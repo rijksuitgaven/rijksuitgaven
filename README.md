@@ -10,6 +10,7 @@ High-level project information, goals, and context.
 - [Project Charter](./01-project-overview/project-charter.md)
 - [Stakeholders](./01-project-overview/stakeholders.md)
 - [Success Criteria](./01-project-overview/success-criteria.md)
+- [Development Methodology](./01-project-overview/development-methodology.md) - AI-assisted development workflow
 
 ### [02 - Requirements](./02-requirements)
 Detailed functional and non-functional requirements.
