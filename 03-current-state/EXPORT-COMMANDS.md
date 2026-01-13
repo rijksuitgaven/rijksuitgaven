@@ -1,193 +1,323 @@
-# Database Export Commands
+# Database Export Guide - PhpMyAdmin
 
-This document contains copy-paste commands for exporting database schema and sample data from the current MySQL database.
+This document contains step-by-step instructions for exporting database schema and sample data using PhpMyAdmin.
 
 ---
 
 ## Prerequisites
 
 You'll need:
-- Access to your MySQL database server
-- MySQL username and password
-- Database name
-- Terminal/command line access
+- Access to PhpMyAdmin
+- Login credentials for your database
+- Web browser
 
 ---
 
-## Export 1: Database Schema Only (No Data)
+## Export 1: Complete Database Schema (Structure Only)
 
-This exports the complete database structure without any actual data.
+This exports the complete database structure without any actual data - perfect for understanding the architecture.
 
-### Command:
+### Steps in PhpMyAdmin:
 
-```bash
-mysqldump -u [USERNAME] -p --no-data --skip-comments [DATABASE_NAME] > rijksuitgaven_schema.sql
-```
+1. **Login to PhpMyAdmin**
+   - Open your PhpMyAdmin URL
+   - Login with your credentials
 
-**Replace:**
-- `[USERNAME]` - Your MySQL username
-- `[DATABASE_NAME]` - Your database name
+2. **Select Your Database**
+   - Click on your database name in the left sidebar
+   - (It's probably named something like `rijksuitgaven_db` or similar)
 
-**What this does:**
-- Exports all table structures
-- Exports indexes and constraints
-- Does NOT include actual data
-- Creates a file called `rijksuitgaven_schema.sql`
+3. **Go to Export Tab**
+   - Click the **"Export"** tab at the top
 
-**Expected output:**
-- You'll be prompted for password
-- File will be created in current directory
-- File size: typically 10-100 KB for schema only
+4. **Choose Export Method**
+   - Select **"Custom"** (not Quick)
 
-**To verify:**
-```bash
-ls -lh rijksuitgaven_schema.sql
-head -50 rijksuitgaven_schema.sql
-```
+5. **Configure Export Settings:**
+   - **Tables:** Select All (or check "Select all")
+   - **Output:** Select "Save output to a file"
+   - **Format:** SQL
+   - **Format-specific options:**
+     - **Structure:**
+       - ✓ Check "Add DROP TABLE / VIEW / PROCEDURE / FUNCTION / EVENT / TRIGGER statement"
+       - ✓ Check "Add CREATE TABLE" (or similar)
+       - ✓ Check "Add IF NOT EXISTS"
+     - **Data:**
+       - ✗ **UNCHECK** "Add INSERT statements" or set to "none"
+       - We want structure only, no data
 
----
+6. **File name template:**
+   - Change to: `rijksuitgaven_schema`
 
-## Export 2: Table List with Row Counts
+7. **Click "Export" button**
+   - File will download as `rijksuitgaven_schema.sql`
 
-Get a list of all tables and how many rows each contains.
-
-### Command:
-
-```bash
-mysql -u [USERNAME] -p [DATABASE_NAME] -e "SELECT table_name, table_rows FROM information_schema.tables WHERE table_schema = '[DATABASE_NAME]' ORDER BY table_rows DESC;"
-```
-
-**Replace:**
-- `[USERNAME]` - Your MySQL username
-- `[DATABASE_NAME]` - Your database name (appears twice!)
-
-**What this does:**
-- Lists all tables in the database
-- Shows row count for each table
-- Sorted by size (largest first)
-
-**Expected output:**
-```
-+---------------------------+------------+
-| table_name                | table_rows |
-+---------------------------+------------+
-| wp_financiele_instrumenten| 45000      |
-| wp_apparaatsuitgaven      | 32000      |
-...
-```
+**What you'll get:**
+- File size: ~50-200 KB (structure only)
+- Contains: All table definitions, indexes, keys
+- Safe to share: No actual data included
 
 ---
 
-## Export 3: Sample Data from Each Table
+## Export 2: Get Table List with Row Counts
 
-Export just the first 100 rows from each table to see data structure.
+Let's see what tables you have and how big they are.
 
-### For a specific table:
+### Steps in PhpMyAdmin:
 
-```bash
-mysqldump -u [USERNAME] -p [DATABASE_NAME] [TABLE_NAME] --where="1 limit 100" > sample_[TABLE_NAME].sql
+1. **Select Your Database**
+   - Click on your database name in left sidebar
+
+2. **Look at the Main View**
+   - You should see a list of all tables
+   - The view shows: Table name, Records (row count), Size
+
+3. **Take a Screenshot or Copy the Table**
+   - Simply take a screenshot of this table list
+   - Or manually note down:
+     - Table name
+     - Number of rows (Records column)
+     - Size
+
+**What we need:**
+- List of all table names
+- How many rows in each table
+- Especially interested in:
+  - Tables starting with `wp_financiele_instrumenten`
+  - Tables with `apparaat`, `subsidie`, `inkoop`, etc.
+  - Any pivot or aggregated tables
+
+---
+
+## Export 3: Sample Data from Main Tables
+
+Export a small sample (100-1000 rows) from your main data tables.
+
+### For Each Major Table:
+
+**Tables to export (if they exist):**
+- Financiële Instrumenten table
+- Apparaatsuitgaven table
+- Any pivot/aggregated table
+- One provincial/municipal subsidy table
+
+### Steps for Each Table:
+
+1. **Click on the Table Name**
+   - In the left sidebar, click the table you want to export
+
+2. **Click "Export" Tab**
+   - At the top of the page
+
+3. **Choose Export Method**
+   - Select **"Custom"**
+
+4. **Configure Export:**
+   - **Format:** SQL
+   - **Tables:** (already selected - just this one table)
+   - **Output:** Save output to a file
+   - **Rows:**
+     - Under "Dump table" section
+     - Find option to limit rows
+     - Enter: `100` or `1000` (whatever is comfortable)
+     - OR leave empty and we'll work with what you send
+
+5. **Structure Options:**
+   - ✓ Check everything (we want structure too)
+
+6. **Data Options:**
+   - ✓ Check "Add INSERT statements"
+   - We want sample data this time
+
+7. **File name:**
+   - Change to: `sample_[tablename]`
+   - Example: `sample_financiele_instrumenten`
+
+8. **Click "Export"**
+
+**Repeat for 3-4 main tables**
+
+**What you'll get:**
+- File size: 100 KB - 5 MB per table (depending on data)
+- Contains: Table structure + sample rows
+- Useful for: Understanding data format and relationships
+
+---
+
+## Export 4: WordPress Tables (For User Migration)
+
+We need to understand how users and subscriptions are stored.
+
+### Tables to Export (Schema + Limited Data):
+
+Look for these tables and export them (with data):
+
+1. **User Tables:**
+   - `wp_users` - WordPress users (export 5-10 sample rows)
+   - `wp_usermeta` - User metadata
+
+2. **ARMember Tables:**
+   - Look for tables starting with `wp_arm_` or `arm_`
+   - Common ones:
+     - `wp_arm_members`
+     - `wp_arm_membership_setup`
+     - `wp_arm_subscriptions`
+     - `wp_arm_payment_log`
+   - Export structure + sample data (10-20 rows)
+
+### Same Export Process as Export 3
+- Export each table individually
+- Include structure + limited data
+- We want to understand subscription model
+
+**Privacy Note:**
+- You can anonymize email addresses if sensitive
+- Or just send schema (structure only) for user tables
+- We mainly need to understand the data structure
+
+---
+
+## Export 5: WordPress Active Plugins List
+
+### Method 1: From WordPress Admin (Easiest)
+
+1. Login to WordPress admin
+2. Go to **Plugins** → **Installed Plugins**
+3. Take a screenshot showing all active plugins
+4. OR copy the list to a text file
+
+### Method 2: From PhpMyAdmin
+
+1. **Select Your Database**
+
+2. **Click on `wp_options` table**
+
+3. **Click "Search" tab**
+
+4. **Search for:**
+   - Field: `option_name`
+   - Operator: `=`
+   - Value: `active_plugins`
+
+5. **Click "Go"**
+
+6. **Look at the result:**
+   - The `option_value` column contains a serialized list of active plugins
+   - Copy this value
+
+7. **Alternative - Run SQL Query:**
+   - Click "SQL" tab
+   - Paste this query:
+   ```sql
+   SELECT option_value FROM wp_options WHERE option_name = 'active_plugins';
+   ```
+   - Click "Go"
+   - Copy the result
+
+**What you'll get:**
+- List of all active WordPress plugins
+- Helps us understand what functionality to replicate
+
+---
+
+## Summary: What to Export
+
+Here's a checklist of what we need:
+
+### Priority 1 (Essential)
+- [ ] **Complete database schema** (Export 1)
+  - File: `rijksuitgaven_schema.sql`
+  - Size: ~50-200 KB
+  - Content: All table structures, no data
+
+- [ ] **Table list with row counts** (Export 2)
+  - Screenshot or text file
+  - Shows all table names and sizes
+
+### Priority 2 (Very Helpful)
+- [ ] **Sample data from main tables** (Export 3)
+  - 3-4 files with 100-1000 rows each
+  - Focus on: Financiële Instrumenten, Apparaatsuitgaven, pivot tables
+  - Files: `sample_[tablename].sql`
+
+### Priority 3 (Helpful for User Migration)
+- [ ] **WordPress user/subscription tables** (Export 4)
+  - `wp_users`, `wp_usermeta` (sample data)
+  - ARMember tables (sample data)
+  - Can anonymize emails if needed
+
+- [ ] **Active plugins list** (Export 5)
+  - Screenshot from WordPress admin
+  - OR text list of plugins
+
+---
+
+## Security & Privacy Notes
+
+✅ **Safe to Share:**
+- Database schema (no actual data)
+- Sample data from financial tables (public government data)
+- Table structure and column names
+
+⚠️ **Be Careful With:**
+- User emails (can anonymize if needed)
+- Password hashes (only structure needed, not actual values)
+- Payment information (only structure needed)
+
+💡 **Tips:**
+- Schema files are completely safe (no user data)
+- Sample financial data is public government data (safe)
+- For user tables, you can export structure only (no data)
+- We mainly need to understand the structure
+
+---
+
+## Where to Share Files
+
+### Option 1: Add to GitHub Repository (Recommended)
+Create a folder and upload there:
+```
+03-current-state/exports/
+  ├── rijksuitgaven_schema.sql
+  ├── table_list.txt (or screenshot)
+  ├── sample_financiele_instrumenten.sql
+  ├── sample_apparaatsuitgaven.sql
+  └── plugins_list.txt (or screenshot)
 ```
 
-**Replace:**
-- `[USERNAME]` - Your MySQL username
-- `[DATABASE_NAME]` - Your database name
-- `[TABLE_NAME]` - The table name (e.g., wp_financiele_instrumenten)
+### Option 2: File Transfer
+- If files are large (>10 MB total)
+- Use WeTransfer, Dropbox, or Google Drive
+- Share link with me
 
-**Example for Financial Instruments table:**
-```bash
-mysqldump -u myuser -p rijksuitgaven_db wp_financiele_instrumenten --where="1 limit 100" > sample_financiele_instrumenten.sql
-```
-
-**What this does:**
-- Exports table structure
-- Exports first 100 rows only
-- Safe for sharing (limited data)
+### Option 3: Direct Upload
+- If working in our shared environment
+- Place files in the documentation repository
 
 ---
 
-## Export 4: Complete Database Structure Report
+## Troubleshooting
 
-Get detailed information about database structure.
+### "Export is taking too long"
+- For large tables, reduce the row limit to 100
+- Or export structure only first, data later
 
-### Command:
+### "File is too large"
+- Zip/compress the .sql files
+- Or export fewer rows (50-100 instead of 1000)
 
-```bash
-mysql -u [USERNAME] -p [DATABASE_NAME] -e "SHOW TABLES;" > table_list.txt
-```
+### "Can't find specific tables"
+- Take screenshot of all tables in PhpMyAdmin
+- Send that, and I'll tell you which ones to export
 
-**What this does:**
-- Lists all tables in plain text
-- Easy to review and share
+### "Not sure about table names"
+- Export the complete schema first (Export 1)
+- I can analyze that and tell you which specific tables we need samples from
 
----
-
-## Export 5: WordPress Plugin List
-
-If you can access the WordPress admin or database directly:
-
-### Via Database:
-
-```bash
-mysql -u [USERNAME] -p [DATABASE_NAME] -e "SELECT option_value FROM wp_options WHERE option_name = 'active_plugins';"
-```
-
-### Or manually:
-
-Simply list the plugins from WordPress Admin → Plugins page and save to a text file.
-
----
-
-## Alternative: Using SequelAce
-
-Since you mentioned using SequelAce, here's how to export from there:
-
-### Export Schema:
-1. Open your database in SequelAce
-2. File → Export
-3. Select all tables
-4. Format: SQL
-5. Check "Structure" only (uncheck "Content")
-6. Save as `rijksuitgaven_schema.sql`
-
-### Export Sample Data:
-1. File → Export
-2. Select specific table
-3. Check both "Structure" and "Content"
-4. In Advanced options, add: `LIMIT 100`
-5. Save as `sample_[tablename].sql`
-
----
-
-## What to Share
-
-Please export and share:
-
-1. ✓ **Complete database schema** (`rijksuitgaven_schema.sql`)
-2. ✓ **Table list with row counts** (copy terminal output)
-3. ✓ **Sample data from main tables:**
-   - Financiële Instrumenten (100 rows)
-   - Apparaatsuitgaven (100 rows)
-   - One of the pivot/aggregated tables (100 rows)
-4. ✓ **WordPress plugin list** (from admin panel or text file)
-
----
-
-## Security Notes
-
-- Schema file is safe to share (no sensitive data)
-- Sample data (100 rows) should be fine but check for any sensitive info
-- Don't share full database dumps with passwords or personal data
-- If needed, we can anonymize the sample data
-
----
-
-## How to Share Files
-
-Options:
-1. Upload to GitHub repository in a private branch
-2. Share via secure file transfer
-3. Email if files are small (< 5 MB)
-4. Add to our documentation repo in `/03-current-state/exports/` folder
+### "Privacy concerns"
+- Export structure only (no data) for user tables
+- We mainly need to understand the schema
+- For financial data tables, sample data is helpful but not critical initially
 
 ---
 
@@ -195,34 +325,98 @@ Options:
 
 Once I receive these files, I will:
 
-1. **Analyze database schema**
-   - Understand table structures
-   - Identify relationships
-   - Document data model
+### 1. Database Analysis (1-2 hours)
+- Analyze complete schema structure
+- Identify all tables and relationships
+- Document data model
+- Understand WpDataTables configuration
 
-2. **Review sample data**
-   - Understand data formats
-   - Identify data quality issues
-   - Plan data access patterns
+### 2. Data Review (1-2 hours)
+- Review sample data formats
+- Understand data patterns
+- Identify any data quality issues
+- Map field types and constraints
 
-3. **Design new architecture**
-   - Plan how to connect to existing database
-   - Design API layer
-   - Plan search indexing strategy
+### 3. Architecture Design (2-4 hours)
+- Design how new platform connects to existing database
+- Plan API layer structure
+- Design search indexing strategy
+- Plan AI integration architecture
 
-4. **Create migration plan**
-   - Document Phase 1 approach
-   - Identify any data structure improvements for Phase 2
-   - Plan user/subscription migration
+### 4. Create Detailed Technical Specs
+- Document database access patterns
+- Design new frontend architecture
+- Plan user/subscription migration
+- Create development roadmap
+
+### 5. Technology Stack Recommendations
+- Recommend specific frameworks
+- Recommend hosting platform
+- Recommend search solution
+- Recommend AI integration approach
 
 ---
 
-## Questions During Export
+## Questions During Export?
 
-If you encounter any issues:
-- Error messages → Copy full error text
-- Permission issues → Let me know
-- Uncertain about database name → Run: `SHOW DATABASES;`
-- Need to find table names → Run: `SHOW TABLES;`
+If you encounter any issues, just let me know:
 
-Just share the error or question and I'll provide the fix!
+### Common Issues:
+**"Which database should I select?"**
+- Look for name with "rijksuitgaven" or your site name
+- Or take screenshot of database list
+
+**"Too many tables - which ones matter?"**
+- Export schema first (all tables)
+- Take screenshot of table list
+- I'll tell you which specific ones need sample data
+
+**"Export is slow"**
+- Start with schema only (Export 1)
+- Send that first
+- We can get sample data later if needed
+
+**"Not sure about settings"**
+- Take screenshots of each step
+- Send those and I'll guide you
+
+**"File won't download"**
+- Try different browser
+- Check popup blockers
+- Try smaller table first
+
+---
+
+## Quick Start: Minimum Viable Export
+
+If you're short on time, start with just these:
+
+1. **Database Schema** (Export 1)
+   - Complete structure, no data
+   - 5 minutes to export
+
+2. **Table List Screenshot** (Export 2)
+   - Just take screenshot
+   - 1 minute
+
+**That's enough to get started!**
+
+We can get sample data later if needed. The schema alone will tell me 80% of what I need to know.
+
+---
+
+## I'm Ready to Help!
+
+Once you've exported the files:
+
+1. Upload them to the GitHub repo in `03-current-state/exports/`
+2. Or share via file transfer
+3. Let me know they're ready
+
+I'll analyze them and create:
+- Complete data model documentation
+- Detailed architecture design
+- Technology recommendations
+- Development plan
+
+Let's build something amazing! 🚀

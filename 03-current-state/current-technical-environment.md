@@ -263,7 +263,7 @@ Rijksuitgaven.nl currently runs on a WordPress-based solution with WpDataTables 
   - ✓ Multiple files sometimes need merging
 
 ### Current Import Process
-- **Tool:** SequelAce (direct database import)
+- **Tool:** Direct database import via PhpMyAdmin
 - **Process:** Direct MySQL import, bypassing WordPress interface
 - **Complexity:** Requires technical knowledge and manual preparation
 
