@@ -62,8 +62,9 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
                     ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                    AI SERVICES                               │
-│  • OpenAI (for complex queries)                              │
-│  • Claude (for analysis and MCP)                             │
+│  • Claude Sonnet 4.5 (primary - Research Mode)               │
+│  • OpenAI GPT-4 (fallback only)                              │
+│  • LangChain (agent orchestration)                           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -90,6 +91,8 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
 - **TanStack Query** - Data fetching and caching
 - **Zod** - TypeScript-first validation
 - **NextAuth.js** - Authentication
+- **Recharts** - Standard charts (bar, line, pie)
+- **nivo** - Advanced charts (Sankey diagrams, treemaps, heatmaps) ⭐ V2.0
 
 **Why not alternatives:**
 - React alone: Too much configuration needed
@@ -129,8 +132,13 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
 - **Pydantic** - Data validation
 - **python-dotenv** - Environment configuration
 - **httpx** - Async HTTP client
-- **LangChain** - AI orchestration
+- **anthropic** - Claude API (primary AI provider) ⭐ Updated
+- **openai** - OpenAI API (fallback only)
+- **LangChain** - AI orchestration and agent framework ⭐ V2.0
+- **langchain-anthropic** - Claude integration for LangChain
 - **MCP SDK** - MCP server implementation
+- **WeasyPrint** - PDF report generation ⭐ V2.0
+- **BeautifulSoup4** - Web scraping (wetten.overheid.nl)
 
 ---
 
@@ -152,6 +160,45 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
 - Start fast, optimize later
 - Validate architecture with real data
 - No data migration blockers for launch
+
+**V2.0 Database Additions:** ⭐ NEW
+```sql
+-- IBOS Domain Reference (30 rows, static)
+CREATE TABLE ibos_domains (
+  code VARCHAR(2) PRIMARY KEY,
+  name_nl VARCHAR(255),
+  name_en VARCHAR(255)
+);
+
+-- Recipient to Domain Mapping (AI + manual)
+CREATE TABLE recipient_domain_mappings (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  recipient VARCHAR(255),
+  ibos_code VARCHAR(2),
+  confidence DECIMAL(3,2),  -- 0.00 to 1.00
+  source ENUM('manual', 'ai', 'metadata'),
+  created_at TIMESTAMP,
+  FOREIGN KEY (ibos_code) REFERENCES ibos_domains(code)
+);
+
+-- User Focus Domains (personalization)
+CREATE TABLE user_focus_domains (
+  user_id INT,
+  ibos_code VARCHAR(2),
+  PRIMARY KEY (user_id, ibos_code),
+  FOREIGN KEY (ibos_code) REFERENCES ibos_domains(code)
+);
+
+-- Pre-computed Domain Analytics
+CREATE TABLE analytics_domain_yearly (
+  ibos_code VARCHAR(2),
+  year INT,
+  total_amount BIGINT,
+  recipient_count INT,
+  percentage_of_total DECIMAL(5,2),
+  PRIMARY KEY (ibos_code, year)
+);
+```
 
 ---
 
@@ -215,31 +262,44 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
 
 ---
 
-### AI Integration: Dual Provider Strategy
+### AI Integration: Claude Primary Strategy ⭐ Updated
 
-#### For Natural Language Queries: OpenAI GPT-4 Turbo
-**Cost:** ~€20-40/month (with caching)
+#### Primary: Claude Sonnet 4.5 (Anthropic)
+**Cost:** ~€25-35/month (with caching)
 **Why:**
-- Best at query understanding
-- Fastest responses
-- Most reliable
-- Industry standard
+- **10x cheaper** for conversations (€0.003 vs €0.03 per 1K tokens)
+- Native MCP support (critical for Research Mode)
+- 200K context window (full conversation history)
+- Excellent multi-step reasoning
+- Better for Research Mode's "Bloomberg Terminal" conversations
 
-#### For Data Analysis: Claude (Anthropic)
-**Cost:** ~€20-40/month
-**Why:**
-- Better at complex analysis
-- Native MCP support
-- Safer, more thoughtful responses
-- Excellent with structured data
+#### Fallback: OpenAI GPT-4 (Emergency only)
+**Cost:** ~€5-10/month (5% of queries)
+**When:**
+- Claude API unavailable
+- Specific tasks where OpenAI excels (rare)
+
+#### V2.0 Research Mode AI Architecture
+```
+User Query → LangChain Agent → Claude Sonnet 4.5
+                    ↓
+              MCP Tools:
+              - get_domain_distribution()
+              - get_domain_trends()
+              - classify_recipient()
+              - search_typesense()
+              - fetch_regulation()
+                    ↓
+              Response + Visualization
+```
 
 #### Cost Optimization Strategy:
 1. **Cache AI responses** (Redis) - 80% of queries repeat
-2. **Use cheaper models** for simple queries (GPT-3.5-turbo)
-3. **Batch similar queries**
+2. **Use Claude Haiku** for simple queries (even cheaper)
+3. **Pre-computed analytics tables** - reduce AI query complexity
 4. **Rate limiting** per user tier
 
-**Realistic AI costs: €30-60/month** (much cheaper than you might think!)
+**Realistic AI costs: €30-50/month** (10x cheaper than GPT-4 primary!)
 
 ---
 
@@ -248,14 +308,8 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
 **What is MCP (Model Context Protocol)?**
 Anthropic's standard for AI to access external data sources.
 
-**Your Implementation:**
+**V1.0 Tools (Basic):**
 ```python
-# FastAPI endpoint that's also an MCP server
-from mcp import MCPServer
-
-app = FastAPI()
-mcp_server = MCPServer(app)
-
 @mcp_server.tool
 def get_financial_data(recipient: str, year: int):
     """Get financial data for a recipient in a specific year"""
@@ -267,10 +321,49 @@ def search_recipients(query: str):
     return search_typesense(query)
 ```
 
+**V2.0 Tools (Research Mode):** ⭐ NEW
+```python
+@mcp_server.tool
+def get_domain_distribution(year: int):
+    """Get IBOS domain breakdown for a year - 'Where does tax euro go?'"""
+    return query_analytics_domain_yearly(year)
+
+@mcp_server.tool
+def get_domain_trends(ibos_code: str, start_year: int, end_year: int):
+    """Get year-over-year trends for a policy domain"""
+    return query_domain_trends(ibos_code, start_year, end_year)
+
+@mcp_server.tool
+def classify_recipient(recipient: str):
+    """AI-assisted IBOS domain classification for ambiguous recipients"""
+    return infer_ibos_code(recipient)
+
+@mcp_server.tool
+def compare_domains(domain_a: str, domain_b: str, year: int):
+    """Compare two policy domains side-by-side"""
+    return compare_ibos_domains(domain_a, domain_b, year)
+
+@mcp_server.tool
+def fetch_regulation(regeling_name: str):
+    """Fetch legislation from wetten.overheid.nl"""
+    return scrape_wetten_overheid(regeling_name)
+
+@mcp_server.tool
+def get_top_recipients(ibos_code: str, year: int, limit: int = 10):
+    """Get top N recipients in a domain - 'Wie krijgt het meeste?'"""
+    return query_top_recipients(ibos_code, year, limit)
+
+@mcp_server.tool
+def get_fastest_growers(ibos_code: str, start_year: int, end_year: int):
+    """Get fastest growing/declining recipients in a domain"""
+    return query_growth_ranking(ibos_code, start_year, end_year)
+```
+
 **Benefits:**
 - ✅ AI can directly query your data
+- ✅ Domain-first analysis ("Where does tax euro go?")
 - ✅ Standardized protocol
-- ✅ Works with Claude and other AI tools
+- ✅ Works with Claude and LangChain
 - ✅ Future-proof as MCP adoption grows
 
 ---
@@ -295,14 +388,18 @@ MySQL:                     €7
 Typesense:                 €15-25
 Redis:                     €7-10
 ──────────────────────────────
-Total:                     €59-92
+Infrastructure:            €59-92
 
-Add AI costs:              €30-60
+AI Services (Claude primary):
+- Claude Sonnet 4.5:       €25-35
+- OpenAI fallback:         €5-10
 ──────────────────────────────
-Grand Total:               €89-152
+AI Total:                  €30-45
+
+Grand Total:               €89-137
 ```
 
-**Well within your €180 budget! Room to grow.**
+**Well within your €180 budget! €43-91 buffer for growth.**
 
 **Why not alternatives:**
 - **AWS/Google Cloud:** Too complex, need IaC knowledge, harder to debug
@@ -390,18 +487,21 @@ Total:                      €180/month
 ### New Platform (Recommended)
 ```
 Railway infrastructure:     €59-92/month
-AI services:                €30-60/month
+AI services (Claude):       €30-45/month
 ──────────────────────────────────────
-Total:                      €89-152/month
-Savings:                    €28-91/month
+Total:                      €89-137/month
+Savings:                    €43-91/month
 ```
 
 **Plus you get:**
-- ✅ 50x faster search
-- ✅ AI capabilities
+- ✅ 50x faster search (<100ms vs 5s)
+- ✅ AI Research Mode (Bloomberg Terminal for Rijksfinanciën)
+- ✅ IBOS domain analysis ("Where does tax euro go?")
+- ✅ Advanced visualizations (Sankey, Treemap, Heatmap)
+- ✅ wetten.overheid.nl integration
 - ✅ Better scalability
 - ✅ Modern architecture
-- ✅ Room for growth
+- ✅ €43-91 buffer for growth
 
 ---
 
@@ -527,21 +627,25 @@ If you grow beyond:
 
 ## Decision Summary
 
-### What You Get
+### What You Get (V1.0 + V2.0)
 ✅ Modern, fast platform (5s → <100ms search)
-✅ AI-powered natural language queries
-✅ MCP server support
-✅ Within budget (€90-150 vs €180)
-✅ Easy deployment (GUI-based)
-✅ Future-proof technology
+✅ AI-powered Research Mode ("Bloomberg Terminal for Rijksfinanciën")
+✅ Domain-first analysis (IBOS - "Where does tax euro go?")
+✅ Advanced visualizations (Sankey, Treemap, Heatmap)
+✅ wetten.overheid.nl integration
+✅ MCP server with domain tools
+✅ Within budget (€89-137 vs €180)
+✅ Easy deployment (GUI-based Railway)
+✅ Future-proof technology (Claude + LangChain)
 ✅ Scalable architecture
-✅ Deliverable in 1-2 months
+✅ V1.0 in 8 weeks, V2.0 in +12 weeks
 ✅ Maintainable by 2-3 person team
 
 ### Trade-offs
 ⚠️ Learning curve (Python + Next.js) - **Mitigated:** Excellent docs, huge community
 ⚠️ Initial development time - **Mitigated:** Worth it for 50x performance gain
 ⚠️ New deployment platform - **Mitigated:** Railway simpler than current setup
+⚠️ IBOS domain mapping effort - **Mitigated:** AI-assisted classification
 
 ---
 

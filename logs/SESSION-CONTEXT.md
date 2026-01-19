@@ -1,8 +1,8 @@
 # Session Context
 
-**Last Updated:** 2026-01-14 (End of Day)
+**Last Updated:** 2026-01-19
 **Project Phase:** Phase 1 - Requirements & Architecture
-**Current Sprint:** Search Requirements Deep-Dive Complete
+**Current Sprint:** V1.0 MVP Scope Defined
 
 ---
 
@@ -13,30 +13,35 @@
 - ✅ Current environment analyzed
 - ✅ Database structure documented
 - ✅ Technology stack recommended (initial)
-- ✅ **COMPLETED TODAY:** Search requirements deep-dive
-- ✅ **COMPLETED TODAY:** Architecture impact analysis
-- ⏳ **NEXT:** Answer open questions, define V1.0 MVP scope
+- ✅ Search requirements deep-dive
+- ✅ Architecture impact analysis
+- ✅ 4 critical decisions answered
+- ✅ V1.0 MVP scope defined
+- ✅ **COMPLETED TODAY:** V2.0 Research Mode brainstorm (Eerste Kamer interview)
+- ✅ **COMPLETED TODAY:** V2.0 design document created
+- ⏳ **NEXT:** UI/UX wireframes (V1.0)
 
 ### Active Tasks
 | Task | Status | Notes |
 |------|--------|-------|
 | Search requirements gathering | ✅ Completed | 57-page comprehensive document |
 | Architecture impact analysis | ✅ Completed | Stack validated against requirements |
-| Define V1.0 MVP scope | 🔄 Next session | Answer open questions first |
-| UI/UX wireframes | ⏳ Pending | After scope defined |
+| Define V1.0 MVP scope | ✅ Completed | All 4 decisions answered |
+| V2.0 Research Mode brainstorm | ✅ Completed | Eerste Kamer interview, design doc created |
+| UI/UX wireframes (V1.0) | 🔄 Next | Ready to start |
 
 ---
 
 ## Recent Work (Last 3 Files)
 
-1. **02-requirements/search-requirements.md** ⭐ NEW
+1. **docs/plans/2026-01-19-v2-research-mode-design.md** ⭐ NEW
+   V2.0 Research Mode design: Bloomberg Terminal vision, IBOS domains, Eerste Kamer insights
+
+2. **02-requirements/search-requirements.md**
    Comprehensive search requirements (1,544 lines): Search Bar (V1.0) + Research Mode (V2.0)
 
-2. **04-target-architecture/architecture-impact-analysis.md** ⭐ NEW
-   Evaluation of tech stack against requirements + updated recommendations (956 lines)
-
-3. **04-target-architecture/RECOMMENDED-TECH-STACK.md**
-   Original technology recommendation: Python + FastAPI + Next.js + Railway + Typesense
+3. **04-target-architecture/architecture-impact-analysis.md**
+   Evaluation of tech stack against requirements + updated recommendations
 
 ---
 
@@ -84,53 +89,76 @@
 - **Development Methodology:** AI takes multiple roles, copy-paste execution
 - **Internationalization:** Dutch primary (V1.0), English UI option (V2.0), i18n framework from day 1
 
-### Product Decisions (NEW TODAY) ⭐
+### Product Decisions
 - **Two Search Modes:** Search Bar (V1.0) + Research Mode (V2.0)
-- **"Claude of Rijksfinanciën":** Zero syntax required, natural language first
-- **Target Users:** Journalists, researchers, political parties, financial analysts
-- **Pricing Tiers:** Pro Account (search) + Research Account (AI mode)
+- **"Bloomberg Terminal for Rijksfinanciën":** Domain-first analysis, not recipient-first
+- **Target Users:** Eerste Kamer, journalists, researchers, political parties
+- **Pricing Tiers:** Pro Account (search) + Research Account (AI mode - upsell later)
+
+### V2.0 Research Mode Decisions (2026-01-19) ⭐ NEW
+
+**ADR-008: Domain Classification**
+- **Decision:** Use IBOS (30 official policy domains) as standard classification
+- **AI Classification:** For ambiguous recipients, AI infers IBOS code from metadata
+- **Personalization:** Users select their focus domains
+
+**ADR-009: Entry Point Paradigm**
+- **Decision:** V2.0 entry point is Domain, not Recipient
+- **Question:** "Where does the tax euro go?" (not "Who received money?")
+- **Flow:** Domain → Trends → Recipients (drill-down)
+
+**ADR-010: wetten.overheid.nl Integration**
+- **Decision:** Must-have for V2.0
+- **Rationale:** Every Regeling links to legislation, users need legal context
+
+**ADR-011: Visualizations**
+- **Decision:** Standard + Advanced charts
+- **Standard:** Bar, Line, Pie
+- **Advanced:** Sankey (money flow), Treemap (hierarchy), Heatmap (year × domain)
+
+**ADR-012: V3.0 Data Requirement**
+- **Decision:** Budget analysis (onderuitputting, kasverschuivingen) requires begroting data
+- **Current data:** Realisatie only
+- **Impact:** Budget vs actual analysis parked for V3.0
+
+### Critical Decisions - RESOLVED (2026-01-19) ⭐
+
+**DECISION 1: V1.0 Timeline** ✅
+- **Decision:** V1.0 = Search Bar only (8 weeks), V2.0 = Research Mode (+12 weeks)
+- **Rationale:** Deliver value faster, reduce risk, validate architecture first
+
+**DECISION 2: Pricing Strategy** ✅
+- **Decision:** €1,500/year or €150/month (ex VAT) - single tier for V1.0
+- **Research tier:** TBD - will be upsell at later stage
+- **Revenue:** 30 subscribers × €150 = €4,500/month potential
+
+**DECISION 3: V1.0 MVP Scope** ✅
+- **Must-haves:**
+  - Global search bar with autocomplete
+  - Cross-module search ("Integraal") ✅
+  - All 7 module filters (based on current UI)
+  - Year range filter
+  - Amount range filter ✅
+  - CSV export (500 row limit)
+  - User accounts (email/password only)
+- **Not in V1.0:**
+  - Research Mode (V2.0)
+- **Never:**
+  - Social login (email/password only, always)
+  - Unlimited exports (500 row limit always)
+
+**DECISION 4: User Migration Strategy** ✅
+- **Decision:** 1:1 migration to new platform
+- **Same functionality:** All current features preserved
+- **Research Mode:** Will be offered as upsell later
+- **No pricing changes:** Existing subscribers keep current terms
 
 ---
 
 ## Pending Decisions
 
-### Critical (For Tomorrow's Session) ⚠️
-
-**DECISION 1: V1.0 Timeline Confirmation**
-- **Question:** Is "ASAP, 1-2 months" still realistic for V1.0?
-- **Sub-questions:**
-  - Should we launch V1.0 without Research Mode first? (Recommended: Yes)
-  - Or delay V1.0 to include basic Research Mode?
-- **Impact:** Determines development roadmap and resource allocation
-- **Recommendation:** Launch V1.0 (Search Bar only) in 8 weeks, V2.0 (Research Mode) 3 months later
-
-**DECISION 2: Pricing Strategy**
-- **Question:** What's your target pricing for each tier?
-  - Pro Account: €X/month (search + filters + exports)
-  - Research Account: €Y/month (Pro + AI Research Mode)
-- **Context:** Need to validate pricing covers infrastructure costs
-- **Impact:** Revenue projections, feature prioritization
-
-**DECISION 3: V1.0 MVP Scope Definition**
-- **Question:** What features are **absolute must-haves** for V1.0 launch?
-- **Examples to decide:**
-  - Is "Integraal" (cross-module search) critical for launch? (Nice-to-have vs must-have?)
-  - Export limits: 1K rows? 10K rows? Unlimited?
-  - User accounts: Basic (email/password) or social login too?
-  - Module-specific filters: All 7 modules or prioritize top 3?
-- **Impact:** Timeline, development complexity
-
-**DECISION 4: User Migration Strategy**
-- **Question:** How to migrate existing 30 paying subscribers?
-- **Sub-questions:**
-  - Grandfather their current pricing (€180/month)?
-  - Force migration to new tiers?
-  - Transition timeline (immediate vs gradual)?
-  - Data migration: automatic or require user action?
-- **Impact:** Customer satisfaction, revenue continuity
-
 ### Important (Not Blocking)
-- **Wireframe approval** - After scope defined
+- **Wireframe approval** - Ready to start
 - **API specification review** - After wireframes
 - **Development environment setup** - Can start anytime
 
@@ -144,7 +172,8 @@
 
 ## Quick Links
 
-### Requirements (NEW TODAY) ⭐
+### Design Documents
+- [V2.0 Research Mode Design](../docs/plans/2026-01-19-v2-research-mode-design.md) ⭐ NEW - Bloomberg Terminal vision
 - [Search Requirements](../02-requirements/search-requirements.md) - Comprehensive 57-page document
 - [Architecture Impact Analysis](../04-target-architecture/architecture-impact-analysis.md) - Stack validation
 
@@ -165,44 +194,34 @@
 
 ## Next Steps (Priority Order)
 
-### Tomorrow's Session (2026-01-15) 🗓️
+### This Session (2026-01-19) 🗓️
 
-**PRIMARY GOAL:** Answer 4 critical questions (see Pending Decisions above)
+**COMPLETED:**
+- ✅ All 4 critical decisions answered
+- ✅ V1.0 MVP scope defined
 
-**AGENDA:**
-1. Review search requirements (02-requirements/search-requirements.md)
-2. Review architecture impact analysis (04-target-architecture/architecture-impact-analysis.md)
-3. **Answer DECISION 1:** V1.0 timeline (2 months realistic? Research Mode in V1 or V2?)
-4. **Answer DECISION 2:** Pricing strategy (Pro tier €X, Research tier €Y)
-5. **Answer DECISION 3:** V1.0 MVP scope (must-haves vs nice-to-haves)
-6. **Answer DECISION 4:** User migration strategy (30 existing subscribers)
-7. Finalize V1.0 feature list
-8. Begin UI/UX wireframes (if time permits)
+**READY TO START:**
 
-### After Scope Defined:
 1. **Create UI/UX Wireframes**
    - Search bar with autocomplete/instant preview
    - Advanced filters (collapsible panel)
    - Results display (table view)
    - Module navigation
-   - Research Mode interface (V2.0)
+   - All 7 modules with filters
 
 2. **Estimate Development Effort**
    - Break down V1.0 features into tasks
-   - Assign story points
    - Create sprint plan (8 weeks = 4 sprints)
 
 3. **Create API Specifications** (06-technical-specs/api-specifications.md)
    - RESTful endpoint design for 7 data modules
    - Authentication/authorization endpoints
    - Search API with Typesense integration
-   - Request/response schemas
 
 4. **Create Project Setup Guide** (07-migration-strategy/setup-guide.md)
    - Railway account setup
    - GitHub repository setup
    - Local development environment
-   - Copy-paste ready commands
 
 ---
 
@@ -231,16 +250,51 @@
 - Zero downtime for paying customers
 - V1.0: 8 weeks | V2.0: +12 weeks (total 20 weeks / ~5 months)
 
-### Today's Accomplishments (2026-01-14)
-1. ✅ Comprehensive search requirements documented (57 pages)
-2. ✅ Architecture validated against requirements
-3. ✅ 4 major architectural decisions updated (Claude primary, LangChain, frontend charts, analytics tables)
-4. ✅ Cost analysis updated (€89-127/month with Research Mode)
-5. ✅ 12 user stories created with acceptance criteria
-6. ✅ Version roadmap defined (V1.0 → V2.0 → V2.1)
-7. ✅ 4 critical questions prepared for tomorrow
+### Today's Accomplishments (2026-01-19)
+1. ✅ All 4 critical decisions answered
+2. ✅ V1.0 MVP scope finalized
+3. ✅ Pricing confirmed: €1,500/year or €150/month
+4. ✅ Timeline confirmed: V1.0 (8 weeks) + V2.0 (+12 weeks)
+5. ✅ Migration strategy: 1:1 migration, Research Mode as upsell
+6. ✅ V2.0 Research Mode brainstorm (Eerste Kamer user interview)
+7. ✅ V2.0 design document created (Bloomberg Terminal vision)
+8. ✅ 5 new ADRs documented (008-012)
+
+### V1.0 MVP Feature Summary
+| Feature | Status |
+|---------|--------|
+| Global search bar | ✅ Must-have |
+| Autocomplete | ✅ Must-have |
+| Cross-module search | ✅ Must-have |
+| All 7 module filters | ✅ Must-have |
+| Year range filter | ✅ Must-have |
+| Amount range filter | ✅ Must-have |
+| CSV export (500 rows) | ✅ Must-have |
+| Email/password auth | ✅ Must-have |
+| Social login | ❌ Never |
+| Research Mode | ❌ V2.0 |
+
+### V2.0 Research Mode Scope Summary
+| Feature | Status |
+|---------|--------|
+| Domain-first analysis (IBOS) | ✅ V2.0 |
+| "Where does tax euro go?" | ✅ V2.0 |
+| AI domain classification | ✅ V2.0 |
+| User focus domains | ✅ V2.0 |
+| Trend analysis (YoY) | ✅ V2.0 |
+| Top N / Groeiers / Dalers | ✅ V2.0 |
+| All comparison types | ✅ V2.0 |
+| Advanced charts (Sankey, Treemap, Heatmap) | ✅ V2.0 |
+| wetten.overheid.nl integration | ✅ V2.0 |
+| Save queries | ✅ V2.0 |
+| Export CSV/Excel/PDF | ✅ V2.0 |
+| Share read-only links | ✅ V2.0 |
+| PowerPoint export | 🅿️ V2.1 |
+| Share + comment | 🅿️ V2.1 |
+| Budget analysis (onderuitputting) | 🅿️ V3.0 (needs begroting data) |
 
 ---
 
-**Last Session:** 2026-01-14 (Search requirements deep-dive + architecture impact analysis)
-**Next Session:** 2026-01-15 - Answer 4 critical questions, define V1.0 MVP scope
+**Last Session:** 2026-01-14 (Search requirements + architecture impact analysis)
+**This Session:** 2026-01-19 - V1.0 decisions + V2.0 Research Mode brainstorm
+**Next:** UI/UX wireframes (V1.0)

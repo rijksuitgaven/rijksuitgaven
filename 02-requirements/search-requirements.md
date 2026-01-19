@@ -352,16 +352,25 @@ User on "Financiële Instrumenten" page searches "prorail"
 **Requirement:** Create a conversational AI interface for deep financial data analysis
 
 **Vision Statement:**
-"Research Mode is the Claude of Rijksfinanciën - an AI assistant that understands government financial data and helps users discover insights through natural conversation."
+"Research Mode is the **Bloomberg Terminal for Rijksfinanciën** - a professional analysis platform that answers the question: **Where does the tax euro go?**"
+
+**Key Paradigm Shift:**
+| Aspect | V1.0 (Search) | V2.0 (Research Mode) |
+|--------|---------------|----------------------|
+| Entry point | Recipient (Ontvanger) | Policy Domain (Beleidsterrein) |
+| Primary question | "Who received money?" | "Where does the tax euro go?" |
+| User flow | Recipient → Payments | Domain → Trends → Recipients |
 
 **Core Concept:**
+- **Domain-first analysis** using IBOS classification (30 policy domains)
 - AI-first interface (conversational, not traditional search)
 - Multi-step analysis capability
-- Data visualization on demand
-- Integration with external sources (wetten.overheid.nl)
-- Professional workspace (save, annotate, share, export)
+- Data visualization on demand (including Sankey, Treemap, Heatmap)
+- Integration with wetten.overheid.nl (must-have)
+- Professional workspace (save, share, export)
 
 **Target Users:**
+- Eerste Kamer (Senate) staff - primary user research source
 - Journalists (investigative reporting)
 - Academic researchers (policy analysis)
 - Political parties (oversight, policy development)
@@ -377,21 +386,21 @@ User on "Financiële Instrumenten" page searches "prorail"
 **Requirement:** Two-tier subscription model
 
 **Tiers:**
-1. **Pro Account** (Basic platform access)
+1. **Pro Account** (Basic platform access) - V1.0
    - Full search bar functionality
    - All modules accessible
    - Advanced filters
-   - Standard exports (CSV, up to 10K rows)
-   - Price: TBD
+   - Standard exports (CSV, 500 rows limit)
+   - Price: €150/month or €1,500/year (ex VAT)
 
-2. **Research Account** (Pro + Research Mode)
+2. **Research Account** (Pro + Research Mode) - V2.0
    - Everything in Pro
    - Research Mode (AI conversational interface)
-   - Unlimited exports (with rate limits)
-   - Save queries indefinitely
-   - Custom visualizations
-   - Priority support
-   - Price: TBD (premium over Pro)
+   - Exports: CSV, Excel, PDF reports (500 rows limit)
+   - Save queries
+   - Advanced visualizations (Sankey, Treemap, Heatmap)
+   - Share read-only links
+   - Price: Premium over Pro (TBD at V2.0 launch)
 
 **Priority:** P0 (Critical)
 **Version:** V2.0
