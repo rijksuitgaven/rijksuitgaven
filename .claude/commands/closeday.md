@@ -55,13 +55,26 @@ Update:
 
 ---
 
-## 3. Commit to GitHub
+## 3. Commit EVERYTHING to GitHub
+
+**IMPORTANT:** All project files live in ONE repository: `rijksuitgaven-saas-docs/`
 
 ```bash
-git add logs/
+cd /Users/michielmaandag/SynologyDrive/code/watchtower/rijksuitgaven-saas-docs
+git add -A
+git status  # Verify what will be committed
 git commit -m "Daily log YYYY-MM-DD: [brief summary]"
 git push
 ```
+
+**Checklist before committing:**
+- [ ] CLAUDE.md changes included
+- [ ] All new/modified docs included
+- [ ] Daily log included
+- [ ] SESSION-CONTEXT.md included
+- [ ] No files left uncommitted
+
+**Never leave uncommitted changes.** Everything goes to the repo.
 
 ---
 
