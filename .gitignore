@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies (when app code is added)
+node_modules/
+__pycache__/
+*.pyc
+
+# Build outputs (when app code is added)
+.next/
+dist/
+build/
