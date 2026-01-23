@@ -441,28 +441,31 @@ Years with €0 are displayed but grayed out:
 
 ## Design Tokens
 
-### Colors
+**Reference:** `02-requirements/brand-identity.md` (authoritative source)
+
+### Colors (Brand Identity)
 
 | Token | Value | Usage |
 |-------|-------|-------|
 | Card background | #FFFFFF | Card containers |
 | Card border | #E0E0E0 | Card borders |
-| Section header | #666666 | "BEGROTING" etc. |
-| Label text | #666666 | "Hoofdstuk", "Begrotingsnaam" |
-| Value text | #333333 | Actual values |
-| Link text | #1976D2 | External links |
-| Zero amount | #999999 | Years with €0 |
+| Section header | #436FA3 | "BEGROTING" etc. (Navy Medium) |
+| Label text | #436FA3 | "Hoofdstuk", "Begrotingsnaam" (Navy Medium) |
+| Value text | #0E3261 | Actual values (Navy Dark) |
+| Link text | #436FA3 | External links (Navy Medium) |
+| Zero amount | #8DBADC | Years with €0 (Blue Light) |
+| Pink accent | #E62D75 | CTAs, highlights (Pink) |
 
-### Typography
+### Typography (Brand Identity)
 
-| Element | Size | Weight |
-|---------|------|--------|
-| Recipient name | 24px | Bold |
-| Section header | 12px | Bold, uppercase |
-| Label | 12px | Regular |
-| Value | 14px | Medium |
-| Year amount | 14px | Regular |
-| Total | 14px | Bold |
+| Element | Font | Size | Weight |
+|---------|------|------|--------|
+| Recipient name | Brawler | 24px | Bold |
+| Section header | IBM Plex Sans Condensed | 12px | Bold, uppercase |
+| Label | IBM Plex Sans Condensed | 12px | Regular |
+| Value | IBM Plex Sans Condensed | 14px | Medium |
+| Year amount | IBM Plex Sans Condensed | 14px | Regular |
+| Total | IBM Plex Sans Condensed | 14px | Bold |
 
 ### Spacing
 

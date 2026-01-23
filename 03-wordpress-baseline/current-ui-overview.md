@@ -21,7 +21,7 @@ Rijksuitgaven.nl is a financial data analysis platform providing insights into D
 - Brand logo with tagline
 
 **Design Elements:**
-- Pink/magenta primary color (#E91E63 or similar)
+- Pink primary color (#E62D75 - see brand-identity.md)
 - Navy blue footer
 - Light blue decorative wave pattern at bottom
 - Minimalist, professional design
@@ -199,8 +199,10 @@ Rijksuitgaven.nl is a financial data analysis platform providing insights into D
 - **Search:** Prominent search bar with advanced options
 
 ### Colors
-- **Primary:** Pink/Magenta (#E91E63 or similar)
-- **Secondary:** Navy Blue (#2C3E50 or similar)
+- **Primary:** Pink (#E62D75)
+- **Secondary:** Navy Dark (#0E3261)
+
+**Reference:** See `02-requirements/brand-identity.md` for complete color palette.
 - **Accent:** Light blue (decorative elements)
 - **Background:** White with light gray sections
 - **Text:** Dark gray/black

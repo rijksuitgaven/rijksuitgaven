@@ -179,7 +179,7 @@ The main search page is the primary interface for users to search government fin
 **Colors:**
 - Background: White (#FFFFFF)
 - Text: Dark gray (#333333)
-- Logo accent: Pink/Magenta (#E91E63)
+- Logo accent: Pink (#E62D75)
 
 ---
 
@@ -466,25 +466,30 @@ The main search page is the primary interface for users to search government fin
 
 ## Design Tokens
 
-### Colors (Current palette - preserved)
+**Reference:** `02-requirements/brand-identity.md` (authoritative source)
+
+### Colors (Brand Identity)
 | Token | Value | Usage |
 |-------|-------|-------|
-| Primary | #E91E63 | Buttons, toggles, accents |
-| Secondary | #2C3E50 | Header, footer, links |
+| Primary (Pink) | #E62D75 | Buttons, toggles, CTAs, active states |
+| Navy Dark | #0E3261 | Headers, footer, primary text |
+| Navy Medium | #436FA3 | Links, secondary elements |
+| Blue Light | #8DBADC | Hover states, highlights |
+| Gray Light | #E1EAF2 | Backgrounds, disabled states |
 | Background | #FFFFFF | Page background |
-| Surface | #F5F5F5 | Cards, filter panel |
-| Text | #333333 | Body text |
-| Text-light | #666666 | Secondary text |
 | Border | #E0E0E0 | Dividers, table borders |
+| Success | #85C97D | Positive trends |
+| Warning | #FFC857 | Attention |
+| Error | #E30101 | Negative trends, errors |
 
-### Typography
-| Element | Size | Weight |
-|---------|------|--------|
-| H1 (Page title) | 24px | Bold |
-| H2 (Section) | 18px | Semi-bold |
-| Body | 14px | Regular |
-| Table data | 14px | Regular |
-| Small/Caption | 12px | Regular |
+### Typography (Brand Identity)
+| Element | Font | Size | Weight |
+|---------|------|------|--------|
+| Logo/Headings | Brawler | 24px | Bold |
+| H2 (Section) | IBM Plex Sans Condensed | 18px | Bold |
+| Body | IBM Plex Sans Condensed | 14px | Regular |
+| Table data | IBM Plex Sans Condensed | 14px | Regular |
+| Small/Caption | IBM Plex Sans Condensed | 12px | Regular |
 
 ### Spacing
 | Token | Value |

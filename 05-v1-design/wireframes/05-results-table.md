@@ -353,27 +353,31 @@ Click ▼ on ProRail:
 
 ## Design Tokens
 
-### Colors
+**Reference:** `02-requirements/brand-identity.md` (authoritative source)
+
+### Colors (Brand Identity)
 
 | Token | Value | Usage |
 |-------|-------|-------|
 | Row background | #FFFFFF | Default row |
-| Row hover | #F5F5F5 | Hover state |
-| Row alternate | #FAFAFA | Zebra striping (optional) |
-| Line item bg | #F8F8F8 | Expanded line items |
-| Header bg | #F5F5F5 | Table header |
+| Row hover | #E1EAF2 | Hover state (Gray Light) |
+| Row alternate | #E1EAF2 | Zebra striping (Gray Light) |
+| Line item bg | #E1EAF2 | Expanded line items (Gray Light) |
+| Header bg | #E1EAF2 | Table header (Gray Light) |
 | Border | #E0E0E0 | Cell borders |
-| Text primary | #333333 | Recipient names, amounts |
-| Text secondary | #666666 | Line item recipients |
+| Text primary | #0E3261 | Recipient names, amounts (Navy Dark) |
+| Text secondary | #436FA3 | Line item recipients (Navy Medium) |
+| Trend positive | #85C97D | Positive year-over-year (Success) |
+| Trend negative | #E30101 | Negative year-over-year (Error) |
 
-### Typography
+### Typography (Brand Identity)
 
-| Element | Size | Weight |
-|---------|------|--------|
-| Header | 13px | Bold |
-| Summary row | 14px | Medium |
-| Line item | 14px | Regular |
-| Amounts | 14px | Regular, tabular nums |
+| Element | Font | Size | Weight |
+|---------|------|------|--------|
+| Header | IBM Plex Sans Condensed | 13px | Bold |
+| Summary row | IBM Plex Sans Condensed | 14px | Medium |
+| Line item | IBM Plex Sans Condensed | 14px | Regular |
+| Amounts | IBM Plex Sans Condensed | 14px | Regular, tabular nums |
 
 ### Spacing
 

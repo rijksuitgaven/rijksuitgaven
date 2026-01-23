@@ -79,7 +79,7 @@ Module tabs (horizontal scroll if needed):
 | Hover | Subtle opacity change |
 
 **Design:**
-- Logo color: Pink/Magenta (#E91E63)
+- Logo color: Pink (#E62D75)
 - Tagline: Gray (#666666), smaller font
 
 ---
@@ -145,7 +145,7 @@ Module tabs (horizontal scroll if needed):
 
 | State | Style |
 |-------|-------|
-| Active | Navy background (#2C3E50), white text |
+| Active | Navy background (#0E3261), white text |
 | Inactive | White background, dark text |
 | Hover | Light gray background |
 | With results | Badge showing count (when searching) |
@@ -253,23 +253,25 @@ Module tabs (horizontal scroll if needed):
 
 ## Design Tokens
 
-### Colors (preserved from current)
+**Reference:** `02-requirements/brand-identity.md` (authoritative source)
+
+### Colors (Brand Identity)
 | Element | Color |
 |---------|-------|
 | Header background | White (#FFFFFF) |
-| Logo accent | Pink/Magenta (#E91E63) |
-| Active tab | Navy (#2C3E50) |
-| Text | Dark gray (#333333) |
-| Secondary text | Gray (#666666) |
-| Hover background | Light gray (#F5F5F5) |
+| Logo accent | Pink (#E62D75) |
+| Active tab | Navy Dark (#0E3261) |
+| Text | Navy Dark (#0E3261) |
+| Secondary text | Navy Medium (#436FA3) |
+| Hover background | Gray Light (#E1EAF2) |
 
-### Typography
-| Element | Size | Weight |
-|---------|------|--------|
-| Logo text | 24px | Bold |
-| Tagline | 12px | Regular |
-| Nav items | 14px | Medium |
-| Tab labels | 14px | Medium |
+### Typography (Brand Identity)
+| Element | Font | Size | Weight |
+|---------|------|------|--------|
+| Logo text | Brawler | 24px | Bold |
+| Tagline | IBM Plex Sans Condensed | 12px | Regular |
+| Nav items | IBM Plex Sans Condensed | 14px | Medium |
+| Tab labels | IBM Plex Sans Condensed | 14px | Medium |
 
 ### Spacing
 | Element | Value |

@@ -160,7 +160,7 @@ The search bar is the primary way users find data. It provides:
 | Height | 48px |
 | Border radius | 8px |
 | Border | 1px solid #E0E0E0 |
-| Border (focused) | 2px solid #E91E63 |
+| Border (focused) | 2px solid #E62D75 |
 | Background | White (#FFFFFF) |
 | Font size | 16px |
 | Placeholder color | #999999 |
@@ -319,24 +319,26 @@ The search bar is the primary way users find data. It provides:
 
 ## Design Tokens
 
-### Colors
+**Reference:** `02-requirements/brand-identity.md` (authoritative source)
+
+### Colors (Brand Identity)
 | Token | Value | Usage |
 |-------|-------|-------|
 | Input border | #E0E0E0 | Default state |
-| Input border focus | #E91E63 | Focused state |
-| Suggestion hover | #F5F5F5 | Hover background |
-| Suggestion selected | #E8F4FD | Keyboard selected |
-| Section header | #666666 | "ONTVANGERS" etc. |
-| Amount text | #666666 | Secondary info |
+| Input border focus | #E62D75 | Focused state (Pink) |
+| Suggestion hover | #E1EAF2 | Hover background (Gray Light) |
+| Suggestion selected | #8DBADC | Keyboard selected (Blue Light) |
+| Section header | #436FA3 | "ONTVANGERS" etc. (Navy Medium) |
+| Amount text | #436FA3 | Secondary info (Navy Medium) |
 
-### Typography
-| Element | Size | Weight | Color |
-|---------|------|--------|-------|
-| Input text | 16px | Regular | #333333 |
-| Placeholder | 16px | Regular | #999999 |
-| Suggestion primary | 14px | Medium | #333333 |
-| Suggestion secondary | 12px | Regular | #666666 |
-| Section header | 11px | Bold | #666666 |
+### Typography (Brand Identity)
+| Element | Font | Size | Weight | Color |
+|---------|------|------|--------|-------|
+| Input text | IBM Plex Sans Condensed | 16px | Regular | #0E3261 |
+| Placeholder | IBM Plex Sans Condensed | 16px | Regular | #436FA3 |
+| Suggestion primary | IBM Plex Sans Condensed | 14px | Medium | #0E3261 |
+| Suggestion secondary | IBM Plex Sans Condensed | 12px | Regular | #436FA3 |
+| Section header | IBM Plex Sans Condensed | 11px | Bold | #436FA3 |
 
 ---
 

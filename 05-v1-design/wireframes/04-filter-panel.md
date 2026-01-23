@@ -213,8 +213,8 @@ The filter panel allows users to narrow search results using:
 | Property | Value |
 |----------|-------|
 | Track color | #E0E0E0 |
-| Selected range | #E91E63 |
-| Handle | Circle, #E91E63 |
+| Selected range | #E62D75 |
+| Handle | Circle, #E62D75 |
 | Labels | Years at each end |
 
 ### Amount Range Inputs
@@ -273,7 +273,7 @@ The filter panel allows users to narrow search results using:
 
 | Property | Value |
 |----------|-------|
-| Background | Light pink (#FCE4EC) |
+| Background | Light pink (#F3A3C1) |
 | Text | Dark gray (#333333) |
 | Close icon | ✕, clickable |
 | Max width | 200px (truncate with ...) |
@@ -357,22 +357,25 @@ Some filters depend on others:
 
 ## Design Tokens
 
-### Colors
+**Reference:** `02-requirements/brand-identity.md` (authoritative source)
+
+### Colors (Brand Identity)
 | Token | Value | Usage |
 |-------|-------|-------|
-| Panel background | #FAFAFA | Filter panel bg |
+| Panel background | #E1EAF2 | Filter panel bg (Gray Light) |
 | Slider track | #E0E0E0 | Unselected range |
-| Slider selected | #E91E63 | Selected range |
-| Chip background | #FCE4EC | Active filter chip |
-| Chip text | #333333 | Chip label |
+| Slider selected | #E62D75 | Selected range (Pink) |
+| Slider handle | #E62D75 | Handle (Pink) |
+| Chip background | #F3A3C1 | Active filter chip (Chart pink 1) |
+| Chip text | #0E3261 | Chip label (Navy Dark) |
 
-### Typography
-| Element | Size | Weight |
-|---------|------|--------|
-| Section header | 11px | Bold, uppercase |
-| Filter label | 14px | Medium |
-| Filter value | 14px | Regular |
-| Chip text | 12px | Medium |
+### Typography (Brand Identity)
+| Element | Font | Size | Weight |
+|---------|------|------|--------|
+| Section header | IBM Plex Sans Condensed | 11px | Bold, uppercase |
+| Filter label | IBM Plex Sans Condensed | 14px | Medium |
+| Filter value | IBM Plex Sans Condensed | 14px | Regular |
+| Chip text | IBM Plex Sans Condensed | 12px | Medium |
 
 ### Spacing
 | Element | Value |

@@ -97,6 +97,7 @@ Before starting any significant task, verify:
 | Success metrics | `01-project-overview/success-criteria.md` |
 | Sprint plan | `09-timelines/v1-sprint-plan.md` |
 | Session state | `logs/SESSION-CONTEXT.md` |
+| **Brand identity** | `02-requirements/brand-identity.md` |
 
 **If information exists in multiple places:** Delete duplicates, keep the most comprehensive version.
 
@@ -231,9 +232,12 @@ When code is executed by the founder:
 
 **Rule:** Before starting any task, read the relevant documentation listed below. Do not skip this step.
 
-### Before ANY wireframe/UI work:
+### Before ANY wireframe/UI/design work:
+- `02-requirements/brand-identity.md` **(LEADING - all design must follow brand identity)**
 - `03-wordpress-baseline/current-ui-overview.md`
 - `assets/screenshots/current-ui/` (all images)
+
+**Brand Identity Rule:** The brand identity document (`02-requirements/brand-identity.md`) is the authoritative source for all visual design decisions. All colors, fonts, and design tokens MUST match the brand identity. No deviations without founder approval.
 
 ### Before ANY API work:
 - `06-technical-specs/api-specifications.md`
