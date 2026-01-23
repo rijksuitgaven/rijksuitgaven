@@ -1,15 +1,26 @@
-# Architecture Impact Analysis - Search Requirements
+# Architecture Impact Analysis
 
 **Project:** Rijksuitgaven.nl SaaS Platform
 **Version:** 1.0
-**Date:** 2026-01-14
-**Status:** Analysis
+**Date:** 2026-01-23
+**Status:** Validated
+
+---
+
+## Document Structure
+
+This document has two parts:
+- **Part 1: V1.0 Architecture** - Search Bar implementation (what we're building now)
+- **Part 2: V2.0 Architecture** - Research Mode planning (what's coming next)
 
 ---
 
 ## Purpose
 
-Evaluate whether the **recommended technology stack** (Python + FastAPI + Next.js + Railway + Typesense) adequately supports the **detailed search requirements**, particularly the AI-heavy **Research Mode**.
+Evaluate whether the **recommended technology stack** (Python + FastAPI + Next.js + Railway + Typesense) supports the search requirements.
+
+- **V1.0:** Search Bar - fully validated, ready for implementation
+- **V2.0:** Research Mode - architecture planned, implementation post-V1.0
 
 ---
 
@@ -45,9 +56,15 @@ The recommended stack (Typesense + FastAPI + Next.js) **fully supports** Search 
 
 ---
 
-## Detailed Analysis
+---
 
-### 1. Search Bar Requirements vs Typesense
+# PART 1: V1.0 ARCHITECTURE (Search Bar)
+
+*This section covers V1.0 implementation. Ready for development.*
+
+---
+
+## Search Bar Requirements vs Typesense
 
 | Requirement | Typesense Capability | Status | Notes |
 |-------------|----------------------|--------|-------|
@@ -68,7 +85,14 @@ The recommended stack (Typesense + FastAPI + Next.js) **fully supports** Search 
 
 ---
 
-### 2. Research Mode Requirements vs Current Architecture
+# PART 2: V2.0 ARCHITECTURE (Research Mode)
+
+*This section covers V2.0 planning. Do not implement until V1.0 is complete.*
+*For full V2.0 requirements, see: `02-requirements/research-mode-vision.md`*
+
+---
+
+## Research Mode Requirements vs Current Architecture
 
 #### 2.1 Conversational AI (Claude vs OpenAI)
 
@@ -385,9 +409,15 @@ httpx  # Async HTTP client
 
 ---
 
-### 3. Performance Analysis
+---
 
-#### 3.1 Search Bar Performance Targets
+# PART 3: PERFORMANCE & COST ANALYSIS
+
+---
+
+## Performance Analysis
+
+### V1.0: Search Bar Performance Targets
 
 | Query Type | Target | Typesense Capability | Status |
 |------------|--------|----------------------|--------|
@@ -401,7 +431,7 @@ httpx  # Async HTTP client
 
 ---
 
-#### 3.2 Research Mode Performance Targets
+### V2.0: Research Mode Performance Targets
 
 | Operation | Target | Analysis | Status |
 |-----------|--------|----------|--------|
@@ -481,9 +511,11 @@ Buffer for growth: €53-91
 
 ---
 
-### 5. Data Layer Requirements
+---
 
-#### 5.1 Search Bar (V1.0) - Current Database OK
+## Data Layer Requirements
+
+### V1.0: Search Bar - Current Database OK
 
 **Requirement:** Typesense index of all searchable fields
 
@@ -523,7 +555,7 @@ MySQL (source) → API (reads) → Typesense (indexes)
 
 ---
 
-#### 5.2 Research Mode (V2.0) - Needs Pre-Computed Aggregations
+### V2.0: Research Mode - Needs Pre-Computed Aggregations
 
 **Requirement:** AI needs fast access to aggregated data for analysis
 
@@ -598,7 +630,7 @@ CREATE TABLE analytics_module_trends (
 
 ---
 
-#### 5.3 Vector Search (Optional - V2.1)
+### V2.1: Vector Search (Optional - Future)
 
 **Requirement:** "Find similar recipients" feature
 

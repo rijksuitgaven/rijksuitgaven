@@ -140,25 +140,35 @@ Non-functional requirements define system qualities and constraints.
 
 ## Internationalization & Localization Requirements
 
+> **Version Scope:**
+> - **V1.0:** i18n framework in place, Dutch-only UI (no translations needed yet)
+> - **V2.0:** English UI option added
+> - **Future:** Additional languages for franchise expansion
+
 ### Language Support
+
 - **NFR-I18N-001:** Multi-language architecture
   - **Requirement:** System must be built with internationalization (i18n) from the ground up with no hard-coded strings in the codebase
   - **Priority:** Critical
+  - **Version:** V1.0 (framework), V2.0+ (translations)
   - **Rationale:** Platform is designed for franchise model to multiple countries. Hard-coded strings would require code changes for each new market, creating technical debt and scaling challenges.
 
 - **NFR-I18N-002:** Source language
   - **Requirement:** English must be used as the source language for all UI strings, error messages, and system text in the codebase
   - **Priority:** High
+  - **Version:** V1.0
   - **Rationale:** English as source language is industry best practice for international SaaS platforms, facilitating easier expansion to new markets and better developer experience with international teams.
 
 - **NFR-I18N-003:** Dutch as primary translation
   - **Requirement:** Dutch (NL) must be the first complete translation and default language for the Netherlands market
   - **Priority:** Critical
+  - **Version:** V1.0
   - **Rationale:** Current customer base is Dutch-speaking, requiring seamless migration experience with Dutch as the primary user-facing language.
 
 - **NFR-I18N-004:** Translation management
   - **Requirement:** All translatable strings must be externalized in translation files (e.g., JSON, YAML, or dedicated i18n service) with unique keys
   - **Priority:** Critical
+  - **Version:** V1.0 (structure), V2.0 (multi-language files)
   - **Rationale:** Enables non-developers to manage translations and supports continuous localization without code deployments.
 
 - **NFR-I18N-005:** Language detection and selection
@@ -227,19 +237,23 @@ Non-functional requirements define system qualities and constraints.
   - **Rationale:** Franchise model requires each market to provide localized customer support.
 
 ### Expansion Strategy
+
 - **NFR-I18N-017:** Easy language addition
   - **Requirement:** Adding a new language should require only translation files, not code changes
   - **Priority:** Critical
+  - **Version:** V1.0 (architecture ready)
   - **Rationale:** Reduces time-to-market for new countries and enables rapid international expansion.
 
 - **NFR-I18N-018:** Initial language support
-  - **Requirement:** Launch with English (source) and Dutch (NL) fully implemented
+  - **Requirement:** Launch V1.0 with Dutch (NL) fully implemented. Add English UI option in V2.0.
   - **Priority:** Critical
+  - **Version:** V1.0 (Dutch only), V2.0 (English added)
   - **Rationale:** Validates i18n architecture while serving current market needs.
 
 - **NFR-I18N-019:** Future language roadmap
   - **Requirement:** Architecture should accommodate 10+ languages without performance degradation
   - **Priority:** Medium
+  - **Version:** V2.0+ (franchise expansion)
   - **Rationale:** Supports long-term franchise expansion to major European markets and beyond.
 
 ### Performance Considerations

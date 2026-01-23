@@ -498,9 +498,10 @@ The AI presents data and connections. Users draw conclusions.
 
 ## Related Documents
 
+- [Research Mode Vision (V2.0)](./research-mode-vision.md) - Detailed V2.0 specifications
 - [ADR-008 to ADR-012: V2.0 Research Mode Decisions](../08-decisions/)
 - [IBOS Classification](./ibos-classification.md)
-- [Search Requirements](./search-requirements.md)
+- [Search Requirements (V1.0)](./search-requirements.md)
 
 ---
 

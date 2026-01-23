@@ -98,6 +98,8 @@ Before starting any significant task, verify:
 | Sprint plan | `09-timelines/v1-sprint-plan.md` |
 | Session state | `logs/SESSION-CONTEXT.md` |
 | **Brand identity** | `02-requirements/brand-identity.md` |
+| **V1.0 Search** | `02-requirements/search-requirements.md` |
+| **V2.0 Research Mode** | `02-requirements/research-mode-vision.md` |
 
 **If information exists in multiple places:** Delete duplicates, keep the most comprehensive version.
 
