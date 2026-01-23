@@ -52,13 +52,25 @@ Create a comprehensive daily log for today and update session context. Follow th
 
 ### Audit Checklist (Must Complete)
 
-- [ ] SESSION-CONTEXT.md reflects today's work
-- [ ] Daily log captures everything done today
-- [ ] All new files are documented
-- [ ] All config/credentials are documented (not the secrets, just that they exist)
-- [ ] Sprint progress is accurate
+**Consistency Checks:**
+- [ ] No "said A, did B" - decisions match implementation
 - [ ] No conflicting information across files
-- [ ] All my questions have been answered
+- [ ] Sprint progress matches reality (check every deliverable)
+
+**Documentation Completeness:**
+- [ ] ALL code is documented (headers, comments, README)
+- [ ] ALL UI/UX is clear and documented (wireframes, decisions)
+- [ ] All config/credentials are documented (not secrets, just that they exist)
+- [ ] All new files created today are documented
+
+**Session State:**
+- [ ] SESSION-CONTEXT.md reflects today's work accurately
+- [ ] Daily log captures everything done today
+- [ ] Pending decisions are listed for next session
+
+**Understanding Check:**
+- [ ] I understand everything - if ANY doubt, I MUST ask before closing
+- [ ] All my questions have been answered by the user
 
 **Rule:** The day is NOT closed until all boxes are checked and all questions resolved.
 
