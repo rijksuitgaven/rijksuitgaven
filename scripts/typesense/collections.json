@@ -1,0 +1,101 @@
+{
+  "collections": [
+    {
+      "name": "recipients",
+      "fields": [
+        {"name": "name", "type": "string"},
+        {"name": "name_lower", "type": "string"},
+        {"name": "sources", "type": "string[]", "facet": true},
+        {"name": "source_count", "type": "int32", "facet": true},
+        {"name": "totaal", "type": "int64"},
+        {"name": "latest_year", "type": "int32", "facet": true}
+      ],
+      "default_sorting_field": "totaal",
+      "token_separators": ["-", ".", "/"]
+    },
+    {
+      "name": "instrumenten",
+      "fields": [
+        {"name": "ontvanger", "type": "string"},
+        {"name": "ontvanger_lower", "type": "string"},
+        {"name": "regeling", "type": "string", "facet": true, "optional": true},
+        {"name": "begrotingsnaam", "type": "string", "facet": true, "optional": true},
+        {"name": "artikel", "type": "string", "facet": true, "optional": true},
+        {"name": "instrument", "type": "string", "facet": true, "optional": true},
+        {"name": "begrotingsjaar", "type": "int32", "facet": true},
+        {"name": "bedrag", "type": "int64"}
+      ],
+      "default_sorting_field": "bedrag",
+      "token_separators": ["-", ".", "/"]
+    },
+    {
+      "name": "inkoop",
+      "fields": [
+        {"name": "leverancier", "type": "string"},
+        {"name": "leverancier_lower", "type": "string"},
+        {"name": "ministerie", "type": "string", "facet": true, "optional": true},
+        {"name": "categorie", "type": "string", "facet": true, "optional": true},
+        {"name": "staffel", "type": "int32", "facet": true, "optional": true},
+        {"name": "jaar", "type": "int32", "facet": true},
+        {"name": "totaal_avg", "type": "int64"}
+      ],
+      "default_sorting_field": "totaal_avg",
+      "token_separators": ["-", ".", "/"]
+    },
+    {
+      "name": "publiek",
+      "fields": [
+        {"name": "ontvanger", "type": "string"},
+        {"name": "ontvanger_lower", "type": "string"},
+        {"name": "source", "type": "string", "facet": true},
+        {"name": "regeling", "type": "string", "facet": true, "optional": true},
+        {"name": "omschrijving", "type": "string", "optional": true},
+        {"name": "jaar", "type": "int32", "facet": true},
+        {"name": "bedrag", "type": "int64"}
+      ],
+      "default_sorting_field": "bedrag",
+      "token_separators": ["-", ".", "/"]
+    },
+    {
+      "name": "gemeente",
+      "fields": [
+        {"name": "ontvanger", "type": "string"},
+        {"name": "ontvanger_lower", "type": "string"},
+        {"name": "gemeente", "type": "string", "facet": true},
+        {"name": "beleidsterrein", "type": "string", "facet": true, "optional": true},
+        {"name": "regeling", "type": "string", "facet": true, "optional": true},
+        {"name": "omschrijving", "type": "string", "optional": true},
+        {"name": "jaar", "type": "int32", "facet": true},
+        {"name": "bedrag", "type": "int64"}
+      ],
+      "default_sorting_field": "bedrag",
+      "token_separators": ["-", ".", "/"]
+    },
+    {
+      "name": "provincie",
+      "fields": [
+        {"name": "ontvanger", "type": "string"},
+        {"name": "ontvanger_lower", "type": "string"},
+        {"name": "provincie", "type": "string", "facet": true},
+        {"name": "omschrijving", "type": "string", "optional": true},
+        {"name": "jaar", "type": "int32", "facet": true},
+        {"name": "bedrag", "type": "int64"}
+      ],
+      "default_sorting_field": "bedrag",
+      "token_separators": ["-", ".", "/"]
+    },
+    {
+      "name": "apparaat",
+      "fields": [
+        {"name": "begrotingsnaam", "type": "string", "facet": true, "optional": true},
+        {"name": "artikel", "type": "string", "facet": true, "optional": true},
+        {"name": "kostensoort", "type": "string", "facet": true, "optional": true},
+        {"name": "detail", "type": "string", "optional": true},
+        {"name": "begrotingsjaar", "type": "int32", "facet": true},
+        {"name": "bedrag", "type": "int64"}
+      ],
+      "default_sorting_field": "bedrag",
+      "token_separators": ["-", ".", "/"]
+    }
+  ]
+}
