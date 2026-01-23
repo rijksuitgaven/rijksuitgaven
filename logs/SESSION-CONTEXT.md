@@ -75,6 +75,7 @@
 |----------|-------|
 | Project URL | `https://kmdelrgtgglcrupprkqf.supabase.co` |
 | Region | Europe (Frankfurt) |
+| Plan | **Pro** (upgraded 2026-01-23) |
 | Created | 2026-01-21 |
 | Extensions | postgis, vector (pgvector) |
 
