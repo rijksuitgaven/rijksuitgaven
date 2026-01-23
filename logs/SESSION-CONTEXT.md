@@ -33,7 +33,8 @@
 - ✅ Source column triggers deployed
 - ✅ Data freshness tracking table created
 - ✅ **Typesense collections & sync** - 466,827 recipients indexed, <25ms search
-- ⏳ **NEXT:** Week 2 - Backend API
+- ⏳ **Week 1 Day 7:** Next.js project setup (not started)
+- ⏳ **NEXT:** Complete Week 1 (Next.js), then Week 2 - Backend API
 
 ### Active Tasks
 | Task | Status | Notes |
@@ -485,7 +486,13 @@ Dedicated overview page showing module-level totals with year columns.
 
 ### Important (Not Blocking)
 - ~~**Wireframe review** - Batch 1 ready for approval~~ ✅ **Completed 2026-01-23**
-- None currently
+
+### To Discuss Next Session
+- **Apparaat Typesense Search:** Should apparaat module be searchable in Typesense?
+  - Context: Apparaat has no `ontvanger` field (budget data, not recipient payments)
+  - Option A: Leave out of Typesense (filter-only search in module)
+  - Option B: Add with different search fields (begrotingsnaam, kostensoort, artikel)
+  - **Needs brainstorm session**
 
 ---
 
@@ -573,7 +580,15 @@ Dedicated overview page showing module-level totals with year columns.
 | Build initial index (Supabase → Typesense sync) | ✅ 466,827 recipients indexed |
 | Test search <100ms | ✅ <25ms achieved |
 
-**WEEK 1 COMPLETE!** Ready for Week 2: Backend API
+**Week 1 (Day 7: Next.js Setup) - NOT STARTED**
+
+| Task | Status |
+|------|--------|
+| Create Next.js app | ❌ Pending |
+| Install dependencies | ❌ Pending |
+| Deploy to Railway | ❌ Pending |
+
+**NEXT:** Complete Week 1 Day 7, then Week 2: Backend API
 
 See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
@@ -616,4 +631,4 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-20 - V1.0 scope change, sprint planning
 - 2026-01-21 - PM audit, UX brainstorm, folder restructure, Supabase setup, Typesense deployed
 
-**This Session:** 2026-01-23 - **Week 1 Complete!** Data migration (3.1M rows), Typesense setup (466K recipients, <25ms search), wireframe review (all 6 approved), UI/UX decisions: side panel, year column collapse, absolute euros, PM Rule #8 added
+**This Session:** 2026-01-23 - Week 1 Day 1-6 done (data migration 3.1M rows, Typesense 466K recipients <25ms), wireframe review (6 approved), UI/UX decisions, PM Rule #8 added, Supabase Pro upgrade. **Remaining:** Day 7 Next.js setup

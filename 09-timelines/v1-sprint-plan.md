@@ -88,10 +88,10 @@
 | Deploy to Railway | Basic "Hello World" deployment |
 
 **Week 1 Deliverables:**
-- [ ] Supabase with all source data
-- [ ] Typesense with search index
-- [ ] Next.js deployed on Railway
-- [ ] All services connected
+- [x] Supabase with all source data (3.1M rows migrated 2026-01-23)
+- [x] Typesense with search index (466,827 recipients, <25ms search)
+- [ ] Next.js deployed on Railway (Week 2)
+- [ ] All services connected (Week 2)
 
 ---
 
