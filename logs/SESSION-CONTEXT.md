@@ -32,8 +32,8 @@
 - ✅ Universal search materialized view created
 - ✅ Source column triggers deployed
 - ✅ Data freshness tracking table created
-- ⏳ **Typesense collections & sync** - Week 1 not yet complete
-- ⏳ **NEXT:** Complete Week 1 (Typesense), then Week 2 - Backend API
+- ✅ **Typesense collections & sync** - 466,827 recipients indexed, <25ms search
+- ⏳ **NEXT:** Week 2 - Backend API
 
 ### Active Tasks
 | Task | Status | Notes |
@@ -90,13 +90,14 @@
 
 | Property | Value |
 |----------|-------|
-| Platform | Railway (rijksuitgaven project) |
-| Image | `typesense/typesense:27.1` |
-| API Key | `rua-ts-k8x2m9p4q7w3` |
-| Data Dir | `/data` |
-| Volume | ✅ Attached (persistent) |
-| Status | Running |
-| Config | `config/typesense-railway.md` |
+| Platform | Railway (template deployment) |
+| URL | `typesense-production-35ae.up.railway.app` |
+| API Key | `0vh4mxafjeuvd676gw92kpjflg6fuv57` |
+| Status | ✅ Running |
+| Collections | 7 (recipients, instrumenten, inkoop, publiek, gemeente, provincie, apparaat) |
+| Indexed | 466,827 recipients |
+| Performance | <25ms search (target <100ms) |
+| Scripts | `scripts/typesense/collections.json`, `scripts/typesense/sync_to_typesense.py` |
 
 ### Executed Scripts
 
@@ -562,16 +563,16 @@ Dedicated overview page showing module-level totals with year columns.
 | Create materialized view | ✅ Universal search with absolute euros |
 | Document everything | ✅ DATABASE-DOCUMENTATION.md, DATA-MIGRATION-README.md |
 
-**Week 1 Remaining (Day 5-6: Typesense Setup) - NOT COMPLETE**
+**Week 1 (Day 5-6: Typesense Setup) - COMPLETED 2026-01-23**
 
 | Task | Status |
 |------|--------|
-| Deploy Typesense on Railway | ✅ Done |
-| Create search collections | ❌ Pending |
-| Build initial index (Supabase → Typesense sync) | ❌ Pending |
-| Test search <100ms | ❌ Pending |
+| Deploy Typesense on Railway | ✅ Template deployment |
+| Create search collections | ✅ 7 collections created |
+| Build initial index (Supabase → Typesense sync) | ✅ 466,827 recipients indexed |
+| Test search <100ms | ✅ <25ms achieved |
 
-**NEXT:** Complete Typesense setup, THEN Week 2: Backend API
+**WEEK 1 COMPLETE!** Ready for Week 2: Backend API
 
 See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
@@ -614,4 +615,4 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-20 - V1.0 scope change, sprint planning
 - 2026-01-21 - PM audit, UX brainstorm, folder restructure, Supabase setup, Typesense deployed
 
-**This Session:** 2026-01-23 - **Data migration completed** (3.1M rows), wireframe review (all 6 approved), UI/UX decisions: side panel, year column collapse, absolute euros, partial data indicator, documentation audit completed
+**This Session:** 2026-01-23 - **Week 1 Complete!** Data migration (3.1M rows), Typesense setup (466K recipients, <25ms search), wireframe review (all 6 approved), UI/UX decisions: side panel, year column collapse, absolute euros, PM Rule #8 added
