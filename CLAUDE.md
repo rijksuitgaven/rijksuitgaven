@@ -109,6 +109,65 @@ Before starting any significant task, verify:
 
 ---
 
+## V1/V2 Documentation Rules (MANDATORY)
+
+**Principle:** Build V1 with V2 in mind. Never develop in a funnel.
+
+### Document Structure
+
+| Version | Documents | Purpose |
+|---------|-----------|---------|
+| V1.0 | `search-requirements.md`, wireframes | What we're building now |
+| V2.0 | `research-mode-vision.md`, `v2-vision-roadmap.md` | What's coming next |
+
+### Rules
+
+1. **V1 docs stay clean and focused**
+   - V1 requirements documents contain V1 scope only
+   - No V2 features mixed into V1 requirements
+   - Clear "V1.0 Scope" labels
+
+2. **V2 context must always be visible**
+   - V1 docs include "V2 Context" callouts where relevant
+   - Example: `> **V2 Context:** This search bar will integrate with Research Mode AI. See: research-mode-vision.md`
+   - These callouts show what V2 depends on without cluttering V1 scope
+
+3. **Architecture must support V2**
+   - Every V1 technical decision: ask "Does this support V2?"
+   - Database schemas, API designs, component structures → V2-ready
+   - No shortcuts that require V2 rework
+   - Document V2 implications in architecture docs
+
+4. **Before any V1 implementation**
+   - Read the relevant V2 vision document
+   - Understand what V2 will add on top
+   - Verify V1 implementation doesn't block V2
+   - If unclear, ask founder before proceeding
+
+### Why This Matters
+
+Avoid this pattern:
+```
+❌ Build V1 narrowly → V2 requires rewrite → Wasted effort
+```
+
+Instead:
+```
+✅ Build V1 with V2 awareness → V2 extends naturally → No rework
+```
+
+### Example: Search Bar
+
+**V1 builds:** Fast keyword search with Typesense
+**V2 adds:** AI conversational layer on top
+
+**V1 implementation must:**
+- Use API layer that V2 AI can also call
+- Structure search results in format V2 can enhance
+- Build components V2 can extend (not replace)
+
+---
+
 ## Code Documentation Rules (MANDATORY)
 
 **Every piece of code provided must be saved to the repository.** No exceptions.
