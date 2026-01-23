@@ -77,6 +77,14 @@ Rijksuitgaven.nl SaaS Platform Migration - Documentation and planning repository
    - Update SESSION-CONTEXT.md with accurate sprint status
    - **Never say "Week X complete" without verifying against the plan**
 
+8. **Infrastructure setup must be foolproof**
+   - **ALWAYS use official templates/one-click deployments** when available (Railway, Vercel, Supabase, etc.)
+   - **NEVER provide manual configuration steps** when a template exists
+   - **Research the correct deployment method BEFORE** providing any instructions
+   - Founder executes copy-paste only - Claude provides complete, tested instructions
+   - If unsure about infrastructure setup: STOP, research, then provide the solution
+   - **Zero tolerance for "try this, if it doesn't work try that"** - know the answer first
+
 ### PM Verification Checklist (Use Before Major Work)
 
 Before starting any significant task, verify:
