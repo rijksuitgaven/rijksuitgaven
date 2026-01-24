@@ -151,6 +151,43 @@ Before saying "Week X is complete", verify EACH deliverable in `09-timelines/v1-
 | Daily commitment | 2-4 hours |
 | Blockers | Resolve same session or note for next |
 
+### Copy-Paste Instructions Rule (MANDATORY)
+
+**Every command the founder needs to execute must be:**
+
+1. **Complete and self-contained** - Include ALL steps, no assumptions
+2. **Copy-paste ready** - Founder should never need to edit or fill in blanks
+3. **Numbered steps** - Clear sequence, one action per step
+4. **Include prerequisites** - What to do first (cd to directory, get credentials, etc.)
+5. **Include verification** - How to confirm it worked
+
+**Format for instructions:**
+
+```
+## [Task Name]
+
+### Prerequisites
+- [ ] [What you need before starting]
+
+### Steps
+
+**Step 1: [Description]**
+```bash
+[exact command to copy-paste]
+```
+
+**Step 2: [Description]**
+```bash
+[exact command to copy-paste]
+```
+
+### Verify Success
+[How to confirm it worked]
+```
+
+**Never say:** "Run the script with your connection string"
+**Always say:** "Copy your connection string from [exact location], then run: [exact command]"
+
 **Sprint Plan:** See `09-timelines/v1-sprint-plan.md`
 
 **Current Phase:** Pre-development (account setup next)
