@@ -85,6 +85,38 @@ Rijksuitgaven.nl SaaS Platform Migration - Documentation and planning repository
    - If unsure about infrastructure setup: STOP, research, then provide the solution
    - **Zero tolerance for "try this, if it doesn't work try that"** - know the answer first
 
+9. **Verify implementation before moving on (CRITICAL)**
+   - **After ANY decision:** Check the actual implementation files, not just documentation
+   - **Never mark a decision as "resolved"** until code/config files are updated and verified
+   - **Cross-check design against implementation:**
+     - Design doc says X → verify config/code actually does X
+     - Schema design → verify `collections.json` or SQL files match
+     - API design → verify endpoint code exists and matches
+   - **Before declaring any task complete:**
+     - Read the relevant implementation files
+     - Verify they match the documented design
+     - If mismatch found: FIX IT before moving on
+   - **Zero tolerance for "design documented but not implemented"**
+   - **This applies to:** Typesense schemas, database schemas, API endpoints, UI components, config files
+   - **When in doubt:** Read the actual file, don't assume it's correct
+
+### PM Implementation Verification Checklist (Use After Every Decision)
+
+After making any technical decision, verify implementation:
+- [ ] Read the actual implementation file(s) that should reflect this decision
+- [ ] Compare implementation against the design/decision
+- [ ] If mismatch: update implementation files NOW
+- [ ] If sync script/migration needed: write and test it
+- [ ] Only THEN mark the decision as resolved
+
+**Common files to check:**
+| Decision Type | Verify These Files |
+|---------------|-------------------|
+| Typesense schema | `scripts/typesense/collections.json`, `sync_to_typesense.py` |
+| Database schema | `scripts/sql/*.sql`, Supabase actual tables |
+| API endpoints | `backend/app/api/` endpoint files |
+| UI components | `src/components/` component files |
+
 ### PM Verification Checklist (Use Before Major Work)
 
 Before starting any significant task, verify:
