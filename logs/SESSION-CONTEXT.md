@@ -615,16 +615,20 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Mandatory documentation reading before tasks (in CLAUDE.md)
 - Each command has required reading list
 
-### V1.0 Port Status
-| Module | SQL Tables | Status |
-|--------|------------|--------|
-| Financiële Instrumenten | `instrumenten_pivot`, `instrumenten_pivot_geconsolideerd` | ⏳ To document |
-| Apparaatsuitgaven | `apparaat_pivot`, `apparaat_pivot_geconsolideerd` | ⏳ To document |
-| Inkoopuitgaven | `inkoop_pivot`, `inkoop_pivot_geconsolideerd` | ⏳ To document |
-| Provinciale subsidies | `provincie_pivot`, `provincie_pivot_geconsolideerd` | ⏳ To document |
-| Gemeentelijke subsidies | `stad_pivot`, `stad_pivot_geconsolideerd` | ⏳ To document |
-| Publiek | `publiek_pivot`, `publiek_pivot_geconsolideerd` | ⏳ To document |
-| Integraal (cross-module) | `universal_search` | ⏳ To document |
+### Data Migration Status (Supabase)
+
+**ADR-014:** Using source tables only (no pivot tables). Data migrated 2026-01-23.
+
+| Table | Rows | Status |
+|-------|------|--------|
+| instrumenten | 674,826 | ✅ Migrated |
+| apparaat | 21,315 | ✅ Migrated |
+| inkoop | 635,866 | ✅ Migrated |
+| provincie | 67,456 | ✅ Migrated |
+| gemeente | 126,377 | ✅ Migrated |
+| publiek | 115,020 | ✅ Migrated |
+| universal_search | 1,456,095 | ✅ Materialized view |
+| **Total** | **~3.1M** | ✅ Complete |
 
 ### Key Context
 - **V1.0 = Single-View Architecture + New Features** (not 1:1 port)
@@ -641,4 +645,4 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-20 - V1.0 scope change, sprint planning
 - 2026-01-21 - PM audit, UX brainstorm, folder restructure, Supabase setup, Typesense deployed
 
-**This Session:** 2026-01-23 - Week 1 Day 1-6 done (data migration 3.1M rows, Typesense 466K recipients <25ms), wireframe review (6 approved), UI/UX decisions, PM Rule #8 added, Supabase Pro upgrade. **Remaining:** Day 7 Next.js setup
+**This Session:** 2026-01-24 - Apparaat Typesense decision (brainstorm), PM Rule #9 added (verify implementation), Copy-paste instructions rule added, Apparaat synced (9,628 records <18ms). **Remaining:** Day 7 Next.js setup
