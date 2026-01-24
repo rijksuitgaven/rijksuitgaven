@@ -100,6 +100,22 @@ Rijksuitgaven.nl SaaS Platform Migration - Documentation and planning repository
    - **This applies to:** Typesense schemas, database schemas, API endpoints, UI components, config files
    - **When in doubt:** Read the actual file, don't assume it's correct
 
+10. **Task transition checklist (MANDATORY)**
+
+    **AFTER completing any task:**
+    - [ ] Update ALL affected documentation (SESSION-CONTEXT.md, daily log, design docs)
+    - [ ] Verify no stale/conflicting information remains
+    - [ ] Ask founder: "Any questions or unclear points before we continue?"
+    - [ ] Commit all changes to git
+
+    **BEFORE starting any new task:**
+    - [ ] Read relevant documentation for the new task
+    - [ ] Check for pending decisions or blockers that affect this task
+    - [ ] Verify prerequisites are complete (previous tasks done, files exist)
+    - [ ] Ask founder: "Ready to proceed?" or clarify any ambiguity first
+
+    **Never silently move from one task to the next.** Always close out the previous task completely and verify readiness for the next.
+
 ### PM Implementation Verification Checklist (Use After Every Decision)
 
 After making any technical decision, verify implementation:
