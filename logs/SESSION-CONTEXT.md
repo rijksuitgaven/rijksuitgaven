@@ -97,9 +97,18 @@
 | API Key | `0vh4mxafjeuvd676gw92kpjflg6fuv57` |
 | Status | ✅ Running |
 | Collections | 7 (recipients, instrumenten, inkoop, publiek, gemeente, provincie, apparaat) |
-| Indexed | 466,827 recipients |
+| Indexed | 466,827 recipients + 9,628 apparaat |
 | Performance | <25ms search (target <100ms) |
 | Scripts | `scripts/typesense/collections.json`, `scripts/typesense/sync_to_typesense.py` |
+| **Sync Docs** | `scripts/typesense/README.md` ← **Use this for re-indexing** |
+
+### Supabase Connection String (for scripts)
+
+```
+postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres
+```
+
+**Note:** Use pooler URL (`aws-1-eu-west-1.pooler.supabase.com`), NOT direct URL (`db.xxx.supabase.co`).
 
 ### Executed Scripts
 
