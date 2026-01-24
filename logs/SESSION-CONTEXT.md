@@ -487,12 +487,13 @@ Dedicated overview page showing module-level totals with year columns.
 ### Important (Not Blocking)
 - ~~**Wireframe review** - Batch 1 ready for approval~~ ✅ **Completed 2026-01-23**
 
-### To Discuss Next Session
-- **Apparaat Typesense Search:** Should apparaat module be searchable in Typesense?
-  - Context: Apparaat has no `ontvanger` field (budget data, not recipient payments)
-  - Option A: Leave out of Typesense (filter-only search in module)
-  - Option B: Add with different search fields (begrotingsnaam, kostensoort, artikel)
-  - **Needs brainstorm session**
+### Resolved (2026-01-24)
+- **Apparaat Typesense Search:** ✅ Include in global search
+  - Primary search field: `kostensoort` (weight: 100)
+  - Secondary search field: `begrotingsnaam` (weight: 50)
+  - Table shows Kostensoort as first column (replaces Ontvanger)
+  - Same expandable row pattern, grouping by Begrotingsnaam/Artikel/Detail
+  - **See:** `docs/plans/2026-01-24-apparaat-typesense-search-design.md`
 
 ---
 
