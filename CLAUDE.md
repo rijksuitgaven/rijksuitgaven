@@ -116,6 +116,19 @@ Rijksuitgaven.nl SaaS Platform Migration - Documentation and planning repository
 
     **Never silently move from one task to the next.** Always close out the previous task completely and verify readiness for the next.
 
+11. **Local installation documentation (MANDATORY)**
+
+    **Every time something is installed locally, IMMEDIATELY update `docs/LOCAL-SETUP.md`:**
+    - [ ] System tools (brew install, apt install) → Add to "System Requirements" table
+    - [ ] Python packages (pip3 install) → Add to "Python Packages" table
+    - [ ] Node packages (npm install) → Add to "Node Packages" section
+    - [ ] Environment variables → Add to "Environment Variables" section
+    - [ ] New scripts or commands → Add to relevant section
+
+    **This happens automatically - founder should NEVER need to ask.**
+
+    **Before providing any install command:** Check if it's already in LOCAL-SETUP.md. If not, add it first, then provide the command.
+
 ### PM Implementation Verification Checklist (Use After Every Decision)
 
 After making any technical decision, verify implementation:
