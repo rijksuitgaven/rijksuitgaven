@@ -32,7 +32,7 @@
 - ✅ Universal search materialized view created
 - ✅ Source column triggers deployed
 - ✅ Data freshness tracking table created
-- ✅ **Typesense collections & sync** - recipients indexed, <25ms search (⚠️ re-sync needed after entity resolution)
+- ✅ **Typesense collections & sync** - 451,445 recipients indexed, <25ms search
 - ✅ **Week 1 Day 7:** Next.js project setup (COMPLETED 2026-01-24)
 - ✅ **Week 1 COMPLETE** - All deliverables done
 - ✅ **Week 2 Day 1:** FastAPI backend deployed (COMPLETED 2026-01-26)
@@ -123,7 +123,7 @@
 | API Key | `0vh4mxafjeuvd676gw92kpjflg6fuv57` |
 | Status | ✅ Running |
 | Collections | 7 (recipients, instrumenten, inkoop, publiek, gemeente, provincie, apparaat) |
-| Indexed | ⚠️ Needs re-sync after entity resolution (will be 451,445 recipients) |
+| Indexed | 451,445 recipients (after entity resolution) |
 | Performance | <25ms search (target <100ms) |
 | Scripts | `scripts/typesense/collections.json`, `scripts/typesense/sync_to_typesense.py` |
 | **Sync Docs** | `scripts/typesense/README.md` ← **Use this for re-indexing** |
@@ -668,16 +668,16 @@ Dedicated overview page showing module-level totals with year columns.
 | Expandable row data | ✅ Details endpoint working |
 | Performance test | ✅ <500ms (except inkoop/integraal - backlogged) |
 
-**Performance Results:**
-| Module | Time | Status |
-|--------|------|--------|
-| instrumenten | 114-204ms | ✅ |
-| apparaat | 172ms | ✅ |
-| inkoop | 567ms | ⚠️ Backlog |
-| provincie | 196ms | ✅ |
-| gemeente | 191ms | ✅ |
-| publiek | 222ms | ✅ |
-| integraal | 989ms | ⚠️ Backlog |
+**Performance Results (after all optimizations):**
+| Module | Basic Query | Search | Status |
+|--------|-------------|--------|--------|
+| instrumenten | 114-204ms | 237ms | ✅ |
+| apparaat | 172ms | 215ms | ✅ |
+| inkoop | 180-480ms | 175-312ms | ✅ |
+| provincie | 196ms | 228ms | ✅ |
+| gemeente | 191ms | 598ms | ✅ |
+| publiek | 222ms | 247ms | ✅ |
+| integraal | 190-380ms | 181-226ms | ✅ |
 
 **WEEK 2 COMPLETE.** Next: Week 3 - Core UI Components
 
@@ -727,4 +727,4 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-21 - PM audit, UX brainstorm, folder restructure, Supabase setup, Typesense deployed
 - 2026-01-23 - Data migration complete (3.1M rows), Typesense sync (466K recipients)
 
-**This Session:** 2026-01-26 - **WEEK 2 COMPLETE.** FastAPI backend deployed, materialized views for performance (100x improvement), all 7 endpoints tested. Year filter Option B (show all years for recipients active in filtered year). Data Update Runbook created. Recharts selected (React 19 compatible). Entity resolution: 15,382 duplicates merged (466,827 → 451,445). **Next:** Week 3 - Core UI Components (⚠️ First: re-sync Typesense)
+**This Session:** 2026-01-26 - **WEEK 2 COMPLETE.** FastAPI backend deployed, materialized views for performance (100x improvement), all 7 endpoints tested. Year filter Option B (show all years for recipients active in filtered year). Data Update Runbook created. Recharts selected (React 19 compatible). Entity resolution: 15,382 duplicates merged (466,827 → 451,445). Typesense re-synced with 451,445 recipients. **Next:** Week 3 - Core UI Components
