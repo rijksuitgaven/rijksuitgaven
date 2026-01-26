@@ -576,7 +576,8 @@ VACUUM ANALYZE universal_search;
 | `003-source-column-triggers.sql` | Auto-set source on INSERT | Once after schema setup (done) |
 | `004-universal-search-materialized-view.sql` | Cross-module search view | After data updates (refresh) |
 | `005-backend-rls-policy.sql` | RLS policies for postgres role | Once after backend setup (done) |
-| `006-aggregated-materialized-views.sql` | Pre-computed aggregations for API | After data updates (refresh) |
+| `006-aggregated-materialized-views.sql` | Pre-computed aggregations for API | Once (creates views) |
+| `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---
 
@@ -584,8 +585,10 @@ VACUUM ANALYZE universal_search;
 
 | Document | Location |
 |----------|----------|
+| **Data update runbook** | `scripts/data/DATA-UPDATE-RUNBOOK.md` ⭐ Use this for updates |
 | Migration process | `scripts/data/DATA-MIGRATION-README.md` |
 | Schema SQL | `scripts/sql/001-initial-schema.sql` |
 | Source triggers | `scripts/sql/003-source-column-triggers.sql` |
+| Typesense sync | `scripts/typesense/README.md` |
 | WordPress baseline | `03-wordpress-baseline/exports/rijksuitgaven_schema.sql` |
 | Architecture | `04-target-architecture/RECOMMENDED-TECH-STACK.md` |
