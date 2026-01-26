@@ -1,0 +1,270 @@
+'use client'
+
+import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { DataTable, ExpandedRow } from '@/components/data-table'
+import { FilterPanel, type FilterValues } from '@/components/filter-panel'
+import { fetchModuleData } from '@/lib/api'
+import type { ModuleDataResponse, RecipientRow } from '@/types/api'
+
+// Module configuration
+export interface ModuleConfig {
+  id: string
+  title: string
+  description: string
+  primaryColumn: string
+}
+
+export const MODULE_CONFIGS: Record<string, ModuleConfig> = {
+  instrumenten: {
+    id: 'instrumenten',
+    title: 'Financiële Instrumenten',
+    description: 'Subsidies, regelingen en bijdragen aan ontvangers',
+    primaryColumn: 'Ontvanger',
+  },
+  apparaat: {
+    id: 'apparaat',
+    title: 'Apparaatsuitgaven',
+    description: 'Operationele kosten per kostensoort',
+    primaryColumn: 'Kostensoort',
+  },
+  inkoop: {
+    id: 'inkoop',
+    title: 'Inkoopuitgaven',
+    description: 'Inkoop bij leveranciers per ministerie',
+    primaryColumn: 'Leverancier',
+  },
+  provincie: {
+    id: 'provincie',
+    title: 'Provinciale Subsidies',
+    description: 'Subsidies verstrekt door provincies',
+    primaryColumn: 'Ontvanger',
+  },
+  gemeente: {
+    id: 'gemeente',
+    title: 'Gemeentelijke Subsidies',
+    description: 'Subsidies verstrekt door gemeenten',
+    primaryColumn: 'Ontvanger',
+  },
+  publiek: {
+    id: 'publiek',
+    title: 'Publiek',
+    description: 'Uitbetalingen door RVO, COA en NWO',
+    primaryColumn: 'Ontvanger',
+  },
+  integraal: {
+    id: 'integraal',
+    title: 'Integraal Zoeken',
+    description: 'Zoek ontvangers over alle modules heen',
+    primaryColumn: 'Ontvanger',
+  },
+}
+
+interface ModulePageProps {
+  moduleId: string
+}
+
+const DEFAULT_FILTERS: FilterValues = {
+  search: '',
+  jaar: null,
+  minBedrag: null,
+  maxBedrag: null,
+}
+
+// Main export - wraps content in Suspense for useSearchParams
+export function ModulePage({ moduleId }: ModulePageProps) {
+  const config = MODULE_CONFIGS[moduleId]
+
+  if (!config) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-[var(--error)]">Module niet gevonden: {moduleId}</p>
+      </div>
+    )
+  }
+
+  return (
+    <Suspense fallback={<ModulePageSkeleton config={config} />}>
+      <ModulePageContent moduleId={moduleId} config={config} />
+    </Suspense>
+  )
+}
+
+function ModulePageSkeleton({ config }: { config: ModuleConfig }) {
+  return (
+    <div className="min-h-screen bg-white">
+      <header className="bg-[var(--navy-dark)] text-white px-6 py-4">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-xl font-semibold">{config.title}</h1>
+          <p className="text-sm text-[var(--blue-light)] mt-1">{config.description}</p>
+        </div>
+      </header>
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-12 bg-[var(--gray-light)] rounded-lg" />
+          <div className="h-64 bg-[var(--gray-light)] rounded-lg" />
+        </div>
+      </main>
+    </div>
+  )
+}
+
+function ModulePageContent({ moduleId, config }: { moduleId: string; config: ModuleConfig }) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const [data, setData] = useState<ModuleDataResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState(25)
+  const [sortBy, setSortBy] = useState<string>('total')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+
+  // Initialize filters from URL params
+  const [filters, setFilters] = useState<FilterValues>(() => ({
+    search: searchParams.get('q') ?? '',
+    jaar: searchParams.get('jaar') ? parseInt(searchParams.get('jaar')!, 10) : null,
+    minBedrag: searchParams.get('min_bedrag') ? parseFloat(searchParams.get('min_bedrag')!) : null,
+    maxBedrag: searchParams.get('max_bedrag') ? parseFloat(searchParams.get('max_bedrag')!) : null,
+  }))
+
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (filters.search) params.set('q', filters.search)
+    if (filters.jaar) params.set('jaar', String(filters.jaar))
+    if (filters.minBedrag) params.set('min_bedrag', String(filters.minBedrag))
+    if (filters.maxBedrag) params.set('max_bedrag', String(filters.maxBedrag))
+
+    const newUrl = params.toString() ? `/${moduleId}?${params.toString()}` : `/${moduleId}`
+    router.replace(newUrl, { scroll: false })
+  }, [filters, router, moduleId])
+
+  // Fetch data when filters, pagination, or sorting changes
+  useEffect(() => {
+    async function loadData() {
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        const response = await fetchModuleData(moduleId, {
+          page,
+          per_page: perPage,
+          sort_by: sortBy,
+          sort_order: sortOrder,
+          search: filters.search || undefined,
+          jaar: filters.jaar ?? undefined,
+          min_bedrag: filters.minBedrag ?? undefined,
+          max_bedrag: filters.maxBedrag ?? undefined,
+        })
+        setData(response)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Er ging iets mis')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadData()
+  }, [moduleId, page, perPage, sortBy, sortOrder, filters])
+
+  const handleFilterChange = useCallback((newFilters: FilterValues) => {
+    setFilters(newFilters)
+    setPage(1)
+  }, [])
+
+  const handleSortChange = useCallback((column: string, direction: 'asc' | 'desc') => {
+    setSortBy(column)
+    setSortOrder(direction)
+    setPage(1)
+  }, [])
+
+  const handlePageChange = useCallback((newPage: number) => {
+    setPage(newPage)
+  }, [])
+
+  const handlePerPageChange = useCallback((newPerPage: number) => {
+    setPerPage(newPerPage)
+    setPage(1)
+  }, [])
+
+  const handleRowExpand = useCallback((primaryValue: string) => {
+    // Could trigger analytics or prefetch here
+  }, [])
+
+  const handleNavigateToModule = useCallback((targetModule: string, recipient: string) => {
+    router.push(`/${targetModule}?q=${encodeURIComponent(recipient)}`)
+  }, [router])
+
+  const renderExpandedRow = useCallback((row: RecipientRow) => (
+    <ExpandedRow
+      row={row}
+      module={moduleId}
+      availableYears={data?.availableYears ?? []}
+      onNavigateToModule={handleNavigateToModule}
+    />
+  ), [moduleId, data?.availableYears, handleNavigateToModule])
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg font-medium text-[var(--error)]">Er ging iets mis</p>
+          <p className="text-sm text-[var(--muted-foreground)] mt-2">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-[var(--pink)] text-white rounded hover:opacity-90 transition-opacity"
+          >
+            Opnieuw proberen
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-white">
+      <header className="bg-[var(--navy-dark)] text-white px-6 py-4">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-xl font-semibold">{config.title}</h1>
+          <p className="text-sm text-[var(--blue-light)] mt-1">{config.description}</p>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        <FilterPanel
+          module={moduleId}
+          availableYears={data?.availableYears ?? []}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          isLoading={isLoading}
+        />
+
+        {data && (
+          <div className="mb-4 text-sm text-[var(--muted-foreground)]">
+            {data.pagination.totalRows.toLocaleString('nl-NL')} resultaten
+            {filters.search && (
+              <span> voor &ldquo;{filters.search}&rdquo;</span>
+            )}
+          </div>
+        )}
+
+        <DataTable
+          data={data?.rows ?? []}
+          availableYears={data?.availableYears ?? []}
+          primaryColumnName={config.primaryColumn}
+          isLoading={isLoading}
+          totalRows={data?.pagination.totalRows ?? 0}
+          page={page}
+          perPage={perPage}
+          onPageChange={handlePageChange}
+          onPerPageChange={handlePerPageChange}
+          onSortChange={handleSortChange}
+          onRowExpand={handleRowExpand}
+          renderExpandedRow={renderExpandedRow}
+        />
+      </main>
+    </div>
+  )
+}

@@ -1,6 +1,8 @@
 import Link from 'next/link'
 
+// Integraal first (UX Enhancement 7: landing page for logged-in users)
 const modules = [
+  { name: 'integraal', display: 'Integraal Zoeken', description: 'Zoek ontvangers over alle modules heen', highlight: true },
   { name: 'instrumenten', display: 'Financiële Instrumenten', description: 'Subsidies, regelingen en bijdragen' },
   { name: 'apparaat', display: 'Apparaatsuitgaven', description: 'Operationele kosten per kostensoort' },
   { name: 'inkoop', display: 'Inkoopuitgaven', description: 'Inkoop bij leveranciers' },
@@ -34,35 +36,23 @@ export default function Home() {
             <Link
               key={module.name}
               href={`/${module.name}`}
-              className="block p-6 border border-[var(--border)] rounded-lg hover:border-[var(--navy-medium)] hover:shadow-md transition-all"
+              className={`block p-6 border rounded-lg transition-all ${
+                module.highlight
+                  ? 'border-[var(--pink)] bg-[var(--pink)]/5 hover:bg-[var(--pink)]/10'
+                  : 'border-[var(--border)] hover:border-[var(--navy-medium)] hover:shadow-md'
+              }`}
             >
               <h3 className="text-lg font-semibold text-[var(--navy-dark)]">
                 {module.display}
+                {module.highlight && (
+                  <span className="ml-2 text-xs font-normal text-[var(--pink)]">Aanbevolen</span>
+                )}
               </h3>
               <p className="text-sm text-[var(--muted-foreground)] mt-1">
                 {module.description}
               </p>
             </Link>
           ))}
-        </div>
-
-        {/* Development status */}
-        <div className="mt-12 p-6 bg-[var(--gray-light)] rounded-lg">
-          <h3 className="font-semibold text-[var(--navy-dark)]">Week 3 - Core UI Components</h3>
-          <ul className="mt-3 space-y-2 text-sm text-[var(--muted-foreground)]">
-            <li className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[var(--warning)]" />
-              Task 1: DataTable component - In Progress
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[var(--gray-light)] border border-[var(--border)]" />
-              Task 2: Expandable rows with grouping - Pending
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[var(--gray-light)] border border-[var(--border)]" />
-              Task 3: Filter panel with real-time filtering - Pending
-            </li>
-          </ul>
         </div>
       </main>
     </div>
