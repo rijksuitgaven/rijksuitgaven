@@ -13,7 +13,7 @@ import {
   type ExpandedState,
   type Row,
 } from '@tanstack/react-table'
-import { ChevronRight, ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react'
+import { ChevronRight, ChevronDown, ChevronUp, ChevronsUpDown, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   formatAmount,
@@ -28,6 +28,8 @@ import type { RecipientRow, YearAmount } from '@/types/api'
 const COLLAPSED_YEARS_START = 2016
 const COLLAPSED_YEARS_END = 2020
 
+const MAX_EXPORT_ROWS = 500
+
 interface DataTableProps {
   data: RecipientRow[]
   availableYears: number[]
@@ -41,6 +43,39 @@ interface DataTableProps {
   onSortChange?: (column: string, direction: 'asc' | 'desc') => void
   onRowExpand?: (primaryValue: string) => void
   renderExpandedRow?: (row: RecipientRow) => React.ReactNode
+  moduleId?: string // For export filename
+}
+
+// Generate CSV content from data
+function generateCSV(data: RecipientRow[], availableYears: number[], primaryColumnName: string): string {
+  // Header row
+  const headers = [primaryColumnName, ...availableYears.map(String), 'Totaal']
+  const headerRow = headers.map(h => `"${h}"`).join(';')
+
+  // Data rows
+  const dataRows = data.slice(0, MAX_EXPORT_ROWS).map(row => {
+    const yearAmounts = availableYears.map(year => {
+      const amount = row.years.find(y => y.year === year)?.amount ?? 0
+      return amount.toFixed(2)
+    })
+    return [`"${row.primary_value.replace(/"/g, '""')}"`, ...yearAmounts, row.total.toFixed(2)].join(';')
+  })
+
+  return [headerRow, ...dataRows].join('\n')
+}
+
+// Download CSV file
+function downloadCSV(content: string, filename: string) {
+  const BOM = '\uFEFF' // UTF-8 BOM for Excel compatibility
+  const blob = new Blob([BOM + content], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
 }
 
 // Amount cell with trend anomaly indicator
@@ -110,10 +145,27 @@ export function DataTable({
   onSortChange,
   onRowExpand,
   renderExpandedRow,
+  moduleId = 'export',
 }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [yearsExpanded, setYearsExpanded] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
+
+  // Export handler
+  const handleExport = () => {
+    if (data.length === 0) return
+    setIsExporting(true)
+
+    try {
+      const csvContent = generateCSV(data, availableYears, primaryColumnName)
+      const timestamp = new Date().toISOString().split('T')[0]
+      const filename = `rijksuitgaven-${moduleId}-${timestamp}.csv`
+      downloadCSV(csvContent, filename)
+    } finally {
+      setIsExporting(false)
+    }
+  }
 
   // Determine which years to show based on expansion state
   const collapsedYears = availableYears.filter(
@@ -396,10 +448,28 @@ export function DataTable({
 
       {/* Footer */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-2">
-        <div className="text-xs text-[var(--muted-foreground)]">
-          Bedragen in &euro;
-          {availableYears.includes(Math.max(...availableYears)) && (
-            <span className="ml-4">* Data nog niet compleet</span>
+        <div className="flex items-center gap-4">
+          <div className="text-xs text-[var(--muted-foreground)]">
+            Bedragen in &euro;
+            {availableYears.includes(Math.max(...availableYears)) && (
+              <span className="ml-4">* Data nog niet compleet</span>
+            )}
+          </div>
+
+          {/* Export button */}
+          <button
+            onClick={handleExport}
+            disabled={isLoading || isExporting || data.length === 0}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            title={`Download als CSV (max ${MAX_EXPORT_ROWS} rijen)`}
+          >
+            <Download className="h-3.5 w-3.5" />
+            {isExporting ? 'Bezig...' : 'CSV Export'}
+          </button>
+          {data.length > 0 && (
+            <span className="text-xs text-[var(--muted-foreground)]">
+              (max {MAX_EXPORT_ROWS} rijen)
+            </span>
           )}
         </div>
 

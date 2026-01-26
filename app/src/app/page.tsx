@@ -14,16 +14,23 @@ const modules = [
 export default function Home() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-[var(--navy-dark)] text-white px-6 py-6">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl font-semibold">Rijksuitgaven.nl</h1>
-          <p className="text-[var(--blue-light)] mt-1">Snel inzicht voor krachtige analyses</p>
+      {/* Hero section */}
+      <section className="bg-gradient-to-b from-[var(--gray-light)] to-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <h1
+            className="text-3xl md:text-4xl font-bold text-[var(--navy-dark)]"
+            style={{ fontFamily: 'var(--font-heading), serif' }}
+          >
+            Snel inzicht voor krachtige analyses
+          </h1>
+          <p className="text-lg text-[var(--muted-foreground)] mt-3 max-w-2xl">
+            Doorzoek rijksuitgaven, subsidies en inkoopdata. Ontdek wie wat ontvangt van de overheid.
+          </p>
         </div>
-      </header>
+      </section>
 
       {/* Main content */}
-      <main className="max-w-7xl mx-auto px-6 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-[var(--navy-dark)]">Modules</h2>
           <p className="text-[var(--muted-foreground)] mt-1">

@@ -8,23 +8,20 @@ export const metadata = {
 export default function PrivacybeleidPage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-[var(--navy-dark)] text-white px-6 py-6">
-        <div className="max-w-4xl mx-auto">
-          <Link href="/" className="text-[var(--blue-light)] hover:text-white text-sm mb-2 inline-block">
+      {/* Content */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+        <div className="mb-8">
+          <Link href="/" className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)] text-sm mb-4 inline-block">
             &larr; Terug naar home
           </Link>
-          <h1 className="text-2xl font-semibold" style={{ fontFamily: 'var(--font-heading), serif' }}>
+          <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
             Privacybeleid
           </h1>
-          <p className="text-[var(--blue-light)] mt-1 text-sm">
+          <p className="text-[var(--muted-foreground)] mt-1 text-sm">
             Laatst bijgewerkt: 26 januari 2026
           </p>
         </div>
-      </header>
 
-      {/* Content */}
-      <main className="max-w-4xl mx-auto px-6 py-12">
         <article className="prose prose-slate max-w-none">
           {/* Artikel 1 */}
           <section className="mb-10">

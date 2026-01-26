@@ -93,13 +93,13 @@ export function ModulePage({ moduleId }: ModulePageProps) {
 function ModulePageSkeleton({ config }: { config: ModuleConfig }) {
   return (
     <div className="min-h-screen bg-white">
-      <header className="bg-[var(--navy-dark)] text-white px-6 py-4">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-xl font-semibold">{config.title}</h1>
-          <p className="text-sm text-[var(--blue-light)] mt-1">{config.description}</p>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            {config.title}
+          </h1>
+          <p className="text-sm text-[var(--muted-foreground)] mt-1">{config.description}</p>
         </div>
-      </header>
-      <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="animate-pulse space-y-4">
           <div className="h-12 bg-[var(--gray-light)] rounded-lg" />
           <div className="h-64 bg-[var(--gray-light)] rounded-lg" />
@@ -225,14 +225,14 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="bg-[var(--navy-dark)] text-white px-6 py-4">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-xl font-semibold">{config.title}</h1>
-          <p className="text-sm text-[var(--blue-light)] mt-1">{config.description}</p>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            {config.title}
+          </h1>
+          <p className="text-sm text-[var(--muted-foreground)] mt-1">{config.description}</p>
         </div>
-      </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
         <FilterPanel
           module={moduleId}
           availableYears={data?.availableYears ?? []}
@@ -263,6 +263,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           onSortChange={handleSortChange}
           onRowExpand={handleRowExpand}
           renderExpandedRow={renderExpandedRow}
+          moduleId={moduleId}
         />
       </main>
     </div>

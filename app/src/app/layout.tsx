@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_Condensed, Brawler } from "next/font/google";
 import { CookieBanner } from "@/components/cookie-banner";
+import { Header } from "@/components/header";
 import "./globals.css";
 
 // Body text - IBM Plex Sans Condensed
@@ -33,6 +34,7 @@ export default function RootLayout({
         className={`${ibmPlexSansCondensed.variable} ${brawler.variable} antialiased`}
         style={{ fontFamily: "var(--font-body), sans-serif" }}
       >
+        <Header />
         {children}
         <CookieBanner />
       </body>
