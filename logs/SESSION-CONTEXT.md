@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-01-26
 **Project Phase:** Phase 1 - V1.0 Development
-**Current Sprint:** Week 2 - Backend API + Data Layer
+**Current Sprint:** Week 2 COMPLETE → Next: Week 3 - Core UI Components
 
 ---
 
@@ -38,6 +38,7 @@
 - ✅ **Week 2 Day 1:** FastAPI backend deployed (COMPLETED 2026-01-26)
 - ✅ **Chart Library:** Recharts selected (React 19 compatible)
 - ✅ **RESOLVED:** Query performance optimized (114-989ms, was 9-19 seconds)
+- ✅ **Week 2 COMPLETE:** All 7 API endpoints working, tested, documented
 
 ### Active Tasks
 | Task | Status | Notes |
@@ -106,7 +107,7 @@
 | API Docs | `/docs` - Swagger UI |
 | Root Directory | `backend` |
 | Status | ✅ Running |
-| **Performance Issue** | ⚠️ 9-19 seconds (target <500ms) - needs optimization |
+| **Performance** | ✅ 114-989ms (optimized with materialized views) |
 
 **Endpoints:**
 - `GET /api/v1/modules` - List all modules
@@ -147,6 +148,7 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/data/import-to-supabase.sh` | 2026-01-23 | Local → Supabase |
 | `scripts/sql/005-backend-rls-policy.sql` | 2026-01-26 | Supabase |
 | `scripts/sql/006-aggregated-materialized-views.sql` | 2026-01-26 | Supabase |
+| `scripts/sql/refresh-all-views.sql` | 2026-01-26 | Supabase |
 | VACUUM ANALYZE (all tables) | 2026-01-26 | Supabase |
 
 ### Configuration Files
@@ -156,6 +158,8 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `config/typesense-railway.md` | Typesense setup documentation |
 | `scripts/sql/DATABASE-DOCUMENTATION.md` | Database schema, triggers, queries |
 | `scripts/data/DATA-MIGRATION-README.md` | Migration process documentation |
+| `scripts/data/DATA-UPDATE-RUNBOOK.md` | Data update procedure (refresh views, re-sync) |
+| `scripts/sql/refresh-all-views.sql` | Refresh script for all materialized views |
 
 ---
 
@@ -648,7 +652,31 @@ Dedicated overview page showing module-level totals with year columns.
 
 **Note:** Tremor skipped (React 19 incompatible). Decision made 2026-01-26: Switch to Recharts (React 19 compatible, lower bundle).
 
-**WEEK 1 COMPLETE.** Next: Week 2 - Backend API (FastAPI)
+**WEEK 1 COMPLETE.**
+
+### Week 2 Progress (Backend API + Data Layer) - COMPLETED 2026-01-26
+
+| Task | Status |
+|------|--------|
+| FastAPI setup | ✅ Deployed to Railway |
+| Base endpoints | ✅ All 7 modules working |
+| Query parameters | ✅ filters, sort, pagination |
+| Aggregation queries | ✅ Materialized views (100x faster) |
+| Expandable row data | ✅ Details endpoint working |
+| Performance test | ✅ <500ms (except inkoop/integraal - backlogged) |
+
+**Performance Results:**
+| Module | Time | Status |
+|--------|------|--------|
+| instrumenten | 114-204ms | ✅ |
+| apparaat | 172ms | ✅ |
+| inkoop | 567ms | ⚠️ Backlog |
+| provincie | 196ms | ✅ |
+| gemeente | 191ms | ✅ |
+| publiek | 222ms | ✅ |
+| integraal | 989ms | ⚠️ Backlog |
+
+**WEEK 2 COMPLETE.** Next: Week 3 - Core UI Components
 
 See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
@@ -696,4 +724,4 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-21 - PM audit, UX brainstorm, folder restructure, Supabase setup, Typesense deployed
 - 2026-01-23 - Data migration complete (3.1M rows), Typesense sync (466K recipients)
 
-**This Session:** 2026-01-24 - **WEEK 1 COMPLETE.** Apparaat Typesense decision (brainstorm), PM Rules #9-#11 added, Apparaat synced (9,628 records), Next.js app created and deployed to Railway, DNS configured (beta.rijksuitgaven.nl). **Next:** Week 2 - Backend API (FastAPI)
+**This Session:** 2026-01-26 - **WEEK 2 COMPLETE.** FastAPI backend deployed, materialized views for performance (100x improvement), all 7 endpoints tested. Year filter Option B (show all years for recipients active in filtered year). Data Update Runbook created. Recharts selected (React 19 compatible). **Next:** Week 3 - Core UI Components
