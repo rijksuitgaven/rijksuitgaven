@@ -159,7 +159,7 @@ def index_instrumenten(client, conn, recreate=False):
             artikel,
             instrument,
             begrotingsjaar,
-            COALESCE(bedrag, 0) * 1000 as bedrag
+            COALESCE(bedrag, 0)::bigint * 1000 as bedrag
         FROM instrumenten
         WHERE ontvanger IS NOT NULL AND ontvanger != ''
         LIMIT 100000
@@ -411,7 +411,7 @@ def index_apparaat(client, conn, recreate=False):
             begrotingsnaam,
             artikel,
             detail,
-            SUM(COALESCE(bedrag, 0)) * 1000 as totaal
+            SUM(COALESCE(bedrag, 0)::bigint) * 1000 as totaal
         FROM apparaat
         WHERE kostensoort IS NOT NULL AND kostensoort != ''
         GROUP BY kostensoort, begrotingsnaam, artikel, detail
