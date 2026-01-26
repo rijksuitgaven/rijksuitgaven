@@ -211,6 +211,38 @@ Rijksuitgaven.nl SaaS Platform Migration - Documentation and planning repository
 
     **Before providing any install command:** Check if it's already in LOCAL-SETUP.md. If not, add it first, then provide the command.
 
+12. **Requirements-first implementation (MANDATORY - NEVER SKIP)**
+
+    **Before writing ANY code for a feature/sprint:**
+
+    1. **Read ALL relevant requirements documents** (not summaries, not context - the ACTUAL source documents)
+       - `02-requirements/search-requirements.md` for search features
+       - `02-requirements/brand-identity.md` for UI work
+       - Any UX/design documents in `docs/plans/`
+       - Sprint deliverables in `09-timelines/v1-sprint-plan.md`
+
+    2. **Create explicit checklist** of EVERY feature/behavior specified
+       - Extract each requirement as a checkbox item
+       - Include UI behaviors, edge cases, error states
+       - Post checklist to founder for approval BEFORE coding
+
+    3. **Check off each item** as implemented
+       - Never mark done until verified working
+       - If blocked, note explicitly (don't skip silently)
+
+    4. **Review checklist at end** - nothing ships until 100% checked
+       - Compare implementation against original requirements
+       - Re-read source documents one more time
+       - Any gaps = implement before declaring done
+
+    **Never rely on:**
+    - Session context summaries (they can miss details)
+    - Task names alone (they don't capture full scope)
+    - Memory of what was discussed (always go back to source)
+    - Assumptions about what "should" be included
+
+    **Why this exists:** Features were missed because requirements docs weren't read before implementation. This rule ensures 100% coverage.
+
 ### PM Implementation Verification Checklist (Use After Every Decision)
 
 After making any technical decision, verify implementation:
