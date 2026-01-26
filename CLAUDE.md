@@ -644,3 +644,362 @@ At the start of each session:
 1. Read `logs/SESSION-CONTEXT.md` for current state
 2. Review pending decisions
 3. Update session context at end of work
+
+---
+
+## Coding Standards (MANDATORY)
+
+**Source:** Adapted from [everything-claude-code](https://github.com/affaan-m/everything-claude-code)
+
+### Core Principles
+
+| Principle | Rule |
+|-----------|------|
+| **Readability First** | Code is read more than written. Clear > clever. |
+| **KISS** | Simplest solution that works. No over-engineering. |
+| **DRY** | Extract common logic. No copy-paste programming. |
+| **YAGNI** | Don't build features before needed. Start simple. |
+
+### TypeScript Standards
+
+**Variable Naming:**
+```typescript
+// ✅ GOOD: Descriptive names
+const searchQuery = 'prorail'
+const isAuthenticated = true
+const totalAmount = 1000000
+
+// ❌ BAD: Unclear names
+const q = 'prorail'
+const flag = true
+const x = 1000000
+```
+
+**Immutability (CRITICAL):**
+```typescript
+// ✅ ALWAYS use spread operator
+const updatedUser = { ...user, name: 'New Name' }
+const updatedArray = [...items, newItem]
+
+// ❌ NEVER mutate directly
+user.name = 'New Name'  // BAD
+items.push(newItem)     // BAD
+```
+
+**Error Handling:**
+```typescript
+// ✅ GOOD: Comprehensive error handling
+async function fetchData(url: string) {
+  try {
+    const response = await fetch(url)
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    return await response.json()
+  } catch (error) {
+    console.error('Fetch failed:', error)
+    throw new Error('Failed to fetch data')
+  }
+}
+```
+
+**Async/Await (Parallel when possible):**
+```typescript
+// ✅ GOOD: Parallel execution
+const [users, markets, stats] = await Promise.all([
+  fetchUsers(),
+  fetchMarkets(),
+  fetchStats()
+])
+
+// ❌ BAD: Sequential when unnecessary
+const users = await fetchUsers()
+const markets = await fetchMarkets()  // Waits for users first
+```
+
+**Type Safety:**
+```typescript
+// ✅ GOOD: Proper types
+interface Recipient {
+  id: number
+  ontvanger: string
+  bedrag: number
+  jaar: number
+}
+
+// ❌ BAD: Using 'any'
+function getRecipient(id: any): Promise<any>  // NEVER
+```
+
+**Early Returns (No deep nesting):**
+```typescript
+// ✅ GOOD: Early returns
+if (!user) return
+if (!user.isAdmin) return
+if (!hasPermission) return
+// Do something
+
+// ❌ BAD: Deep nesting
+if (user) {
+  if (user.isAdmin) {
+    if (hasPermission) {
+      // Do something
+    }
+  }
+}
+```
+
+**Named Constants (No magic numbers):**
+```typescript
+// ✅ GOOD: Named constants
+const MAX_EXPORT_ROWS = 500
+const DEBOUNCE_DELAY_MS = 300
+const SEARCH_MIN_CHARS = 3
+
+// ❌ BAD: Magic numbers
+if (rows > 500) { }
+setTimeout(callback, 300)
+```
+
+### React/Next.js Standards
+
+**Component Structure:**
+```typescript
+// ✅ GOOD: Typed functional component
+interface ButtonProps {
+  children: React.ReactNode
+  onClick: () => void
+  disabled?: boolean
+}
+
+export function Button({ children, onClick, disabled = false }: ButtonProps) {
+  return (
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
+  )
+}
+```
+
+**State Updates:**
+```typescript
+// ✅ GOOD: Functional update for state based on previous
+setCount(prev => prev + 1)
+
+// ❌ BAD: Direct state reference (can be stale)
+setCount(count + 1)
+```
+
+**Conditional Rendering:**
+```typescript
+// ✅ GOOD: Clear conditionals
+{isLoading && <Spinner />}
+{error && <ErrorMessage error={error} />}
+{data && <DataDisplay data={data} />}
+
+// ❌ BAD: Ternary hell
+{isLoading ? <Spinner /> : error ? <ErrorMessage /> : data ? <DataDisplay /> : null}
+```
+
+---
+
+## PostgreSQL/Supabase Patterns (MANDATORY)
+
+### Index Cheat Sheet
+
+| Query Pattern | Index Type | Example |
+|--------------|------------|---------|
+| `WHERE col = value` | B-tree (default) | `CREATE INDEX idx ON t (col)` |
+| `WHERE col > value` | B-tree | `CREATE INDEX idx ON t (col)` |
+| `WHERE a = x AND b > y` | Composite | `CREATE INDEX idx ON t (a, b)` |
+| `WHERE jsonb @> '{}'` | GIN | `CREATE INDEX idx ON t USING gin (col)` |
+| Full-text search | GIN | `CREATE INDEX idx ON t USING gin (col)` |
+
+**Composite Index Rule:** Equality columns first, then range columns.
+```sql
+CREATE INDEX idx ON orders (status, created_at);
+-- Works for: WHERE status = 'pending' AND created_at > '2024-01-01'
+```
+
+### Query Optimization
+
+```sql
+-- ✅ GOOD: Select only needed columns
+SELECT id, ontvanger, bedrag FROM instrumenten WHERE jaar = 2024 LIMIT 100;
+
+-- ❌ BAD: Select everything
+SELECT * FROM instrumenten;
+```
+
+### RLS Policy Pattern (Supabase)
+
+```sql
+-- ✅ GOOD: Wrap auth.uid() in SELECT for performance
+CREATE POLICY policy ON orders
+  USING ((SELECT auth.uid()) = user_id);
+
+-- ❌ BAD: Direct call (slower)
+CREATE POLICY policy ON orders
+  USING (auth.uid() = user_id);
+```
+
+### Pagination (Use Cursor, Not OFFSET)
+
+```sql
+-- ✅ GOOD: Cursor pagination O(1)
+SELECT * FROM recipients WHERE id > $last_id ORDER BY id LIMIT 25;
+
+-- ❌ BAD: OFFSET pagination O(n)
+SELECT * FROM recipients ORDER BY id LIMIT 25 OFFSET 1000;
+```
+
+### N+1 Query Prevention
+
+```typescript
+// ❌ BAD: N+1 queries
+const recipients = await getRecipients()
+for (const r of recipients) {
+  r.details = await getDetails(r.id)  // N queries!
+}
+
+// ✅ GOOD: Batch fetch
+const recipients = await getRecipients()
+const ids = recipients.map(r => r.id)
+const details = await getDetailsBatch(ids)  // 1 query
+const detailsMap = new Map(details.map(d => [d.id, d]))
+recipients.forEach(r => r.details = detailsMap.get(r.id))
+```
+
+---
+
+## Security Checklist (MANDATORY)
+
+### Before EVERY Commit
+
+- [ ] **No hardcoded secrets** (API keys, passwords, tokens)
+- [ ] **All user inputs validated** (Zod schemas on API endpoints)
+- [ ] **SQL injection prevention** (parameterized queries, never string concat)
+- [ ] **XSS prevention** (sanitized HTML, no dangerouslySetInnerHTML)
+- [ ] **Authentication verified** (protected routes check session)
+- [ ] **Error messages don't leak data** (no stack traces to users)
+
+### Secret Management
+
+```typescript
+// ❌ NEVER: Hardcoded secrets
+const apiKey = "sk-proj-xxxxx"
+
+// ✅ ALWAYS: Environment variables
+const apiKey = process.env.TYPESENSE_API_KEY
+if (!apiKey) {
+  throw new Error('TYPESENSE_API_KEY not configured')
+}
+```
+
+### Input Validation (Zod)
+
+```typescript
+import { z } from 'zod'
+
+const SearchSchema = z.object({
+  query: z.string().min(1).max(200),
+  limit: z.number().min(1).max(100).default(25),
+  jaar: z.number().min(2016).max(2025).optional()
+})
+
+export async function GET(request: Request) {
+  const params = SearchSchema.parse(await request.json())
+  // Safe to use params
+}
+```
+
+### Security Response Protocol
+
+**If security issue found:**
+1. **STOP immediately**
+2. Fix CRITICAL issues before continuing
+3. Rotate any exposed secrets
+4. Review codebase for similar issues
+
+---
+
+## Code Review Standards
+
+### Review Checklist (Priority Order)
+
+**CRITICAL (Must Fix):**
+- [ ] Hardcoded credentials
+- [ ] SQL injection risks
+- [ ] Missing input validation
+- [ ] Authentication bypasses
+- [ ] Exposed sensitive data
+
+**HIGH (Should Fix):**
+- [ ] Missing error handling
+- [ ] Large functions (>50 lines)
+- [ ] Deep nesting (>4 levels)
+- [ ] Direct mutations
+- [ ] console.log statements in production code
+
+**MEDIUM (Consider):**
+- [ ] Missing TypeScript types
+- [ ] Inefficient algorithms
+- [ ] Missing memoization in React
+- [ ] Poor variable naming
+
+### Self-Review Before Commit
+
+Before committing any code, Claude must verify:
+1. **Security:** No secrets, inputs validated
+2. **Types:** No `any`, proper interfaces
+3. **Errors:** Try/catch on async operations
+4. **Performance:** No N+1 queries, proper indexes considered
+5. **Readability:** Clear names, no deep nesting
+
+---
+
+## API Design Standards
+
+### REST Conventions
+
+```
+GET    /api/v1/modules              # List modules
+GET    /api/v1/modules/:id          # Get single module
+POST   /api/v1/modules              # Create (if applicable)
+
+# Query parameters for filtering
+GET /api/v1/instrumenten?jaar=2024&limit=25&offset=0
+```
+
+### Response Format (Consistent)
+
+```typescript
+// Success
+{
+  "success": true,
+  "data": [...],
+  "meta": { "total": 100, "page": 1, "limit": 25 }
+}
+
+// Error
+{
+  "success": false,
+  "error": "Validation failed",
+  "details": [...]
+}
+```
+
+### Error Handling Pattern
+
+```typescript
+class ApiError extends Error {
+  constructor(public statusCode: number, message: string) {
+    super(message)
+  }
+}
+
+// Usage
+if (!user) throw new ApiError(401, 'Unauthorized')
+if (!hasPermission) throw new ApiError(403, 'Forbidden')
+if (!found) throw new ApiError(404, 'Not found')
+```
