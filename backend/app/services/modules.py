@@ -21,6 +21,7 @@ MODULE_CONFIG = {
         "primary_field": "ontvanger",
         "year_field": "begrotingsjaar",
         "amount_field": "bedrag",
+        "amount_multiplier": 1000,  # Source data in ×1000, normalize to absolute euros
         "search_fields": ["ontvanger", "regeling", "instrument"],
         "filter_fields": ["regeling", "artikel", "begrotingsnaam"],
     },
@@ -29,6 +30,7 @@ MODULE_CONFIG = {
         "primary_field": "kostensoort",
         "year_field": "begrotingsjaar",
         "amount_field": "bedrag",
+        "amount_multiplier": 1000,  # Source data in ×1000, normalize to absolute euros
         "search_fields": ["kostensoort", "begrotingsnaam"],
         "filter_fields": ["artikel", "begrotingsnaam"],
     },
@@ -37,6 +39,7 @@ MODULE_CONFIG = {
         "primary_field": "leverancier",
         "year_field": "jaar",
         "amount_field": "totaal_avg",
+        "amount_multiplier": 1,  # Already in absolute euros
         "search_fields": ["leverancier", "ministerie", "categorie"],
         "filter_fields": ["ministerie", "categorie"],
     },
@@ -45,6 +48,7 @@ MODULE_CONFIG = {
         "primary_field": "ontvanger",
         "year_field": "jaar",
         "amount_field": "bedrag",
+        "amount_multiplier": 1,  # Already in absolute euros
         "search_fields": ["ontvanger", "omschrijving"],
         "filter_fields": ["provincie"],
     },
@@ -53,6 +57,7 @@ MODULE_CONFIG = {
         "primary_field": "ontvanger",
         "year_field": "jaar",
         "amount_field": "bedrag",
+        "amount_multiplier": 1,  # Already in absolute euros
         "search_fields": ["ontvanger", "omschrijving", "regeling"],
         "filter_fields": ["gemeente", "beleidsterrein"],
     },
@@ -61,6 +66,7 @@ MODULE_CONFIG = {
         "primary_field": "ontvanger",
         "year_field": "jaar",
         "amount_field": "bedrag",
+        "amount_multiplier": 1,  # Already in absolute euros
         "search_fields": ["ontvanger", "omschrijving", "regeling"],
         "filter_fields": ["source", "regeling"],
     },
@@ -96,11 +102,13 @@ async def get_module_data(
     primary = config["primary_field"]
     year_field = config["year_field"]
     amount_field = config["amount_field"]
+    multiplier = config.get("amount_multiplier", 1)
     search_fields = config["search_fields"]
 
     # Build year columns with COALESCE for null handling
+    # Apply multiplier to normalize all amounts to absolute euros
     year_columns = ", ".join([
-        f"COALESCE(SUM(CASE WHEN {year_field} = {year} THEN {amount_field} END), 0) AS \"y{year}\""
+        f"COALESCE(SUM(CASE WHEN {year_field} = {year} THEN {amount_field} END), 0) * {multiplier} AS \"y{year}\""
         for year in YEARS
     ])
 
@@ -125,14 +133,15 @@ async def get_module_data(
         param_idx += 1
 
     # Amount filters (on total - applied in HAVING)
+    # User provides filter in absolute euros, so divide by multiplier for comparison
     having_clauses = []
     if min_bedrag is not None:
-        having_clauses.append(f"SUM({amount_field}) >= ${param_idx}")
+        having_clauses.append(f"SUM({amount_field}) * {multiplier} >= ${param_idx}")
         params.append(min_bedrag)
         param_idx += 1
 
     if max_bedrag is not None:
-        having_clauses.append(f"SUM({amount_field}) <= ${param_idx}")
+        having_clauses.append(f"SUM({amount_field}) * {multiplier} <= ${param_idx}")
         params.append(max_bedrag)
         param_idx += 1
 
@@ -152,11 +161,12 @@ async def get_module_data(
     count_params = params.copy()
 
     # Main query with aggregation
+    # Apply multiplier to totaal for consistent absolute euro amounts
     query = f"""
         SELECT
             {primary} AS primary_value,
             {year_columns},
-            COALESCE(SUM({amount_field}), 0) AS totaal,
+            COALESCE(SUM({amount_field}), 0) * {multiplier} AS totaal,
             COUNT(*) AS row_count
         FROM {table}
         {where_sql}
@@ -217,6 +227,7 @@ async def get_row_details(
     primary = config["primary_field"]
     year_field = config["year_field"]
     amount_field = config["amount_field"]
+    multiplier = config.get("amount_multiplier", 1)
 
     # Default grouping fields per module
     default_group_by = {
@@ -230,9 +241,9 @@ async def get_row_details(
 
     group_field = group_by or default_group_by.get(module, primary)
 
-    # Build year columns
+    # Build year columns with multiplier for normalization
     year_columns = ", ".join([
-        f"COALESCE(SUM(CASE WHEN {year_field} = {year} THEN {amount_field} END), 0) AS \"y{year}\""
+        f"COALESCE(SUM(CASE WHEN {year_field} = {year} THEN {amount_field} END), 0) * {multiplier} AS \"y{year}\""
         for year in YEARS
     ])
 
@@ -250,7 +261,7 @@ async def get_row_details(
         SELECT
             {group_field} AS group_value,
             {year_columns},
-            COALESCE(SUM({amount_field}), 0) AS totaal,
+            COALESCE(SUM({amount_field}), 0) * {multiplier} AS totaal,
             COUNT(*) AS row_count
         FROM {table}
         {where_sql}

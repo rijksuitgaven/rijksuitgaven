@@ -98,4 +98,4 @@ backend/
 
 Deployed to Railway. Push to main triggers automatic deployment.
 
-Railway URL: `https://rijksuitgaven-api-production.up.railway.app` (TBD)
+Railway URL: `https://rijksuitgaven-api-production-3448.up.railway.app`

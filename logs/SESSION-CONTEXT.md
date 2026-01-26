@@ -1,8 +1,8 @@
 # Session Context
 
-**Last Updated:** 2026-01-24
+**Last Updated:** 2026-01-26
 **Project Phase:** Phase 1 - V1.0 Development
-**Current Sprint:** Week 1 - Infrastructure + Data Migration
+**Current Sprint:** Week 2 - Backend API + Data Layer
 
 ---
 
@@ -35,7 +35,9 @@
 - ✅ **Typesense collections & sync** - 466,827 recipients indexed, <25ms search
 - ✅ **Week 1 Day 7:** Next.js project setup (COMPLETED 2026-01-24)
 - ✅ **Week 1 COMPLETE** - All deliverables done
-- ⏳ **NEXT:** Week 2 - Backend API (FastAPI)
+- ✅ **Week 2 Day 1:** FastAPI backend deployed (COMPLETED 2026-01-26)
+- ✅ **Chart Library:** Recharts selected (React 19 compatible)
+- ⏳ **BLOCKING:** Query performance (9-19 seconds, target <500ms)
 
 ### Active Tasks
 | Task | Status | Notes |
@@ -58,14 +60,14 @@
 
 ## Recent Work (Last 3 Files)
 
-1. **app/** ⭐ CREATED (2026-01-24)
-   Next.js application with Supabase, Typesense, TanStack, shadcn/ui. Deployed to Railway.
+1. **backend/** ⭐ CREATED (2026-01-26)
+   FastAPI backend with real aggregation queries. Deployed to Railway at `rijksuitgaven-api-production-3448.up.railway.app`
 
-2. **docs/LOCAL-SETUP.md** ⭐ CREATED (2026-01-24)
-   Local development setup guide for machine switching. All dependencies documented.
+2. **docs/plans/2026-01-26-chart-library-evaluation.md** ⭐ CREATED (2026-01-26)
+   Chart library research: Recharts selected over Tremor (React 19 compatibility)
 
-3. **docs/plans/2026-01-24-apparaat-typesense-search-design.md** ⭐ CREATED (2026-01-24)
-   Apparaat search design: kostensoort as primary field, mixed results in global search.
+3. **scripts/sql/005-backend-rls-policy.sql** ⭐ CREATED (2026-01-26)
+   RLS policies allowing backend (postgres role) to read all data tables
 
 ---
 
@@ -93,6 +95,23 @@
 | **Beta CNAME Target** | `j65ghs38.up.railway.app` (Railway-provided) |
 | Root Directory | `app` |
 | Region | EU West (Amsterdam) |
+
+### FastAPI Backend (API) ⭐ NEW 2026-01-26
+
+| Property | Value |
+|----------|-------|
+| Platform | Railway |
+| URL | `https://rijksuitgaven-api-production-3448.up.railway.app` |
+| Health | `/health` - database connected |
+| API Docs | `/docs` - Swagger UI |
+| Root Directory | `backend` |
+| Status | ✅ Running |
+| **Performance Issue** | ⚠️ 9-19 seconds (target <500ms) - needs optimization |
+
+**Endpoints:**
+- `GET /api/v1/modules` - List all modules
+- `GET /api/v1/modules/{module}` - Aggregated data with year columns
+- `GET /api/v1/modules/{module}/{value}/details` - Expandable row details
 
 ### Typesense (Search Engine)
 
@@ -126,6 +145,7 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/sql/004-universal-search-materialized-view.sql` | 2026-01-23 | Supabase |
 | `scripts/data/transform-csv-headers.py` | 2026-01-23 | Local |
 | `scripts/data/import-to-supabase.sh` | 2026-01-23 | Local → Supabase |
+| `scripts/sql/005-backend-rls-policy.sql` | 2026-01-26 | Supabase |
 
 ### Configuration Files
 

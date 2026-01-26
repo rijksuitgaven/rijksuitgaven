@@ -124,7 +124,7 @@
 | `/api/v1/apparaat` | `apparaat` |
 | `/api/v1/inkoop` | `inkoop` |
 | `/api/v1/provincie` | `provincie` |
-| `/api/v1/stad` | `stad` |
+| `/api/v1/gemeente` | `gemeente` |
 | `/api/v1/publiek` | `publiek` |
 | `/api/v1/integraal` | `universal_search` + `universal_search_source` |
 
