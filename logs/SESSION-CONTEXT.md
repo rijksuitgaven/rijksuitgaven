@@ -453,6 +453,28 @@ Dedicated overview page showing module-level totals with year columns.
 
 **Rule (added to CLAUDE.md):** Brand identity is **leading** for all design work. All wireframes updated with correct brand colors.
 
+### Cookie Banner & Privacy Policy (2026-01-27) ⭐ NEW
+
+**Approach:** Essential cookies only = simple disclosure (no consent mechanism needed).
+
+| Decision | Outcome |
+|----------|---------|
+| Cookie banner | Simple bottom bar, non-blocking |
+| Consent mechanism | None (essential cookies exempt under GDPR) |
+| Privacy policy | Merged with cookie policy into single page |
+| URL structure | `/privacybeleid` (Dutch), `/cookiebeleid` redirects |
+| Google Fonts | Self-hosted via next/font (no external requests) |
+| Analytics | Not in V1.0 (deferred to backlog) |
+| Persistence | localStorage (never re-displays after dismissed) |
+
+**Text:** "Deze website gebruikt alleen noodzakelijke cookies voor het functioneren van de site."
+
+**Files:**
+- `docs/plans/2026-01-27-cookie-banner-design.md` - Component design
+- `content/privacybeleid.md` - Privacy policy content (10 articles, Dutch)
+
+**Note:** When analytics is added (V1.1+), replace simple banner with proper consent mechanism.
+
 ### Data Migration Completed (2026-01-23) ⭐ NEW
 
 | Table | Rows Imported |
