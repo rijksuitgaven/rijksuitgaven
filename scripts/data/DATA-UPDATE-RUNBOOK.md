@@ -110,23 +110,23 @@ ORDER BY table_name;
 
 **This step is MANDATORY after any data change.**
 
-Run in Supabase SQL Editor:
+**Recommended: Run via psql (no timeout issues):**
+
+```bash
+/usr/local/opt/libpq/bin/psql "postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" -f scripts/sql/refresh-all-views.sql
+```
+
+**Alternative: Supabase SQL Editor (run each separately to avoid timeout):**
 
 ```sql
--- Refresh aggregated views (for API performance)
 REFRESH MATERIALIZED VIEW instrumenten_aggregated;
 REFRESH MATERIALIZED VIEW apparaat_aggregated;
 REFRESH MATERIALIZED VIEW inkoop_aggregated;
 REFRESH MATERIALIZED VIEW provincie_aggregated;
 REFRESH MATERIALIZED VIEW gemeente_aggregated;
 REFRESH MATERIALIZED VIEW publiek_aggregated;
-
--- Refresh cross-module search view
 REFRESH MATERIALIZED VIEW CONCURRENTLY universal_search;
 ```
-
-**Or use the script:**
-Copy contents of `scripts/sql/refresh-all-views.sql` into SQL Editor and run.
 
 ### Verify Refresh
 
