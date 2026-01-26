@@ -449,7 +449,6 @@ async def get_integraal_data(
             ontvanger AS primary_value,
             sources,
             source_count,
-            row_count,
             "2016" AS y2016,
             "2017" AS y2017,
             "2018" AS y2018,
@@ -483,7 +482,7 @@ async def get_integraal_data(
             "primary_value": row["primary_value"],
             "years": years_dict,
             "totaal": float(row["totaal"] or 0),
-            "row_count": row["row_count"] or 1,
+            "row_count": row["source_count"] or 1,  # Use source_count as row_count
             "modules": row["sources"].split(",") if row["sources"] else [],
         })
 
