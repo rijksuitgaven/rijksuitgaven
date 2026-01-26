@@ -5,7 +5,7 @@
 **Region:** eu-west-1
 **Created:** 2026-01-21
 **Data Migrated:** 2026-01-23
-**Last Updated:** 2026-01-26
+**Last Updated:** 2026-01-26 (source table indexes, pg_trgm extension)
 
 ---
 
@@ -99,7 +99,9 @@
 
 **Indexes:**
 - `idx_instrumenten_ontvanger` - Fast recipient lookup
-- `idx_instrumenten_jaar` - Fast year filtering
+- `idx_instrumenten_ontvanger_details` - Details query optimization
+- `idx_instrumenten_begrotingsjaar` - Fast year filtering
+- `idx_instrumenten_ontvanger_jaar` - Composite: recipient + year (details with year filter)
 - `idx_instrumenten_regeling` - Fast regulation search
 
 ---
@@ -128,7 +130,9 @@
 
 **Indexes:**
 - `idx_apparaat_kostensoort` - Fast cost type filtering
-- `idx_apparaat_jaar` - Fast year filtering
+- `idx_apparaat_kostensoort_details` - Details query optimization
+- `idx_apparaat_begrotingsjaar` - Fast year filtering
+- `idx_apparaat_kostensoort_jaar` - Composite: kostensoort + year
 
 ---
 
@@ -151,7 +155,9 @@
 
 **Indexes:**
 - `idx_inkoop_leverancier` - Fast supplier lookup
+- `idx_inkoop_leverancier_details` - Details query optimization
 - `idx_inkoop_jaar` - Fast year filtering
+- `idx_inkoop_leverancier_jaar` - Composite: supplier + year
 - `idx_inkoop_ministerie` - Fast ministry filtering
 
 ---
@@ -175,7 +181,9 @@
 
 **Indexes:**
 - `idx_provincie_ontvanger` - Fast recipient lookup
+- `idx_provincie_ontvanger_details` - Details query optimization
 - `idx_provincie_jaar` - Fast year filtering
+- `idx_provincie_ontvanger_jaar` - Composite: recipient + year
 - `idx_provincie_provincie` - Fast province filtering
 
 ---
@@ -202,7 +210,9 @@
 
 **Indexes:**
 - `idx_gemeente_ontvanger` - Fast recipient lookup
+- `idx_gemeente_ontvanger_details` - Details query optimization
 - `idx_gemeente_jaar` - Fast year filtering
+- `idx_gemeente_ontvanger_jaar` - Composite: recipient + year
 - `idx_gemeente_gemeente` - Fast municipality filtering
 
 **Note:** Column was renamed from `stad` to `gemeente` during migration.
@@ -236,7 +246,9 @@
 
 **Indexes:**
 - `idx_publiek_ontvanger` - Fast recipient lookup
+- `idx_publiek_ontvanger_details` - Details query optimization
 - `idx_publiek_jaar` - Fast year filtering
+- `idx_publiek_ontvanger_jaar` - Composite: recipient + year
 - `idx_publiek_source` - Fast source filtering
 
 **Note:** Uses PostGIS geometry for location data.

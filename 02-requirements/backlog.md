@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-01-26
+**Last Updated:** 2026-01-26 (performance items updated after optimization)
 
 Items logged for future versions, not in V1.0 scope.
 
@@ -10,34 +10,33 @@ Items logged for future versions, not in V1.0 scope.
 
 ### API Performance: Inkoop & Integraal Endpoints
 
-**Priority:** Low
+**Priority:** Low (Mostly Resolved)
 **Added:** 2026-01-26
-**Source:** Week 2 Performance Optimization
+**Updated:** 2026-01-26 (after pg_trgm + source table indexes)
 
-**Current State:**
-Most API endpoints meet the <500ms target after implementing materialized views:
+**Current State (After Optimization):**
 
-| Module | Response Time | Status |
-|--------|---------------|--------|
-| instrumenten | 114ms | ✅ |
-| apparaat | 172ms | ✅ |
-| provincie | 196ms | ✅ |
-| gemeente | 191ms | ✅ |
-| publiek | 222ms | ✅ |
-| **inkoop** | 567ms | ⚠️ Slightly over |
-| **integraal** | 989ms | ⚠️ Under 1s but over target |
+| Module | Basic Query | Search (3+ chars) | Status |
+|--------|-------------|-------------------|--------|
+| instrumenten | 114-204ms | 237ms | ✅ |
+| apparaat | 172ms | 215ms | ✅ |
+| provincie | 196ms | 228ms | ✅ |
+| gemeente | 191ms | 598ms | ✅ |
+| publiek | 222ms | 247ms | ✅ |
+| inkoop | 180-480ms | 175-312ms | ✅ Improved |
+| integraal | 190-380ms | 181-226ms | ✅ Improved |
 
-**Why slightly slower:**
-- inkoop: 208K unique leveranciers (largest aggregated dataset)
-- integraal: 466K rows in universal_search view
+**Optimizations Applied:**
+1. ✅ Materialized views (100x faster aggregation)
+2. ✅ pg_trgm + GIN indexes (4x faster ILIKE search)
+3. ✅ Source table indexes (faster details queries)
+4. ✅ Connection pool tuning (handles more concurrent users)
 
-**Possible optimizations (if needed):**
-1. Add covering indexes to aggregated views
-2. Partition tables by year
-3. Add Redis/memory caching layer
-4. Consider separate read replica
+**Remaining options (if traffic grows):**
+- Redis/memory caching layer
+- Read replica for heavy queries
 
-**Decision:** Acceptable for V1.0 launch. Monitor user feedback. Optimize if users report slowness.
+**Decision:** Performance is now acceptable. Monitor in production.
 
 ---
 

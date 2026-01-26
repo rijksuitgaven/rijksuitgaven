@@ -150,6 +150,7 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/sql/006-aggregated-materialized-views.sql` | 2026-01-26 | Supabase |
 | `scripts/sql/refresh-all-views.sql` | 2026-01-26 | Supabase |
 | `scripts/sql/007-search-optimization-indexes.sql` | 2026-01-26 | Supabase |
+| `scripts/sql/008-source-table-indexes.sql` | 2026-01-26 | Supabase |
 | VACUUM ANALYZE (all tables) | 2026-01-26 | Supabase |
 
 ### Configuration Files
