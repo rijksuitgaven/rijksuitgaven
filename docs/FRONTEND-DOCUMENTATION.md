@@ -10,9 +10,9 @@
 ```
 app/src/
 ├── app/                          # Next.js App Router pages
-│   ├── layout.tsx                # Root layout (fonts, cookie banner)
+│   ├── layout.tsx                # Root layout (fonts, header, cookie banner)
 │   ├── globals.css               # Global styles (brand colors, animations)
-│   ├── page.tsx                  # Home page (module cards)
+│   ├── page.tsx                  # Home page (hero + module cards)
 │   ├── privacybeleid/page.tsx    # Privacy policy page
 │   ├── instrumenten/page.tsx     # Module page
 │   ├── apparaat/page.tsx         # Module page
@@ -26,14 +26,20 @@ app/src/
 │   │   ├── cookie-banner.tsx
 │   │   └── index.ts
 │   ├── data-table/               # Main data table component
-│   │   ├── data-table.tsx        # TanStack Table implementation
+│   │   ├── data-table.tsx        # TanStack Table + CSV export
 │   │   ├── expanded-row.tsx      # Expandable row with grouping
 │   │   └── index.ts
 │   ├── filter-panel/             # Search and filter UI
 │   │   ├── filter-panel.tsx
 │   │   └── index.ts
-│   └── module-page/              # Reusable module page template
-│       ├── module-page.tsx
+│   ├── header/                   # Global navigation header
+│   │   ├── header.tsx
+│   │   └── index.ts
+│   ├── module-page/              # Reusable module page template
+│   │   ├── module-page.tsx
+│   │   └── index.ts
+│   └── search-bar/               # Typesense autocomplete search
+│       ├── search-bar.tsx
 │       └── index.ts
 ├── lib/
 │   ├── api.ts                    # API client for backend
@@ -94,11 +100,20 @@ Main data grid component using TanStack Table.
 - Dynamic year columns (2016-2025)
 - Collapsible 2016-2020 range (click to expand)
 - Trend anomaly indicator (red highlight for 10%+ YoY change)
+- Cross-module indicator ("Ook in: Instrumenten, Publiek")
 - Sticky columns on mobile (expand button + primary column)
-- Server-side pagination
+- Server-side pagination (25/50/100 rows per page)
 - Sortable columns
 - Loading skeleton
 - Empty state with suggestions
+- CSV export (max 500 rows)
+
+**CSV Export:**
+- Max 500 rows (constant: `MAX_EXPORT_ROWS`)
+- Format: Semicolon-separated (`;`) for Dutch Excel compatibility
+- Includes UTF-8 BOM for proper encoding
+- Filename: `rijksuitgaven-{moduleId}-{YYYY-MM-DD}.csv`
+- Columns: Primary value, year columns, Totaal
 
 **Props:**
 ```typescript
@@ -115,6 +130,7 @@ interface DataTableProps {
   onSortChange?: (column: string, direction: 'asc' | 'desc') => void
   onRowExpand?: (primaryValue: string) => void
   renderExpandedRow?: (row: RecipientRow) => React.ReactNode
+  moduleId?: string  // Used for CSV export filename
 }
 ```
 
@@ -177,6 +193,75 @@ Reusable template for all module pages.
 | gemeente | Ontvanger | Gemeentelijke subsidies |
 | publiek | Ontvanger | RVO, COA, NWO uitbetalingen |
 | integraal | Ontvanger | Cross-module search |
+
+### Header (`components/header/header.tsx`)
+
+Global navigation header (rendered in layout.tsx).
+
+**Features:**
+- Logo with link to home
+- Modules dropdown (desktop)
+- Mobile hamburger menu
+- Integrated search bar
+- Privacy policy link
+- Login button (placeholder for Week 6)
+- Sticky positioning (z-index 40)
+
+**Responsive Behavior:**
+| Screen Size | Navigation | Search | Menu |
+|-------------|------------|--------|------|
+| < 768px | Hidden | Bottom of header | Hamburger |
+| 768px+ | Hidden | Inline | Hamburger |
+| 1024px+ | Dropdown | Inline | Hidden |
+
+**Module List:**
+```typescript
+const MODULES = [
+  { id: 'integraal', name: 'Integraal', description: 'Zoek over alle modules' },
+  { id: 'instrumenten', name: 'Instrumenten', description: 'Subsidies en regelingen' },
+  { id: 'apparaat', name: 'Apparaat', description: 'Operationele kosten' },
+  { id: 'inkoop', name: 'Inkoop', description: 'Inkoop bij leveranciers' },
+  { id: 'provincie', name: 'Provincie', description: 'Provinciale subsidies' },
+  { id: 'gemeente', name: 'Gemeente', description: 'Gemeentelijke subsidies' },
+  { id: 'publiek', name: 'Publiek', description: 'RVO, COA, NWO' },
+]
+```
+
+### SearchBar (`components/search-bar/search-bar.tsx`)
+
+Global search with Typesense autocomplete.
+
+**Features:**
+- Real-time autocomplete (<50ms target)
+- Debounced input (150ms)
+- Keyboard navigation (Arrow Up/Down, Escape, Enter)
+- Shows recipient name + total amount
+- Module badges ("Ook in: Instrumenten, Publiek")
+- Routes to `/integraal?q=QUERY` on selection
+- Loading spinner during search
+- Clear button in input
+
+**Props:**
+```typescript
+interface SearchBarProps {
+  className?: string
+  placeholder?: string
+  onSearch?: (query: string) => void
+}
+```
+
+**Typesense Query:**
+- Collection: `recipients`
+- Query fields: `name,name_lower` (case-insensitive)
+- Sort: `totaal:desc`
+- Results: 8 per query
+- Minimum query: 2 characters
+
+**Environment Variables:**
+| Variable | Default |
+|----------|---------|
+| `NEXT_PUBLIC_TYPESENSE_HOST` | `typesense-production-35ae.up.railway.app` |
+| `NEXT_PUBLIC_TYPESENSE_API_KEY` | (set in deployment) |
 
 ### CookieBanner (`components/cookie-banner/cookie-banner.tsx`)
 
@@ -267,7 +352,7 @@ interface ModuleQueryParams {
 
 | Route | Page | Description |
 |-------|------|-------------|
-| `/` | Home | Module selection cards |
+| `/` | Home | Hero section + module cards |
 | `/instrumenten` | Module | Financiële Instrumenten |
 | `/apparaat` | Module | Apparaatsuitgaven |
 | `/inkoop` | Module | Inkoopuitgaven |
@@ -276,6 +361,7 @@ interface ModuleQueryParams {
 | `/publiek` | Module | Publiek (RVO/COA/NWO) |
 | `/integraal` | Module | Cross-module search |
 | `/privacybeleid` | Static | Privacy policy |
+| `/login` | Auth | Login page (Week 6 - placeholder) |
 
 ---
 
@@ -314,6 +400,8 @@ npm run build
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `NEXT_PUBLIC_API_URL` | Railway API URL | Backend API endpoint |
+| `NEXT_PUBLIC_TYPESENSE_HOST` | `typesense-production-35ae.up.railway.app` | Typesense server |
+| `NEXT_PUBLIC_TYPESENSE_API_KEY` | (required) | Typesense search API key |
 
 **Deployment:**
 - Platform: Railway
@@ -329,10 +417,31 @@ npm run build
 - [ ] Year columns display correctly
 - [ ] Collapsed years (2016-20) expandable
 - [ ] Trend anomaly highlight (10%+ change)
+- [ ] Cross-module indicator shows ("Ook in:")
 - [ ] Sorting works (click headers)
-- [ ] Pagination controls work
+- [ ] Pagination controls work (25/50/100)
 - [ ] Row expand/collapse works
 - [ ] Sticky columns on mobile scroll
+- [ ] CSV export downloads correctly
+- [ ] CSV export limited to 500 rows
+- [ ] CSV opens correctly in Dutch Excel (semicolon format)
+
+### Header
+- [ ] Logo links to home
+- [ ] Modules dropdown works (desktop)
+- [ ] Current module highlighted
+- [ ] Mobile menu toggles
+- [ ] Search bar visible
+- [ ] Sticky on scroll
+
+### SearchBar
+- [ ] Autocomplete appears after 2 chars
+- [ ] Results show recipient name + amount
+- [ ] Module badges display correctly
+- [ ] Keyboard navigation works (arrows, enter, escape)
+- [ ] Click selects and navigates to /integraal
+- [ ] Clear button works
+- [ ] Click outside closes dropdown
 
 ### FilterPanel
 - [ ] Search input debounces (300ms)
@@ -362,3 +471,4 @@ npm run build
 | Date | Change |
 |------|--------|
 | 2026-01-26 | Initial documentation (Week 3-4 components) |
+| 2026-01-26 | Added Header, SearchBar, CSV export documentation (Week 5) |

@@ -48,7 +48,7 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
           `https://${TYPESENSE_HOST}/collections/recipients/documents/search?` +
           new URLSearchParams({
             q: query,
-            query_by: 'name',
+            query_by: 'name,name_lower',
             prefix: 'true',
             per_page: '8',
             sort_by: 'totaal:desc',

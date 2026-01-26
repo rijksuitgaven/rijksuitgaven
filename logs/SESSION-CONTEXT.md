@@ -113,6 +113,8 @@
 - `GET /api/v1/modules` - List all modules
 - `GET /api/v1/modules/{module}` - Aggregated data with year columns
 - `GET /api/v1/modules/{module}/{value}/details` - Expandable row details
+- `GET /api/v1/health` - Health check (database + Typesense status)
+- `GET /health` - Railway health probe endpoint
 
 ### Typesense (Search Engine)
 
