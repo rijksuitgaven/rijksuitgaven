@@ -329,57 +329,7 @@
 
 ---
 
-## Week 7: Marketing Pages
-
-**Goal:** All public pages live
-
-### Day 1-2: Homepage
-
-| Section | Details |
-|---------|---------|
-| Hero | Port from WordPress (same copy) |
-| Value props | 3 cards |
-| Sample data | Live table preview |
-| Features grid | 6 features |
-| Pricing | €150/month |
-| CTA | Demo request |
-
-### Day 3-4: Support Pages
-
-| Page | Details |
-|------|---------|
-| `/support` | Index with search |
-| `/support/[slug]` | Markdown articles |
-| Content | Getting started, FAQ, Data sources, Export guide |
-
-### Day 5-6: Other Pages
-
-| Page | Details |
-|------|---------|
-| `/about` | Mission, data sources |
-| `/contact` | Contact form (Resend/Postmark) |
-| `/pricing` | Pricing details, FAQ |
-| `/demo` | Calendly embed |
-| `/terms`, `/privacy` | Legal pages |
-
-### Day 7: Polish
-
-| Task | Details |
-|------|---------|
-| SEO | Meta tags, Open Graph |
-| Footer | Links, social, legal |
-| 404 page | Custom not found |
-| Favicon | Brand icon |
-
-**Week 7 Deliverables:**
-- [ ] Homepage live
-- [ ] All support pages
-- [ ] Contact form working
-- [ ] All marketing pages complete
-
----
-
-## Week 8: UX/UI Optimization
+## Week 7: UX/UI Optimization
 
 **Goal:** Polish all interfaces with senior UX/UI specialist review
 
@@ -421,12 +371,62 @@
 | Performance perception | Perceived speed improvements |
 | Documentation | Update FRONTEND-DOCUMENTATION.md with changes |
 
-**Week 8 Deliverables:**
+**Week 7 Deliverables:**
 - [ ] UX audit completed with findings documented
 - [ ] All critical UX issues resolved
 - [ ] Visual design consistent across all pages
 - [ ] Accessibility basics verified (WCAG AA)
 - [ ] Mobile experience polished
+
+---
+
+## Week 8: Marketing Pages
+
+**Goal:** All public pages live
+
+### Day 1-2: Homepage
+
+| Section | Details |
+|---------|---------|
+| Hero | Port from WordPress (same copy) |
+| Value props | 3 cards |
+| Sample data | Live table preview |
+| Features grid | 6 features |
+| Pricing | €150/month |
+| CTA | Demo request |
+
+### Day 3-4: Support Pages
+
+| Page | Details |
+|------|---------|
+| `/support` | Index with search |
+| `/support/[slug]` | Markdown articles |
+| Content | Getting started, FAQ, Data sources, Export guide |
+
+### Day 5-6: Other Pages
+
+| Page | Details |
+|------|---------|
+| `/about` | Mission, data sources |
+| `/contact` | Contact form (Resend/Postmark) |
+| `/pricing` | Pricing details, FAQ |
+| `/demo` | Calendly embed |
+| `/terms`, `/privacy` | Legal pages |
+
+### Day 7: Polish
+
+| Task | Details |
+|------|---------|
+| SEO | Meta tags, Open Graph |
+| Footer | Links, social, legal |
+| 404 page | Custom not found |
+| Favicon | Brand icon |
+
+**Week 8 Deliverables:**
+- [ ] Homepage live
+- [ ] All support pages
+- [ ] Contact form working
+- [ ] All marketing pages complete
 
 ---
 
