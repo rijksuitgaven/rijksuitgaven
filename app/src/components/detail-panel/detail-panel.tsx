@@ -113,8 +113,8 @@ export function DetailPanel({
 
         const json = await response.json()
 
-        // Transform API response
-        const rows = json.rows || []
+        // Transform API response - API returns 'details' array, not 'rows'
+        const rows = json.details || json.rows || []
         if (rows.length === 0) {
           setData(null)
           return
@@ -122,7 +122,7 @@ export function DetailPanel({
 
         // Aggregate years from all rows
         const yearTotals: Record<number, number> = {}
-        const details: Record<string, string> = {}
+        const detailFields: Record<string, string> = {}
         let totalAmount = 0
 
         rows.forEach((row: any) => {
@@ -136,10 +136,13 @@ export function DetailPanel({
             })
           }
 
-          // Capture first non-empty detail fields
+          // Capture first non-empty detail fields (from group_value or direct fields)
+          if (row.group_by && row.group_value && !detailFields[row.group_by]) {
+            detailFields[row.group_by] = row.group_value
+          }
           Object.keys(FIELD_LABELS).forEach(field => {
-            if (row[field] && !details[field]) {
-              details[field] = row[field]
+            if (row[field] && !detailFields[field]) {
+              detailFields[field] = row[field]
             }
           })
         })
@@ -150,12 +153,12 @@ export function DetailPanel({
           .sort((a, b) => a.year - b.year)
 
         setData({
-          primary_value: recipientName,
+          primary_value: json.primary_value || recipientName,
           years,
           total: totalAmount,
-          row_count: rows.length,
+          row_count: rows.reduce((sum: number, r: any) => sum + (r.row_count || 1), 0),
           sources: json.sources || [],
-          details,
+          details: detailFields,
         })
       } catch (err) {
         console.error('Detail fetch error:', err)
