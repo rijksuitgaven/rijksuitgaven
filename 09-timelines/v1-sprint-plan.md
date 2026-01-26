@@ -285,6 +285,10 @@
 - [x] Header navigation complete (2026-01-26: modules dropdown, mobile menu)
 - [x] URL sharing (basic) (2026-01-26: filters in URL via module-page)
 - [x] CSV export working (2026-01-26: max 500 rows, Dutch format)
+- [x] Column customization (2026-01-26: UX-005, "Kolommen" button with localStorage)
+- [x] Filter badge count (2026-01-26: SR-009, shows active filter count)
+- [x] Keyboard shortcut "/" (2026-01-26: SR-004, focus search)
+- [x] "Did you mean" suggestions (2026-01-26: fuzzy matches when no results)
 
 ---
 
