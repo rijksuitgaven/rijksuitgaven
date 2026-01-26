@@ -133,18 +133,18 @@
 - [x] On-the-fly aggregation tested (materialized views for performance)
 - [x] <500ms response times verified (see performance results below)
 
-**Performance Results (2026-01-26):**
-| Module | Response Time | Status |
-|--------|---------------|--------|
-| instrumenten | 114-204ms | ✅ |
-| apparaat | 172ms | ✅ |
-| inkoop | 567ms | ⚠️ Backlog |
-| provincie | 196ms | ✅ |
-| gemeente | 191ms | ✅ |
-| publiek | 222ms | ✅ |
-| integraal | 989ms | ⚠️ Backlog |
+**Performance Results (2026-01-26, after pg_trgm + entity resolution):**
+| Module | Basic Query | Search (3+ chars) | Status |
+|--------|-------------|-------------------|--------|
+| instrumenten | 114-204ms | 237ms | ✅ |
+| apparaat | 172ms | 215ms | ✅ |
+| inkoop | 180-480ms | 175-312ms | ✅ |
+| provincie | 196ms | 228ms | ✅ |
+| gemeente | 191ms | 598ms | ✅ |
+| publiek | 222ms | 247ms | ✅ |
+| integraal | 190-380ms | 181-226ms | ✅ |
 
-**Note:** inkoop/integraal over 500ms target, added to backlog for optimization.
+**Optimizations applied:** Materialized views, pg_trgm + GIN indexes, source table indexes, entity resolution (451,445 unique recipients).
 
 ---
 
