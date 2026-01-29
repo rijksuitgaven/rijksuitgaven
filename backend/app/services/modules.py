@@ -272,6 +272,7 @@ async def _get_from_aggregated_view(
     # Sort field mapping - support "random" for default view (UX-002)
     # Uses pre-computed random_order column for fast random sorting (~50ms vs 3s)
     use_random_threshold = False
+    relevance_select = ""
     if sort_by == "random":
         sort_clause = "ORDER BY random_order"
         # For random sort on first page: use WHERE random_order > threshold
@@ -282,6 +283,19 @@ async def _get_from_aggregated_view(
             where_clauses.append(f"random_order > ${param_idx}")
             params.append(random_threshold)
             param_idx += 1
+    elif search:
+        # When searching: rank by relevance (exact > starts with > word boundary > contains)
+        # Then by amount within each relevance tier
+        relevance_select = f""",
+            CASE
+                WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
+                WHEN UPPER({primary}) LIKE UPPER(${param_idx}) || '%' THEN 2
+                WHEN UPPER({primary}) LIKE '% ' || UPPER(${param_idx}) || '%' THEN 3
+                ELSE 4
+            END AS relevance_score"""
+        params.append(search)
+        param_idx += 1
+        sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
     else:
         sort_field = "totaal"
         if sort_by == "primary":
@@ -309,7 +323,7 @@ async def _get_from_aggregated_view(
             "2019" AS y2019, "2020" AS y2020, "2021" AS y2021,
             "2022" AS y2022, "2023" AS y2023, "2024" AS y2024,
             totaal,
-            row_count
+            row_count{relevance_select}
         FROM {agg_table}
         {where_sql}
         {sort_clause}
@@ -419,8 +433,22 @@ async def _get_from_source_table(
     # NOTE: Source table fallback uses ORDER BY RANDOM() (slow) because it doesn't
     # have pre-computed random_order column. This path is rarely used - aggregated
     # views are preferred and have fast random sorting via random_order column.
+    relevance_select = ""
     if sort_by == "random":
         sort_clause = "ORDER BY RANDOM()"
+    elif search:
+        # When searching: rank by relevance (exact > starts with > word boundary > contains)
+        # Then by amount within each relevance tier
+        relevance_select = f""",
+            CASE
+                WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
+                WHEN UPPER({primary}) LIKE UPPER(${param_idx}) || '%' THEN 2
+                WHEN UPPER({primary}) LIKE '% ' || UPPER(${param_idx}) || '%' THEN 3
+                ELSE 4
+            END AS relevance_score"""
+        params.append(search)
+        param_idx += 1
+        sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
     else:
         sort_field = "totaal"
         if sort_by == "primary":
@@ -439,7 +467,7 @@ async def _get_from_source_table(
             {primary} AS primary_value,
             {year_columns},
             COALESCE(SUM({amount_field}), 0) * {multiplier} AS totaal,
-            COUNT(*) AS row_count
+            COUNT(*) AS row_count{relevance_select}
         FROM {table}
         {where_sql}
         GROUP BY {primary}
@@ -633,6 +661,7 @@ async def get_integraal_data(
     # Sort field mapping - support "random" for default view (UX-002)
     # Uses pre-computed random_order column for fast random sorting (~50ms vs 3s)
     use_random_threshold = False
+    relevance_select = ""
     if sort_by == "random":
         sort_clause = "ORDER BY random_order"
         # For random sort on first page: use WHERE random_order > threshold
@@ -643,6 +672,19 @@ async def get_integraal_data(
             where_clauses.append(f"random_order > ${param_idx}")
             params.append(random_threshold)
             param_idx += 1
+    elif search:
+        # When searching: rank by relevance (exact > starts with > word boundary > contains)
+        # Then by amount within each relevance tier
+        relevance_select = f""",
+            CASE
+                WHEN UPPER(ontvanger) = UPPER(${param_idx}) THEN 1
+                WHEN UPPER(ontvanger) LIKE UPPER(${param_idx}) || '%' THEN 2
+                WHEN UPPER(ontvanger) LIKE '% ' || UPPER(${param_idx}) || '%' THEN 3
+                ELSE 4
+            END AS relevance_score"""
+        params.append(search)
+        param_idx += 1
+        sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
     else:
         sort_field = "totaal"
         if sort_by == "primary":
@@ -675,7 +717,7 @@ async def get_integraal_data(
             "2022" AS y2022,
             "2023" AS y2023,
             "2024" AS y2024,
-            totaal
+            totaal{relevance_select}
         FROM universal_search
         {where_sql}
         {sort_clause}
@@ -828,18 +870,24 @@ async def get_module_autocomplete(
     current_module_results = []
     other_modules_results = []
 
-    # 1. Search current module's aggregated view
+    # 1. Search current module's aggregated view with relevance ranking
     if agg_table:
         query = f"""
             SELECT
                 {primary} AS name,
-                totaal
+                totaal,
+                CASE
+                    WHEN UPPER({primary}) = UPPER($1) THEN 1
+                    WHEN UPPER({primary}) LIKE UPPER($1) || '%' THEN 2
+                    WHEN UPPER({primary}) LIKE '% ' || UPPER($1) || '%' THEN 3
+                    ELSE 4
+                END AS relevance_score
             FROM {agg_table}
-            WHERE {primary} ILIKE $1
-            ORDER BY totaal DESC
-            LIMIT $2
+            WHERE {primary} ILIKE $2
+            ORDER BY relevance_score ASC, totaal DESC
+            LIMIT $3
         """
-        rows = await fetch_all(query, f"%{search}%", limit)
+        rows = await fetch_all(query, search, f"%{search}%", limit)
 
         for row in rows:
             current_module_results.append({
@@ -868,17 +916,23 @@ async def get_module_autocomplete(
     if module.lower() in module_display_names:
         module_variants.update(v.lower() for v in module_display_names[module.lower()])
 
-    # Query universal_search for matching recipients
+    # Query universal_search for matching recipients with relevance ranking
     universal_query = """
         SELECT
             ontvanger AS name,
-            sources
+            sources,
+            CASE
+                WHEN UPPER(ontvanger) = UPPER($1) THEN 1
+                WHEN UPPER(ontvanger) LIKE UPPER($1) || '%' THEN 2
+                WHEN UPPER(ontvanger) LIKE '% ' || UPPER($1) || '%' THEN 3
+                ELSE 4
+            END AS relevance_score
         FROM universal_search
-        WHERE ontvanger ILIKE $1
-        ORDER BY totaal DESC
-        LIMIT $2
+        WHERE ontvanger ILIKE $2
+        ORDER BY relevance_score ASC, totaal DESC
+        LIMIT $3
     """
-    universal_rows = await fetch_all(universal_query, f"%{search}%", limit * 2)
+    universal_rows = await fetch_all(universal_query, search, f"%{search}%", limit * 2)
 
     for row in universal_rows:
         name = row["name"]
@@ -919,14 +973,20 @@ async def get_integraal_autocomplete(
         SELECT
             ontvanger AS name,
             totaal,
-            sources
+            sources,
+            CASE
+                WHEN UPPER(ontvanger) = UPPER($1) THEN 1
+                WHEN UPPER(ontvanger) LIKE UPPER($1) || '%' THEN 2
+                WHEN UPPER(ontvanger) LIKE '% ' || UPPER($1) || '%' THEN 3
+                ELSE 4
+            END AS relevance_score
         FROM universal_search
-        WHERE ontvanger ILIKE $1
-        ORDER BY totaal DESC
-        LIMIT $2
+        WHERE ontvanger ILIKE $2
+        ORDER BY relevance_score ASC, totaal DESC
+        LIMIT $3
     """
 
-    rows = await fetch_all(query, f"%{search}%", limit)
+    rows = await fetch_all(query, search, f"%{search}%", limit)
 
     results = []
     for row in rows:
