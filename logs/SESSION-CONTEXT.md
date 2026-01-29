@@ -915,4 +915,8 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Header updated to show logo icon + text (icon only on mobile)
 - Cleaned up default Next.js placeholder assets
 
-**Next:** Continue Week 6 - User Auth (Magic Link, user migration, Overzicht page)
+**Next Steps:**
+1. Header design refinement (logo + navigation styling)
+2. Search results UX (show why results matched)
+3. Week 6 - User Auth (Magic Link, user migration)
+4. Overzicht page

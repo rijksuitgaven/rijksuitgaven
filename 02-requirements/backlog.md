@@ -83,6 +83,31 @@ Allow users to download a screenshot/image of current view for reports and prese
 
 ---
 
+### Search on Other Fields (Regeling, Omschrijving)
+
+**Priority:** Medium
+**Added:** 2026-01-29
+**Sprint:** UI/UX Sprint
+
+**Problem:**
+When search matches on fields OTHER than Ontvanger (e.g., Regeling, Omschrijving), the current UI can't show why that result appeared.
+
+**Example:**
+- Search: "politie"
+- Match: Regeling "Subsidieregeling Politiewerk"
+- Ontvanger shown: "Gemeente Amsterdam"
+- User confusion: "Why is Amsterdam in my politie search?"
+
+**Solutions to explore:**
+1. Show "Matched on: Regeling" indicator
+2. Show snippet of matched field below Ontvanger
+3. Separate section for "Also found in Regelingen"
+4. Highlight matched terms in expandable row
+
+**Design doc:** `docs/plans/2026-01-29-search-relevance-ranking.md` (deferred section)
+
+---
+
 ### Full URL State Restoration
 
 **Priority:** Medium
