@@ -198,8 +198,17 @@ async def _get_from_aggregated_view(
 
     # Sort field mapping - support "random" for default view (UX-002)
     # Uses pre-computed random_order column for fast random sorting (~50ms vs 3s)
+    use_random_threshold = False
     if sort_by == "random":
         sort_clause = "ORDER BY random_order"
+        # For random sort on first page: use WHERE random_order > threshold
+        # This is faster than OFFSET because it uses the index directly
+        if offset == 0:
+            use_random_threshold = True
+            random_threshold = random.random() * 0.9  # 0-0.9 to ensure enough rows after
+            where_clauses.append(f"random_order > ${param_idx}")
+            params.append(random_threshold)
+            param_idx += 1
     else:
         sort_field = "totaal"
         if sort_by == "primary":
@@ -211,21 +220,13 @@ async def _get_from_aggregated_view(
         sort_direction = "DESC" if sort_order == "desc" else "ASC"
         sort_clause = f"ORDER BY {sort_field} {sort_direction}"
 
-    # Store params for count query
-    count_params = params.copy()
+    # Rebuild where_sql after potential random_order addition
+    where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
-    # Count query - run first for random offset calculation
-    count_query = f"SELECT COUNT(*) FROM {agg_table} {where_sql}"
-    total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
-    total = total or 0
-
-    # For random sort: use a random offset to show different results each time
-    # This works because data is pre-sorted by random_order column
-    effective_offset = offset
-    if sort_by == "random" and offset == 0 and total > limit:
-        # Pick a random starting point in the data
-        max_offset = total - limit
-        effective_offset = random.randint(0, max_offset)
+    # Store params for count query (without random threshold for accurate count)
+    count_where = [c for c in where_clauses if "random_order" not in c]
+    count_where_sql = f"WHERE {' AND '.join(count_where)}" if count_where else ""
+    count_params = [p for i, p in enumerate(params) if i < len(params) - (1 if use_random_threshold else 0)]
 
     # Main query from aggregated view
     query = f"""
@@ -241,10 +242,14 @@ async def _get_from_aggregated_view(
         {sort_clause}
         LIMIT ${param_idx} OFFSET ${param_idx + 1}
     """
-    params.extend([limit, effective_offset])
+    params.extend([limit, offset])
 
-    # Execute query
+    # Count query (without random threshold for accurate total)
+    count_query = f"SELECT COUNT(*) FROM {agg_table} {count_where_sql}"
+
+    # Execute queries
     rows = await fetch_all(query, *params)
+    total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
 
     # Transform rows
     result = []
@@ -514,12 +519,19 @@ async def get_integraal_data(
         ])
         where_clauses.append(f"({year_count_expr}) >= {min_years}")
 
-    where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
-
     # Sort field mapping - support "random" for default view (UX-002)
     # Uses pre-computed random_order column for fast random sorting (~50ms vs 3s)
+    use_random_threshold = False
     if sort_by == "random":
         sort_clause = "ORDER BY random_order"
+        # For random sort on first page: use WHERE random_order > threshold
+        # This is faster than OFFSET because it uses the index directly
+        if offset == 0:
+            use_random_threshold = True
+            random_threshold = random.random() * 0.9  # 0-0.9 to ensure enough rows after
+            where_clauses.append(f"random_order > ${param_idx}")
+            params.append(random_threshold)
+            param_idx += 1
     else:
         sort_field = "totaal"
         if sort_by == "primary":
@@ -530,21 +542,13 @@ async def get_integraal_data(
         sort_direction = "DESC" if sort_order == "desc" else "ASC"
         sort_clause = f"ORDER BY {sort_field} {sort_direction}"
 
-    # Store params for count query
-    count_params = params.copy()
+    # Rebuild where_sql after potential random_order addition
+    where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
-    # Count query - run first for random offset calculation
-    count_query = f"SELECT COUNT(*) FROM universal_search {where_sql}"
-    total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
-    total = total or 0
-
-    # For random sort: use a random offset to show different results each time
-    # This works because data is pre-sorted by random_order column
-    effective_offset = offset
-    if sort_by == "random" and offset == 0 and total > limit:
-        # Pick a random starting point in the data
-        max_offset = total - limit
-        effective_offset = random.randint(0, max_offset)
+    # Store params for count query (without random threshold for accurate count)
+    count_where = [c for c in where_clauses if "random_order" not in c]
+    count_where_sql = f"WHERE {' AND '.join(count_where)}" if count_where else ""
+    count_params = [p for i, p in enumerate(params) if i < len(params) - (1 if use_random_threshold else 0)]
 
     query = f"""
         SELECT
@@ -566,10 +570,14 @@ async def get_integraal_data(
         {sort_clause}
         LIMIT ${param_idx} OFFSET ${param_idx + 1}
     """
-    params.extend([limit, effective_offset])
+    params.extend([limit, offset])
 
-    # Execute query
+    # Count query (without random threshold for accurate total)
+    count_query = f"SELECT COUNT(*) FROM universal_search {count_where_sql}"
+
+    # Execute queries
     rows = await fetch_all(query, *params)
+    total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
 
     result = []
     for row in rows:
