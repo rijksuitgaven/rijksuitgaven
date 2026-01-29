@@ -61,20 +61,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/app/icon.svg** ⭐ CREATED (2026-01-29)
-   Favicon for browser tabs (auto-detected by Next.js)
+1. **app/src/components/header/header.tsx** ⭐ MAJOR UPDATE (2026-01-29)
+   Visual refresh: 2-row compact layout, grouped tabs, logo fix
 
-2. **app/src/app/apple-icon.png** ⭐ CREATED (2026-01-29)
-   Apple touch icon (180×180, auto-detected)
+2. **app/src/app/globals.css** ⭐ UPDATED (2026-01-29)
+   Visual refresh: page background #E1EAF2, --totaal-bg variable
 
-3. **app/public/logo.png** ⭐ CREATED (2026-01-29)
-   Full logo with text for light backgrounds
+3. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-29)
+   Visual refresh: navy header, Totaal column styling
 
-4. **app/src/components/header/header.tsx** ⭐ UPDATED (2026-01-29)
-   Added logo image, removed SearchBar (consolidated into filter panel)
+4. **docs/plans/2026-01-29-visual-refresh-design.md** ⭐ CREATED (2026-01-29)
+   Design specification for header, background, table styling
 
-5. **app/src/components/filter-panel/filter-panel.tsx** ⭐ MAJOR UPDATE (2026-01-29)
-   Module-specific autocomplete with two-section dropdown
+5. **app/public/logo-icon.png** ⭐ CREATED (2026-01-29)
+   Color icon for header (white background)
 
 ---
 
@@ -944,6 +944,15 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
   - Deployed & tested: "politie" shows Politie first, then Nationale Politie (€17.2B) near top ✅
 - **V1.1b Roadmap:** Embeddings (Cohere embed-multilingual-v3, ~€1/month)
 - Design document: `docs/plans/2026-01-29-semantic-search-design.md`
+
+**Visual Refresh COMPLETE (Session 11):**
+- Header redesign: 2-row compact layout (~100px), grouped tabs with gaps
+- Page background: White → #E1EAF2 (Gray Light)
+- Table header: Navy #0E3261 with white text
+- Totaal column: Bold + #D0DEEA background tint
+- Logo fix: `logo-icon.png` for white header background
+- Design document: `docs/plans/2026-01-29-visual-refresh-design.md`
+- Build verified ✅, Deployed ✅
 
 **Next Steps:**
 1. Week 6 - User Auth (Magic Link, user migration)
