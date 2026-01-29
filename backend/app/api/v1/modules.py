@@ -105,49 +105,62 @@ async def list_modules():
 # Autocomplete Endpoint
 # =============================================================================
 
-class AutocompleteResult(BaseModel):
-    """Autocomplete result item."""
+class CurrentModuleResult(BaseModel):
+    """Recipient result from current module."""
     name: str
     totaal: int
-    sources: list[str] = []
+
+
+class OtherModulesResult(BaseModel):
+    """Recipient result from other modules."""
+    name: str
+    modules: list[str] = []
 
 
 class AutocompleteResponse(BaseModel):
-    """Autocomplete response."""
+    """Autocomplete response with two sections."""
     success: bool = True
-    results: list[AutocompleteResult] = []
+    current_module: list[CurrentModuleResult] = []
+    other_modules: list[OtherModulesResult] = []
 
 
 @router.get("/{module}/autocomplete", response_model=AutocompleteResponse)
 async def module_autocomplete(
     module: ModuleName,
     q: str = Query(..., min_length=2, max_length=200, description="Search query"),
-    limit: int = Query(8, ge=1, le=20, description="Max results"),
+    limit: int = Query(5, ge=1, le=10, description="Max results per section"),
 ):
     """
     Get autocomplete suggestions for a specific module.
 
-    Returns recipients/entities from the specified module that match the query.
-    Results include which other modules the recipient appears in (for "Ook in" badges).
+    Returns two sections:
+    1. current_module: Recipients matching search IN this module (with amounts)
+    2. other_modules: Recipients matching search in OTHER modules (with module badges)
 
-    This searches the same data as the main table, ensuring autocomplete
-    results match what users will see when they press Enter.
+    This ensures "what you see is what you get" - selecting a current_module
+    result will show that recipient in the table.
     """
     try:
         if module.value == "integraal":
-            results = await get_integraal_autocomplete(q, limit)
+            data = await get_integraal_autocomplete(q, limit)
         else:
-            results = await get_module_autocomplete(module.value, q, limit)
+            data = await get_module_autocomplete(module.value, q, limit)
 
         return AutocompleteResponse(
             success=True,
-            results=[
-                AutocompleteResult(
+            current_module=[
+                CurrentModuleResult(
                     name=r["name"],
-                    totaal=r["totaal"],
-                    sources=r["sources"],
+                    totaal=r.get("totaal", 0),
                 )
-                for r in results
+                for r in data.get("current_module", [])
+            ],
+            other_modules=[
+                OtherModulesResult(
+                    name=r["name"],
+                    modules=r.get("modules", []),
+                )
+                for r in data.get("other_modules", [])
             ],
         )
     except ValueError as e:

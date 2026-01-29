@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, X, SlidersHorizontal, Check, ChevronDown, Loader2, FileText, User } from 'lucide-react'
+import { Search, X, SlidersHorizontal, Check, ChevronDown, Loader2, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatAmount } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
@@ -21,24 +21,17 @@ interface FilterConfig {
   options?: { value: string; label: string }[]
 }
 
-interface RecipientResult {
-  type: 'recipient'
+// Current module result (with amount)
+interface CurrentModuleResult {
   name: string
-  sources: string[]
-  source_count: number
   totaal: number
 }
 
-interface KeywordResult {
-  type: 'keyword'
-  keyword: string
-  field: string
-  fieldLabel: string
-  module: string
-  moduleLabel: string
+// Other modules result (with module badges)
+interface OtherModulesResult {
+  name: string
+  modules: string[]
 }
-
-type SearchResultItem = RecipientResult | KeywordResult
 
 // =============================================================================
 // Module filter configuration
@@ -293,8 +286,8 @@ export function FilterPanel({
   const [isExpanded, setIsExpanded] = useState(false)
 
   // Autocomplete state
-  const [keywords, setKeywords] = useState<KeywordResult[]>([])
-  const [recipients, setRecipients] = useState<RecipientResult[]>([])
+  const [currentModuleResults, setCurrentModuleResults] = useState<CurrentModuleResult[]>([])
+  const [otherModulesResults, setOtherModulesResults] = useState<OtherModulesResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
@@ -302,61 +295,47 @@ export function FilterPanel({
 
   const moduleFilters = useMemo(() => MODULE_FILTERS[module] ?? [], [module])
 
-  // Combined results for keyboard navigation (recipients first, then keywords)
-  const allResults = useMemo<SearchResultItem[]>(
-    () => [...recipients, ...keywords],
-    [recipients, keywords]
-  )
-  const totalResults = allResults.length
+  // Combined results for keyboard navigation
+  const totalResults = currentModuleResults.length + otherModulesResults.length
 
   // =============================================================================
   // Autocomplete search - uses module-specific endpoint
   // =============================================================================
 
-  async function fetchSearchResults(q: string): Promise<{ recipients: RecipientResult[], keywords: KeywordResult[] }> {
+  async function fetchSearchResults(q: string): Promise<{
+    currentModule: CurrentModuleResult[]
+    otherModules: OtherModulesResult[]
+  }> {
     try {
       // Call the module-specific autocomplete endpoint
-      // This searches the same data as the table, ensuring results match
+      // Returns two sections: current module results and other modules results
       const response = await fetch(
         `${API_BASE_URL}/api/v1/modules/${module}/autocomplete?` +
         new URLSearchParams({ q }),
       )
       if (!response.ok) {
-        return { recipients: [], keywords: [] }
+        return { currentModule: [], otherModules: [] }
       }
       const data = await response.json()
 
-      // Map results to RecipientResult format
-      const recipients = (data.results || []).map((r: { name: string; totaal: number; sources: string[] }) => ({
-        type: 'recipient' as const,
-        name: r.name,
-        sources: r.sources || [],
-        source_count: r.sources?.length || 0,
-        totaal: r.totaal,
-      }))
-
-      // Keywords are no longer returned by module autocomplete
-      // (they were from global Typesense search which we've replaced)
       return {
-        recipients,
-        keywords: [],
+        currentModule: data.current_module || [],
+        otherModules: data.other_modules || [],
       }
     } catch (error) {
       if (error instanceof Error && error.name !== 'AbortError') {
         console.error('[FilterPanel] fetchSearchResults failed:', error.message)
       }
-      return { recipients: [], keywords: [] }
+      return { currentModule: [], otherModules: [] }
     }
   }
-
-  // Note: Fuzzy suggestions now handled by backend (same endpoint, PostgreSQL ILIKE)
 
   // Debounced autocomplete search
   useEffect(() => {
     const searchValue = localFilters.search
     if (searchValue.length < 2) {
-      setKeywords([])
-      setRecipients([])
+      setCurrentModuleResults([])
+      setOtherModulesResults([])
       setNoResultsQuery(null)
       setIsDropdownOpen(false)
       return
@@ -365,26 +344,26 @@ export function FilterPanel({
     const timeout = setTimeout(async () => {
       setIsSearching(true)
       try {
-        const { recipients: recipientsData, keywords: keywordsData } = await fetchSearchResults(searchValue)
+        const { currentModule, otherModules } = await fetchSearchResults(searchValue)
 
-        setRecipients(recipientsData)
-        setKeywords(keywordsData)
+        setCurrentModuleResults(currentModule)
+        setOtherModulesResults(otherModules)
 
-        // Show dropdown if we have results, or show "no results" message
-        if (recipientsData.length === 0 && keywordsData.length === 0) {
+        // Show "no results" if nothing found
+        if (currentModule.length === 0 && otherModules.length === 0) {
           setNoResultsQuery(searchValue)
         } else {
           setNoResultsQuery(null)
         }
-        // Always show dropdown when searching (to show results or "no results" message)
+        // Always show dropdown when searching
         setIsDropdownOpen(true)
         setSelectedIndex(-1)
       } catch (error) {
         if (error instanceof Error && error.name !== 'AbortError') {
           console.error('[FilterPanel] Search failed:', error.message)
         }
-        setRecipients([])
-        setKeywords([])
+        setCurrentModuleResults([])
+        setOtherModulesResults([])
         setNoResultsQuery(null)
       } finally {
         setIsSearching(false)
@@ -466,28 +445,22 @@ export function FilterPanel({
   // Autocomplete selection handlers
   // =============================================================================
 
-  const handleSelectRecipient = useCallback((result: RecipientResult) => {
+  const handleSelectCurrentModule = useCallback((result: CurrentModuleResult) => {
     // Set search to recipient name and close dropdown
     // Stays on current module, filters the table
     setLocalFilters((prev) => ({ ...prev, search: result.name }))
     setIsDropdownOpen(false)
   }, [])
 
-  const handleSelectKeyword = useCallback((result: KeywordResult) => {
-    // Set search to keyword and close dropdown
-    setLocalFilters((prev) => ({ ...prev, search: result.keyword }))
-    setIsDropdownOpen(false)
-  }, [])
-
-  const handleNavigateToModule = useCallback((targetModule: string, searchQuery: string) => {
+  const handleSelectOtherModule = useCallback((name: string, targetModule: string) => {
     // Navigate to different module with search applied
-    router.push(`/${targetModule}?q=${encodeURIComponent(searchQuery)}`)
+    router.push(`/${targetModule}?q=${encodeURIComponent(name)}`)
   }, [router])
 
   const handleClearSearch = useCallback(() => {
     setLocalFilters((prev) => ({ ...prev, search: '' }))
-    setKeywords([])
-    setRecipients([])
+    setCurrentModuleResults([])
+    setOtherModulesResults([])
     setIsDropdownOpen(false)
     inputRef.current?.focus()
   }, [])
@@ -510,12 +483,19 @@ export function FilterPanel({
         break
       case 'Enter':
         e.preventDefault()
-        if (selectedIndex >= 0 && allResults[selectedIndex]) {
-          const selected = allResults[selectedIndex]
-          if (selected.type === 'recipient') {
-            handleSelectRecipient(selected)
+        if (selectedIndex >= 0) {
+          // Determine which section and item
+          if (selectedIndex < currentModuleResults.length) {
+            handleSelectCurrentModule(currentModuleResults[selectedIndex])
           } else {
-            handleSelectKeyword(selected)
+            const otherIndex = selectedIndex - currentModuleResults.length
+            if (otherModulesResults[otherIndex]) {
+              const result = otherModulesResults[otherIndex]
+              // Navigate to first module in the list
+              if (result.modules.length > 0) {
+                handleSelectOtherModule(result.name, result.modules[0])
+              }
+            }
           }
         }
         break
@@ -524,7 +504,7 @@ export function FilterPanel({
         setSelectedIndex(-1)
         break
     }
-  }, [isDropdownOpen, totalResults, selectedIndex, allResults, handleSelectRecipient, handleSelectKeyword])
+  }, [isDropdownOpen, totalResults, selectedIndex, currentModuleResults, otherModulesResults, handleSelectCurrentModule, handleSelectOtherModule])
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -601,7 +581,7 @@ export function FilterPanel({
               value={localFilters.search}
               onChange={(e) => handleSearchChange(e.target.value)}
               onKeyDown={handleKeyDown}
-              onFocus={() => (keywords.length > 0 || recipients.length > 0) && setIsDropdownOpen(true)}
+              onFocus={() => (currentModuleResults.length > 0 || otherModulesResults.length > 0) && setIsDropdownOpen(true)}
               placeholder="Zoek op ontvanger, regeling..."
               aria-label="Zoeken"
               aria-expanded={isDropdownOpen}
@@ -635,17 +615,8 @@ export function FilterPanel({
               className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-[var(--border)] z-50 overflow-hidden"
             >
               <div className="max-h-96 overflow-y-auto">
-                {/* "Did you mean" suggestion */}
-                {noResultsQuery && recipients.length > 0 && (
-                  <div className="px-4 py-2 bg-[var(--warning)]/10 border-b border-[var(--border)]">
-                    <span className="text-sm text-[var(--navy-dark)]">
-                      Geen exacte resultaten voor &ldquo;<strong>{noResultsQuery}</strong>&rdquo;. Bedoelde u:
-                    </span>
-                  </div>
-                )}
-
                 {/* No results */}
-                {noResultsQuery && recipients.length === 0 && keywords.length === 0 && (
+                {noResultsQuery && currentModuleResults.length === 0 && otherModulesResults.length === 0 && (
                   <div className="px-4 py-6 text-center">
                     <p className="text-sm text-[var(--navy-dark)]">
                       Geen resultaten voor &ldquo;<strong>{noResultsQuery}</strong>&rdquo;
@@ -656,113 +627,83 @@ export function FilterPanel({
                   </div>
                 )}
 
-                {/* Recipients section */}
-                {recipients.length > 0 && (
+                {/* Current module section */}
+                {currentModuleResults.length > 0 && (
                   <div>
                     <div className="px-4 py-2 text-xs font-semibold text-[var(--navy-medium)] uppercase tracking-wider bg-[var(--gray-light)]">
                       <User className="inline h-3 w-3 mr-1.5 -mt-0.5" />
-                      Ontvangers
+                      Ontvangers in {MODULE_LABELS[module] || module}
                     </div>
-                    {recipients.map((result, index) => (
-                      <div
+                    {currentModuleResults.map((result, index) => (
+                      <button
                         key={result.name}
+                        type="button"
+                        onClick={() => handleSelectCurrentModule(result)}
                         className={cn(
-                          'px-4 py-3 hover:bg-[var(--gray-light)] transition-colors border-b border-[var(--border)] last:border-b-0',
+                          'w-full px-4 py-3 text-left hover:bg-[var(--gray-light)] transition-colors border-b border-[var(--border)]',
                           selectedIndex === index && 'bg-[var(--gray-light)]'
                         )}
                       >
-                        <button
-                          type="button"
-                          onClick={() => handleSelectRecipient(result)}
-                          className="w-full text-left"
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1 min-w-0">
-                              <div className="font-medium text-[var(--navy-dark)] truncate">
-                                {result.name}
-                              </div>
-                              {/* Only show "Ook in" for OTHER modules (not the current one) */}
-                              {(() => {
-                                const otherModules = result.sources?.filter(s => s !== module) ?? []
-                                return otherModules.length > 0 && (
-                                  <div className="flex flex-wrap gap-1 mt-1">
-                                    <span className="text-xs text-[var(--muted-foreground)] mr-1">Ook in:</span>
-                                    {otherModules.slice(0, 4).map((source) => (
-                                      <button
-                                        key={source}
-                                        type="button"
-                                        onClick={(e) => {
-                                          e.stopPropagation()
-                                          handleNavigateToModule(source, result.name)
-                                        }}
-                                        className="text-xs px-1.5 py-0.5 bg-[var(--blue-light)]/20 text-[var(--navy-medium)] rounded hover:bg-[var(--blue-light)]/40 transition-colors"
-                                      >
-                                        {MODULE_LABELS[source] || source}
-                                      </button>
-                                    ))}
-                                    {otherModules.length > 4 && (
-                                      <span className="text-xs text-[var(--muted-foreground)]">
-                                        +{otherModules.length - 4}
-                                      </span>
-                                    )}
-                                  </div>
-                                )
-                              })()}
-                            </div>
-                            <div className="text-right">
-                              <div className="text-sm font-medium text-[var(--navy-dark)]">
-                                {formatAmount(result.totaal)}
-                              </div>
-                              <div className="text-xs text-[var(--muted-foreground)]">
-                                totaal
-                              </div>
-                            </div>
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="font-medium text-[var(--navy-dark)] truncate">
+                            {result.name}
                           </div>
-                        </button>
-                      </div>
+                          <div className="text-sm font-medium text-[var(--navy-dark)] whitespace-nowrap">
+                            {formatAmount(result.totaal)}
+                          </div>
+                        </div>
+                      </button>
                     ))}
                   </div>
                 )}
 
-                {/* Keywords section */}
-                {keywords.length > 0 && (
+                {/* Other modules section */}
+                {otherModulesResults.length > 0 && (
                   <div>
                     <div className="px-4 py-2 text-xs font-semibold text-[var(--navy-medium)] uppercase tracking-wider bg-[var(--gray-light)]">
-                      <FileText className="inline h-3 w-3 mr-1.5 -mt-0.5" />
-                      Zoektermen
+                      <User className="inline h-3 w-3 mr-1.5 -mt-0.5" />
+                      Ook in andere modules
                     </div>
-                    {keywords.map((result, index) => {
-                      const adjustedIndex = recipients.length + index
+                    {otherModulesResults.map((result, index) => {
+                      const adjustedIndex = currentModuleResults.length + index
                       return (
-                        <button
-                          key={`${result.keyword}-${result.field}`}
-                          type="button"
-                          onClick={() => handleSelectKeyword(result)}
+                        <div
+                          key={result.name}
                           className={cn(
-                            'w-full px-4 py-2.5 text-left hover:bg-[var(--gray-light)] transition-colors border-b border-[var(--border)]',
+                            'px-4 py-3 hover:bg-[var(--gray-light)] transition-colors border-b border-[var(--border)]',
                             selectedIndex === adjustedIndex && 'bg-[var(--gray-light)]'
                           )}
                         >
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between gap-4">
                             <div className="font-medium text-[var(--navy-dark)] truncate">
-                              {result.keyword}
+                              {result.name}
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-                              <span className="px-1.5 py-0.5 bg-[var(--blue-light)]/20 text-[var(--navy-medium)] rounded">
-                                {result.moduleLabel}
-                              </span>
-                              <span>in {result.fieldLabel}</span>
+                            <div className="flex flex-wrap gap-1 justify-end">
+                              {result.modules.slice(0, 4).map((mod) => (
+                                <button
+                                  key={mod}
+                                  type="button"
+                                  onClick={() => handleSelectOtherModule(result.name, mod)}
+                                  className="text-xs px-1.5 py-0.5 bg-[var(--blue-light)]/20 text-[var(--navy-medium)] rounded hover:bg-[var(--blue-light)]/40 transition-colors"
+                                >
+                                  {MODULE_LABELS[mod] || mod}
+                                </button>
+                              ))}
+                              {result.modules.length > 4 && (
+                                <span className="text-xs text-[var(--muted-foreground)]">
+                                  +{result.modules.length - 4}
+                                </span>
+                              )}
                             </div>
                           </div>
-                        </button>
+                        </div>
                       )
                     })}
                   </div>
                 )}
               </div>
-              <div className="px-4 py-2 bg-[var(--gray-light)] text-xs text-[var(--muted-foreground)] border-t border-[var(--border)] flex items-center justify-between">
+              <div className="px-4 py-2 bg-[var(--gray-light)] text-xs text-[var(--muted-foreground)] border-t border-[var(--border)]">
                 <span>Druk op Enter om te zoeken</span>
-                <span className="text-[var(--navy-medium)]">Tip: druk <kbd className="px-1.5 py-0.5 bg-white rounded border border-[var(--border)] font-mono text-[10px]">/</kbd> om te zoeken</span>
               </div>
             </div>
           )}

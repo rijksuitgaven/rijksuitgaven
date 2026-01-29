@@ -806,18 +806,17 @@ async def get_filter_options(module: str, field: str) -> list[str]:
 async def get_module_autocomplete(
     module: str,
     search: str,
-    limit: int = 8,
-) -> list[dict]:
+    limit: int = 5,
+) -> dict:
     """
-    Get autocomplete suggestions from a specific module.
+    Get autocomplete suggestions for a module.
 
-    This searches the same data as the main table view, ensuring
-    autocomplete results match what the user will see when they press Enter.
+    Returns two sections:
+    1. current_module: Recipients matching search IN the current module (with amounts)
+    2. other_modules: Recipients matching search in OTHER modules (with module badges)
 
-    Returns list of recipients with:
-    - name: recipient/primary value name
-    - totaal: total amount
-    - sources: list of modules this recipient appears in (for "Ook in" badges)
+    This ensures "what you see is what you get" - current module results
+    match what users will see when they press Enter.
     """
     if module not in MODULE_CONFIG:
         raise ValueError(f"Unknown module: {module}")
@@ -826,73 +825,84 @@ async def get_module_autocomplete(
     primary = config["primary_field"]
     agg_table = config.get("aggregated_table")
 
-    if not agg_table:
-        return []
+    current_module_results = []
+    other_modules_results = []
 
-    # Search the aggregated view for matching recipients
-    # Use ILIKE for case-insensitive partial matching
-    query = f"""
+    # 1. Search current module's aggregated view
+    if agg_table:
+        query = f"""
+            SELECT
+                {primary} AS name,
+                totaal
+            FROM {agg_table}
+            WHERE {primary} ILIKE $1
+            ORDER BY totaal DESC
+            LIMIT $2
+        """
+        rows = await fetch_all(query, f"%{search}%", limit)
+
+        for row in rows:
+            current_module_results.append({
+                "name": row["name"],
+                "totaal": int(row["totaal"] or 0),
+            })
+
+    # 2. Search universal_search for recipients in OTHER modules
+    # Exclude recipients already shown in current module
+    current_names = {r["name"].upper() for r in current_module_results}
+
+    # Query universal_search for matching recipients
+    universal_query = """
         SELECT
-            {primary} AS name,
-            totaal
-        FROM {agg_table}
-        WHERE {primary} ILIKE $1
+            ontvanger AS name,
+            sources
+        FROM universal_search
+        WHERE ontvanger ILIKE $1
         ORDER BY totaal DESC
         LIMIT $2
     """
+    universal_rows = await fetch_all(universal_query, f"%{search}%", limit * 2)
 
-    rows = await fetch_all(query, f"%{search}%", limit)
-
-    if not rows:
-        return []
-
-    # For each recipient, look up which modules they appear in
-    # Query universal_search to get sources
-    results = []
-    for row in rows:
+    for row in universal_rows:
         name = row["name"]
-        totaal = int(row["totaal"] or 0)
+        sources = row["sources"].split(",") if row["sources"] else []
 
-        # Look up sources from universal_search
-        # (this table has aggregated data with sources column)
-        sources_query = """
-            SELECT sources, source_count
-            FROM universal_search
-            WHERE ontvanger = $1
-            LIMIT 1
-        """
-        sources_rows = await fetch_all(sources_query, name)
+        # Filter out the current module from sources
+        other_sources = [s for s in sources if s != module]
 
-        if sources_rows and sources_rows[0]["sources"]:
-            sources = sources_rows[0]["sources"].split(",")
-        else:
-            # Fallback: just the current module
-            sources = [module]
+        # Only include if:
+        # - Has sources in other modules
+        # - Not already shown in current module results
+        if other_sources and name.upper() not in current_names:
+            other_modules_results.append({
+                "name": name,
+                "modules": other_sources,
+            })
 
-        results.append({
-            "name": name,
-            "totaal": totaal,
-            "sources": sources,
-        })
+            if len(other_modules_results) >= limit:
+                break
 
-    return results
+    return {
+        "current_module": current_module_results,
+        "other_modules": other_modules_results,
+    }
 
 
 async def get_integraal_autocomplete(
     search: str,
     limit: int = 8,
-) -> list[dict]:
+) -> dict:
     """
     Get autocomplete suggestions from integraal (cross-module) view.
 
-    Returns recipients with their sources from universal_search.
+    For integraal, we show all recipients with their module badges.
+    No "current module" vs "other modules" split since integraal IS cross-module.
     """
     query = """
         SELECT
             ontvanger AS name,
             totaal,
-            sources,
-            source_count
+            sources
         FROM universal_search
         WHERE ontvanger ILIKE $1
         ORDER BY totaal DESC
@@ -907,7 +917,10 @@ async def get_integraal_autocomplete(
         results.append({
             "name": row["name"],
             "totaal": int(row["totaal"] or 0),
-            "sources": sources,
+            "modules": sources,
         })
 
-    return results
+    return {
+        "current_module": results,  # For integraal, all results go in one section
+        "other_modules": [],
+    }
