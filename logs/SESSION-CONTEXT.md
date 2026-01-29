@@ -923,6 +923,9 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Backlog: "Search on Other Fields" (Regeling/Omschrijving matches) - deferred to UI/UX sprint
 - Deployed & tested: "politie" now shows exact matches first ✅
 
+**UI Cleanup (Session 9):**
+- Removed "Alle jaren" dropdown from filter panel (redundant - year columns visible in table)
+
 **Next Steps:**
 1. Header design refinement (logo + navigation styling)
 2. Week 6 - User Auth (Magic Link, user migration)
