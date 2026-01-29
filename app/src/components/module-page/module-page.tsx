@@ -167,7 +167,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
         const effectiveSortBy = isDefaultView && !userHasSorted ? 'random' : sortBy
         const minYears = isDefaultView && !userHasSorted ? 4 : undefined
 
-        const response = await fetchModuleData(moduleId, {
+        // Build params including module-specific filters (provincie, gemeente, etc.)
+        const params: Record<string, unknown> = {
           page,
           per_page: perPage,
           sort_by: effectiveSortBy,
@@ -177,7 +178,16 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           min_bedrag: filters.minBedrag ?? undefined,
           max_bedrag: filters.maxBedrag ?? undefined,
           min_years: minYears,
+        }
+
+        // Add module-specific filters (arrays for multiselect, strings for text)
+        Object.entries(filters).forEach(([key, value]) => {
+          if (!['search', 'jaar', 'minBedrag', 'maxBedrag'].includes(key) && value) {
+            params[key] = value
+          }
         })
+
+        const response = await fetchModuleData(moduleId, params)
         setData(response)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Er ging iets mis')

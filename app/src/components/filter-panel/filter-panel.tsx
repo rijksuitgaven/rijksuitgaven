@@ -1,12 +1,20 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { Search, X, SlidersHorizontal } from 'lucide-react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { Search, X, SlidersHorizontal, Check, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { formatAmount } from '@/lib/format'
+import { API_BASE_URL } from '@/lib/api-config'
 
 // Filter configuration per module
-const MODULE_FILTERS: Record<string, { value: string; label: string; type: 'select' | 'text' }[]> = {
+type FilterType = 'text' | 'multiselect'
+
+interface FilterConfig {
+  value: string
+  label: string
+  type: FilterType
+}
+
+const MODULE_FILTERS: Record<string, FilterConfig[]> = {
   instrumenten: [
     { value: 'regeling', label: 'Regeling', type: 'text' },
     { value: 'artikel', label: 'Artikel', type: 'text' },
@@ -21,10 +29,10 @@ const MODULE_FILTERS: Record<string, { value: string; label: string; type: 'sele
     { value: 'categorie', label: 'Categorie', type: 'text' },
   ],
   provincie: [
-    { value: 'provincie', label: 'Provincie', type: 'text' },
+    { value: 'provincie', label: 'Provincie', type: 'multiselect' },
   ],
   gemeente: [
-    { value: 'gemeente', label: 'Gemeente', type: 'text' },
+    { value: 'gemeente', label: 'Gemeente', type: 'multiselect' },
     { value: 'beleidsterrein', label: 'Beleidsterrein', type: 'text' },
   ],
   publiek: [
@@ -41,7 +49,173 @@ export interface FilterValues {
   jaar: number | null
   minBedrag: number | null
   maxBedrag: number | null
-  [key: string]: string | number | null
+  [key: string]: string | string[] | number | null
+}
+
+// Multi-select dropdown component
+interface MultiSelectProps {
+  module: string
+  field: string
+  label: string
+  value: string[]
+  onChange: (values: string[]) => void
+}
+
+function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const [options, setOptions] = useState<string[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Fetch options on mount
+  useEffect(() => {
+    async function fetchOptions() {
+      setIsLoading(true)
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/v1/modules/${module}/filters/${field}`)
+        if (response.ok) {
+          const data = await response.json()
+          setOptions(data)
+        }
+      } catch {
+        // Silent failure
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchOptions()
+  }, [module, field])
+
+  // Close on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const filteredOptions = options.filter(opt =>
+    opt.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const toggleOption = (option: string) => {
+    if (value.includes(option)) {
+      onChange(value.filter(v => v !== option))
+    } else {
+      onChange([...value, option])
+    }
+  }
+
+  const clearAll = () => {
+    onChange([])
+    setSearchQuery('')
+  }
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          'w-full px-3 py-2 border rounded-lg text-sm text-left flex items-center justify-between transition-colors',
+          'border-[var(--border)] bg-white hover:border-[var(--navy-medium)]',
+          'focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)]',
+          value.length > 0 && 'border-[var(--navy-medium)]'
+        )}
+      >
+        <span className={cn(
+          'truncate',
+          value.length === 0 && 'text-[var(--muted-foreground)]'
+        )}>
+          {value.length === 0
+            ? `Selecteer ${label.toLowerCase()}...`
+            : value.length === 1
+              ? value[0]
+              : `${value.length} geselecteerd`
+          }
+        </span>
+        <ChevronDown className={cn(
+          'h-4 w-4 text-[var(--muted-foreground)] transition-transform',
+          isOpen && 'rotate-180'
+        )} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-[var(--border)] rounded-lg shadow-lg overflow-hidden">
+          {/* Search input */}
+          <div className="p-2 border-b border-[var(--border)]">
+            <div className="relative">
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--muted-foreground)]" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Zoek..."
+                className="w-full pl-7 pr-3 py-1.5 text-sm border border-[var(--border)] rounded focus:outline-none focus:ring-1 focus:ring-[var(--navy-medium)]"
+              />
+            </div>
+          </div>
+
+          {/* Selected count and clear button */}
+          {value.length > 0 && (
+            <div className="px-3 py-2 bg-[var(--gray-light)] flex items-center justify-between text-xs">
+              <span className="text-[var(--navy-dark)] font-medium">
+                {value.length} geselecteerd
+              </span>
+              <button
+                type="button"
+                onClick={clearAll}
+                className="text-[var(--error)] hover:underline"
+              >
+                Wis selectie
+              </button>
+            </div>
+          )}
+
+          {/* Options list */}
+          <div className="max-h-48 overflow-y-auto">
+            {isLoading ? (
+              <div className="px-3 py-4 text-sm text-center text-[var(--muted-foreground)]">
+                Laden...
+              </div>
+            ) : filteredOptions.length === 0 ? (
+              <div className="px-3 py-4 text-sm text-center text-[var(--muted-foreground)]">
+                Geen resultaten
+              </div>
+            ) : (
+              filteredOptions.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => toggleOption(option)}
+                  className={cn(
+                    'w-full px-3 py-2 text-sm text-left flex items-center gap-2 hover:bg-[var(--gray-light)] transition-colors',
+                    value.includes(option) && 'bg-[var(--blue-light)]/10'
+                  )}
+                >
+                  <div className={cn(
+                    'w-4 h-4 border rounded flex items-center justify-center flex-shrink-0',
+                    value.includes(option)
+                      ? 'bg-[var(--navy-dark)] border-[var(--navy-dark)]'
+                      : 'border-[var(--border)]'
+                  )}>
+                    {value.includes(option) && (
+                      <Check className="h-3 w-3 text-white" />
+                    )}
+                  </div>
+                  <span className="truncate">{option}</span>
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }
 
 interface FilterPanelProps {
@@ -109,8 +283,13 @@ export function FilterPanel({
     })
   }, [])
 
-  const handleModuleFilterChange = useCallback((field: string, value: string) => {
-    setLocalFilters((prev) => ({ ...prev, [field]: value || null }))
+  const handleModuleFilterChange = useCallback((field: string, value: string | string[]) => {
+    if (Array.isArray(value)) {
+      // Multi-select: store empty array as null for cleaner state
+      setLocalFilters((prev) => ({ ...prev, [field]: value.length > 0 ? value : null }))
+    } else {
+      setLocalFilters((prev) => ({ ...prev, [field]: value || null }))
+    }
   }, [])
 
   const handleClearAll = useCallback(() => {
@@ -131,7 +310,12 @@ export function FilterPanel({
     localFilters.jaar,
     localFilters.minBedrag,
     localFilters.maxBedrag,
-    ...moduleFilters.map((f) => localFilters[f.value]),
+    ...moduleFilters.map((f) => {
+      const val = localFilters[f.value]
+      // Arrays: count as active if has items
+      if (Array.isArray(val)) return val.length > 0 ? val : null
+      return val
+    }),
   ].filter(Boolean).length
 
   const hasActiveFilters =
@@ -139,7 +323,11 @@ export function FilterPanel({
     localFilters.jaar ||
     localFilters.minBedrag ||
     localFilters.maxBedrag ||
-    moduleFilters.some((f) => localFilters[f.value])
+    moduleFilters.some((f) => {
+      const val = localFilters[f.value]
+      if (Array.isArray(val)) return val.length > 0
+      return Boolean(val)
+    })
 
   return (
     <div className="bg-white border border-[var(--border)] rounded-lg p-4 mb-6">
@@ -258,13 +446,23 @@ export function FilterPanel({
               <label className="text-sm font-medium text-[var(--navy-dark)]">
                 {filter.label}
               </label>
-              <input
-                type="text"
-                value={(localFilters[filter.value] as string) ?? ''}
-                onChange={(e) => handleModuleFilterChange(filter.value, e.target.value)}
-                placeholder={`Filter op ${filter.label.toLowerCase()}...`}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)]"
-              />
+              {filter.type === 'multiselect' ? (
+                <MultiSelect
+                  module={module}
+                  field={filter.value}
+                  label={filter.label}
+                  value={(localFilters[filter.value] as string[]) ?? []}
+                  onChange={(values) => handleModuleFilterChange(filter.value, values)}
+                />
+              ) : (
+                <input
+                  type="text"
+                  value={(localFilters[filter.value] as string) ?? ''}
+                  onChange={(e) => handleModuleFilterChange(filter.value, e.target.value)}
+                  placeholder={`Filter op ${filter.label.toLowerCase()}...`}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)]"
+                />
+              )}
             </div>
           ))}
         </div>

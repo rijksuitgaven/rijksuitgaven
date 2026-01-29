@@ -81,7 +81,13 @@ export async function fetchModuleData(
         !['page', 'per_page', 'limit', 'offset'].includes(key)) {
       // Map 'search' to 'q' (backend expects 'q' for search query)
       const paramKey = key === 'search' ? 'q' : key
-      searchParams.append(paramKey, String(value))
+
+      // Handle array values (for multi-select filters like provincie, gemeente)
+      if (Array.isArray(value)) {
+        value.forEach((v) => searchParams.append(paramKey, String(v)))
+      } else {
+        searchParams.append(paramKey, String(value))
+      }
     }
   })
 

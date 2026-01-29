@@ -86,5 +86,8 @@ export interface ModuleQueryParams {
   min_bedrag?: number
   max_bedrag?: number
   min_years?: number  // Filter recipients with data in X+ years (UX-002)
-  [key: string]: string | number | undefined
+  // Multi-select filters (arrays)
+  provincie?: string[]  // For provincie module
+  gemeente?: string[]   // For gemeente module
+  [key: string]: string | string[] | number | undefined
 }
