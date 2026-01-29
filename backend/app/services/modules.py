@@ -786,13 +786,14 @@ async def get_filter_options(module: str, field: str) -> list[str]:
         raise ValueError(f"Invalid filter field '{field}' for module '{module}'")
 
     # Query distinct values (excluding NULL and empty strings)
+    # Cast to text to handle both string and numeric columns uniformly
     query = f"""
-        SELECT DISTINCT {field}
+        SELECT DISTINCT {field}::text AS value
         FROM {table}
         WHERE {field} IS NOT NULL
-          AND {field} != ''
-        ORDER BY {field}
+          AND {field}::text != ''
+        ORDER BY {field}::text
     """
 
     rows = await fetch_all(query)
-    return [row[field] for row in rows]
+    return [row["value"] for row in rows]
