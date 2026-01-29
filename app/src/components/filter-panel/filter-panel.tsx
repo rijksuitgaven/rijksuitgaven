@@ -497,6 +497,10 @@ export function FilterPanel({
               }
             }
           }
+        } else {
+          // No item selected - just close dropdown and blur to show results
+          setIsDropdownOpen(false)
+          inputRef.current?.blur()
         }
         break
       case 'Escape':
