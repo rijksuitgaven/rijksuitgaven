@@ -59,7 +59,7 @@ Which do you prefer?
 
 ### 4. Pre-Commit Audit (Before EVERY Commit)
 
-**Before running `git commit`, ALWAYS perform this audit:**
+**Before running `git commit`, ALWAYS perform this audit AND SHOW IT TO THE USER:**
 
 - [ ] **Documentation audit:** All affected docs updated? SESSION-CONTEXT.md current?
 - [ ] **Requirements check:** Changes align with V1.0 requirements? Don't block V2.0?
@@ -67,9 +67,24 @@ Which do you prefer?
 - [ ] **Clarity check:** Is everything clear and unambiguous? If not, ask first.
 - [ ] **Daily log updated:** Today's work logged in `logs/daily/YYYY-MM-DD.md`?
 
+**Format for showing audit:**
+```
+## Pre-Commit Audit
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Documentation audit | ✅/❌ | [what was updated or what's missing] |
+| Requirements check | ✅/❌ | [V1/V2 alignment] |
+| No stale info | ✅/❌ | [any conflicts found] |
+| Clarity check | ✅/❌ | [any ambiguity] |
+| Daily log updated | ✅/❌ | [logged or not] |
+
+Ready to commit: YES/NO
+```
+
 **If ANY checkbox fails:** Fix it BEFORE committing. If unsure, ask the founder.
 
-**This is not optional.** Every commit must pass this audit. No exceptions.
+**MANDATORY:** Show this audit table to the user before every commit. Do not commit without user seeing the audit results.
 
 ---
 
