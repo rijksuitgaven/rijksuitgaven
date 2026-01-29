@@ -947,12 +947,13 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 **Visual Refresh COMPLETE (Session 11):**
 - Header redesign: 2-row compact layout (~100px), grouped tabs with gaps
+- Full module names: Financiële instrumenten, Provinciale subsidieregisters, etc.
 - Page background: White → #E1EAF2 (Gray Light)
-- Table header: Navy #0E3261 with white text
+- Table header: Navy #0E3261, rounded corners (pill shape), 14px semibold
+- Year columns: Right-aligned (header + data cells)
 - Totaal column: Bold + #D0DEEA background tint
 - Logo fix: `logo-icon.png` for white header background
 - Module pages: Gradient background + white content card
-- Table header fix: White text for collapsed years (2016-20)
 - Design document: `docs/plans/2026-01-29-visual-refresh-design.md`
 - Build verified ✅, Deployed ✅
 
