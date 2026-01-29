@@ -816,23 +816,58 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-26 - Weeks 3, 4 & 5 complete, UX enhancements, search requirements audit
 
 **This Session:** 2026-01-29 - **MINI SPRINT: CODE REVIEW & SECURITY FIXES**
-- **Golden Rules added to CLAUDE.md:** 4 non-negotiable rules (Requirements Check, Documentation Sync, Ask Don't Assume, Pre-Commit Audit)
-- **CRITICAL FIX:** Typesense API key moved to backend proxy (`/api/v1/search/autocomplete`)
-- **CRITICAL FIX:** XSS risk in CSV filename sanitized
-- **Security:** API key rotated, removed from documentation
-- **TypeScript:** Fixed `any` types with proper Column and ColumnMeta interfaces
-- **Accessibility:** Added aria-labels to search-bar, filter-panel, data-table buttons
-- **Validation:** Added min/max bedrag filter validation
-- **Centralized:** API_BASE_URL in single config file
-- **UX-002 FIX:** Randomized default view - `sort_by=random`, `min_years=4`, resets on module switch
-- **UX-002 PERF:** Pre-computed `random_order` column in all 7 materialized views (~50ms vs 3000ms)
-- **UX-002 TRUE RANDOM:** `WHERE random_order > threshold` for different results each request
-- **Backlog:** Railway private networking (deferred - public URL works)
-- **Created:** `/document` skill for comprehensive session documentation
-- **BUG FIX:** Search not filtering - frontend `search` param mapped to backend `q` param
-- **BUG FIX:** pgbouncer prepared statements - disabled `statement_cache_size` for transaction mode
-- **UX:** Default view shows "Random resultaten" instead of count
-- **UX:** Search dropdown reorder - Ontvangers before Zoektermen
-- **FEATURE:** Multi-select filters for Provincie (10 options) and Gemeente (13 options)
-- **Backend endpoint:** `GET /api/v1/modules/{module}/filters/{field}` for dropdown options
-- **Next:** Continue Week 6 - User Auth (Magic Link, user migration, Overzicht page)
+
+**Golden Rules added to CLAUDE.md:** 5 non-negotiable rules:
+1. Requirements Check - Verify against V1/V2 requirements before any proposal
+2. Documentation Sync - Update all affected docs immediately after any change
+3. Ask, Don't Assume - Stop and ask when in doubt
+4. Pre-Commit Audit - Audit docs and requirements before every commit
+5. Model Selection - Use appropriate model (Haiku/Sonnet/Opus) based on task complexity
+
+**CRITICAL Security Fixes:**
+- Typesense API key moved to backend proxy (`/api/v1/search/autocomplete`)
+- XSS risk in CSV filename sanitized
+- SQL identifier validation whitelist (prevents SQL injection via sort_by/filter fields)
+- Error messages now generic (internals logged server-side only)
+- Debug logging removed from production
+
+**HIGH Priority Fixes:**
+- TypeScript: Added `ApiDetailRow` interface, removed all `any` types
+- AbortController: Added to detail-panel, expanded-row, module-page (prevents race conditions)
+- useMemo: Wrapped `allResults` (search-bar), `moduleFilters` (filter-panel), fixed `onRowClick` dependency
+- Cookie banner: Fixed SSR pattern with proper null state
+- Accessibility: Added `role="combobox"`, `aria-controls`, `aria-autocomplete` to search input
+
+**MEDIUM Priority Fixes:**
+- Created `lib/constants.ts` - shared MODULE_LABELS, FIELD_LABELS, ALL_MODULES (was duplicated in 4 files)
+- Bug fix: `cross-module-results.tsx` using wrong API field (`data.pagination?.totalRows` → `data.meta?.total`)
+- Cleanup: Removed 5 unused imports across components
+
+**LOW Priority Fixes (delegated to Sonnet):**
+- Named constants for magic numbers (ANOMALY_THRESHOLD_PERCENT, FILTER_DEBOUNCE_MS, etc.)
+- JSDoc comments on all exported functions/components
+- Code style improvements
+
+**UX-002 Randomization:**
+- Default view now randomized: `sort_by=random`, `min_years=4`
+- Pre-computed `random_order` column in all 7 materialized views (~50ms vs 3000ms)
+- True randomization: `WHERE random_order > threshold` for different results each request
+- Display: "Random resultaten" instead of count
+
+**Bug Fixes:**
+- Search not filtering: frontend `search` param → backend `q` param
+- pgbouncer prepared statements: disabled `statement_cache_size` for transaction mode
+- YoY calculation: Added `Number.isFinite()` validation
+
+**Features:**
+- Multi-select filters for Provincie (10 options) and Gemeente (13 options)
+- Backend endpoint: `GET /api/v1/modules/{module}/filters/{field}` for dropdown options
+- Search dropdown reorder: Ontvangers before Zoektermen
+
+**Created Files:**
+- `app/src/lib/constants.ts` - Shared constants
+- `backend/app/api/v1/search.py` - Typesense proxy endpoint
+- `app/src/lib/api-config.ts` - Centralized API base URL
+- `.claude/commands/document.md` - /document skill
+
+**Next:** Continue Week 6 - User Auth (Magic Link, user migration, Overzicht page)
