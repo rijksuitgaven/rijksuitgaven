@@ -90,7 +90,23 @@ export function FilterPanel({
 
   const handleAmountChange = useCallback((field: 'minBedrag' | 'maxBedrag', value: string) => {
     const numValue = value ? parseFloat(value) : null
-    setLocalFilters((prev) => ({ ...prev, [field]: numValue }))
+
+    // Validate: must be positive
+    if (numValue !== null && numValue < 0) return
+
+    setLocalFilters((prev) => {
+      const updated = { ...prev, [field]: numValue }
+
+      // Validate: min should not exceed max
+      if (field === 'minBedrag' && numValue !== null && prev.maxBedrag !== null && numValue > prev.maxBedrag) {
+        return prev // Don't update if min > max
+      }
+      if (field === 'maxBedrag' && numValue !== null && prev.minBedrag !== null && numValue < prev.minBedrag) {
+        return prev // Don't update if max < min
+      }
+
+      return updated
+    })
   }, [])
 
   const handleModuleFilterChange = useCallback((field: string, value: string) => {
@@ -216,17 +232,21 @@ export function FilterPanel({
             <div className="flex items-center gap-2">
               <input
                 type="number"
+                min="0"
                 value={localFilters.minBedrag ?? ''}
                 onChange={(e) => handleAmountChange('minBedrag', e.target.value)}
                 placeholder="Min"
+                aria-label="Minimum bedrag"
                 className="w-full px-3 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)]"
               />
-              <span className="text-[var(--muted-foreground)]">-</span>
+              <span className="text-[var(--muted-foreground)]" aria-hidden="true">-</span>
               <input
                 type="number"
+                min="0"
                 value={localFilters.maxBedrag ?? ''}
                 onChange={(e) => handleAmountChange('maxBedrag', e.target.value)}
                 placeholder="Max"
+                aria-label="Maximum bedrag"
                 className="w-full px-3 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)]"
               />
             </div>

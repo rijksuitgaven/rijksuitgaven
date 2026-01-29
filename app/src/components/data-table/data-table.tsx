@@ -133,9 +133,10 @@ function CollapsedYearsCell({
     <button
       onClick={onExpand}
       className="flex items-center justify-end gap-1 w-full text-right tabular-nums text-sm hover:text-[var(--navy-medium)] transition-colors"
+      aria-label={`${formatAmount(total)} - klik om jaren uit te klappen`}
     >
       {formatAmount(total)}
-      <ChevronRight className="h-3 w-3" />
+      <ChevronRight className="h-3 w-3" aria-hidden="true" />
     </button>
   )
 }
@@ -201,11 +202,13 @@ export function DataTable({
               }
             }}
             className="p-1 hover:bg-[var(--gray-light)] rounded transition-colors"
+            aria-expanded={row.getIsExpanded()}
+            aria-label={row.getIsExpanded() ? 'Rij inklappen' : 'Rij uitklappen'}
           >
             {row.getIsExpanded() ? (
-              <ChevronDown className="h-4 w-4 text-[var(--navy-medium)]" />
+              <ChevronDown className="h-4 w-4 text-[var(--navy-medium)]" aria-hidden="true" />
             ) : (
-              <ChevronRight className="h-4 w-4 text-[var(--navy-medium)]" />
+              <ChevronRight className="h-4 w-4 text-[var(--navy-medium)]" aria-hidden="true" />
             )}
           </button>
         ),
@@ -249,9 +252,10 @@ export function DataTable({
           <button
             onClick={() => setYearsExpanded(true)}
             className="flex items-center gap-1 text-xs font-semibold text-[var(--navy-dark)] hover:text-[var(--navy-medium)] transition-colors"
+            aria-label={`Jaren ${COLLAPSED_YEARS_START} tot ${COLLAPSED_YEARS_END} uitklappen`}
           >
             {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
-            <ChevronRight className="h-3 w-3" />
+            <ChevronRight className="h-3 w-3" aria-hidden="true" />
           </button>
         ),
         cell: ({ row }) => (
@@ -309,8 +313,9 @@ export function DataTable({
             onClick={() => setYearsExpanded(false)}
             className="p-1 hover:bg-[var(--gray-light)] rounded"
             title="Jaren inklappen"
+            aria-label="Jaren inklappen"
           >
-            <ChevronRight className="h-3 w-3 rotate-180" />
+            <ChevronRight className="h-3 w-3 rotate-180" aria-hidden="true" />
           </button>
         ),
         cell: () => null,
@@ -484,8 +489,9 @@ export function DataTable({
             disabled={isLoading || isExporting || data.length === 0}
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             title={`Download als CSV (max ${MAX_EXPORT_ROWS} rijen)`}
+            aria-label={`Download als CSV, maximaal ${MAX_EXPORT_ROWS} rijen`}
           >
-            <Download className="h-3.5 w-3.5" />
+            <Download className="h-3.5 w-3.5" aria-hidden="true" />
             {isExporting ? 'Bezig...' : 'CSV Export'}
           </button>
           {data.length > 0 && (
@@ -521,6 +527,7 @@ export function DataTable({
             value={perPage}
             onChange={(e) => onPerPageChange?.(Number(e.target.value))}
             className="px-2 py-1.5 text-sm border border-[var(--border)] rounded bg-white"
+            aria-label="Aantal rijen per pagina"
           >
             {[25, 50, 100].map((size) => (
               <option key={size} value={size}>
@@ -552,18 +559,25 @@ function SortableHeader({
     onSortChange?.(column.id, newDirection)
   }
 
+  const sortLabel = isSorted === 'asc'
+    ? 'Gesorteerd oplopend, klik voor aflopend'
+    : isSorted === 'desc'
+    ? 'Gesorteerd aflopend, klik voor oplopend'
+    : 'Klik om te sorteren'
+
   return (
     <button
       onClick={handleSort}
       className="flex items-center gap-1 hover:text-[var(--navy-medium)] transition-colors"
+      aria-label={sortLabel}
     >
       {children}
       {isSorted === 'asc' ? (
-        <ChevronUp className="h-3 w-3" />
+        <ChevronUp className="h-3 w-3" aria-hidden="true" />
       ) : isSorted === 'desc' ? (
-        <ChevronDown className="h-3 w-3" />
+        <ChevronDown className="h-3 w-3" aria-hidden="true" />
       ) : (
-        <ChevronsUpDown className="h-3 w-3 opacity-50" />
+        <ChevronsUpDown className="h-3 w-3 opacity-50" aria-hidden="true" />
       )}
     </button>
   )
