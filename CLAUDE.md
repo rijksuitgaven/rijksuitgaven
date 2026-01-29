@@ -7,7 +7,7 @@ Rijksuitgaven.nl SaaS Platform Migration - Documentation and planning repository
 
 ## Golden Rules (ALWAYS APPLY - NO EXCEPTIONS)
 
-**These four rules override everything else. Apply them automatically, every time.**
+**These five rules override everything else. Apply them automatically, every time.**
 
 ### 1. Requirements Check (Before ANY Proposal)
 
@@ -85,6 +85,28 @@ Ready to commit: YES/NO
 **If ANY checkbox fails:** Fix it BEFORE committing. If unsure, ask the founder.
 
 **MANDATORY:** Show this audit table to the user before every commit. Do not commit without user seeing the audit results.
+
+### 5. Model Selection (Before ANY Task)
+
+**Before starting ANY task, assess complexity and use the appropriate model:**
+
+| Task Type | Model | Examples |
+|-----------|-------|----------|
+| **Simple** | Haiku | Reading files, quick searches, status checks, simple edits |
+| **Standard** | Sonnet | Multi-file changes, bug fixes, implementing features, refactoring |
+| **Complex** | Opus | Architecture decisions, comprehensive planning, cross-referencing 10+ docs |
+
+**Rules:**
+- [ ] **Start light:** Default to the lightest model that can handle the task
+- [ ] **Announce switches:** When switching models, state: "Switching to [Model] for [reason]"
+- [ ] **De-escalate:** After complex work, switch back to lighter model for simpler follow-up tasks
+
+**Quick check before each task:**
+- Is this a simple read/search/edit? → **Haiku**
+- Is this standard coding/refactoring? → **Sonnet**
+- Does this require complex reasoning across many files? → **Opus**
+
+**Cost matters:** Opus is 10x+ more expensive than Sonnet. Never use Opus for tasks Sonnet can handle.
 
 ---
 
