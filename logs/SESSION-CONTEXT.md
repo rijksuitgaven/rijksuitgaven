@@ -833,4 +833,6 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - **BUG FIX:** pgbouncer prepared statements - disabled `statement_cache_size` for transaction mode
 - **UX:** Default view shows "Random resultaten" instead of count
 - **UX:** Search dropdown reorder - Ontvangers before Zoektermen
+- **FEATURE:** Multi-select filters for Provincie (10 options) and Gemeente (13 options)
+- **Backend endpoint:** `GET /api/v1/modules/{module}/filters/{field}` for dropdown options
 - **Next:** Continue Week 6 - User Auth (Magic Link, user migration, Overzicht page)
