@@ -6,13 +6,15 @@ import Link from 'next/link'
 const STORAGE_KEY = 'cookie-banner-dismissed'
 
 export function CookieBanner() {
-  const [visible, setVisible] = useState(false)
+  // Start with null to indicate "not yet determined" (SSR-safe)
+  const [visible, setVisible] = useState<boolean | null>(null)
 
   useEffect(() => {
-    // Check on client side only (localStorage not available during SSR)
-    if (typeof window !== 'undefined' && !localStorage.getItem(STORAGE_KEY)) {
-      setVisible(true)
-    }
+    // Check localStorage after hydration (not available during SSR)
+    // This is an intentional pattern for SSR apps - we must wait for client-side
+    const shouldShow = !localStorage.getItem(STORAGE_KEY)
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: SSR requires post-hydration check
+    setVisible(shouldShow)
   }, [])
 
   const handleDismiss = () => {
@@ -20,7 +22,8 @@ export function CookieBanner() {
     setVisible(false)
   }
 
-  if (!visible) return null
+  // Don't render during SSR (null) or when dismissed (false)
+  if (visible !== true) return null
 
   return (
     <div

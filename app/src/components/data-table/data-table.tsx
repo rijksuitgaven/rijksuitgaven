@@ -5,13 +5,11 @@ import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
-  getPaginationRowModel,
   getExpandedRowModel,
   flexRender,
   type ColumnDef,
   type SortingState,
   type ExpandedState,
-  type Row,
   type Column,
 } from '@tanstack/react-table'
 import { ChevronRight, ChevronDown, ChevronUp, ChevronsUpDown, Download } from 'lucide-react'
@@ -270,7 +268,7 @@ export function DataTable({
     }
 
     // Individual year columns
-    visibleYears.forEach((year, index) => {
+    visibleYears.forEach((year) => {
       const yearIndex = availableYears.indexOf(year)
       const previousYear = yearIndex > 0 ? availableYears[yearIndex - 1] : null
 
@@ -345,7 +343,7 @@ export function DataTable({
     })
 
     return cols
-  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand])
+  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onRowClick])
 
   const table = useReactTable({
     data,

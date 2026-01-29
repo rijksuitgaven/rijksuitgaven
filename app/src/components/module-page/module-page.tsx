@@ -66,13 +66,6 @@ interface ModulePageProps {
   moduleId: string
 }
 
-const DEFAULT_FILTERS: FilterValues = {
-  search: '',
-  jaar: null,
-  minBedrag: null,
-  maxBedrag: null,
-}
-
 // Main export - wraps content in Suspense for useSearchParams
 export function ModulePage({ moduleId }: ModulePageProps) {
   const config = MODULE_CONFIGS[moduleId]
@@ -233,8 +226,9 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     setPage(1)
   }, [])
 
-  const handleRowExpand = useCallback((primaryValue: string) => {
-    // Could trigger analytics or prefetch here
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleRowExpand = useCallback((_primaryValue: string) => {
+    // Placeholder for future analytics or prefetch
   }, [])
 
   const handleNavigateToModule = useCallback((targetModule: string, recipient: string) => {

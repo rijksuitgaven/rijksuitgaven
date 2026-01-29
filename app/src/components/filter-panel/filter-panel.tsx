@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { Search, X, SlidersHorizontal, Check, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { API_BASE_URL } from '@/lib/api-config'
@@ -236,7 +236,7 @@ export function FilterPanel({
   const [localFilters, setLocalFilters] = useState<FilterValues>(filters)
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const moduleFilters = MODULE_FILTERS[module] ?? []
+  const moduleFilters = useMemo(() => MODULE_FILTERS[module] ?? [], [module])
 
   // Debounced filter update
   useEffect(() => {

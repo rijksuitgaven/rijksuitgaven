@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, X, Loader2, FileText, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -56,7 +56,10 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
   const [noResultsQuery, setNoResultsQuery] = useState<string | null>(null)
 
   // Combined results for keyboard navigation (recipients first, then keywords)
-  const allResults: SearchResultItem[] = [...recipients, ...keywords]
+  const allResults = useMemo<SearchResultItem[]>(
+    () => [...recipients, ...keywords],
+    [recipients, keywords]
+  )
   const totalResults = allResults.length
 
   // Debounced search
@@ -264,6 +267,7 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
           <input
             ref={inputRef}
             type="text"
+            role="combobox"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -272,6 +276,9 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
             aria-label="Zoeken"
             aria-expanded={isOpen}
             aria-haspopup="listbox"
+            aria-autocomplete="list"
+            aria-controls="search-results-listbox"
+            autoComplete="off"
             className="w-full pl-10 pr-10 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all"
           />
           {isLoading && (
@@ -294,6 +301,8 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
       {isOpen && (
         <div
           ref={dropdownRef}
+          id="search-results-listbox"
+          role="listbox"
           className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-[var(--border)] z-50 overflow-hidden"
         >
           <div className="max-h-96 overflow-y-auto">
@@ -301,7 +310,7 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
             {noResultsQuery && recipients.length > 0 && (
               <div className="px-4 py-2 bg-[var(--warning)]/10 border-b border-[var(--border)]">
                 <span className="text-sm text-[var(--navy-dark)]">
-                  Geen exacte resultaten voor "<strong>{noResultsQuery}</strong>". Bedoelde u:
+                  Geen exacte resultaten voor &ldquo;<strong>{noResultsQuery}</strong>&rdquo;. Bedoelde u:
                 </span>
               </div>
             )}
@@ -310,7 +319,7 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
             {noResultsQuery && recipients.length === 0 && keywords.length === 0 && (
               <div className="px-4 py-6 text-center">
                 <p className="text-sm text-[var(--navy-dark)]">
-                  Geen resultaten voor "<strong>{noResultsQuery}</strong>"
+                  Geen resultaten voor &ldquo;<strong>{noResultsQuery}</strong>&rdquo;
                 </p>
                 <p className="text-xs text-[var(--muted-foreground)] mt-1">
                   Controleer de spelling of probeer een andere zoekterm

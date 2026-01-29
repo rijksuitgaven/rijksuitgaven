@@ -34,6 +34,28 @@ interface DetailData {
   }
 }
 
+// API response row type from details endpoint
+interface ApiDetailRow {
+  group_by?: string
+  group_value?: string | null
+  years?: Record<string, number>
+  totaal?: number
+  row_count?: number
+  // Optional detail fields
+  regeling?: string
+  artikel?: string
+  begrotingsnaam?: string
+  instrument?: string
+  kostensoort?: string
+  ministerie?: string
+  categorie?: string
+  provincie?: string
+  gemeente?: string
+  beleidsterrein?: string
+  omschrijving?: string
+  source?: string
+}
+
 interface DetailPanelProps {
   recipientName: string
   moduleId: string
@@ -97,13 +119,16 @@ export function DetailPanel({
   useEffect(() => {
     if (!isOpen || !recipientName) return
 
+    const abortController = new AbortController()
+
     async function fetchDetail() {
       setIsLoading(true)
       setError(null)
 
       try {
         const response = await fetch(
-          `${API_BASE_URL}/api/v1/modules/${moduleId}/${encodeURIComponent(recipientName)}/details`
+          `${API_BASE_URL}/api/v1/modules/${moduleId}/${encodeURIComponent(recipientName)}/details`,
+          { signal: abortController.signal }
         )
 
         if (!response.ok) {
@@ -124,7 +149,7 @@ export function DetailPanel({
         const detailFields: Record<string, string> = {}
         let totalAmount = 0
 
-        rows.forEach((row: any) => {
+        rows.forEach((row: ApiDetailRow) => {
           // Aggregate year amounts
           if (row.years) {
             Object.entries(row.years).forEach(([year, amount]) => {
@@ -140,8 +165,9 @@ export function DetailPanel({
             detailFields[row.group_by] = row.group_value
           }
           Object.keys(FIELD_LABELS).forEach(field => {
-            if (row[field] && !detailFields[field]) {
-              detailFields[field] = row[field]
+            const value = row[field as keyof ApiDetailRow]
+            if (value && typeof value === 'string' && !detailFields[field]) {
+              detailFields[field] = value
             }
           })
         })
@@ -155,18 +181,29 @@ export function DetailPanel({
           primary_value: json.primary_value || recipientName,
           years,
           total: totalAmount,
-          row_count: rows.reduce((sum: number, r: any) => sum + (r.row_count || 1), 0),
+          row_count: rows.reduce((sum: number, r: ApiDetailRow) => sum + (r.row_count || 1), 0),
           sources: json.sources || [],
           details: detailFields,
         })
-      } catch {
+      } catch (error) {
+        // Ignore abort errors - they're expected when component unmounts or deps change
+        if (error instanceof Error && error.name === 'AbortError') {
+          return
+        }
+        console.error('[DetailPanel] fetchDetail failed:', error instanceof Error ? error.message : error)
         setError('Kon gegevens niet laden')
       } finally {
-        setIsLoading(false)
+        if (!abortController.signal.aborted) {
+          setIsLoading(false)
+        }
       }
     }
 
     fetchDetail()
+
+    return () => {
+      abortController.abort()
+    }
   }, [isOpen, recipientName, moduleId])
 
   // Handle escape key

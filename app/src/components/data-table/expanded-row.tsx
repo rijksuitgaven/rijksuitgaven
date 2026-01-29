@@ -5,7 +5,7 @@ import { ChevronDown, Loader2, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatAmount, getAmountFontClass } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
-import type { RecipientRow, YearAmount } from '@/types/api'
+import type { RecipientRow } from '@/types/api'
 
 // Groupable fields per module
 const GROUPABLE_FIELDS: Record<string, { value: string; label: string }[]> = {
