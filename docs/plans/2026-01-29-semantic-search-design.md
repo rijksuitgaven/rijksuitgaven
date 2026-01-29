@@ -1,7 +1,7 @@
 # Semantic Search Design
 
 **Date:** 2026-01-29
-**Status:** V1.1 implemented (Dutch word rules)
+**Status:** ✅ V1.1 COMPLETE (Dutch word rules + Option C ranking)
 **Priority:** V2.0 (embeddings)
 
 ---
@@ -76,6 +76,7 @@ WHERE ontvanger ~* 'politie([^k]|$|\s)'
 - Added `build_search_condition()` helper in `backend/app/services/modules.py`
 - Applied to all 6 search locations (aggregated views, source tables, integraal, autocomplete)
 - Pattern: For searches ending in "-ie", uses regex `term([^k]|$|\s)` to exclude "-iek" matches
+- **Option C ranking:** Exact match first, then everything else sorted by totaal (biggest money flows)
 
 ---
 
@@ -140,8 +141,8 @@ WHERE ontvanger ~* 'politie([^k]|$|\s)'
 | Version | Implementation | Status |
 |---------|----------------|--------|
 | V1.0 | Keep current ILIKE (no change) | ✅ Shipped |
-| V1.1 | Option B: Dutch language rules | ✅ Implemented 2026-01-29 |
-| V2.0 | Option C: Embeddings with hybrid search | Planned |
+| V1.1a | Dutch language rules + Option C ranking | ✅ Complete 2026-01-29 |
+| V1.1b | Embeddings with hybrid search (Cohere) | Planned |
 
 ---
 

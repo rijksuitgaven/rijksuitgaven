@@ -935,16 +935,15 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Status: ✅ ALL COMPLETE (instrumenten, inkoop, provincie, gemeente, publiek)
 - apparaat not needed (uses kostensoort category, not recipient names)
 
-**Semantic Search Design & V1.1 Implementation (Session 10):**
+**Semantic Search V1.1 COMPLETE (Session 10):**
 - Problem: "politie" (police) matches "Politieke" (political) - different domains
-- V1.1 IMPLEMENTED: Dutch word rules (-ie/-iek exclusion pattern)
-  - `build_search_condition()` helper in modules.py
-  - For searches ending in "-ie", uses regex: `term([^k]|$|\s)`
-  - Excludes "-iek" false cognates (Politieke, academiek, etc.)
+- **V1.1a COMPLETE:**
+  - Dutch word rules: `build_search_condition()` helper excludes -ie/-iek false cognates
+  - Option C ranking: Exact match first, then everything else by totaal (biggest money flows)
   - Applied to all 6 search locations ✅
-- V2.0 plan: Embeddings (Cohere embed-multilingual-v3, ~€1/month)
+  - Deployed & tested: "politie" shows Politie first, then Nationale Politie (€17.2B) near top ✅
+- **V1.1b Roadmap:** Embeddings (Cohere embed-multilingual-v3, ~€1/month)
 - Design document: `docs/plans/2026-01-29-semantic-search-design.md`
-- Deployed & tested: "politie" no longer matches "Politieke beweging DENK" ✅
 
 **Next Steps:**
 1. Week 6 - User Auth (Magic Link, user migration)

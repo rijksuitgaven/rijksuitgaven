@@ -314,9 +314,9 @@ Rebuild all module aggregated views using `normalize_recipient()` in the GROUP B
 
 ### Semantic Search: Dutch Language Awareness
 
-**Priority:** Medium
+**Priority:** ✅ V1.1 COMPLETE
 **Added:** 2026-01-29
-**V1.1 Completed:** 2026-01-29 (word rules implemented)
+**V1.1 Completed:** 2026-01-29
 **Target:** V2.0 (embeddings)
 
 **Problem:**
@@ -330,12 +330,16 @@ Example: "politie" (police) matches "Politieke" (political) - completely differe
 | politie → Politieacademie | ✅ | ✅ |
 | politie → Politieke beweging | ✅ | ❌ |
 
-**Proposed Solutions:**
+**V1.1 Implementation (COMPLETE):**
+1. **Dutch word rules:** For searches ending in "-ie", exclude "-iek" false cognates
+2. **Option C ranking:** Exact match first, then everything else by totaal (biggest money flows)
+
+**Roadmap:**
 
 | Version | Approach | Effort | Accuracy | Status |
 |---------|----------|--------|----------|--------|
-| V1.1 | Dutch word rules (-ie/-iek pattern) | 4-8 hours | ~90% | ✅ Done |
-| V2.0 | Embeddings (vector similarity) | 2-3 days | ~95% | Planned |
+| V1.1a | Dutch word rules + Option C ranking | 4-8 hours | ~90% | ✅ Complete |
+| V1.1b | Embeddings (Cohere, vector similarity) | 2-3 days | ~95% | Planned |
 
 **V2.0 Embeddings:**
 - **Vendor:** Cohere embed-multilingual-v3 (native Dutch support)

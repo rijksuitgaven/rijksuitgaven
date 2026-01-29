@@ -586,6 +586,13 @@ When expanded:
 
 **Status:** ✅ Implemented 2026-01-29
 
+**V1.1 Complete:**
+- Dutch word rules (-ie/-iek exclusion)
+- Option C ranking (exact match first, then by totaal)
+
+**V1.1 Roadmap:**
+- Embeddings with Cohere embed-multilingual-v3 (~€1/month)
+
 **Design Doc:** `docs/plans/2026-01-29-semantic-search-design.md`
 
 ---
