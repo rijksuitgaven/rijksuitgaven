@@ -5,12 +5,15 @@ This file provides a secure backend proxy for Typesense searches,
 keeping the API key server-side only.
 """
 from typing import Optional
+import logging
 import httpx
 
 from fastapi import APIRouter, Query, HTTPException
 from pydantic import BaseModel
 
 from app.config import get_settings
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 settings = get_settings()
@@ -115,6 +118,9 @@ async def autocomplete(
     Used by the global search bar for instant suggestions.
     """
     try:
+        # Log config for debugging
+        logger.info(f"Typesense config: host={settings.typesense_host}, port={settings.typesense_port}, protocol={settings.typesense_protocol}")
+
         # Parallel search for recipients and keywords
         recipients = await search_recipients(q, fuzzy=fuzzy)
         keywords = await search_keywords(q)
@@ -125,7 +131,8 @@ async def autocomplete(
             keywords=keywords,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Search failed")
+        logger.error(f"Search failed: {type(e).__name__}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
 
 
 @router.get("/recipients", response_model=list[RecipientResult])
