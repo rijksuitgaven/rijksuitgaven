@@ -79,6 +79,10 @@ interface ExpandedRowProps {
   onNavigateToModule?: (module: string, recipient: string) => void
 }
 
+/**
+ * Expanded row component showing detailed breakdown by grouping field
+ * Fetches and displays detail data when a row is expanded in the main table
+ */
 export function ExpandedRow({
   row,
   module,

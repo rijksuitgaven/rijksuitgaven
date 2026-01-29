@@ -40,12 +40,15 @@ export function calculateYoYChange(
   return result
 }
 
+// Threshold for flagging year-over-year changes as anomalies
+const ANOMALY_THRESHOLD_PERCENT = 10
+
 /**
  * Check if a YoY change is an anomaly (10%+ change)
  */
 export function isAnomaly(percentChange: number | null): boolean {
   if (percentChange === null) return false
-  return Math.abs(percentChange) >= 10
+  return Math.abs(percentChange) >= ANOMALY_THRESHOLD_PERCENT
 }
 
 /**
@@ -57,10 +60,13 @@ export function formatPercentage(value: number | null): string {
   return `${sign}${value.toFixed(1)}%`
 }
 
+// Character threshold for switching to smaller font size for large amounts
+const LARGE_AMOUNT_CHAR_THRESHOLD = 10
+
 /**
  * Get font size class based on amount string length
  * Large numbers (>10 chars) get smaller font
  */
 export function getAmountFontClass(formattedAmount: string): string {
-  return formattedAmount.length > 10 ? 'text-xs' : 'text-sm'
+  return formattedAmount.length > LARGE_AMOUNT_CHAR_THRESHOLD ? 'text-xs' : 'text-sm'
 }

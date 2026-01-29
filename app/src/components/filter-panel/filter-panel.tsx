@@ -226,6 +226,10 @@ interface FilterPanelProps {
   isLoading?: boolean
 }
 
+/**
+ * Filter panel component with search, year filter, amount range, and module-specific filters
+ * Supports debounced input and multi-select dropdowns for certain fields
+ */
 export function FilterPanel({
   module,
   availableYears,
@@ -238,11 +242,13 @@ export function FilterPanel({
 
   const moduleFilters = useMemo(() => MODULE_FILTERS[module] ?? [], [module])
 
-  // Debounced filter update
+  // Debounced filter update (300ms delay to avoid excessive API calls)
+  const FILTER_DEBOUNCE_MS = 300
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       onFilterChange(localFilters)
-    }, 300)
+    }, FILTER_DEBOUNCE_MS)
     return () => clearTimeout(timeout)
   }, [localFilters, onFilterChange])
 

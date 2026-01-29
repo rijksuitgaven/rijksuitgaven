@@ -66,7 +66,10 @@ interface ModulePageProps {
   moduleId: string
 }
 
-// Main export - wraps content in Suspense for useSearchParams
+/**
+ * Module page component - main page for displaying module data
+ * Wraps content in Suspense for useSearchParams compatibility
+ */
 export function ModulePage({ moduleId }: ModulePageProps) {
   const config = MODULE_CONFIGS[moduleId]
 

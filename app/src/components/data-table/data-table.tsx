@@ -30,6 +30,9 @@ const COLLAPSED_YEARS_END = 2020
 
 const MAX_EXPORT_ROWS = 500
 
+// Sticky column offset for primary column (in pixels)
+const STICKY_PRIMARY_OFFSET_PX = 40
+
 // Column meta type for sticky columns
 interface ColumnMeta {
   sticky?: boolean
@@ -52,7 +55,10 @@ interface DataTableProps {
   moduleId?: string // For export filename
 }
 
-// Generate CSV content from data
+/**
+ * Generate CSV content from data rows
+ * Formats data with semicolon separator for Dutch Excel compatibility
+ */
 function generateCSV(data: RecipientRow[], availableYears: number[], primaryColumnName: string): string {
   // Header row
   const headers = [primaryColumnName, ...availableYears.map(String), 'Totaal']
@@ -70,7 +76,9 @@ function generateCSV(data: RecipientRow[], availableYears: number[], primaryColu
   return [headerRow, ...dataRows].join('\n')
 }
 
-// Download CSV file
+/**
+ * Download CSV file with UTF-8 BOM for Excel compatibility
+ */
 function downloadCSV(content: string, filename: string) {
   const BOM = '\uFEFF' // UTF-8 BOM for Excel compatibility
   const blob = new Blob([BOM + content], { type: 'text/csv;charset=utf-8' })
@@ -139,6 +147,10 @@ function CollapsedYearsCell({
   )
 }
 
+/**
+ * Main data table component with year columns, expandable rows, and CSV export
+ * Supports sticky columns, sorting, pagination, and collapsible year ranges
+ */
 export function DataTable({
   data,
   availableYears,
@@ -379,9 +391,12 @@ export function DataTable({
                       className={cn(
                         'px-3 py-2 text-left text-xs font-semibold text-[var(--navy-dark)] border-b border-[var(--border)]',
                         isSticky && 'sticky left-0 bg-[var(--gray-light)] z-10',
-                        headerIndex === 1 && 'sticky left-10 bg-[var(--gray-light)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                        headerIndex === 1 && `sticky bg-[var(--gray-light)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]`
                       )}
-                      style={{ width: header.getSize() }}
+                      style={{
+                        width: header.getSize(),
+                        left: headerIndex === 1 ? `${STICKY_PRIMARY_OFFSET_PX}px` : undefined
+                      }}
                     >
                       {header.isPlaceholder
                         ? null
@@ -437,10 +452,13 @@ export function DataTable({
                           className={cn(
                             'px-3 py-2 border-b border-[var(--border)]',
                             isSticky && 'sticky left-0 bg-white z-10',
-                            cellIndex === 1 && 'sticky left-10 bg-white z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
+                            cellIndex === 1 && 'sticky bg-white z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
                             isExpanded && isSticky && 'bg-[var(--gray-light)]'
                           )}
-                          style={{ width: cell.column.getSize() }}
+                          style={{
+                            width: cell.column.getSize(),
+                            left: cellIndex === 1 ? `${STICKY_PRIMARY_OFFSET_PX}px` : undefined
+                          }}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>

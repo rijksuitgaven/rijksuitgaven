@@ -48,7 +48,8 @@ function transformRow(apiRow: ApiRecipientRow, years: number[]): RecipientRow {
 }
 
 /**
- * Fetch all available modules
+ * Fetch all available modules from the API
+ * @returns Array of module metadata (id, display name, description)
  */
 export async function fetchModules(): Promise<ModuleInfo[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/modules`)
@@ -60,6 +61,10 @@ export async function fetchModules(): Promise<ModuleInfo[]> {
 
 /**
  * Fetch data for a specific module with filters and pagination
+ * @param module - Module ID (e.g., 'instrumenten', 'apparaat')
+ * @param params - Query parameters including filters, sorting, and pagination
+ * @param signal - Optional AbortSignal for request cancellation
+ * @returns Module data with rows, pagination info, and available years
  */
 export async function fetchModuleData(
   module: string,
@@ -123,6 +128,10 @@ export async function fetchModuleData(
 
 /**
  * Fetch detail rows for an expanded recipient
+ * @param module - Module ID
+ * @param primaryValue - Primary field value (e.g., recipient name)
+ * @param groupingField - Optional field to group results by
+ * @returns Detailed breakdown data for the recipient
  */
 export async function fetchDetailData(
   module: string,
