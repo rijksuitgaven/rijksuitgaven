@@ -55,8 +55,8 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const [noResultsQuery, setNoResultsQuery] = useState<string | null>(null)
 
-  // Combined results for keyboard navigation
-  const allResults: SearchResultItem[] = [...keywords, ...recipients]
+  // Combined results for keyboard navigation (recipients first, then keywords)
+  const allResults: SearchResultItem[] = [...recipients, ...keywords]
   const totalResults = allResults.length
 
   // Debounced search
@@ -309,32 +309,53 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
               </div>
             )}
 
-            {/* Keywords section */}
-            {keywords.length > 0 && (
+            {/* Recipients section (shown first) */}
+            {recipients.length > 0 && (
               <div>
                 <div className="px-4 py-2 text-xs font-semibold text-[var(--navy-medium)] uppercase tracking-wider bg-[var(--gray-light)]">
-                  <FileText className="inline h-3 w-3 mr-1.5 -mt-0.5" />
-                  Zoektermen
+                  <User className="inline h-3 w-3 mr-1.5 -mt-0.5" />
+                  Ontvangers
                 </div>
-                {keywords.map((result, index) => (
+                {recipients.map((result, index) => (
                   <button
-                    key={`${result.keyword}-${result.field}`}
+                    key={result.name}
                     type="button"
-                    onClick={() => handleSelectKeyword(result)}
+                    onClick={() => handleSelectRecipient(result)}
                     className={cn(
-                      'w-full px-4 py-2.5 text-left hover:bg-[var(--gray-light)] transition-colors border-b border-[var(--border)]',
+                      'w-full px-4 py-3 text-left hover:bg-[var(--gray-light)] transition-colors border-b border-[var(--border)] last:border-b-0',
                       selectedIndex === index && 'bg-[var(--gray-light)]'
                     )}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-[var(--navy-dark)] truncate">
-                        {result.keyword}
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-[var(--navy-dark)] truncate">
+                          {result.name}
+                        </div>
+                        {result.sources && result.sources.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {result.sources.slice(0, 4).map((source) => (
+                              <span
+                                key={source}
+                                className="text-xs px-1.5 py-0.5 bg-[var(--blue-light)]/20 text-[var(--navy-medium)] rounded"
+                              >
+                                {MODULE_LABELS[source] || source}
+                              </span>
+                            ))}
+                            {result.sources.length > 4 && (
+                              <span className="text-xs text-[var(--muted-foreground)]">
+                                +{result.sources.length - 4}
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-                        <span className="px-1.5 py-0.5 bg-[var(--blue-light)]/20 text-[var(--navy-medium)] rounded">
-                          {result.moduleLabel}
-                        </span>
-                        <span>in {result.fieldLabel}</span>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-[var(--navy-dark)]">
+                          {formatAmount(result.totaal)}
+                        </div>
+                        <div className="text-xs text-[var(--muted-foreground)]">
+                          totaal
+                        </div>
                       </div>
                     </div>
                   </button>
@@ -342,55 +363,34 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
               </div>
             )}
 
-            {/* Recipients section */}
-            {recipients.length > 0 && (
+            {/* Keywords section */}
+            {keywords.length > 0 && (
               <div>
                 <div className="px-4 py-2 text-xs font-semibold text-[var(--navy-medium)] uppercase tracking-wider bg-[var(--gray-light)]">
-                  <User className="inline h-3 w-3 mr-1.5 -mt-0.5" />
-                  Ontvangers
+                  <FileText className="inline h-3 w-3 mr-1.5 -mt-0.5" />
+                  Zoektermen
                 </div>
-                {recipients.map((result, index) => {
-                  const adjustedIndex = keywords.length + index
+                {keywords.map((result, index) => {
+                  const adjustedIndex = recipients.length + index
                   return (
                     <button
-                      key={result.name}
+                      key={`${result.keyword}-${result.field}`}
                       type="button"
-                      onClick={() => handleSelectRecipient(result)}
+                      onClick={() => handleSelectKeyword(result)}
                       className={cn(
-                        'w-full px-4 py-3 text-left hover:bg-[var(--gray-light)] transition-colors border-b border-[var(--border)] last:border-b-0',
+                        'w-full px-4 py-2.5 text-left hover:bg-[var(--gray-light)] transition-colors border-b border-[var(--border)]',
                         selectedIndex === adjustedIndex && 'bg-[var(--gray-light)]'
                       )}
                     >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-[var(--navy-dark)] truncate">
-                            {result.name}
-                          </div>
-                          {result.sources && result.sources.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {result.sources.slice(0, 4).map((source) => (
-                                <span
-                                  key={source}
-                                  className="text-xs px-1.5 py-0.5 bg-[var(--blue-light)]/20 text-[var(--navy-medium)] rounded"
-                                >
-                                  {MODULE_LABELS[source] || source}
-                                </span>
-                              ))}
-                              {result.sources.length > 4 && (
-                                <span className="text-xs text-[var(--muted-foreground)]">
-                                  +{result.sources.length - 4}
-                                </span>
-                              )}
-                            </div>
-                          )}
+                      <div className="flex items-center justify-between">
+                        <div className="font-medium text-[var(--navy-dark)] truncate">
+                          {result.keyword}
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm font-medium text-[var(--navy-dark)]">
-                            {formatAmount(result.totaal)}
-                          </div>
-                          <div className="text-xs text-[var(--muted-foreground)]">
-                            totaal
-                          </div>
+                        <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
+                          <span className="px-1.5 py-0.5 bg-[var(--blue-light)]/20 text-[var(--navy-medium)] rounded">
+                            {result.moduleLabel}
+                          </span>
+                          <span>in {result.fieldLabel}</span>
                         </div>
                       </div>
                     </button>
