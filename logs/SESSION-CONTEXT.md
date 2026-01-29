@@ -163,6 +163,13 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/sql/008-source-table-indexes.sql` | 2026-01-26 | Supabase |
 | `scripts/sql/009-entity-resolution-normalization.sql` | 2026-01-26 | Supabase |
 | VACUUM ANALYZE (all tables) | 2026-01-26 | Supabase |
+| `scripts/sql/011a-random-order-instrumenten.sql` | 2026-01-29 | Supabase |
+| `scripts/sql/011b-random-order-apparaat.sql` | 2026-01-29 | Supabase |
+| `scripts/sql/011c-random-order-inkoop.sql` | 2026-01-29 | Supabase |
+| `scripts/sql/011d-random-order-provincie.sql` | 2026-01-29 | Supabase |
+| `scripts/sql/011e-random-order-gemeente.sql` | 2026-01-29 | Supabase |
+| `scripts/sql/011f-random-order-publiek.sql` | 2026-01-29 | Supabase |
+| `scripts/sql/011g-random-order-universal-search.sql` | 2026-01-29 | Supabase |
 
 ### Configuration Files
 
@@ -818,5 +825,8 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - **Validation:** Added min/max bedrag filter validation
 - **Centralized:** API_BASE_URL in single config file
 - **UX-002 FIX:** Randomized default view - `sort_by=random`, `min_years=4`, resets on module switch
+- **UX-002 PERF:** Pre-computed `random_order` column in all 7 materialized views (~50ms vs 3000ms)
+- **UX-002 TRUE RANDOM:** `WHERE random_order > threshold` for different results each request
 - **Backlog:** Railway private networking (deferred - public URL works)
+- **Created:** `/document` skill for comprehensive session documentation
 - **Next:** Continue Week 6 - User Auth (Magic Link, user migration, Overzicht page)

@@ -296,7 +296,23 @@
 
 **Goal:** Magic Link auth, user migration, Overzicht page
 
-### Day 1-2: Supabase Auth Setup
+### Day 1: Code Review Mini-Sprint (2026-01-29) ✅
+
+**Unplanned but valuable:** Comprehensive code review and security fixes before continuing.
+
+| Task | Status |
+|------|--------|
+| Golden Rules added to CLAUDE.md | ✅ |
+| Typesense API key moved to backend proxy | ✅ CRITICAL FIX |
+| XSS risk in CSV filename sanitized | ✅ CRITICAL FIX |
+| TypeScript `any` types fixed | ✅ |
+| Accessibility labels added | ✅ |
+| UX-002 randomization implemented | ✅ |
+| Random sort performance optimized | ✅ (~50ms vs 3000ms) |
+
+**Impact:** Delayed Week 6 by ~1 day, but critical security issues resolved.
+
+### Day 2-3: Supabase Auth Setup
 
 | Task | Details |
 |------|---------|
@@ -374,6 +390,7 @@
 | Responsive breakpoints | 320px, 768px, 1024px, 1440px |
 | Performance perception | Perceived speed improvements |
 | Documentation | Update FRONTEND-DOCUMENTATION.md with changes |
+| **Railway private networking** | Configure internal network between services |
 
 **Week 7 Deliverables:**
 - [ ] UX audit completed with findings documented
@@ -381,6 +398,7 @@
 - [ ] Visual design consistent across all pages
 - [ ] Accessibility basics verified (WCAG AA)
 - [ ] Mobile experience polished
+- [ ] Railway private networking configured
 
 ---
 
