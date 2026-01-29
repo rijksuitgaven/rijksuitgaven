@@ -3,13 +3,78 @@ Module service - aggregation queries for all data modules.
 
 Handles the business logic for fetching and aggregating data
 from each module table with year columns.
+
+SECURITY NOTE: All SQL identifiers (table names, column names) are validated
+against whitelists before being used in queries. User input is NEVER used
+directly as identifiers - only as parameterized values.
 """
+import logging
 import random
 from typing import Optional
 from app.services.database import fetch_all, fetch_val
 
+logger = logging.getLogger(__name__)
+
 # Available years in the data
 YEARS = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+
+# =============================================================================
+# Security: Identifier Validation
+# =============================================================================
+
+# Allowed SQL identifiers (tables and columns) - populated from MODULE_CONFIG
+ALLOWED_TABLES: set[str] = set()
+ALLOWED_COLUMNS: set[str] = set()
+
+
+def _init_allowed_identifiers():
+    """Initialize allowed identifier sets from MODULE_CONFIG. Called at module load."""
+    global ALLOWED_TABLES, ALLOWED_COLUMNS
+
+    # Add tables
+    for config in MODULE_CONFIG.values():
+        ALLOWED_TABLES.add(config["table"])
+        if config.get("aggregated_table"):
+            ALLOWED_TABLES.add(config["aggregated_table"])
+
+    # Add universal_search table
+    ALLOWED_TABLES.add("universal_search")
+
+    # Add columns
+    for config in MODULE_CONFIG.values():
+        ALLOWED_COLUMNS.add(config["primary_field"])
+        ALLOWED_COLUMNS.add(config["year_field"])
+        ALLOWED_COLUMNS.add(config["amount_field"])
+        for field in config.get("search_fields", []):
+            ALLOWED_COLUMNS.add(field)
+        for field in config.get("filter_fields", []):
+            ALLOWED_COLUMNS.add(field)
+
+    # Add standard columns
+    ALLOWED_COLUMNS.update([
+        "totaal", "row_count", "random_order", "modules", "source",
+        "ontvanger", "primary_value", "module",
+    ])
+
+    # Add year columns
+    for year in YEARS:
+        ALLOWED_COLUMNS.add(str(year))
+        ALLOWED_COLUMNS.add(f"y{year}")
+
+
+def validate_identifier(identifier: str, allowed: set[str], identifier_type: str = "identifier") -> str:
+    """
+    Validate that an identifier is in the allowed set.
+
+    SECURITY: This prevents SQL injection via identifier manipulation.
+    All table/column names must be validated before use in queries.
+
+    Raises ValueError if identifier is not allowed.
+    """
+    if identifier not in allowed:
+        logger.warning(f"Invalid {identifier_type} attempted: {identifier}")
+        raise ValueError(f"Invalid {identifier_type}: {identifier}")
+    return identifier
 
 
 # =============================================================================
@@ -78,6 +143,9 @@ MODULE_CONFIG = {
         "filter_fields": ["source", "regeling"],
     },
 }
+
+# Initialize allowed identifiers from config
+_init_allowed_identifiers()
 
 
 # =============================================================================

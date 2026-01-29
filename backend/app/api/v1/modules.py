@@ -10,11 +10,14 @@ Modules:
 - publiek: Publieke uitvoeringsorganisaties (115K rows)
 - integraal: Cross-module search (universal_search)
 """
+import logging
 from typing import Optional
 from enum import Enum
 import time
 
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Path
+
+logger = logging.getLogger(__name__)
 from pydantic import BaseModel, Field
 
 from app.services.modules import (
@@ -198,8 +201,13 @@ async def get_module(
             },
         )
 
+    except ValueError as e:
+        # Validation errors (e.g., invalid filter field) - safe to show
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # Log full error details server-side, return generic message to client
+        logger.error(f"Module query failed for {module}: {type(e).__name__}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Er ging iets mis bij het ophalen van de gegevens")
 
 
 @router.get("/{module}/{primary_value}/details", response_model=DetailResponse)
@@ -241,8 +249,11 @@ async def get_details(
             details=[DetailRow(**row) for row in details],
         )
 
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Details query failed for {module}/{primary_value}: {type(e).__name__}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Er ging iets mis bij het ophalen van de details")
 
 
 @router.get("/{module}/filters/{field}", response_model=list[str])
@@ -270,4 +281,5 @@ async def get_filter_values(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Filter options query failed for {module}/{field}: {type(e).__name__}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Er ging iets mis bij het ophalen van de filteropties")

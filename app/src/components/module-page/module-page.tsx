@@ -158,6 +158,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
   // Fetch data when filters, pagination, or sorting changes
   useEffect(() => {
+    const abortController = new AbortController()
+
     async function loadData() {
       setIsLoading(true)
       setError(null)
@@ -188,16 +190,26 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           }
         })
 
-        const response = await fetchModuleData(moduleId, params)
+        const response = await fetchModuleData(moduleId, params, abortController.signal)
         setData(response)
       } catch (err) {
+        // Ignore abort errors - they're expected when deps change
+        if (err instanceof Error && err.name === 'AbortError') {
+          return
+        }
         setError(err instanceof Error ? err.message : 'Er ging iets mis')
       } finally {
-        setIsLoading(false)
+        if (!abortController.signal.aborted) {
+          setIsLoading(false)
+        }
       }
     }
 
     loadData()
+
+    return () => {
+      abortController.abort()
+    }
   }, [moduleId, page, perPage, sortBy, sortOrder, filters, isDefaultView, userHasSorted])
 
   const handleFilterChange = useCallback((newFilters: FilterValues) => {

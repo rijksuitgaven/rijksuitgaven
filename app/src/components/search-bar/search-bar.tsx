@@ -94,8 +94,11 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
           setIsOpen(recipientsData.length > 0 || keywordsData.length > 0)
         }
         setSelectedIndex(-1)
-      } catch {
-        // Silent failure - user sees no results instead of error
+      } catch (error) {
+        // Log error but show graceful UI - user sees no results instead of error
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.error('[SearchBar] Search failed:', error.message)
+        }
         setRecipients([])
         setKeywords([])
         setNoResultsQuery(null)
@@ -130,7 +133,10 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
           type: 'keyword' as const,
         })),
       }
-    } catch {
+    } catch (error) {
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('[SearchBar] fetchSearchResults failed:', error.message)
+      }
       return { recipients: [], keywords: [] }
     }
   }
@@ -150,7 +156,10 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
         ...r,
         type: 'recipient' as const,
       }))
-    } catch {
+    } catch (error) {
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('[SearchBar] fetchFuzzySuggestions failed:', error.message)
+      }
       return []
     }
   }

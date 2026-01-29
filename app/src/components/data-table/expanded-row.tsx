@@ -103,6 +103,8 @@ export function ExpandedRow({
 
   // Fetch details when row is expanded or grouping changes
   useEffect(() => {
+    const abortController = new AbortController()
+
     async function fetchDetails() {
       setIsLoading(true)
       setError(null)
@@ -111,7 +113,7 @@ export function ExpandedRow({
         const encodedValue = encodeURIComponent(row.primary_value)
         const url = `${API_BASE_URL}/api/v1/modules/${module}/${encodedValue}/details?group_by=${grouping}`
 
-        const response = await fetch(url)
+        const response = await fetch(url, { signal: abortController.signal })
         if (!response.ok) {
           throw new Error('Fout bij laden details')
         }
@@ -119,13 +121,23 @@ export function ExpandedRow({
         const data = await response.json()
         setDetails(data.details || [])
       } catch (err) {
+        // Ignore abort errors - they're expected when component unmounts or deps change
+        if (err instanceof Error && err.name === 'AbortError') {
+          return
+        }
         setError(err instanceof Error ? err.message : 'Er ging iets mis')
       } finally {
-        setIsLoading(false)
+        if (!abortController.signal.aborted) {
+          setIsLoading(false)
+        }
       }
     }
 
     fetchDetails()
+
+    return () => {
+      abortController.abort()
+    }
   }, [row.primary_value, module, grouping])
 
   // Cross-module sources (excluding current module)

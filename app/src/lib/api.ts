@@ -63,7 +63,8 @@ export async function fetchModules(): Promise<ModuleInfo[]> {
  */
 export async function fetchModuleData(
   module: string,
-  params: ModuleQueryParams & { page?: number; per_page?: number } = {}
+  params: ModuleQueryParams & { page?: number; per_page?: number } = {},
+  signal?: AbortSignal
 ): Promise<ModuleDataResponse> {
   const searchParams = new URLSearchParams()
 
@@ -92,7 +93,7 @@ export async function fetchModuleData(
   })
 
   const url = `${API_BASE_URL}/api/v1/modules/${module}?${searchParams.toString()}`
-  const response = await fetch(url)
+  const response = await fetch(url, signal ? { signal } : undefined)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch ${module} data: ${response.statusText}`)

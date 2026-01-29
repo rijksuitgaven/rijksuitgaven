@@ -16,17 +16,28 @@ export function formatAmount(amount: number | null | undefined): string {
 
 /**
  * Calculate year-over-year percentage change
- * Returns null if previous year is 0 or missing (can't calculate %)
+ * Returns null if previous year is 0, missing, or if result would be invalid
  */
 export function calculateYoYChange(
   currentAmount: number,
   previousAmount: number | null | undefined
 ): number | null {
-  if (!previousAmount || previousAmount === 0) {
+  // Validate inputs - must be finite numbers
+  if (!Number.isFinite(currentAmount)) {
+    return null
+  }
+  if (!previousAmount || previousAmount === 0 || !Number.isFinite(previousAmount)) {
     return null
   }
 
-  return ((currentAmount - previousAmount) / Math.abs(previousAmount)) * 100
+  const result = ((currentAmount - previousAmount) / Math.abs(previousAmount)) * 100
+
+  // Validate result is a finite number
+  if (!Number.isFinite(result)) {
+    return null
+  }
+
+  return result
 }
 
 /**

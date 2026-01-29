@@ -118,9 +118,6 @@ async def autocomplete(
     Used by the global search bar for instant suggestions.
     """
     try:
-        # Log config for debugging
-        logger.info(f"Typesense config: host={settings.typesense_host}, port={settings.typesense_port}, protocol={settings.typesense_protocol}")
-
         # Parallel search for recipients and keywords
         recipients = await search_recipients(q, fuzzy=fuzzy)
         keywords = await search_keywords(q)
@@ -131,8 +128,8 @@ async def autocomplete(
             keywords=keywords,
         )
     except Exception as e:
-        logger.error(f"Search failed: {type(e).__name__}: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
+        logger.error(f"Search failed: {type(e).__name__}: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Er ging iets mis bij het zoeken")
 
 
 @router.get("/recipients", response_model=list[RecipientResult])
