@@ -336,7 +336,13 @@ Example: "politie" (police) matches "Politieke" (political) - completely differe
 | V1.1 | Dutch word rules (-ie/-iek pattern) | 4-8 hours | ~90% |
 | V2.0 | Embeddings (vector similarity) | 2-3 days | ~95% |
 
-**V2.0 Embeddings Benefits:**
+**V2.0 Embeddings:**
+- **Vendor:** Cohere embed-multilingual-v3 (native Dutch support)
+- **Scope:** Full database (~9M tokens: recipients, regelingen, omschrijvingen)
+- **Cost:** €0.90 one-time, ~€1/month
+- **Storage:** pgvector in Supabase (already enabled)
+
+**Benefits:**
 - Filter false positives semantically
 - Entity clustering (group related organizations)
 - Theme search ("infrastructure" finds rail, road, water entities)
