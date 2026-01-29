@@ -333,14 +333,12 @@ async def _get_from_aggregated_view(
     use_random_threshold = False
     relevance_select = ""
     if search:
-        # When searching: rank by relevance (exact > starts with > word boundary > contains)
-        # Then by amount within each relevance tier
+        # When searching: exact match first, then everything else by totaal
+        # Option C: Users want exact match on top, then biggest money flows
         relevance_select = f""",
             CASE
                 WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
-                WHEN UPPER({primary}) LIKE UPPER(${param_idx}) || '%' THEN 2
-                WHEN UPPER({primary}) LIKE '% ' || UPPER(${param_idx}) || '%' THEN 3
-                ELSE 4
+                ELSE 2
             END AS relevance_score"""
         params.append(search)
         param_idx += 1
@@ -507,14 +505,12 @@ async def _get_from_source_table(
     # IMPORTANT: When searching, ALWAYS use relevance ranking (ignore random sort)
     relevance_select = ""
     if search:
-        # When searching: rank by relevance (exact > starts with > word boundary > contains)
-        # Then by amount within each relevance tier
+        # When searching: exact match first, then everything else by totaal
+        # Option C: Users want exact match on top, then biggest money flows
         relevance_select = f""",
             CASE
                 WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
-                WHEN UPPER({primary}) LIKE UPPER(${param_idx}) || '%' THEN 2
-                WHEN UPPER({primary}) LIKE '% ' || UPPER(${param_idx}) || '%' THEN 3
-                ELSE 4
+                ELSE 2
             END AS relevance_score"""
         params.append(search)
         param_idx += 1
@@ -739,14 +735,12 @@ async def get_integraal_data(
     use_random_threshold = False
     relevance_select = ""
     if search:
-        # When searching: rank by relevance (exact > starts with > word boundary > contains)
-        # Then by amount within each relevance tier
+        # When searching: exact match first, then everything else by totaal
+        # Option C: Users want exact match on top, then biggest money flows
         relevance_select = f""",
             CASE
                 WHEN UPPER(ontvanger) = UPPER(${param_idx}) THEN 1
-                WHEN UPPER(ontvanger) LIKE UPPER(${param_idx}) || '%' THEN 2
-                WHEN UPPER(ontvanger) LIKE '% ' || UPPER(${param_idx}) || '%' THEN 3
-                ELSE 4
+                ELSE 2
             END AS relevance_score"""
         params.append(search)
         param_idx += 1
@@ -956,9 +950,7 @@ async def get_module_autocomplete(
                 totaal,
                 CASE
                     WHEN UPPER({primary}) = UPPER($1) THEN 1
-                    WHEN UPPER({primary}) LIKE UPPER($1) || '%' THEN 2
-                    WHEN UPPER({primary}) LIKE '% ' || UPPER($1) || '%' THEN 3
-                    ELSE 4
+                    ELSE 2
                 END AS relevance_score
             FROM {agg_table}
             WHERE {condition}
@@ -1003,9 +995,7 @@ async def get_module_autocomplete(
             sources,
             CASE
                 WHEN UPPER(ontvanger) = UPPER($1) THEN 1
-                WHEN UPPER(ontvanger) LIKE UPPER($1) || '%' THEN 2
-                WHEN UPPER(ontvanger) LIKE '% ' || UPPER($1) || '%' THEN 3
-                ELSE 4
+                ELSE 2
             END AS relevance_score
         FROM universal_search
         WHERE {universal_condition}
@@ -1058,9 +1048,7 @@ async def get_integraal_autocomplete(
             sources,
             CASE
                 WHEN UPPER(ontvanger) = UPPER($1) THEN 1
-                WHEN UPPER(ontvanger) LIKE UPPER($1) || '%' THEN 2
-                WHEN UPPER(ontvanger) LIKE '% ' || UPPER($1) || '%' THEN 3
-                ELSE 4
+                ELSE 2
             END AS relevance_score
         FROM universal_search
         WHERE {condition}
