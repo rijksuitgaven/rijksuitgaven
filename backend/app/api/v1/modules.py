@@ -119,6 +119,7 @@ async def get_module(
     # Module-specific multi-select filters
     provincie: Optional[list[str]] = Query(None, description="Filter by provincie(s) - multi-select"),
     gemeente: Optional[list[str]] = Query(None, description="Filter by gemeente(s) - multi-select"),
+    source: Optional[list[str]] = Query(None, description="Filter by source/organisatie(s) - multi-select (publiek module)"),
 ):
     """
     Get aggregated data for a module.
@@ -152,6 +153,8 @@ async def get_module(
         filter_fields["provincie"] = provincie
     if gemeente:
         filter_fields["gemeente"] = gemeente
+    if source:
+        filter_fields["source"] = source
 
     try:
         # Handle integraal separately (uses universal_search table)

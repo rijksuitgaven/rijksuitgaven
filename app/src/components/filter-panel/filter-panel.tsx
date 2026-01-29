@@ -36,7 +36,7 @@ const MODULE_FILTERS: Record<string, FilterConfig[]> = {
     { value: 'beleidsterrein', label: 'Beleidsterrein', type: 'text' },
   ],
   publiek: [
-    { value: 'source', label: 'Organisatie', type: 'text' },
+    { value: 'source', label: 'Organisatie', type: 'multiselect' },
     { value: 'regeling', label: 'Regeling', type: 'text' },
   ],
   integraal: [
@@ -418,7 +418,33 @@ export function FilterPanel({
       {/* Expanded filters */}
       {isExpanded && (
         <div className="mt-4 pt-4 border-t border-[var(--border)] grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {/* Amount range */}
+          {/* Module-specific filters (first) */}
+          {moduleFilters.map((filter) => (
+            <div key={filter.value} className="space-y-2">
+              <label className="text-sm font-medium text-[var(--navy-dark)]">
+                {filter.label}
+              </label>
+              {filter.type === 'multiselect' ? (
+                <MultiSelect
+                  module={module}
+                  field={filter.value}
+                  label={filter.label}
+                  value={(localFilters[filter.value] as string[]) ?? []}
+                  onChange={(values) => handleModuleFilterChange(filter.value, values)}
+                />
+              ) : (
+                <input
+                  type="text"
+                  value={(localFilters[filter.value] as string) ?? ''}
+                  onChange={(e) => handleModuleFilterChange(filter.value, e.target.value)}
+                  placeholder={`Filter op ${filter.label.toLowerCase()}...`}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)]"
+                />
+              )}
+            </div>
+          ))}
+
+          {/* Amount range (last) */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-[var(--navy-dark)]">
               Bedrag bereik
@@ -445,32 +471,6 @@ export function FilterPanel({
               />
             </div>
           </div>
-
-          {/* Module-specific filters */}
-          {moduleFilters.map((filter) => (
-            <div key={filter.value} className="space-y-2">
-              <label className="text-sm font-medium text-[var(--navy-dark)]">
-                {filter.label}
-              </label>
-              {filter.type === 'multiselect' ? (
-                <MultiSelect
-                  module={module}
-                  field={filter.value}
-                  label={filter.label}
-                  value={(localFilters[filter.value] as string[]) ?? []}
-                  onChange={(values) => handleModuleFilterChange(filter.value, values)}
-                />
-              ) : (
-                <input
-                  type="text"
-                  value={(localFilters[filter.value] as string) ?? ''}
-                  onChange={(e) => handleModuleFilterChange(filter.value, e.target.value)}
-                  placeholder={`Filter op ${filter.label.toLowerCase()}...`}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)]"
-                />
-              )}
-            </div>
-          ))}
         </div>
       )}
 
