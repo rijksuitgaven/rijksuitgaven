@@ -261,11 +261,11 @@ export function DataTable({
         header: () => (
           <button
             onClick={() => setYearsExpanded(true)}
-            className="flex items-center gap-1 text-xs font-semibold text-white hover:text-white/80 transition-colors"
+            className="flex items-center gap-1 text-sm font-semibold text-white hover:text-white/80 transition-colors ml-auto"
             aria-label={`Jaren ${COLLAPSED_YEARS_START} tot ${COLLAPSED_YEARS_END} uitklappen`}
           >
             {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
-            <ChevronRight className="h-3 w-3" aria-hidden="true" />
+            <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </button>
         ),
         cell: ({ row }) => (
@@ -595,10 +595,16 @@ function SortableHeader({
     ? 'Gesorteerd aflopend, klik voor oplopend'
     : 'Klik om te sorteren'
 
+  // Check if this is a year or total column (should be right-aligned)
+  const isYearOrTotal = column.id.startsWith('year-') || column.id === 'total'
+
   return (
     <button
       onClick={handleSort}
-      className="flex items-center gap-1 hover:text-white/80 transition-colors"
+      className={cn(
+        "flex items-center gap-1 hover:text-white/80 transition-colors",
+        isYearOrTotal && "ml-auto"
+      )}
       aria-label={sortLabel}
     >
       {children}
