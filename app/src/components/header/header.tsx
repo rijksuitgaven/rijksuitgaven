@@ -50,7 +50,7 @@ export function Header() {
             {/* Logo + Tagline */}
             <Link href="/" className="flex items-center gap-2 shrink-0">
               <Image
-                src="/logo-white.png"
+                src="/logo-icon.png"
                 alt="Rijksuitgaven"
                 width={32}
                 height={32}
