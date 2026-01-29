@@ -16,13 +16,16 @@ interface FilterConfig {
 
 const MODULE_FILTERS: Record<string, FilterConfig[]> = {
   instrumenten: [
-    { value: 'regeling', label: 'Regeling', type: 'text' },
-    { value: 'artikel', label: 'Artikel', type: 'text' },
     { value: 'begrotingsnaam', label: 'Begrotingsnaam', type: 'text' },
+    { value: 'artikel', label: 'Artikel', type: 'text' },
+    { value: 'artikelonderdeel', label: 'Artikelonderdeel', type: 'text' },
+    { value: 'instrument', label: 'Instrument', type: 'text' },
+    { value: 'regeling', label: 'Regeling', type: 'text' },
   ],
   apparaat: [
-    { value: 'artikel', label: 'Artikel', type: 'text' },
     { value: 'begrotingsnaam', label: 'Begrotingsnaam', type: 'text' },
+    { value: 'artikel', label: 'Artikel', type: 'text' },
+    { value: 'detail', label: 'Detail', type: 'text' },
   ],
   inkoop: [
     { value: 'ministerie', label: 'Ministerie', type: 'text' },

@@ -90,7 +90,7 @@ MODULE_CONFIG = {
         "amount_field": "bedrag",
         "amount_multiplier": 1000,  # Source data in ×1000, normalize to absolute euros
         "search_fields": ["ontvanger", "regeling", "instrument"],
-        "filter_fields": ["regeling", "artikel", "begrotingsnaam"],
+        "filter_fields": ["begrotingsnaam", "artikel", "artikelonderdeel", "instrument", "regeling"],
     },
     "apparaat": {
         "table": "apparaat",
@@ -100,7 +100,7 @@ MODULE_CONFIG = {
         "amount_field": "bedrag",
         "amount_multiplier": 1000,  # Source data in ×1000, normalize to absolute euros
         "search_fields": ["kostensoort", "begrotingsnaam"],
-        "filter_fields": ["artikel", "begrotingsnaam"],
+        "filter_fields": ["begrotingsnaam", "artikel", "detail"],
     },
     "inkoop": {
         "table": "inkoop",
