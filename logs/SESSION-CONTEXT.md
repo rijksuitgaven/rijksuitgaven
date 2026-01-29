@@ -61,20 +61,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/header/header.tsx** ⭐ MAJOR UPDATE (2026-01-29)
+1. **app/src/components/module-page/module-page.tsx** ⭐ UPDATED (2026-01-29)
+   Gradient background, white content card for filter/table
+
+2. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-29)
+   Navy header, Totaal column, white text for collapsed years
+
+3. **app/src/components/header/header.tsx** ⭐ MAJOR UPDATE (2026-01-29)
    Visual refresh: 2-row compact layout, grouped tabs, logo fix
 
-2. **app/src/app/globals.css** ⭐ UPDATED (2026-01-29)
+4. **app/src/app/globals.css** ⭐ UPDATED (2026-01-29)
    Visual refresh: page background #E1EAF2, --totaal-bg variable
 
-3. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-29)
-   Visual refresh: navy header, Totaal column styling
-
-4. **docs/plans/2026-01-29-visual-refresh-design.md** ⭐ CREATED (2026-01-29)
+5. **docs/plans/2026-01-29-visual-refresh-design.md** ⭐ CREATED (2026-01-29)
    Design specification for header, background, table styling
-
-5. **app/public/logo-icon.png** ⭐ CREATED (2026-01-29)
-   Color icon for header (white background)
 
 ---
 
@@ -951,6 +951,8 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Table header: Navy #0E3261 with white text
 - Totaal column: Bold + #D0DEEA background tint
 - Logo fix: `logo-icon.png` for white header background
+- Module pages: Gradient background + white content card
+- Table header fix: White text for collapsed years (2016-20)
 - Design document: `docs/plans/2026-01-29-visual-refresh-design.md`
 - Build verified ✅, Deployed ✅
 
