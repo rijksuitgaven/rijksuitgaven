@@ -530,6 +530,37 @@ When expanded:
 
 **Priority:** P0 (Critical)
 
+**Status:** ✅ Implemented 2026-01-29
+
+---
+
+### UX-002a: Search Relevance Ranking
+
+**Requirement:** When searching, show most relevant results first (Google-like behavior)
+
+**Behavior:**
+- Ranking priority (1 = highest):
+  1. **Exact match:** Search term equals Ontvanger (e.g., "politie" → "Politie")
+  2. **Starts with:** Ontvanger starts with search term (e.g., "Politieacademie")
+  3. **Word boundary:** Search term as separate word (e.g., "VTS POLITIE NEDERLAND")
+  4. **Contains:** Search term anywhere in Ontvanger (e.g., "Het Oude Politiebureau")
+- **Tiebreaker within each tier:** Amount (descending) - users typically care about biggest money flows first
+
+**Rationale:**
+- Users expect best matches at top (Google-like behavior)
+- Without ranking, "Politiehonddresseervereniging" (€6K) appeared before "Politie" (€6.5B)
+- Industry standard UX pattern
+
+**Implementation:**
+- PostgreSQL CASE expression for relevance scoring
+- Applied to all three data functions: aggregated view, source table, integraal
+
+**Priority:** P0 (Critical)
+
+**Status:** ✅ Implemented 2026-01-29
+
+**Design Doc:** `docs/plans/2026-01-29-search-relevance-ranking.md`
+
 ---
 
 ### UX-003: Mobile Responsiveness

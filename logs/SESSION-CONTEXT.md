@@ -915,8 +915,15 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Header updated to show logo icon + text (icon only on mobile)
 - Cleaned up default Next.js placeholder assets
 
+**Search Relevance Ranking (Session 9):**
+- Implemented relevance-based ranking: exact > starts with > word boundary > contains
+- Amount tiebreaker within each relevance tier
+- Design document: `docs/plans/2026-01-29-search-relevance-ranking.md`
+- Bug fixes: random sort override, asyncpg count_params mismatch
+- Backlog: "Search on Other Fields" (Regeling/Omschrijving matches) - deferred to UI/UX sprint
+- Deployed & tested: "politie" now shows exact matches first ✅
+
 **Next Steps:**
 1. Header design refinement (logo + navigation styling)
-2. Search results UX (show why results matched)
-3. Week 6 - User Auth (Magic Link, user migration)
-4. Overzicht page
+2. Week 6 - User Auth (Magic Link, user migration)
+3. Overzicht page
