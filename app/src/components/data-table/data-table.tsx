@@ -378,22 +378,26 @@ export function DataTable({
   return (
     <div className="w-full">
       {/* Table container with horizontal scroll for expanded years */}
-      <div className="overflow-x-auto border border-[var(--border)] rounded-lg">
+      <div className="overflow-x-auto">
         <table className="w-full border-collapse">
-          <thead className="bg-[var(--navy-dark)]">
+          <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr key={headerGroup.id} className="bg-[var(--navy-dark)]">
                 {headerGroup.headers.map((header, headerIndex) => {
                   const isSticky = (header.column.columnDef.meta as ColumnMeta | undefined)?.sticky || headerIndex === 0 || headerIndex === 1
                   const isTotaal = header.column.id === 'total'
+                  const isFirst = headerIndex === 0
+                  const isLast = headerIndex === headerGroup.headers.length - 1
                   return (
                     <th
                       key={header.id}
                       className={cn(
-                        'px-3 py-3 text-left text-xs font-semibold text-white border-b border-[var(--navy-medium)]',
+                        'px-3 py-2.5 text-left text-[13px] font-medium text-white',
                         isSticky && 'sticky left-0 bg-[var(--navy-dark)] z-10',
                         headerIndex === 1 && `sticky bg-[var(--navy-dark)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]`,
-                        isTotaal && 'bg-[var(--navy-medium)]'
+                        isTotaal && 'bg-[var(--navy-medium)]',
+                        isFirst && 'rounded-l-lg',
+                        isLast && 'rounded-r-lg'
                       )}
                       style={{
                         width: header.getSize(),
@@ -409,7 +413,7 @@ export function DataTable({
               </tr>
             ))}
           </thead>
-          <tbody>
+          <tbody className="bg-white border border-[var(--border)] border-t-0">
             {isLoading ? (
               // Loading skeleton
               Array.from({ length: 5 }).map((_, i) => (
