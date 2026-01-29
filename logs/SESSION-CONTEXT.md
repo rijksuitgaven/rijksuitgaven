@@ -895,8 +895,16 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Merged two search bars into one (was: header + filter panel, now: filter panel only)
 - Filter panel now has full autocomplete with Ontvangers + Zoektermen sections
 - Clickable "Ook in" module badges navigate to `/module?q=search`
-- Keyboard navigation (arrows, Enter, Escape, "/" to focus)
+- Keyboard navigation (arrows, Enter, Escape)
 - URL parameter support (`?q=ProRail`)
 - Design document: `docs/plans/2026-01-29-search-bar-consolidation.md`
+
+**Autocomplete UX Redesign (Session 7):**
+- Redesigned autocomplete to follow industry standard "what you see is what you get" principle
+- Two-section dropdown: "Ontvangers in [Module]" (with amounts) + "Ook in andere modules" (with badges)
+- New backend endpoint: `GET /api/v1/modules/{module}/autocomplete`
+- Searches current module first (PostgreSQL), shows other modules as secondary
+- Bug fixes: current module filtered from badges, Enter closes dropdown
+- Removed confusing "/" shortcut tip
 
 **Next:** Continue Week 6 - User Auth (Magic Link, user migration, Overzicht page)
