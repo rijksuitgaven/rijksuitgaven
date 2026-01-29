@@ -261,7 +261,7 @@ export function DataTable({
         header: () => (
           <button
             onClick={() => setYearsExpanded(true)}
-            className="flex items-center gap-1 text-xs font-semibold text-[var(--navy-dark)] hover:text-[var(--navy-medium)] transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold text-white hover:text-white/80 transition-colors"
             aria-label={`Jaren ${COLLAPSED_YEARS_START} tot ${COLLAPSED_YEARS_END} uitklappen`}
           >
             {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
@@ -321,7 +321,7 @@ export function DataTable({
         header: () => (
           <button
             onClick={() => setYearsExpanded(false)}
-            className="p-1 hover:bg-[var(--gray-light)] rounded"
+            className="p-1 hover:bg-white/20 rounded text-white"
             title="Jaren inklappen"
             aria-label="Jaren inklappen"
           >
@@ -588,7 +588,7 @@ function SortableHeader({
   return (
     <button
       onClick={handleSort}
-      className="flex items-center gap-1 hover:text-[var(--navy-medium)] transition-colors"
+      className="flex items-center gap-1 hover:text-white/80 transition-colors"
       aria-label={sortLabel}
     >
       {children}
