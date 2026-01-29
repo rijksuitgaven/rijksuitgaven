@@ -1,8 +1,8 @@
 # Session Context
 
-**Last Updated:** 2026-01-26
+**Last Updated:** 2026-01-29
 **Project Phase:** Phase 1 - V1.0 Development
-**Current Sprint:** Week 5 COMPLETE → Next: Week 6 - User Auth
+**Current Sprint:** Week 6 - User Auth (Mini Sprint: Code Review & Fixes)
 
 ---
 
@@ -61,20 +61,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/column-selector/column-selector.tsx** ⭐ CREATED (2026-01-26)
-   UX-005: Column customization with "Kolommen" button, localStorage persistence
+1. **backend/app/api/v1/search.py** ⭐ CREATED (2026-01-29)
+   Typesense proxy endpoint - keeps API key server-side only
 
-2. **app/src/components/search-bar/search-bar.tsx** ⭐ UPDATED (2026-01-26)
-   Added keyboard shortcut `/` to focus, "Did you mean" suggestions when no results
+2. **app/src/lib/api-config.ts** ⭐ CREATED (2026-01-29)
+   Centralized API base URL configuration
 
-3. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-01-26)
-   Added filter badge count showing number of active filters (e.g., "Filters (3)")
+3. **app/src/components/search-bar/search-bar.tsx** ⭐ UPDATED (2026-01-29)
+   Backend proxy for Typesense, accessibility labels (aria-label, aria-expanded, aria-haspopup)
 
-4. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-26)
-   Integrated ColumnSelector component for detail column customization
+4. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-29)
+   TypeScript fixes (Column, ColumnMeta), accessibility labels on all buttons
 
-5. **docs/FRONTEND-DOCUMENTATION.md** ⭐ UPDATED (2026-01-26)
-   Added ColumnSelector documentation, updated SearchBar and FilterPanel features
+5. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-01-29)
+   Min/max bedrag validation, accessibility labels
 
 ---
 
@@ -119,6 +119,7 @@
 - `GET /api/v1/modules` - List all modules
 - `GET /api/v1/modules/{module}` - Aggregated data with year columns
 - `GET /api/v1/modules/{module}/{value}/details` - Expandable row details
+- `GET /api/v1/search/autocomplete` - Typesense proxy (API key server-side) ⭐ NEW 2026-01-29
 - `GET /api/v1/health` - Health check (database + Typesense status)
 - `GET /health` - Railway health probe endpoint
 
@@ -128,13 +129,14 @@
 |----------|-------|
 | Platform | Railway (template deployment) |
 | URL | `typesense-production-35ae.up.railway.app` |
-| API Key | `0vh4mxafjeuvd676gw92kpjflg6fuv57` |
+| API Key | **In Railway env vars only** (rotated 2026-01-29) |
 | Status | ✅ Running |
 | Collections | 7 (recipients, instrumenten, inkoop, publiek, gemeente, provincie, apparaat) |
 | Indexed | 451,445 recipients (after entity resolution) |
 | Performance | <25ms search (target <100ms) |
 | Scripts | `scripts/typesense/collections.json`, `scripts/typesense/sync_to_typesense.py` |
 | **Sync Docs** | `scripts/typesense/README.md` ← **Use this for re-indexing** |
+| **Backend Proxy** | `/api/v1/search/autocomplete` - API key stays server-side |
 
 ### Supabase Connection String (for scripts)
 
@@ -804,13 +806,16 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-20 - V1.0 scope change, sprint planning
 - 2026-01-21 - PM audit, UX brainstorm, folder restructure, Supabase setup, Typesense deployed
 - 2026-01-23 - Data migration complete (3.1M rows), Typesense sync (466K recipients)
+- 2026-01-26 - Weeks 3, 4 & 5 complete, UX enhancements, search requirements audit
 
-**This Session:** 2026-01-26 - **WEEKS 3, 4 & 5 COMPLETE + ALL UX ENHANCEMENTS + SEARCH REQUIREMENTS AUDIT.**
-- DataTable with TanStack Table, expandable rows with grouping, filter panel with URL sync
-- Reusable ModulePage component for all 7 modules, sticky columns for mobile
-- Documentation: Brawler font, cookie banner, privacy policy, FRONTEND-DOCUMENTATION.md
-- **Week 5:** Global search bar (Typesense autocomplete), header navigation, CSV export
-- **UX Enhancements:** Enhanced autocomplete, DetailPanel, CrossModuleResults, Prominent expanded context
-- **Search Requirements Audit:** Column customization (UX-005), filter badge count (SR-009), keyboard shortcut "/" (SR-004), "Did you mean" suggestions
-- **PM Rule #12 added:** Requirements-first implementation checklist
-- **Next:** Week 6 - User Auth (Magic Link, user migration, Overzicht page)
+**This Session:** 2026-01-29 - **MINI SPRINT: CODE REVIEW & SECURITY FIXES**
+- **Golden Rules added to CLAUDE.md:** 4 non-negotiable rules (Requirements Check, Documentation Sync, Ask Don't Assume, Pre-Commit Audit)
+- **CRITICAL FIX:** Typesense API key moved to backend proxy (`/api/v1/search/autocomplete`)
+- **CRITICAL FIX:** XSS risk in CSV filename sanitized
+- **Security:** API key rotated, removed from documentation
+- **TypeScript:** Fixed `any` types with proper Column and ColumnMeta interfaces
+- **Accessibility:** Added aria-labels to search-bar, filter-panel, data-table buttons
+- **Validation:** Added min/max bedrag filter validation
+- **Centralized:** API_BASE_URL in single config file
+- **Backlog:** Railway private networking (deferred - public URL works)
+- **Next:** Continue Week 6 - User Auth (Magic Link, user migration, Overzicht page)
