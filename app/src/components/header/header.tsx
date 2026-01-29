@@ -11,13 +11,13 @@ const MODULES = [
   // Group 1: Cross-module discovery
   { id: 'integraal', name: 'Integraal', group: 'discovery' },
   // Group 2: Recipient-based modules
-  { id: 'instrumenten', name: 'Instrumenten', group: 'main' },
-  { id: 'provincie', name: 'Provincie', group: 'main' },
-  { id: 'gemeente', name: 'Gemeente', group: 'main' },
-  { id: 'inkoop', name: 'Inkoop', group: 'main' },
+  { id: 'instrumenten', name: 'Financiële instrumenten', group: 'main' },
+  { id: 'provincie', name: 'Provinciale subsidieregisters', group: 'main' },
+  { id: 'gemeente', name: 'Gemeentelijke subsidieregisters', group: 'main' },
+  { id: 'inkoop', name: 'Inkoopuitgaven', group: 'main' },
   { id: 'publiek', name: 'Publiek', group: 'main' },
   // Group 3: Different data type (costs, not recipients)
-  { id: 'apparaat', name: 'Apparaat', group: 'other' },
+  { id: 'apparaat', name: 'Apparaatsuitgaven', group: 'other' },
 ]
 
 // Navigation items (V1.0: only Profiel/Logout shown, others reserved for V1.1+)
