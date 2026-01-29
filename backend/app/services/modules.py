@@ -93,6 +93,7 @@ async def get_module_data(
     sort_order: str = "desc",
     limit: int = 25,
     offset: int = 0,
+    min_years: Optional[int] = None,  # Filter for recipients with data in X+ years
 ) -> tuple[list[dict], int]:
     """
     Get aggregated data for a module.
@@ -125,6 +126,7 @@ async def get_module_data(
             sort_order=sort_order,
             limit=limit,
             offset=offset,
+            min_years=min_years,
         )
     else:
         return await _get_from_source_table(
@@ -137,6 +139,7 @@ async def get_module_data(
             sort_order=sort_order,
             limit=limit,
             offset=offset,
+            min_years=min_years,
         )
 
 
@@ -150,6 +153,7 @@ async def _get_from_aggregated_view(
     sort_order: str = "desc",
     limit: int = 25,
     offset: int = 0,
+    min_years: Optional[int] = None,
 ) -> tuple[list[dict], int]:
     """Fast path: query pre-computed materialized view."""
     agg_table = config["aggregated_table"]
@@ -182,18 +186,28 @@ async def _get_from_aggregated_view(
         params.append(max_bedrag)
         param_idx += 1
 
+    # Filter for recipients with data in min_years+ years (UX-002)
+    if min_years is not None and min_years > 0:
+        year_count_expr = " + ".join([
+            f'CASE WHEN "{y}" > 0 THEN 1 ELSE 0 END' for y in YEARS
+        ])
+        where_clauses.append(f"({year_count_expr}) >= {min_years}")
+
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
-    # Sort field mapping
-    sort_field = "totaal"
-    if sort_by == "primary":
-        sort_field = primary
-    elif sort_by.startswith("y") and sort_by[1:].isdigit():
-        # Map y2024 to "2024" column name
-        year = sort_by[1:]
-        sort_field = f'"{year}"'
-
-    sort_direction = "DESC" if sort_order == "desc" else "ASC"
+    # Sort field mapping - support "random" for default view (UX-002)
+    if sort_by == "random":
+        sort_clause = "ORDER BY RANDOM()"
+    else:
+        sort_field = "totaal"
+        if sort_by == "primary":
+            sort_field = primary
+        elif sort_by.startswith("y") and sort_by[1:].isdigit():
+            # Map y2024 to "2024" column name
+            year = sort_by[1:]
+            sort_field = f'"{year}"'
+        sort_direction = "DESC" if sort_order == "desc" else "ASC"
+        sort_clause = f"ORDER BY {sort_field} {sort_direction}"
 
     # Store params for count query
     count_params = params.copy()
@@ -209,7 +223,7 @@ async def _get_from_aggregated_view(
             row_count
         FROM {agg_table}
         {where_sql}
-        ORDER BY {sort_field} {sort_direction}
+        {sort_clause}
         LIMIT ${param_idx} OFFSET ${param_idx + 1}
     """
     params.extend([limit, offset])
@@ -245,6 +259,7 @@ async def _get_from_source_table(
     sort_order: str = "desc",
     limit: int = 25,
     offset: int = 0,
+    min_years: Optional[int] = None,
 ) -> tuple[list[dict], int]:
     """Slow path: aggregate from source table (needed for year filter)."""
     table = config["table"]
@@ -292,17 +307,24 @@ async def _get_from_source_table(
         params.append(max_bedrag)
         param_idx += 1
 
+    # Filter for recipients with data in min_years+ years (UX-002)
+    if min_years is not None and min_years > 0:
+        having_clauses.append(f"COUNT(DISTINCT {year_field}) >= {min_years}")
+
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
     having_sql = f"HAVING {' AND '.join(having_clauses)}" if having_clauses else ""
 
-    # Sort field mapping
-    sort_field = "totaal"
-    if sort_by == "primary":
-        sort_field = primary
-    elif sort_by.startswith("y") and sort_by[1:].isdigit():
-        sort_field = f"\"{sort_by}\""
-
-    sort_direction = "DESC" if sort_order == "desc" else "ASC"
+    # Sort field mapping - support "random" for default view (UX-002)
+    if sort_by == "random":
+        sort_clause = "ORDER BY RANDOM()"
+    else:
+        sort_field = "totaal"
+        if sort_by == "primary":
+            sort_field = primary
+        elif sort_by.startswith("y") and sort_by[1:].isdigit():
+            sort_field = f"\"{sort_by}\""
+        sort_direction = "DESC" if sort_order == "desc" else "ASC"
+        sort_clause = f"ORDER BY {sort_field} {sort_direction}"
 
     # Store params for count query
     count_params = params.copy()
@@ -318,7 +340,7 @@ async def _get_from_source_table(
         {where_sql}
         GROUP BY {primary}
         {having_sql}
-        ORDER BY {sort_field} {sort_direction}
+        {sort_clause}
         LIMIT ${param_idx} OFFSET ${param_idx + 1}
     """
     params.extend([limit, offset])
@@ -439,6 +461,7 @@ async def get_integraal_data(
     sort_order: str = "desc",
     limit: int = 25,
     offset: int = 0,
+    min_years: Optional[int] = None,
 ) -> tuple[list[dict], int]:
     """
     Get cross-module data from universal_search table.
@@ -470,17 +493,27 @@ async def get_integraal_data(
         params.append(max_bedrag)
         param_idx += 1
 
+    # Filter for recipients with data in min_years+ years (UX-002)
+    if min_years is not None and min_years > 0:
+        year_count_expr = " + ".join([
+            f'CASE WHEN "{y}" > 0 THEN 1 ELSE 0 END' for y in YEARS
+        ])
+        where_clauses.append(f"({year_count_expr}) >= {min_years}")
+
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
-    # Sort field mapping
-    sort_field = "totaal"
-    if sort_by == "primary":
-        sort_field = "ontvanger"
-    elif sort_by.startswith("y") and sort_by[1:].isdigit():
-        year = sort_by[1:]
-        sort_field = f'"{year}"'
-
-    sort_direction = "DESC" if sort_order == "desc" else "ASC"
+    # Sort field mapping - support "random" for default view (UX-002)
+    if sort_by == "random":
+        sort_clause = "ORDER BY RANDOM()"
+    else:
+        sort_field = "totaal"
+        if sort_by == "primary":
+            sort_field = "ontvanger"
+        elif sort_by.startswith("y") and sort_by[1:].isdigit():
+            year = sort_by[1:]
+            sort_field = f'"{year}"'
+        sort_direction = "DESC" if sort_order == "desc" else "ASC"
+        sort_clause = f"ORDER BY {sort_field} {sort_direction}"
 
     # Store params for count query
     count_params = params.copy()
@@ -502,7 +535,7 @@ async def get_integraal_data(
             totaal
         FROM universal_search
         {where_sql}
-        ORDER BY {sort_field} {sort_direction}
+        {sort_clause}
         LIMIT ${param_idx} OFFSET ${param_idx + 1}
     """
     params.extend([limit, offset])

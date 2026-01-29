@@ -516,13 +516,17 @@ When expanded:
 - Display a random selection of recipients
 - Only include recipients with amounts in at least 4 different years
 - Truly random order (not sorted by amount or name)
-- Refreshes on each page load
+- **Randomize on:**
+  - Initial page load
+  - Browser refresh
+  - **Switching between modules** (each module shows fresh random selection)
 
 **Rationale:**
 - Users immediately see the type of data available
 - Demonstrates multi-year coverage
 - Encourages exploration
 - No empty state on first visit
+- Module switching = fresh discovery opportunity
 
 **Priority:** P0 (Critical)
 

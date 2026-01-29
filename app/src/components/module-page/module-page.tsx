@@ -120,8 +120,9 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(25)
-  const [sortBy, setSortBy] = useState<string>('total')
+  const [sortBy, setSortBy] = useState<string>('random')  // Default: random (UX-002)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+  const [userHasSorted, setUserHasSorted] = useState(false)  // Track if user explicitly sorted
   const [selectedRecipient, setSelectedRecipient] = useState<string | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
 
@@ -132,6 +133,13 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     minBedrag: searchParams.get('min_bedrag') ? parseFloat(searchParams.get('min_bedrag')!) : null,
     maxBedrag: searchParams.get('max_bedrag') ? parseFloat(searchParams.get('max_bedrag')!) : null,
   }))
+
+  // Reset sort state when switching modules (UX-002: randomize on module switch)
+  useEffect(() => {
+    setSortBy('random')
+    setUserHasSorted(false)
+    setPage(1)
+  }, [moduleId])
 
   // Update URL when filters change
   useEffect(() => {
@@ -145,6 +153,9 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     router.replace(newUrl, { scroll: false })
   }, [filters, router, moduleId])
 
+  // Determine if this is the default view (no search, no filters)
+  const isDefaultView = !filters.search && !filters.jaar && !filters.minBedrag && !filters.maxBedrag
+
   // Fetch data when filters, pagination, or sorting changes
   useEffect(() => {
     async function loadData() {
@@ -152,15 +163,20 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
       setError(null)
 
       try {
+        // For default view: use random sort and filter to recipients with 4+ years (UX-002)
+        const effectiveSortBy = isDefaultView && !userHasSorted ? 'random' : sortBy
+        const minYears = isDefaultView && !userHasSorted ? 4 : undefined
+
         const response = await fetchModuleData(moduleId, {
           page,
           per_page: perPage,
-          sort_by: sortBy,
+          sort_by: effectiveSortBy,
           sort_order: sortOrder,
           search: filters.search || undefined,
           jaar: filters.jaar ?? undefined,
           min_bedrag: filters.minBedrag ?? undefined,
           max_bedrag: filters.maxBedrag ?? undefined,
+          min_years: minYears,
         })
         setData(response)
       } catch (err) {
@@ -171,7 +187,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     }
 
     loadData()
-  }, [moduleId, page, perPage, sortBy, sortOrder, filters])
+  }, [moduleId, page, perPage, sortBy, sortOrder, filters, isDefaultView, userHasSorted])
 
   const handleFilterChange = useCallback((newFilters: FilterValues) => {
     setFilters(newFilters)
@@ -181,6 +197,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const handleSortChange = useCallback((column: string, direction: 'asc' | 'desc') => {
     setSortBy(column)
     setSortOrder(direction)
+    setUserHasSorted(true)  // User explicitly sorted, don't reset to random
     setPage(1)
   }, [])
 

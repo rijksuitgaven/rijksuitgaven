@@ -108,8 +108,10 @@ async def get_module(
     min_bedrag: Optional[float] = Query(None, ge=0, description="Minimum amount"),
     max_bedrag: Optional[float] = Query(None, ge=0, description="Maximum amount"),
     # Sorting
-    sort_by: str = Query("totaal", description="Sort field: totaal, primary, or year (e.g., y2024)"),
+    sort_by: str = Query("totaal", description="Sort field: totaal, primary, random, or year (e.g., y2024)"),
     sort_order: SortOrder = Query(SortOrder.desc, description="Sort direction"),
+    # Default view filter (UX-002)
+    min_years: Optional[int] = Query(None, ge=1, le=9, description="Minimum years with data (for default view)"),
 ):
     """
     Get aggregated data for a module.
@@ -123,8 +125,9 @@ async def get_module(
     - **limit/offset**: Pagination (max 100 per page)
     - **jaar**: Filter to specific year
     - **min_bedrag/max_bedrag**: Filter by amount range
-    - **sort_by**: Field to sort by (default: totaal)
+    - **sort_by**: Field to sort by: totaal, primary, random, or year (default: totaal)
     - **sort_order**: asc or desc (default: desc)
+    - **min_years**: Filter recipients with data in X+ years (for default view)
 
     ## Response
 
@@ -148,6 +151,7 @@ async def get_module(
                 sort_order=sort_order.value,
                 limit=limit,
                 offset=offset,
+                min_years=min_years,
             )
             primary_field = "ontvanger"
         else:
@@ -161,6 +165,7 @@ async def get_module(
                 sort_order=sort_order.value,
                 limit=limit,
                 offset=offset,
+                min_years=min_years,
             )
             primary_field = MODULE_CONFIG[module.value]["primary_field"]
 

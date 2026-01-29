@@ -85,5 +85,6 @@ export interface ModuleQueryParams {
   jaar?: number
   min_bedrag?: number
   max_bedrag?: number
+  min_years?: number  // Filter recipients with data in X+ years (UX-002)
   [key: string]: string | number | undefined
 }

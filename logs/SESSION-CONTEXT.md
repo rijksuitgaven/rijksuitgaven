@@ -817,5 +817,6 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - **Accessibility:** Added aria-labels to search-bar, filter-panel, data-table buttons
 - **Validation:** Added min/max bedrag filter validation
 - **Centralized:** API_BASE_URL in single config file
+- **UX-002 FIX:** Randomized default view - `sort_by=random`, `min_years=4`, resets on module switch
 - **Backlog:** Railway private networking (deferred - public URL works)
 - **Next:** Continue Week 6 - User Auth (Magic Link, user migration, Overzicht page)
