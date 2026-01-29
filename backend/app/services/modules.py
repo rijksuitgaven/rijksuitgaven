@@ -566,12 +566,24 @@ async def get_integraal_data(
     limit: int = 25,
     offset: int = 0,
     min_years: Optional[int] = None,
+    filter_modules: Optional[list[str]] = None,
+    min_instanties: Optional[int] = None,
 ) -> tuple[list[dict], int]:
     """
     Get cross-module data from universal_search table.
 
     This table is pre-aggregated with recipient totals across all modules.
     """
+    # Map display names to source values in database
+    module_name_map = {
+        "Instrumenten": "instrumenten",
+        "Apparaat": "apparaat",
+        "Inkoop": "inkoop",
+        "Provincie": "provincie",
+        "Gemeente": "gemeente",
+        "Publiek": "publiek",
+    }
+
     # Build WHERE clause
     where_clauses = []
     params = []
@@ -603,6 +615,20 @@ async def get_integraal_data(
             f'CASE WHEN "{y}" > 0 THEN 1 ELSE 0 END' for y in YEARS
         ])
         where_clauses.append(f"({year_count_expr}) >= {min_years}")
+
+    # Filter by modules: recipient must appear in ALL selected modules
+    if filter_modules:
+        for mod_display in filter_modules:
+            mod_db = module_name_map.get(mod_display, mod_display.lower())
+            where_clauses.append(f"sources ILIKE ${param_idx}")
+            params.append(f"%{mod_db}%")
+            param_idx += 1
+
+    # Filter by minimum number of instanties (source_count)
+    if min_instanties is not None and min_instanties > 1:
+        where_clauses.append(f"source_count >= ${param_idx}")
+        params.append(min_instanties)
+        param_idx += 1
 
     # Sort field mapping - support "random" for default view (UX-002)
     # Uses pre-computed random_order column for fast random sorting (~50ms vs 3s)

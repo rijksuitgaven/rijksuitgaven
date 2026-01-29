@@ -6,12 +6,13 @@ import { cn } from '@/lib/utils'
 import { API_BASE_URL } from '@/lib/api-config'
 
 // Filter configuration per module
-type FilterType = 'text' | 'multiselect'
+type FilterType = 'text' | 'multiselect' | 'select'
 
 interface FilterConfig {
   value: string
   label: string
   type: FilterType
+  options?: { value: string; label: string }[]  // For 'select' type
 }
 
 const MODULE_FILTERS: Record<string, FilterConfig[]> = {
@@ -44,7 +45,19 @@ const MODULE_FILTERS: Record<string, FilterConfig[]> = {
     { value: 'regeling', label: 'Regeling', type: 'text' },
   ],
   integraal: [
-    // Integraal searches across all modules, no module-specific filters
+    { value: 'modules', label: 'Modules per ontvanger', type: 'multiselect' },
+    {
+      value: 'min_instanties',
+      label: 'Instanties per ontvanger',
+      type: 'select',
+      options: [
+        { value: '', label: 'Alle' },
+        { value: '2', label: '2+' },
+        { value: '3', label: '3+' },
+        { value: '5', label: '5+' },
+        { value: '10', label: '10+' },
+      ]
+    },
   ],
 }
 
@@ -436,6 +449,18 @@ export function FilterPanel({
                   value={(localFilters[filter.value] as string[]) ?? []}
                   onChange={(values) => handleModuleFilterChange(filter.value, values)}
                 />
+              ) : filter.type === 'select' && filter.options ? (
+                <select
+                  value={(localFilters[filter.value] as string) ?? ''}
+                  onChange={(e) => handleModuleFilterChange(filter.value, e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)]"
+                >
+                  {filter.options.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
               ) : (
                 <input
                   type="text"

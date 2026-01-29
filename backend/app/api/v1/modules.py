@@ -120,6 +120,9 @@ async def get_module(
     provincie: Optional[list[str]] = Query(None, description="Filter by provincie(s) - multi-select"),
     gemeente: Optional[list[str]] = Query(None, description="Filter by gemeente(s) - multi-select"),
     source: Optional[list[str]] = Query(None, description="Filter by source/organisatie(s) - multi-select (publiek module)"),
+    # Integraal-specific filters
+    modules: Optional[list[str]] = Query(None, description="Filter by modules recipient appears in (integraal only)"),
+    min_instanties: Optional[int] = Query(None, ge=1, description="Minimum number of distinct sources (integraal only)"),
 ):
     """
     Get aggregated data for a module.
@@ -169,6 +172,8 @@ async def get_module(
                 limit=limit,
                 offset=offset,
                 min_years=min_years,
+                filter_modules=modules,
+                min_instanties=min_instanties,
             )
             primary_field = "ontvanger"
         else:
@@ -275,8 +280,12 @@ async def get_filter_values(
     - `GET /api/v1/modules/provincie/filters/provincie` → ["Drenthe", "Friesland", ...]
     - `GET /api/v1/modules/gemeente/filters/gemeente` → ["Amsterdam", "Rotterdam", ...]
     """
+    # Special case: integraal "modules" filter returns module names
     if module == ModuleName.integraal:
-        raise HTTPException(status_code=400, detail="Integraal module has no filter fields")
+        if field == "modules":
+            # Return all modules that appear in universal_search (exclude integraal itself)
+            return ["Instrumenten", "Apparaat", "Inkoop", "Provincie", "Gemeente", "Publiek"]
+        raise HTTPException(status_code=400, detail=f"Unknown filter field: {field}")
 
     try:
         values = await get_filter_options(module.value, field)
