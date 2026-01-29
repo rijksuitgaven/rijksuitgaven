@@ -851,6 +851,23 @@ async def get_module_autocomplete(
     # Exclude recipients already shown in current module
     current_names = {r["name"].upper() for r in current_module_results}
 
+    # Module name variants to filter out (sources may contain different formats)
+    module_variants = {
+        module.lower(),
+        module,
+    }
+    # Add display name variants
+    module_display_names = {
+        "instrumenten": ["instrumenten", "financiële instrumenten", "financiele instrumenten"],
+        "apparaat": ["apparaat", "apparaatsuitgaven"],
+        "inkoop": ["inkoop", "inkoopuitgaven"],
+        "provincie": ["provincie", "provinciale subsidieregisters"],
+        "gemeente": ["gemeente", "gemeentelijke subsidieregisters"],
+        "publiek": ["publiek", "publieke uitvoeringsorganisaties"],
+    }
+    if module.lower() in module_display_names:
+        module_variants.update(v.lower() for v in module_display_names[module.lower()])
+
     # Query universal_search for matching recipients
     universal_query = """
         SELECT
@@ -867,11 +884,11 @@ async def get_module_autocomplete(
         name = row["name"]
         sources = row["sources"].split(",") if row["sources"] else []
 
-        # Filter out the current module from sources
-        other_sources = [s for s in sources if s != module]
+        # Filter out the current module from sources (check all variants)
+        other_sources = [s for s in sources if s.lower().strip() not in module_variants]
 
         # Only include if:
-        # - Has sources in other modules
+        # - Has sources in other modules (not just the current one)
         # - Not already shown in current module results
         if other_sources and name.upper() not in current_names:
             other_modules_results.append({
