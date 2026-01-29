@@ -92,6 +92,14 @@ function downloadCSV(content: string, filename: string) {
   URL.revokeObjectURL(url)
 }
 
+/**
+ * Create a Map from year amounts for O(1) lookup performance
+ * Avoids repeated .find() calls in cell rendering
+ */
+function createYearMap(years: YearAmount[]): Map<number, number> {
+  return new Map(years.map(y => [y.year, y.amount]))
+}
+
 // Amount cell with trend anomaly indicator
 function AmountCell({
   amount,

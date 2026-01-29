@@ -119,8 +119,11 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
           const data = await response.json()
           setOptions(data)
         }
-      } catch {
-        // Silent failure
+      } catch (error) {
+        // Log error for debugging - don't show to user as filter still works without options
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.error(`[MultiSelect] Failed to fetch ${field} options:`, error.message)
+        }
       } finally {
         setIsLoading(false)
       }
@@ -297,38 +300,10 @@ export function FilterPanel({
   const totalResults = currentModuleResults.length + otherModulesResults.length
 
   // =============================================================================
-  // Autocomplete search - uses module-specific endpoint
+  // Autocomplete search - uses module-specific endpoint with AbortController
   // =============================================================================
 
-  async function fetchSearchResults(q: string): Promise<{
-    currentModule: CurrentModuleResult[]
-    otherModules: OtherModulesResult[]
-  }> {
-    try {
-      // Call the module-specific autocomplete endpoint
-      // Returns two sections: current module results and other modules results
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/modules/${module}/autocomplete?` +
-        new URLSearchParams({ q }),
-      )
-      if (!response.ok) {
-        return { currentModule: [], otherModules: [] }
-      }
-      const data = await response.json()
-
-      return {
-        currentModule: data.current_module || [],
-        otherModules: data.other_modules || [],
-      }
-    } catch (error) {
-      if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('[FilterPanel] fetchSearchResults failed:', error.message)
-      }
-      return { currentModule: [], otherModules: [] }
-    }
-  }
-
-  // Debounced autocomplete search
+  // Debounced autocomplete search with AbortController to prevent race conditions
   useEffect(() => {
     const searchValue = localFilters.search
     if (searchValue.length < 2) {
@@ -339,10 +314,28 @@ export function FilterPanel({
       return
     }
 
+    const abortController = new AbortController()
+
     const timeout = setTimeout(async () => {
       setIsSearching(true)
       try {
-        const { currentModule, otherModules } = await fetchSearchResults(searchValue)
+        // Pass abort signal to fetch
+        const response = await fetch(
+          `${API_BASE_URL}/api/v1/modules/${module}/autocomplete?` +
+          new URLSearchParams({ q: searchValue }),
+          { signal: abortController.signal }
+        )
+
+        if (!response.ok) {
+          setCurrentModuleResults([])
+          setOtherModulesResults([])
+          setNoResultsQuery(searchValue)
+          return
+        }
+
+        const data = await response.json()
+        const currentModule = data.current_module || []
+        const otherModules = data.other_modules || []
 
         setCurrentModuleResults(currentModule)
         setOtherModulesResults(otherModules)
@@ -357,19 +350,26 @@ export function FilterPanel({
         setIsDropdownOpen(true)
         setSelectedIndex(-1)
       } catch (error) {
-        if (error instanceof Error && error.name !== 'AbortError') {
-          console.error('[FilterPanel] Search failed:', error.message)
+        // Ignore abort errors - they're expected when search changes rapidly
+        if (error instanceof Error && error.name === 'AbortError') {
+          return
         }
+        console.error('[FilterPanel] Search failed:', error instanceof Error ? error.message : error)
         setCurrentModuleResults([])
         setOtherModulesResults([])
         setNoResultsQuery(null)
       } finally {
-        setIsSearching(false)
+        if (!abortController.signal.aborted) {
+          setIsSearching(false)
+        }
       }
     }, 150)
 
-    return () => clearTimeout(timeout)
-  }, [localFilters.search])
+    return () => {
+      clearTimeout(timeout)
+      abortController.abort()
+    }
+  }, [localFilters.search, module])
 
   // =============================================================================
   // Filter change handlers
@@ -394,19 +394,44 @@ export function FilterPanel({
     setLocalFilters((prev) => ({ ...prev, search: value }))
   }, [])
 
+  const MAX_AMOUNT = 999_999_999_999 // ~1 trillion euros max
+
   const handleAmountChange = useCallback((field: 'minBedrag' | 'maxBedrag', value: string) => {
-    const numValue = value ? parseFloat(value) : null
-    if (numValue !== null && numValue < 0) return
+    // Empty value clears the filter
+    if (!value) {
+      setLocalFilters((prev) => ({ ...prev, [field]: null }))
+      return
+    }
+
+    const numValue = parseFloat(value)
+
+    // Validate: must be a valid number
+    if (Number.isNaN(numValue)) {
+      console.warn(`[FilterPanel] Invalid amount input: "${value}"`)
+      return
+    }
+
+    // Validate: must be non-negative
+    if (numValue < 0) {
+      console.warn(`[FilterPanel] Negative amount rejected: ${numValue}`)
+      return
+    }
+
+    // Validate: must be within reasonable bounds
+    if (numValue > MAX_AMOUNT) {
+      console.warn(`[FilterPanel] Amount exceeds maximum (${MAX_AMOUNT}): ${numValue}`)
+      return
+    }
 
     setLocalFilters((prev) => {
-      const updated = { ...prev, [field]: numValue }
-      if (field === 'minBedrag' && numValue !== null && prev.maxBedrag !== null && numValue > prev.maxBedrag) {
+      // Validate min/max relationship
+      if (field === 'minBedrag' && prev.maxBedrag !== null && numValue > prev.maxBedrag) {
         return prev
       }
-      if (field === 'maxBedrag' && numValue !== null && prev.minBedrag !== null && numValue < prev.minBedrag) {
+      if (field === 'maxBedrag' && prev.minBedrag !== null && numValue < prev.minBedrag) {
         return prev
       }
-      return updated
+      return { ...prev, [field]: numValue }
     })
   }, [])
 

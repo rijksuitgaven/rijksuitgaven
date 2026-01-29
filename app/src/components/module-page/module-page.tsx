@@ -6,6 +6,7 @@ import { DataTable, ExpandedRow } from '@/components/data-table'
 import { FilterPanel, type FilterValues } from '@/components/filter-panel'
 import { DetailPanel } from '@/components/detail-panel'
 import { CrossModuleResults } from '@/components/cross-module-results'
+import { ErrorBoundary } from '@/components/error-boundary'
 import { fetchModuleData } from '@/lib/api'
 import type { ModuleDataResponse, RecipientRow } from '@/types/api'
 
@@ -82,9 +83,11 @@ export function ModulePage({ moduleId }: ModulePageProps) {
   }
 
   return (
-    <Suspense fallback={<ModulePageSkeleton config={config} />}>
-      <ModulePageContent moduleId={moduleId} config={config} />
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={<ModulePageSkeleton config={config} />}>
+        <ModulePageContent moduleId={moduleId} config={config} />
+      </Suspense>
+    </ErrorBoundary>
   )
 }
 

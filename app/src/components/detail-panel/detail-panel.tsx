@@ -213,10 +213,12 @@ export function DetailPanel({
     const BOM = '\uFEFF'
     const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8' })
     const url = URL.createObjectURL(blob)
-    // Sanitize filename to prevent path traversal/injection
+    // Sanitize filename to prevent path traversal/injection and CSV formula injection
     const safeFilename = recipientName
       .slice(0, 30)
-      .replace(/[^a-zA-Z0-9\s\-_.]/g, '')
+      .replace(/[^a-zA-Z0-9\s\-_.]/g, '')  // Remove special chars
+      .replace(/^[=+@-]/, '_')              // Block CSV formula injection chars at start
+      .replace(/\.{2,}/g, '.')              // Block path traversal (..)
       .trim() || 'export'
 
     const link = document.createElement('a')

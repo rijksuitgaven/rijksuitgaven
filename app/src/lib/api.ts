@@ -35,15 +35,16 @@ const PRIMARY_COLUMN_NAMES: Record<string, string> = {
  * Transform API row format to internal format
  */
 function transformRow(apiRow: ApiRecipientRow, years: number[]): RecipientRow {
+  const yearData = apiRow.years ?? {}
   return {
     primary_value: apiRow.primary_value,
     years: years.map((year) => ({
       year,
-      amount: apiRow.years[String(year)] || 0,
+      amount: yearData[String(year)] ?? 0,
     })),
-    total: apiRow.totaal,
-    row_count: apiRow.row_count,
-    sources: apiRow.modules,
+    total: apiRow.totaal ?? 0,
+    row_count: apiRow.row_count ?? 0,
+    sources: apiRow.modules ?? null,
   }
 }
 
