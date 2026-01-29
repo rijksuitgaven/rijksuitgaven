@@ -26,6 +26,8 @@ from app.services.modules import (
     get_integraal_data,
     get_integraal_details,
     get_filter_options,
+    get_module_autocomplete,
+    get_integraal_autocomplete,
     MODULE_CONFIG,
     YEARS,
 )
@@ -98,6 +100,66 @@ async def list_modules():
     """List all available modules."""
     return [m.value for m in ModuleName]
 
+
+# =============================================================================
+# Autocomplete Endpoint
+# =============================================================================
+
+class AutocompleteResult(BaseModel):
+    """Autocomplete result item."""
+    name: str
+    totaal: int
+    sources: list[str] = []
+
+
+class AutocompleteResponse(BaseModel):
+    """Autocomplete response."""
+    success: bool = True
+    results: list[AutocompleteResult] = []
+
+
+@router.get("/{module}/autocomplete", response_model=AutocompleteResponse)
+async def module_autocomplete(
+    module: ModuleName,
+    q: str = Query(..., min_length=2, max_length=200, description="Search query"),
+    limit: int = Query(8, ge=1, le=20, description="Max results"),
+):
+    """
+    Get autocomplete suggestions for a specific module.
+
+    Returns recipients/entities from the specified module that match the query.
+    Results include which other modules the recipient appears in (for "Ook in" badges).
+
+    This searches the same data as the main table, ensuring autocomplete
+    results match what users will see when they press Enter.
+    """
+    try:
+        if module.value == "integraal":
+            results = await get_integraal_autocomplete(q, limit)
+        else:
+            results = await get_module_autocomplete(module.value, q, limit)
+
+        return AutocompleteResponse(
+            success=True,
+            results=[
+                AutocompleteResult(
+                    name=r["name"],
+                    totaal=r["totaal"],
+                    sources=r["sources"],
+                )
+                for r in results
+            ],
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Autocomplete failed: {type(e).__name__}: {str(e)}")
+        raise HTTPException(status_code=500, detail="Er ging iets mis bij het zoeken")
+
+
+# =============================================================================
+# Module Data Endpoint
+# =============================================================================
 
 @router.get("/{module}", response_model=ModuleResponse)
 async def get_module(

@@ -797,3 +797,117 @@ async def get_filter_options(module: str, field: str) -> list[str]:
 
     rows = await fetch_all(query)
     return [row["value"] for row in rows]
+
+
+# =============================================================================
+# Module Autocomplete
+# =============================================================================
+
+async def get_module_autocomplete(
+    module: str,
+    search: str,
+    limit: int = 8,
+) -> list[dict]:
+    """
+    Get autocomplete suggestions from a specific module.
+
+    This searches the same data as the main table view, ensuring
+    autocomplete results match what the user will see when they press Enter.
+
+    Returns list of recipients with:
+    - name: recipient/primary value name
+    - totaal: total amount
+    - sources: list of modules this recipient appears in (for "Ook in" badges)
+    """
+    if module not in MODULE_CONFIG:
+        raise ValueError(f"Unknown module: {module}")
+
+    config = MODULE_CONFIG[module]
+    primary = config["primary_field"]
+    agg_table = config.get("aggregated_table")
+
+    if not agg_table:
+        return []
+
+    # Search the aggregated view for matching recipients
+    # Use ILIKE for case-insensitive partial matching
+    query = f"""
+        SELECT
+            {primary} AS name,
+            totaal
+        FROM {agg_table}
+        WHERE {primary} ILIKE $1
+        ORDER BY totaal DESC
+        LIMIT $2
+    """
+
+    rows = await fetch_all(query, f"%{search}%", limit)
+
+    if not rows:
+        return []
+
+    # For each recipient, look up which modules they appear in
+    # Query universal_search to get sources
+    results = []
+    for row in rows:
+        name = row["name"]
+        totaal = int(row["totaal"] or 0)
+
+        # Look up sources from universal_search
+        # (this table has aggregated data with sources column)
+        sources_query = """
+            SELECT sources, source_count
+            FROM universal_search
+            WHERE ontvanger = $1
+            LIMIT 1
+        """
+        sources_rows = await fetch_all(sources_query, name)
+
+        if sources_rows and sources_rows[0]["sources"]:
+            sources = sources_rows[0]["sources"].split(",")
+        else:
+            # Fallback: just the current module
+            sources = [module]
+
+        results.append({
+            "name": name,
+            "totaal": totaal,
+            "sources": sources,
+        })
+
+    return results
+
+
+async def get_integraal_autocomplete(
+    search: str,
+    limit: int = 8,
+) -> list[dict]:
+    """
+    Get autocomplete suggestions from integraal (cross-module) view.
+
+    Returns recipients with their sources from universal_search.
+    """
+    query = """
+        SELECT
+            ontvanger AS name,
+            totaal,
+            sources,
+            source_count
+        FROM universal_search
+        WHERE ontvanger ILIKE $1
+        ORDER BY totaal DESC
+        LIMIT $2
+    """
+
+    rows = await fetch_all(query, f"%{search}%", limit)
+
+    results = []
+    for row in rows:
+        sources = row["sources"].split(",") if row["sources"] else []
+        results.append({
+            "name": row["name"],
+            "totaal": int(row["totaal"] or 0),
+            "sources": sources,
+        })
+
+    return results

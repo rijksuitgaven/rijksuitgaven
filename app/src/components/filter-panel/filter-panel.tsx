@@ -310,13 +310,15 @@ export function FilterPanel({
   const totalResults = allResults.length
 
   // =============================================================================
-  // Autocomplete search
+  // Autocomplete search - uses module-specific endpoint
   // =============================================================================
 
   async function fetchSearchResults(q: string): Promise<{ recipients: RecipientResult[], keywords: KeywordResult[] }> {
     try {
+      // Call the module-specific autocomplete endpoint
+      // This searches the same data as the table, ensuring results match
       const response = await fetch(
-        `${API_BASE_URL}/api/v1/search/autocomplete?` +
+        `${API_BASE_URL}/api/v1/modules/${module}/autocomplete?` +
         new URLSearchParams({ q }),
       )
       if (!response.ok) {
@@ -324,31 +326,20 @@ export function FilterPanel({
       }
       const data = await response.json()
 
-      // Filter recipients to only show those that exist in the current module
-      // Apparaatsuitgaven doesn't have recipients (uses Kostensoort), so skip for that module
-      const allRecipients = (data.recipients || []).map((r: RecipientResult) => ({
-        ...r,
+      // Map results to RecipientResult format
+      const recipients = (data.results || []).map((r: { name: string; totaal: number; sources: string[] }) => ({
         type: 'recipient' as const,
+        name: r.name,
+        sources: r.sources || [],
+        source_count: r.sources?.length || 0,
+        totaal: r.totaal,
       }))
 
-      // For non-integraal modules, filter to only show recipients in current module
-      // For integraal, show all recipients
-      const filteredRecipients = module === 'integraal' || module === 'apparaat'
-        ? (module === 'apparaat' ? [] : allRecipients) // Apparaat has no recipients
-        : allRecipients.filter((r: RecipientResult) => r.sources?.includes(module))
-
-      // Filter keywords to prioritize current module
-      const allKeywords = (data.keywords || []).map((k: KeywordResult) => ({
-        ...k,
-        type: 'keyword' as const,
-      }))
-      const filteredKeywords = module === 'integraal'
-        ? allKeywords
-        : allKeywords.filter((k: KeywordResult) => k.module === module || !k.module)
-
+      // Keywords are no longer returned by module autocomplete
+      // (they were from global Typesense search which we've replaced)
       return {
-        recipients: filteredRecipients,
-        keywords: filteredKeywords,
+        recipients,
+        keywords: [],
       }
     } catch (error) {
       if (error instanceof Error && error.name !== 'AbortError') {
@@ -358,33 +349,7 @@ export function FilterPanel({
     }
   }
 
-  async function fetchFuzzySuggestions(q: string): Promise<RecipientResult[]> {
-    // Apparaatsuitgaven has no recipients
-    if (module === 'apparaat') return []
-
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/search/autocomplete?` +
-        new URLSearchParams({ q, fuzzy: 'true' }),
-      )
-      if (!response.ok) return []
-      const data = await response.json()
-      const allRecipients = (data.recipients || []).map((r: RecipientResult) => ({
-        ...r,
-        type: 'recipient' as const,
-      }))
-
-      // Filter to current module (except for integraal which shows all)
-      return module === 'integraal'
-        ? allRecipients
-        : allRecipients.filter((r: RecipientResult) => r.sources?.includes(module))
-    } catch (error) {
-      if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('[FilterPanel] fetchFuzzySuggestions failed:', error.message)
-      }
-      return []
-    }
-  }
+  // Note: Fuzzy suggestions now handled by backend (same endpoint, PostgreSQL ILIKE)
 
   // Debounced autocomplete search
   useEffect(() => {
@@ -405,19 +370,14 @@ export function FilterPanel({
         setRecipients(recipientsData)
         setKeywords(keywordsData)
 
-        if (recipientsData.length === 0 && keywordsData.length === 0 && searchValue.length >= 3) {
+        // Show dropdown if we have results, or show "no results" message
+        if (recipientsData.length === 0 && keywordsData.length === 0) {
           setNoResultsQuery(searchValue)
-          const fuzzySuggestions = await fetchFuzzySuggestions(searchValue)
-          if (fuzzySuggestions.length > 0) {
-            setRecipients(fuzzySuggestions)
-            setIsDropdownOpen(true)
-          } else {
-            setIsDropdownOpen(true)
-          }
         } else {
           setNoResultsQuery(null)
-          setIsDropdownOpen(recipientsData.length > 0 || keywordsData.length > 0)
         }
+        // Always show dropdown when searching (to show results or "no results" message)
+        setIsDropdownOpen(true)
         setSelectedIndex(-1)
       } catch (error) {
         if (error instanceof Error && error.name !== 'AbortError') {
