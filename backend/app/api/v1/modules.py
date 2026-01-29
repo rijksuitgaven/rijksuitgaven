@@ -22,6 +22,7 @@ from app.services.modules import (
     get_row_details,
     get_integraal_data,
     get_integraal_details,
+    get_filter_options,
     MODULE_CONFIG,
     YEARS,
 )
@@ -112,6 +113,9 @@ async def get_module(
     sort_order: SortOrder = Query(SortOrder.desc, description="Sort direction"),
     # Default view filter (UX-002)
     min_years: Optional[int] = Query(None, ge=1, le=9, description="Minimum years with data (for default view)"),
+    # Module-specific multi-select filters
+    provincie: Optional[list[str]] = Query(None, description="Filter by provincie(s) - multi-select"),
+    gemeente: Optional[list[str]] = Query(None, description="Filter by gemeente(s) - multi-select"),
 ):
     """
     Get aggregated data for a module.
@@ -138,6 +142,13 @@ async def get_module(
     - Row count (for expansion indicator)
     """
     start_time = time.time()
+
+    # Build filter fields dict (only include non-None values)
+    filter_fields: dict[str, list[str]] = {}
+    if provincie:
+        filter_fields["provincie"] = provincie
+    if gemeente:
+        filter_fields["gemeente"] = gemeente
 
     try:
         # Handle integraal separately (uses universal_search table)
@@ -166,6 +177,7 @@ async def get_module(
                 limit=limit,
                 offset=offset,
                 min_years=min_years,
+                filter_fields=filter_fields,
             )
             primary_field = MODULE_CONFIG[module.value]["primary_field"]
 
@@ -229,5 +241,33 @@ async def get_details(
             details=[DetailRow(**row) for row in details],
         )
 
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/{module}/filters/{field}", response_model=list[str])
+async def get_filter_values(
+    module: ModuleName,
+    field: str,
+):
+    """
+    Get distinct values for a filter field.
+
+    Used for auto-populating multi-select dropdowns.
+    Returns sorted list of unique values.
+
+    ## Examples
+
+    - `GET /api/v1/modules/provincie/filters/provincie` → ["Drenthe", "Friesland", ...]
+    - `GET /api/v1/modules/gemeente/filters/gemeente` → ["Amsterdam", "Rotterdam", ...]
+    """
+    if module == ModuleName.integraal:
+        raise HTTPException(status_code=400, detail="Integraal module has no filter fields")
+
+    try:
+        values = await get_filter_options(module.value, field)
+        return values
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

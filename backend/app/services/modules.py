@@ -95,12 +95,14 @@ async def get_module_data(
     limit: int = 25,
     offset: int = 0,
     min_years: Optional[int] = None,  # Filter for recipients with data in X+ years
+    filter_fields: Optional[dict[str, list[str]]] = None,  # Multi-select filters
 ) -> tuple[list[dict], int]:
     """
     Get aggregated data for a module.
 
-    Uses pre-computed materialized view for fast queries when no year filter.
-    Falls back to source table aggregation when year filter is applied.
+    Uses pre-computed materialized view for fast queries when no filters.
+    Falls back to source table aggregation when filter_fields are applied
+    (aggregated views don't have filter columns like provincie/gemeente).
 
     Returns:
         Tuple of (rows, total_count)
@@ -111,10 +113,12 @@ async def get_module_data(
     config = MODULE_CONFIG[module]
     primary = config["primary_field"]
 
-    # Always use materialized view when available (fast path)
-    # Year filter: shows recipients active in that year (with all their year data)
-    # Source table fallback: only if no aggregated view exists
-    use_aggregated = config.get("aggregated_table") is not None
+    # Use aggregated view for fast queries UNLESS filter_fields are provided
+    # (filter_fields like provincie/gemeente aren't in aggregated views)
+    use_aggregated = (
+        config.get("aggregated_table") is not None
+        and not filter_fields  # Must use source table for filter fields
+    )
 
     if use_aggregated:
         return await _get_from_aggregated_view(
@@ -141,6 +145,7 @@ async def get_module_data(
             limit=limit,
             offset=offset,
             min_years=min_years,
+            filter_fields=filter_fields,
         )
 
 
@@ -276,8 +281,9 @@ async def _get_from_source_table(
     limit: int = 25,
     offset: int = 0,
     min_years: Optional[int] = None,
+    filter_fields: Optional[dict[str, list[str]]] = None,  # Multi-select filters
 ) -> tuple[list[dict], int]:
-    """Slow path: aggregate from source table (needed for year filter)."""
+    """Slow path: aggregate from source table (needed for filter fields)."""
     table = config["table"]
     primary = config["primary_field"]
     year_field = config["year_field"]
@@ -310,6 +316,17 @@ async def _get_from_source_table(
         where_clauses.append(f"{year_field} = ${param_idx}")
         params.append(jaar)
         param_idx += 1
+
+    # Multi-select filter fields (e.g., provincie, gemeente)
+    if filter_fields:
+        valid_filter_fields = config.get("filter_fields", [])
+        for field, values in filter_fields.items():
+            if field in valid_filter_fields and values:
+                # Build IN clause with parameterized values
+                placeholders = ", ".join([f"${param_idx + i}" for i in range(len(values))])
+                where_clauses.append(f"{field} IN ({placeholders})")
+                params.extend(values)
+                param_idx += len(values)
 
     # Amount filters (on total - applied in HAVING)
     having_clauses = []
@@ -650,3 +667,38 @@ async def get_integraal_details(
     result.sort(key=lambda x: x["totaal"], reverse=True)
 
     return result
+
+
+# =============================================================================
+# Filter Options
+# =============================================================================
+
+async def get_filter_options(module: str, field: str) -> list[str]:
+    """
+    Get distinct values for a filter field.
+
+    Used for auto-populating multi-select dropdowns.
+    Returns sorted list of unique values.
+    """
+    if module not in MODULE_CONFIG:
+        raise ValueError(f"Unknown module: {module}")
+
+    config = MODULE_CONFIG[module]
+    table = config["table"]
+
+    # Validate field is a valid filter field for this module
+    valid_fields = config.get("filter_fields", [])
+    if field not in valid_fields:
+        raise ValueError(f"Invalid filter field '{field}' for module '{module}'")
+
+    # Query distinct values (excluding NULL and empty strings)
+    query = f"""
+        SELECT DISTINCT {field}
+        FROM {table}
+        WHERE {field} IS NOT NULL
+          AND {field} != ''
+        ORDER BY {field}
+    """
+
+    rows = await fetch_all(query)
+    return [row[field] for row in rows]
