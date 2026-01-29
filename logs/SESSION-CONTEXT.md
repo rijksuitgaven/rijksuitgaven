@@ -170,7 +170,7 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/sql/011e-random-order-gemeente.sql` | 2026-01-29 | Supabase |
 | `scripts/sql/011f-random-order-publiek.sql` | 2026-01-29 | Supabase |
 | `scripts/sql/011g-random-order-universal-search.sql` | 2026-01-29 | Supabase |
-| `scripts/sql/010-normalize-module-aggregated-views.sql` | 2026-01-29 | Supabase (instrumenten only) |
+| `scripts/sql/010-normalize-module-aggregated-views.sql` | 2026-01-29 | Supabase (all 5 views) |
 
 ### Configuration Files
 
@@ -932,11 +932,17 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Problem: "politie", "Politie", "POLITIE" appeared as separate rows in instrumenten
 - Solution: GROUP BY normalize_recipient(primary_field) + first-letter capitalization for display
 - Script: `scripts/sql/010-normalize-module-aggregated-views.sql`
-- Status: instrumenten ✅, inkoop/provincie/gemeente/publiek pending
+- Status: ✅ ALL COMPLETE (instrumenten, inkoop, provincie, gemeente, publiek)
 - apparaat not needed (uses kostensoort category, not recipient names)
 
+**Semantic Search Brainstorm (Session 10):**
+- Problem: "politie" (police) matches "Politieke" (political) - different domains
+- V1.1 plan: Dutch word rules (-ie/-iek exclusion pattern)
+- V2.0 plan: Embeddings (vector similarity with pgvector)
+- Design document: `docs/plans/2026-01-29-semantic-search-design.md`
+- Decision: Keep current search for V1.0, improve in later versions
+
 **Next Steps:**
-1. Complete entity resolution (run remaining 4 views)
-2. Header design refinement (logo + navigation styling)
-3. Week 6 - User Auth (Magic Link, user migration)
-4. Overzicht page
+1. Week 6 - User Auth (Magic Link, user migration)
+2. Overzicht page
+3. Beta testing preparation

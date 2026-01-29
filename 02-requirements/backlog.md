@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-01-29 (added module-level entity resolution)
+**Last Updated:** 2026-01-29 (added semantic search design)
 
 Items logged for future versions, not in V1.0 scope.
 
@@ -300,15 +300,49 @@ The `normalize_recipient()` function was applied to `universal_search` (integraa
 **Solution:**
 Rebuild all module aggregated views using `normalize_recipient()` in the GROUP BY, with first-letter capitalization for display.
 
-**Status:** IN PROGRESS
-- ✅ `instrumenten_aggregated` - Done (2026-01-29)
-- ⏳ `inkoop_aggregated` - Pending
-- ⏳ `provincie_aggregated` - Pending
-- ⏳ `gemeente_aggregated` - Pending
-- ⏳ `publiek_aggregated` - Pending
+**Status:** ✅ COMPLETED (2026-01-29)
+- ✅ `instrumenten_aggregated` - Done
+- ✅ `inkoop_aggregated` - Done
+- ✅ `provincie_aggregated` - Done
+- ✅ `gemeente_aggregated` - Done
+- ✅ `publiek_aggregated` - Done
 - ➖ `apparaat_aggregated` - Not needed (uses kostensoort, not recipients)
 
 **Script:** `scripts/sql/010-normalize-module-aggregated-views.sql`
+
+---
+
+### Semantic Search: Dutch Language Awareness
+
+**Priority:** Medium
+**Added:** 2026-01-29
+**Target:** V1.1 (word rules) / V2.0 (embeddings)
+
+**Problem:**
+Current keyword search (`ILIKE '%term%'`) matches substrings without understanding meaning.
+
+Example: "politie" (police) matches "Politieke" (political) - completely different domains.
+
+| Search | Current Result | Desired |
+|--------|----------------|---------|
+| politie → Politie | ✅ | ✅ |
+| politie → Politieacademie | ✅ | ✅ |
+| politie → Politieke beweging | ✅ | ❌ |
+
+**Proposed Solutions:**
+
+| Version | Approach | Effort | Accuracy |
+|---------|----------|--------|----------|
+| V1.1 | Dutch word rules (-ie/-iek pattern) | 4-8 hours | ~90% |
+| V2.0 | Embeddings (vector similarity) | 2-3 days | ~95% |
+
+**V2.0 Embeddings Benefits:**
+- Filter false positives semantically
+- Entity clustering (group related organizations)
+- Theme search ("infrastructure" finds rail, road, water entities)
+- Multilingual queries
+
+**Design document:** `docs/plans/2026-01-29-semantic-search-design.md`
 
 ---
 
