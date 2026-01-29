@@ -61,20 +61,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **backend/app/api/v1/search.py** ⭐ CREATED (2026-01-29)
+1. **app/src/components/filter-panel/filter-panel.tsx** ⭐ MAJOR UPDATE (2026-01-29)
+   +429 lines: Full autocomplete with Typesense, Ontvangers + Zoektermen dropdown, clickable "Ook in" badges
+
+2. **app/src/components/header/header.tsx** ⭐ UPDATED (2026-01-29)
+   Removed SearchBar component (consolidated into filter panel)
+
+3. **docs/plans/2026-01-29-search-bar-consolidation.md** ⭐ CREATED (2026-01-29)
+   Design document for search bar consolidation
+
+4. **backend/app/api/v1/search.py** ⭐ CREATED (2026-01-29)
    Typesense proxy endpoint - keeps API key server-side only
 
-2. **app/src/lib/api-config.ts** ⭐ CREATED (2026-01-29)
-   Centralized API base URL configuration
-
-3. **app/src/components/search-bar/search-bar.tsx** ⭐ UPDATED (2026-01-29)
-   Backend proxy for Typesense, accessibility labels (aria-label, aria-expanded, aria-haspopup)
-
-4. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-29)
-   TypeScript fixes (Column, ColumnMeta), accessibility labels on all buttons
-
-5. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-01-29)
-   Min/max bedrag validation, accessibility labels
+5. **app/src/lib/constants.ts** ⭐ CREATED (2026-01-29)
+   Shared constants (MODULE_LABELS, FIELD_LABELS, ALL_MODULES)
 
 ---
 
@@ -890,5 +890,13 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 | Gemeente | Gemeente (multiselect) → Beleidsterrein → Bedrag |
 | Publiek | Organisatie (multiselect) → Regeling → Bedrag |
 | Integraal | Modules per ontvanger (multiselect) → Instanties per ontvanger (select) → Bedrag |
+
+**Search Bar Consolidation (Session 6):**
+- Merged two search bars into one (was: header + filter panel, now: filter panel only)
+- Filter panel now has full autocomplete with Ontvangers + Zoektermen sections
+- Clickable "Ook in" module badges navigate to `/module?q=search`
+- Keyboard navigation (arrows, Enter, Escape, "/" to focus)
+- URL parameter support (`?q=ProRail`)
+- Design document: `docs/plans/2026-01-29-search-bar-consolidation.md`
 
 **Next:** Continue Week 6 - User Auth (Magic Link, user migration, Overzicht page)
