@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-01-26 (performance items updated after optimization)
+**Last Updated:** 2026-01-29 (added module-level entity resolution)
 
 Items logged for future versions, not in V1.0 scope.
 
@@ -279,6 +279,36 @@ AI: "ProRail B.V. received €461M in 2024.
 **Effort:** 8-12 hours total
 
 **Decision:** Post-V1.0. Implement after platform stable.
+
+---
+
+### Entity Resolution: Module Views (Case Normalization)
+
+**Priority:** High - V1.0 Release
+**Added:** 2026-01-29
+**Related:** Extends previous entity resolution work (scripts/sql/009-entity-resolution-normalization.sql)
+
+**Problem:**
+Recipient case variations still appear as separate rows in individual module views:
+- "politie", "Politie", "POLITIE" shown separately in Financiële Instrumenten
+- "Politieke beweging DENK", "Politieke Beweging DENK", "Politieke Beweging Denk" as 4 rows
+- Same recipient, different casing = different aggregated totals
+
+**Root Cause:**
+The `normalize_recipient()` function was applied to `universal_search` (integraal) but NOT to individual module aggregated views.
+
+**Solution:**
+Rebuild all module aggregated views using `normalize_recipient()` in the GROUP BY, with first-letter capitalization for display.
+
+**Status:** IN PROGRESS
+- ✅ `instrumenten_aggregated` - Done (2026-01-29)
+- ⏳ `inkoop_aggregated` - Pending
+- ⏳ `provincie_aggregated` - Pending
+- ⏳ `gemeente_aggregated` - Pending
+- ⏳ `publiek_aggregated` - Pending
+- ➖ `apparaat_aggregated` - Not needed (uses kostensoort, not recipients)
+
+**Script:** `scripts/sql/010-normalize-module-aggregated-views.sql`
 
 ---
 

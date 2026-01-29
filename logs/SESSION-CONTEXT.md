@@ -170,6 +170,7 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/sql/011e-random-order-gemeente.sql` | 2026-01-29 | Supabase |
 | `scripts/sql/011f-random-order-publiek.sql` | 2026-01-29 | Supabase |
 | `scripts/sql/011g-random-order-universal-search.sql` | 2026-01-29 | Supabase |
+| `scripts/sql/010-normalize-module-aggregated-views.sql` | 2026-01-29 | Supabase (instrumenten only) |
 
 ### Configuration Files
 
@@ -926,7 +927,16 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 **UI Cleanup (Session 9):**
 - Removed "Alle jaren" dropdown from filter panel (redundant - year columns visible in table)
 
+**Entity Resolution: Module Views (Session 10):**
+- Extended `normalize_recipient()` to all module aggregated views (previously only universal_search)
+- Problem: "politie", "Politie", "POLITIE" appeared as separate rows in instrumenten
+- Solution: GROUP BY normalize_recipient(primary_field) + first-letter capitalization for display
+- Script: `scripts/sql/010-normalize-module-aggregated-views.sql`
+- Status: instrumenten ✅, inkoop/provincie/gemeente/publiek pending
+- apparaat not needed (uses kostensoort category, not recipient names)
+
 **Next Steps:**
-1. Header design refinement (logo + navigation styling)
-2. Week 6 - User Auth (Magic Link, user migration)
-3. Overzicht page
+1. Complete entity resolution (run remaining 4 views)
+2. Header design refinement (logo + navigation styling)
+3. Week 6 - User Auth (Magic Link, user migration)
+4. Overzicht page
