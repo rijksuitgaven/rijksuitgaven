@@ -870,4 +870,25 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - `app/src/lib/api-config.ts` - Centralized API base URL
 - `.claude/commands/document.md` - /document skill
 
+**Module Filter Enhancements (Session 5):**
+- Reordered all filters: module-specific first, Bedrag bereik last
+- New filter fields: Artikelonderdeel, Instrument (Instrumenten), Detail (Apparaat), Staffel (Inkoop)
+- Multi-select Organisatie for Publiek: COA, NWO, RVO, ZonMW
+- Integraal filters: Modules per ontvanger (multiselect), Instanties per ontvanger (dropdown 2+/3+/5+/10+)
+- Added `select` filter type for predefined dropdown options
+- Bug fix: get_filter_options() now handles numeric columns (staffel INTEGER)
+- All filters deployed and tested on production ✅
+
+**Complete Filter Configuration:**
+
+| Module | Filters |
+|--------|---------|
+| Instrumenten | Begrotingsnaam → Artikel → Artikelonderdeel → Instrument → Regeling → Bedrag |
+| Apparaat | Begrotingsnaam → Artikel → Detail → Bedrag |
+| Inkoop | Ministerie → Categorie → Staffel → Bedrag |
+| Provincie | Provincie (multiselect) → Bedrag |
+| Gemeente | Gemeente (multiselect) → Beleidsterrein → Bedrag |
+| Publiek | Organisatie (multiselect) → Regeling → Bedrag |
+| Integraal | Modules per ontvanger (multiselect) → Instanties per ontvanger (select) → Bedrag |
+
 **Next:** Continue Week 6 - User Auth (Magic Link, user migration, Overzicht page)
