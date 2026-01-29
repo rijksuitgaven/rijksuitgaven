@@ -18,6 +18,58 @@ logger = logging.getLogger(__name__)
 # Available years in the data
 YEARS = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
 
+
+# =============================================================================
+# Dutch Language Search Rules (V1.1)
+# =============================================================================
+# Problem: "politie" (police) matches "politieke" (political) with ILIKE
+# Solution: For Dutch words ending in "-ie", exclude "-iek" false cognates
+#
+# Examples:
+#   "politie"    -> Matches: Politie, Politieacademie, Nationale Politie
+#                -> Excludes: Politieke beweging DENK
+#   "academie"   -> Matches: Academie, Politieacademie
+#                -> Excludes: Academiekring (if it were "-iek")
+#
+# Pattern: search_term followed by NOT 'k', or end of word, or whitespace
+# =============================================================================
+
+def build_search_condition(field: str, param_idx: int, search: str) -> tuple[str, str]:
+    """
+    Build a search condition with Dutch language awareness.
+
+    For searches ending in "-ie", uses regex to exclude "-iek" false cognates.
+    Otherwise uses standard ILIKE for substring matching.
+
+    Args:
+        field: The column name to search
+        param_idx: The parameter index (e.g., 1 for $1)
+        search: The search term from user
+
+    Returns:
+        Tuple of (sql_condition, search_pattern)
+        - sql_condition: e.g., "field ~* $1" or "field ILIKE $1"
+        - search_pattern: e.g., "politie([^k]|$|\\s)" or "%politie%"
+    """
+    search_lower = search.lower().strip()
+
+    # Dutch "-ie" suffix rule: exclude "-iek" false cognates
+    # Common Dutch pairs: politie/politiek, academie/academisch, democratie/democratisch
+    if search_lower.endswith("ie") and len(search_lower) >= 3:
+        # Regex: search term followed by (not 'k') OR (end of string) OR (whitespace)
+        # This matches: Politie, Politieacademie, Nationale Politie
+        # But excludes: Politieke, Politiekunde
+        return (
+            f"{field} ~* ${param_idx}",
+            f"{search_lower}([^k]|$|\\s)"
+        )
+
+    # Standard ILIKE for other searches
+    return (
+        f"{field} ILIKE ${param_idx}",
+        f"%{search}%"
+    )
+
 # =============================================================================
 # Security: Identifier Validation
 # =============================================================================
@@ -239,9 +291,11 @@ async def _get_from_aggregated_view(
     param_idx = 1
 
     # Search filter on primary field only (aggregated view only has primary)
+    # Uses Dutch language rules to avoid false cognates (e.g., politie/politiek)
     if search:
-        where_clauses.append(f"{primary} ILIKE ${param_idx}")
-        params.append(f"%{search}%")
+        condition, pattern = build_search_condition(primary, param_idx, search)
+        where_clauses.append(condition)
+        params.append(pattern)
         param_idx += 1
 
     # Year filter: show recipients who have data in that year
@@ -389,13 +443,21 @@ async def _get_from_source_table(
     params = []
     param_idx = 1
 
-    # Search filter (ILIKE on multiple fields)
+    # Search filter on multiple fields
+    # Uses Dutch language rules to avoid false cognates (e.g., politie/politiek)
     if search:
-        search_conditions = " OR ".join([
-            f"{field} ILIKE ${param_idx}" for field in search_fields
-        ])
+        condition, pattern = build_search_condition(search_fields[0], param_idx, search)
+        # Apply same condition type to all search fields
+        if "~*" in condition:
+            search_conditions = " OR ".join([
+                f"{field} ~* ${param_idx}" for field in search_fields
+            ])
+        else:
+            search_conditions = " OR ".join([
+                f"{field} ILIKE ${param_idx}" for field in search_fields
+            ])
         where_clauses.append(f"({search_conditions})")
-        params.append(f"%{search}%")
+        params.append(pattern)
         param_idx += 1
 
     # Year filter
@@ -624,9 +686,11 @@ async def get_integraal_data(
     params = []
     param_idx = 1
 
+    # Search with Dutch language rules to avoid false cognates
     if search:
-        where_clauses.append(f"ontvanger ILIKE ${param_idx}")
-        params.append(f"%{search}%")
+        condition, pattern = build_search_condition("ontvanger", param_idx, search)
+        where_clauses.append(condition)
+        params.append(pattern)
         param_idx += 1
 
     # Year filter: show recipients who have data in that year
@@ -883,7 +947,9 @@ async def get_module_autocomplete(
     other_modules_results = []
 
     # 1. Search current module's aggregated view with relevance ranking
+    # Uses Dutch language rules to avoid false cognates
     if agg_table:
+        condition, pattern = build_search_condition(primary, 2, search)
         query = f"""
             SELECT
                 {primary} AS name,
@@ -895,11 +961,11 @@ async def get_module_autocomplete(
                     ELSE 4
                 END AS relevance_score
             FROM {agg_table}
-            WHERE {primary} ILIKE $2
+            WHERE {condition}
             ORDER BY relevance_score ASC, totaal DESC
             LIMIT $3
         """
-        rows = await fetch_all(query, search, f"%{search}%", limit)
+        rows = await fetch_all(query, search, pattern, limit)
 
         for row in rows:
             current_module_results.append({
@@ -929,7 +995,9 @@ async def get_module_autocomplete(
         module_variants.update(v.lower() for v in module_display_names[module.lower()])
 
     # Query universal_search for matching recipients with relevance ranking
-    universal_query = """
+    # Uses Dutch language rules to avoid false cognates
+    universal_condition, universal_pattern = build_search_condition("ontvanger", 2, search)
+    universal_query = f"""
         SELECT
             ontvanger AS name,
             sources,
@@ -940,11 +1008,11 @@ async def get_module_autocomplete(
                 ELSE 4
             END AS relevance_score
         FROM universal_search
-        WHERE ontvanger ILIKE $2
+        WHERE {universal_condition}
         ORDER BY relevance_score ASC, totaal DESC
         LIMIT $3
     """
-    universal_rows = await fetch_all(universal_query, search, f"%{search}%", limit * 2)
+    universal_rows = await fetch_all(universal_query, search, universal_pattern, limit * 2)
 
     for row in universal_rows:
         name = row["name"]
@@ -981,7 +1049,9 @@ async def get_integraal_autocomplete(
     For integraal, we show all recipients with their module badges.
     No "current module" vs "other modules" split since integraal IS cross-module.
     """
-    query = """
+    # Uses Dutch language rules to avoid false cognates
+    condition, pattern = build_search_condition("ontvanger", 2, search)
+    query = f"""
         SELECT
             ontvanger AS name,
             totaal,
@@ -993,12 +1063,12 @@ async def get_integraal_autocomplete(
                 ELSE 4
             END AS relevance_score
         FROM universal_search
-        WHERE ontvanger ILIKE $2
+        WHERE {condition}
         ORDER BY relevance_score ASC, totaal DESC
         LIMIT $3
     """
 
-    rows = await fetch_all(query, search, f"%{search}%", limit)
+    rows = await fetch_all(query, search, pattern, limit)
 
     results = []
     for row in rows:

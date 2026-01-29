@@ -316,7 +316,8 @@ Rebuild all module aggregated views using `normalize_recipient()` in the GROUP B
 
 **Priority:** Medium
 **Added:** 2026-01-29
-**Target:** V1.1 (word rules) / V2.0 (embeddings)
+**V1.1 Completed:** 2026-01-29 (word rules implemented)
+**Target:** V2.0 (embeddings)
 
 **Problem:**
 Current keyword search (`ILIKE '%term%'`) matches substrings without understanding meaning.
@@ -331,10 +332,10 @@ Example: "politie" (police) matches "Politieke" (political) - completely differe
 
 **Proposed Solutions:**
 
-| Version | Approach | Effort | Accuracy |
-|---------|----------|--------|----------|
-| V1.1 | Dutch word rules (-ie/-iek pattern) | 4-8 hours | ~90% |
-| V2.0 | Embeddings (vector similarity) | 2-3 days | ~95% |
+| Version | Approach | Effort | Accuracy | Status |
+|---------|----------|--------|----------|--------|
+| V1.1 | Dutch word rules (-ie/-iek pattern) | 4-8 hours | ~90% | ✅ Done |
+| V2.0 | Embeddings (vector similarity) | 2-3 days | ~95% | Planned |
 
 **V2.0 Embeddings:**
 - **Vendor:** Cohere embed-multilingual-v3 (native Dutch support)

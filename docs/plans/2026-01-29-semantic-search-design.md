@@ -1,8 +1,8 @@
 # Semantic Search Design
 
 **Date:** 2026-01-29
-**Status:** Planned (not implemented)
-**Priority:** V1.1 (word boundary) / V2.0 (embeddings)
+**Status:** V1.1 implemented (Dutch word rules)
+**Priority:** V2.0 (embeddings)
 
 ---
 
@@ -72,7 +72,10 @@ WHERE ontvanger ~* 'politie([^k]|$|\s)'
 |--------|----------|
 | 4-8 hours | ~90% |
 
-**Status:** Designed, not implemented. Need to identify all relevant Dutch patterns first.
+**Status:** ✅ IMPLEMENTED (2026-01-29)
+- Added `build_search_condition()` helper in `backend/app/services/modules.py`
+- Applied to all 6 search locations (aggregated views, source tables, integraal, autocomplete)
+- Pattern: For searches ending in "-ie", uses regex `term([^k]|$|\s)` to exclude "-iek" matches
 
 ---
 
@@ -134,11 +137,11 @@ WHERE ontvanger ~* 'politie([^k]|$|\s)'
 
 ## Decision
 
-| Version | Implementation |
-|---------|----------------|
-| V1.0 | Keep current ILIKE (no change) |
-| V1.1 | Option B: Dutch language rules |
-| V2.0 | Option C: Embeddings with hybrid search |
+| Version | Implementation | Status |
+|---------|----------------|--------|
+| V1.0 | Keep current ILIKE (no change) | ✅ Shipped |
+| V1.1 | Option B: Dutch language rules | ✅ Implemented 2026-01-29 |
+| V2.0 | Option C: Embeddings with hybrid search | Planned |
 
 ---
 
