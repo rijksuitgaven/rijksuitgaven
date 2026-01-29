@@ -81,7 +81,7 @@ export interface ModuleQueryParams {
   offset?: number
   sort_by?: string
   sort_order?: 'asc' | 'desc'
-  search?: string
+  search?: string  // Maps to 'q' in backend API
   jaar?: number
   min_bedrag?: number
   max_bedrag?: number

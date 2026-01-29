@@ -79,7 +79,9 @@ export async function fetchModuleData(
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '' &&
         !['page', 'per_page', 'limit', 'offset'].includes(key)) {
-      searchParams.append(key, String(value))
+      // Map 'search' to 'q' (backend expects 'q' for search query)
+      const paramKey = key === 'search' ? 'q' : key
+      searchParams.append(paramKey, String(value))
     }
   })
 
