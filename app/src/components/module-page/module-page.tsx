@@ -75,7 +75,7 @@ export function ModulePage({ moduleId }: ModulePageProps) {
 
   if (!config) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-[var(--gray-light)] to-white flex items-center justify-center">
         <p className="text-lg text-[var(--error)]">Module niet gevonden: {moduleId}</p>
       </div>
     )
@@ -90,7 +90,7 @@ export function ModulePage({ moduleId }: ModulePageProps) {
 
 function ModulePageSkeleton({ config }: { config: ModuleConfig }) {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--gray-light)] to-white">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
@@ -98,9 +98,11 @@ function ModulePageSkeleton({ config }: { config: ModuleConfig }) {
           </h1>
           <p className="text-sm text-[var(--muted-foreground)] mt-1">{config.description}</p>
         </div>
-        <div className="animate-pulse space-y-4">
-          <div className="h-12 bg-[var(--gray-light)] rounded-lg" />
-          <div className="h-64 bg-[var(--gray-light)] rounded-lg" />
+        <div className="bg-white rounded-lg border border-[var(--border)] p-6 shadow-sm">
+          <div className="animate-pulse space-y-4">
+            <div className="h-12 bg-[var(--gray-light)] rounded-lg" />
+            <div className="h-64 bg-[var(--gray-light)] rounded-lg" />
+          </div>
         </div>
       </main>
     </div>
@@ -258,8 +260,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen bg-gradient-to-b from-[var(--gray-light)] to-white flex items-center justify-center">
+        <div className="text-center bg-white rounded-lg border border-[var(--border)] p-8 shadow-sm">
           <p className="text-lg font-medium text-[var(--error)]">Er ging iets mis</p>
           <p className="text-sm text-[var(--muted-foreground)] mt-2">{error}</p>
           <button
@@ -274,7 +276,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--gray-light)] to-white">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
@@ -283,52 +285,55 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           <p className="text-sm text-[var(--muted-foreground)] mt-1">{config.description}</p>
         </div>
 
-        <FilterPanel
-          module={moduleId}
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          isLoading={isLoading}
-        />
-
-        {data && (
-          <div className="mb-4 text-sm text-[var(--muted-foreground)]">
-            {isDefaultView ? (
-              'Random resultaten'
-            ) : (
-              <>
-                {data.pagination.totalRows.toLocaleString('nl-NL')} resultaten
-                {filters.search && (
-                  <span> voor &ldquo;{filters.search}&rdquo;</span>
-                )}
-              </>
-            )}
-          </div>
-        )}
-
-        {/* Cross-module search results */}
-        {filters.search && moduleId !== 'integraal' && (
-          <CrossModuleResults
-            searchQuery={filters.search}
-            currentModule={moduleId}
+        {/* White card for search and table area */}
+        <div className="bg-white rounded-lg border border-[var(--border)] p-6 shadow-sm">
+          <FilterPanel
+            module={moduleId}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            isLoading={isLoading}
           />
-        )}
 
-        <DataTable
-          data={data?.rows ?? []}
-          availableYears={data?.availableYears ?? []}
-          primaryColumnName={config.primaryColumn}
-          isLoading={isLoading}
-          totalRows={data?.pagination.totalRows ?? 0}
-          page={page}
-          perPage={perPage}
-          onPageChange={handlePageChange}
-          onPerPageChange={handlePerPageChange}
-          onSortChange={handleSortChange}
-          onRowExpand={handleRowExpand}
-          onRowClick={handleRowClick}
-          renderExpandedRow={renderExpandedRow}
-          moduleId={moduleId}
-        />
+          {data && (
+            <div className="mb-4 text-sm text-[var(--muted-foreground)]">
+              {isDefaultView ? (
+                'Random resultaten'
+              ) : (
+                <>
+                  {data.pagination.totalRows.toLocaleString('nl-NL')} resultaten
+                  {filters.search && (
+                    <span> voor &ldquo;{filters.search}&rdquo;</span>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Cross-module search results */}
+          {filters.search && moduleId !== 'integraal' && (
+            <CrossModuleResults
+              searchQuery={filters.search}
+              currentModule={moduleId}
+            />
+          )}
+
+          <DataTable
+            data={data?.rows ?? []}
+            availableYears={data?.availableYears ?? []}
+            primaryColumnName={config.primaryColumn}
+            isLoading={isLoading}
+            totalRows={data?.pagination.totalRows ?? 0}
+            page={page}
+            perPage={perPage}
+            onPageChange={handlePageChange}
+            onPerPageChange={handlePerPageChange}
+            onSortChange={handleSortChange}
+            onRowExpand={handleRowExpand}
+            onRowClick={handleRowClick}
+            renderExpandedRow={renderExpandedRow}
+            moduleId={moduleId}
+          />
+        </div>
       </main>
 
       {/* Detail Side Panel */}
