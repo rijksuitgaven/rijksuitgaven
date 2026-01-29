@@ -696,29 +696,33 @@ export function FilterPanel({
                               <div className="font-medium text-[var(--navy-dark)] truncate">
                                 {result.name}
                               </div>
-                              {result.sources && result.sources.length > 0 && (
-                                <div className="flex flex-wrap gap-1 mt-1">
-                                  <span className="text-xs text-[var(--muted-foreground)] mr-1">Ook in:</span>
-                                  {result.sources.slice(0, 4).map((source) => (
-                                    <button
-                                      key={source}
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleNavigateToModule(source, result.name)
-                                      }}
-                                      className="text-xs px-1.5 py-0.5 bg-[var(--blue-light)]/20 text-[var(--navy-medium)] rounded hover:bg-[var(--blue-light)]/40 transition-colors"
-                                    >
-                                      {MODULE_LABELS[source] || source}
-                                    </button>
-                                  ))}
-                                  {result.sources.length > 4 && (
-                                    <span className="text-xs text-[var(--muted-foreground)]">
-                                      +{result.sources.length - 4}
-                                    </span>
-                                  )}
-                                </div>
-                              )}
+                              {/* Only show "Ook in" for OTHER modules (not the current one) */}
+                              {(() => {
+                                const otherModules = result.sources?.filter(s => s !== module) ?? []
+                                return otherModules.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mt-1">
+                                    <span className="text-xs text-[var(--muted-foreground)] mr-1">Ook in:</span>
+                                    {otherModules.slice(0, 4).map((source) => (
+                                      <button
+                                        key={source}
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          handleNavigateToModule(source, result.name)
+                                        }}
+                                        className="text-xs px-1.5 py-0.5 bg-[var(--blue-light)]/20 text-[var(--navy-medium)] rounded hover:bg-[var(--blue-light)]/40 transition-colors"
+                                      >
+                                        {MODULE_LABELS[source] || source}
+                                      </button>
+                                    ))}
+                                    {otherModules.length > 4 && (
+                                      <span className="text-xs text-[var(--muted-foreground)]">
+                                        +{otherModules.length - 4}
+                                      </span>
+                                    )}
+                                  </div>
+                                )
+                              })()}
                             </div>
                             <div className="text-right">
                               <div className="text-sm font-medium text-[var(--navy-dark)]">
