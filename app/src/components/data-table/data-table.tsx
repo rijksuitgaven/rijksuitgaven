@@ -388,11 +388,14 @@ export function DataTable({
                   const isTotaal = header.column.id === 'total'
                   const isFirst = headerIndex === 0
                   const isLast = headerIndex === headerGroup.headers.length - 1
+                  // Year columns and Totaal are right-aligned, first two columns left-aligned
+                  const isYearOrTotal = header.column.id.startsWith('year-') || header.column.id === 'collapsed-years' || header.column.id === 'total'
                   return (
                     <th
                       key={header.id}
                       className={cn(
-                        'px-3 py-2.5 text-left text-[13px] font-medium text-white',
+                        'px-3 py-2.5 text-sm font-semibold text-white',
+                        isYearOrTotal ? 'text-right' : 'text-left',
                         isSticky && 'sticky left-0 bg-[var(--navy-dark)] z-10',
                         headerIndex === 1 && `sticky bg-[var(--navy-dark)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]`,
                         isTotaal && 'bg-[var(--navy-medium)]',
@@ -453,11 +456,14 @@ export function DataTable({
                       const isSticky = (cell.column.columnDef.meta as ColumnMeta | undefined)?.sticky || cellIndex === 0 || cellIndex === 1
                       const isExpanded = row.getIsExpanded()
                       const isTotaal = cell.column.id === 'total'
+                      // Year columns and Totaal are right-aligned
+                      const isYearOrTotal = cell.column.id.startsWith('year-') || cell.column.id === 'collapsed-years' || cell.column.id === 'total'
                       return (
                         <td
                           key={cell.id}
                           className={cn(
                             'px-3 py-2 border-b border-[var(--border)]',
+                            isYearOrTotal ? 'text-right' : 'text-left',
                             isSticky && 'sticky left-0 bg-white z-10',
                             cellIndex === 1 && 'sticky bg-white z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
                             isExpanded && isSticky && 'bg-[var(--gray-light)]',
