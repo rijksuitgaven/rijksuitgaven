@@ -2,8 +2,13 @@
 -- Refresh All Materialized Views
 -- Description: Run this after any data import/update
 -- Created: 2026-01-26
+-- Updated: 2026-01-29 - Added note about random_order regeneration
 -- Usage: Run in Supabase SQL Editor after data changes
 -- =====================================================
+
+-- NOTE: Refreshing regenerates the random_order column values,
+-- giving users a fresh random selection after each data update.
+-- This is intentional (UX-002 requirement).
 
 -- Refresh aggregated views (for API performance)
 REFRESH MATERIALIZED VIEW instrumenten_aggregated;

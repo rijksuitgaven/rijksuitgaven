@@ -196,8 +196,9 @@ async def _get_from_aggregated_view(
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
     # Sort field mapping - support "random" for default view (UX-002)
+    # Uses pre-computed random_order column for fast random sorting (~50ms vs 3s)
     if sort_by == "random":
-        sort_clause = "ORDER BY RANDOM()"
+        sort_clause = "ORDER BY random_order"
     else:
         sort_field = "totaal"
         if sort_by == "primary":
@@ -315,6 +316,9 @@ async def _get_from_source_table(
     having_sql = f"HAVING {' AND '.join(having_clauses)}" if having_clauses else ""
 
     # Sort field mapping - support "random" for default view (UX-002)
+    # NOTE: Source table fallback uses ORDER BY RANDOM() (slow) because it doesn't
+    # have pre-computed random_order column. This path is rarely used - aggregated
+    # views are preferred and have fast random sorting via random_order column.
     if sort_by == "random":
         sort_clause = "ORDER BY RANDOM()"
     else:
@@ -503,8 +507,9 @@ async def get_integraal_data(
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
     # Sort field mapping - support "random" for default view (UX-002)
+    # Uses pre-computed random_order column for fast random sorting (~50ms vs 3s)
     if sort_by == "random":
-        sort_clause = "ORDER BY RANDOM()"
+        sort_clause = "ORDER BY random_order"
     else:
         sort_field = "totaal"
         if sort_by == "primary":
