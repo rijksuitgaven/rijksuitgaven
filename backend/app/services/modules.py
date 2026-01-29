@@ -269,6 +269,10 @@ async def _get_from_aggregated_view(
 
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
+    # Store count params BEFORE adding non-WHERE params (relevance, random threshold)
+    # Count query only needs WHERE clause parameters
+    count_params_snapshot = params.copy()
+
     # Sort field mapping - support "random" for default view (UX-002)
     # Uses pre-computed random_order column for fast random sorting (~50ms vs 3s)
     # IMPORTANT: When searching, ALWAYS use relevance ranking (ignore random sort)
@@ -311,10 +315,10 @@ async def _get_from_aggregated_view(
     # Rebuild where_sql after potential random_order addition
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
-    # Store params for count query (without random threshold for accurate count)
+    # Count query uses only WHERE clause params (snapshot taken before relevance/random params added)
     count_where = [c for c in where_clauses if "random_order" not in c]
     count_where_sql = f"WHERE {' AND '.join(count_where)}" if count_where else ""
-    count_params = [p for i, p in enumerate(params) if i < len(params) - (1 if use_random_threshold else 0)]
+    count_params = count_params_snapshot
 
     # Main query from aggregated view
     query = f"""
@@ -430,6 +434,10 @@ async def _get_from_source_table(
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
     having_sql = f"HAVING {' AND '.join(having_clauses)}" if having_clauses else ""
 
+    # Store count params BEFORE adding relevance param
+    # Count query only needs WHERE and HAVING clause parameters
+    count_params = params.copy()
+
     # Sort field mapping - support "random" for default view (UX-002)
     # NOTE: Source table fallback uses ORDER BY RANDOM() (slow) because it doesn't
     # have pre-computed random_order column. This path is rarely used - aggregated
@@ -459,9 +467,6 @@ async def _get_from_source_table(
             sort_field = f"\"{sort_by}\""
         sort_direction = "DESC" if sort_order == "desc" else "ASC"
         sort_clause = f"ORDER BY {sort_field} {sort_direction}"
-
-    # Store params for count query
-    count_params = params.copy()
 
     # Main query with aggregation
     query = f"""
@@ -660,6 +665,10 @@ async def get_integraal_data(
         params.append(min_instanties)
         param_idx += 1
 
+    # Store count params BEFORE adding non-WHERE params (relevance, random threshold)
+    # Count query only needs WHERE clause parameters
+    count_params_snapshot = params.copy()
+
     # Sort field mapping - support "random" for default view (UX-002)
     # Uses pre-computed random_order column for fast random sorting (~50ms vs 3s)
     # IMPORTANT: When searching, ALWAYS use relevance ranking (ignore random sort)
@@ -701,10 +710,10 @@ async def get_integraal_data(
     # Rebuild where_sql after potential random_order addition
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
-    # Store params for count query (without random threshold for accurate count)
+    # Count query uses only WHERE clause params (snapshot taken before relevance/random params added)
     count_where = [c for c in where_clauses if "random_order" not in c]
     count_where_sql = f"WHERE {' AND '.join(count_where)}" if count_where else ""
-    count_params = [p for i, p in enumerate(params) if i < len(params) - (1 if use_random_threshold else 0)]
+    count_params = count_params_snapshot
 
     query = f"""
         SELECT
