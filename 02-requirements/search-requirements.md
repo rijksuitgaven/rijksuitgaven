@@ -563,6 +563,33 @@ When expanded:
 
 ---
 
+### UX-002b: Dutch False Cognate Filtering (V1.1)
+
+**Requirement:** Exclude semantically unrelated results that share a prefix with the search term
+
+**Problem:**
+- "politie" (police) matches "Politieke" (political) via substring match
+- These are different domains - users searching for police don't want political parties
+
+**Behavior:**
+- For searches ending in "-ie", exclude matches continuing with "k" (which forms "-iek")
+- Pattern: `search_term([^k]|$|\s)` using PostgreSQL regex
+- Example: "politie" → Matches: Politie, Politieacademie, Nationale Politie
+- Example: "politie" → Excludes: Politieke beweging DENK
+
+**Implementation:**
+- `build_search_condition()` helper function in `modules.py`
+- Applied to all 6 search locations (aggregated views, source tables, integraal, autocomplete)
+- Standard ILIKE for non "-ie" searches (unchanged behavior)
+
+**Priority:** P1 (V1.1)
+
+**Status:** ✅ Implemented 2026-01-29
+
+**Design Doc:** `docs/plans/2026-01-29-semantic-search-design.md`
+
+---
+
 ### UX-003: Mobile Responsiveness
 
 **Requirement:** Optimize for mobile, but desktop-first for data work
