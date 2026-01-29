@@ -7,7 +7,7 @@ Rijksuitgaven.nl SaaS Platform Migration - Documentation and planning repository
 
 ## Golden Rules (ALWAYS APPLY - NO EXCEPTIONS)
 
-**These three rules override everything else. Apply them automatically, every time.**
+**These four rules override everything else. Apply them automatically, every time.**
 
 ### 1. Requirements Check (Before ANY Proposal)
 
@@ -56,6 +56,20 @@ I need clarification before proceeding:
 
 Which do you prefer?
 ```
+
+### 4. Pre-Commit Audit (Before EVERY Commit)
+
+**Before running `git commit`, ALWAYS perform this audit:**
+
+- [ ] **Documentation audit:** All affected docs updated? SESSION-CONTEXT.md current?
+- [ ] **Requirements check:** Changes align with V1.0 requirements? Don't block V2.0?
+- [ ] **No stale info:** No conflicting or outdated information in any document?
+- [ ] **Clarity check:** Is everything clear and unambiguous? If not, ask first.
+- [ ] **Daily log updated:** Today's work logged in `logs/daily/YYYY-MM-DD.md`?
+
+**If ANY checkbox fails:** Fix it BEFORE committing. If unsure, ask the founder.
+
+**This is not optional.** Every commit must pass this audit. No exceptions.
 
 ---
 
