@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { SearchBar } from '@/components/search-bar'
 
 const MODULES = [
   { id: 'integraal', name: 'Integraal', description: 'Zoek over alle modules' },
@@ -110,11 +109,6 @@ export function Header() {
             </Link>
           </nav>
 
-          {/* Search bar - desktop */}
-          <div className="hidden md:block flex-1 max-w-md mx-4">
-            <SearchBar />
-          </div>
-
           {/* Auth buttons - placeholder for Week 6 */}
           <div className="hidden lg:flex items-center gap-2">
             <Link
@@ -132,11 +126,6 @@ export function Header() {
           >
             {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
-        </div>
-
-        {/* Search bar - mobile */}
-        <div className="md:hidden pb-4">
-          <SearchBar />
         </div>
       </div>
 
