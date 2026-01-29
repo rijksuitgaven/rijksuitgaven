@@ -110,7 +110,7 @@ MODULE_CONFIG = {
         "amount_field": "totaal_avg",
         "amount_multiplier": 1,  # Already in absolute euros
         "search_fields": ["leverancier", "ministerie", "categorie"],
-        "filter_fields": ["ministerie", "categorie"],
+        "filter_fields": ["ministerie", "categorie", "staffel"],
     },
     "provincie": {
         "table": "provincie",

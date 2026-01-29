@@ -27,6 +27,7 @@ const MODULE_FILTERS: Record<string, FilterConfig[]> = {
   inkoop: [
     { value: 'ministerie', label: 'Ministerie', type: 'text' },
     { value: 'categorie', label: 'Categorie', type: 'text' },
+    { value: 'staffel', label: 'Staffel', type: 'text' },
   ],
   provincie: [
     { value: 'provincie', label: 'Provincie', type: 'multiselect' },
