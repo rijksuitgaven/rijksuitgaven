@@ -256,3 +256,32 @@ AI: "ProRail B.V. received €461M in 2024.
 **Decision:** Post-V1.0. Implement after platform stable.
 
 ---
+
+### Railway Private Networking for Typesense
+
+**Priority:** Low (Cost Optimization)
+**Added:** 2026-01-29
+
+**Problem:**
+Backend API connects to Typesense via public URL, incurring egress fees. Railway supports private networking between services in the same project.
+
+**Current State:**
+- Both services have private networking enabled
+- `typesense.railway.internal` shows "Ready to talk privately"
+- Connection fails with "All connection attempts failed"
+- Public URL works fine
+
+**Attempted:**
+- Port 8080 (Railway PORT variable)
+- Port 8108 (Typesense default)
+- Hostname `typesense.railway.internal`
+- Hostname `typesense` (short form)
+
+**Possible Causes:**
+- Caddy reverse proxy configuration (Typesense uses Caddy)
+- IPv6/IPv4 resolution issues
+- Service binding to localhost instead of 0.0.0.0
+
+**Decision:** Use public URL for now. Egress costs are minimal for search traffic. Investigate later if costs become significant.
+
+---
