@@ -27,7 +27,4 @@ CREATE INDEX idx_instrumenten_agg_ontvanger ON instrumenten_aggregated (ontvange
 CREATE INDEX idx_instrumenten_agg_totaal ON instrumenten_aggregated (totaal DESC);
 CREATE INDEX idx_instrumenten_agg_random ON instrumenten_aggregated (random_order);
 
-ALTER TABLE instrumenten_aggregated ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Backend can read instrumenten_aggregated" ON instrumenten_aggregated FOR SELECT TO postgres USING (true);
-
 SELECT 'instrumenten_aggregated' as view_name, COUNT(*) as rows FROM instrumenten_aggregated;

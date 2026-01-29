@@ -26,7 +26,4 @@ CREATE INDEX idx_publiek_agg_ontvanger ON publiek_aggregated (ontvanger);
 CREATE INDEX idx_publiek_agg_totaal ON publiek_aggregated (totaal DESC);
 CREATE INDEX idx_publiek_agg_random ON publiek_aggregated (random_order);
 
-ALTER TABLE publiek_aggregated ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Backend can read publiek_aggregated" ON publiek_aggregated FOR SELECT TO postgres USING (true);
-
 SELECT 'publiek_aggregated' as view_name, COUNT(*) as rows FROM publiek_aggregated;

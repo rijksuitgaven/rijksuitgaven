@@ -26,7 +26,4 @@ CREATE INDEX idx_gemeente_agg_ontvanger ON gemeente_aggregated (ontvanger);
 CREATE INDEX idx_gemeente_agg_totaal ON gemeente_aggregated (totaal DESC);
 CREATE INDEX idx_gemeente_agg_random ON gemeente_aggregated (random_order);
 
-ALTER TABLE gemeente_aggregated ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Backend can read gemeente_aggregated" ON gemeente_aggregated FOR SELECT TO postgres USING (true);
-
 SELECT 'gemeente_aggregated' as view_name, COUNT(*) as rows FROM gemeente_aggregated;

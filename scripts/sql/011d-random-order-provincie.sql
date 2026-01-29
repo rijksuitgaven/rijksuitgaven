@@ -26,7 +26,4 @@ CREATE INDEX idx_provincie_agg_ontvanger ON provincie_aggregated (ontvanger);
 CREATE INDEX idx_provincie_agg_totaal ON provincie_aggregated (totaal DESC);
 CREATE INDEX idx_provincie_agg_random ON provincie_aggregated (random_order);
 
-ALTER TABLE provincie_aggregated ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Backend can read provincie_aggregated" ON provincie_aggregated FOR SELECT TO postgres USING (true);
-
 SELECT 'provincie_aggregated' as view_name, COUNT(*) as rows FROM provincie_aggregated;

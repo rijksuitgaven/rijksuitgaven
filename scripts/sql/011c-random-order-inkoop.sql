@@ -26,7 +26,4 @@ CREATE INDEX idx_inkoop_agg_leverancier ON inkoop_aggregated (leverancier);
 CREATE INDEX idx_inkoop_agg_totaal ON inkoop_aggregated (totaal DESC);
 CREATE INDEX idx_inkoop_agg_random ON inkoop_aggregated (random_order);
 
-ALTER TABLE inkoop_aggregated ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Backend can read inkoop_aggregated" ON inkoop_aggregated FOR SELECT TO postgres USING (true);
-
 SELECT 'inkoop_aggregated' as view_name, COUNT(*) as rows FROM inkoop_aggregated;

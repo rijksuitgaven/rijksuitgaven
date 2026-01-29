@@ -26,7 +26,4 @@ CREATE INDEX idx_apparaat_agg_kostensoort ON apparaat_aggregated (kostensoort);
 CREATE INDEX idx_apparaat_agg_totaal ON apparaat_aggregated (totaal DESC);
 CREATE INDEX idx_apparaat_agg_random ON apparaat_aggregated (random_order);
 
-ALTER TABLE apparaat_aggregated ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Backend can read apparaat_aggregated" ON apparaat_aggregated FOR SELECT TO postgres USING (true);
-
 SELECT 'apparaat_aggregated' as view_name, COUNT(*) as rows FROM apparaat_aggregated;

@@ -263,23 +263,6 @@ CREATE INDEX idx_universal_search_totaal ON universal_search(totaal DESC);
 CREATE INDEX idx_universal_search_random ON universal_search(random_order);
 
 -- =====================================================
--- RLS POLICIES (re-apply after recreation)
--- =====================================================
-ALTER TABLE instrumenten_aggregated ENABLE ROW LEVEL SECURITY;
-ALTER TABLE apparaat_aggregated ENABLE ROW LEVEL SECURITY;
-ALTER TABLE inkoop_aggregated ENABLE ROW LEVEL SECURITY;
-ALTER TABLE provincie_aggregated ENABLE ROW LEVEL SECURITY;
-ALTER TABLE gemeente_aggregated ENABLE ROW LEVEL SECURITY;
-ALTER TABLE publiek_aggregated ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Backend can read instrumenten_aggregated" ON instrumenten_aggregated FOR SELECT TO postgres USING (true);
-CREATE POLICY "Backend can read apparaat_aggregated" ON apparaat_aggregated FOR SELECT TO postgres USING (true);
-CREATE POLICY "Backend can read inkoop_aggregated" ON inkoop_aggregated FOR SELECT TO postgres USING (true);
-CREATE POLICY "Backend can read provincie_aggregated" ON provincie_aggregated FOR SELECT TO postgres USING (true);
-CREATE POLICY "Backend can read gemeente_aggregated" ON gemeente_aggregated FOR SELECT TO postgres USING (true);
-CREATE POLICY "Backend can read publiek_aggregated" ON publiek_aggregated FOR SELECT TO postgres USING (true);
-
--- =====================================================
 -- VERIFY
 -- =====================================================
 SELECT 'instrumenten_aggregated' as view_name, COUNT(*) as rows FROM instrumenten_aggregated
