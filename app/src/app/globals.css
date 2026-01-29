@@ -65,8 +65,11 @@
   --trend-anomaly-bg: rgba(227, 1, 1, 0.1);
   --trend-anomaly-border: rgba(227, 1, 1, 0.3);
 
+  /* Totaal column highlight */
+  --totaal-bg: #D0DEEA;
+
   /* shadcn/ui semantic colors mapped to brand */
-  --background: #FFFFFF;
+  --background: #E1EAF2;
   --foreground: #0E3261;
   --card: #FFFFFF;
   --card-foreground: #0E3261;

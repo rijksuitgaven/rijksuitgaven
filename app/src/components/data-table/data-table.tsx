@@ -380,18 +380,20 @@ export function DataTable({
       {/* Table container with horizontal scroll for expanded years */}
       <div className="overflow-x-auto border border-[var(--border)] rounded-lg">
         <table className="w-full border-collapse">
-          <thead className="bg-[var(--gray-light)]">
+          <thead className="bg-[var(--navy-dark)]">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header, headerIndex) => {
                   const isSticky = (header.column.columnDef.meta as ColumnMeta | undefined)?.sticky || headerIndex === 0 || headerIndex === 1
+                  const isTotaal = header.column.id === 'total'
                   return (
                     <th
                       key={header.id}
                       className={cn(
-                        'px-3 py-2 text-left text-xs font-semibold text-[var(--navy-dark)] border-b border-[var(--border)]',
-                        isSticky && 'sticky left-0 bg-[var(--gray-light)] z-10',
-                        headerIndex === 1 && `sticky bg-[var(--gray-light)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]`
+                        'px-3 py-3 text-left text-xs font-semibold text-white border-b border-[var(--navy-medium)]',
+                        isSticky && 'sticky left-0 bg-[var(--navy-dark)] z-10',
+                        headerIndex === 1 && `sticky bg-[var(--navy-dark)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]`,
+                        isTotaal && 'bg-[var(--navy-medium)]'
                       )}
                       style={{
                         width: header.getSize(),
@@ -446,6 +448,7 @@ export function DataTable({
                     {row.getVisibleCells().map((cell, cellIndex) => {
                       const isSticky = (cell.column.columnDef.meta as ColumnMeta | undefined)?.sticky || cellIndex === 0 || cellIndex === 1
                       const isExpanded = row.getIsExpanded()
+                      const isTotaal = cell.column.id === 'total'
                       return (
                         <td
                           key={cell.id}
@@ -453,7 +456,8 @@ export function DataTable({
                             'px-3 py-2 border-b border-[var(--border)]',
                             isSticky && 'sticky left-0 bg-white z-10',
                             cellIndex === 1 && 'sticky bg-white z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
-                            isExpanded && isSticky && 'bg-[var(--gray-light)]'
+                            isExpanded && isSticky && 'bg-[var(--gray-light)]',
+                            isTotaal && 'bg-[var(--totaal-bg)] font-semibold'
                           )}
                           style={{
                             width: cell.column.getSize(),

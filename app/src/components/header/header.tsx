@@ -1,175 +1,148 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Menu, X, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+// Module tabs with grouping: Integraal | main modules | Apparaat
 const MODULES = [
-  { id: 'integraal', name: 'Integraal', description: 'Zoek over alle modules' },
-  { id: 'instrumenten', name: 'Instrumenten', description: 'Subsidies en regelingen' },
-  { id: 'apparaat', name: 'Apparaat', description: 'Operationele kosten' },
-  { id: 'inkoop', name: 'Inkoop', description: 'Inkoop bij leveranciers' },
-  { id: 'provincie', name: 'Provincie', description: 'Provinciale subsidies' },
-  { id: 'gemeente', name: 'Gemeente', description: 'Gemeentelijke subsidies' },
-  { id: 'publiek', name: 'Publiek', description: 'RVO, COA, NWO' },
+  // Group 1: Cross-module discovery
+  { id: 'integraal', name: 'Integraal', group: 'discovery' },
+  // Group 2: Recipient-based modules
+  { id: 'instrumenten', name: 'Instrumenten', group: 'main' },
+  { id: 'provincie', name: 'Provincie', group: 'main' },
+  { id: 'gemeente', name: 'Gemeente', group: 'main' },
+  { id: 'inkoop', name: 'Inkoop', group: 'main' },
+  { id: 'publiek', name: 'Publiek', group: 'main' },
+  // Group 3: Different data type (costs, not recipients)
+  { id: 'apparaat', name: 'Apparaat', group: 'other' },
+]
+
+// Navigation items (V1.0: only Profiel/Logout shown, others reserved for V1.1+)
+const NAV_ITEMS: { href: string; label: string }[] = [
+  // { href: '/support', label: 'Support' },
+  // { href: '/over-ons', label: 'Over ons' },
+  // { href: '/contact', label: 'Contact' },
 ]
 
 export function Header() {
   const pathname = usePathname()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isModulesOpen, setIsModulesOpen] = useState(false)
-  const modulesDropdownRef = useRef<HTMLDivElement>(null)
+  const tabsRef = useRef<HTMLDivElement>(null)
 
-  const currentModule = MODULES.find((m) => pathname === `/${m.id}`)
-
-  // Close dropdown on Escape key or click outside
+  // Scroll active tab into view on mobile
   useEffect(() => {
-    if (!isModulesOpen) return
-
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        setIsModulesOpen(false)
+    if (tabsRef.current) {
+      const activeTab = tabsRef.current.querySelector('[data-active="true"]')
+      if (activeTab) {
+        activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
       }
     }
-
-    function handleClickOutside(e: MouseEvent) {
-      if (modulesDropdownRef.current && !modulesDropdownRef.current.contains(e.target as Node)) {
-        setIsModulesOpen(false)
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    document.addEventListener('mousedown', handleClickOutside)
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isModulesOpen])
+  }, [pathname])
 
   return (
-    <header className="bg-[var(--navy-dark)] text-white sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <Image
-              src="/logo-white.png"
-              alt="Rijksuitgaven"
-              width={36}
-              height={36}
-              className="h-9 w-auto"
-              priority
-            />
-            <span
-              className="text-xl font-bold hidden sm:inline"
-              style={{ fontFamily: 'var(--font-heading), serif' }}
-            >
-              Rijksuitgaven
-            </span>
-          </Link>
+    <header className="sticky top-0 z-40">
+      {/* Row 1: Logo + Navigation */}
+      <div className="bg-white border-b border-[var(--border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between h-14">
+            {/* Logo + Tagline */}
+            <Link href="/" className="flex items-center gap-2 shrink-0">
+              <Image
+                src="/logo-white.png"
+                alt="Rijksuitgaven"
+                width={32}
+                height={32}
+                className="h-8 w-auto"
+                priority
+              />
+              <div className="hidden sm:flex flex-col">
+                <span
+                  className="text-xl font-bold text-[var(--navy-dark)] leading-tight"
+                  style={{ fontFamily: 'var(--font-heading), serif' }}
+                >
+                  Rijksuitgaven
+                </span>
+                <span className="text-xs text-[var(--pink)] leading-tight">
+                  Snel inzicht voor krachtige analyses
+                </span>
+              </div>
+            </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1 ml-8">
-            {/* Modules dropdown */}
-            <div className="relative" ref={modulesDropdownRef}>
-              <button
-                onClick={() => setIsModulesOpen(!isModulesOpen)}
-                className={cn(
-                  'flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                  currentModule
-                    ? 'bg-white/20 text-white'
-                    : 'text-white/80 hover:text-white hover:bg-white/10'
-                )}
-              >
-                {currentModule?.name || 'Modules'}
-                <ChevronDown className={cn('h-4 w-4 transition-transform', isModulesOpen && 'rotate-180')} />
-              </button>
+            {/* Right side: Nav items + Auth */}
+            <div className="flex items-center gap-6">
+              {/* Future nav items (V1.1+) */}
+              <nav className="hidden lg:flex items-center gap-6">
+                {NAV_ITEMS.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="text-sm font-medium text-[var(--navy-dark)] hover:text-[var(--navy-medium)] transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
 
-              {isModulesOpen && (
-                <div className="absolute top-full left-0 mt-1 w-64 bg-white rounded-lg shadow-lg border border-[var(--border)] overflow-hidden z-50">
-                  {MODULES.map((module) => (
-                    <Link
-                      key={module.id}
-                      href={`/${module.id}`}
-                      onClick={() => setIsModulesOpen(false)}
-                      className={cn(
-                        'block px-4 py-3 hover:bg-[var(--gray-light)] transition-colors border-b border-[var(--border)] last:border-b-0',
-                        pathname === `/${module.id}` && 'bg-[var(--gray-light)]'
-                      )}
-                    >
-                      <div className="font-medium text-[var(--navy-dark)]">{module.name}</div>
-                      <div className="text-xs text-[var(--muted-foreground)]">{module.description}</div>
-                    </Link>
-                  ))}
-                </div>
-              )}
+              {/* Auth links */}
+              <div className="flex items-center gap-4 text-sm">
+                <Link
+                  href="/profiel"
+                  className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                >
+                  Profiel
+                </Link>
+                <Link
+                  href="/logout"
+                  className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                >
+                  Logout
+                </Link>
+              </div>
             </div>
-
-            {/* Quick links */}
-            <Link
-              href="/privacybeleid"
-              className="px-3 py-2 text-sm text-white/60 hover:text-white transition-colors"
-            >
-              Privacy
-            </Link>
-          </nav>
-
-          {/* Auth buttons - placeholder for Week 6 */}
-          <div className="hidden lg:flex items-center gap-2">
-            <Link
-              href="/login"
-              className="px-4 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors"
-            >
-              Inloggen
-            </Link>
           </div>
-
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-white/80 hover:text-white"
-          >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden bg-[var(--navy-dark)] border-t border-white/10">
-          <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
-            {MODULES.map((module) => (
-              <Link
-                key={module.id}
-                href={`/${module.id}`}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={cn(
-                  'block px-4 py-3 rounded-lg transition-colors',
-                  pathname === `/${module.id}`
-                    ? 'bg-white/20 text-white'
-                    : 'text-white/80 hover:bg-white/10 hover:text-white'
-                )}
-              >
-                <div className="font-medium">{module.name}</div>
-                <div className="text-xs text-white/60">{module.description}</div>
-              </Link>
-            ))}
-            <div className="pt-4 border-t border-white/10 mt-4">
-              <Link
-                href="/login"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-4 py-3 text-center bg-[var(--pink)] rounded-lg font-medium"
-              >
-                Inloggen
-              </Link>
-            </div>
+      {/* Row 2: Module Tabs */}
+      <div className="bg-[var(--gray-light)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div
+            ref={tabsRef}
+            className="flex items-center gap-2 py-2 overflow-x-auto scrollbar-hide"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {MODULES.map((module, index) => {
+              const isActive = pathname === `/${module.id}`
+              const prevModule = MODULES[index - 1]
+
+              // Add gap after Integraal (discovery -> main transition)
+              const gapBefore = prevModule?.group === 'discovery' && module.group === 'main'
+              // Add gap before Apparaat (main -> other transition)
+              const gapBeforeApparaat = prevModule?.group === 'main' && module.group === 'other'
+
+              return (
+                <Link
+                  key={module.id}
+                  href={`/${module.id}`}
+                  data-active={isActive}
+                  className={cn(
+                    'px-4 py-2 rounded text-sm font-medium whitespace-nowrap transition-all shrink-0',
+                    isActive
+                      ? 'bg-white text-[var(--navy-dark)] shadow-sm'
+                      : 'text-[var(--navy-dark)] hover:bg-white/50',
+                    gapBefore && 'ml-6',
+                    gapBeforeApparaat && 'ml-6'
+                  )}
+                >
+                  {module.name}
+                </Link>
+              )
+            })}
           </div>
         </div>
-      )}
+      </div>
     </header>
   )
 }
