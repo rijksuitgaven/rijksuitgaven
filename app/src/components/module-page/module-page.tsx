@@ -273,9 +273,15 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
         {data && (
           <div className="mb-4 text-sm text-[var(--muted-foreground)]">
-            {data.pagination.totalRows.toLocaleString('nl-NL')} resultaten
-            {filters.search && (
-              <span> voor &ldquo;{filters.search}&rdquo;</span>
+            {isDefaultView ? (
+              'Random resultaten'
+            ) : (
+              <>
+                {data.pagination.totalRows.toLocaleString('nl-NL')} resultaten
+                {filters.search && (
+                  <span> voor &ldquo;{filters.search}&rdquo;</span>
+                )}
+              </>
             )}
           </div>
         )}
