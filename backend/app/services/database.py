@@ -19,25 +19,25 @@ async def get_pool() -> asyncpg.Pool:
     """
     Get or create the connection pool.
 
-    Pool settings tuned for production:
-    - min_size: Keep 5 connections warm (reduces latency for first requests)
-    - max_size: Allow up to 20 concurrent connections (handles traffic spikes)
+    Pool settings tuned for production with pgbouncer:
+    - min_size: Keep 2 connections warm
+    - max_size: Allow up to 10 concurrent connections
     - max_inactive_connection_lifetime: Close idle connections after 5 min
     - command_timeout: 60s for complex aggregation queries
-    - statement_cache_size: Cache 100 prepared statements per connection
+    - statement_cache_size: MUST be 0 for pgbouncer transaction mode
 
-    Supabase pooler limit: 60 connections (Pro plan)
-    We use max 20 to leave headroom for other services.
+    Supabase pooler (port 6543) uses transaction mode which doesn't
+    support prepared statements - each query can go to different backend.
     """
     global _pool
     if _pool is None:
         _pool = await asyncpg.create_pool(
             settings.database_url,
-            min_size=5,
-            max_size=20,
+            min_size=2,
+            max_size=10,
             max_inactive_connection_lifetime=300,  # 5 minutes
             command_timeout=60,
-            statement_cache_size=100,
+            statement_cache_size=0,  # Required for pgbouncer transaction mode
         )
     return _pool
 
