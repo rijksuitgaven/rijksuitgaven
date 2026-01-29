@@ -168,7 +168,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
         const minYears = isDefaultView && !userHasSorted ? 4 : undefined
 
         // Build params including module-specific filters (provincie, gemeente, etc.)
-        const params: Record<string, unknown> = {
+        const params: Parameters<typeof fetchModuleData>[1] = {
           page,
           per_page: perPage,
           sort_by: effectiveSortBy,
@@ -183,7 +183,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
         // Add module-specific filters (arrays for multiselect, strings for text)
         Object.entries(filters).forEach(([key, value]) => {
           if (!['search', 'jaar', 'minBedrag', 'maxBedrag'].includes(key) && value) {
-            params[key] = value
+            // Cast to any to allow dynamic keys - types are validated at API level
+            (params as Record<string, unknown>)[key] = value
           }
         })
 
