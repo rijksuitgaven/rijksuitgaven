@@ -323,15 +323,32 @@ export function FilterPanel({
         return { recipients: [], keywords: [] }
       }
       const data = await response.json()
+
+      // Filter recipients to only show those that exist in the current module
+      // Apparaatsuitgaven doesn't have recipients (uses Kostensoort), so skip for that module
+      const allRecipients = (data.recipients || []).map((r: RecipientResult) => ({
+        ...r,
+        type: 'recipient' as const,
+      }))
+
+      // For non-integraal modules, filter to only show recipients in current module
+      // For integraal, show all recipients
+      const filteredRecipients = module === 'integraal' || module === 'apparaat'
+        ? (module === 'apparaat' ? [] : allRecipients) // Apparaat has no recipients
+        : allRecipients.filter((r: RecipientResult) => r.sources?.includes(module))
+
+      // Filter keywords to prioritize current module
+      const allKeywords = (data.keywords || []).map((k: KeywordResult) => ({
+        ...k,
+        type: 'keyword' as const,
+      }))
+      const filteredKeywords = module === 'integraal'
+        ? allKeywords
+        : allKeywords.filter((k: KeywordResult) => k.module === module || !k.module)
+
       return {
-        recipients: (data.recipients || []).map((r: RecipientResult) => ({
-          ...r,
-          type: 'recipient' as const,
-        })),
-        keywords: (data.keywords || []).map((k: KeywordResult) => ({
-          ...k,
-          type: 'keyword' as const,
-        })),
+        recipients: filteredRecipients,
+        keywords: filteredKeywords,
       }
     } catch (error) {
       if (error instanceof Error && error.name !== 'AbortError') {
@@ -342,6 +359,9 @@ export function FilterPanel({
   }
 
   async function fetchFuzzySuggestions(q: string): Promise<RecipientResult[]> {
+    // Apparaatsuitgaven has no recipients
+    if (module === 'apparaat') return []
+
     try {
       const response = await fetch(
         `${API_BASE_URL}/api/v1/search/autocomplete?` +
@@ -349,10 +369,15 @@ export function FilterPanel({
       )
       if (!response.ok) return []
       const data = await response.json()
-      return (data.recipients || []).map((r: RecipientResult) => ({
+      const allRecipients = (data.recipients || []).map((r: RecipientResult) => ({
         ...r,
         type: 'recipient' as const,
       }))
+
+      // Filter to current module (except for integraal which shows all)
+      return module === 'integraal'
+        ? allRecipients
+        : allRecipients.filter((r: RecipientResult) => r.sources?.includes(module))
     } catch (error) {
       if (error instanceof Error && error.name !== 'AbortError') {
         console.error('[FilterPanel] fetchFuzzySuggestions failed:', error.message)
