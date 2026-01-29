@@ -829,4 +829,8 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - **UX-002 TRUE RANDOM:** `WHERE random_order > threshold` for different results each request
 - **Backlog:** Railway private networking (deferred - public URL works)
 - **Created:** `/document` skill for comprehensive session documentation
+- **BUG FIX:** Search not filtering - frontend `search` param mapped to backend `q` param
+- **BUG FIX:** pgbouncer prepared statements - disabled `statement_cache_size` for transaction mode
+- **UX:** Default view shows "Random resultaten" instead of count
+- **UX:** Search dropdown reorder - Ontvangers before Zoektermen
 - **Next:** Continue Week 6 - User Auth (Magic Link, user migration, Overzicht page)
