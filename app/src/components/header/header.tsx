@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -55,8 +56,16 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
+            <Image
+              src="/logo-white.png"
+              alt="Rijksuitgaven"
+              width={36}
+              height={36}
+              className="h-9 w-auto"
+              priority
+            />
             <span
-              className="text-xl font-bold"
+              className="text-xl font-bold hidden sm:inline"
               style={{ fontFamily: 'var(--font-heading), serif' }}
             >
               Rijksuitgaven
