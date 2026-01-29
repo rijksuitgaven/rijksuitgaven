@@ -4,6 +4,7 @@ Module service - aggregation queries for all data modules.
 Handles the business logic for fetching and aggregating data
 from each module table with year columns.
 """
+import random
 from typing import Optional
 from app.services.database import fetch_all, fetch_val
 
@@ -213,6 +214,19 @@ async def _get_from_aggregated_view(
     # Store params for count query
     count_params = params.copy()
 
+    # Count query - run first for random offset calculation
+    count_query = f"SELECT COUNT(*) FROM {agg_table} {where_sql}"
+    total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
+    total = total or 0
+
+    # For random sort: use a random offset to show different results each time
+    # This works because data is pre-sorted by random_order column
+    effective_offset = offset
+    if sort_by == "random" and offset == 0 and total > limit:
+        # Pick a random starting point in the data
+        max_offset = total - limit
+        effective_offset = random.randint(0, max_offset)
+
     # Main query from aggregated view
     query = f"""
         SELECT
@@ -227,14 +241,10 @@ async def _get_from_aggregated_view(
         {sort_clause}
         LIMIT ${param_idx} OFFSET ${param_idx + 1}
     """
-    params.extend([limit, offset])
+    params.extend([limit, effective_offset])
 
-    # Count query
-    count_query = f"SELECT COUNT(*) FROM {agg_table} {where_sql}"
-
-    # Execute queries
+    # Execute query
     rows = await fetch_all(query, *params)
-    total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
 
     # Transform rows
     result = []
@@ -523,6 +533,19 @@ async def get_integraal_data(
     # Store params for count query
     count_params = params.copy()
 
+    # Count query - run first for random offset calculation
+    count_query = f"SELECT COUNT(*) FROM universal_search {where_sql}"
+    total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
+    total = total or 0
+
+    # For random sort: use a random offset to show different results each time
+    # This works because data is pre-sorted by random_order column
+    effective_offset = offset
+    if sort_by == "random" and offset == 0 and total > limit:
+        # Pick a random starting point in the data
+        max_offset = total - limit
+        effective_offset = random.randint(0, max_offset)
+
     query = f"""
         SELECT
             ontvanger AS primary_value,
@@ -543,12 +566,10 @@ async def get_integraal_data(
         {sort_clause}
         LIMIT ${param_idx} OFFSET ${param_idx + 1}
     """
-    params.extend([limit, offset])
+    params.extend([limit, effective_offset])
 
-    count_query = f"SELECT COUNT(*) FROM universal_search {where_sql}"
-
+    # Execute query
     rows = await fetch_all(query, *params)
-    total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
 
     result = []
     for row in rows:
