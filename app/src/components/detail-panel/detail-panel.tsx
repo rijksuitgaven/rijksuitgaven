@@ -6,6 +6,7 @@ import { X, ExternalLink, Download, Loader2, ChevronDown, ChevronUp } from 'luci
 import { cn } from '@/lib/utils'
 import { formatAmount } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
+import { MODULE_LABELS, FIELD_LABELS } from '@/lib/constants'
 
 interface YearAmount {
   year: number
@@ -64,18 +65,7 @@ interface DetailPanelProps {
   onNavigateToModule?: (module: string, recipientName: string) => void
 }
 
-// Module labels for display
-const MODULE_LABELS: Record<string, string> = {
-  instrumenten: 'Instrumenten',
-  inkoop: 'Inkoop',
-  publiek: 'Publiek',
-  gemeente: 'Gemeente',
-  provincie: 'Provincie',
-  apparaat: 'Apparaat',
-  integraal: 'Integraal',
-}
-
-// Fields to display per module
+// Fields to display per module (component-specific, not shared)
 const MODULE_DETAIL_FIELDS: Record<string, string[]> = {
   instrumenten: ['regeling', 'artikel', 'begrotingsnaam', 'instrument'],
   apparaat: ['kostensoort', 'artikel', 'begrotingsnaam'],
@@ -84,22 +74,6 @@ const MODULE_DETAIL_FIELDS: Record<string, string[]> = {
   gemeente: ['gemeente', 'beleidsterrein', 'regeling', 'omschrijving'],
   publiek: ['source', 'regeling', 'omschrijving'],
   integraal: [],
-}
-
-// Field labels for display
-const FIELD_LABELS: Record<string, string> = {
-  regeling: 'Regeling',
-  artikel: 'Artikel',
-  begrotingsnaam: 'Begrotingsnaam',
-  instrument: 'Instrument',
-  kostensoort: 'Kostensoort',
-  ministerie: 'Ministerie',
-  categorie: 'Categorie',
-  provincie: 'Provincie',
-  gemeente: 'Gemeente',
-  beleidsterrein: 'Beleidsterrein',
-  omschrijving: 'Omschrijving',
-  source: 'Bron',
 }
 
 export function DetailPanel({

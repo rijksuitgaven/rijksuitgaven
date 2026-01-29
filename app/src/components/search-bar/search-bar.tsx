@@ -6,6 +6,7 @@ import { Search, X, Loader2, FileText, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatAmount } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
+import { MODULE_LABELS } from '@/lib/constants'
 
 interface RecipientResult {
   type: 'recipient'
@@ -30,16 +31,6 @@ interface SearchBarProps {
   className?: string
   placeholder?: string
   onSearch?: (query: string) => void
-}
-
-// Module labels for recipient source display
-const MODULE_LABELS: Record<string, string> = {
-  instrumenten: 'Instrumenten',
-  inkoop: 'Inkoop',
-  publiek: 'Publiek',
-  gemeente: 'Gemeente',
-  provincie: 'Provincie',
-  apparaat: 'Apparaat',
 }
 
 export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regeling...', onSearch }: SearchBarProps) {

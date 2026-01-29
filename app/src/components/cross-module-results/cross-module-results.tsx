@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { API_BASE_URL } from '@/lib/api-config'
+import { MODULE_LABELS, ALL_MODULES } from '@/lib/constants'
 
 interface ModuleCount {
   module: string
@@ -14,20 +15,6 @@ interface CrossModuleResultsProps {
   searchQuery: string
   currentModule: string
   className?: string
-}
-
-// All searchable modules
-const ALL_MODULES = ['instrumenten', 'apparaat', 'inkoop', 'provincie', 'gemeente', 'publiek', 'integraal']
-
-// Module labels for display
-const MODULE_LABELS: Record<string, string> = {
-  instrumenten: 'Instrumenten',
-  inkoop: 'Inkoop',
-  publiek: 'Publiek',
-  gemeente: 'Gemeente',
-  provincie: 'Provincie',
-  apparaat: 'Apparaat',
-  integraal: 'Integraal',
 }
 
 export function CrossModuleResults({ searchQuery, currentModule, className }: CrossModuleResultsProps) {
@@ -66,10 +53,15 @@ export function CrossModuleResults({ searchQuery, currentModule, className }: Cr
               if (!response.ok) return null
 
               const data = await response.json()
-              const count = data.pagination?.totalRows || 0
+              // API returns meta.total (not pagination.totalRows - that's the transformed format)
+              const count = data.meta?.total ?? 0
 
               return { module, count }
-            } catch {
+            } catch (error) {
+              // Log but continue - one module failing shouldn't break the others
+              if (error instanceof Error && error.name !== 'AbortError') {
+                console.error(`[CrossModuleResults] Failed to fetch ${module}:`, error.message)
+              }
               return null
             }
           })

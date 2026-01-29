@@ -5,6 +5,7 @@ import { ChevronDown, Loader2, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatAmount, getAmountFontClass } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
+import { MODULE_LABELS } from '@/lib/constants'
 import type { RecipientRow } from '@/types/api'
 
 // Groupable fields per module
@@ -48,16 +49,6 @@ const CONTEXT_FIELDS: Record<string, { headline: string; headlineLabel: string; 
   gemeente: { headline: 'regeling', headlineLabel: 'Regeling', breadcrumb: ['beleidsterrein', 'gemeente'] },
   publiek: { headline: 'regeling', headlineLabel: 'Regeling', breadcrumb: ['source'] },
   integraal: { headline: 'module', headlineLabel: 'Module', breadcrumb: [] },
-}
-
-// Module display names for cross-module indicator
-const MODULE_NAMES: Record<string, string> = {
-  instrumenten: 'Instrumenten',
-  apparaat: 'Apparaat',
-  inkoop: 'Inkoop',
-  provincie: 'Provincie',
-  gemeente: 'Gemeente',
-  publiek: 'Publiek',
 }
 
 interface DetailRow {
@@ -185,7 +176,7 @@ export function ExpandedRow({
                       onClick={() => onNavigateToModule?.(source, row.primary_value)}
                       className="inline-flex items-center px-2 py-0.5 rounded bg-[var(--gray-light)] hover:bg-[var(--blue-light)] transition-colors"
                     >
-                      {MODULE_NAMES[source] || source}
+                      {MODULE_LABELS[source] || source}
                     </button>
                   ))}
                 </div>
@@ -216,7 +207,7 @@ export function ExpandedRow({
                   onClick={() => onNavigateToModule?.(source, row.primary_value)}
                   className="inline-flex items-center px-2 py-0.5 rounded bg-[var(--gray-light)] hover:bg-[var(--blue-light)] transition-colors"
                 >
-                  {MODULE_NAMES[source] || source}
+                  {MODULE_LABELS[source] || source}
                 </button>
               ))}
             </div>
