@@ -61,20 +61,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/filter-panel/filter-panel.tsx** ⭐ MAJOR UPDATE (2026-01-29)
-   +429 lines: Full autocomplete with Typesense, Ontvangers + Zoektermen dropdown, clickable "Ook in" badges
+1. **app/src/app/icon.svg** ⭐ CREATED (2026-01-29)
+   Favicon for browser tabs (auto-detected by Next.js)
 
-2. **app/src/components/header/header.tsx** ⭐ UPDATED (2026-01-29)
-   Removed SearchBar component (consolidated into filter panel)
+2. **app/src/app/apple-icon.png** ⭐ CREATED (2026-01-29)
+   Apple touch icon (180×180, auto-detected)
 
-3. **docs/plans/2026-01-29-search-bar-consolidation.md** ⭐ CREATED (2026-01-29)
-   Design document for search bar consolidation
+3. **app/public/logo.png** ⭐ CREATED (2026-01-29)
+   Full logo with text for light backgrounds
 
-4. **backend/app/api/v1/search.py** ⭐ CREATED (2026-01-29)
-   Typesense proxy endpoint - keeps API key server-side only
+4. **app/src/components/header/header.tsx** ⭐ UPDATED (2026-01-29)
+   Added logo image, removed SearchBar (consolidated into filter panel)
 
-5. **app/src/lib/constants.ts** ⭐ CREATED (2026-01-29)
-   Shared constants (MODULE_LABELS, FIELD_LABELS, ALL_MODULES)
+5. **app/src/components/filter-panel/filter-panel.tsx** ⭐ MAJOR UPDATE (2026-01-29)
+   Module-specific autocomplete with two-section dropdown
 
 ---
 
@@ -906,5 +906,13 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Searches current module first (PostgreSQL), shows other modules as secondary
 - Bug fixes: current module filtered from badges, Enter closes dropdown
 - Removed confusing "/" shortcut tip
+
+**Brand Assets Distribution (Session 8):**
+- Established workflow: founder drops assets in `assets/brand/`, Claude distributes
+- Favicon: `icon.svg` (auto-detected by Next.js App Router)
+- Apple touch icon: `apple-icon.png` (180×180, resized from source)
+- Logos: `logo.png` (full logo), `logo-white.png` (icon only for dark backgrounds)
+- Header updated to show logo icon + text (icon only on mobile)
+- Cleaned up default Next.js placeholder assets
 
 **Next:** Continue Week 6 - User Auth (Magic Link, user migration, Overzicht page)
