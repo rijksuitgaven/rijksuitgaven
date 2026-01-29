@@ -285,7 +285,6 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
         <FilterPanel
           module={moduleId}
-          availableYears={data?.availableYears ?? []}
           filters={filters}
           onFilterChange={handleFilterChange}
           isLoading={isLoading}

@@ -261,19 +261,17 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
 
 interface FilterPanelProps {
   module: string
-  availableYears: number[]
   filters: FilterValues
   onFilterChange: (filters: FilterValues) => void
   isLoading?: boolean
 }
 
 /**
- * Filter panel component with autocomplete search, year filter, amount range, and module-specific filters.
- * The search input includes global autocomplete with Ontvangers and Zoektermen.
+ * Filter panel component with autocomplete search, amount range, and module-specific filters.
+ * The search input includes module-specific autocomplete with relevance ranking.
  */
 export function FilterPanel({
   module,
-  availableYears,
   filters,
   onFilterChange,
   isLoading = false,
@@ -394,13 +392,6 @@ export function FilterPanel({
 
   const handleSearchChange = useCallback((value: string) => {
     setLocalFilters((prev) => ({ ...prev, search: value }))
-  }, [])
-
-  const handleYearChange = useCallback((value: string) => {
-    setLocalFilters((prev) => ({
-      ...prev,
-      jaar: value ? parseInt(value, 10) : null,
-    }))
   }, [])
 
   const handleAmountChange = useCallback((field: 'minBedrag' | 'maxBedrag', value: string) => {
@@ -711,22 +702,6 @@ export function FilterPanel({
               </div>
             </div>
           )}
-        </div>
-
-        {/* Year filter */}
-        <div className="w-32">
-          <select
-            value={localFilters.jaar ?? ''}
-            onChange={(e) => handleYearChange(e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)] focus:border-transparent"
-          >
-            <option value="">Alle jaren</option>
-            {availableYears.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
         </div>
 
         {/* Expand/collapse button */}
