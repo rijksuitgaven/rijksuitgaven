@@ -86,6 +86,7 @@ export async function fetchModuleData(
   })
 
   const url = `${API_BASE_URL}/api/v1/modules/${module}?${searchParams.toString()}`
+  console.log('[API] Fetching:', url)  // Debug: verify search param is mapped to q
   const response = await fetch(url)
 
   if (!response.ok) {
