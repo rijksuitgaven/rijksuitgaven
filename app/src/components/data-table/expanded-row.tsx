@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { ChevronDown, Loader2, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatAmount, getAmountFontClass } from '@/lib/format'
+import { API_BASE_URL } from '@/lib/api-config'
 import type { RecipientRow, YearAmount } from '@/types/api'
 
 // Groupable fields per module
@@ -107,7 +108,6 @@ export function ExpandedRow({
       setError(null)
 
       try {
-        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://rijksuitgaven-api-production-3448.up.railway.app'
         const encodedValue = encodeURIComponent(row.primary_value)
         const url = `${API_BASE_URL}/api/v1/modules/${module}/${encodedValue}/details?group_by=${grouping}`
 

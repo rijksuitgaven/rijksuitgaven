@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://rijksuitgaven-api-production-3448.up.railway.app'
+import { API_BASE_URL } from '@/lib/api-config'
 
 interface ModuleCount {
   module: string

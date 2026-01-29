@@ -5,9 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Search, X, Loader2, FileText, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatAmount } from '@/lib/format'
-
-const TYPESENSE_HOST = process.env.NEXT_PUBLIC_TYPESENSE_HOST || 'typesense-production-35ae.up.railway.app'
-const TYPESENSE_API_KEY = process.env.NEXT_PUBLIC_TYPESENSE_API_KEY || '0vh4mxafjeuvd676gw92kpjflg6fuv57'
+import { API_BASE_URL } from '@/lib/api-config'
 
 interface RecipientResult {
   type: 'recipient'
@@ -34,17 +32,7 @@ interface SearchBarProps {
   onSearch?: (query: string) => void
 }
 
-// Field labels for display
-const FIELD_LABELS: Record<string, string> = {
-  regeling: 'Regeling',
-  omschrijving: 'Omschrijving',
-  beleidsterrein: 'Beleidsterrein',
-  begrotingsnaam: 'Begrotingsnaam',
-  categorie: 'Categorie',
-  trefwoorden: 'Trefwoorden',
-}
-
-// Module labels for display
+// Module labels for recipient source display
 const MODULE_LABELS: Record<string, string> = {
   instrumenten: 'Instrumenten',
   inkoop: 'Inkoop',
@@ -84,11 +72,8 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
     const timeout = setTimeout(async () => {
       setIsLoading(true)
       try {
-        // Parallel fetch: recipients + keywords from multiple collections
-        const [recipientsData, keywordsData] = await Promise.all([
-          fetchRecipients(query),
-          fetchKeywords(query),
-        ])
+        // Fetch search results from backend proxy
+        const { recipients: recipientsData, keywords: keywordsData } = await fetchSearchResults(query)
 
         setRecipients(recipientsData)
         setKeywords(keywordsData)
@@ -109,8 +94,8 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
           setIsOpen(recipientsData.length > 0 || keywordsData.length > 0)
         }
         setSelectedIndex(-1)
-      } catch (error) {
-        console.error('Search error:', error)
+      } catch {
+        // Silent failure - user sees no results instead of error
         setRecipients([])
         setKeywords([])
         setNoResultsQuery(null)
@@ -122,137 +107,52 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
     return () => clearTimeout(timeout)
   }, [query])
 
-  // Fetch recipients from recipients collection
-  async function fetchRecipients(q: string): Promise<RecipientResult[]> {
-    const response = await fetch(
-      `https://${TYPESENSE_HOST}/collections/recipients/documents/search?` +
-      new URLSearchParams({
-        q,
-        query_by: 'name,name_lower',
-        prefix: 'true',
-        per_page: '5',
-        sort_by: 'totaal:desc',
-      }),
-      {
-        headers: {
-          'X-TYPESENSE-API-KEY': TYPESENSE_API_KEY,
-        },
+  // Fetch search results from backend proxy (Typesense API key stays server-side)
+  async function fetchSearchResults(q: string): Promise<{ recipients: RecipientResult[], keywords: KeywordResult[] }> {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/v1/search/autocomplete?` +
+        new URLSearchParams({ q }),
+      )
+
+      if (!response.ok) {
+        return { recipients: [], keywords: [] }
       }
-    )
 
-    if (!response.ok) return []
-
-    const data = await response.json()
-    return (data.hits || []).map((hit: any) => ({
-      type: 'recipient' as const,
-      name: hit.document.name,
-      sources: hit.document.sources || [],
-      source_count: hit.document.source_count || 0,
-      totaal: hit.document.totaal || 0,
-    }))
-  }
-
-  // Fetch keywords from module collections
-  async function fetchKeywords(q: string): Promise<KeywordResult[]> {
-    // Search keyword fields in different module collections
-    const keywordSearches = [
-      { collection: 'instrumenten', field: 'regeling', module: 'instrumenten' },
-      { collection: 'publiek', field: 'regeling', module: 'publiek' },
-      { collection: 'publiek', field: 'omschrijving', module: 'publiek' },
-      { collection: 'gemeente', field: 'regeling', module: 'gemeente' },
-      { collection: 'gemeente', field: 'beleidsterrein', module: 'gemeente' },
-      { collection: 'gemeente', field: 'omschrijving', module: 'gemeente' },
-      { collection: 'provincie', field: 'omschrijving', module: 'provincie' },
-    ]
-
-    const results: KeywordResult[] = []
-    const seenKeywords = new Set<string>()
-
-    // Fetch from each collection/field combo (in parallel, limited)
-    const searches = keywordSearches.slice(0, 4).map(async ({ collection, field, module }) => {
-      try {
-        const response = await fetch(
-          `https://${TYPESENSE_HOST}/collections/${collection}/documents/search?` +
-          new URLSearchParams({
-            q,
-            query_by: field,
-            prefix: 'true',
-            per_page: '3',
-            group_by: field,
-            group_limit: '1',
-          }),
-          {
-            headers: {
-              'X-TYPESENSE-API-KEY': TYPESENSE_API_KEY,
-            },
-          }
-        )
-
-        if (!response.ok) return []
-
-        const data = await response.json()
-        const groupedHits = data.grouped_hits || []
-
-        return groupedHits.map((group: any) => {
-          const doc = group.hits?.[0]?.document
-          if (!doc || !doc[field]) return null
-
-          const keyword = doc[field]
-          // Skip if we've seen this keyword or if it's too short
-          if (seenKeywords.has(keyword.toLowerCase()) || keyword.length < 3) return null
-          seenKeywords.add(keyword.toLowerCase())
-
-          return {
-            type: 'keyword' as const,
-            keyword,
-            field,
-            fieldLabel: FIELD_LABELS[field] || field,
-            module,
-            moduleLabel: MODULE_LABELS[module] || module,
-          }
-        }).filter(Boolean)
-      } catch {
-        return []
+      const data = await response.json()
+      return {
+        recipients: (data.recipients || []).map((r: RecipientResult) => ({
+          ...r,
+          type: 'recipient' as const,
+        })),
+        keywords: (data.keywords || []).map((k: KeywordResult) => ({
+          ...k,
+          type: 'keyword' as const,
+        })),
       }
-    })
-
-    const searchResults = await Promise.all(searches)
-    searchResults.forEach(hits => results.push(...hits))
-
-    // Dedupe and limit to 4 keywords
-    return results.slice(0, 4)
+    } catch {
+      return { recipients: [], keywords: [] }
+    }
   }
 
   // Fetch fuzzy suggestions when exact search returns no results (typo tolerance)
   async function fetchFuzzySuggestions(q: string): Promise<RecipientResult[]> {
-    const response = await fetch(
-      `https://${TYPESENSE_HOST}/collections/recipients/documents/search?` +
-      new URLSearchParams({
-        q,
-        query_by: 'name,name_lower',
-        prefix: 'true',
-        per_page: '3',
-        sort_by: 'totaal:desc',
-        num_typos: '2', // Allow up to 2 typos
-        typo_tokens_threshold: '1',
-      }),
-      {
-        headers: {
-          'X-TYPESENSE-API-KEY': TYPESENSE_API_KEY,
-        },
-      }
-    )
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/v1/search/autocomplete?` +
+        new URLSearchParams({ q, fuzzy: 'true' }),
+      )
 
-    if (!response.ok) return []
+      if (!response.ok) return []
 
-    const data = await response.json()
-    return (data.hits || []).map((hit: any) => ({
-      type: 'recipient' as const,
-      name: hit.document.name,
-      sources: hit.document.sources || [],
-      source_count: hit.document.source_count || 0,
-      totaal: hit.document.totaal || 0,
-    }))
+      const data = await response.json()
+      return (data.recipients || []).map((r: RecipientResult) => ({
+        ...r,
+        type: 'recipient' as const,
+      }))
+    } catch {
+      return []
+    }
   }
 
   // Handle click outside

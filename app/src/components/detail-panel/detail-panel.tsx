@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation'
 import { X, ExternalLink, Download, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatAmount } from '@/lib/format'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://rijksuitgaven-api-production-3448.up.railway.app'
+import { API_BASE_URL } from '@/lib/api-config'
 
 interface YearAmount {
   year: number
@@ -160,8 +159,7 @@ export function DetailPanel({
           sources: json.sources || [],
           details: detailFields,
         })
-      } catch (err) {
-        console.error('Detail fetch error:', err)
+      } catch {
         setError('Kon gegevens niet laden')
       } finally {
         setIsLoading(false)
@@ -204,9 +202,15 @@ export function DetailPanel({
     const BOM = '\uFEFF'
     const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8' })
     const url = URL.createObjectURL(blob)
+    // Sanitize filename to prevent path traversal/injection
+    const safeFilename = recipientName
+      .slice(0, 30)
+      .replace(/[^a-zA-Z0-9\s\-_.]/g, '')
+      .trim() || 'export'
+
     const link = document.createElement('a')
     link.href = url
-    link.download = `rijksuitgaven-${recipientName.slice(0, 30)}.csv`
+    link.download = `rijksuitgaven-${safeFilename}.csv`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)

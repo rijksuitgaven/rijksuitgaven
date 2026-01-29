@@ -3,6 +3,62 @@
 ## Project
 Rijksuitgaven.nl SaaS Platform Migration - Documentation and planning repository.
 
+---
+
+## Golden Rules (ALWAYS APPLY - NO EXCEPTIONS)
+
+**These three rules override everything else. Apply them automatically, every time.**
+
+### 1. Requirements Check (Before ANY Proposal)
+
+**Before proposing ANY solution, feature, or change:**
+
+- [ ] Read `02-requirements/search-requirements.md` (V1.0 scope)
+- [ ] Read `02-requirements/research-mode-vision.md` (V2.0 scope)
+- [ ] Verify proposal doesn't conflict with existing requirements
+- [ ] Verify proposal doesn't block V2.0 features
+- [ ] State explicitly: "Checked against V1/V2 requirements: [compatible/conflict]"
+
+**If you skip this, you are failing at your job.**
+
+### 2. Documentation Sync (After ANY Change)
+
+**After ANY code, schema, decision, or feature work:**
+
+- [ ] Update `logs/SESSION-CONTEXT.md` with what changed
+- [ ] Update relevant technical docs (DATABASE-DOCUMENTATION.md, FRONTEND-DOCUMENTATION.md, etc.)
+- [ ] Check: Does this change affect other documents? Update them.
+- [ ] Verify no stale or conflicting information remains
+
+**Documentation is NEVER "I'll do it later." It happens immediately.**
+
+### 3. Ask, Don't Assume (When In Doubt)
+
+**If ANY of these are true, STOP and ask the founder:**
+
+- Requirements are ambiguous or could be interpreted multiple ways
+- Multiple valid approaches exist and preference matters
+- You're unsure if something aligns with founder's vision
+- A decision could affect timeline, budget, or scope
+- You're about to make an assumption that hasn't been validated
+
+**The rule:** When in doubt, ask. Never assume. Never guess. Never "I think you meant X."
+
+**Format for asking:**
+```
+I need clarification before proceeding:
+
+**Question:** [Specific question]
+**Context:** [Why this matters]
+**Options (if applicable):**
+- A: [option]
+- B: [option]
+
+Which do you prefer?
+```
+
+---
+
 ## Founder Context
 
 **Solo founder** doing everything: development, design, marketing, operations.

@@ -7,8 +7,7 @@ import type {
   ApiRecipientRow,
   RecipientRow,
 } from '@/types/api'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://rijksuitgaven-api-production-3448.up.railway.app'
+import { API_BASE_URL } from './api-config'
 
 // Module display names
 const MODULE_DISPLAY_NAMES: Record<string, string> = {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown } from 'lucide-react'
@@ -21,8 +21,34 @@ export function Header() {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isModulesOpen, setIsModulesOpen] = useState(false)
+  const modulesDropdownRef = useRef<HTMLDivElement>(null)
 
   const currentModule = MODULES.find((m) => pathname === `/${m.id}`)
+
+  // Close dropdown on Escape key or click outside
+  useEffect(() => {
+    if (!isModulesOpen) return
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setIsModulesOpen(false)
+      }
+    }
+
+    function handleClickOutside(e: MouseEvent) {
+      if (modulesDropdownRef.current && !modulesDropdownRef.current.contains(e.target as Node)) {
+        setIsModulesOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isModulesOpen])
 
   return (
     <header className="bg-[var(--navy-dark)] text-white sticky top-0 z-40">
@@ -41,10 +67,9 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1 ml-8">
             {/* Modules dropdown */}
-            <div className="relative">
+            <div className="relative" ref={modulesDropdownRef}>
               <button
                 onClick={() => setIsModulesOpen(!isModulesOpen)}
-                onBlur={() => setTimeout(() => setIsModulesOpen(false), 150)}
                 className={cn(
                   'flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                   currentModule

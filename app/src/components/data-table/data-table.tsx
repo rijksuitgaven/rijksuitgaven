@@ -12,6 +12,7 @@ import {
   type SortingState,
   type ExpandedState,
   type Row,
+  type Column,
 } from '@tanstack/react-table'
 import { ChevronRight, ChevronDown, ChevronUp, ChevronsUpDown, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -30,6 +31,11 @@ const COLLAPSED_YEARS_START = 2016
 const COLLAPSED_YEARS_END = 2020
 
 const MAX_EXPORT_ROWS = 500
+
+// Column meta type for sticky columns
+interface ColumnMeta {
+  sticky?: boolean
+}
 
 interface DataTableProps {
   data: RecipientRow[]
@@ -363,7 +369,7 @@ export function DataTable({
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header, headerIndex) => {
-                  const isSticky = (header.column.columnDef.meta as any)?.sticky || headerIndex === 0 || headerIndex === 1
+                  const isSticky = (header.column.columnDef.meta as ColumnMeta | undefined)?.sticky || headerIndex === 0 || headerIndex === 1
                   return (
                     <th
                       key={header.id}
@@ -420,7 +426,7 @@ export function DataTable({
                     )}
                   >
                     {row.getVisibleCells().map((cell, cellIndex) => {
-                      const isSticky = (cell.column.columnDef.meta as any)?.sticky || cellIndex === 0 || cellIndex === 1
+                      const isSticky = (cell.column.columnDef.meta as ColumnMeta | undefined)?.sticky || cellIndex === 0 || cellIndex === 1
                       const isExpanded = row.getIsExpanded()
                       return (
                         <td
@@ -534,7 +540,7 @@ function SortableHeader({
   children,
   onSortChange,
 }: {
-  column: any
+  column: Column<RecipientRow, unknown>
   children: React.ReactNode
   onSortChange?: (column: string, direction: 'asc' | 'desc') => void
 }) {
