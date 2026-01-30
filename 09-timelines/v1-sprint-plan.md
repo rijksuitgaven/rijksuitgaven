@@ -348,6 +348,7 @@
 
 | Task | Details |
 |------|---------|
+| **BUG: Limit dropdown causes error** | Selecting 100/150/250/500 results causes "Failed to fetch instrumenten data" error. Likely API timeout or backend issue with larger limits. |
 | Review user-reported issues | Address any frontend logic bugs |
 | Header refinements | Finalize ONTVANGERS/KOSTEN label styling if needed |
 | Mobile responsiveness | Quick check of mobile experience |
