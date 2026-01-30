@@ -92,15 +92,11 @@ export function ModulePage({ moduleId }: ModulePageProps) {
 }
 
 function ModulePageSkeleton({ config }: { config: ModuleConfig }) {
+  // config used for type consistency, title/description removed per UX decision
+  void config
   return (
     <div className="min-h-screen bg-gradient-to-b from-[var(--gray-light)] to-white">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
-            {config.title}
-          </h1>
-          <p className="text-sm text-[var(--muted-foreground)] mt-1">{config.description}</p>
-        </div>
         <div className="bg-white rounded-lg border border-[var(--border)] p-6 shadow-sm">
           <div className="animate-pulse space-y-4">
             <div className="h-12 bg-[var(--gray-light)] rounded-lg" />
@@ -281,13 +277,6 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   return (
     <div className="min-h-screen bg-gradient-to-b from-[var(--gray-light)] to-white">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
-            {config.title}
-          </h1>
-          <p className="text-sm text-[var(--muted-foreground)] mt-1">{config.description}</p>
-        </div>
-
         {/* White card for search and table area */}
         <div className="bg-white rounded-lg border border-[var(--border)] p-6 shadow-sm">
           <FilterPanel
