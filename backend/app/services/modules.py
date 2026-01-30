@@ -147,6 +147,8 @@ MODULE_CONFIG = {
         "search_fields": ["ontvanger", "regeling", "instrument"],
         "filter_fields": ["begrotingsnaam", "artikel", "artikelonderdeel", "instrument", "regeling"],
         "extra_columns": ["regeling", "artikel", "artikelonderdeel", "instrument", "begrotingsnaam", "detail"],
+        # Columns available in aggregated view (default columns for speed)
+        "view_columns": ["artikel", "regeling"],
     },
     "apparaat": {
         "table": "apparaat",
@@ -158,6 +160,8 @@ MODULE_CONFIG = {
         "search_fields": ["kostensoort", "begrotingsnaam"],
         "filter_fields": ["begrotingsnaam", "artikel", "detail"],
         "extra_columns": ["kostensoort", "artikel", "begrotingsnaam", "detail"],
+        # Columns available in aggregated view (default columns for speed)
+        "view_columns": ["artikel", "detail"],
     },
     "inkoop": {
         "table": "inkoop",
@@ -169,6 +173,8 @@ MODULE_CONFIG = {
         "search_fields": ["leverancier", "ministerie", "categorie"],
         "filter_fields": ["ministerie", "categorie", "staffel"],
         "extra_columns": ["ministerie", "categorie", "staffel"],
+        # Columns available in aggregated view (default columns for speed)
+        "view_columns": ["categorie", "staffel"],
     },
     "provincie": {
         "table": "provincie",
@@ -180,6 +186,8 @@ MODULE_CONFIG = {
         "search_fields": ["ontvanger", "omschrijving"],
         "filter_fields": ["provincie"],
         "extra_columns": ["provincie", "omschrijving"],
+        # Columns available in aggregated view (default columns for speed)
+        "view_columns": ["provincie", "omschrijving"],
     },
     "gemeente": {
         "table": "gemeente",
@@ -191,6 +199,8 @@ MODULE_CONFIG = {
         "search_fields": ["ontvanger", "omschrijving", "regeling"],
         "filter_fields": ["gemeente", "beleidsterrein"],
         "extra_columns": ["gemeente", "beleidsterrein", "regeling", "omschrijving"],
+        # Columns available in aggregated view (default columns for speed)
+        "view_columns": ["gemeente", "omschrijving"],
     },
     "publiek": {
         "table": "publiek",
@@ -202,6 +212,8 @@ MODULE_CONFIG = {
         "search_fields": ["ontvanger", "omschrijving", "regeling"],
         "filter_fields": ["source", "regeling"],
         "extra_columns": ["source", "regeling", "trefwoorden", "sectoren", "regio"],
+        # Columns available in aggregated view (default columns for speed)
+        "view_columns": ["source"],
     },
 }
 
@@ -257,13 +269,19 @@ async def get_module_data(
             else:
                 logger.warning(f"Invalid extra column '{col}' requested for module '{module}'")
 
-    # Use aggregated view for fast queries UNLESS filter_fields are provided
-    # (filter_fields like provincie/gemeente aren't in aggregated views)
-    # Also use source table when extra columns are requested
+    # Check if requested columns are available in the aggregated view
+    # View columns are pre-computed default columns (e.g., artikel, regeling for instrumenten)
+    view_columns = set(config.get("view_columns", []))
+    columns_in_view = all(col in view_columns for col in valid_columns) if valid_columns else True
+
+    # Use aggregated view for fast queries when:
+    # 1. Aggregated table exists
+    # 2. No filter_fields (filter fields like provincie/gemeente aren't in views)
+    # 3. Either no columns requested OR all columns are in the view
     use_aggregated = (
         config.get("aggregated_table") is not None
         and not filter_fields  # Must use source table for filter fields
-        and not valid_columns  # Must use source table for extra columns
+        and columns_in_view  # Can use view if columns are available or none requested
     )
 
     if use_aggregated:
@@ -278,6 +296,7 @@ async def get_module_data(
             limit=limit,
             offset=offset,
             min_years=min_years,
+            columns=valid_columns if valid_columns else None,  # Pass columns to view query
         )
     else:
         return await _get_from_source_table(
@@ -307,10 +326,17 @@ async def _get_from_aggregated_view(
     limit: int = 25,
     offset: int = 0,
     min_years: Optional[int] = None,
+    columns: Optional[list[str]] = None,  # Extra columns available in view
 ) -> tuple[list[dict], int]:
     """Fast path: query pre-computed materialized view."""
     agg_table = config["aggregated_table"]
     primary = config["primary_field"]
+
+    # Build extra columns selection if columns are requested and available in view
+    extra_columns_select = ""
+    if columns and not search:
+        # Only include static columns when NOT searching (search uses matched_field instead)
+        extra_columns_select = ", " + ", ".join([f"{col} AS extra_{col}" for col in columns])
 
     # Build WHERE clause
     where_clauses = []
@@ -407,7 +433,7 @@ async def _get_from_aggregated_view(
             "2019" AS y2019, "2020" AS y2020, "2021" AS y2021,
             "2022" AS y2022, "2023" AS y2023, "2024" AS y2024,
             totaal,
-            row_count{relevance_select}
+            row_count{extra_columns_select}{relevance_select}
         FROM {agg_table}
         {where_sql}
         {sort_clause}
@@ -426,12 +452,19 @@ async def _get_from_aggregated_view(
     result = []
     for row in rows:
         years_dict = {year: int(row.get(f"y{year}", 0) or 0) for year in YEARS}
-        result.append({
+        row_data = {
             "primary_value": row["primary_value"],
             "years": years_dict,
             "totaal": int(row["totaal"] or 0),
             "row_count": row["row_count"],
-        })
+        }
+        # Add extra columns if requested (from view columns)
+        if columns and not search:
+            extra_cols = {}
+            for col in columns:
+                extra_cols[col] = row.get(f"extra_{col}")
+            row_data["extra_columns"] = extra_cols
+        result.append(row_data)
 
     return result, total or 0
 
