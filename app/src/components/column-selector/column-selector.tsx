@@ -9,39 +9,40 @@ export const MAX_SELECTED_COLUMNS = 2
 
 // Available columns per module (UX-005)
 // Note: Max 2 columns can be selected at a time (enforced by MAX_SELECTED_COLUMNS)
-// Default columns are marked - only first 2 defaults will be used
+// Default: NO columns selected (for speed - uses fast materialized views)
+// When user selects columns, query falls back to slower source table aggregation
 export const MODULE_COLUMNS: Record<string, { value: string; label: string; default: boolean }[]> = {
   instrumenten: [
-    { value: 'regeling', label: 'Regeling', default: true },
-    { value: 'instrument', label: 'Instrument', default: true },
+    { value: 'regeling', label: 'Regeling', default: false },
+    { value: 'instrument', label: 'Instrument', default: false },
     { value: 'artikel', label: 'Artikel', default: false },
     { value: 'artikelonderdeel', label: 'Artikelonderdeel', default: false },
     { value: 'begrotingsnaam', label: 'Begrotingsnaam', default: false },
     { value: 'detail', label: 'Detail', default: false },
   ],
   apparaat: [
-    { value: 'begrotingsnaam', label: 'Begrotingsnaam', default: true },
-    { value: 'detail', label: 'Detail', default: true },
+    { value: 'begrotingsnaam', label: 'Begrotingsnaam', default: false },
+    { value: 'detail', label: 'Detail', default: false },
     { value: 'artikel', label: 'Artikel', default: false },
   ],
   inkoop: [
-    { value: 'ministerie', label: 'Ministerie', default: true },
-    { value: 'categorie', label: 'Categorie', default: true },
+    { value: 'ministerie', label: 'Ministerie', default: false },
+    { value: 'categorie', label: 'Categorie', default: false },
     { value: 'staffel', label: 'Staffel', default: false },
   ],
   provincie: [
-    { value: 'provincie', label: 'Provincie', default: true },
-    { value: 'omschrijving', label: 'Omschrijving', default: true },
+    { value: 'provincie', label: 'Provincie', default: false },
+    { value: 'omschrijving', label: 'Omschrijving', default: false },
   ],
   gemeente: [
-    { value: 'gemeente', label: 'Gemeente', default: true },
-    { value: 'omschrijving', label: 'Omschrijving', default: true },
+    { value: 'gemeente', label: 'Gemeente', default: false },
+    { value: 'omschrijving', label: 'Omschrijving', default: false },
     { value: 'beleidsterrein', label: 'Beleidsterrein', default: false },
     { value: 'regeling', label: 'Regeling', default: false },
   ],
   publiek: [
-    { value: 'source', label: 'Organisatie', default: true },
-    { value: 'regeling', label: 'Regeling', default: true },
+    { value: 'source', label: 'Organisatie', default: false },
+    { value: 'regeling', label: 'Regeling', default: false },
     { value: 'trefwoorden', label: 'Trefwoorden', default: false },
     { value: 'sectoren', label: 'Sectoren', default: false },
     { value: 'regio', label: 'Regio', default: false },
@@ -165,8 +166,8 @@ export function ColumnSelector({ moduleId, selectedColumns, onColumnsChange }: C
             <div className="p-2 max-h-64 overflow-y-auto">
               {/* Max columns warning */}
               {isAtMaxColumns && (
-                <div className="flex items-center gap-2 px-3 py-2 mb-2 bg-[var(--warning-bg)] text-[var(--warning)] rounded text-xs">
-                  <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                <div className="flex items-center gap-2 px-3 py-2 mb-2 bg-[#FFC857]/20 text-[var(--navy-dark)] rounded text-xs font-medium">
+                  <AlertCircle className="h-3.5 w-3.5 flex-shrink-0 text-[#B5891D]" />
                   <span>Max {MAX_SELECTED_COLUMNS} kolommen</span>
                 </div>
               )}
