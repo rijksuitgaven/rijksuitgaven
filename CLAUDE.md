@@ -968,6 +968,31 @@ setCount(count + 1)
 
 ## PostgreSQL/Supabase Patterns (MANDATORY)
 
+### Supabase SQL Editor Limitations (CRITICAL)
+
+**Supabase SQL Editor has a statement timeout.** Large combined scripts will fail with "upstream timeout".
+
+**Rules:**
+- **NEVER combine multiple DDL operations** (CREATE/DROP VIEW, CREATE INDEX) in one script
+- **ALWAYS split migrations** into separate files per table/view
+- **One view per file** for materialized view operations
+- **Test each file individually** before providing to founder
+
+**Example - BAD:**
+```
+scripts/sql/014-all-views.sql  # Contains 6 DROP + CREATE + INDEX operations - WILL TIMEOUT
+```
+
+**Example - GOOD:**
+```
+scripts/sql/014a-instrumenten-view.sql
+scripts/sql/014b-apparaat-view.sql
+scripts/sql/014c-inkoop-view.sql
+scripts/sql/014d-provincie-view.sql
+scripts/sql/014e-gemeente-view.sql
+scripts/sql/014f-publiek-view.sql
+```
+
 ### Index Cheat Sheet
 
 | Query Pattern | Index Type | Example |
