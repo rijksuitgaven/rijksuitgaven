@@ -1081,8 +1081,15 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - ✅ Backend deployed to Railway
 - ✅ Instrumenten page now loads in ~400-500ms (was 4 seconds)
 
+**Code Audit Fixes - COMPLETE:**
+- ✅ Fixed limit validation bug (`le=100` → `le=500`) - dropdown options now work
+- ✅ Added FastAPI lifespan handler for proper connection pool shutdown
+- ✅ Added AbortController to MultiSelect filter (race condition fix)
+- ✅ Fixed abort status check in CrossModuleResults
+- ✅ Removed console statements from filter-panel, search-bar, detail-panel
+- ✅ Added aria-live and role="status" to all Loader2 components (accessibility)
+
 **Next Steps:**
-1. UI/UX Logic Fixes (next session) - user-reported issues
-2. Week 6 - User Auth (Magic Link, user migration)
-3. Overzicht page
-4. Beta testing preparation
+1. Week 6 - User Auth (Magic Link, user migration)
+2. Overzicht page
+3. Beta testing preparation
