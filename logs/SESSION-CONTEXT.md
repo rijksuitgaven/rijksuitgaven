@@ -191,6 +191,9 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/sql/010-normalize-module-aggregated-views.sql` | 2026-01-29 | Supabase (all 5 views) |
 | `scripts/sql/012-enable-rls-missing-tables.sql` | 2026-01-31 | Supabase |
 | `scripts/sql/013-security-hardening.sql` | 2026-01-31 | Supabase |
+| `scripts/sql/014a-f-*-default-cols.sql` (6 files) | 2026-01-31 | Supabase |
+| `scripts/sql/015a-f-*-years-col.sql` (6 files) | 2026-01-31 | Supabase |
+| `scripts/sql/016-instrumenten-add-instrument-col.sql` | 2026-01-31 | Supabase |
 
 ### Configuration Files
 
@@ -1070,9 +1073,16 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Need to add default columns to materialized views for speed improvement
 - User approved, to be done after documentation
 
+**Materialized View Speed Fixes - COMPLETE:**
+- ✅ Created 6 migrations for default columns (014a-f)
+- ✅ Created 6 migrations for years_with_data column (015a-f)
+- ✅ Created migration for instrument column (016)
+- ✅ All migrations executed in Supabase
+- ✅ Backend deployed to Railway
+- ✅ Instrumenten page now loads in ~400-500ms (was 4 seconds)
+
 **Next Steps:**
-1. Create materialized view migration for speed fix (columns)
-2. Deploy backend changes
-3. Week 6 - User Auth (Magic Link, user migration)
-4. Overzicht page
-5. Beta testing preparation
+1. UI/UX Logic Fixes (next session) - user-reported issues
+2. Week 6 - User Auth (Magic Link, user migration)
+3. Overzicht page
+4. Beta testing preparation

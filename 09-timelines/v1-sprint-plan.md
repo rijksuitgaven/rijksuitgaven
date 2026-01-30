@@ -341,7 +341,20 @@
 | Grand total | Footer row |
 | Click navigation | Module/sub-source → module page with filter |
 
+### Day 2: UI/UX Logic Fixes (Scheduled Next Session)
+
+**Added:** 2026-01-31
+**Context:** Various UI/UX issues identified during mini sprint that need attention before auth work.
+
+| Task | Details |
+|------|---------|
+| Review user-reported issues | Address any frontend logic bugs |
+| Header refinements | Finalize ONTVANGERS/KOSTEN label styling if needed |
+| Mobile responsiveness | Quick check of mobile experience |
+| Performance verification | Confirm all modules load in <500ms |
+
 **Week 6 Deliverables:**
+- [ ] UI/UX logic fixes complete (next session)
 - [ ] Magic Link authentication working
 - [ ] 50 users migrated
 - [ ] Overzicht page complete
