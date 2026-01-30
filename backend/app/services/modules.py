@@ -1071,3 +1071,69 @@ async def get_integraal_autocomplete(
         "current_module": results,  # For integraal, all results go in one section
         "other_modules": [],
     }
+
+
+# =============================================================================
+# Module Stats (for dynamic search placeholder)
+# =============================================================================
+
+async def get_module_stats(module: str) -> dict:
+    """
+    Get statistics for a module: count of unique entities and total amount.
+
+    Used for dynamic search bar placeholder:
+    "Doorzoek X ontvangers (€Y miljard) in [module]"
+
+    Returns:
+        {
+            "count": int,  # Number of unique entities
+            "total": int,  # Sum of all amounts in euros
+            "total_formatted": str,  # "1.474 miljard" or "156 miljoen"
+        }
+    """
+    if module == "integraal":
+        # Universal search: unique recipients across all modules
+        query = """
+            SELECT
+                COUNT(*) AS count,
+                SUM(totaal) AS total
+            FROM universal_search
+        """
+        row = await fetch_all(query)
+        row = row[0] if row else {"count": 0, "total": 0}
+    elif module in MODULE_CONFIG:
+        config = MODULE_CONFIG[module]
+        table = config.get("aggregated_table") or config["table"]
+
+        query = f"""
+            SELECT
+                COUNT(*) AS count,
+                SUM(totaal) AS total
+            FROM {table}
+        """
+        row = await fetch_all(query)
+        row = row[0] if row else {"count": 0, "total": 0}
+    else:
+        return {"count": 0, "total": 0, "total_formatted": "0"}
+
+    count = int(row["count"] or 0)
+    total = int(row["total"] or 0)
+
+    # Format total in Dutch style: "X miljard" or "X miljoen"
+    if total >= 1_000_000_000_000:
+        # Trillion
+        formatted = f"{total / 1_000_000_000_000:.2f} biljoen".replace(".", ",")
+    elif total >= 1_000_000_000:
+        # Billion
+        formatted = f"{total / 1_000_000_000:.0f} miljard"
+    elif total >= 1_000_000:
+        # Million
+        formatted = f"{total / 1_000_000:.0f} miljoen"
+    else:
+        formatted = f"{total:,.0f}".replace(",", ".")
+
+    return {
+        "count": count,
+        "total": total,
+        "total_formatted": formatted,
+    }

@@ -28,6 +28,7 @@ from app.services.modules import (
     get_filter_options,
     get_module_autocomplete,
     get_integraal_autocomplete,
+    get_module_stats,
     MODULE_CONFIG,
     YEARS,
 )
@@ -99,6 +100,41 @@ class DetailResponse(BaseModel):
 async def list_modules():
     """List all available modules."""
     return [m.value for m in ModuleName]
+
+
+# =============================================================================
+# Module Stats Endpoint
+# =============================================================================
+
+class ModuleStatsResponse(BaseModel):
+    """Module statistics for search placeholder."""
+    success: bool = True
+    module: str
+    count: int
+    total: int
+    total_formatted: str
+
+
+@router.get("/{module}/stats", response_model=ModuleStatsResponse)
+async def module_stats(module: ModuleName):
+    """
+    Get statistics for a module: count and total amount.
+
+    Used for dynamic search bar placeholder:
+    "Doorzoek X ontvangers (€Y miljard) in [module]"
+    """
+    try:
+        stats = await get_module_stats(module.value)
+        return ModuleStatsResponse(
+            success=True,
+            module=module.value,
+            count=stats["count"],
+            total=stats["total"],
+            total_formatted=stats["total_formatted"],
+        )
+    except Exception as e:
+        logger.error(f"Failed to get stats for {module.value}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve module stats")
 
 
 # =============================================================================

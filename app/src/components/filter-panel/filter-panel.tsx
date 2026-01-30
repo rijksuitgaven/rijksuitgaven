@@ -12,6 +12,12 @@ import { MODULE_LABELS } from '@/lib/constants'
 // Types
 // =============================================================================
 
+interface ModuleStats {
+  count: number
+  total: number
+  total_formatted: string
+}
+
 type FilterType = 'text' | 'multiselect' | 'select'
 
 interface FilterConfig {
@@ -36,6 +42,17 @@ interface OtherModulesResult {
 // =============================================================================
 // Module filter configuration
 // =============================================================================
+
+// Entity type labels per module (for search placeholder)
+const MODULE_ENTITY_LABELS: Record<string, string> = {
+  instrumenten: 'ontvangers',
+  apparaat: 'kostensoorten',
+  inkoop: 'leveranciers',
+  provincie: 'ontvangers',
+  gemeente: 'ontvangers',
+  publiek: 'ontvangers',
+  integraal: 'ontvangers',
+}
 
 const MODULE_FILTERS: Record<string, FilterConfig[]> = {
   instrumenten: [
@@ -285,6 +302,38 @@ export function FilterPanel({
 
   const [localFilters, setLocalFilters] = useState<FilterValues>(filters)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [moduleStats, setModuleStats] = useState<ModuleStats | null>(null)
+
+  // Fetch module stats for dynamic placeholder
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/v1/modules/${module}/stats`)
+        if (response.ok) {
+          const data = await response.json()
+          setModuleStats({
+            count: data.count,
+            total: data.total,
+            total_formatted: data.total_formatted,
+          })
+        }
+      } catch (error) {
+        console.error('[FilterPanel] Failed to fetch module stats:', error)
+      }
+    }
+    fetchStats()
+  }, [module])
+
+  // Generate dynamic placeholder based on module stats
+  const searchPlaceholder = useMemo(() => {
+    if (!moduleStats) return 'Zoek op ontvanger, regeling...'
+
+    const entityLabel = MODULE_ENTITY_LABELS[module] || 'ontvangers'
+    const countFormatted = moduleStats.count.toLocaleString('nl-NL')
+    const suffix = module === 'integraal' ? ' in alle modules' : ''
+
+    return `Doorzoek ${countFormatted} ${entityLabel} (€${moduleStats.total_formatted})${suffix}`
+  }, [module, moduleStats])
 
   // Autocomplete state
   const [currentModuleResults, setCurrentModuleResults] = useState<CurrentModuleResult[]>([])
@@ -602,7 +651,7 @@ export function FilterPanel({
               onChange={(e) => handleSearchChange(e.target.value)}
               onKeyDown={handleKeyDown}
               onFocus={() => (currentModuleResults.length > 0 || otherModulesResults.length > 0) && setIsDropdownOpen(true)}
-              placeholder="Zoek op ontvanger, regeling..."
+              placeholder={searchPlaceholder}
               aria-label="Zoeken"
               aria-expanded={isDropdownOpen}
               aria-haspopup="listbox"
