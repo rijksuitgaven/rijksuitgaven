@@ -35,3 +35,6 @@ CREATE UNIQUE INDEX idx_gemeente_agg_key ON gemeente_aggregated (ontvanger_key);
 CREATE INDEX idx_gemeente_agg_random ON gemeente_aggregated (random_order);
 
 SELECT 'gemeente_aggregated' AS view_name, COUNT(*) AS rows FROM gemeente_aggregated;
+
+-- Update query planner statistics (CRITICAL for performance)
+ANALYZE gemeente_aggregated;

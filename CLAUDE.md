@@ -993,6 +993,27 @@ scripts/sql/014e-gemeente-view.sql
 scripts/sql/014f-publiek-view.sql
 ```
 
+### After Recreating Materialized Views (CRITICAL)
+
+**ALWAYS run ANALYZE after creating/recreating materialized views.** PostgreSQL query planner needs fresh statistics.
+
+```sql
+ANALYZE view_name;
+```
+
+**Without ANALYZE:** Queries can be 10-100x slower (wrong query plans).
+
+**Rule:** Every migration that creates/recreates a materialized view MUST include ANALYZE at the end.
+
+**Example:**
+```sql
+CREATE MATERIALIZED VIEW foo_aggregated AS ...;
+CREATE INDEX idx_foo ON foo_aggregated (...);
+ANALYZE foo_aggregated;  -- NEVER FORGET THIS
+```
+
+---
+
 ### Index Cheat Sheet
 
 | Query Pattern | Index Type | Example |

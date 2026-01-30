@@ -35,3 +35,6 @@ CREATE UNIQUE INDEX idx_inkoop_agg_key ON inkoop_aggregated (leverancier_key);
 CREATE INDEX idx_inkoop_agg_random ON inkoop_aggregated (random_order);
 
 SELECT 'inkoop_aggregated' AS view_name, COUNT(*) AS rows FROM inkoop_aggregated;
+
+-- Update query planner statistics (CRITICAL for performance)
+ANALYZE inkoop_aggregated;

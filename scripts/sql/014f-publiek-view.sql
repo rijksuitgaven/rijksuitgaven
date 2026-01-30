@@ -34,3 +34,6 @@ CREATE UNIQUE INDEX idx_publiek_agg_key ON publiek_aggregated (ontvanger_key);
 CREATE INDEX idx_publiek_agg_random ON publiek_aggregated (random_order);
 
 SELECT 'publiek_aggregated' AS view_name, COUNT(*) AS rows FROM publiek_aggregated;
+
+-- Update query planner statistics (CRITICAL for performance)
+ANALYZE publiek_aggregated;

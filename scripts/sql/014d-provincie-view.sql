@@ -35,3 +35,6 @@ CREATE UNIQUE INDEX idx_provincie_agg_key ON provincie_aggregated (ontvanger_key
 CREATE INDEX idx_provincie_agg_random ON provincie_aggregated (random_order);
 
 SELECT 'provincie_aggregated' AS view_name, COUNT(*) AS rows FROM provincie_aggregated;
+
+-- Update query planner statistics (CRITICAL for performance)
+ANALYZE provincie_aggregated;

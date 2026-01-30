@@ -35,3 +35,6 @@ CREATE UNIQUE INDEX idx_instrumenten_agg_key ON instrumenten_aggregated (ontvang
 CREATE INDEX idx_instrumenten_agg_random ON instrumenten_aggregated (random_order);
 
 SELECT 'instrumenten_aggregated' AS view_name, COUNT(*) AS rows FROM instrumenten_aggregated;
+
+-- Update query planner statistics (CRITICAL for performance)
+ANALYZE instrumenten_aggregated;

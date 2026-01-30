@@ -32,3 +32,6 @@ CREATE INDEX idx_apparaat_agg_totaal ON apparaat_aggregated (totaal DESC);
 CREATE INDEX idx_apparaat_agg_random ON apparaat_aggregated (random_order);
 
 SELECT 'apparaat_aggregated' AS view_name, COUNT(*) AS rows FROM apparaat_aggregated;
+
+-- Update query planner statistics (CRITICAL for performance)
+ANALYZE apparaat_aggregated;
