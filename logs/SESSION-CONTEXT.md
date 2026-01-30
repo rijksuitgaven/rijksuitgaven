@@ -79,20 +79,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-01-30)
-   Added field matches section (OOK GEVONDEN IN) to autocomplete
+1. **backend/app/main.py** ⭐ UPDATED (2026-01-30)
+   Added FastAPI lifespan handler for connection pool shutdown
 
-2. **backend/app/services/modules.py** ⭐ UPDATED (2026-01-30)
-   Added field_matches search, matched_field detection
+2. **backend/app/api/v1/modules.py** ⭐ UPDATED (2026-01-30)
+   Fixed limit validation (le=100 → le=500), added FieldMatchResult model
 
-3. **app/src/components/column-selector/column-selector.tsx** ⭐ UPDATED (2026-01-30)
-   Removed badge, set default columns per module
+3. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-01-30)
+   AbortController, removed console, aria-live for accessibility
 
-4. **backend/app/api/v1/modules.py** ⭐ UPDATED (2026-01-30)
-   Added FieldMatchResult model, matched_field/matched_value fields
+4. **app/src/components/search-bar/search-bar.tsx** ⭐ UPDATED (2026-01-30)
+   Removed console statements, added aria-live to loader
 
-5. **docs/VERSIONING.md** ⭐ CREATED (2026-01-30)
-   Complete versioning structure V1-V7 with Rijksnetwerken
+5. **09-timelines/v1-sprint-plan.md** ⭐ UPDATED (2026-01-30)
+   Marked Week 6 Day 2 (UI/UX fixes) as complete
 
 ---
 
