@@ -79,20 +79,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/error-boundary/error-boundary.tsx** ⭐ CREATED (2026-01-29)
-   React Error Boundary component for production stability
+1. **docs/VERSIONING.md** ⭐ CREATED (2026-01-30)
+   Complete versioning structure V1-V7 with Rijksnetwerken
 
-2. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-01-29)
-   Amount validation, AbortController for race conditions, error logging
+2. **docs/INFRASTRUCTURE-ROADMAP.md** ⭐ CREATED (2026-01-30)
+   Infrastructure needs per version (YAGNI tracking)
 
-3. **app/src/components/module-page/module-page.tsx** ⭐ UPDATED (2026-01-29)
-   Gradient background, ErrorBoundary wrapper
+3. **docs/PRODUCT-TIERS.md** ⭐ CREATED (2026-01-30)
+   Product tiers with pricing (draft for discussion)
 
-4. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-29)
-   Navy header, createYearMap() helper, visual refresh
+4. **docs/AUDIENCES.md** ⭐ CREATED (2026-01-30)
+   7 target audience segments with personas
 
-5. **app/src/components/header/header.tsx** ⭐ MAJOR UPDATE (2026-01-29)
-   Visual refresh: 2-row compact layout, grouped tabs, full module names
+5. **02-requirements/research-mode-vision.md** ⭐ UPDATED (2026-01-30)
+   V2.0 → V3, updated all version references
 
 ---
 
@@ -833,8 +833,10 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-21 - PM audit, UX brainstorm, folder restructure, Supabase setup, Typesense deployed
 - 2026-01-23 - Data migration complete (3.1M rows), Typesense sync (466K recipients)
 - 2026-01-26 - Weeks 3, 4 & 5 complete, UX enhancements, search requirements audit
+- 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
+- 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**This Session:** 2026-01-29 - **MINI SPRINT: CODE REVIEW & SECURITY FIXES**
+**Last Session:** 2026-01-30 - **ROADMAP & VERSIONING**
 
 **Golden Rules added to CLAUDE.md:** 5 non-negotiable rules:
 1. Requirements Check - Verify against V1/V2 requirements before any proposal
@@ -987,7 +989,31 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - `app/src/components/error-boundary/error-boundary.tsx`
 - `app/src/components/error-boundary/index.ts`
 
-**66 commits today** across 12 sessions.
+**66 commits** across 12 sessions.
+
+---
+
+**2026-01-30 - ROADMAP & VERSIONING SESSION**
+
+**Focus:** Strategic planning, not coding
+
+**Versioning Structure Established:**
+- Clear V1-V7 roadmap with use cases per version
+- Version scheme: X.0 = Major, X.Y = Minor, X.Y.Z = Patch
+- Rijksnetwerken added as V6 (network analysis for compliance market)
+
+**Documents Created:**
+- `docs/VERSIONING.md` - Source of truth for version roadmap
+- `docs/PRODUCT-TIERS.md` - Pricing tiers (draft)
+- `docs/AUDIENCES.md` - 7 audience segments
+- `docs/INFRASTRUCTURE-ROADMAP.md` - YAGNI tracking per version
+
+**Infrastructure Review:**
+- V1 infrastructure is production-ready
+- No gaps blocking launch
+- Future needs (Redis, workers, V2+ tables) tracked for when required
+
+**4 commits** this session.
 
 **Next Steps:**
 1. Week 6 - User Auth (Magic Link, user migration)
