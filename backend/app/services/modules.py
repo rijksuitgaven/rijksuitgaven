@@ -148,7 +148,7 @@ MODULE_CONFIG = {
         "filter_fields": ["begrotingsnaam", "artikel", "artikelonderdeel", "instrument", "regeling"],
         "extra_columns": ["regeling", "artikel", "artikelonderdeel", "instrument", "begrotingsnaam", "detail"],
         # Columns available in aggregated view (default columns for speed)
-        "view_columns": ["artikel", "regeling"],
+        "view_columns": ["artikel", "regeling", "instrument"],
     },
     "apparaat": {
         "table": "apparaat",
