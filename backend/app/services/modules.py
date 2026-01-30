@@ -466,8 +466,9 @@ async def _get_from_source_table(
 
     # Build extra columns selection (MODE() returns most frequent value per group)
     extra_columns_select = ""
-    if columns:
-        # Validate columns are in allowed set for security
+    if columns and not search:
+        # Only use static extra columns when NOT searching
+        # When searching, we use matched_field/matched_value instead
         for col in columns:
             validate_identifier(col, ALLOWED_COLUMNS, "column")
         extra_columns_select = ", " + ", ".join([
@@ -475,27 +476,50 @@ async def _get_from_source_table(
             for col in columns
         ])
 
+    # For matched_field detection when searching, we'll build SQL to find which field matched
+    # This is built later after we know the search pattern
+    matched_field_sql = ""
+
     # Build WHERE clause
     where_clauses = []
     params = []
     param_idx = 1
 
+    # Track search info for matched_field/matched_value detection
+    search_pattern = None
+    search_operator = None
+
     # Search filter on multiple fields
     # Uses Dutch language rules to avoid false cognates (e.g., politie/politiek)
     if search:
         condition, pattern = build_search_condition(search_fields[0], param_idx, search)
+        search_pattern = pattern
         # Apply same condition type to all search fields
         if "~*" in condition:
+            search_operator = "~*"
             search_conditions = " OR ".join([
                 f"{field} ~* ${param_idx}" for field in search_fields
             ])
         else:
+            search_operator = "ILIKE"
             search_conditions = " OR ".join([
                 f"{field} ILIKE ${param_idx}" for field in search_fields
             ])
         where_clauses.append(f"({search_conditions})")
         params.append(pattern)
         param_idx += 1
+
+        # Build matched field detection SQL for search results
+        # This finds which field matched and what value it had
+        # We check each search field and get the first matching value
+        matched_field_cases = []
+        for field in search_fields:
+            if field != primary:  # Skip primary field - we already show that
+                matched_field_cases.append(
+                    f"MAX(CASE WHEN {field} {search_operator} $1 THEN {field} END) AS matched_{field}"
+                )
+        if matched_field_cases:
+            matched_field_sql = ", " + ", ".join(matched_field_cases)
 
     # Year filter
     if jaar:
@@ -571,7 +595,7 @@ async def _get_from_source_table(
             {primary} AS primary_value,
             {year_columns},
             COALESCE(SUM({amount_field}), 0) * {multiplier} AS totaal,
-            COUNT(*) AS row_count{extra_columns_select}{relevance_select}
+            COUNT(*) AS row_count{extra_columns_select}{matched_field_sql}{relevance_select}
         FROM {table}
         {where_sql}
         GROUP BY {primary}
@@ -606,12 +630,24 @@ async def _get_from_source_table(
             "totaal": int(row["totaal"] or 0),
             "row_count": row["row_count"],
         }
-        # Add extra columns if requested
-        if columns:
+
+        # Add matched field/value when searching (shows which field matched the search)
+        if search:
+            # Find first non-null matched field (in order of search_fields priority)
+            for field in search_fields:
+                if field != primary:  # Skip primary - we already show that
+                    matched_value = row.get(f"matched_{field}")
+                    if matched_value:
+                        row_data["matched_field"] = field
+                        row_data["matched_value"] = matched_value
+                        break
+        # Add extra columns if requested (only when NOT searching)
+        elif columns:
             extra_cols = {}
             for col in columns:
                 extra_cols[col] = row.get(f"extra_{col}")
             row_data["extra_columns"] = extra_cols
+
         result.append(row_data)
 
     return result, total or 0

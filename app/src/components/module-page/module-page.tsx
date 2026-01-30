@@ -333,6 +333,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             moduleId={moduleId}
             selectedColumns={selectedColumns}
             onColumnsChange={setSelectedColumns}
+            searchQuery={filters.search}
           />
         </div>
       </main>

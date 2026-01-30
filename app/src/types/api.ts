@@ -15,7 +15,9 @@ export interface ApiRecipientRow {
   totaal: number
   row_count: number
   modules: string[] | null  // For cross-module indicator
-  extra_columns?: Record<string, string | null>  // Dynamic columns (max 2)
+  extra_columns?: Record<string, string | null>  // Dynamic columns (max 2, when NOT searching)
+  matched_field?: string | null  // Which field matched the search (when searching)
+  matched_value?: string | null  // The value that matched (when searching)
 }
 
 // Internal row format - years as array (easier for iteration)
@@ -25,7 +27,9 @@ export interface RecipientRow {
   total: number
   row_count: number
   sources: string[] | null  // Renamed from modules for clarity
-  extraColumns?: Record<string, string | null>  // Dynamic columns (max 2)
+  extraColumns?: Record<string, string | null>  // Dynamic columns (max 2, when NOT searching)
+  matchedField?: string | null  // Which field matched the search (when searching)
+  matchedValue?: string | null  // The value that matched (when searching)
 }
 
 export interface YearAmount {

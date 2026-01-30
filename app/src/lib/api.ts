@@ -46,6 +46,8 @@ function transformRow(apiRow: ApiRecipientRow, years: number[]): RecipientRow {
     row_count: apiRow.row_count ?? 0,
     sources: apiRow.modules ?? null,
     extraColumns: apiRow.extra_columns ?? undefined,
+    matchedField: apiRow.matched_field ?? undefined,
+    matchedValue: apiRow.matched_value ?? undefined,
   }
 }
 

@@ -56,6 +56,7 @@ interface DataTableProps {
   moduleId?: string // For export filename
   selectedColumns?: string[]  // Selected extra columns (UX-005)
   onColumnsChange?: (columns: string[]) => void  // Callback for column selection changes
+  searchQuery?: string  // Current search query (for Match column display)
 }
 
 /**
@@ -231,6 +232,28 @@ function CollapsedYearsCell({
  * Main data table component with year columns, expandable rows, and CSV export
  * Supports sticky columns, sorting, pagination, and collapsible year ranges
  */
+// Field label mapping for Match column display
+const FIELD_LABELS: Record<string, string> = {
+  regeling: 'Regeling',
+  instrument: 'Instrument',
+  artikel: 'Artikel',
+  artikelonderdeel: 'Artikelonderdeel',
+  begrotingsnaam: 'Begroting',
+  detail: 'Detail',
+  ministerie: 'Ministerie',
+  categorie: 'Categorie',
+  staffel: 'Staffel',
+  provincie: 'Provincie',
+  omschrijving: 'Omschrijving',
+  gemeente: 'Gemeente',
+  beleidsterrein: 'Beleidsterrein',
+  source: 'Bron',
+  trefwoorden: 'Trefwoorden',
+  sectoren: 'Sectoren',
+  regio: 'Regio',
+  kostensoort: 'Kostensoort',
+}
+
 export function DataTable({
   data,
   availableYears,
@@ -248,6 +271,7 @@ export function DataTable({
   moduleId = 'export',
   selectedColumns = [],
   onColumnsChange,
+  searchQuery,
 }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
@@ -350,28 +374,57 @@ export function DataTable({
       },
     ]
 
-    // Dynamic extra columns (UX-005) - inserted after primary, before year columns
+    // Dynamic columns (UX-005)
+    // When searching: show Match column (which field matched and its value)
+    // When not searching: show selected extra columns
     const moduleColumns = MODULE_COLUMNS[moduleId] || []
-    selectedColumns.forEach((colKey) => {
-      const config = moduleColumns.find(c => c.value === colKey)
-      if (config) {
-        cols.push({
-          id: `extra-${colKey}`,
-          header: () => (
-            <span className="text-sm font-semibold text-white">{config.label}</span>
-          ),
-          cell: ({ row }) => {
-            const value = row.original.extraColumns?.[colKey]
-            return (
-              <div className="text-sm text-[var(--navy-dark)] truncate max-w-[150px]" title={value || undefined}>
-                {value || '-'}
-              </div>
-            )
-          },
-          size: 150,
-        })
-      }
-    })
+    const isSearching = Boolean(searchQuery && searchQuery.trim().length > 0)
+
+    if (isSearching) {
+      // Match column - shows which field matched the search
+      cols.push({
+        id: 'match',
+        header: () => (
+          <span className="text-sm font-semibold text-white">Match</span>
+        ),
+        cell: ({ row }) => {
+          const field = row.original.matchedField
+          const value = row.original.matchedValue
+          if (!field || !value) return <span className="text-[var(--muted-foreground)]">-</span>
+
+          const fieldLabel = FIELD_LABELS[field] || field
+          return (
+            <div className="text-sm truncate max-w-[200px]" title={`${fieldLabel}: ${value}`}>
+              <span className="text-[var(--navy-medium)] font-medium">{fieldLabel}:</span>{' '}
+              <span className="text-[var(--navy-dark)]">{value}</span>
+            </div>
+          )
+        },
+        size: 200,
+      })
+    } else {
+      // Static extra columns when not searching
+      selectedColumns.forEach((colKey) => {
+        const config = moduleColumns.find(c => c.value === colKey)
+        if (config) {
+          cols.push({
+            id: `extra-${colKey}`,
+            header: () => (
+              <span className="text-sm font-semibold text-white">{config.label}</span>
+            ),
+            cell: ({ row }) => {
+              const value = row.original.extraColumns?.[colKey]
+              return (
+                <div className="text-sm text-[var(--navy-dark)] truncate max-w-[150px]" title={value || undefined}>
+                  {value || '-'}
+                </div>
+              )
+            },
+            size: 150,
+          })
+        }
+      })
+    }
 
     // Collapsed years column (2016-2020)
     if (!yearsExpanded && collapsedYears.length > 0) {
@@ -474,7 +527,7 @@ export function DataTable({
     })
 
     return cols
-  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onRowClick, selectedColumns, moduleId])
+  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onRowClick, selectedColumns, moduleId, searchQuery])
 
   const table = useReactTable({
     data,

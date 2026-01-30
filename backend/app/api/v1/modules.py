@@ -64,7 +64,9 @@ class AggregatedRow(BaseModel):
     totaal: int = 0
     row_count: int = 1
     modules: Optional[list[str]] = None  # For integraal only
-    extra_columns: Optional[dict[str, Optional[str]]] = None  # Dynamic columns (max 2)
+    extra_columns: Optional[dict[str, Optional[str]]] = None  # Dynamic columns (max 2, when NOT searching)
+    matched_field: Optional[str] = None  # Which field matched the search (when searching)
+    matched_value: Optional[str] = None  # The value that matched (when searching)
 
 
 class ModuleResponse(BaseModel):
