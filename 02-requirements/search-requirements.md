@@ -1,12 +1,17 @@
-# Search Requirements (V1.0)
+# Search Requirements (V1)
 
 **Project:** Rijksuitgaven.nl SaaS Platform
-**Version:** 1.0
-**Date:** 2026-01-23
-**Status:** V1.0 Scope - Ready for Implementation
+**Version:** V1 - Search Platform
+**Date:** 2026-01-23 (Updated: 2026-01-30)
+**Status:** In Development
 
-> **Scope:** This document covers V1.0 Search Bar requirements only.
-> For V2.0 Research Mode vision, see: `research-mode-vision.md`
+> **Scope:** This document covers V1 Search Platform requirements.
+> See `docs/VERSIONING.md` for full version roadmap.
+>
+> **Version context:**
+> - V1 = Search Platform (this document)
+> - V2 = Theme Discovery (IBOS domains, landing pages)
+> - V3 = AI Research Mode (see `research-mode-vision.md`)
 
 ---
 
@@ -44,7 +49,7 @@
   - Cross-module search with module filtering
 - **User Experience:** Intuitive, no syntax required
 
-> **V2 Context:** This search bar architecture is designed to support future Research Mode (AI conversational interface). The Typesense engine and API layer will integrate with AI in V2.0. See: `research-mode-vision.md`
+> **Future Version Context:** This search bar architecture is designed to support future Research Mode (AI conversational interface). The Typesense engine and API layer will integrate with AI in V2.0. See: `research-mode-vision.md`
 
 ### Key Principle
 Search should be as intuitive as Google - requiring zero technical knowledge from users.
@@ -370,7 +375,7 @@ User on "Financiële Instrumenten" page searches "prorail"
 
 **Default Columns:** Organisatie
 
-> **V2 Context:** This module has GIS/location data (POINT geometry field). Geographic search will be enabled in V2.0. See: `research-mode-vision.md`
+> **Future Version Context:** This module has GIS/location data (POINT geometry field). Geographic search will be enabled in V2.0. See: `research-mode-vision.md`
 
 ---
 
@@ -624,7 +629,7 @@ When expanded:
 - Dutch only (all UI, all content)
 - Code structured for i18n (but not translated)
 
-> **V2 Context:** English UI will be added in V2.0 for international users and franchising potential. Framework prepared in V1.0.
+> **Future Version Context:** English UI will be added in V2.0 for international users and franchising potential. Framework prepared in V1.0.
 
 **Priority:** P2 (Medium - framework only)
 
@@ -853,7 +858,7 @@ When expanded:
 - wetten.overheid.nl integration
 - Save/share queries
 
-> **V2 Context:** Research Mode will add AI-powered conversational analysis. This V1.0 search bar provides the foundation for V2.0. See: `research-mode-vision.md`
+> **Future Version Context:** Research Mode will add AI-powered conversational analysis. This V1.0 search bar provides the foundation for V2.0. See: `research-mode-vision.md`
 
 ---
 

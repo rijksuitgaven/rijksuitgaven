@@ -1,8 +1,26 @@
 # Session Context
 
-**Last Updated:** 2026-01-29
-**Project Phase:** Phase 1 - V1.0 Development
-**Current Sprint:** Week 6 - User Auth (Mini Sprint: Code Review & Fixes)
+**Last Updated:** 2026-01-30
+**Project Phase:** V1.0 Development
+**Current Sprint:** Week 6 - User Auth
+
+---
+
+## Product Versioning (NEW 2026-01-30)
+
+**Source of truth:** `docs/VERSIONING.md`
+
+| Version | Name | Use Case | Status |
+|---------|------|----------|--------|
+| **V1** | Search Platform | "Who received money?" | 🔨 Building |
+| **V2** | Theme Discovery | "What's happening in defensie?" | 📋 Planned |
+| **V3** | AI Research Mode | "Help me investigate this" | 📋 Planned |
+| **V4** | Research Workspace | "Build a case, share with team" | 📋 Planned |
+| **V5** | External Integrations | "What law governs this?" | 📋 Planned |
+| **V6** | Network Analysis | "Who runs these organizations?" | 📋 Planned |
+| **V7** | European Platform | "Compare NL with Germany" | 📋 Planned |
+
+**Version scheme:** X.0 = Major (new capability) | X.Y = Minor (improvements) | X.Y.Z = Patch (fixes)
 
 ---
 

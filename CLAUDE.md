@@ -13,11 +13,11 @@ Rijksuitgaven.nl SaaS Platform Migration - Documentation and planning repository
 
 **Before proposing ANY solution, feature, or change:**
 
-- [ ] Read `02-requirements/search-requirements.md` (V1.0 scope)
-- [ ] Read `02-requirements/research-mode-vision.md` (V2.0 scope)
+- [ ] Read `docs/VERSIONING.md` (version roadmap)
+- [ ] Read requirements for current version (e.g., `02-requirements/search-requirements.md` for V1)
 - [ ] Verify proposal doesn't conflict with existing requirements
-- [ ] Verify proposal doesn't block V2.0 features
-- [ ] State explicitly: "Checked against V1/V2 requirements: [compatible/conflict]"
+- [ ] Verify proposal doesn't block future versions
+- [ ] State explicitly: "Checked against versioning: [compatible/conflict]"
 
 **If you skip this, you are failing at your job.**
 
@@ -62,7 +62,7 @@ Which do you prefer?
 **Before running `git commit`, ALWAYS perform this audit AND SHOW IT TO THE USER:**
 
 - [ ] **Documentation audit:** All affected docs updated? SESSION-CONTEXT.md current?
-- [ ] **Requirements check:** Changes align with V1.0 requirements? Don't block V2.0?
+- [ ] **Requirements check:** Changes align with current version requirements? Don't block future versions?
 - [ ] **No stale info:** No conflicting or outdated information in any document?
 - [ ] **Clarity check:** Is everything clear and unambiguous? If not, ask first.
 - [ ] **Daily log updated:** Today's work logged in `logs/daily/YYYY-MM-DD.md`?
@@ -74,7 +74,7 @@ Which do you prefer?
 | Check | Status | Notes |
 |-------|--------|-------|
 | Documentation audit | ✅/❌ | [what was updated or what's missing] |
-| Requirements check | ✅/❌ | [V1/V2 alignment] |
+| Requirements check | ✅/❌ | [version alignment] |
 | No stale info | ✅/❌ | [any conflicts found] |
 | Clarity check | ✅/❌ | [any ambiguity] |
 | Daily log updated | ✅/❌ | [logged or not] |
@@ -450,14 +450,15 @@ Before saying "Week X is complete", verify EACH deliverable in `09-timelines/v1-
 
 | Topic | Single Source |
 |-------|---------------|
+| **Versioning & Roadmap** | `docs/VERSIONING.md` |
 | Tech stack | `04-target-architecture/RECOMMENDED-TECH-STACK.md` |
 | Project scope | `01-project-overview/project-charter.md` |
 | Success metrics | `01-project-overview/success-criteria.md` |
 | Sprint plan | `09-timelines/v1-sprint-plan.md` |
 | Session state | `logs/SESSION-CONTEXT.md` |
 | **Brand identity** | `02-requirements/brand-identity.md` |
-| **V1.0 Search** | `02-requirements/search-requirements.md` |
-| **V2.0 Research Mode** | `02-requirements/research-mode-vision.md` |
+| **V1 Search** | `02-requirements/search-requirements.md` |
+| **V3 AI Research Mode** | `02-requirements/research-mode-vision.md` |
 | **Local dev setup** | `docs/LOCAL-SETUP.md` |
 | **Frontend components** | `docs/FRONTEND-DOCUMENTATION.md` |
 | **Typesense sync** | `scripts/typesense/README.md` |
@@ -472,57 +473,67 @@ Before saying "Week X is complete", verify EACH deliverable in `09-timelines/v1-
 
 ---
 
-## V1/V2 Documentation Rules (MANDATORY)
+## Versioning Rules (MANDATORY)
 
-**Principle:** Build V1 with V2 in mind. Never develop in a funnel.
+**Principle:** Build each version with future versions in mind. Never develop in a funnel.
 
-### Document Structure
+**Source of truth:** `docs/VERSIONING.md`
 
-| Version | Documents | Purpose |
-|---------|-----------|---------|
-| V1.0 | `search-requirements.md`, wireframes | What we're building now |
-| V2.0 | `research-mode-vision.md`, `v2-vision-roadmap.md` | What's coming next |
+### Version Overview
+
+| Version | Name | New Use Case |
+|---------|------|--------------|
+| **V1** | Search Platform | "Who received money?" |
+| **V2** | Theme Discovery | "What's happening in defensie?" |
+| **V3** | AI Research Mode | "Help me investigate this" |
+| **V4** | Research Workspace | "Build a case, share with team" |
+| **V5** | External Integrations | "What law governs this?" |
+| **V6** | European Platform | "Compare NL with Germany" |
+
+### Versioning Scheme
+
+| Format | Meaning | Example |
+|--------|---------|---------|
+| **X.0** | Major release - new capability, new use cases | 1.0, 2.0, 3.0 |
+| **X.Y** | Minor release - improvements within major | 1.1, 1.2, 2.1 |
+| **X.Y.Z** | Patch release - bug fixes | 1.0.1, 1.1.2 |
+
+**Rule:** If it enables a NEW use case or serves a NEW audience, it's a major release.
 
 ### Rules
 
-1. **V1 docs stay clean and focused**
-   - V1 requirements documents contain V1 scope only
-   - No V2 features mixed into V1 requirements
-   - Clear "V1.0 Scope" labels
+1. **Each version's docs stay clean and focused**
+   - V1 requirements contain V1 scope only
+   - No future version features mixed in
+   - Clear version labels on all docs
 
-2. **V2 context must always be visible**
-   - V1 docs include "V2 Context" callouts where relevant
-   - Example: `> **V2 Context:** This search bar will integrate with Research Mode AI. See: research-mode-vision.md`
-   - These callouts show what V2 depends on without cluttering V1 scope
+2. **Future version context must be visible**
+   - Include callouts where relevant
+   - Example: `> **V3 Context:** This search will integrate with AI Research Mode. See: research-mode-vision.md`
+   - Shows dependencies without cluttering current scope
 
-3. **Architecture must support V2**
-   - Every V1 technical decision: ask "Does this support V2?"
-   - Database schemas, API designs, component structures → V2-ready
-   - No shortcuts that require V2 rework
-   - Document V2 implications in architecture docs
+3. **Architecture must support future versions**
+   - Every technical decision: ask "Does this support V2, V3, etc.?"
+   - No shortcuts that require rework
+   - Document implications in architecture docs
 
-4. **Before any V1 implementation**
-   - Read the relevant V2 vision document
-   - Understand what V2 will add on top
-   - Verify V1 implementation doesn't block V2
+4. **Before any implementation**
+   - Check `docs/VERSIONING.md` for dependencies
+   - Verify implementation doesn't block future versions
    - If unclear, ask founder before proceeding
 
 ### Why This Matters
 
-Avoid this pattern:
 ```
-❌ Build V1 narrowly → V2 requires rewrite → Wasted effort
-```
-
-Instead:
-```
-✅ Build V1 with V2 awareness → V2 extends naturally → No rework
+❌ Build V1 narrowly → V3 requires rewrite → Wasted effort
+✅ Build V1 with V3 awareness → V3 extends naturally → No rework
 ```
 
-### Example: Search Bar
+### Example: Search → Themes → AI
 
 **V1 builds:** Fast keyword search with Typesense
-**V2 adds:** AI conversational layer on top
+**V2 adds:** IBOS domain classification, theme landing pages
+**V3 adds:** AI conversational layer that uses IBOS domains
 
 **V1 implementation must:**
 - Use API layer that V2 AI can also call

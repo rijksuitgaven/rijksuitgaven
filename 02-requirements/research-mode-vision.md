@@ -1,12 +1,17 @@
-# Research Mode Vision (V2.0)
+# Research Mode Vision (V3)
 
 **Project:** Rijksuitgaven.nl SaaS Platform
-**Version:** 2.0 (Post-V1.0 Launch)
-**Date:** 2026-01-23
-**Status:** Vision Document - Not for V1.0 Implementation
+**Version:** V3 - AI Research Mode
+**Date:** 2026-01-23 (Updated: 2026-01-30)
+**Status:** Vision Document - Not for V1 Implementation
 
-> **Important:** This document describes V2.0 features. Do not implement these in V1.0.
-> For V1.0 search requirements, see: `search-requirements.md`
+> **Important:** This document describes V3 (AI Research Mode) features.
+> See `docs/VERSIONING.md` for full version roadmap.
+>
+> **Version context:**
+> - V1 = Search Platform (current development)
+> - V2 = Theme Discovery (IBOS domains, landing pages)
+> - V3 = AI Research Mode (this document)
 
 ---
 
@@ -37,7 +42,7 @@
 
 **Key Paradigm Shift:**
 
-| Aspect | V1.0 (Search) | V2.0 (Research Mode) |
+| Aspect | V1.0 (Search) | V3.0 (Research Mode) |
 |--------|---------------|----------------------|
 | Entry point | Recipient (Ontvanger) | Policy Domain (Beleidsterrein) |
 | Primary question | "Who received money?" | "Where does the tax euro go?" |
@@ -58,8 +63,8 @@
 - Political parties (oversight, policy development)
 - Financial analysts (trend analysis)
 
-**Priority:** P0 (Critical for V2.0)
-**Version:** V2.0 (MVP), V2.1+ (enhancements)
+**Priority:** P0 (Critical for V3.0)
+**Version:** V3.0 (MVP), V3.1+ (enhancements)
 
 ---
 
@@ -78,17 +83,17 @@
    - Standard exports (CSV, 500 rows limit)
    - Price: €150/month or €1,500/year (ex VAT)
 
-2. **Research Account** (Pro + Research Mode) - V2.0
+2. **Research Account** (Pro + Research Mode) - V3.0
    - Everything in Pro
    - Research Mode (AI conversational interface)
    - Exports: CSV, Excel, PDF reports (500 rows limit)
    - Save queries
    - Advanced visualizations (Sankey, Treemap, Heatmap)
    - Share read-only links
-   - Price: Premium over Pro (TBD at V2.0 launch)
+   - Price: Premium over Pro (TBD at V3.0 launch)
 
 **Priority:** P0 (Critical)
-**Version:** V2.0
+**Version:** V3.0
 
 ---
 
@@ -109,7 +114,7 @@
 - Matches mental model: "Search" = quick lookup, "Research" = deep analysis
 
 **Priority:** P0 (Critical)
-**Version:** V2.0
+**Version:** V3.0
 
 ---
 
@@ -163,7 +168,7 @@
 - Markdown support (bold, lists, links)
 
 **Priority:** P0 (Critical)
-**Version:** V2.0
+**Version:** V3.0
 
 ---
 
@@ -200,10 +205,10 @@
 **6. Report Generation**
 - Summarize findings in natural language
 - Generate executive summaries
-- Create formatted reports (Markdown, PDF in V2.1)
+- Create formatted reports (Markdown, PDF in V3.1)
 
 **Priority:** P0 (Critical)
-**Version:** V2.0
+**Version:** V3.0
 
 ---
 
@@ -242,7 +247,7 @@ Step 7: User: "Exporteer dit als CSV"
 - Maintain filters across conversation
 
 **Priority:** P0 (Critical)
-**Version:** V2.0
+**Version:** V3.0
 
 ---
 
@@ -254,13 +259,13 @@ Step 7: User: "Exporteer dit als CSV"
 
 **Supported Chart Types:**
 
-**V2.0 (MVP):**
+**V3.0 (MVP):**
 - **Bar charts** (comparisons, top N)
 - **Line charts** (trends over time)
 - **Pie charts** (distribution, composition)
 - **Tables** (detailed data, sortable)
 
-**V2.1 (Enhanced):**
+**V3.1 (Enhanced):**
 - **Stacked bar charts** (multi-series comparison)
 - **Area charts** (cumulative trends)
 - **Scatter plots** (correlations)
@@ -279,8 +284,8 @@ Step 7: User: "Exporteer dit als CSV"
 - "Vergelijk grafisch..."
 - "Visualiseer..."
 
-**Priority:** P0 (V2.0 charts), P1 (V2.1 advanced)
-**Version:** V2.0 (MVP), V2.1 (enhanced)
+**Priority:** P0 (V3.0 charts), P1 (V3.1 advanced)
+**Version:** V3.0 (MVP), V3.1 (enhanced)
 
 ---
 
@@ -330,7 +335,7 @@ AI: ProRail ontvangt in 3 modules:
 ```
 
 **Priority:** P0 (Critical)
-**Version:** V2.0
+**Version:** V3.0
 
 ---
 
@@ -365,7 +370,7 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 - Fallback: If not found, provide search link
 
 **Priority:** P1 (High)
-**Version:** V2.0 (basic linking), V2.1 (summarization)
+**Version:** V3.0 (basic linking), V3.1 (summarization)
 
 ---
 
@@ -397,7 +402,7 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 - Password protection (optional)
 
 **Priority:** P1 (High - Save/Share), P2 (Medium - Annotate)
-**Version:** V2.0 (Save/Share), V2.1 (Annotate)
+**Version:** V3.0 (Save/Share), V3.1 (Annotate)
 
 ---
 
@@ -409,13 +414,13 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 
 **Export Formats:**
 
-**V2.0:**
+**V3.0:**
 - **CSV** (data tables)
 - **Excel** (data tables with formatting)
 - **PDF** (conversation transcript + visualizations)
 - **Markdown** (conversation transcript)
 
-**V2.1:**
+**V3.1:**
 - **JSON** (structured data, for developers)
 - **PowerPoint** (auto-generated presentation)
 
@@ -429,7 +434,7 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 - "Geef me een Excel bestand"
 
 **Priority:** P0 (CSV/Excel), P2 (PDF/Markdown)
-**Version:** V2.0 (data exports), V2.1 (document exports)
+**Version:** V3.0 (data exports), V3.1 (document exports)
 
 ---
 
@@ -454,12 +459,12 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 
 **Mobile Optimization:**
 - Responsive chat interface
-- Voice input (future V2.1)
+- Voice input (future V3.1)
 - Swipe gestures for navigation
 - Simplified export (email link to desktop)
 
 **Priority:** P2 (Medium)
-**Version:** V2.0 (basic), V2.1 (enhanced)
+**Version:** V3.0 (basic), V3.1 (enhanced)
 
 ---
 
@@ -482,7 +487,7 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 - Subsequent queries (cached): <500ms
 
 **Priority:** P0 (Critical)
-**Version:** V2.0
+**Version:** V3.0
 
 ---
 
@@ -490,7 +495,7 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 
 **Requirement:** Support multiple users simultaneously
 
-**V2.0 Targets:**
+**V3.0 Targets:**
 - 100 concurrent users (search bar)
 - 20 concurrent users (Research Mode)
 - 500 AI queries/hour
@@ -502,7 +507,7 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 - Queue for AI requests (prevent overload)
 
 **Priority:** P1 (High)
-**Version:** V2.0
+**Version:** V3.0
 
 ---
 
@@ -524,7 +529,7 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 - Circuit breaker if >€500/day
 
 **Priority:** P0 (Critical)
-**Version:** V2.0
+**Version:** V3.0
 
 ---
 
@@ -546,7 +551,7 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 - I can click "Vergelijk met 2023" suggestion
 - AI shows comparison chart
 
-**Priority:** P0 (V2.0) | **Story Points:** 21
+**Priority:** P0 (V3.0) | **Story Points:** 21
 
 ---
 
@@ -562,7 +567,7 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 - I can re-open it later and continue conversation
 - I can share link to read-only version
 
-**Priority:** P1 (V2.0) | **Story Points:** 13
+**Priority:** P1 (V3.0) | **Story Points:** 13
 
 ---
 
@@ -578,7 +583,7 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 - I can ask: "Toon dit als staafdiagram"
 - AI regenerates as bar chart
 
-**Priority:** P0 (V2.0) | **Story Points:** 13
+**Priority:** P0 (V3.0) | **Story Points:** 13
 
 ---
 
@@ -595,7 +600,7 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
   - Which articles apply
 - I can click link to open legislation in new tab
 
-**Priority:** P1 (V2.0) | **Story Points:** 8
+**Priority:** P1 (V3.0) | **Story Points:** 8
 
 ---
 
@@ -613,7 +618,7 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 - Download link appears
 - File downloads successfully (<100K rows for Research tier)
 
-**Priority:** P1 (V2.0) | **Story Points:** 8
+**Priority:** P1 (V3.0) | **Story Points:** 8
 
 ---
 
@@ -633,13 +638,13 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 - I can ask: "Vergelijk dit met Rijkswaterstaat"
 - AI shows side-by-side comparison
 
-**Priority:** P0 (V2.0) | **Story Points:** 13
+**Priority:** P0 (V3.0) | **Story Points:** 13
 
 ---
 
 ## Acceptance Criteria
 
-### Research Mode (V2.0)
+### Research Mode (V3.0)
 
 **Must Have:**
 - ✅ Separate /research page with chat interface
@@ -664,15 +669,15 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 - PDF export with branding
 - PowerPoint export
 - Email reports
-- Scheduled alerts (V2.1)
-- Voice input (V2.1)
-- Geographic search (V2.1)
+- Scheduled alerts (V3.1)
+- Voice input (V3.1)
+- Geographic search (V3.1)
 
 ---
 
 ## Version Roadmap
 
-### V2.0 - Research Mode MVP (Weeks 9-16 post-V1.0)
+### V3.0 - Research Mode MVP (Weeks 9-16 post-V1.0)
 
 **Goal:** AI-powered analysis tool for professionals
 
@@ -690,7 +695,7 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 
 ---
 
-### V2.1 - Enhanced Research (Weeks 17-24)
+### V3.1 - Enhanced Research (Weeks 17-24)
 
 **Goal:** Polish and expand Research Mode
 
@@ -709,14 +714,14 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 
 ## Open Questions
 
-### Architecture Decisions (For V2.0 Planning)
+### Architecture Decisions (For V3.0 Planning)
 
 **Q1: Search Engine Enhancement**
 - Given Research Mode requirements (AI-heavy), do we need:
   - Vector search for semantic similarity?
   - Hybrid search (keyword + semantic)?
   - RAG (Retrieval-Augmented Generation) architecture?
-- **Action:** Re-evaluate during V2.0 planning phase
+- **Action:** Re-evaluate during V3.0 planning phase
 
 **Q2: AI Model Selection**
 - Research Mode is conversation-heavy (like Claude)
@@ -738,10 +743,10 @@ AI: "De regeling 'Bijdrage aan medeoverheden' valt onder:
 
 ---
 
-**Document Status:** Vision Document - V2.0 Planning
+**Document Status:** Vision Document - V3.0 Planning
 **Last Updated:** 2026-01-23
 **Author:** Technical Project Manager (AI Assistant)
 
 ---
 
-*This document is referenced from V1.0 search-requirements.md for context. Do not implement V2.0 features until V1.0 is complete and launched.*
+*This document is referenced from V1.0 search-requirements.md for context. Do not implement V3.0 features until V1.0 is complete and launched.*
