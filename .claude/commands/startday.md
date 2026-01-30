@@ -75,7 +75,17 @@ You MUST read these files before presenting the briefing:
 
 This ensures the log exists from the start and can be updated throughout the session.
 
-## 3. Additional Reading (Based on Current Phase)
+## 3. Start Development Server
+
+Start the Next.js dev server so the user can test changes locally:
+
+```bash
+cd /Users/michielmaandag/SynologyDrive/code/watchtower/rijksuitgaven/app && npm run dev
+```
+
+Run this in the background. Confirm server is running on http://localhost:3000 (or :3001 if 3000 is occupied).
+
+## 4. Additional Reading (Based on Current Phase)
 
 If phase involves UI/wireframes, also read:
 - `03-wordpress-baseline/current-ui-overview.md`
@@ -84,14 +94,14 @@ If phase involves UI/wireframes, also read:
 If phase involves architecture decisions, also read:
 - `04-target-architecture/architecture-impact-analysis.md`
 
-## 4. Check for Blockers
+## 5. Check for Blockers
 
 Identify any:
 - Unresolved decisions blocking progress
 - Missing information needed
 - Dependencies on external input
 
-## 5. Present Session Briefing
+## 6. Present Session Briefing
 
 Output a structured briefing:
 
@@ -120,7 +130,7 @@ Output a structured briefing:
 Ready to begin?
 ```
 
-## 6. Await User Direction
+## 7. Await User Direction
 
 After presenting the briefing, wait for user to:
 - Confirm the plan

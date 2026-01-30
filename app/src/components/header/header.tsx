@@ -6,35 +6,29 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
-// Module tabs with grouping: Integraal | main modules | Apparaat
-const MODULES = [
-  // Group 1: Cross-module discovery
-  { id: 'integraal', name: 'Integraal', group: 'discovery' },
-  // Group 2: Recipient-based modules
-  { id: 'instrumenten', name: 'Financiële instrumenten', group: 'main' },
-  { id: 'provincie', name: 'Provinciale subsidieregisters', group: 'main' },
-  { id: 'gemeente', name: 'Gemeentelijke subsidieregisters', group: 'main' },
-  { id: 'inkoop', name: 'Inkoopuitgaven', group: 'main' },
-  { id: 'publiek', name: 'Publiek', group: 'main' },
-  // Group 3: Different data type (costs, not recipients)
-  { id: 'apparaat', name: 'Apparaatsuitgaven', group: 'other' },
+// Ontvangers modules (recipient-based data)
+const ONTVANGERS_MODULES = [
+  { id: 'integraal', name: 'Zoek in alle', isSearch: true },
+  { id: 'instrumenten', name: 'Instrumenten' },
+  { id: 'provincie', name: 'Provincie' },
+  { id: 'gemeente', name: 'Gemeente' },
+  { id: 'inkoop', name: 'Inkoop' },
+  { id: 'publiek', name: 'Publiek' },
 ]
 
-// Navigation items (V1.0: only Profiel/Logout shown, others reserved for V1.1+)
-const NAV_ITEMS: { href: string; label: string }[] = [
-  // { href: '/support', label: 'Support' },
-  // { href: '/over-ons', label: 'Over ons' },
-  // { href: '/contact', label: 'Contact' },
+// Kosten module (cost-based data)
+const KOSTEN_MODULES = [
+  { id: 'apparaat', name: 'Apparaat' },
 ]
 
 export function Header() {
   const pathname = usePathname()
-  const tabsRef = useRef<HTMLDivElement>(null)
+  const navRef = useRef<HTMLElement>(null)
 
   // Scroll active tab into view on mobile
   useEffect(() => {
-    if (tabsRef.current) {
-      const activeTab = tabsRef.current.querySelector('[data-active="true"]')
+    if (navRef.current) {
+      const activeTab = navRef.current.querySelector('[data-active="true"]')
       if (activeTab) {
         activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
       }
@@ -42,107 +36,136 @@ export function Header() {
   }, [pathname])
 
   return (
-    <header className="sticky top-0 z-40">
-      {/* Row 1: Logo + Navigation */}
-      <div className="bg-white border-b border-[var(--border)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo + Tagline */}
-            <Link href="/" className="flex items-center gap-3 shrink-0">
+    <header className="sticky top-0 z-40 bg-white">
+      {/* Masthead: Logo + Auth */}
+      <div className="border-b border-[var(--gray-light)]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex items-center justify-between h-24">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-4 group">
               <Image
                 src="/logo-icon.png"
                 alt="Rijksuitgaven"
-                width={40}
-                height={40}
-                className="h-10 w-auto"
+                width={56}
+                height={56}
+                className="h-14 w-auto transition-transform group-hover:scale-105"
                 priority
               />
-              <div className="hidden sm:flex flex-col">
-                <span
-                  className="text-xl font-bold text-[var(--navy-dark)] leading-tight"
+              <div className="hidden sm:block">
+                <h1
+                  className="text-2xl font-bold text-[var(--navy-dark)] tracking-tight"
                   style={{ fontFamily: 'var(--font-heading), serif' }}
                 >
                   Rijksuitgaven
-                </span>
-                <span className="text-xs text-[var(--pink)] leading-tight">
+                </h1>
+                <p className="text-sm text-[var(--pink)] font-medium -mt-0.5">
                   Snel inzicht voor krachtige analyses
-                </span>
+                </p>
               </div>
             </Link>
 
-            {/* Right side: Nav items + Auth */}
-            <div className="flex items-center gap-6">
-              {/* Future nav items (V1.1+) */}
-              <nav className="hidden lg:flex items-center gap-6">
-                {NAV_ITEMS.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="text-sm font-medium text-[var(--navy-dark)] hover:text-[var(--navy-medium)] transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
-
-              {/* Auth links */}
-              <div className="flex items-center gap-4 text-sm">
-                <Link
-                  href="/profiel"
-                  className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
-                >
-                  Profiel
-                </Link>
-                <Link
-                  href="/logout"
-                  className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
-                >
-                  Logout
-                </Link>
-              </div>
+            {/* Auth */}
+            <div className="flex items-center gap-6 text-sm font-medium">
+              <Link
+                href="/profiel"
+                className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+              >
+                Profiel
+              </Link>
+              <Link
+                href="/logout"
+                className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+              >
+                Uitloggen
+              </Link>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Row 2: Module Tabs */}
-      <div className="bg-[var(--gray-light)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div
-            ref={tabsRef}
-            className="flex items-center gap-2 py-2 overflow-x-auto scrollbar-hide"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {MODULES.map((module, index) => {
-              const isActive = pathname === `/${module.id}`
-              const prevModule = MODULES[index - 1]
+      {/* Navigation Bar */}
+      <nav
+        ref={navRef}
+        className="bg-white border-b border-[var(--border)]"
+      >
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex items-stretch overflow-x-auto scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
 
-              // Add gap after Integraal (discovery -> main transition)
-              const gapBefore = prevModule?.group === 'discovery' && module.group === 'main'
-              // Add gap before Apparaat (main -> other transition)
-              const gapBeforeApparaat = prevModule?.group === 'main' && module.group === 'other'
+            {/* Ontvangers Section */}
+            <div className="flex items-stretch">
+              <span className="flex items-center px-4 text-xs font-medium uppercase tracking-wider text-[var(--navy-medium)]">
+                Ontvangers
+              </span>
+              <div className="flex items-stretch">
+                {ONTVANGERS_MODULES.map((module) => {
+                  const isActive = pathname === `/${module.id}`
+                  return (
+                    <Link
+                      key={module.id}
+                      href={`/${module.id}`}
+                      data-active={isActive}
+                      className={cn(
+                        'group relative flex items-center gap-1.5 px-4 py-4 text-sm font-medium transition-colors whitespace-nowrap',
+                        isActive
+                          ? 'text-[var(--navy-dark)]'
+                          : 'text-[var(--navy-medium)] hover:text-[var(--navy-dark)]'
+                      )}
+                    >
+                      {module.isSearch && (
+                        <svg className={cn('w-4 h-4', isActive ? 'text-[var(--pink)]' : '')} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      )}
+                      {module.name}
+                      {/* Hover preview indicator */}
+                      <span className={cn(
+                        'absolute bottom-0 left-4 right-4 h-[3px] transition-all',
+                        isActive
+                          ? 'bg-[var(--pink)]'
+                          : 'bg-[var(--pink)]/0 group-hover:bg-[var(--pink)]/30'
+                      )} />
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
 
-              return (
-                <Link
-                  key={module.id}
-                  href={`/${module.id}`}
-                  data-active={isActive}
-                  className={cn(
-                    'px-4 py-2 rounded text-sm font-medium whitespace-nowrap transition-all shrink-0',
-                    isActive
-                      ? 'bg-white text-[var(--navy-dark)] shadow-sm'
-                      : 'text-[var(--navy-dark)] hover:bg-white/50',
-                    gapBefore && 'ml-6',
-                    gapBeforeApparaat && 'ml-6'
-                  )}
-                >
-                  {module.name}
-                </Link>
-              )
-            })}
+            {/* Kosten Section */}
+            <div className="flex items-stretch ml-4">
+              <span className="flex items-center px-4 text-xs font-medium uppercase tracking-wider text-[var(--navy-medium)]">
+                Kosten
+              </span>
+              <div className="flex items-stretch">
+                {KOSTEN_MODULES.map((module) => {
+                  const isActive = pathname === `/${module.id}`
+                  return (
+                    <Link
+                      key={module.id}
+                      href={`/${module.id}`}
+                      data-active={isActive}
+                      className={cn(
+                        'group relative flex items-center px-4 py-4 text-sm font-medium transition-colors whitespace-nowrap',
+                        isActive
+                          ? 'text-[var(--navy-dark)]'
+                          : 'text-[var(--navy-medium)] hover:text-[var(--navy-dark)]'
+                      )}
+                    >
+                      {module.name}
+                      {/* Hover preview indicator */}
+                      <span className={cn(
+                        'absolute bottom-0 left-4 right-4 h-[3px] transition-all',
+                        isActive
+                          ? 'bg-[var(--pink)]'
+                          : 'bg-[var(--pink)]/0 group-hover:bg-[var(--pink)]/30'
+                      )} />
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </nav>
     </header>
   )
 }
