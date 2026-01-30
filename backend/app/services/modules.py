@@ -368,11 +368,9 @@ async def _get_from_aggregated_view(
         param_idx += 1
 
     # Filter for recipients with data in min_years+ years (UX-002)
+    # Uses pre-computed years_with_data column for fast filtering
     if min_years is not None and min_years > 0:
-        year_count_expr = " + ".join([
-            f'CASE WHEN "{y}" > 0 THEN 1 ELSE 0 END' for y in YEARS
-        ])
-        where_clauses.append(f"({year_count_expr}) >= {min_years}")
+        where_clauses.append(f"years_with_data >= {min_years}")
 
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
