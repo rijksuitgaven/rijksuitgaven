@@ -1,12 +1,45 @@
 # Product Backlog
 
-**Last Updated:** 2026-01-29 (added semantic search design)
+**Last Updated:** 2026-01-30 (added Integraal view redesign)
 
 Items logged for future versions, not in V1.0 scope.
 
 ---
 
 ## Post-V1.0 Backlog
+
+### Integraal View Redesign (Brainstorm Required)
+
+**Priority:** Medium
+**Added:** 2026-01-30
+**Type:** Architecture / Brainstorm
+
+**Problem:**
+The current Integraal view (`universal_search` materialized view) is not a "true" integraal view. It aggregates recipients across modules but cannot show extra columns because different modules have different fields in their source tables:
+
+| Module | Fields Available |
+|--------|------------------|
+| Instrumenten | regeling, artikel, instrument, begrotingsnaam |
+| Apparaat | kostensoort (no recipient), artikel, detail |
+| Inkoop | categorie, staffel, ministerie |
+| Provincie | provincie, omschrijving |
+| Gemeente | gemeente, omschrijving, beleidsterrein |
+| Publiek | source, regeling, trefwoorden, sectoren |
+
+**Current Limitation:**
+- Integraal can only show: Ontvanger, year columns, totaal, modules list
+- Cannot show "extra columns" like individual module pages can
+- No common denominator across all modules
+
+**Questions to Explore:**
+1. Should Integraal show module-specific columns when drilling down?
+2. Should we create a unified taxonomy mapping different fields to common concepts?
+3. Is the current "discovery layer" approach sufficient (find recipient → navigate to module)?
+4. What do users actually need from cross-module view?
+
+**Decision:** Requires brainstorm session to determine approach. Park for post-V1.0.
+
+---
 
 ### API Performance: Inkoop & Integraal Endpoints
 
