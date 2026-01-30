@@ -451,6 +451,7 @@ Before saying "Week X is complete", verify EACH deliverable in `09-timelines/v1-
 | Topic | Single Source |
 |-------|---------------|
 | **Versioning & Roadmap** | `docs/VERSIONING.md` |
+| **Infrastructure per Version** | `docs/INFRASTRUCTURE-ROADMAP.md` |
 | **Product Tiers** | `docs/PRODUCT-TIERS.md` |
 | **Target Audiences** | `docs/AUDIENCES.md` |
 | Tech stack | `04-target-architecture/RECOMMENDED-TECH-STACK.md` |
