@@ -12,7 +12,8 @@ import {
   type ExpandedState,
   type Column,
 } from '@tanstack/react-table'
-import { ChevronRight, ChevronDown, ChevronUp, ChevronsUpDown, Download } from 'lucide-react'
+import { ChevronRight, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet } from 'lucide-react'
+import * as XLSX from 'xlsx'
 import { cn } from '@/lib/utils'
 import {
   formatAmount,
@@ -90,6 +91,38 @@ function downloadCSV(content: string, filename: string) {
   link.click()
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
+}
+
+/**
+ * Generate and download XLS file
+ * Uses same data structure as CSV export
+ */
+function downloadXLS(data: RecipientRow[], availableYears: number[], primaryColumnName: string, filename: string) {
+  // Build worksheet data
+  const headers = [primaryColumnName, ...availableYears.map(String), 'Totaal']
+
+  const rows = data.slice(0, MAX_EXPORT_ROWS).map(row => {
+    const yearAmounts = availableYears.map(year => {
+      return row.years.find(y => y.year === year)?.amount ?? 0
+    })
+    return [row.primary_value, ...yearAmounts, row.total]
+  })
+
+  // Create worksheet
+  const wsData = [headers, ...rows]
+  const ws = XLSX.utils.aoa_to_sheet(wsData)
+
+  // Set column widths
+  ws['!cols'] = [
+    { wch: 40 }, // Primary column
+    ...availableYears.map(() => ({ wch: 12 })), // Year columns
+    { wch: 14 }, // Totaal
+  ]
+
+  // Create workbook and export
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, 'Rijksuitgaven')
+  XLSX.writeFile(wb, filename)
 }
 
 /**
@@ -178,13 +211,14 @@ export function DataTable({
   const [sorting, setSorting] = useState<SortingState>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [yearsExpanded, setYearsExpanded] = useState(false)
-  const [isExporting, setIsExporting] = useState(false)
+  const [isExportingCSV, setIsExportingCSV] = useState(false)
+  const [isExportingXLS, setIsExportingXLS] = useState(false)
   const [selectedColumns, setSelectedColumns] = useState<string[]>(() => getStoredColumns(moduleId))
 
-  // Export handler
-  const handleExport = () => {
+  // CSV Export handler
+  const handleExportCSV = () => {
     if (data.length === 0) return
-    setIsExporting(true)
+    setIsExportingCSV(true)
 
     try {
       const csvContent = generateCSV(data, availableYears, primaryColumnName)
@@ -192,7 +226,21 @@ export function DataTable({
       const filename = `rijksuitgaven-${moduleId}-${timestamp}.csv`
       downloadCSV(csvContent, filename)
     } finally {
-      setIsExporting(false)
+      setIsExportingCSV(false)
+    }
+  }
+
+  // XLS Export handler
+  const handleExportXLS = () => {
+    if (data.length === 0) return
+    setIsExportingXLS(true)
+
+    try {
+      const timestamp = new Date().toISOString().split('T')[0]
+      const filename = `rijksuitgaven-${moduleId}-${timestamp}.xlsx`
+      downloadXLS(data, availableYears, primaryColumnName, filename)
+    } finally {
+      setIsExportingXLS(false)
     }
   }
 
@@ -385,6 +433,58 @@ export function DataTable({
 
   return (
     <div className="w-full">
+      {/* Toolbar above table */}
+      <div className="flex items-center justify-between mb-3">
+        {/* Left: Results per page dropdown */}
+        <div className="flex items-center gap-2">
+          <select
+            value={perPage}
+            onChange={(e) => onPerPageChange?.(Number(e.target.value))}
+            className="px-2 py-1.5 text-sm font-medium border border-[var(--border)] rounded bg-white"
+            aria-label="Aantal resultaten weergeven"
+          >
+            {[25, 100, 150, 250, 500].map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+          <span className="text-sm text-[var(--navy-dark)]">resultaten weergeven</span>
+        </div>
+
+        {/* Right: Kolommen + CSV Export */}
+        <div className="flex items-center gap-2">
+          {/* Column selector (UX-005) */}
+          <ColumnSelector
+            moduleId={moduleId}
+            selectedColumns={selectedColumns}
+            onColumnsChange={setSelectedColumns}
+          />
+
+          {/* CSV Export button */}
+          <button
+            onClick={handleExportCSV}
+            disabled={isLoading || isExportingCSV || data.length === 0}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            aria-label="Download als CSV"
+          >
+            <Download className="h-4 w-4" aria-hidden="true" />
+            {isExportingCSV ? 'Bezig...' : 'CSV'}
+          </button>
+
+          {/* XLS Export button */}
+          <button
+            onClick={handleExportXLS}
+            disabled={isLoading || isExportingXLS || data.length === 0}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            aria-label="Download als Excel"
+          >
+            <FileSpreadsheet className="h-4 w-4" aria-hidden="true" />
+            {isExportingXLS ? 'Bezig...' : 'XLS'}
+          </button>
+        </div>
+      </div>
+
       {/* Table container with horizontal scroll for expanded years */}
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
@@ -506,73 +606,33 @@ export function DataTable({
 
       {/* Footer */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-2">
-        <div className="flex items-center gap-4">
-          <div className="text-xs text-[var(--muted-foreground)]">
-            Bedragen in &euro;
-            {availableYears.includes(Math.max(...availableYears)) && (
-              <span className="ml-4">* Data nog niet compleet</span>
-            )}
-          </div>
-
-          {/* Column selector (UX-005) */}
-          <ColumnSelector
-            moduleId={moduleId}
-            selectedColumns={selectedColumns}
-            onColumnsChange={setSelectedColumns}
-          />
-
-          {/* Export button */}
-          <button
-            onClick={handleExport}
-            disabled={isLoading || isExporting || data.length === 0}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title={`Download als CSV (max ${MAX_EXPORT_ROWS} rijen)`}
-            aria-label={`Download als CSV, maximaal ${MAX_EXPORT_ROWS} rijen`}
-          >
-            <Download className="h-3.5 w-3.5" aria-hidden="true" />
-            {isExporting ? 'Bezig...' : 'CSV Export'}
-          </button>
-          {data.length > 0 && (
-            <span className="text-xs text-[var(--muted-foreground)]">
-              (max {MAX_EXPORT_ROWS} rijen)
-            </span>
+        {/* Left: Amount note */}
+        <div className="text-sm text-[var(--muted-foreground)]">
+          Absolute bedragen in &euro;
+          {availableYears.includes(Math.max(...availableYears)) && (
+            <span className="ml-4">* Data nog niet compleet</span>
           )}
         </div>
 
-        {/* Pagination */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => onPageChange?.(page - 1)}
-              disabled={page <= 1}
-              className="px-3 py-1.5 text-sm border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              &#9664; Vorige
-            </button>
-            <span className="text-sm text-[var(--muted-foreground)]">
-              Pagina {page} van {totalPages}
-            </span>
-            <button
-              onClick={() => onPageChange?.(page + 1)}
-              disabled={page >= totalPages}
-              className="px-3 py-1.5 text-sm border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Volgende &#9654;
-            </button>
-          </div>
-
-          <select
-            value={perPage}
-            onChange={(e) => onPerPageChange?.(Number(e.target.value))}
-            className="px-2 py-1.5 text-sm border border-[var(--border)] rounded bg-white"
-            aria-label="Aantal rijen per pagina"
+        {/* Right: Pagination */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onPageChange?.(page - 1)}
+            disabled={page <= 1}
+            className="px-3 py-1.5 text-sm border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {[25, 50, 100].map((size) => (
-              <option key={size} value={size}>
-                {size} per pagina
-              </option>
-            ))}
-          </select>
+            &#9664; Vorige
+          </button>
+          <span className="text-sm text-[var(--muted-foreground)]">
+            Pagina {page} van {totalPages}
+          </span>
+          <button
+            onClick={() => onPageChange?.(page + 1)}
+            disabled={page >= totalPages}
+            className="px-3 py-1.5 text-sm border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Volgende &#9654;
+          </button>
         </div>
       </div>
     </div>

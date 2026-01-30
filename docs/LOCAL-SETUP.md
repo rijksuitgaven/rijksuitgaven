@@ -85,6 +85,7 @@ Installed via `npm install` from `package.json`. Key packages:
 | @tanstack/react-query | Server state | ✅ Installed |
 | recharts | Charts (React 19 compatible) | ⏳ To install Week 3 |
 | shadcn/ui components | UI components | ✅ Installed (v3.7.0) |
+| xlsx | Excel export (SheetJS) | ✅ Installed |
 
 ### Chart Library Decision (2026-01-26)
 

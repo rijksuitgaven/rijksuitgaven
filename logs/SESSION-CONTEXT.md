@@ -189,6 +189,8 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/sql/011f-random-order-publiek.sql` | 2026-01-29 | Supabase |
 | `scripts/sql/011g-random-order-universal-search.sql` | 2026-01-29 | Supabase |
 | `scripts/sql/010-normalize-module-aggregated-views.sql` | 2026-01-29 | Supabase (all 5 views) |
+| `scripts/sql/012-enable-rls-missing-tables.sql` | 2026-01-31 | Supabase |
+| `scripts/sql/013-security-hardening.sql` | 2026-01-31 | Supabase |
 
 ### Configuration Files
 
@@ -836,7 +838,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-01-30 - **ROADMAP & VERSIONING**
+**Last Session:** 2026-01-31 - **MINI SPRINT: Supabase Security + UI/UX**
 
 **Golden Rules added to CLAUDE.md:** 5 non-negotiable rules:
 1. Requirements Check - Verify against V1/V2 requirements before any proposal
@@ -1014,6 +1016,24 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Future needs (Redis, workers, V2+ tables) tracked for when required
 
 **4 commits** this session.
+
+**2026-01-31 - MINI SPRINT: Supabase Security + UI/UX**
+
+**Supabase Security Hardening:**
+- Fixed RLS on `data_freshness` (enabled + public read policy)
+- Fixed `spatial_ref_sys` (revoked API access - extension-owned table)
+- Fixed 7 functions with mutable search_path (added `SET search_path = public`)
+- Revoked direct API access to 7 materialized views (force through FastAPI)
+- Accepted: 3 extensions in public schema (migration risk too high)
+
+**UI/UX Improvements:**
+- Table toolbar redesign: Results dropdown (25/100/150/250/500) + Kolommen + CSV/XLS top of table
+- Footer cleaned up: "Absolute bedragen in €" + pagination only
+- Added XLS export (xlsx library) alongside CSV
+
+**Scripts executed:**
+- `012-enable-rls-missing-tables.sql`
+- `013-security-hardening.sql`
 
 **Next Steps:**
 1. Week 6 - User Auth (Magic Link, user migration)
