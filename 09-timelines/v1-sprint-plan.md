@@ -341,21 +341,23 @@
 | Grand total | Footer row |
 | Click navigation | Module/sub-source → module page with filter |
 
-### Day 2: UI/UX Logic Fixes (Scheduled Next Session)
+### Day 2: UI/UX Logic Fixes + Code Audit (2026-01-30) ✅
 
 **Added:** 2026-01-31
-**Context:** Various UI/UX issues identified during mini sprint that need attention before auth work.
+**Completed:** 2026-01-30
+**Context:** Various UI/UX issues identified during mini sprint, plus comprehensive code audit.
 
-| Task | Details |
-|------|---------|
-| **BUG: Limit dropdown causes error** | Selecting 100/150/250/500 results causes "Failed to fetch instrumenten data" error. Likely API timeout or backend issue with larger limits. |
-| Review user-reported issues | Address any frontend logic bugs |
-| Header refinements | Finalize ONTVANGERS/KOSTEN label styling if needed |
-| Mobile responsiveness | Quick check of mobile experience |
-| Performance verification | Confirm all modules load in <500ms |
+| Task | Status |
+|------|--------|
+| **BUG: Limit dropdown causes error** | ✅ Fixed - backend `le=100` → `le=500` |
+| Code audit (backend + frontend) | ✅ 20 backend + 11 frontend issues identified |
+| Backend: Connection pool shutdown | ✅ Added FastAPI lifespan handler |
+| Frontend: AbortController fixes | ✅ Prevents race conditions |
+| Frontend: Console statements removed | ✅ Production-ready |
+| Frontend: Accessibility (aria-live) | ✅ Screen reader support for loaders |
 
 **Week 6 Deliverables:**
-- [ ] UI/UX logic fixes complete (next session)
+- [x] UI/UX logic fixes complete (2026-01-30)
 - [ ] Magic Link authentication working
 - [ ] 50 users migrated
 - [ ] Overzicht page complete
