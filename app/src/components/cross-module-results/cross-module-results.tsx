@@ -58,10 +58,8 @@ export function CrossModuleResults({ searchQuery, currentModule, className }: Cr
 
               return { module, count }
             } catch (error) {
-              // Log but continue - one module failing shouldn't break the others
-              if (error instanceof Error && error.name !== 'AbortError') {
-                console.error(`[CrossModuleResults] Failed to fetch ${module}:`, error.message)
-              }
+              // Silently continue - one module failing shouldn't break the others
+              // AbortError is expected when search changes rapidly
               return null
             }
           })
@@ -72,9 +70,13 @@ export function CrossModuleResults({ searchQuery, currentModule, className }: Cr
           .filter((r): r is ModuleCount => r !== null && r.count > 0)
           .sort((a, b) => b.count - a.count)
 
-        setModuleCounts(validResults)
+        if (!signal.aborted) {
+          setModuleCounts(validResults)
+        }
       } finally {
-        setIsLoading(false)
+        if (!signal.aborted) {
+          setIsLoading(false)
+        }
       }
     }
 

@@ -89,9 +89,10 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
         }
         setSelectedIndex(-1)
       } catch (error) {
-        // Log error but show graceful UI - user sees no results instead of error
-        if (error instanceof Error && error.name !== 'AbortError') {
-          console.error('[SearchBar] Search failed:', error.message)
+        // Silently handle errors - user sees no results instead of error
+        // AbortError is expected when search changes rapidly
+        if (error instanceof Error && error.name === 'AbortError') {
+          return
         }
         setRecipients([])
         setKeywords([])
@@ -127,10 +128,8 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
           type: 'keyword' as const,
         })),
       }
-    } catch (error) {
-      if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('[SearchBar] fetchSearchResults failed:', error.message)
-      }
+    } catch {
+      // Silently handle errors - return empty results
       return { recipients: [], keywords: [] }
     }
   }
@@ -150,10 +149,8 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
         ...r,
         type: 'recipient' as const,
       }))
-    } catch (error) {
-      if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('[SearchBar] fetchFuzzySuggestions failed:', error.message)
-      }
+    } catch {
+      // Silently handle errors - return empty suggestions
       return []
     }
   }
@@ -273,7 +270,10 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
             className="w-full pl-10 pr-10 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all"
           />
           {isLoading && (
-            <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/60 animate-spin" aria-label="Laden" />
+            <span role="status" aria-live="polite" className="absolute right-3 top-1/2 -translate-y-1/2">
+              <Loader2 className="h-4 w-4 text-white/60 animate-spin" aria-hidden="true" />
+              <span className="sr-only">Laden...</span>
+            </span>
           )}
           {!isLoading && query && (
             <button

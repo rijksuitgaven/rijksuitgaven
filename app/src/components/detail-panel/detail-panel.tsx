@@ -164,7 +164,6 @@ export function DetailPanel({
         if (error instanceof Error && error.name === 'AbortError') {
           return
         }
-        console.error('[DetailPanel] fetchDetail failed:', error instanceof Error ? error.message : error)
         setError('Kon gegevens niet laden')
       } finally {
         if (!abortController.signal.aborted) {
@@ -284,8 +283,9 @@ export function DetailPanel({
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
           {isLoading && (
-            <div className="flex items-center justify-center h-64">
-              <Loader2 className="h-8 w-8 text-[var(--navy-medium)] animate-spin" />
+            <div className="flex items-center justify-center h-64" role="status" aria-live="polite">
+              <Loader2 className="h-8 w-8 text-[var(--navy-medium)] animate-spin" aria-hidden="true" />
+              <span className="sr-only">Gegevens laden...</span>
             </div>
           )}
 

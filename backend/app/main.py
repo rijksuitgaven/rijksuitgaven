@@ -3,13 +3,37 @@ Rijksuitgaven API - FastAPI Backend
 
 Main application entry point.
 """
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.api.v1 import router as api_v1_router
+from app.services.database import close_pool
 
+logger = logging.getLogger(__name__)
 settings = get_settings()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Application lifespan context manager.
+
+    Handles startup and shutdown events:
+    - Startup: Nothing needed (pool created lazily on first request)
+    - Shutdown: Close database connection pool to prevent resource leaks
+    """
+    # Startup
+    logger.info("Application starting up")
+    yield
+    # Shutdown
+    logger.info("Application shutting down, closing database pool")
+    await close_pool()
+    logger.info("Database pool closed")
+
 
 app = FastAPI(
     title=settings.app_name,
@@ -17,6 +41,7 @@ app = FastAPI(
     description="API for Rijksuitgaven.nl - Dutch Government Spending Data",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # CORS middleware

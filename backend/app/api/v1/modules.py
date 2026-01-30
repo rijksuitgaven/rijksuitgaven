@@ -233,7 +233,7 @@ async def get_module(
     # Search
     q: Optional[str] = Query(None, min_length=1, max_length=200, description="Search query"),
     # Pagination
-    limit: int = Query(25, ge=1, le=100, description="Results per page"),
+    limit: int = Query(25, ge=1, le=500, description="Results per page (max 500)"),
     offset: int = Query(0, ge=0, description="Pagination offset"),
     # Filtering
     jaar: Optional[int] = Query(None, ge=2016, le=2025, description="Filter by year"),

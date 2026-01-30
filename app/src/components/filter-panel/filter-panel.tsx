@@ -149,24 +149,34 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const abortController = new AbortController()
+
     async function fetchOptions() {
       setIsLoading(true)
       try {
-        const response = await fetch(`${API_BASE_URL}/api/v1/modules/${module}/filters/${field}`)
+        const response = await fetch(
+          `${API_BASE_URL}/api/v1/modules/${module}/filters/${field}`,
+          { signal: abortController.signal }
+        )
         if (response.ok) {
           const data = await response.json()
           setOptions(data)
         }
       } catch (error) {
-        // Log error for debugging - don't show to user as filter still works without options
-        if (error instanceof Error && error.name !== 'AbortError') {
-          console.error(`[MultiSelect] Failed to fetch ${field} options:`, error.message)
+        // Ignore abort errors - expected when component unmounts or module changes
+        if (error instanceof Error && error.name === 'AbortError') {
+          return
         }
+        // Silently fail - filter still works without pre-loaded options
       } finally {
-        setIsLoading(false)
+        if (!abortController.signal.aborted) {
+          setIsLoading(false)
+        }
       }
     }
     fetchOptions()
+
+    return () => abortController.abort()
   }, [module, field])
 
   useEffect(() => {
@@ -338,8 +348,8 @@ export function FilterPanel({
             total_formatted: data.total_formatted,
           })
         }
-      } catch (error) {
-        console.error('[FilterPanel] Failed to fetch module stats:', error)
+      } catch {
+        // Silently fail - placeholder will use default text
       }
     }
     fetchStats()
@@ -427,7 +437,7 @@ export function FilterPanel({
         if (error instanceof Error && error.name === 'AbortError') {
           return
         }
-        console.error('[FilterPanel] Search failed:', error instanceof Error ? error.message : error)
+        // Search failed - show empty results (error already handled above)
         setCurrentModuleResults([])
         setFieldMatches([])
         setOtherModulesResults([])
@@ -481,19 +491,16 @@ export function FilterPanel({
 
     // Validate: must be a valid number
     if (Number.isNaN(numValue)) {
-      console.warn(`[FilterPanel] Invalid amount input: "${value}"`)
       return
     }
 
     // Validate: must be non-negative
     if (numValue < 0) {
-      console.warn(`[FilterPanel] Negative amount rejected: ${numValue}`)
       return
     }
 
     // Validate: must be within reasonable bounds
     if (numValue > MAX_AMOUNT) {
-      console.warn(`[FilterPanel] Amount exceeds maximum (${MAX_AMOUNT}): ${numValue}`)
       return
     }
 
@@ -696,7 +703,10 @@ export function FilterPanel({
               className="w-full h-[52px] pl-12 pr-12 text-base bg-white rounded-lg shadow-md border border-[var(--border)] focus:outline-none focus:border-[var(--navy-dark)] focus:ring-2 focus:ring-[var(--navy-dark)]/20 focus:shadow-lg transition-all placeholder:text-[var(--navy-dark)]/60"
             />
             {isSearching && (
-              <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--navy-medium)] animate-spin" aria-label="Laden" />
+              <span role="status" aria-live="polite" className="absolute right-4 top-1/2 -translate-y-1/2">
+                <Loader2 className="h-5 w-5 text-[var(--navy-medium)] animate-spin" aria-hidden="true" />
+                <span className="sr-only">Zoeken...</span>
+              </span>
             )}
             {!isSearching && localFilters.search && (
               <button
