@@ -156,10 +156,17 @@ class OtherModulesResult(BaseModel):
     modules: list[str] = []
 
 
+class FieldMatchResult(BaseModel):
+    """Field match result (OOK GEVONDEN IN)."""
+    value: str
+    field: str
+
+
 class AutocompleteResponse(BaseModel):
-    """Autocomplete response with two sections."""
+    """Autocomplete response with three sections."""
     success: bool = True
     current_module: list[CurrentModuleResult] = []
+    field_matches: list[FieldMatchResult] = []
     other_modules: list[OtherModulesResult] = []
 
 
@@ -193,6 +200,13 @@ async def module_autocomplete(
                     totaal=r.get("totaal", 0),
                 )
                 for r in data.get("current_module", [])
+            ],
+            field_matches=[
+                FieldMatchResult(
+                    value=r["value"],
+                    field=r["field"],
+                )
+                for r in data.get("field_matches", [])
             ],
             other_modules=[
                 OtherModulesResult(

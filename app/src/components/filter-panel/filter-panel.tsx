@@ -39,6 +39,27 @@ interface OtherModulesResult {
   modules: string[]
 }
 
+// Field match result (OOK GEVONDEN IN)
+interface FieldMatchResult {
+  value: string
+  field: string
+}
+
+// Field labels for display
+const FIELD_LABELS: Record<string, string> = {
+  regeling: 'Regeling',
+  instrument: 'Instrument',
+  omschrijving: 'Omschrijving',
+  begrotingsnaam: 'Begrotingsnaam',
+  categorie: 'Categorie',
+  ministerie: 'Ministerie',
+  staffel: 'Staffel',
+  beleidsterrein: 'Beleidsterrein',
+  trefwoorden: 'Trefwoorden',
+  sectoren: 'Sectoren',
+  regio: 'Regio',
+}
+
 // =============================================================================
 // Module filter configuration
 // =============================================================================
@@ -337,6 +358,7 @@ export function FilterPanel({
 
   // Autocomplete state
   const [currentModuleResults, setCurrentModuleResults] = useState<CurrentModuleResult[]>([])
+  const [fieldMatches, setFieldMatches] = useState<FieldMatchResult[]>([])
   const [otherModulesResults, setOtherModulesResults] = useState<OtherModulesResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -346,7 +368,7 @@ export function FilterPanel({
   const moduleFilters = useMemo(() => MODULE_FILTERS[module] ?? [], [module])
 
   // Combined results for keyboard navigation
-  const totalResults = currentModuleResults.length + otherModulesResults.length
+  const totalResults = currentModuleResults.length + fieldMatches.length + otherModulesResults.length
 
   // =============================================================================
   // Autocomplete search - uses module-specific endpoint with AbortController
@@ -384,13 +406,15 @@ export function FilterPanel({
 
         const data = await response.json()
         const currentModule = data.current_module || []
+        const fieldMatchesData = data.field_matches || []
         const otherModules = data.other_modules || []
 
         setCurrentModuleResults(currentModule)
+        setFieldMatches(fieldMatchesData)
         setOtherModulesResults(otherModules)
 
         // Show "no results" if nothing found
-        if (currentModule.length === 0 && otherModules.length === 0) {
+        if (currentModule.length === 0 && fieldMatchesData.length === 0 && otherModules.length === 0) {
           setNoResultsQuery(searchValue)
         } else {
           setNoResultsQuery(null)
@@ -405,6 +429,7 @@ export function FilterPanel({
         }
         console.error('[FilterPanel] Search failed:', error instanceof Error ? error.message : error)
         setCurrentModuleResults([])
+        setFieldMatches([])
         setOtherModulesResults([])
         setNoResultsQuery(null)
       } finally {
@@ -525,9 +550,16 @@ export function FilterPanel({
   const handleClearSearch = useCallback(() => {
     setLocalFilters((prev) => ({ ...prev, search: '' }))
     setCurrentModuleResults([])
+    setFieldMatches([])
     setOtherModulesResults([])
     setIsDropdownOpen(false)
     inputRef.current?.focus()
+  }, [])
+
+  const handleSelectFieldMatch = useCallback((result: FieldMatchResult) => {
+    // Set search to the field value and close dropdown
+    setLocalFilters((prev) => ({ ...prev, search: result.value }))
+    setIsDropdownOpen(false)
   }, [])
 
   // =============================================================================
@@ -552,8 +584,11 @@ export function FilterPanel({
           // Determine which section and item
           if (selectedIndex < currentModuleResults.length) {
             handleSelectCurrentModule(currentModuleResults[selectedIndex])
+          } else if (selectedIndex < currentModuleResults.length + fieldMatches.length) {
+            const fieldIndex = selectedIndex - currentModuleResults.length
+            handleSelectFieldMatch(fieldMatches[fieldIndex])
           } else {
-            const otherIndex = selectedIndex - currentModuleResults.length
+            const otherIndex = selectedIndex - currentModuleResults.length - fieldMatches.length
             if (otherModulesResults[otherIndex]) {
               const result = otherModulesResults[otherIndex]
               // Navigate to first module in the list
@@ -573,7 +608,7 @@ export function FilterPanel({
         setSelectedIndex(-1)
         break
     }
-  }, [isDropdownOpen, totalResults, selectedIndex, currentModuleResults, otherModulesResults, handleSelectCurrentModule, handleSelectOtherModule])
+  }, [isDropdownOpen, totalResults, selectedIndex, currentModuleResults, fieldMatches, otherModulesResults, handleSelectCurrentModule, handleSelectFieldMatch, handleSelectOtherModule])
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -726,6 +761,38 @@ export function FilterPanel({
                   </div>
                 )}
 
+                {/* Field matches section (OOK GEVONDEN IN) */}
+                {fieldMatches.length > 0 && (
+                  <div>
+                    <div className="px-4 py-2 text-xs font-semibold text-[var(--navy-medium)] uppercase tracking-wider bg-[var(--gray-light)]">
+                      Ook gevonden in
+                    </div>
+                    {fieldMatches.map((result, index) => {
+                      const adjustedIndex = currentModuleResults.length + index
+                      return (
+                        <button
+                          key={`${result.field}-${result.value}`}
+                          type="button"
+                          onClick={() => handleSelectFieldMatch(result)}
+                          className={cn(
+                            'w-full px-4 py-3 text-left hover:bg-[var(--gray-light)] transition-colors border-b border-[var(--border)]',
+                            selectedIndex === adjustedIndex && 'bg-[var(--gray-light)]'
+                          )}
+                        >
+                          <div className="flex items-center justify-between gap-4">
+                            <div className="font-medium text-[var(--navy-dark)] truncate">
+                              {result.value}
+                            </div>
+                            <div className="text-xs text-[var(--muted-foreground)] whitespace-nowrap">
+                              in {FIELD_LABELS[result.field] || result.field}
+                            </div>
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+
                 {/* Other modules section */}
                 {otherModulesResults.length > 0 && (
                   <div>
@@ -734,7 +801,7 @@ export function FilterPanel({
                       Ook in andere modules
                     </div>
                     {otherModulesResults.map((result, index) => {
-                      const adjustedIndex = currentModuleResults.length + index
+                      const adjustedIndex = currentModuleResults.length + fieldMatches.length + index
                       return (
                         <div
                           key={result.name}

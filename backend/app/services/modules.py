@@ -1005,9 +1005,10 @@ async def get_module_autocomplete(
     """
     Get autocomplete suggestions for a module.
 
-    Returns two sections:
+    Returns three sections:
     1. current_module: Recipients matching search IN the current module (with amounts)
-    2. other_modules: Recipients matching search in OTHER modules (with module badges)
+    2. field_matches: Matches in other fields like regeling, instrument (OOK GEVONDEN IN)
+    3. other_modules: Recipients matching search in OTHER modules (with module badges)
 
     This ensures "what you see is what you get" - current module results
     match what users will see when they press Enter.
@@ -1018,9 +1019,12 @@ async def get_module_autocomplete(
     config = MODULE_CONFIG[module]
     primary = config["primary_field"]
     agg_table = config.get("aggregated_table")
+    table = config["table"]
+    search_fields = config.get("search_fields", [primary])
 
     current_module_results = []
     other_modules_results = []
+    field_matches = []
 
     # 1. Search current module's aggregated view with relevance ranking
     # Uses Dutch language rules to avoid false cognates
@@ -1046,6 +1050,38 @@ async def get_module_autocomplete(
                 "name": row["name"],
                 "totaal": int(row["totaal"] or 0),
             })
+
+    # 2. Search for field matches (OOK GEVONDEN IN)
+    # Search non-primary fields for matching values
+    seen_values: set[str] = set()
+    for field in search_fields:
+        if field == primary:
+            continue  # Skip primary field - already shown in current_module
+
+        condition, pattern = build_search_condition(field, 1, search)
+        field_query = f"""
+            SELECT DISTINCT {field} AS value
+            FROM {table}
+            WHERE {condition}
+              AND {field} IS NOT NULL
+              AND {field} != ''
+            LIMIT 3
+        """
+        field_rows = await fetch_all(field_query, pattern)
+
+        for row in field_rows:
+            value = row["value"]
+            if value and value.upper() not in seen_values:
+                seen_values.add(value.upper())
+                field_matches.append({
+                    "value": value,
+                    "field": field,
+                })
+                if len(field_matches) >= limit:
+                    break
+
+        if len(field_matches) >= limit:
+            break
 
     # 2. Search universal_search for recipients in OTHER modules
     # Exclude recipients already shown in current module
@@ -1107,6 +1143,7 @@ async def get_module_autocomplete(
 
     return {
         "current_module": current_module_results,
+        "field_matches": field_matches,
         "other_modules": other_modules_results,
     }
 

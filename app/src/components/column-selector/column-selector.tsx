@@ -13,35 +13,35 @@ export const MAX_SELECTED_COLUMNS = 2
 // When user selects columns, query falls back to slower source table aggregation
 export const MODULE_COLUMNS: Record<string, { value: string; label: string; default: boolean }[]> = {
   instrumenten: [
-    { value: 'regeling', label: 'Regeling', default: false },
+    { value: 'artikel', label: 'Artikel', default: true },
+    { value: 'regeling', label: 'Regeling', default: true },
     { value: 'instrument', label: 'Instrument', default: false },
-    { value: 'artikel', label: 'Artikel', default: false },
     { value: 'artikelonderdeel', label: 'Artikelonderdeel', default: false },
     { value: 'begrotingsnaam', label: 'Begrotingsnaam', default: false },
     { value: 'detail', label: 'Detail', default: false },
   ],
   apparaat: [
+    { value: 'artikel', label: 'Artikel', default: true },
+    { value: 'detail', label: 'Detail', default: true },
     { value: 'begrotingsnaam', label: 'Begrotingsnaam', default: false },
-    { value: 'detail', label: 'Detail', default: false },
-    { value: 'artikel', label: 'Artikel', default: false },
   ],
   inkoop: [
+    { value: 'categorie', label: 'Categorie', default: true },
+    { value: 'staffel', label: 'Staffel', default: true },
     { value: 'ministerie', label: 'Ministerie', default: false },
-    { value: 'categorie', label: 'Categorie', default: false },
-    { value: 'staffel', label: 'Staffel', default: false },
   ],
   provincie: [
-    { value: 'provincie', label: 'Provincie', default: false },
-    { value: 'omschrijving', label: 'Omschrijving', default: false },
+    { value: 'provincie', label: 'Provincie', default: true },
+    { value: 'omschrijving', label: 'Omschrijving', default: true },
   ],
   gemeente: [
-    { value: 'gemeente', label: 'Gemeente', default: false },
-    { value: 'omschrijving', label: 'Omschrijving', default: false },
+    { value: 'gemeente', label: 'Gemeente', default: true },
+    { value: 'omschrijving', label: 'Omschrijving', default: true },
     { value: 'beleidsterrein', label: 'Beleidsterrein', default: false },
     { value: 'regeling', label: 'Regeling', default: false },
   ],
   publiek: [
-    { value: 'source', label: 'Organisatie', default: false },
+    { value: 'source', label: 'Organisatie', default: true },
     { value: 'regeling', label: 'Regeling', default: false },
     { value: 'trefwoorden', label: 'Trefwoorden', default: false },
     { value: 'sectoren', label: 'Sectoren', default: false },
@@ -133,14 +133,6 @@ export function ColumnSelector({ moduleId, selectedColumns, onColumnsChange }: C
       >
         <Columns3 className="h-3.5 w-3.5" />
         Kolommen
-        {selectedColumns.length !== getDefaultColumns(moduleId).length && (
-          <span className={cn(
-            'px-1 py-0.5 text-[10px] rounded-full',
-            isOpen ? 'bg-white/20' : 'bg-[var(--pink)] text-white'
-          )}>
-            {selectedColumns.length}
-          </span>
-        )}
       </button>
 
       {isOpen && (
