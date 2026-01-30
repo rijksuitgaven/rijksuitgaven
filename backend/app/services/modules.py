@@ -462,7 +462,9 @@ async def _get_from_aggregated_view(
         if columns and not search:
             extra_cols = {}
             for col in columns:
-                extra_cols[col] = row.get(f"extra_{col}")
+                val = row.get(f"extra_{col}")
+                # Cast to string (staffel is INTEGER, API expects strings)
+                extra_cols[col] = str(val) if val is not None else None
             row_data["extra_columns"] = extra_cols
         result.append(row_data)
 
@@ -678,7 +680,9 @@ async def _get_from_source_table(
         elif columns:
             extra_cols = {}
             for col in columns:
-                extra_cols[col] = row.get(f"extra_{col}")
+                val = row.get(f"extra_{col}")
+                # Cast to string (staffel is INTEGER, API expects strings)
+                extra_cols[col] = str(val) if val is not None else None
             row_data["extra_columns"] = extra_cols
 
         result.append(row_data)
