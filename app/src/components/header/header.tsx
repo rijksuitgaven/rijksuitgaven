@@ -9,16 +9,16 @@ import { cn } from '@/lib/utils'
 // Ontvangers modules (recipient-based data)
 const ONTVANGERS_MODULES = [
   { id: 'integraal', name: 'Zoek in alle', isSearch: true },
-  { id: 'instrumenten', name: 'Instrumenten' },
-  { id: 'provincie', name: 'Provincie' },
-  { id: 'gemeente', name: 'Gemeente' },
-  { id: 'inkoop', name: 'Inkoop' },
+  { id: 'instrumenten', name: 'Financiële instrumenten' },
+  { id: 'provincie', name: 'Provinciale subsidieregisters' },
+  { id: 'gemeente', name: 'Gemeentelijke subsidieregisters' },
+  { id: 'inkoop', name: 'Inkoopuitgaven' },
   { id: 'publiek', name: 'Publiek' },
 ]
 
 // Kosten module (cost-based data)
 const KOSTEN_MODULES = [
-  { id: 'apparaat', name: 'Apparaat' },
+  { id: 'apparaat', name: 'Apparaatskosten' },
 ]
 
 export function Header() {
@@ -93,7 +93,7 @@ export function Header() {
 
             {/* Ontvangers Section */}
             <div className="flex items-stretch">
-              <span className="flex items-center px-4 text-xs font-medium uppercase tracking-wider text-[var(--navy-medium)]">
+              <span className="flex items-center pr-1 text-[10px] font-medium uppercase tracking-wider text-[var(--navy-medium)]/60">
                 Ontvangers
               </span>
               <div className="flex items-stretch">
@@ -105,7 +105,7 @@ export function Header() {
                       href={`/${module.id}`}
                       data-active={isActive}
                       className={cn(
-                        'group relative flex items-center gap-1.5 px-4 py-4 text-sm font-medium transition-colors whitespace-nowrap',
+                        'group relative flex items-center gap-1 px-3 py-5 text-sm font-medium transition-colors whitespace-nowrap',
                         isActive
                           ? 'text-[var(--navy-dark)]'
                           : 'text-[var(--navy-medium)] hover:text-[var(--navy-dark)]'
@@ -119,7 +119,7 @@ export function Header() {
                       {module.name}
                       {/* Hover preview indicator */}
                       <span className={cn(
-                        'absolute bottom-0 left-4 right-4 h-[3px] transition-all',
+                        'absolute bottom-0 left-3 right-3 h-[3px] transition-all',
                         isActive
                           ? 'bg-[var(--pink)]'
                           : 'bg-[var(--pink)]/0 group-hover:bg-[var(--pink)]/30'
@@ -130,9 +130,14 @@ export function Header() {
               </div>
             </div>
 
+            {/* Vertical divider */}
+            <div className="flex items-center px-3">
+              <div className="h-6 w-px bg-[var(--border)]" />
+            </div>
+
             {/* Kosten Section */}
-            <div className="flex items-stretch ml-4">
-              <span className="flex items-center px-4 text-xs font-medium uppercase tracking-wider text-[var(--navy-medium)]">
+            <div className="flex items-stretch">
+              <span className="flex items-center pr-1 text-[10px] font-medium uppercase tracking-wider text-[var(--navy-medium)]/60">
                 Kosten
               </span>
               <div className="flex items-stretch">
@@ -144,7 +149,7 @@ export function Header() {
                       href={`/${module.id}`}
                       data-active={isActive}
                       className={cn(
-                        'group relative flex items-center px-4 py-4 text-sm font-medium transition-colors whitespace-nowrap',
+                        'group relative flex items-center px-3 py-5 text-sm font-medium transition-colors whitespace-nowrap',
                         isActive
                           ? 'text-[var(--navy-dark)]'
                           : 'text-[var(--navy-medium)] hover:text-[var(--navy-dark)]'
@@ -153,7 +158,7 @@ export function Header() {
                       {module.name}
                       {/* Hover preview indicator */}
                       <span className={cn(
-                        'absolute bottom-0 left-4 right-4 h-[3px] transition-all',
+                        'absolute bottom-0 left-3 right-3 h-[3px] transition-all',
                         isActive
                           ? 'bg-[var(--pink)]'
                           : 'bg-[var(--pink)]/0 group-hover:bg-[var(--pink)]/30'

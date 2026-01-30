@@ -636,13 +636,13 @@ export function FilterPanel({
   // =============================================================================
 
   return (
-    <div className="bg-white border border-[var(--border)] rounded-lg p-4 mb-6">
-      {/* Main search row */}
-      <div className="flex flex-wrap gap-4">
+    <div className="mb-6">
+      {/* Hero Search Row */}
+      <div className="flex items-stretch gap-3">
         {/* Search input with autocomplete */}
         <div className="flex-1 min-w-[200px] relative">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)]" />
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--navy-dark)] transition-colors group-focus-within:text-[var(--navy-dark)]" />
             <input
               ref={inputRef}
               type="text"
@@ -658,19 +658,19 @@ export function FilterPanel({
               aria-autocomplete="list"
               aria-controls="search-results-listbox"
               autoComplete="off"
-              className="w-full pl-10 pr-10 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)] focus:border-transparent transition-all"
+              className="w-full h-[52px] pl-12 pr-12 text-base bg-white rounded-lg shadow-md border border-[var(--border)] focus:outline-none focus:border-[var(--navy-dark)] focus:ring-2 focus:ring-[var(--navy-dark)]/20 focus:shadow-lg transition-all placeholder:text-[var(--navy-dark)]/60"
             />
             {isSearching && (
-              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)] animate-spin" aria-label="Laden" />
+              <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--navy-medium)] animate-spin" aria-label="Laden" />
             )}
             {!isSearching && localFilters.search && (
               <button
                 type="button"
                 onClick={handleClearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] hover:text-[var(--navy-dark)]"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
                 aria-label="Zoekveld wissen"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             )}
           </div>
@@ -778,22 +778,22 @@ export function FilterPanel({
           )}
         </div>
 
-        {/* Expand/collapse button */}
+        {/* Filters button - matches search height */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className={cn(
-            'flex items-center gap-2 px-3 py-2 border rounded-lg transition-colors',
+            'flex items-center gap-2 px-5 h-[52px] rounded-lg font-medium transition-all',
             isExpanded
-              ? 'bg-[var(--navy-dark)] text-white border-[var(--navy-dark)]'
-              : 'border-[var(--border)] hover:border-[var(--navy-medium)]'
+              ? 'bg-[var(--navy-dark)] text-white shadow-md'
+              : 'bg-white text-[var(--navy-dark)] shadow-sm hover:shadow-md'
           )}
         >
-          <SlidersHorizontal className="h-4 w-4" />
-          <span className="text-sm">
+          <SlidersHorizontal className="h-5 w-5" />
+          <span>
             Filters
             {activeFilterCount > 0 && (
               <span className={cn(
-                'ml-1.5 px-1.5 py-0.5 text-xs font-medium rounded-full',
+                'ml-2 px-2 py-0.5 text-xs font-semibold rounded-full',
                 isExpanded
                   ? 'bg-white/20 text-white'
                   : 'bg-[var(--pink)] text-white'
@@ -804,14 +804,14 @@ export function FilterPanel({
           </span>
         </button>
 
-        {/* Clear all button */}
+        {/* Clear filters - next to Filters button */}
         {hasActiveFilters && (
           <button
             onClick={handleClearAll}
-            className="flex items-center gap-1 px-3 py-2 text-sm text-[var(--error)] hover:bg-red-50 rounded-lg transition-colors"
+            className="flex items-center gap-1 px-3 h-[52px] text-sm text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
           >
             <X className="h-4 w-4" />
-            Wis filters
+            <span className="hidden sm:inline">Wissen</span>
           </button>
         )}
       </div>
