@@ -93,7 +93,7 @@ export function Header() {
 
             {/* Ontvangers Section */}
             <div className="flex items-stretch">
-              <span className="flex items-center pr-1 text-[10px] font-medium uppercase tracking-wider text-[var(--navy-medium)]/60">
+              <span className="flex items-center px-2 py-1 mr-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--navy-medium)] bg-[var(--gray-light)] rounded">
                 Ontvangers
               </span>
               <div className="flex items-stretch">
@@ -130,14 +130,9 @@ export function Header() {
               </div>
             </div>
 
-            {/* Vertical divider */}
-            <div className="flex items-center px-3">
-              <div className="h-6 w-px bg-[var(--border)]" />
-            </div>
-
             {/* Kosten Section */}
-            <div className="flex items-stretch">
-              <span className="flex items-center pr-1 text-[10px] font-medium uppercase tracking-wider text-[var(--navy-medium)]/60">
+            <div className="flex items-stretch ml-2">
+              <span className="flex items-center px-2 py-1 mr-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--navy-medium)] bg-[var(--gray-light)] rounded">
                 Kosten
               </span>
               <div className="flex items-stretch">
