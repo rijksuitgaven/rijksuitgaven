@@ -64,6 +64,7 @@ class AggregatedRow(BaseModel):
     totaal: int = 0
     row_count: int = 1
     modules: Optional[list[str]] = None  # For integraal only
+    extra_columns: Optional[dict[str, Optional[str]]] = None  # Dynamic columns (max 2)
 
 
 class ModuleResponse(BaseModel):
@@ -234,6 +235,8 @@ async def get_module(
     # Integraal-specific filters
     modules: Optional[list[str]] = Query(None, description="Filter by modules recipient appears in (integraal only)"),
     min_instanties: Optional[int] = Query(None, ge=1, description="Minimum number of distinct sources (integraal only)"),
+    # Dynamic columns (UX-005)
+    columns: Optional[list[str]] = Query(None, description="Extra columns to display (max 2)"),
 ):
     """
     Get aggregated data for a module.
@@ -250,6 +253,7 @@ async def get_module(
     - **sort_by**: Field to sort by: totaal, primary, random, or year (default: totaal)
     - **sort_order**: asc or desc (default: desc)
     - **min_years**: Filter recipients with data in X+ years (for default view)
+    - **columns**: Extra columns to include in response (max 2)
 
     ## Response
 
@@ -258,6 +262,7 @@ async def get_module(
     - Year columns (2016-2024)
     - Total amount
     - Row count (for expansion indicator)
+    - Extra columns (if requested)
     """
     start_time = time.time()
 
@@ -300,6 +305,7 @@ async def get_module(
                 offset=offset,
                 min_years=min_years,
                 filter_fields=filter_fields,
+                columns=columns,
             )
             primary_field = MODULE_CONFIG[module.value]["primary_field"]
 

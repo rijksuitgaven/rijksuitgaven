@@ -8,6 +8,7 @@ import { DetailPanel } from '@/components/detail-panel'
 import { CrossModuleResults } from '@/components/cross-module-results'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { fetchModuleData } from '@/lib/api'
+import { getStoredColumns } from '@/components/column-selector'
 import type { ModuleDataResponse, RecipientRow } from '@/types/api'
 
 // Module configuration
@@ -122,6 +123,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const [userHasSorted, setUserHasSorted] = useState(false)  // Track if user explicitly sorted
   const [selectedRecipient, setSelectedRecipient] = useState<string | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+  // Selected extra columns state - lifted from DataTable (UX-005)
+  const [selectedColumns, setSelectedColumns] = useState<string[]>(() => getStoredColumns(moduleId))
 
   // Initialize filters from URL params
   const [filters, setFilters] = useState<FilterValues>(() => ({
@@ -131,11 +134,13 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     maxBedrag: searchParams.get('max_bedrag') ? parseFloat(searchParams.get('max_bedrag')!) : null,
   }))
 
-  // Reset sort state when switching modules (UX-002: randomize on module switch)
+  // Reset state when switching modules (UX-002: randomize on module switch)
   useEffect(() => {
     setSortBy('random')
     setUserHasSorted(false)
     setPage(1)
+    // Reset selected columns to defaults for the new module (UX-005)
+    setSelectedColumns(getStoredColumns(moduleId))
   }, [moduleId])
 
   // Update URL when filters change
@@ -177,6 +182,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           min_bedrag: filters.minBedrag ?? undefined,
           max_bedrag: filters.maxBedrag ?? undefined,
           min_years: minYears,
+          // Include selected extra columns (UX-005)
+          columns: selectedColumns.length > 0 ? selectedColumns : undefined,
         }
 
         // Add module-specific filters (arrays for multiselect, strings for text)
@@ -207,7 +214,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     return () => {
       abortController.abort()
     }
-  }, [moduleId, page, perPage, sortBy, sortOrder, filters, isDefaultView, userHasSorted])
+  }, [moduleId, page, perPage, sortBy, sortOrder, filters, isDefaultView, userHasSorted, selectedColumns])
 
   const handleFilterChange = useCallback((newFilters: FilterValues) => {
     setFilters(newFilters)
@@ -324,6 +331,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             onRowClick={handleRowClick}
             renderExpandedRow={renderExpandedRow}
             moduleId={moduleId}
+            selectedColumns={selectedColumns}
+            onColumnsChange={setSelectedColumns}
           />
         </div>
       </main>

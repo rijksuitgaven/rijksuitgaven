@@ -101,11 +101,14 @@ def _init_allowed_identifiers():
             ALLOWED_COLUMNS.add(field)
         for field in config.get("filter_fields", []):
             ALLOWED_COLUMNS.add(field)
+        for field in config.get("extra_columns", []):
+            ALLOWED_COLUMNS.add(field)
 
     # Add standard columns
     ALLOWED_COLUMNS.update([
         "totaal", "row_count", "random_order", "modules", "source",
         "ontvanger", "primary_value", "module",
+        "trefwoorden", "sectoren", "regio", "omschrijving", "organisatie",
     ])
 
     # Add year columns
@@ -143,6 +146,7 @@ MODULE_CONFIG = {
         "amount_multiplier": 1000,  # Source data in ×1000, normalize to absolute euros
         "search_fields": ["ontvanger", "regeling", "instrument"],
         "filter_fields": ["begrotingsnaam", "artikel", "artikelonderdeel", "instrument", "regeling"],
+        "extra_columns": ["regeling", "artikel", "artikelonderdeel", "instrument", "begrotingsnaam", "detail"],
     },
     "apparaat": {
         "table": "apparaat",
@@ -153,6 +157,7 @@ MODULE_CONFIG = {
         "amount_multiplier": 1000,  # Source data in ×1000, normalize to absolute euros
         "search_fields": ["kostensoort", "begrotingsnaam"],
         "filter_fields": ["begrotingsnaam", "artikel", "detail"],
+        "extra_columns": ["kostensoort", "artikel", "begrotingsnaam", "detail"],
     },
     "inkoop": {
         "table": "inkoop",
@@ -163,6 +168,7 @@ MODULE_CONFIG = {
         "amount_multiplier": 1,  # Already in absolute euros
         "search_fields": ["leverancier", "ministerie", "categorie"],
         "filter_fields": ["ministerie", "categorie", "staffel"],
+        "extra_columns": ["ministerie", "categorie", "staffel"],
     },
     "provincie": {
         "table": "provincie",
@@ -173,6 +179,7 @@ MODULE_CONFIG = {
         "amount_multiplier": 1,  # Already in absolute euros
         "search_fields": ["ontvanger", "omschrijving"],
         "filter_fields": ["provincie"],
+        "extra_columns": ["provincie", "omschrijving"],
     },
     "gemeente": {
         "table": "gemeente",
@@ -183,6 +190,7 @@ MODULE_CONFIG = {
         "amount_multiplier": 1,  # Already in absolute euros
         "search_fields": ["ontvanger", "omschrijving", "regeling"],
         "filter_fields": ["gemeente", "beleidsterrein"],
+        "extra_columns": ["gemeente", "beleidsterrein", "regeling", "omschrijving"],
     },
     "publiek": {
         "table": "publiek",
@@ -193,6 +201,7 @@ MODULE_CONFIG = {
         "amount_multiplier": 1,  # Already in absolute euros
         "search_fields": ["ontvanger", "omschrijving", "regeling"],
         "filter_fields": ["source", "regeling"],
+        "extra_columns": ["source", "regeling", "trefwoorden", "sectoren", "regio"],
     },
 }
 
@@ -216,6 +225,7 @@ async def get_module_data(
     offset: int = 0,
     min_years: Optional[int] = None,  # Filter for recipients with data in X+ years
     filter_fields: Optional[dict[str, list[str]]] = None,  # Multi-select filters
+    columns: Optional[list[str]] = None,  # Extra columns to return (max 2)
 ) -> tuple[list[dict], int]:
     """
     Get aggregated data for a module.
@@ -223,6 +233,10 @@ async def get_module_data(
     Uses pre-computed materialized view for fast queries when no filters.
     Falls back to source table aggregation when filter_fields are applied
     (aggregated views don't have filter columns like provincie/gemeente).
+
+    Args:
+        columns: Optional list of extra column names to include (max 2).
+                 Values are fetched from the source table for each aggregated row.
 
     Returns:
         Tuple of (rows, total_count)
@@ -233,11 +247,23 @@ async def get_module_data(
     config = MODULE_CONFIG[module]
     primary = config["primary_field"]
 
+    # Validate requested columns against allowed extra_columns for this module
+    valid_columns: list[str] = []
+    if columns:
+        allowed_extra = config.get("extra_columns", [])
+        for col in columns[:2]:  # Max 2 columns
+            if col in allowed_extra:
+                valid_columns.append(col)
+            else:
+                logger.warning(f"Invalid extra column '{col}' requested for module '{module}'")
+
     # Use aggregated view for fast queries UNLESS filter_fields are provided
     # (filter_fields like provincie/gemeente aren't in aggregated views)
+    # Also use source table when extra columns are requested
     use_aggregated = (
         config.get("aggregated_table") is not None
         and not filter_fields  # Must use source table for filter fields
+        and not valid_columns  # Must use source table for extra columns
     )
 
     if use_aggregated:
@@ -266,6 +292,7 @@ async def get_module_data(
             offset=offset,
             min_years=min_years,
             filter_fields=filter_fields,
+            columns=valid_columns,
         )
 
 
@@ -421,8 +448,9 @@ async def _get_from_source_table(
     offset: int = 0,
     min_years: Optional[int] = None,
     filter_fields: Optional[dict[str, list[str]]] = None,  # Multi-select filters
+    columns: Optional[list[str]] = None,  # Extra columns to return
 ) -> tuple[list[dict], int]:
-    """Slow path: aggregate from source table (needed for filter fields)."""
+    """Slow path: aggregate from source table (needed for filter fields and extra columns)."""
     table = config["table"]
     primary = config["primary_field"]
     year_field = config["year_field"]
@@ -435,6 +463,17 @@ async def _get_from_source_table(
         f"COALESCE(SUM(CASE WHEN {year_field} = {year} THEN {amount_field} END), 0) * {multiplier} AS \"y{year}\""
         for year in YEARS
     ])
+
+    # Build extra columns selection (MODE() returns most frequent value per group)
+    extra_columns_select = ""
+    if columns:
+        # Validate columns are in allowed set for security
+        for col in columns:
+            validate_identifier(col, ALLOWED_COLUMNS, "column")
+        extra_columns_select = ", " + ", ".join([
+            f"MODE() WITHIN GROUP (ORDER BY {col}) AS extra_{col}"
+            for col in columns
+        ])
 
     # Build WHERE clause
     where_clauses = []
@@ -532,7 +571,7 @@ async def _get_from_source_table(
             {primary} AS primary_value,
             {year_columns},
             COALESCE(SUM({amount_field}), 0) * {multiplier} AS totaal,
-            COUNT(*) AS row_count{relevance_select}
+            COUNT(*) AS row_count{extra_columns_select}{relevance_select}
         FROM {table}
         {where_sql}
         GROUP BY {primary}
@@ -561,12 +600,19 @@ async def _get_from_source_table(
     result = []
     for row in rows:
         years_dict = {year: int(row.get(f"y{year}", 0) or 0) for year in YEARS}
-        result.append({
+        row_data = {
             "primary_value": row["primary_value"],
             "years": years_dict,
             "totaal": int(row["totaal"] or 0),
             "row_count": row["row_count"],
-        })
+        }
+        # Add extra columns if requested
+        if columns:
+            extra_cols = {}
+            for col in columns:
+                extra_cols[col] = row.get(f"extra_{col}")
+            row_data["extra_columns"] = extra_cols
+        result.append(row_data)
 
     return result, total or 0
 

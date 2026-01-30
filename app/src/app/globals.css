@@ -59,6 +59,7 @@
   /* Status Colors */
   --success: #85C97D;
   --warning: #FFC857;
+  --warning-bg: rgba(255, 200, 87, 0.15);
   --error: #E30101;
 
   /* Trend Anomaly (10%+ change) */

@@ -1,29 +1,33 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { X, Check, Columns3 } from 'lucide-react'
+import { X, Check, Columns3, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+// Maximum number of columns that can be selected (UX-005)
+export const MAX_SELECTED_COLUMNS = 2
+
 // Available columns per module (UX-005)
+// Note: Max 2 columns can be selected at a time (enforced by MAX_SELECTED_COLUMNS)
+// Default columns are marked - only first 2 defaults will be used
 export const MODULE_COLUMNS: Record<string, { value: string; label: string; default: boolean }[]> = {
   instrumenten: [
     { value: 'regeling', label: 'Regeling', default: true },
-    { value: 'artikel', label: 'Artikel', default: true },
-    { value: 'artikelonderdeel', label: 'Artikelonderdeel', default: false },
     { value: 'instrument', label: 'Instrument', default: true },
+    { value: 'artikel', label: 'Artikel', default: false },
+    { value: 'artikelonderdeel', label: 'Artikelonderdeel', default: false },
     { value: 'begrotingsnaam', label: 'Begrotingsnaam', default: false },
     { value: 'detail', label: 'Detail', default: false },
   ],
   apparaat: [
-    { value: 'kostensoort', label: 'Kostensoort', default: true },
-    { value: 'artikel', label: 'Artikel', default: true },
-    { value: 'begrotingsnaam', label: 'Begrotingsnaam', default: false },
+    { value: 'begrotingsnaam', label: 'Begrotingsnaam', default: true },
     { value: 'detail', label: 'Detail', default: true },
+    { value: 'artikel', label: 'Artikel', default: false },
   ],
   inkoop: [
     { value: 'ministerie', label: 'Ministerie', default: true },
     { value: 'categorie', label: 'Categorie', default: true },
-    { value: 'staffel', label: 'Staffel', default: true },
+    { value: 'staffel', label: 'Staffel', default: false },
   ],
   provincie: [
     { value: 'provincie', label: 'Provincie', default: true },
@@ -31,30 +35,32 @@ export const MODULE_COLUMNS: Record<string, { value: string; label: string; defa
   ],
   gemeente: [
     { value: 'gemeente', label: 'Gemeente', default: true },
+    { value: 'omschrijving', label: 'Omschrijving', default: true },
     { value: 'beleidsterrein', label: 'Beleidsterrein', default: false },
     { value: 'regeling', label: 'Regeling', default: false },
-    { value: 'omschrijving', label: 'Omschrijving', default: true },
   ],
   publiek: [
-    { value: 'organisatie', label: 'Organisatie', default: true },
-    { value: 'regeling', label: 'Regeling', default: false },
+    { value: 'source', label: 'Organisatie', default: true },
+    { value: 'regeling', label: 'Regeling', default: true },
     { value: 'trefwoorden', label: 'Trefwoorden', default: false },
     { value: 'sectoren', label: 'Sectoren', default: false },
     { value: 'regio', label: 'Regio', default: false },
   ],
   integraal: [
-    { value: 'modules', label: 'Modules', default: true },
+    // Integraal doesn't have extra columns - modules are shown inline
   ],
 }
 
-// Get stored preferences from localStorage
+// Get stored preferences from localStorage (max 2 columns)
 export function getStoredColumns(moduleId: string): string[] {
   if (typeof window === 'undefined') return getDefaultColumns(moduleId)
 
   try {
     const stored = localStorage.getItem(`columns-${moduleId}`)
     if (stored) {
-      return JSON.parse(stored)
+      const parsed = JSON.parse(stored) as string[]
+      // Enforce max columns limit even for stored preferences
+      return parsed.slice(0, MAX_SELECTED_COLUMNS)
     }
   } catch {
     // Ignore parse errors
@@ -62,10 +68,10 @@ export function getStoredColumns(moduleId: string): string[] {
   return getDefaultColumns(moduleId)
 }
 
-// Get default columns for a module
+// Get default columns for a module (max 2)
 export function getDefaultColumns(moduleId: string): string[] {
   const columns = MODULE_COLUMNS[moduleId] || []
-  return columns.filter(c => c.default).map(c => c.value)
+  return columns.filter(c => c.default).map(c => c.value).slice(0, MAX_SELECTED_COLUMNS)
 }
 
 // Store preferences in localStorage
@@ -87,9 +93,17 @@ interface ColumnSelectorProps {
 export function ColumnSelector({ moduleId, selectedColumns, onColumnsChange }: ColumnSelectorProps) {
   const [isOpen, setIsOpen] = useState(false)
   const availableColumns = MODULE_COLUMNS[moduleId] || []
+  const isAtMaxColumns = selectedColumns.length >= MAX_SELECTED_COLUMNS
 
   const handleToggle = useCallback((columnValue: string) => {
-    const newColumns = selectedColumns.includes(columnValue)
+    const isCurrentlySelected = selectedColumns.includes(columnValue)
+
+    // If trying to add and already at max, don't allow
+    if (!isCurrentlySelected && selectedColumns.length >= MAX_SELECTED_COLUMNS) {
+      return
+    }
+
+    const newColumns = isCurrentlySelected
       ? selectedColumns.filter(c => c !== columnValue)
       : [...selectedColumns, columnValue]
 
@@ -149,13 +163,27 @@ export function ColumnSelector({ moduleId, selectedColumns, onColumnsChange }: C
             </div>
 
             <div className="p-2 max-h-64 overflow-y-auto">
+              {/* Max columns warning */}
+              {isAtMaxColumns && (
+                <div className="flex items-center gap-2 px-3 py-2 mb-2 bg-[var(--warning-bg)] text-[var(--warning)] rounded text-xs">
+                  <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                  <span>Max {MAX_SELECTED_COLUMNS} kolommen</span>
+                </div>
+              )}
               {availableColumns.map((column) => {
                 const isSelected = selectedColumns.includes(column.value)
+                const isDisabled = !isSelected && isAtMaxColumns
                 return (
                   <button
                     key={column.value}
                     onClick={() => handleToggle(column.value)}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded hover:bg-[var(--gray-light)] transition-colors text-left"
+                    disabled={isDisabled}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-3 py-2 rounded transition-colors text-left",
+                      isDisabled
+                        ? 'opacity-50 cursor-not-allowed'
+                        : 'hover:bg-[var(--gray-light)]'
+                    )}
                   >
                     <div className={cn(
                       'w-4 h-4 rounded border flex items-center justify-center',

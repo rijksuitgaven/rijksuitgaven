@@ -15,6 +15,7 @@ export interface ApiRecipientRow {
   totaal: number
   row_count: number
   modules: string[] | null  // For cross-module indicator
+  extra_columns?: Record<string, string | null>  // Dynamic columns (max 2)
 }
 
 // Internal row format - years as array (easier for iteration)
@@ -24,6 +25,7 @@ export interface RecipientRow {
   total: number
   row_count: number
   sources: string[] | null  // Renamed from modules for clarity
+  extraColumns?: Record<string, string | null>  // Dynamic columns (max 2)
 }
 
 export interface YearAmount {
@@ -86,6 +88,7 @@ export interface ModuleQueryParams {
   min_bedrag?: number
   max_bedrag?: number
   min_years?: number  // Filter recipients with data in X+ years (UX-002)
+  columns?: string[]  // Dynamic extra columns (max 2, UX-005)
   // Multi-select filters (arrays)
   provincie?: string[]  // For provincie module
   gemeente?: string[]   // For gemeente module

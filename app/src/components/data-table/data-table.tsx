@@ -22,7 +22,7 @@ import {
   formatPercentage,
   getAmountFontClass,
 } from '@/lib/format'
-import { ColumnSelector, getStoredColumns } from '@/components/column-selector'
+import { ColumnSelector, MODULE_COLUMNS } from '@/components/column-selector'
 import type { RecipientRow, YearAmount } from '@/types/api'
 
 // Collapsible year range (2016-2020 by default)
@@ -54,24 +54,45 @@ interface DataTableProps {
   onRowClick?: (primaryValue: string) => void // Click on recipient name to open detail panel
   renderExpandedRow?: (row: RecipientRow) => React.ReactNode
   moduleId?: string // For export filename
+  selectedColumns?: string[]  // Selected extra columns (UX-005)
+  onColumnsChange?: (columns: string[]) => void  // Callback for column selection changes
 }
 
 /**
  * Generate CSV content from data rows
  * Formats data with semicolon separator for Dutch Excel compatibility
  */
-function generateCSV(data: RecipientRow[], availableYears: number[], primaryColumnName: string): string {
-  // Header row
-  const headers = [primaryColumnName, ...availableYears.map(String), 'Totaal']
+function generateCSV(
+  data: RecipientRow[],
+  availableYears: number[],
+  primaryColumnName: string,
+  selectedColumns: string[] = [],
+  moduleId: string = ''
+): string {
+  // Get column labels for selected extra columns
+  const moduleColumns = MODULE_COLUMNS[moduleId] || []
+  const extraColumnLabels = selectedColumns.map(colKey => {
+    const config = moduleColumns.find(c => c.value === colKey)
+    return config?.label || colKey
+  })
+
+  // Header row: Primary, Extra Columns, Years, Totaal
+  const headers = [primaryColumnName, ...extraColumnLabels, ...availableYears.map(String), 'Totaal']
   const headerRow = headers.map(h => `"${h}"`).join(';')
 
   // Data rows
   const dataRows = data.slice(0, MAX_EXPORT_ROWS).map(row => {
+    // Extra column values
+    const extraValues = selectedColumns.map(colKey => {
+      const value = row.extraColumns?.[colKey] || ''
+      return `"${value.replace(/"/g, '""')}"`
+    })
+
     const yearAmounts = availableYears.map(year => {
       const amount = row.years.find(y => y.year === year)?.amount ?? 0
       return amount.toFixed(2)
     })
-    return [`"${row.primary_value.replace(/"/g, '""')}"`, ...yearAmounts, row.total.toFixed(2)].join(';')
+    return [`"${row.primary_value.replace(/"/g, '""')}"`, ...extraValues, ...yearAmounts, row.total.toFixed(2)].join(';')
   })
 
   return [headerRow, ...dataRows].join('\n')
@@ -97,15 +118,32 @@ function downloadCSV(content: string, filename: string) {
  * Generate and download XLS file
  * Uses same data structure as CSV export
  */
-function downloadXLS(data: RecipientRow[], availableYears: number[], primaryColumnName: string, filename: string) {
-  // Build worksheet data
-  const headers = [primaryColumnName, ...availableYears.map(String), 'Totaal']
+function downloadXLS(
+  data: RecipientRow[],
+  availableYears: number[],
+  primaryColumnName: string,
+  filename: string,
+  selectedColumns: string[] = [],
+  moduleId: string = ''
+) {
+  // Get column labels for selected extra columns
+  const moduleColumns = MODULE_COLUMNS[moduleId] || []
+  const extraColumnLabels = selectedColumns.map(colKey => {
+    const config = moduleColumns.find(c => c.value === colKey)
+    return config?.label || colKey
+  })
+
+  // Build worksheet data: Primary, Extra Columns, Years, Totaal
+  const headers = [primaryColumnName, ...extraColumnLabels, ...availableYears.map(String), 'Totaal']
 
   const rows = data.slice(0, MAX_EXPORT_ROWS).map(row => {
+    // Extra column values
+    const extraValues = selectedColumns.map(colKey => row.extraColumns?.[colKey] || '')
+
     const yearAmounts = availableYears.map(year => {
       return row.years.find(y => y.year === year)?.amount ?? 0
     })
-    return [row.primary_value, ...yearAmounts, row.total]
+    return [row.primary_value, ...extraValues, ...yearAmounts, row.total]
   })
 
   // Create worksheet
@@ -115,6 +153,7 @@ function downloadXLS(data: RecipientRow[], availableYears: number[], primaryColu
   // Set column widths
   ws['!cols'] = [
     { wch: 40 }, // Primary column
+    ...extraColumnLabels.map(() => ({ wch: 20 })), // Extra columns
     ...availableYears.map(() => ({ wch: 12 })), // Year columns
     { wch: 14 }, // Totaal
   ]
@@ -207,13 +246,14 @@ export function DataTable({
   onRowClick,
   renderExpandedRow,
   moduleId = 'export',
+  selectedColumns = [],
+  onColumnsChange,
 }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [yearsExpanded, setYearsExpanded] = useState(false)
   const [isExportingCSV, setIsExportingCSV] = useState(false)
   const [isExportingXLS, setIsExportingXLS] = useState(false)
-  const [selectedColumns, setSelectedColumns] = useState<string[]>(() => getStoredColumns(moduleId))
 
   // CSV Export handler
   const handleExportCSV = () => {
@@ -221,7 +261,7 @@ export function DataTable({
     setIsExportingCSV(true)
 
     try {
-      const csvContent = generateCSV(data, availableYears, primaryColumnName)
+      const csvContent = generateCSV(data, availableYears, primaryColumnName, selectedColumns, moduleId)
       const timestamp = new Date().toISOString().split('T')[0]
       const filename = `rijksuitgaven-${moduleId}-${timestamp}.csv`
       downloadCSV(csvContent, filename)
@@ -238,7 +278,7 @@ export function DataTable({
     try {
       const timestamp = new Date().toISOString().split('T')[0]
       const filename = `rijksuitgaven-${moduleId}-${timestamp}.xlsx`
-      downloadXLS(data, availableYears, primaryColumnName, filename)
+      downloadXLS(data, availableYears, primaryColumnName, filename, selectedColumns, moduleId)
     } finally {
       setIsExportingXLS(false)
     }
@@ -309,6 +349,29 @@ export function DataTable({
         meta: { sticky: true }, // Mark as sticky column
       },
     ]
+
+    // Dynamic extra columns (UX-005) - inserted after primary, before year columns
+    const moduleColumns = MODULE_COLUMNS[moduleId] || []
+    selectedColumns.forEach((colKey) => {
+      const config = moduleColumns.find(c => c.value === colKey)
+      if (config) {
+        cols.push({
+          id: `extra-${colKey}`,
+          header: () => (
+            <span className="text-sm font-semibold text-white">{config.label}</span>
+          ),
+          cell: ({ row }) => {
+            const value = row.original.extraColumns?.[colKey]
+            return (
+              <div className="text-sm text-[var(--navy-dark)] truncate max-w-[150px]" title={value || undefined}>
+                {value || '-'}
+              </div>
+            )
+          },
+          size: 150,
+        })
+      }
+    })
 
     // Collapsed years column (2016-2020)
     if (!yearsExpanded && collapsedYears.length > 0) {
@@ -411,7 +474,7 @@ export function DataTable({
     })
 
     return cols
-  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onRowClick])
+  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onRowClick, selectedColumns, moduleId])
 
   const table = useReactTable({
     data,
@@ -455,11 +518,13 @@ export function DataTable({
         {/* Right: Kolommen + CSV Export */}
         <div className="flex items-center gap-2">
           {/* Column selector (UX-005) */}
-          <ColumnSelector
-            moduleId={moduleId}
-            selectedColumns={selectedColumns}
-            onColumnsChange={setSelectedColumns}
-          />
+          {onColumnsChange && (
+            <ColumnSelector
+              moduleId={moduleId}
+              selectedColumns={selectedColumns}
+              onColumnsChange={onColumnsChange}
+            />
+          )}
 
           {/* CSV Export button */}
           <button

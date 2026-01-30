@@ -1035,7 +1035,15 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - `012-enable-rls-missing-tables.sql`
 - `013-security-hardening.sql`
 
+**Dynamic Column Selection (UX-005) - 2026-01-30 Evening:**
+- Users can select up to 2 extra columns to display in table
+- Columns appear between primary column and year columns
+- Backend: MODE() aggregation returns most frequent value per group
+- Frontend: Max 2 enforcement, localStorage persistence, export support
+- Status: Frontend complete, backend needs Railway deployment
+
 **Next Steps:**
-1. Week 6 - User Auth (Magic Link, user migration)
-2. Overzicht page
-3. Beta testing preparation
+1. Deploy backend changes (columns feature)
+2. Week 6 - User Auth (Magic Link, user migration)
+3. Overzicht page
+4. Beta testing preparation
