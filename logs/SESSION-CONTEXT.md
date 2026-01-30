@@ -79,20 +79,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **docs/VERSIONING.md** ⭐ CREATED (2026-01-30)
+1. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-01-30)
+   Added field matches section (OOK GEVONDEN IN) to autocomplete
+
+2. **backend/app/services/modules.py** ⭐ UPDATED (2026-01-30)
+   Added field_matches search, matched_field detection
+
+3. **app/src/components/column-selector/column-selector.tsx** ⭐ UPDATED (2026-01-30)
+   Removed badge, set default columns per module
+
+4. **backend/app/api/v1/modules.py** ⭐ UPDATED (2026-01-30)
+   Added FieldMatchResult model, matched_field/matched_value fields
+
+5. **docs/VERSIONING.md** ⭐ CREATED (2026-01-30)
    Complete versioning structure V1-V7 with Rijksnetwerken
-
-2. **docs/INFRASTRUCTURE-ROADMAP.md** ⭐ CREATED (2026-01-30)
-   Infrastructure needs per version (YAGNI tracking)
-
-3. **docs/PRODUCT-TIERS.md** ⭐ CREATED (2026-01-30)
-   Product tiers with pricing (draft for discussion)
-
-4. **docs/AUDIENCES.md** ⭐ CREATED (2026-01-30)
-   7 target audience segments with personas
-
-5. **02-requirements/research-mode-vision.md** ⭐ UPDATED (2026-01-30)
-   V2.0 → V3, updated all version references
 
 ---
 
@@ -1042,8 +1042,37 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Frontend: Max 2 enforcement, localStorage persistence, export support
 - Status: Frontend complete, backend needs Railway deployment
 
+**Dynamic Match Column - 2026-01-30 Session 3:**
+- When searching: shows "Match" column with "Field: Value" showing which field matched
+- When NOT searching: shows user-selected extra columns (or defaults)
+- Backend: `matched_field` and `matched_value` in API response
+- Uses SQL CASE expressions to detect which field matched the search
+
+**Autocomplete Field Matches - 2026-01-30 Session 4:**
+- Three-section autocomplete: Ontvangers → Ook gevonden in → Ook in andere modules
+- Field matches show non-primary search fields (regeling, instrument, etc.)
+- Removed column count badge from Kolommen button
+- Set proper default columns per module
+
+**Default Columns Per Module:**
+| Module | Default Columns |
+|--------|-----------------|
+| Instrumenten | Artikel, Regeling |
+| Apparaat | Artikel, Detail |
+| Inkoop | Categorie, Staffel |
+| Provincie | Provincie, Omschrijving |
+| Gemeente | Gemeente, Omschrijving |
+| Publiek | Organisatie |
+| Integraal | (none) |
+
+**Pending: Materialized View Speed Fix**
+- Default columns cause slower queries (source table aggregation vs materialized views)
+- Need to add default columns to materialized views for speed improvement
+- User approved, to be done after documentation
+
 **Next Steps:**
-1. Deploy backend changes (columns feature)
-2. Week 6 - User Auth (Magic Link, user migration)
-3. Overzicht page
-4. Beta testing preparation
+1. Create materialized view migration for speed fix (columns)
+2. Deploy backend changes
+3. Week 6 - User Auth (Magic Link, user migration)
+4. Overzicht page
+5. Beta testing preparation
