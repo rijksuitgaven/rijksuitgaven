@@ -140,7 +140,7 @@ MODULE_CONFIG = {
         "year_field": "begrotingsjaar",
         "amount_field": "bedrag",
         "amount_multiplier": 1000,  # Source data in ×1000, normalize to absolute euros
-        "search_fields": ["ontvanger", "regeling", "instrument"],
+        "search_fields": ["ontvanger", "regeling", "instrument", "begrotingsnaam", "artikel", "artikelonderdeel", "detail"],
         "filter_fields": ["begrotingsnaam", "artikel", "artikelonderdeel", "instrument", "regeling"],
         "extra_columns": ["regeling", "artikel", "artikelonderdeel", "instrument", "begrotingsnaam", "detail"],
         # Columns available in aggregated view (default columns for speed)
@@ -153,7 +153,7 @@ MODULE_CONFIG = {
         "year_field": "begrotingsjaar",
         "amount_field": "bedrag",
         "amount_multiplier": 1000,  # Source data in ×1000, normalize to absolute euros
-        "search_fields": ["kostensoort", "begrotingsnaam"],
+        "search_fields": ["kostensoort", "begrotingsnaam", "artikel", "detail"],
         "filter_fields": ["begrotingsnaam", "artikel", "detail"],
         "extra_columns": ["kostensoort", "artikel", "begrotingsnaam", "detail"],
         # Columns available in aggregated view (default columns for speed)
@@ -192,7 +192,7 @@ MODULE_CONFIG = {
         "year_field": "jaar",
         "amount_field": "bedrag",
         "amount_multiplier": 1,  # Already in absolute euros
-        "search_fields": ["ontvanger", "omschrijving", "regeling"],
+        "search_fields": ["ontvanger", "omschrijving", "regeling", "beleidsterrein"],
         "filter_fields": ["gemeente", "beleidsterrein"],
         "extra_columns": ["gemeente", "beleidsterrein", "regeling", "omschrijving"],
         # Columns available in aggregated view (default columns for speed)
@@ -205,9 +205,9 @@ MODULE_CONFIG = {
         "year_field": "jaar",
         "amount_field": "bedrag",
         "amount_multiplier": 1,  # Already in absolute euros
-        "search_fields": ["ontvanger", "omschrijving", "regeling"],
+        "search_fields": ["ontvanger", "omschrijving", "regeling", "trefwoorden", "sectoren"],
         "filter_fields": ["source", "regeling"],
-        "extra_columns": ["source", "regeling", "trefwoorden", "sectoren", "regio"],
+        "extra_columns": ["source", "regeling", "trefwoorden", "sectoren", "regio", "staffel", "onderdeel"],
         # Columns available in aggregated view (default columns for speed)
         "view_columns": ["source"],
     },

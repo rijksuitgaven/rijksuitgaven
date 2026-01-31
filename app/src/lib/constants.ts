@@ -28,20 +28,27 @@ export const ALL_MODULES: string[] = [
 // Type for module names (for stricter typing when needed)
 export type ModuleName = 'instrumenten' | 'apparaat' | 'inkoop' | 'provincie' | 'gemeente' | 'publiek' | 'integraal'
 
-// Field labels for detail views
+// Field labels for detail views and Match column
 export const FIELD_LABELS: Record<string, string> = {
   regeling: 'Regeling',
   artikel: 'Artikel',
+  artikelonderdeel: 'Artikelonderdeel',
   begrotingsnaam: 'Begrotingsnaam',
   instrument: 'Instrument',
+  detail: 'Detail',
   kostensoort: 'Kostensoort',
   ministerie: 'Ministerie',
   categorie: 'Categorie',
+  staffel: 'Staffel',
   provincie: 'Provincie',
   gemeente: 'Gemeente',
   beleidsterrein: 'Beleidsterrein',
   omschrijving: 'Omschrijving',
-  source: 'Bron',
+  source: 'Organisatie',
+  trefwoorden: 'Trefwoorden',
+  sectoren: 'Sectoren',
+  regio: 'Regio',
+  onderdeel: 'Onderdeel',
 }
 
 // Available years in the data
