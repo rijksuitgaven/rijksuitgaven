@@ -515,6 +515,11 @@ async def _typesense_get_primary_keys(
 
     data = await _typesense_search(collection, params)
 
+    # Log Typesense response for debugging
+    found_count = data.get("found", 0)
+    grouped_count = len(data.get("grouped_hits", []))
+    logger.info(f"Typesense search '{search}' in {collection}: found={found_count}, groups={grouped_count}, query_by={query_by}")
+
     # Extract primary values from grouped hits
     primary_keys = []
     for group in data.get("grouped_hits", []):
