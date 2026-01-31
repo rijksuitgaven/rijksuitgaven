@@ -91,3 +91,47 @@ async def check_connection() -> bool:
         return result == 1
     except Exception:
         return False
+
+
+import re
+
+def normalize_recipient_python(name: str | None) -> str:
+    """
+    Python equivalent of PostgreSQL normalize_recipient() function.
+
+    Normalizes recipient names for matching:
+    - Uppercase
+    - Remove B.V./BV, N.V./NV suffixes/prefixes
+    - Collapse multiple spaces
+    - Trim
+
+    This must match the SQL function exactly for hybrid lookups to work.
+    """
+    if not name:
+        return ""
+
+    # Uppercase and trim
+    result = name.upper().strip()
+
+    # Multiple spaces → single space
+    result = re.sub(r'\s+', ' ', result)
+
+    # Trailing dots
+    result = re.sub(r'\.+$', '', result)
+
+    # " B.V." or " B.V" at end
+    result = re.sub(r' B\.V\.?$', '', result)
+
+    # " BV" at end
+    result = re.sub(r' BV\.?$', '', result)
+
+    # " N.V." at end
+    result = re.sub(r' N\.V\.?$', '', result)
+
+    # " NV" at end
+    result = re.sub(r' NV\.?$', '', result)
+
+    # "N.V. " at start
+    result = re.sub(r'^N\.V\.? ', '', result)
+
+    return result.strip()

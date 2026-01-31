@@ -5,7 +5,7 @@
 **Region:** eu-west-1
 **Created:** 2026-01-21
 **Data Migrated:** 2026-01-23
-**Last Updated:** 2026-01-26 (entity resolution, source table indexes, pg_trgm extension)
+**Last Updated:** 2026-01-31 (materialized view columns expanded for search)
 
 ---
 
@@ -330,10 +330,24 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY universal_search;
 
 | Column | Type | Description |
 |--------|------|-------------|
-| [primary_field] | TEXT | ontvanger, kostensoort, or leverancier |
+| ontvanger_key | TEXT | Normalized primary key for lookups |
+| [primary_field] | TEXT | ontvanger, kostensoort, or leverancier (display name) |
 | "2016" - "2024" | BIGINT | Yearly totals in absolute euros |
 | totaal | BIGINT | Grand total across all years |
 | row_count | BIGINT | Number of source rows aggregated |
+| years_with_data | INTEGER | Count of years with non-zero amounts (for min_years filter) |
+| random_order | FLOAT | Pre-computed random value for fast random sorting |
+
+**Module-specific columns (for search and display):**
+
+| View | Extra Columns |
+|------|---------------|
+| instrumenten_aggregated | artikel, regeling, instrument, begrotingsnaam |
+| apparaat_aggregated | artikel, detail |
+| inkoop_aggregated | categorie, staffel |
+| provincie_aggregated | provincie, omschrijving |
+| gemeente_aggregated | gemeente, omschrijving |
+| publiek_aggregated | organisatie |
 
 **Amount Normalization:**
 - `instrumenten_aggregated` and `apparaat_aggregated`: Amounts multiplied by 1000 (source data in ×1000)

@@ -66,6 +66,90 @@ def build_search_condition(field: str, param_idx: int, search: str) -> tuple[str
         f"\\y{escaped}\\y"
     )
 
+
+async def _lookup_matched_fields(
+    table: str,
+    primary_field: str,
+    search_fields: list[str],
+    primary_values: list[str],
+    search: str,
+) -> dict[str, tuple[str | None, str | None]]:
+    """
+    Hybrid lookup: find which field matched for each primary value.
+
+    This is called AFTER the aggregated view query to enrich results with
+    matchedField/matchedValue without the expensive GROUP BY on full table.
+
+    OPTIMIZATION: Only looks up fields OTHER than primary (if primary matched,
+    user already sees the match in the name - no need for "Gevonden in").
+
+    Args:
+        table: Source table name
+        primary_field: Primary column (e.g., 'ontvanger')
+        search_fields: List of searchable fields
+        primary_values: List of primary values to lookup (from aggregated view results)
+        search: Search term
+
+    Returns:
+        Dict mapping primary_value (normalized) to (matched_field, matched_value) tuple
+    """
+    if not primary_values or not search:
+        return {}
+
+    # Non-primary search fields only (we skip primary - already visible in results)
+    other_fields = [f for f in search_fields if f != primary_field]
+    if not other_fields:
+        return {}  # No other fields to search
+
+    # Build search pattern
+    _, pattern = build_search_condition(other_fields[0], 1, search)
+
+    # Build CASE expressions to find first matching field and its value
+    # Priority order: same as search_fields order
+    case_field = "CASE\n"
+    case_value = "CASE\n"
+    for field in other_fields:
+        case_field += f"            WHEN {field} ~* $1 THEN '{field}'\n"
+        case_value += f"            WHEN {field} ~* $1 THEN {field}\n"
+    case_field += "            ELSE NULL\n        END"
+    case_value += "            ELSE NULL\n        END"
+
+    # Build OR conditions for non-primary fields
+    or_conditions = " OR ".join([f"{f} ~* $1" for f in other_fields])
+
+    # Query: find ONE matching row per primary value where a non-primary field matches
+    # Uses LIMIT per primary_value via lateral join for efficiency
+    # This is much faster than DISTINCT ON with large IN clause
+    query = f"""
+        WITH primary_list AS (
+            SELECT unnest($2::text[]) AS pv
+        )
+        SELECT
+            pl.pv AS key,
+            {case_field} AS matched_field,
+            {case_value} AS matched_value
+        FROM primary_list pl
+        CROSS JOIN LATERAL (
+            SELECT *
+            FROM {table}
+            WHERE UPPER({primary_field}) = pl.pv
+              AND ({or_conditions})
+            LIMIT 1
+        ) t
+    """
+
+    # Execute query - pass pattern and array of primary values
+    rows = await fetch_all(query, pattern, primary_values)
+
+    # Build result dict
+    result = {}
+    for row in rows:
+        key = row["key"]
+        result[key] = (row["matched_field"], row["matched_value"])
+
+    return result
+
+
 # =============================================================================
 # Security: Identifier Validation
 # =============================================================================
@@ -144,7 +228,7 @@ MODULE_CONFIG = {
         "filter_fields": ["begrotingsnaam", "artikel", "artikelonderdeel", "instrument", "regeling"],
         "extra_columns": ["regeling", "artikel", "artikelonderdeel", "instrument", "begrotingsnaam", "detail"],
         # Columns available in aggregated view (default columns for speed)
-        "view_columns": ["artikel", "regeling", "instrument"],
+        "view_columns": ["artikel", "regeling", "instrument", "begrotingsnaam"],
     },
     "apparaat": {
         "table": "apparaat",
@@ -274,6 +358,9 @@ async def get_module_data(
     # 1. Aggregated table exists
     # 2. No filter_fields (filter fields like provincie/gemeente aren't in views)
     # 3. Either no columns requested OR all columns are in the view
+    # Note: Search CAN use aggregated view (searches primary field only, fast)
+    # The "Gevonden in" feature won't work but performance is acceptable
+    # TODO: Implement hybrid approach for full search with matchedField/matchedValue
     use_aggregated = (
         config.get("aggregated_table") is not None
         and not filter_fields  # Must use source table for filter fields
@@ -339,11 +426,19 @@ async def _get_from_aggregated_view(
     params = []
     param_idx = 1
 
-    # Search filter on primary field only (aggregated view only has primary)
+    # Search filter on ALL available columns in aggregated view
     # Uses Dutch language rules to avoid false cognates (e.g., politie/politiek)
     if search:
-        condition, pattern = build_search_condition(primary, param_idx, search)
-        where_clauses.append(condition)
+        # Build OR condition for primary field + all view columns
+        view_cols = config.get("view_columns", [])
+        searchable_fields = [primary] + [col for col in view_cols if col != primary]
+
+        or_conditions = []
+        _, pattern = build_search_condition(primary, param_idx, search)  # Get pattern once
+        for field in searchable_fields:
+            or_conditions.append(f"{field} ~* ${param_idx}")
+
+        where_clauses.append(f"({' OR '.join(or_conditions)})")
         params.append(pattern)
         param_idx += 1
 
@@ -442,6 +537,23 @@ async def _get_from_aggregated_view(
     rows = await fetch_all(query, *params)
     total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
 
+    # Hybrid lookup: if searching, find which field matched for each result
+    # This enriches aggregated view results with matchedField/matchedValue
+    # OPTIMIZATION: Only lookup for non-primary field matches
+    matched_fields_map: dict[str, tuple[str | None, str | None]] = {}
+    if search and rows:
+        table = config["table"]
+        search_fields = config.get("search_fields", [primary])
+        # Pass uppercase primary values (matches UPPER() in lookup query)
+        primary_values = [row["primary_value"].upper() for row in rows]
+        matched_fields_map = await _lookup_matched_fields(
+            table=table,
+            primary_field=primary,
+            search_fields=search_fields,
+            primary_values=primary_values,
+            search=search,
+        )
+
     # Transform rows
     result = []
     for row in rows:
@@ -460,6 +572,15 @@ async def _get_from_aggregated_view(
                 # Cast to string (staffel is INTEGER, API expects strings)
                 extra_cols[col] = str(val) if val is not None else None
             row_data["extra_columns"] = extra_cols
+
+        # Add matched field info from hybrid lookup
+        if search:
+            # Use uppercase key to match the lookup (matches UPPER() in query)
+            key = row["primary_value"].upper()
+            matched = matched_fields_map.get(key, (None, None))
+            row_data["matched_field"] = matched[0]
+            row_data["matched_value"] = matched[1]
+
         result.append(row_data)
 
     return result, total or 0

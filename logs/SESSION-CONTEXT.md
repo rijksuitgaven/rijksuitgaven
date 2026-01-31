@@ -79,20 +79,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **backend/app/main.py** ⭐ UPDATED (2026-01-30)
-   Added FastAPI lifespan handler for connection pool shutdown
+1. **backend/app/services/modules.py** ⭐ UPDATED (2026-01-31)
+   Aggregated view search expansion (all view columns), hybrid lookup for matched fields
 
-2. **backend/app/api/v1/modules.py** ⭐ UPDATED (2026-01-30)
-   Fixed limit validation (le=100 → le=500), added FieldMatchResult model
+2. **backend/app/services/database.py** ⭐ UPDATED (2026-01-31)
+   Added normalize_recipient_python() for hybrid lookups
 
-3. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-01-30)
-   AbortController, removed console, aria-live for accessibility
+3. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-31)
+   "Gevonden in" column redesign (separate column, 2-line format)
 
-4. **app/src/components/search-bar/search-bar.tsx** ⭐ UPDATED (2026-01-30)
-   Removed console statements, added aria-live to loader
+4. **app/src/components/module-page/module-page.tsx** ⭐ UPDATED (2026-01-31)
+   Hydration fix for duplicate API calls, consolidated column loading
 
-5. **09-timelines/v1-sprint-plan.md** ⭐ UPDATED (2026-01-30)
-   Marked Week 6 Day 2 (UI/UX fixes) as complete
+5. **scripts/sql/018-expand-view-columns.sql** ⭐ CREATED (2026-01-31)
+   Expand instrumenten_aggregated with begrotingsnaam, instrument columns
 
 ---
 
@@ -194,6 +194,7 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/sql/014a-f-*-default-cols.sql` (6 files) | 2026-01-31 | Supabase |
 | `scripts/sql/015a-f-*-years-col.sql` (6 files) | 2026-01-31 | Supabase |
 | `scripts/sql/016-instrumenten-add-instrument-col.sql` | 2026-01-31 | Supabase |
+| `scripts/sql/018-expand-view-columns.sql` | 2026-01-31 | Supabase |
 
 ### Configuration Files
 
@@ -1088,6 +1089,28 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - ✅ Fixed abort status check in CrossModuleResults
 - ✅ Removed console statements from filter-panel, search-bar, detail-panel
 - ✅ Added aria-live and role="status" to all Loader2 components (accessibility)
+
+**2026-01-31 Session 4 - Search Improvements:**
+
+**Word-Boundary Search (Session 3):**
+- Changed from substring matching (`ILIKE %x%`) to word-boundary matching (`~* \yx\y`)
+- Fixes inflated "Ook in:" counts (e.g., "politie" no longer matches "Designpolitie")
+- Design doc: `docs/plans/2026-01-31-word-boundary-search.md`
+
+**Aggregated View Search Expansion (Session 4):**
+- Extended WHERE clause to search ALL view columns (ontvanger, artikel, regeling, instrument, begrotingsnaam)
+- Searches like "bedrijvenbeleid" now return 95,893 results (was 0)
+- Script: `scripts/sql/018-expand-view-columns.sql` executed on production
+
+**"Gevonden in" Column Redesign (Session 4):**
+- Separate column when searching (replaces extra columns)
+- Line 1: Matched value (e.g., "Bedrijvenbeleid: innovatief en duurzaam ondernemen")
+- Line 2: Field name (e.g., "artikel")
+- Hybrid lookup function for efficient matchedField/matchedValue retrieval
+
+**Module Page Hydration Fix (Session 4):**
+- Fixed duplicate API calls with isHydrated state
+- Consolidated column loading useEffects
 
 **Next Steps:**
 1. Week 6 - User Auth (Magic Link, user migration)

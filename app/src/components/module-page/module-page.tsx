@@ -126,13 +126,14 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   // Selected extra columns state - lifted from DataTable (UX-005)
   // Initialize with defaults (SSR-safe), then sync from localStorage after hydration
   const [selectedColumns, setSelectedColumns] = useState<string[]>(() => getDefaultColumns(moduleId))
+  const [isHydrated, setIsHydrated] = useState(false)
 
   // Sync columns from localStorage after hydration (SSR-safe pattern)
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- Intentional: run only on mount, moduleId change handled separately
   useEffect(() => {
     const stored = getStoredColumns(moduleId)
     setSelectedColumns(stored)
-  }, [])
+    setIsHydrated(true)
+  }, [moduleId])
 
   // Initialize filters from URL params
   const [filters, setFilters] = useState<FilterValues>(() => ({
@@ -143,12 +144,11 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   }))
 
   // Reset state when switching modules (UX-002: randomize on module switch)
+  // Note: selectedColumns is handled in the hydration useEffect above
   useEffect(() => {
     setSortBy('random')
     setUserHasSorted(false)
     setPage(1)
-    // Reset selected columns to defaults for the new module (UX-005)
-    setSelectedColumns(getStoredColumns(moduleId))
   }, [moduleId])
 
   // Update URL when filters change
@@ -167,7 +167,11 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const isDefaultView = !filters.search && !filters.jaar && !filters.minBedrag && !filters.maxBedrag
 
   // Fetch data when filters, pagination, or sorting changes
+  // Wait for hydration to ensure selectedColumns is loaded from localStorage
   useEffect(() => {
+    // Don't fetch until hydration is complete (columns loaded from localStorage)
+    if (!isHydrated) return
+
     const abortController = new AbortController()
 
     async function loadData() {
@@ -222,7 +226,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     return () => {
       abortController.abort()
     }
-  }, [moduleId, page, perPage, sortBy, sortOrder, filters, isDefaultView, userHasSorted, selectedColumns])
+  }, [moduleId, page, perPage, sortBy, sortOrder, filters, isDefaultView, userHasSorted, selectedColumns, isHydrated])
 
   const handleFilterChange = useCallback((newFilters: FilterValues) => {
     setFilters(newFilters)

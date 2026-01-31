@@ -355,8 +355,6 @@ export function DataTable({
         ),
         cell: ({ row }) => {
           const isSearching = Boolean(searchQuery && searchQuery.trim().length > 0)
-          const matchedField = row.original.matchedField
-          const matchedFieldLabel = matchedField ? (FIELD_LABELS[matchedField] || matchedField) : null
 
           return (
             <div>
@@ -366,12 +364,6 @@ export function DataTable({
               >
                 {row.original.primary_value}
               </button>
-              {/* When searching: show matched field under name */}
-              {isSearching && matchedFieldLabel && (
-                <div className="text-xs text-[var(--navy-medium)] mt-0.5">
-                  Gevonden in: {matchedFieldLabel}
-                </div>
-              )}
               {/* Module indicator - different behavior for Integraal vs other modules */}
               {!isSearching && moduleId === 'integraal' ? (
                 // Integraal: Always show "In: [modules]" - this IS the overview page
@@ -401,7 +393,40 @@ export function DataTable({
     const moduleColumns = MODULE_COLUMNS[moduleId] || []
     const isSearching = Boolean(searchQuery && searchQuery.trim().length > 0)
 
-    if (!isSearching) {
+    if (isSearching) {
+      // "Gevonden in" column when searching - shows matched value and field
+      cols.push({
+        id: 'matched',
+        header: () => (
+          <span className="text-sm font-semibold text-white">Gevonden in</span>
+        ),
+        cell: ({ row }) => {
+          const matchedField = row.original.matchedField
+          const matchedValue = row.original.matchedValue
+          const matchedFieldLabel = matchedField ? (FIELD_LABELS[matchedField] || matchedField) : null
+
+          if (!matchedValue && !matchedFieldLabel) {
+            return <span className="text-[var(--muted-foreground)]">-</span>
+          }
+
+          return (
+            <div className="max-w-[200px]">
+              {/* Line 1: The matched value */}
+              <div className="text-sm text-[var(--navy-dark)] truncate" title={matchedValue || undefined}>
+                {matchedValue || '-'}
+              </div>
+              {/* Line 2: The field name (small) */}
+              {matchedFieldLabel && (
+                <div className="text-xs text-[var(--navy-medium)]">
+                  {matchedFieldLabel}
+                </div>
+              )}
+            </div>
+          )
+        },
+        size: 200,
+      })
+    } else {
       // Static extra columns when not searching
       selectedColumns.forEach((colKey) => {
         const config = moduleColumns.find(c => c.value === colKey)
