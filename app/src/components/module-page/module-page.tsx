@@ -8,7 +8,7 @@ import { DetailPanel } from '@/components/detail-panel'
 import { CrossModuleResults } from '@/components/cross-module-results'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { fetchModuleData } from '@/lib/api'
-import { getStoredColumns } from '@/components/column-selector'
+import { getStoredColumns, getDefaultColumns } from '@/components/column-selector'
 import type { ModuleDataResponse, RecipientRow } from '@/types/api'
 
 // Module configuration
@@ -124,7 +124,15 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const [selectedRecipient, setSelectedRecipient] = useState<string | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   // Selected extra columns state - lifted from DataTable (UX-005)
-  const [selectedColumns, setSelectedColumns] = useState<string[]>(() => getStoredColumns(moduleId))
+  // Initialize with defaults (SSR-safe), then sync from localStorage after hydration
+  const [selectedColumns, setSelectedColumns] = useState<string[]>(() => getDefaultColumns(moduleId))
+
+  // Sync columns from localStorage after hydration (SSR-safe pattern)
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- Intentional: run only on mount, moduleId change handled separately
+  useEffect(() => {
+    const stored = getStoredColumns(moduleId)
+    setSelectedColumns(stored)
+  }, [])
 
   // Initialize filters from URL params
   const [filters, setFilters] = useState<FilterValues>(() => ({

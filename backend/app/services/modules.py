@@ -10,6 +10,7 @@ directly as identifiers - only as parameterized values.
 """
 import logging
 import random
+import re
 from typing import Optional
 from app.services.database import fetch_all, fetch_val
 
@@ -20,26 +21,27 @@ YEARS = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
 
 
 # =============================================================================
-# Dutch Language Search Rules (V1.1)
+# Word-Boundary Search (V1.2)
 # =============================================================================
-# Problem: "politie" (police) matches "politieke" (political) with ILIKE
-# Solution: For Dutch words ending in "-ie", exclude "-iek" false cognates
+# Problem: Substring matching returns false positives
+#   "politie" matched "De Designpolitie" (a design company, not police)
+#   "Ook in: Inkoop (28)" included unrelated compound words
 #
-# Examples:
-#   "politie"    -> Matches: Politie, Politieacademie, Nationale Politie
-#                -> Excludes: Politieke beweging DENK
-#   "academie"   -> Matches: Academie, Politieacademie
-#                -> Excludes: Academiekring (if it were "-iek")
+# Solution: Word-boundary matching using PostgreSQL \y regex
+#   "politie" matches: Politie, Nationale Politie, Politie B.V.
+#   "politie" does NOT match: Designpolitie, Politieacademie
 #
-# Pattern: search_term followed by NOT 'k', or end of word, or whitespace
+# UX rationale: Users searching "politie" expect police-related results.
+# Compound words like "Designpolitie" break that expectation.
 # =============================================================================
 
 def build_search_condition(field: str, param_idx: int, search: str) -> tuple[str, str]:
     """
-    Build a search condition with Dutch language awareness.
+    Build a search condition with word-boundary matching.
 
-    For searches ending in "-ie", uses regex to exclude "-iek" false cognates.
-    Otherwise uses standard ILIKE for substring matching.
+    Uses PostgreSQL regex \\y for word boundaries.
+    "politie" matches "Politie", "Nationale Politie"
+    but NOT "Designpolitie", "Politieacademie"
 
     Args:
         field: The column name to search
@@ -48,26 +50,20 @@ def build_search_condition(field: str, param_idx: int, search: str) -> tuple[str
 
     Returns:
         Tuple of (sql_condition, search_pattern)
-        - sql_condition: e.g., "field ~* $1" or "field ILIKE $1"
-        - search_pattern: e.g., "politie([^k]|$|\\s)" or "%politie%"
+        - sql_condition: e.g., "field ~* $1"
+        - search_pattern: e.g., "\\ypolitie\\y"
     """
     search_lower = search.lower().strip()
 
-    # Dutch "-ie" suffix rule: exclude "-iek" false cognates
-    # Common Dutch pairs: politie/politiek, academie/academisch, democratie/democratisch
-    if search_lower.endswith("ie") and len(search_lower) >= 3:
-        # Regex: search term followed by (not 'k') OR (end of string) OR (whitespace)
-        # This matches: Politie, Politieacademie, Nationale Politie
-        # But excludes: Politieke, Politiekunde
-        return (
-            f"{field} ~* ${param_idx}",
-            f"{search_lower}([^k]|$|\\s)"
-        )
+    # Escape regex special characters (e.g., ".", "+", "*")
+    escaped = re.escape(search_lower)
 
-    # Standard ILIKE for other searches
+    # Word boundary matching: \y = word boundary in PostgreSQL
+    # Matches at: start/end of string, whitespace, punctuation
+    # Does NOT match: within compound words
     return (
-        f"{field} ILIKE ${param_idx}",
-        f"%{search}%"
+        f"{field} ~* ${param_idx}",
+        f"\\y{escaped}\\y"
     )
 
 # =============================================================================
