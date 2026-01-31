@@ -7,7 +7,7 @@ Rijksuitgaven.nl SaaS Platform Migration - Documentation and planning repository
 
 ## Golden Rules (ALWAYS APPLY - NO EXCEPTIONS)
 
-**These five rules override everything else. Apply them automatically, every time.**
+**These rules override everything else. Apply them automatically, every time.**
 
 ### 1. Requirements Check (Before ANY Proposal)
 
@@ -129,6 +129,29 @@ Ready to commit: YES/NO
 - [ ] **Never skip skills** - they contain best practices that prevent common mistakes
 
 **If you skip a mandatory skill, you are failing at your job.**
+
+### 7. Cross-Module Consistency (When Working on ANY Module)
+
+**When fixing, changing, or adding functionality to ONE module, ALWAYS check ALL other modules.**
+
+This project has 6 data modules that share similar patterns:
+- instrumenten, apparaat, inkoop, provincie, gemeente, publiek
+
+**Before considering work complete:**
+
+- [ ] Does the same issue exist in other modules?
+- [ ] Does the fix/change need to be applied to other modules?
+- [ ] Are configurations (Typesense fields, view columns, search fields) consistent?
+- [ ] Did I check the MODULE_CONFIG for all 6 modules?
+
+**Example scenarios:**
+- Fixed Typesense field mapping for instrumenten → Check all 6 modules have correct mappings
+- Added a new column to instrumenten view → Check if other modules need the same
+- Fixed a bug in inkoop search → Verify the bug doesn't exist in other modules
+
+**The rule:** Never fix one module in isolation. Always audit all modules for the same issue.
+
+**If you skip this cross-module check, you are failing at your job.**
 
 ---
 
