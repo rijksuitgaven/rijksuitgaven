@@ -353,62 +353,55 @@ export function DataTable({
             {primaryColumnName}
           </SortableHeader>
         ),
-        cell: ({ row }) => (
-          <div>
-            <button
-              onClick={() => onRowClick?.(row.original.primary_value)}
-              className="font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] hover:underline text-left transition-colors"
-            >
-              {row.original.primary_value}
-            </button>
-            {/* Module indicator - different behavior for Integraal vs other modules */}
-            {moduleId === 'integraal' ? (
-              // Integraal: Always show "In: [modules]" - this IS the overview page
-              row.original.sources && row.original.sources.length > 0 && (
+        cell: ({ row }) => {
+          const isSearching = Boolean(searchQuery && searchQuery.trim().length > 0)
+          const matchedField = row.original.matchedField
+          const matchedFieldLabel = matchedField ? (FIELD_LABELS[matchedField] || matchedField) : null
+
+          return (
+            <div>
+              <button
+                onClick={() => onRowClick?.(row.original.primary_value)}
+                className="font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] hover:underline text-left transition-colors"
+              >
+                {row.original.primary_value}
+              </button>
+              {/* When searching: show matched field under name */}
+              {isSearching && matchedFieldLabel && (
                 <div className="text-xs text-[var(--navy-medium)] mt-0.5">
-                  In: {row.original.sources.join(', ')}
+                  Gevonden in: {matchedFieldLabel}
                 </div>
-              )
-            ) : (
-              // Other modules: Show "Ook in:" only when recipient appears in multiple modules
-              row.original.sources && row.original.sources.length > 1 && (
-                <div className="text-xs text-[var(--navy-medium)] mt-0.5">
-                  Ook in: {row.original.sources.filter(s => s !== 'current').join(', ')}
-                </div>
-              )
-            )}
-          </div>
-        ),
+              )}
+              {/* Module indicator - different behavior for Integraal vs other modules */}
+              {!isSearching && moduleId === 'integraal' ? (
+                // Integraal: Always show "In: [modules]" - this IS the overview page
+                row.original.sources && row.original.sources.length > 0 && (
+                  <div className="text-xs text-[var(--navy-medium)] mt-0.5">
+                    In: {row.original.sources.join(', ')}
+                  </div>
+                )
+              ) : !isSearching && (
+                // Other modules: Show "Ook in:" only when recipient appears in multiple modules
+                row.original.sources && row.original.sources.length > 1 && (
+                  <div className="text-xs text-[var(--navy-medium)] mt-0.5">
+                    Ook in: {row.original.sources.filter(s => s !== 'current').join(', ')}
+                  </div>
+                )
+              )}
+            </div>
+          )
+        },
         minSize: 200,
         meta: { sticky: true }, // Mark as sticky column
       },
     ]
 
     // Dynamic columns (UX-005)
-    // When searching: show Match column (which field matched and its value)
-    // When not searching: show selected extra columns
+    // Extra columns shown when not searching (matched field shown under name when searching)
     const moduleColumns = MODULE_COLUMNS[moduleId] || []
     const isSearching = Boolean(searchQuery && searchQuery.trim().length > 0)
 
-    if (isSearching) {
-      // "Gevonden in" column - shows which field matched the search
-      cols.push({
-        id: 'gevonden-in',
-        header: () => (
-          <span className="text-sm font-semibold text-white">Gevonden in</span>
-        ),
-        cell: ({ row }) => {
-          const field = row.original.matchedField
-          if (!field) return <span className="text-[var(--muted-foreground)]">-</span>
-
-          const fieldLabel = FIELD_LABELS[field] || field
-          return (
-            <span className="text-sm text-[var(--navy-dark)]">{fieldLabel}</span>
-          )
-        },
-        size: 120,
-      })
-    } else {
+    if (!isSearching) {
       // Static extra columns when not searching
       selectedColumns.forEach((colKey) => {
         const config = moduleColumns.find(c => c.value === colKey)
