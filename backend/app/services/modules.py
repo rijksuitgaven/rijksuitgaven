@@ -712,22 +712,22 @@ async def _get_from_aggregated_view(
     rows = await fetch_all(query, *params)
     total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
 
-    # Hybrid lookup: if searching, find which field matched for each result
-    # This enriches aggregated view results with matchedField/matchedValue
-    # OPTIMIZATION: Only lookup for non-primary field matches
+    # Hybrid lookup: find which field matched for each result
+    # DISABLED FOR PERFORMANCE: This LATERAL JOIN with regex on source table
+    # is the bottleneck (~5-6 seconds). The "Gevonden in" column won't show
+    # until we optimize this (TODO: use Typesense highlight info instead).
     matched_fields_map: dict[str, tuple[str | None, str | None]] = {}
-    if search and rows:
-        table = config["table"]
-        search_fields = config.get("search_fields", [primary])
-        # Pass uppercase primary values (matches UPPER() in lookup query)
-        primary_values = [row["primary_value"].upper() for row in rows]
-        matched_fields_map = await _lookup_matched_fields(
-            table=table,
-            primary_field=primary,
-            search_fields=search_fields,
-            primary_values=primary_values,
-            search=search,
-        )
+    # if search and rows:
+    #     table = config["table"]
+    #     search_fields = config.get("search_fields", [primary])
+    #     primary_values = [row["primary_value"].upper() for row in rows]
+    #     matched_fields_map = await _lookup_matched_fields(
+    #         table=table,
+    #         primary_field=primary,
+    #         search_fields=search_fields,
+    #         primary_values=primary_values,
+    #         search=search,
+    #     )
 
     # Transform rows
     result = []
