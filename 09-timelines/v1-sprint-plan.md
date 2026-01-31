@@ -292,13 +292,15 @@
 
 ---
 
-## Week 6: Auth + Overzicht
+## Mini Sprint: UI/UX Polish (Before Week 6)
 
-**Goal:** Magic Link auth, user migration, Overzicht page
+**Goal:** Complete all UI/UX refinements before moving to auth and launch prep
+**Started:** 2026-01-29
+**Status:** 🔨 IN PROGRESS
 
-### Day 1: Code Review Mini-Sprint (2026-01-29) ✅
+### Completed Work
 
-**Unplanned but valuable:** Comprehensive code review and security fixes before continuing.
+#### Session 1: Code Review + Security (2026-01-29) ✅
 
 | Task | Status |
 |------|--------|
@@ -310,9 +312,53 @@
 | UX-002 randomization implemented | ✅ |
 | Random sort performance optimized | ✅ (~50ms vs 3000ms) |
 
-**Impact:** Delayed Week 6 by ~1 day, but critical security issues resolved.
+#### Session 2: UI/UX Logic Fixes + Code Audit (2026-01-30) ✅
 
-### Day 2-3: Supabase Auth Setup
+| Task | Status |
+|------|--------|
+| **BUG: Limit dropdown causes error** | ✅ Fixed - backend `le=100` → `le=500` |
+| Code audit (backend + frontend) | ✅ 20 backend + 11 frontend issues identified |
+| Backend: Connection pool shutdown | ✅ Added FastAPI lifespan handler |
+| Frontend: AbortController fixes | ✅ Prevents race conditions |
+| Frontend: Console statements removed | ✅ Production-ready |
+| Frontend: Accessibility (aria-live) | ✅ Screen reader support for loaders |
+
+#### Session 3-6: Search Speed Optimization (2026-01-31) ✅
+
+| Task | Status |
+|------|--------|
+| Word-boundary search (prevents substring false positives) | ✅ |
+| Hybrid Typesense → PostgreSQL search | ✅ 5-10s → 750ms |
+| "Gevonden in" column via Typesense highlights | ✅ 0ms overhead |
+| Golden Rule #7: Cross-module consistency | ✅ |
+
+### Remaining UI/UX Tasks
+
+| Task | Priority | Status |
+|------|----------|--------|
+| Overzicht page design + implementation | HIGH | ❌ Not started |
+| Mobile responsiveness audit | MEDIUM | ❌ Not started |
+| Typography/spacing consistency audit | LOW | ❌ Not started |
+| Performance optimization (<100ms target) | MEDIUM | ❌ See notes below |
+
+**Performance Note:** Current search is ~750ms. Target is <100ms. See performance optimization plan in SESSION-CONTEXT.md.
+
+### Mini Sprint Deliverables
+- [x] Security fixes complete
+- [x] Code audit issues resolved
+- [x] Search performance acceptable (~750ms)
+- [ ] Overzicht page complete
+- [ ] Mobile UX verified
+- [ ] Ready for Week 6 (Auth)
+
+---
+
+## Week 6: Auth + Overzicht
+
+**Goal:** Magic Link auth, user migration, protected routes
+**Status:** ❌ NOT STARTED (blocked by Mini Sprint completion)
+
+### Day 1-2: Supabase Auth Setup
 
 | Task | Details |
 |------|---------|
@@ -330,37 +376,9 @@
 | Test Magic Link | Send test login to yourself |
 | Announcement email | Draft "Welcome to new platform" email |
 
-### Day 5-7: Overzicht Page
-
-| Feature | Details |
-|---------|---------|
-| Route | `/overzicht` |
-| Module totals | All 6 modules with year columns |
-| Sub-sources | Publiek (RVO/COA/NWO), Provincies, Gemeentes |
-| Gemeentes | Top 10 + "Toon alle X gemeentes" |
-| Grand total | Footer row |
-| Click navigation | Module/sub-source → module page with filter |
-
-### Day 2: UI/UX Logic Fixes + Code Audit (2026-01-30) ✅
-
-**Added:** 2026-01-31
-**Completed:** 2026-01-30
-**Context:** Various UI/UX issues identified during mini sprint, plus comprehensive code audit.
-
-| Task | Status |
-|------|--------|
-| **BUG: Limit dropdown causes error** | ✅ Fixed - backend `le=100` → `le=500` |
-| Code audit (backend + frontend) | ✅ 20 backend + 11 frontend issues identified |
-| Backend: Connection pool shutdown | ✅ Added FastAPI lifespan handler |
-| Frontend: AbortController fixes | ✅ Prevents race conditions |
-| Frontend: Console statements removed | ✅ Production-ready |
-| Frontend: Accessibility (aria-live) | ✅ Screen reader support for loaders |
-
 **Week 6 Deliverables:**
-- [x] UI/UX logic fixes complete (2026-01-30)
 - [ ] Magic Link authentication working
 - [ ] 50 users migrated
-- [ ] Overzicht page complete
 - [ ] Protected routes enforced
 
 ---

@@ -1,6 +1,6 @@
 # Frontend Documentation
 
-**Last Updated:** 2026-01-26
+**Last Updated:** 2026-01-31
 **Stack:** Next.js 16.1.4 + TypeScript + Tailwind CSS + TanStack Table
 
 ---
@@ -27,6 +27,9 @@ app/src/
 │   │   └── index.ts
 │   ├── cookie-banner/            # GDPR cookie disclosure
 │   │   ├── cookie-banner.tsx
+│   │   └── index.ts
+│   ├── error-boundary/           # React error boundary wrapper
+│   │   ├── error-boundary.tsx
 │   │   └── index.ts
 │   ├── cross-module-results/     # "Ook in:" cross-module counts
 │   │   ├── cross-module-results.tsx
@@ -110,12 +113,14 @@ Main data grid component using TanStack Table.
 - Collapsible 2016-2020 range (click to expand)
 - Trend anomaly indicator (red highlight for 10%+ YoY change)
 - Cross-module indicator ("Ook in: Instrumenten, Publiek")
+- **"Gevonden in" column** (when searching): Shows which field matched if not primary field
 - Sticky columns on mobile (expand button + primary column)
-- Server-side pagination (25/50/100 rows per page)
+- Server-side pagination (25/100/150/250/500 rows per page)
 - Sortable columns
 - Loading skeleton
 - Empty state with suggestions
 - CSV export (max 500 rows)
+- XLS export (max 500 rows) - via xlsx library
 
 **CSV Export:**
 - Max 500 rows (constant: `MAX_EXPORT_ROWS`)
@@ -376,6 +381,31 @@ GDPR-compliant disclosure banner (essential cookies only).
 4. Fixed bottom position, z-index 50
 5. Fade-in animation (150ms)
 
+### ErrorBoundary (`components/error-boundary/error-boundary.tsx`)
+
+React error boundary for graceful error handling.
+
+**Features:**
+- Catches JavaScript errors in child components
+- Displays user-friendly error message
+- "Probeer opnieuw" (Try again) button resets error state
+- Logs errors to console (production: would send to error tracking)
+
+**Usage:**
+```tsx
+<ErrorBoundary>
+  <ModulePage moduleId="instrumenten" />
+</ErrorBoundary>
+```
+
+**Props:**
+```typescript
+interface ErrorBoundaryProps {
+  children: React.ReactNode
+  fallback?: React.ReactNode  // Optional custom fallback UI
+}
+```
+
 ---
 
 ## API Client (`lib/api.ts`)
@@ -597,3 +627,5 @@ npm run build
 | 2026-01-26 | Initial documentation (Week 3-4 components) |
 | 2026-01-26 | Added Header, SearchBar, CSV export documentation (Week 5) |
 | 2026-01-26 | Added DetailPanel, CrossModuleResults, enhanced SearchBar (UX features) |
+| 2026-01-31 | Added ErrorBoundary component, XLS export, "Gevonden in" column |
+| 2026-01-31 | Updated pagination options (25/100/150/250/500), default columns note |

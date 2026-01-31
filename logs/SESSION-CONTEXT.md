@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-01-31
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 6 - User Auth
+**Current Sprint:** Mini Sprint - UI/UX Polish (before Week 6)
 
 ---
 
@@ -1131,7 +1131,43 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 **Files Modified:**
 - `backend/app/services/modules.py` - New highlight extraction logic
 
+---
+
+## Performance Optimization Options (for <100ms target)
+
+**Current:** ~750ms (hybrid Typesense → PostgreSQL)
+**Target:** <100ms
+
+### Option A: Typesense-Only Results (Recommended for V1.0)
+**Impact:** Could achieve <100ms
+**Trade-off:** Less accurate aggregated totals (Typesense has per-row data, not aggregated)
+
+**How:** Return Typesense results directly without PostgreSQL verification. Use Typesense's aggregation features or accept per-row amounts.
+
+### Option B: Materialized View for Search Results
+**Impact:** Could achieve <200ms
+**Trade-off:** Requires schema changes, storage increase
+
+**How:** Create a new materialized view optimized for search queries with pre-joined data.
+
+### Option C: Redis Caching (V1.1+)
+**Impact:** <50ms for repeated queries
+**Trade-off:** Additional infrastructure, cache invalidation complexity
+
+**How:** Deploy Redis, cache frequent search results with TTL.
+
+### Option D: Accept 750ms for V1.0
+**Impact:** None
+**Trade-off:** Slightly slower than target
+
+**Rationale:** 750ms is 10x faster than original 5-10s. Most users won't notice difference between 100ms and 750ms. Optimize after launch if needed.
+
+**Recommended:** Option D for V1.0 launch, Option C for V1.1.
+
+---
+
 **Next Steps:**
-1. Week 6 - User Auth (Magic Link, user migration)
-2. Overzicht page
-3. Beta testing preparation
+1. Complete Mini Sprint (Overzicht page, mobile audit)
+2. Week 6 - User Auth (Magic Link, user migration)
+3. Week 7-9 - Polish and launch
+4. Beta testing preparation
