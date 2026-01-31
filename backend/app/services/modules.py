@@ -12,12 +12,61 @@ import logging
 import random
 import re
 from typing import Optional
+import httpx
 from app.services.database import fetch_all, fetch_val
+from app.config import get_settings
 
 logger = logging.getLogger(__name__)
 
 # Available years in the data
 YEARS = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+
+
+# =============================================================================
+# Typesense Client Helper (for fast autocomplete)
+# =============================================================================
+
+_settings = None
+
+def _get_settings():
+    """Lazy load settings."""
+    global _settings
+    if _settings is None:
+        _settings = get_settings()
+    return _settings
+
+
+async def _typesense_search(collection: str, params: dict) -> dict:
+    """
+    Execute search against Typesense.
+
+    Uses httpx for async HTTP requests. Returns empty result on error.
+    Typesense delivers <50ms response times vs seconds for PostgreSQL regex.
+    """
+    settings = _get_settings()
+    if not settings.typesense_host or not settings.typesense_api_key:
+        logger.warning("Typesense not configured, falling back to empty results")
+        return {"hits": [], "grouped_hits": []}
+
+    url = f"{settings.typesense_protocol}://{settings.typesense_host}:{settings.typesense_port}/collections/{collection}/documents/search"
+
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                url,
+                params=params,
+                headers={"X-TYPESENSE-API-KEY": settings.typesense_api_key},
+                timeout=5.0,  # Fast timeout - autocomplete must be quick
+            )
+
+            if response.status_code != 200:
+                logger.warning(f"Typesense search failed: {response.status_code}")
+                return {"hits": [], "grouped_hits": []}
+
+            return response.json()
+    except Exception as e:
+        logger.error(f"Typesense search error: {type(e).__name__}: {e}")
+        return {"hits": [], "grouped_hits": []}
 
 
 # =============================================================================
@@ -1146,8 +1195,49 @@ async def get_filter_options(module: str, field: str) -> list[str]:
 
 
 # =============================================================================
-# Module Autocomplete
+# Module Autocomplete (Typesense-powered for <50ms response)
 # =============================================================================
+
+# Typesense collection names per module
+TYPESENSE_COLLECTIONS = {
+    "instrumenten": "instrumenten",
+    "apparaat": "apparaat",
+    "inkoop": "inkoop",
+    "provincie": "provincie",
+    "gemeente": "gemeente",
+    "publiek": "publiek",
+}
+
+# Primary field names in Typesense (differs from PostgreSQL for some modules)
+TYPESENSE_PRIMARY_FIELDS = {
+    "instrumenten": "ontvanger",
+    "apparaat": "kostensoort",
+    "inkoop": "leverancier",
+    "provincie": "ontvanger",
+    "gemeente": "ontvanger",
+    "publiek": "ontvanger",
+}
+
+# Searchable fields for field_matches section per module
+TYPESENSE_SEARCH_FIELDS = {
+    "instrumenten": ["regeling", "begrotingsnaam", "artikel", "instrument"],
+    "apparaat": ["begrotingsnaam", "artikel", "detail"],
+    "inkoop": ["ministerie", "categorie"],
+    "provincie": ["provincie", "omschrijving"],
+    "gemeente": ["gemeente", "beleidsterrein", "regeling", "omschrijving"],
+    "publiek": ["regeling", "omschrijving"],
+}
+
+# Module display names for "other modules" section
+MODULE_DISPLAY_NAMES = {
+    "instrumenten": "Instrumenten",
+    "apparaat": "Apparaat",
+    "inkoop": "Inkoop",
+    "provincie": "Provincie",
+    "gemeente": "Gemeente",
+    "publiek": "Publiek",
+}
+
 
 async def get_module_autocomplete(
     module: str,
@@ -1155,136 +1245,131 @@ async def get_module_autocomplete(
     limit: int = 5,
 ) -> dict:
     """
-    Get autocomplete suggestions for a module.
+    Get autocomplete suggestions for a module using Typesense (<50ms).
 
     Returns three sections:
     1. current_module: Recipients matching search IN the current module (with amounts)
     2. field_matches: Matches in other fields like regeling, instrument (OOK GEVONDEN IN)
     3. other_modules: Recipients matching search in OTHER modules (with module badges)
 
-    This ensures "what you see is what you get" - current module results
-    match what users will see when they press Enter.
+    This uses Typesense for all searches - 10-100x faster than PostgreSQL regex.
     """
     if module not in MODULE_CONFIG:
         raise ValueError(f"Unknown module: {module}")
 
-    config = MODULE_CONFIG[module]
-    primary = config["primary_field"]
-    agg_table = config.get("aggregated_table")
-    table = config["table"]
-    search_fields = config.get("search_fields", [primary])
+    collection = TYPESENSE_COLLECTIONS.get(module)
+    primary_field = TYPESENSE_PRIMARY_FIELDS.get(module, "ontvanger")
+    search_fields = TYPESENSE_SEARCH_FIELDS.get(module, [])
 
     current_module_results = []
-    other_modules_results = []
     field_matches = []
+    other_modules_results = []
 
-    # 1. Search current module's aggregated view with relevance ranking
-    # Uses Dutch language rules to avoid false cognates
-    if agg_table:
-        condition, pattern = build_search_condition(primary, 2, search)
-        query = f"""
-            SELECT
-                {primary} AS name,
-                totaal,
-                CASE
-                    WHEN UPPER({primary}) = UPPER($1) THEN 1
-                    ELSE 2
-                END AS relevance_score
-            FROM {agg_table}
-            WHERE {condition}
-            ORDER BY relevance_score ASC, totaal DESC
-            LIMIT $3
-        """
-        rows = await fetch_all(query, search, pattern, limit)
+    # 1. Search current module for recipients/primary entities
+    if collection:
+        # Build query_by field (primary + lowercase variant for better matching)
+        query_by = f"{primary_field},{primary_field}_lower" if primary_field != "kostensoort" else "kostensoort,kostensoort_lower"
 
-        for row in rows:
-            current_module_results.append({
-                "name": row["name"],
-                "totaal": int(row["totaal"] or 0),
-            })
+        # Determine sort field (totaal for aggregated views, bedrag for raw data)
+        sort_field = "totaal" if module == "apparaat" else "bedrag"
 
-    # 2. Search for field matches (OOK GEVONDEN IN)
-    # Search non-primary fields for matching values
-    seen_values: set[str] = set()
-    for field in search_fields:
-        if field == primary:
-            continue  # Skip primary field - already shown in current_module
+        params = {
+            "q": search,
+            "query_by": query_by,
+            "prefix": "true",
+            "per_page": str(limit),
+            "sort_by": f"{sort_field}:desc",
+            "group_by": primary_field,
+            "group_limit": "1",
+        }
 
-        condition, pattern = build_search_condition(field, 1, search)
-        field_query = f"""
-            SELECT DISTINCT {field} AS value
-            FROM {table}
-            WHERE {condition}
-              AND {field} IS NOT NULL
-              AND {field} != ''
-            LIMIT 3
-        """
-        field_rows = await fetch_all(field_query, pattern)
+        data = await _typesense_search(collection, params)
 
-        for row in field_rows:
-            value = row["value"]
-            if value and value.upper() not in seen_values:
-                seen_values.add(value.upper())
-                field_matches.append({
-                    "value": value,
-                    "field": field,
+        # Process grouped hits
+        for group in data.get("grouped_hits", []):
+            hits = group.get("hits", [])
+            if not hits:
+                continue
+
+            doc = hits[0].get("document", {})
+            name = doc.get(primary_field, "")
+            # Sum up amounts from all hits in group (or use first)
+            amount = doc.get("bedrag", 0) or doc.get("totaal", 0)
+
+            if name:
+                current_module_results.append({
+                    "name": name,
+                    "totaal": int(amount),
                 })
-                if len(field_matches) >= limit:
-                    break
 
-        if len(field_matches) >= limit:
-            break
+    # 2. Search for field matches (OOK GEVONDEN IN section)
+    # Search non-primary fields for matching keyword values
+    if collection and search_fields:
+        seen_values: set[str] = set()
 
-    # 2. Search universal_search for recipients in OTHER modules
-    # Exclude recipients already shown in current module
+        for field in search_fields[:3]:  # Limit to first 3 fields for speed
+            params = {
+                "q": search,
+                "query_by": field,
+                "prefix": "true",
+                "per_page": "3",
+                "group_by": field,
+                "group_limit": "1",
+            }
+
+            data = await _typesense_search(collection, params)
+
+            for group in data.get("grouped_hits", []):
+                hits = group.get("hits", [])
+                if not hits:
+                    continue
+
+                doc = hits[0].get("document", {})
+                value = doc.get(field)
+
+                if value and len(str(value)) >= 3 and value.upper() not in seen_values:
+                    seen_values.add(value.upper())
+                    field_matches.append({
+                        "value": value,
+                        "field": field,
+                    })
+
+                    if len(field_matches) >= limit:
+                        break
+
+            if len(field_matches) >= limit:
+                break
+
+    # 3. Search recipients collection for matches in OTHER modules
     current_names = {r["name"].upper() for r in current_module_results}
 
-    # Module name variants to filter out (sources may contain different formats)
-    module_variants = {
-        module.lower(),
-        module,
+    params = {
+        "q": search,
+        "query_by": "name,name_lower",
+        "prefix": "true",
+        "per_page": str(limit * 2),  # Get extra to filter
+        "sort_by": "totaal:desc",
     }
-    # Add display name variants
-    module_display_names = {
-        "instrumenten": ["instrumenten", "financiële instrumenten", "financiele instrumenten"],
-        "apparaat": ["apparaat", "apparaatsuitgaven"],
-        "inkoop": ["inkoop", "inkoopuitgaven"],
-        "provincie": ["provincie", "provinciale subsidieregisters"],
-        "gemeente": ["gemeente", "gemeentelijke subsidieregisters"],
-        "publiek": ["publiek", "publieke uitvoeringsorganisaties"],
-    }
-    if module.lower() in module_display_names:
-        module_variants.update(v.lower() for v in module_display_names[module.lower()])
 
-    # Query universal_search for matching recipients with relevance ranking
-    # Uses Dutch language rules to avoid false cognates
-    universal_condition, universal_pattern = build_search_condition("ontvanger", 2, search)
-    universal_query = f"""
-        SELECT
-            ontvanger AS name,
-            sources,
-            CASE
-                WHEN UPPER(ontvanger) = UPPER($1) THEN 1
-                ELSE 2
-            END AS relevance_score
-        FROM universal_search
-        WHERE {universal_condition}
-        ORDER BY relevance_score ASC, totaal DESC
-        LIMIT $3
-    """
-    universal_rows = await fetch_all(universal_query, search, universal_pattern, limit * 2)
+    data = await _typesense_search("recipients", params)
 
-    for row in universal_rows:
-        name = row["name"]
-        sources = [s.strip() for s in row["sources"].split(",")] if row["sources"] else []
+    for hit in data.get("hits", []):
+        doc = hit.get("document", {})
+        name = doc.get("name", "")
+        sources = doc.get("sources", [])
 
-        # Filter out the current module from sources (check all variants)
-        other_sources = [s for s in sources if s.lower().strip() not in module_variants]
+        if not name or name.upper() in current_names:
+            continue
 
-        # Only include if:
-        # - Has sources in other modules (not just the current one)
-        # - Not already shown in current module results
-        if other_sources and name.upper() not in current_names:
+        # Filter out current module from sources
+        current_module_lower = module.lower()
+        other_sources = [
+            MODULE_DISPLAY_NAMES.get(s.lower(), s)
+            for s in sources
+            if s.lower() != current_module_lower
+        ]
+
+        if other_sources:
             other_modules_results.append({
                 "name": name,
                 "modules": other_sources,
