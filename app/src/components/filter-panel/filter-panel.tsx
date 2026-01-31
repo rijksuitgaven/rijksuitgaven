@@ -64,15 +64,17 @@ const FIELD_LABELS: Record<string, string> = {
 // Module filter configuration
 // =============================================================================
 
-// Entity type labels per module (for search placeholder)
-const MODULE_ENTITY_LABELS: Record<string, string> = {
-  instrumenten: 'ontvangers',
-  apparaat: 'kostensoorten',
-  inkoop: 'leveranciers',
-  provincie: 'ontvangers',
-  gemeente: 'ontvangers',
-  publiek: 'ontvangers',
-  integraal: 'ontvangers',
+// Search placeholder text per module
+// Shows key searchable fields to communicate search power
+// Format: "Zoek in [fields] (€X miljard)" or with count for integraal
+const MODULE_SEARCH_TEXT: Record<string, { fields: string; showCount: boolean }> = {
+  instrumenten: { fields: 'ontvangers, regelingen, artikelen en meer', showCount: false },
+  apparaat: { fields: 'kostensoorten, begrotingen, artikelen en meer', showCount: false },
+  inkoop: { fields: 'leveranciers, ministeries, categorieën', showCount: false },
+  provincie: { fields: 'ontvangers en omschrijvingen', showCount: false },
+  gemeente: { fields: 'ontvangers, regelingen, beleidsterreinen en meer', showCount: false },
+  publiek: { fields: 'ontvangers, regelingen, trefwoorden en meer', showCount: false },
+  integraal: { fields: 'ontvangers', showCount: true }, // Show count for cross-module discovery
 }
 
 const MODULE_FILTERS: Record<string, FilterConfig[]> = {
@@ -356,14 +358,20 @@ export function FilterPanel({
   }, [module])
 
   // Generate dynamic placeholder based on module stats
+  // Communicates search power: what fields are searchable + financial scale
   const searchPlaceholder = useMemo(() => {
     if (!moduleStats) return 'Zoek op ontvanger, regeling...'
 
-    const entityLabel = MODULE_ENTITY_LABELS[module] || 'ontvangers'
+    const config = MODULE_SEARCH_TEXT[module] || { fields: 'ontvangers', showCount: false }
     const countFormatted = moduleStats.count.toLocaleString('nl-NL')
-    const suffix = module === 'integraal' ? ' in alle modules' : ''
 
-    return `Doorzoek ${countFormatted} ${entityLabel} (€${moduleStats.total_formatted})${suffix}`
+    if (module === 'integraal') {
+      // Integraal: show count + "in alle modules" for cross-module discovery
+      return `Zoek in ${countFormatted} ${config.fields} in alle modules (€${moduleStats.total_formatted})`
+    }
+
+    // Other modules: emphasize searchable fields + EUR scale
+    return `Zoek in ${config.fields} (€${moduleStats.total_formatted})`
   }, [module, moduleStats])
 
   // Autocomplete state
