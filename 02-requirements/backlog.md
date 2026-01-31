@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-01-30 (added Integraal view redesign)
+**Last Updated:** 2026-01-31 (added filters review)
 
 Items logged for future versions, not in V1.0 scope.
 
@@ -118,26 +118,17 @@ Allow users to download a screenshot/image of current view for reports and prese
 
 ### Search on Other Fields (Regeling, Omschrijving)
 
-**Priority:** Medium
+**Priority:** ✅ COMPLETED
 **Added:** 2026-01-29
-**Sprint:** UI/UX Sprint
+**Completed:** 2026-01-31
 
 **Problem:**
 When search matches on fields OTHER than Ontvanger (e.g., Regeling, Omschrijving), the current UI can't show why that result appeared.
 
-**Example:**
-- Search: "politie"
-- Match: Regeling "Subsidieregeling Politiewerk"
-- Ontvanger shown: "Gemeente Amsterdam"
-- User confusion: "Why is Amsterdam in my politie search?"
-
-**Solutions to explore:**
-1. Show "Matched on: Regeling" indicator
-2. Show snippet of matched field below Ontvanger
-3. Separate section for "Also found in Regelingen"
-4. Highlight matched terms in expandable row
-
-**Design doc:** `docs/plans/2026-01-29-search-relevance-ranking.md` (deferred section)
+**Solution Implemented:**
+- "Gevonden in" column shows matched field and value when search hits non-primary fields
+- Uses Typesense highlight data (zero additional latency)
+- Documented in search-requirements.md as UX-002d
 
 ---
 
@@ -148,15 +139,6 @@ When search matches on fields OTHER than Ontvanger (e.g., Regeling, Omschrijving
 
 V1.0 has basic URL sharing (search term, module, key filters).
 V2.0: Full state in URL including expanded rows, pagination position, all filter states.
-
----
-
-### Inzichten / Self-Service BI
-
-**Priority:** Medium
-**Added:** 2026-01-20
-
-Current "Inzichten BETA" shows pre-prepared analyses. Future: allow users to create their own analyses and dashboards.
 
 ---
 
@@ -387,6 +369,46 @@ Example: "politie" (police) matches "Politieke" (political) - completely differe
 - Multilingual queries
 
 **Design document:** `docs/plans/2026-01-29-semantic-search-design.md`
+
+---
+
+### Filters UX Review
+
+**Priority:** Medium (UX)
+**Added:** 2026-01-31
+**Type:** UX / Review
+
+**Task:**
+Take a close look at the filter panel UX and identify improvements needed.
+
+**Areas to review:**
+- Filter layout and organization
+- Filter interaction patterns
+- Mobile filter experience
+- Filter state clarity (what's active)
+- Clear/reset behavior
+- Performance of filter dropdowns
+
+**Decision:** Schedule UX review session.
+
+---
+
+### Extra Columns Behavior During Search
+
+**Priority:** Medium (UX Discussion)
+**Added:** 2026-01-31
+**Type:** UX / Brainstorm
+
+**Current Behavior:**
+When user searches, the "Gevonden in" column replaces user-selected extra columns. User's column preferences disappear during search.
+
+**Questions to Discuss:**
+1. Should extra columns remain visible alongside "Gevonden in"?
+2. Should "Gevonden in" be a separate, always-available column?
+3. Should users be able to toggle between views?
+4. What happens on mobile where space is limited?
+
+**Decision:** Requires UX discussion with founder.
 
 ---
 

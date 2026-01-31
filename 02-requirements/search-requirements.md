@@ -2,7 +2,7 @@
 
 **Project:** Rijksuitgaven.nl SaaS Platform
 **Version:** V1 - Search Platform
-**Date:** 2026-01-23 (Updated: 2026-01-30)
+**Date:** 2026-01-23 (Updated: 2026-01-31)
 **Status:** In Development
 
 > **Scope:** This document covers V1 Search Platform requirements.
@@ -305,7 +305,9 @@ User on "Financiële Instrumenten" page searches "prorail"
 7. **Year Range** - Slider (2016-2024)
 8. **Amount Range** - Min/Max input
 
-**Default Columns:** Artikel, Instrument, Regeling
+**Default Columns:** Artikel, Regeling
+
+*Note: Max 2 extra columns displayed (MAX_SELECTED_COLUMNS = 2)*
 
 ---
 
@@ -599,6 +601,71 @@ When expanded:
 - Embeddings with Cohere embed-multilingual-v3 (~€1/month)
 
 **Design Doc:** `docs/plans/2026-01-29-semantic-search-design.md`
+
+---
+
+### UX-002c: Word-Boundary Search
+
+**Requirement:** Search matches only at word boundaries, not arbitrary substrings
+
+**Behavior:**
+- "politie" matches "Politie", "Nationale Politie", "VTS POLITIE NEDERLAND"
+- "politie" does NOT match "Designpolitie", "Politieacademie" (substring matches)
+- Uses PostgreSQL regex `~* '\ypolitie\y'` for word boundaries
+
+**Rationale:**
+- Prevents inflated cross-module counts ("Ook in: Inkoop (28)" showed substring matches)
+- More intuitive search results
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-01-31
+
+**Design Doc:** `docs/plans/2026-01-31-word-boundary-search.md`
+
+---
+
+### UX-002d: "Gevonden in" Column
+
+**Requirement:** Show which field matched when search hits non-primary fields
+
+**Behavior:**
+- When search matches primary field (Ontvanger): No indicator needed (visible in name)
+- When search matches other fields (Regeling, Artikel, etc.): Shows "Gevonden in" column
+- Column displays: Matched value + field name below
+
+**Example:**
+Search "bedrijvenbeleid" shows:
+- Ontvanger: "Stichting XYZ"
+- Gevonden in: "Bedrijvenbeleid: innovatief en duurzaam ondernemen" / "artikel"
+
+**Implementation:** Uses Typesense highlight data (zero additional latency)
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-01-31
+
+---
+
+### UX-002e: "+X meer" Indicator for Extra Columns
+
+**Requirement:** Show when multiple distinct values exist for aggregated recipients
+
+**Behavior:**
+- Extra columns show most frequent value (MODE aggregation)
+- If recipient has multiple distinct values: Shows "+X meer" below the value
+- Example: "Regeling ABC" with "+5 meer" indicates 6 total regelingen
+- Click "+X meer" opens detail panel
+
+**Styling:**
+- Font: 12px
+- Color: Navy Medium (#436FA3)
+- Cursor: pointer
+- No underline or hover effect
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-01-31
 
 ---
 

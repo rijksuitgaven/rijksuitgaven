@@ -217,8 +217,8 @@ Column customization for expanded row detail fields (UX-005).
 
 | Module | Columns (* = default) |
 |--------|----------------------|
-| instrumenten | Regeling*, Artikel*, Instrument*, Artikelonderdeel, Begrotingsnaam, Detail |
-| apparaat | Kostensoort*, Artikel*, Detail*, Begrotingsnaam |
+| instrumenten | Artikel*, Regeling*, Instrument, Artikelonderdeel, Begrotingsnaam, Detail |
+| apparaat | Artikel*, Detail*, Begrotingsnaam |
 | inkoop | Ministerie*, Categorie*, Staffel* |
 | provincie | Provincie*, Omschrijving* |
 | gemeente | Gemeente*, Omschrijving*, Beleidsterrein, Regeling |
@@ -634,3 +634,4 @@ npm run build
 | 2026-01-26 | Added DetailPanel, CrossModuleResults, enhanced SearchBar (UX features) |
 | 2026-01-31 | Added ErrorBoundary component, XLS export, "Gevonden in" column |
 | 2026-01-31 | Updated pagination options (25/100/150/250/500), default columns note |
+| 2026-01-31 | Fixed Apparaat columns (Kostensoort is primary, not extra) |

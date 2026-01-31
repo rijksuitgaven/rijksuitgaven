@@ -6,7 +6,7 @@
 
 ---
 
-## Product Versioning (NEW 2026-01-30)
+## Product Versioning (UPDATED 2026-01-31)
 
 **Source of truth:** `docs/VERSIONING.md`
 
@@ -14,11 +14,12 @@
 |---------|------|----------|--------|
 | **V1** | Search Platform | "Who received money?" | 🔨 Building |
 | **V2** | Theme Discovery | "What's happening in defensie?" | 📋 Planned |
-| **V3** | AI Research Mode | "Help me investigate this" | 📋 Planned |
-| **V4** | Research Workspace | "Build a case, share with team" | 📋 Planned |
-| **V5** | External Integrations | "What law governs this?" | 📋 Planned |
-| **V6** | Network Analysis | "Who runs these organizations?" | 📋 Planned |
-| **V7** | European Platform | "Compare NL with Germany" | 📋 Planned |
+| **V3** | Inzichten (Self-Service BI) | "Show me trends and anomalies" | 📋 Planned |
+| **V4** | AI Research Mode | "Help me investigate this" | 📋 Planned |
+| **V5** | Research Workspace | "Build a case, share with team" | 📋 Planned |
+| **V6** | External Integrations | "What law governs this?" | 📋 Planned |
+| **V7** | Network Analysis | "Who runs these organizations?" | 📋 Planned |
+| **V8** | European Platform | "Compare NL with Germany" | 📋 Planned |
 
 **Version scheme:** X.0 = Major (new capability) | X.Y = Minor (improvements) | X.Y.Z = Patch (fixes)
 
@@ -79,20 +80,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **backend/app/services/modules.py** ⭐ UPDATED (2026-01-31)
-   Added COUNT(DISTINCT) for extra columns to support "+X meer" indicator
+1. **backend/app/api/v1/modules.py** ⭐ UPDATED (2026-01-31)
+   Added `extra_column_counts` field to Pydantic model (was being stripped from API responses)
 
 2. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-31)
-   Extra column improvements: 2-line wrapping (line-clamp-2), "+X meer" indicator, click to detail
+   Fixed row hover effect for sticky columns using `group` / `group-hover` pattern
 
-3. **app/src/types/api.ts** ⭐ UPDATED (2026-01-31)
-   Added extraColumnCounts field to API and internal types
+3. **docs/VERSIONING.md** ⭐ UPDATED (2026-01-31)
+   Added V3 Inzichten (Self-Service BI), renumbered subsequent versions to V4-V8
 
-4. **app/src/lib/api.ts** ⭐ UPDATED (2026-01-31)
-   Transform extraColumnCounts from API response
+4. **02-requirements/backlog.md** ⭐ UPDATED (2026-01-31)
+   Added Filters UX Review, Extra Columns During Search; marked Search on Other Fields complete
 
-5. **docs/FRONTEND-DOCUMENTATION.md** ⭐ UPDATED (2026-01-31)
-   Documented extra column enhancements feature
+5. **02-requirements/search-requirements.md** ⭐ UPDATED (2026-01-31)
+   Added UX-002c (Word-Boundary), UX-002d (Gevonden in), UX-002e (+X meer)
 
 ---
 
@@ -1153,6 +1154,35 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Refresh on data import (same as other views)
 
 **Status:** Added to Mini Sprint to-do list
+
+---
+
+---
+
+**2026-01-31 Session 8 - Documentation Audit & Bug Fixes:**
+
+**Bug Fixes:**
+- ✅ "+X meer" indicator not showing: Added `extra_column_counts` to Pydantic `AggregatedRow` model
+- ✅ Row hover missing sticky columns: Used Tailwind `group`/`group-hover` pattern
+
+**Documentation Updates:**
+- Fixed search-requirements.md: default columns corrected to 2 (not 3)
+- Added UX-002c (Word-Boundary Search), UX-002d ("Gevonden in"), UX-002e ("+X meer" Indicator)
+- Fixed FRONTEND-DOCUMENTATION.md: Apparaat columns (Kostensoort is primary, not extra)
+
+**Backlog Updates:**
+- Added: Filters UX Review (medium priority)
+- Added: Extra Columns Behavior During Search (UX discussion)
+- Completed: Search on Other Fields (UX-002d)
+
+**Versioning Update:**
+- Added V3 - Inzichten (Self-Service BI) as new major version
+- Renumbered: V3-V7 → V4-V8
+- Note: Consider brainstorming whether V3 should come before V2
+
+**Commits:**
+- Fix: Add extra_column_counts to AggregatedRow model
+- Fix: Full row hover including sticky columns
 
 ---
 

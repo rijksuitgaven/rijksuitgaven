@@ -24,11 +24,14 @@
 |---------|------|----------------|--------------|
 | **V1** | Search Platform | Find data fast | "Who received money?" |
 | **V2** | Theme Discovery | Understand by domain | "What's happening in defensie?" |
-| **V3** | AI Research Mode | Conversational analysis | "Help me investigate this" |
-| **V4** | Research Workspace | Save and share findings | "Build a case, share with team" |
-| **V5** | External Integrations | Connect to legislation | "What law governs this spending?" |
-| **V6** | Network Analysis | Map people & connections | "Who runs these organizations?" |
-| **V7** | European Platform | Multi-country | "Compare NL with Germany" |
+| **V3** | Inzichten | Self-service BI | "Show me trends and anomalies" |
+| **V4** | AI Research Mode | Conversational analysis | "Help me investigate this" |
+| **V5** | Research Workspace | Save and share findings | "Build a case, share with team" |
+| **V6** | External Integrations | Connect to legislation | "What law governs this spending?" |
+| **V7** | Network Analysis | Map people & connections | "Who runs these organizations?" |
+| **V8** | European Platform | Multi-country | "Compare NL with Germany" |
+
+> **Note:** Consider brainstorming whether V3 (Inzichten) should come before V2 (Theme Discovery).
 
 ---
 
@@ -109,7 +112,42 @@
 
 ---
 
-## V3 - AI Research Mode
+## V3 - Inzichten
+
+**Core promise:** Create your own analyses and dashboards.
+
+**New use case:** "Show me trends and anomalies in my area of interest"
+
+**Dependency:** Requires V1.0 (data), benefits from V2.0 (themes)
+
+### V3.0 - Self-Service BI
+
+**Features:**
+- Custom dashboard builder
+- Trend analysis tools
+- Anomaly detection and alerts
+- Comparison views (year-over-year, recipient-to-recipient)
+- Saved analyses
+- Scheduled reports
+- Export to PowerPoint/PDF
+
+**Why this is a major release:**
+- Enables NEW use case (create analyses, not just search)
+- Different interaction paradigm (build dashboards vs. browse)
+- Unlocks recurring usage (check my dashboard weekly)
+
+**Target users:** Policy analysts, controllers, financial journalists
+
+### V3.1 - Inzichten Improvements
+
+- More chart types
+- Embeddable widgets
+- Public dashboard sharing
+- API for custom integrations
+
+---
+
+## V4 - AI Research Mode
 
 **Core promise:** Conversational analysis - ask questions, get answers.
 
@@ -117,7 +155,7 @@
 
 **Dependency:** Requires V2.0 (IBOS classification for domain understanding)
 
-### V3.0 - Conversational AI
+### V4.0 - Conversational AI
 
 **Features:**
 - **/research page** with chat interface
@@ -135,7 +173,7 @@
 
 **Target users:** Deep researchers, investigative journalists, policy analysts
 
-### V3.1 - AI Improvements
+### V4.1 - AI Improvements
 
 - Smarter follow-ups
 - Better visualization generation
@@ -144,15 +182,15 @@
 
 ---
 
-## V4 - Research Workspace
+## V5 - Research Workspace
 
 **Core promise:** Build cases, save findings, collaborate.
 
 **New use case:** "Build a dossier and share with my editor"
 
-**Dependency:** Requires V3.0 (Research Mode to generate findings worth saving)
+**Dependency:** Requires V4.0 (Research Mode to generate findings worth saving)
 
-### V4.0 - Save & Share
+### V5.0 - Save & Share
 
 **Features:**
 - Save research sessions
@@ -167,7 +205,7 @@
 - Creates sticky usage (saved work = retention)
 - B2B value (teams can share)
 
-### V4.1 - Workspace Improvements
+### V5.1 - Workspace Improvements
 
 - Folders and organization
 - Team workspaces
@@ -176,15 +214,15 @@
 
 ---
 
-## V5 - External Integrations
+## V6 - External Integrations
 
 **Core promise:** Connect spending to its legal and business context.
 
 **New use case:** "What regulation governs this subsidy?"
 
-**Dependency:** Requires V3.0+ (meaningful when doing research)
+**Dependency:** Requires V4.0+ (meaningful when doing research)
 
-### V5.0 - Legislation Integration
+### V6.0 - Legislation Integration
 
 **Features:**
 - **wetten.overheid.nl integration**
@@ -192,7 +230,7 @@
 - Legislation summaries in AI responses
 - "View the law" links
 
-### V5.1 - Business Integration
+### V6.1 - Business Integration
 
 - KvK integration (company profiles)
 - Beneficial ownership data
@@ -200,17 +238,17 @@
 
 ---
 
-## V6 - Network Analysis (Rijksnetwerken)
+## V7 - Network Analysis (Rijksnetwerken)
 
 **Core promise:** See who runs the organizations that receive tax money, and how they're connected.
 
 **New use case:** "Who are the people behind these organizations? Are there conflicts of interest?"
 
-**Dependency:** Requires V1 (recipient data), benefits from V3 (AI can analyze networks)
+**Dependency:** Requires V1 (recipient data), benefits from V4 (AI can analyze networks)
 
 **Tagline:** "Verbonden door geld"
 
-### V6.0 - Network Foundation
+### V7.0 - Network Foundation
 
 **Features:**
 - **KvK integration** - Link recipients to Chamber of Commerce data
@@ -249,7 +287,7 @@
 **Market size:** 40-60 organizations (banks, insurers, accountants)
 **Conservative ARR potential:** €1.1M
 
-### V6.1 - Network Improvements
+### V7.1 - Network Improvements
 
 - Beneficial ownership (UBO) data
 - International director connections
@@ -259,15 +297,15 @@
 
 ---
 
-## V7 - European Platform
+## V8 - European Platform
 
 **Core promise:** Every EU tax euro findable.
 
 **New use case:** "Compare Dutch defense spending with German"
 
-**Dependency:** V1-V3 proven in NL market
+**Dependency:** V1-V4 proven in NL market
 
-### V7.0 - Multi-Country Foundation
+### V8.0 - Multi-Country Foundation
 
 **Features:**
 - Multi-tenant architecture
@@ -276,7 +314,7 @@
 - Franchise onboarding tools
 - White-label theming
 
-### V7.1+ - Country Rollouts
+### V8.1+ - Country Rollouts
 
 - Pilot countries
 - Data pipeline templates
@@ -291,12 +329,12 @@ Tiers control ACCESS to versions:
 
 | Tier | Price | Version Access |
 |------|-------|----------------|
-| **Pro** | €1,500/year | V1 + V2 |
-| **Research** | TBD | V1 + V2 + V3 + V4 |
-| **Voor Overheden** | €9,000+ | V1-V5 + municipality features |
-| **Voor Universiteiten** | €3,000+ | V1-V5 + academic features |
-| **Rijksnetwerken** | €25,000+/year | V6 (compliance/KYC module) |
-| **Franchise** | License | V7 (white-label European) |
+| **Pro** | €1,500/year | V1 + V2 + V3 |
+| **Research** | TBD | V1-V5 |
+| **Voor Overheden** | €9,000+ | V1-V6 + municipality features |
+| **Voor Universiteiten** | €3,000+ | V1-V6 + academic features |
+| **Rijksnetwerken** | €25,000+/year | V7 (compliance/KYC module) |
+| **Franchise** | License | V8 (white-label European) |
 
 ---
 
@@ -311,22 +349,24 @@ V1.0 Search ──────────────────────�
   │     │
   │     ├─► V2.1 (improvements)
   │     │
-  │     └─► V3.0 AI Research Mode
+  │     └─► V3.0 Inzichten (Self-Service BI)
   │           │
-  │           ├─► V3.1 (improvements)
-  │           │
-  │           ├─► V4.0 Research Workspace
-  │           │     │
-  │           │     └─► V5.0 External Integrations
-  │           │
-  │           └─► V6.0 Network Analysis ◄──┐
-  │                 (benefits from AI)     │
-  │                                        │
-  └────────────────────────────────────────┘
+  │           └─► V4.0 AI Research Mode
+  │                 │
+  │                 ├─► V4.1 (improvements)
+  │                 │
+  │                 ├─► V5.0 Research Workspace
+  │                 │     │
+  │                 │     └─► V6.0 External Integrations
+  │                 │
+  │                 └─► V7.0 Network Analysis ◄──┐
+  │                       (benefits from AI)     │
+  │                                              │
+  └──────────────────────────────────────────────┘
         (requires recipient data)
 
-V7.0 European Platform
-  └─► Requires V1-V3 proven in NL market
+V8.0 European Platform
+  └─► Requires V1-V4 proven in NL market
 ```
 
 ---
@@ -335,14 +375,15 @@ V7.0 European Platform
 
 | Version | Status | Timeline |
 |---------|--------|----------|
-| V1.0 | 🔨 Building | Now (Week 6 of 8) |
+| V1.0 | 🔨 Building | Now (Week 6 of 9) |
 | V1.1 | 📋 Planned | Post-launch |
 | V2.0 | 📋 Planned | Q1-Q2 2026 |
 | V3.0 | 📋 Planned | Q2 2026 |
 | V4.0 | 📋 Planned | Q2-Q3 2026 |
 | V5.0 | 📋 Planned | Q3 2026 |
-| V6.0 | 📋 Planned | Q3+ 2026 (can start after V1, benefits from V3) |
-| V7.0 | 📋 Planned | 2027+ (after NL market proven) |
+| V6.0 | 📋 Planned | Q3 2026 |
+| V7.0 | 📋 Planned | Q3+ 2026 (can start after V1, benefits from V4) |
+| V8.0 | 📋 Planned | 2027+ (after NL market proven) |
 
 ---
 
@@ -359,4 +400,4 @@ V7.0 European Platform
 ---
 
 **Document maintained by:** Product Owner
-**Last updated:** 2026-01-30
+**Last updated:** 2026-01-31
