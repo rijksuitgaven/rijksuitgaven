@@ -1133,36 +1133,26 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 ---
 
-## Performance Optimization Options (for <100ms target)
+## Performance Optimization Plan
 
 **Current:** ~750ms (hybrid Typesense → PostgreSQL)
-**Target:** <100ms
+**Target:** <200ms
 
-### Option A: Typesense-Only Results (Recommended for V1.0)
-**Impact:** Could achieve <100ms
-**Trade-off:** Less accurate aggregated totals (Typesense has per-row data, not aggregated)
+### Chosen: Option B - Materialized View for Search Results
 
-**How:** Return Typesense results directly without PostgreSQL verification. Use Typesense's aggregation features or accept per-row amounts.
+**Why Option B over Redis:**
+- No additional infrastructure (Redis = €10/month + complexity)
+- One-time schema change vs ongoing cache management
+- No cache invalidation logic needed
+- ~200ms is fast enough for excellent UX
 
-### Option B: Materialized View for Search Results
-**Impact:** Could achieve <200ms
-**Trade-off:** Requires schema changes, storage increase
+**Implementation:**
+- Create materialized view with pre-joined searchable fields
+- Include all columns needed for search results display
+- Index on primary field for fast lookups after Typesense returns matches
+- Refresh on data import (same as other views)
 
-**How:** Create a new materialized view optimized for search queries with pre-joined data.
-
-### Option C: Redis Caching (V1.1+)
-**Impact:** <50ms for repeated queries
-**Trade-off:** Additional infrastructure, cache invalidation complexity
-
-**How:** Deploy Redis, cache frequent search results with TTL.
-
-### Option D: Accept 750ms for V1.0
-**Impact:** None
-**Trade-off:** Slightly slower than target
-
-**Rationale:** 750ms is 10x faster than original 5-10s. Most users won't notice difference between 100ms and 750ms. Optimize after launch if needed.
-
-**Recommended:** Option D for V1.0 launch, Option C for V1.1.
+**Status:** Added to Mini Sprint to-do list
 
 ---
 

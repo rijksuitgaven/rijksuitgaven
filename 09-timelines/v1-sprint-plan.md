@@ -337,11 +337,11 @@
 | Task | Priority | Status |
 |------|----------|--------|
 | Overzicht page design + implementation | HIGH | ❌ Not started |
+| Performance optimization (materialized view) | HIGH | ❌ Not started |
 | Mobile responsiveness audit | MEDIUM | ❌ Not started |
 | Typography/spacing consistency audit | LOW | ❌ Not started |
-| Performance optimization (<100ms target) | MEDIUM | ❌ See notes below |
 
-**Performance Note:** Current search is ~750ms. Target is <100ms. See performance optimization plan in SESSION-CONTEXT.md.
+**Performance Plan:** Create optimized materialized view for search results. Target: 750ms → ~200ms. See SESSION-CONTEXT.md for details.
 
 ### Mini Sprint Deliverables
 - [x] Security fixes complete
