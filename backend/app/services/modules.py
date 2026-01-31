@@ -447,11 +447,32 @@ async def get_module_data(
         )
 
 
+# Fields with _lower variants in Typesense (for prefix matching)
+# Only primary fields have _lower variants in collections.json
+TYPESENSE_LOWER_FIELDS = {
+    "instrumenten": ["ontvanger"],
+    "apparaat": ["kostensoort", "begrotingsnaam"],
+    "inkoop": ["leverancier"],
+    "publiek": ["ontvanger"],
+    "gemeente": ["ontvanger"],
+    "provincie": ["ontvanger"],
+}
+
+# All searchable fields per Typesense collection
+TYPESENSE_SEARCHABLE_FIELDS = {
+    "instrumenten": ["ontvanger", "regeling", "begrotingsnaam", "artikel", "instrument"],
+    "apparaat": ["kostensoort", "begrotingsnaam", "artikel", "detail"],
+    "inkoop": ["leverancier", "ministerie", "categorie"],
+    "publiek": ["ontvanger", "source", "regeling", "omschrijving"],
+    "gemeente": ["ontvanger", "gemeente", "beleidsterrein", "regeling", "omschrijving"],
+    "provincie": ["ontvanger", "provincie", "omschrijving"],
+}
+
+
 async def _typesense_get_primary_keys(
     collection: str,
     primary_field: str,
     search: str,
-    search_fields: list[str],
     limit: int = 1000,
 ) -> list[str]:
     """
@@ -467,15 +488,19 @@ async def _typesense_get_primary_keys(
         collection: Typesense collection name
         primary_field: Primary field to extract and group by
         search: Search term
-        search_fields: List of all fields to search (e.g., ontvanger, artikel, regeling)
         limit: Max results to return
     """
-    # Build query_by from all searchable fields
-    # Include lowercase variants for better prefix matching
+    # Get searchable fields for this collection
+    search_fields = TYPESENSE_SEARCHABLE_FIELDS.get(collection, [primary_field])
+    lower_fields = TYPESENSE_LOWER_FIELDS.get(collection, [])
+
+    # Build query_by from fields that actually exist in Typesense
     query_by_parts = []
     for field in search_fields:
         query_by_parts.append(field)
-        query_by_parts.append(f"{field}_lower")
+        # Only add _lower variant if it exists
+        if field in lower_fields:
+            query_by_parts.append(f"{field}_lower")
 
     query_by = ",".join(query_by_parts)
 
@@ -543,16 +568,12 @@ async def _get_from_aggregated_view(
         # Get Typesense collection for this module
         collection = TYPESENSE_COLLECTIONS.get(config["table"])
         if collection:
-            # Get search fields for this module (primary + view columns)
-            view_cols = config.get("view_columns", [])
-            search_fields = [primary] + [col for col in view_cols if col != primary]
-
             # Get matching primary keys from Typesense (fast)
+            # Searchable fields are defined in TYPESENSE_SEARCHABLE_FIELDS
             typesense_primary_keys = await _typesense_get_primary_keys(
                 collection=collection,
                 primary_field=primary,
                 search=search,
-                search_fields=search_fields,
                 limit=1000,  # Get more than needed for accurate count
             )
 
