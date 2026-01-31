@@ -721,7 +721,7 @@ export function DataTable({
                 <Fragment key={row.id}>
                   <tr
                     className={cn(
-                      'hover:bg-[var(--gray-light)] transition-colors',
+                      'group hover:bg-[var(--gray-light)] transition-colors',
                       row.getIsExpanded() && 'bg-[var(--gray-light)]'
                     )}
                   >
@@ -735,10 +735,10 @@ export function DataTable({
                         <td
                           key={cell.id}
                           className={cn(
-                            'px-3 py-2 border-b border-[var(--border)]',
+                            'px-3 py-2 border-b border-[var(--border)] transition-colors',
                             isYearOrTotal ? 'text-right' : 'text-left',
-                            isSticky && 'sticky left-0 bg-white z-10',
-                            cellIndex === 1 && 'sticky bg-white z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
+                            isSticky && 'sticky left-0 bg-white group-hover:bg-[var(--gray-light)] z-10',
+                            cellIndex === 1 && 'sticky bg-white group-hover:bg-[var(--gray-light)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
                             isExpanded && isSticky && 'bg-[var(--gray-light)]',
                             isTotaal && 'bg-[var(--totaal-bg)] font-semibold'
                           )}
