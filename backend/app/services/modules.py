@@ -479,10 +479,13 @@ async def _typesense_get_primary_keys(
     Get matching primary keys from Typesense for hybrid search.
 
     Uses Typesense to quickly identify which primary entities match the search
-    across ALL searchable fields (not just primary), then we query PostgreSQL
-    with a simple WHERE IN clause (uses index, fast).
+    across searchable fields, then we query PostgreSQL with a simple WHERE IN
+    clause (uses index, fast).
 
     This is 10-100x faster than regex search directly in PostgreSQL.
+
+    Strategy: Search each field individually (like autocomplete does) and
+    combine unique primary values. Multi-field query_by can miss results.
 
     Args:
         collection: Typesense collection name
@@ -490,47 +493,43 @@ async def _typesense_get_primary_keys(
         search: Search term
         limit: Max results to return
     """
-    # Get searchable fields for this collection
     search_fields = TYPESENSE_SEARCHABLE_FIELDS.get(collection, [primary_field])
     lower_fields = TYPESENSE_LOWER_FIELDS.get(collection, [])
 
-    # Build query_by from fields that actually exist in Typesense
-    query_by_parts = []
-    for field in search_fields:
-        query_by_parts.append(field)
-        # Only add _lower variant if it exists
-        if field in lower_fields:
-            query_by_parts.append(f"{field}_lower")
-
-    query_by = ",".join(query_by_parts)
-
-    # Search WITHOUT group_by to get all matching documents
-    # group_by can cause issues with multi-field searches
-    params = {
-        "q": search,
-        "query_by": query_by,
-        "prefix": "true",
-        "per_page": str(limit * 10),  # Get more to ensure enough unique primary values
-    }
-
-    data = await _typesense_search(collection, params)
-
-    # Log Typesense response for debugging
-    found_count = data.get("found", 0)
-    hits_count = len(data.get("hits", []))
-    logger.info(f"Typesense search '{search}' in {collection}: found={found_count}, hits={hits_count}, query_by={query_by}")
-
-    # Extract unique primary values from hits
+    # Collect unique primary values across all field searches
     seen = set()
     primary_keys = []
-    for hit in data.get("hits", []):
-        doc = hit.get("document", {})
-        value = doc.get(primary_field)
-        if value and value not in seen:
-            seen.add(value)
-            primary_keys.append(value)
-            if len(primary_keys) >= limit:
-                break
+
+    # Search each field individually (more reliable than multi-field query_by)
+    for field in search_fields:
+        if len(primary_keys) >= limit:
+            break
+
+        # Build query_by for this field
+        query_by = field
+        if field in lower_fields:
+            query_by = f"{field},{field}_lower"
+
+        params = {
+            "q": search,
+            "query_by": query_by,
+            "prefix": "true",
+            "per_page": str(min(limit * 5, 250)),  # Get enough per field
+        }
+
+        data = await _typesense_search(collection, params)
+
+        # Extract primary values from hits
+        for hit in data.get("hits", []):
+            doc = hit.get("document", {})
+            value = doc.get(primary_field)
+            if value and value not in seen:
+                seen.add(value)
+                primary_keys.append(value)
+                if len(primary_keys) >= limit:
+                    break
+
+    logger.info(f"Typesense search '{search}' in {collection}: found {len(primary_keys)} unique {primary_field}s across {len(search_fields)} fields")
 
     return primary_keys
 
