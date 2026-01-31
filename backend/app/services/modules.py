@@ -504,31 +504,33 @@ async def _typesense_get_primary_keys(
 
     query_by = ",".join(query_by_parts)
 
+    # Search WITHOUT group_by to get all matching documents
+    # group_by can cause issues with multi-field searches
     params = {
         "q": search,
         "query_by": query_by,
         "prefix": "true",
-        "per_page": str(limit),
-        "group_by": primary_field,
-        "group_limit": "1",
+        "per_page": str(limit * 10),  # Get more to ensure enough unique primary values
     }
 
     data = await _typesense_search(collection, params)
 
     # Log Typesense response for debugging
     found_count = data.get("found", 0)
-    grouped_count = len(data.get("grouped_hits", []))
-    logger.info(f"Typesense search '{search}' in {collection}: found={found_count}, groups={grouped_count}, query_by={query_by}")
+    hits_count = len(data.get("hits", []))
+    logger.info(f"Typesense search '{search}' in {collection}: found={found_count}, hits={hits_count}, query_by={query_by}")
 
-    # Extract primary values from grouped hits
+    # Extract unique primary values from hits
+    seen = set()
     primary_keys = []
-    for group in data.get("grouped_hits", []):
-        hits = group.get("hits", [])
-        if hits:
-            doc = hits[0].get("document", {})
-            value = doc.get(primary_field)
-            if value:
-                primary_keys.append(value)
+    for hit in data.get("hits", []):
+        doc = hit.get("document", {})
+        value = doc.get(primary_field)
+        if value and value not in seen:
+            seen.add(value)
+            primary_keys.append(value)
+            if len(primary_keys) >= limit:
+                break
 
     return primary_keys
 
