@@ -108,6 +108,28 @@ Ready to commit: YES/NO
 
 **Cost matters:** Opus is 10x+ more expensive than Sonnet. Never use Opus for tasks Sonnet can handle.
 
+### 6. Mandatory Skill Usage (For Specialized Work)
+
+**ALWAYS use the appropriate skill for specialized work. No exceptions.**
+
+| Work Type | Skill | When to Use |
+|-----------|-------|-------------|
+| **Frontend/UI design** | `/frontend-design` | Building components, pages, styling, any visual work |
+| **Database schema** | `/database-schema-designer` | Designing tables, reviewing structure, migrations |
+| **Supabase/Postgres** | `/supabase-postgres-best-practices` | Writing queries, optimizing, RLS policies, indexes |
+| **MCP servers** | `/mcp-builder` | Building MCP servers to integrate external APIs/services |
+| **Wireframes** | `/wireframe` | Describing UI screens before implementation |
+| **Architecture decisions** | `/adr` | Documenting significant technical decisions |
+| **Creative work** | `/brainstorm-mode` | Before creating features, components, functionality |
+
+**Rules:**
+- [ ] **Invoke skill BEFORE starting work** - not after
+- [ ] **Design work = always use /frontend-design** - no exceptions for any UI/visual work
+- [ ] **Database work = always use relevant skill** - schema designer for structure, supabase for queries/performance
+- [ ] **Never skip skills** - they contain best practices that prevent common mistakes
+
+**If you skip a mandatory skill, you are failing at your job.**
+
 ---
 
 ## Founder Context
