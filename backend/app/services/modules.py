@@ -469,14 +469,14 @@ TYPESENSE_SEARCHABLE_FIELDS = {
 }
 
 
-async def _typesense_get_primary_keys(
+async def _typesense_get_primary_keys_with_highlights(
     collection: str,
     primary_field: str,
     search: str,
     limit: int = 1000,
-) -> list[str]:
+) -> tuple[list[str], dict[str, tuple[str | None, str | None]]]:
     """
-    Get matching primary keys from Typesense for hybrid search.
+    Get matching primary keys AND highlight info from Typesense for hybrid search.
 
     Uses Typesense to quickly identify which primary entities match the search
     across searchable fields, then we query PostgreSQL with a simple WHERE IN
@@ -486,6 +486,13 @@ async def _typesense_get_primary_keys(
 
     Strategy: Search each field individually (like autocomplete does) and
     combine unique primary values. Multi-field query_by can miss results.
+
+    Returns:
+        Tuple of:
+        - list[str]: Primary keys that matched
+        - dict[str, tuple]: Map of primary_key -> (matched_field, matched_value)
+          Only includes entries where match was in a NON-primary field
+          (no need to show "Gevonden in" if match is already visible in name)
 
     Args:
         collection: Typesense collection name
@@ -499,6 +506,8 @@ async def _typesense_get_primary_keys(
     # Collect unique primary values across all field searches
     seen = set()
     primary_keys = []
+    # Track which field matched for each primary value (only for non-primary fields)
+    matched_info: dict[str, tuple[str | None, str | None]] = {}
 
     # Search each field individually (more reliable than multi-field query_by)
     for field in search_fields:
@@ -515,6 +524,7 @@ async def _typesense_get_primary_keys(
             "query_by": query_by,
             "prefix": "true",
             "per_page": str(min(limit * 5, 250)),  # Get enough per field
+            "highlight_full_fields": field,  # Get full field value in highlight
         }
 
         data = await _typesense_search(collection, params)
@@ -526,12 +536,24 @@ async def _typesense_get_primary_keys(
             if value and value not in seen:
                 seen.add(value)
                 primary_keys.append(value)
+
+                # If this match is from a NON-primary field, record which field matched
+                # We DON'T record primary field matches - user already sees the name
+                if field != primary_field:
+                    # Get the matched field value from the document
+                    matched_value = doc.get(field)
+                    if matched_value:
+                        matched_info[value] = (field, str(matched_value))
+
                 if len(primary_keys) >= limit:
                     break
 
-    logger.info(f"Typesense search '{search}' in {collection}: found {len(primary_keys)} unique {primary_field}s across {len(search_fields)} fields")
+    logger.info(
+        f"Typesense search '{search}' in {collection}: found {len(primary_keys)} unique {primary_field}s, "
+        f"{len(matched_info)} with non-primary field matches"
+    )
 
-    return primary_keys
+    return primary_keys, matched_info
 
 
 async def _get_from_aggregated_view(
@@ -568,15 +590,17 @@ async def _get_from_aggregated_view(
     # Problem: Regex search on 5 columns is slow (5+ seconds on 200K rows)
     # Solution: Use Typesense to find matching primary keys (<50ms),
     #           then query PostgreSQL with WHERE IN (uses index, fast)
+    # Also extracts "which field matched" info for "Gevonden in" column
     # ==========================================================================
     typesense_primary_keys: list[str] = []
+    typesense_matched_info: dict[str, tuple[str | None, str | None]] = {}
     if search:
         # Get Typesense collection for this module
         collection = TYPESENSE_COLLECTIONS.get(config["table"])
         if collection:
-            # Get matching primary keys from Typesense (fast)
+            # Get matching primary keys AND highlight info from Typesense (fast)
             # Searchable fields are defined in TYPESENSE_SEARCHABLE_FIELDS
-            typesense_primary_keys = await _typesense_get_primary_keys(
+            typesense_primary_keys, typesense_matched_info = await _typesense_get_primary_keys_with_highlights(
                 collection=collection,
                 primary_field=primary,
                 search=search,
@@ -712,22 +736,10 @@ async def _get_from_aggregated_view(
     rows = await fetch_all(query, *params)
     total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
 
-    # Hybrid lookup: find which field matched for each result
-    # DISABLED FOR PERFORMANCE: This LATERAL JOIN with regex on source table
-    # is the bottleneck (~5-6 seconds). The "Gevonden in" column won't show
-    # until we optimize this (TODO: use Typesense highlight info instead).
-    matched_fields_map: dict[str, tuple[str | None, str | None]] = {}
-    # if search and rows:
-    #     table = config["table"]
-    #     search_fields = config.get("search_fields", [primary])
-    #     primary_values = [row["primary_value"].upper() for row in rows]
-    #     matched_fields_map = await _lookup_matched_fields(
-    #         table=table,
-    #         primary_field=primary,
-    #         search_fields=search_fields,
-    #         primary_values=primary_values,
-    #         search=search,
-    #     )
+    # Use Typesense highlight info for "Gevonden in" column (fast!)
+    # This replaces the slow PostgreSQL LATERAL JOIN approach.
+    # typesense_matched_info contains: primary_value -> (matched_field, matched_value)
+    # Only for matches in NON-primary fields (no need to show if name matched)
 
     # Transform rows
     result = []
@@ -748,11 +760,11 @@ async def _get_from_aggregated_view(
                 extra_cols[col] = str(val) if val is not None else None
             row_data["extra_columns"] = extra_cols
 
-        # Add matched field info from hybrid lookup
+        # Add matched field info from Typesense highlights (fast!)
+        # Only populated when match was in a NON-primary field
         if search:
-            # Use uppercase key to match the lookup (matches UPPER() in query)
-            key = row["primary_value"].upper()
-            matched = matched_fields_map.get(key, (None, None))
+            # Look up by exact primary_value (case-sensitive match from Typesense)
+            matched = typesense_matched_info.get(row["primary_value"], (None, None))
             row_data["matched_field"] = matched[0]
             row_data["matched_value"] = matched[1]
 

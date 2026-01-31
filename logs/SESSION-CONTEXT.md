@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-01-30
+**Last Updated:** 2026-01-31
 **Project Phase:** V1.0 Development
 **Current Sprint:** Week 6 - User Auth
 
@@ -1111,6 +1111,25 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 **Module Page Hydration Fix (Session 4):**
 - Fixed duplicate API calls with isHydrated state
 - Consolidated column loading useEffects
+
+**Session 6 - "Gevonden in" Column via Typesense (2026-01-31):**
+
+**Problem:** "Gevonden in" column was showing "-" after Session 5 disabled the slow PostgreSQL lookup.
+
+**Solution:** Use Typesense highlight data instead of PostgreSQL LATERAL JOIN.
+- Modified `_typesense_get_primary_keys()` → `_typesense_get_primary_keys_with_highlights()`
+- Returns both primary keys AND which field matched (for non-primary field matches)
+- Populates `matched_field` and `matched_value` directly from Typesense response
+- No additional database query needed - info comes from the same Typesense search
+
+**Performance:** Zero additional latency (info extracted from existing Typesense search).
+
+**Behavior:**
+- When search matches primary field (ontvanger/leverancier): "Gevonden in" stays empty (match visible in name)
+- When search matches non-primary field (regeling, artikel, etc.): Shows matched field and value
+
+**Files Modified:**
+- `backend/app/services/modules.py` - New highlight extraction logic
 
 **Next Steps:**
 1. Week 6 - User Auth (Magic Link, user migration)
