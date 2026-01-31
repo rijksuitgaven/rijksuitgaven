@@ -114,6 +114,11 @@ Main data grid component using TanStack Table.
 - Trend anomaly indicator (red highlight for 10%+ YoY change)
 - Cross-module indicator ("Ook in: Instrumenten, Publiek")
 - **"Gevonden in" column** (when searching): Shows which field matched if not primary field
+- **Extra column enhancements** (all modules):
+  - Text wrapping: Max 2 lines with ellipsis overflow (`line-clamp-2`)
+  - "+X meer" indicator: Shows when multiple distinct values exist (Gmail-style)
+  - Click "+X meer": Opens detail panel for full breakdown
+  - Styling: 12px, Navy Medium (`#436FA3`), cursor pointer, no underline/hover
 - Sticky columns on mobile (expand button + primary column)
 - Server-side pagination (25/100/150/250/500 rows per page)
 - Sortable columns

@@ -16,6 +16,7 @@ export interface ApiRecipientRow {
   row_count: number
   modules: string[] | null  // For cross-module indicator
   extra_columns?: Record<string, string | null>  // Dynamic columns (max 2, when NOT searching)
+  extra_column_counts?: Record<string, number>  // Distinct value counts per column (for "+X meer" indicator)
   matched_field?: string | null  // Which field matched the search (when searching)
   matched_value?: string | null  // The value that matched (when searching)
 }
@@ -28,6 +29,7 @@ export interface RecipientRow {
   row_count: number
   sources: string[] | null  // Renamed from modules for clarity
   extraColumns?: Record<string, string | null>  // Dynamic columns (max 2, when NOT searching)
+  extraColumnCounts?: Record<string, number>  // Distinct value counts per column (for "+X meer" indicator)
   matchedField?: string | null  // Which field matched the search (when searching)
   matchedValue?: string | null  // The value that matched (when searching)
 }

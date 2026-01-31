@@ -438,13 +438,36 @@ export function DataTable({
             ),
             cell: ({ row }) => {
               const value = row.original.extraColumns?.[colKey]
+              const count = row.original.extraColumnCounts?.[colKey] ?? 1
+              const hasMore = count > 1
+
+              if (!value) {
+                return <span className="text-[var(--muted-foreground)]">-</span>
+              }
+
               return (
-                <div className="text-sm text-[var(--navy-dark)] truncate max-w-[150px]" title={value || undefined}>
-                  {value || '-'}
+                <div className="max-w-[180px]">
+                  {/* Value with 2-line max and ellipsis overflow */}
+                  <div
+                    className="text-sm text-[var(--navy-dark)] line-clamp-2"
+                    title={value}
+                  >
+                    {value}
+                  </div>
+                  {/* "+X meer" indicator when multiple distinct values exist */}
+                  {hasMore && (
+                    <button
+                      onClick={() => onRowClick?.(row.original.primary_value)}
+                      className="text-xs text-[var(--navy-medium)] mt-0.5 cursor-pointer"
+                      style={{ fontSize: '12px' }}
+                    >
+                      +{count - 1} meer
+                    </button>
+                  )}
                 </div>
               )
             },
-            size: 150,
+            size: 180,
           })
         }
       })

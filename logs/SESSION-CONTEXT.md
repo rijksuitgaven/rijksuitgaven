@@ -80,19 +80,19 @@
 ## Recent Work (Last 5 Files)
 
 1. **backend/app/services/modules.py** ⭐ UPDATED (2026-01-31)
-   Aggregated view search expansion (all view columns), hybrid lookup for matched fields
+   Added COUNT(DISTINCT) for extra columns to support "+X meer" indicator
 
-2. **backend/app/services/database.py** ⭐ UPDATED (2026-01-31)
-   Added normalize_recipient_python() for hybrid lookups
+2. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-31)
+   Extra column improvements: 2-line wrapping (line-clamp-2), "+X meer" indicator, click to detail
 
-3. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-31)
-   "Gevonden in" column redesign (separate column, 2-line format)
+3. **app/src/types/api.ts** ⭐ UPDATED (2026-01-31)
+   Added extraColumnCounts field to API and internal types
 
-4. **app/src/components/module-page/module-page.tsx** ⭐ UPDATED (2026-01-31)
-   Hydration fix for duplicate API calls, consolidated column loading
+4. **app/src/lib/api.ts** ⭐ UPDATED (2026-01-31)
+   Transform extraColumnCounts from API response
 
-5. **scripts/sql/018-expand-view-columns.sql** ⭐ CREATED (2026-01-31)
-   Expand instrumenten_aggregated with begrotingsnaam, instrument columns
+5. **docs/FRONTEND-DOCUMENTATION.md** ⭐ UPDATED (2026-01-31)
+   Documented extra column enhancements feature
 
 ---
 

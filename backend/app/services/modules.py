@@ -574,10 +574,14 @@ async def _get_from_aggregated_view(
     primary = config["primary_field"]
 
     # Build extra columns selection if columns are requested and available in view
+    # Also select count columns for "+X meer" indicator (column_count columns in view)
     extra_columns_select = ""
     if columns and not search:
         # Only include static columns when NOT searching (search uses matched_field instead)
-        extra_columns_select = ", " + ", ".join([f"{col} AS extra_{col}" for col in columns])
+        # Select both the value and the count for each column
+        value_cols = ", ".join([f"{col} AS extra_{col}" for col in columns])
+        count_cols = ", ".join([f"COALESCE({col}_count, 1) AS extra_{col}_count" for col in columns])
+        extra_columns_select = ", " + value_cols + ", " + count_cols
 
     # Build WHERE clause
     where_clauses = []
@@ -754,11 +758,16 @@ async def _get_from_aggregated_view(
         # Add extra columns if requested (from view columns)
         if columns and not search:
             extra_cols = {}
+            extra_counts = {}
             for col in columns:
                 val = row.get(f"extra_{col}")
                 # Cast to string (staffel is INTEGER, API expects strings)
                 extra_cols[col] = str(val) if val is not None else None
+                # Read count from view (column_count columns added in 019a-f migrations)
+                count = row.get(f"extra_{col}_count", 1)
+                extra_counts[col] = int(count) if count is not None else 1
             row_data["extra_columns"] = extra_cols
+            row_data["extra_column_counts"] = extra_counts
 
         # Add matched field info from Typesense highlights (fast!)
         # Only populated when match was in a NON-primary field
@@ -802,16 +811,23 @@ async def _get_from_source_table(
     ])
 
     # Build extra columns selection (MODE() returns most frequent value per group)
+    # Also return COUNT(DISTINCT) for "+X meer" indicator in UI
     extra_columns_select = ""
     if columns and not search:
         # Only use static extra columns when NOT searching
         # When searching, we use matched_field/matched_value instead
         for col in columns:
             validate_identifier(col, ALLOWED_COLUMNS, "column")
-        extra_columns_select = ", " + ", ".join([
+        # Return both the most frequent value AND the count of distinct values
+        mode_cols = ", ".join([
             f"MODE() WITHIN GROUP (ORDER BY {col}) AS extra_{col}"
             for col in columns
         ])
+        count_cols = ", ".join([
+            f"COUNT(DISTINCT {col}) AS extra_{col}_count"
+            for col in columns
+        ])
+        extra_columns_select = ", " + mode_cols + ", " + count_cols
 
     # For matched_field detection when searching, we'll build SQL to find which field matched
     # This is built later after we know the search pattern
@@ -981,11 +997,15 @@ async def _get_from_source_table(
         # Add extra columns if requested (only when NOT searching)
         elif columns:
             extra_cols = {}
+            extra_counts = {}
             for col in columns:
                 val = row.get(f"extra_{col}")
+                count = row.get(f"extra_{col}_count", 1)
                 # Cast to string (staffel is INTEGER, API expects strings)
                 extra_cols[col] = str(val) if val is not None else None
+                extra_counts[col] = int(count) if count is not None else 1
             row_data["extra_columns"] = extra_cols
+            row_data["extra_column_counts"] = extra_counts
 
         result.append(row_data)
 
