@@ -361,11 +361,21 @@ export function DataTable({
             >
               {row.original.primary_value}
             </button>
-            {/* Cross-module indicator */}
-            {row.original.sources && row.original.sources.length > 1 && (
-              <div className="text-xs text-[var(--navy-medium)] mt-0.5">
-                Ook in: {row.original.sources.filter(s => s !== 'current').join(', ')}
-              </div>
+            {/* Module indicator - different behavior for Integraal vs other modules */}
+            {moduleId === 'integraal' ? (
+              // Integraal: Always show "In: [modules]" - this IS the overview page
+              row.original.sources && row.original.sources.length > 0 && (
+                <div className="text-xs text-[var(--navy-medium)] mt-0.5">
+                  In: {row.original.sources.join(', ')}
+                </div>
+              )
+            ) : (
+              // Other modules: Show "Ook in:" only when recipient appears in multiple modules
+              row.original.sources && row.original.sources.length > 1 && (
+                <div className="text-xs text-[var(--navy-medium)] mt-0.5">
+                  Ook in: {row.original.sources.filter(s => s !== 'current').join(', ')}
+                </div>
+              )
             )}
           </div>
         ),

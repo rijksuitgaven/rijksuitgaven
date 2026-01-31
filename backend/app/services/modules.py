@@ -926,7 +926,7 @@ async def get_integraal_data(
             "years": years_dict,
             "totaal": int(row["totaal"] or 0),
             "row_count": row["source_count"] or 1,  # Use source_count as row_count
-            "modules": row["sources"].split(",") if row["sources"] else [],
+            "modules": [s.strip() for s in row["sources"].split(",")] if row["sources"] else [],
         })
 
     return result, total or 0
@@ -1155,7 +1155,7 @@ async def get_module_autocomplete(
 
     for row in universal_rows:
         name = row["name"]
-        sources = row["sources"].split(",") if row["sources"] else []
+        sources = [s.strip() for s in row["sources"].split(",")] if row["sources"] else []
 
         # Filter out the current module from sources (check all variants)
         other_sources = [s for s in sources if s.lower().strip() not in module_variants]
@@ -1210,7 +1210,7 @@ async def get_integraal_autocomplete(
 
     results = []
     for row in rows:
-        sources = row["sources"].split(",") if row["sources"] else []
+        sources = [s.strip() for s in row["sources"].split(",")] if row["sources"] else []
         results.append({
             "name": row["name"],
             "totaal": int(row["totaal"] or 0),
