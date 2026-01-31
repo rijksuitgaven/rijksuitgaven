@@ -65,6 +65,7 @@ class AggregatedRow(BaseModel):
     row_count: int = 1
     modules: Optional[list[str]] = None  # For integraal only
     extra_columns: Optional[dict[str, Optional[str]]] = None  # Dynamic columns (max 2, when NOT searching)
+    extra_column_counts: Optional[dict[str, int]] = None  # Distinct value counts for "+X meer" indicator
     matched_field: Optional[str] = None  # Which field matched the search (when searching)
     matched_value: Optional[str] = None  # The value that matched (when searching)
 
