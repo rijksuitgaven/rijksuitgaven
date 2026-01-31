@@ -391,26 +391,22 @@ export function DataTable({
     const isSearching = Boolean(searchQuery && searchQuery.trim().length > 0)
 
     if (isSearching) {
-      // Match column - shows which field matched the search
+      // "Gevonden in" column - shows which field matched the search
       cols.push({
-        id: 'match',
+        id: 'gevonden-in',
         header: () => (
-          <span className="text-sm font-semibold text-white">Match</span>
+          <span className="text-sm font-semibold text-white">Gevonden in</span>
         ),
         cell: ({ row }) => {
           const field = row.original.matchedField
-          const value = row.original.matchedValue
-          if (!field || !value) return <span className="text-[var(--muted-foreground)]">-</span>
+          if (!field) return <span className="text-[var(--muted-foreground)]">-</span>
 
           const fieldLabel = FIELD_LABELS[field] || field
           return (
-            <div className="text-sm truncate max-w-[200px]" title={`${fieldLabel}: ${value}`}>
-              <span className="text-[var(--navy-medium)] font-medium">{fieldLabel}:</span>{' '}
-              <span className="text-[var(--navy-dark)]">{value}</span>
-            </div>
+            <span className="text-sm text-[var(--navy-dark)]">{fieldLabel}</span>
           )
         },
-        size: 200,
+        size: 120,
       })
     } else {
       // Static extra columns when not searching
