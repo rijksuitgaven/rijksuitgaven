@@ -1186,8 +1186,15 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 ---
 
-**Next Steps:**
-1. Complete Mini Sprint (Overzicht page, mobile audit)
-2. Week 6 - User Auth (Magic Link, user migration)
-3. Week 7-9 - Polish and launch
-4. Beta testing preparation
+**Upcoming Work Plan:**
+
+| Day | Focus |
+|-----|-------|
+| **2026-02-01** | Filters - UX/UI review + database filter work |
+| **2026-02-02** | Overzichtspagina design + implementation |
+| **2026-02-03** | Hyperlinks (cross-module navigation) |
+
+**After Mini Sprint:**
+- Week 6 - User Auth (Magic Link, user migration)
+- Week 7-9 - Polish and launch
+- Beta testing preparation
