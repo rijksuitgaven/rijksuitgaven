@@ -1599,6 +1599,12 @@ async def get_integraal_autocomplete(
 
     data = await _typesense_search("recipients", params)
 
+    # DEBUG: Log what Typesense returns
+    logger.info(f"Integraal autocomplete: got {len(data.get('hits', []))} hits")
+    if data.get("hits"):
+        first_doc = data["hits"][0].get("document", {})
+        logger.info(f"First doc keys: {list(first_doc.keys())}, sources: {first_doc.get('sources')}")
+
     results = []
     for hit in data.get("hits", []):
         doc = hit.get("document", {})
