@@ -1396,6 +1396,22 @@ MODULE_DISPLAY_NAMES = {
     "publiek": "Publiek",
 }
 
+# Reverse mapping: source names (from recipients collection) → module names
+# Sources use full display names, we need to map back to short module names
+SOURCE_TO_MODULE = {
+    "financiële instrumenten": "instrumenten",
+    "instrumenten": "instrumenten",
+    "apparaatsuitgaven": "apparaat",
+    "apparaat": "apparaat",
+    "inkoopuitgaven": "inkoop",
+    "inkoop": "inkoop",
+    "provinciale subsidieregisters": "provincie",
+    "provincie": "provincie",
+    "gemeentelijke subsidieregisters": "gemeente",
+    "gemeente": "gemeente",
+    "publiek": "publiek",
+}
+
 
 async def get_module_autocomplete(
     module: str,
@@ -1523,12 +1539,11 @@ async def get_module_autocomplete(
             continue
 
         # Check if recipient is in current module
-        # sources may use full names like "instrumenten" or display names
+        # Sources use display names like "Provinciale subsidieregisters"
+        # Use SOURCE_TO_MODULE mapping to normalize to module names
         current_module_lower = module.lower()
         is_in_current_module = any(
-            s.lower() == current_module_lower or
-            s.lower().startswith(current_module_lower) or
-            current_module_lower in s.lower()
+            SOURCE_TO_MODULE.get(s.lower(), s.lower()) == current_module_lower
             for s in sources
         )
 
