@@ -1,77 +1,100 @@
 # Typesense Sync Scripts
 
-## Quick Reference
+## When to Sync (Manual Process)
 
-### Sync All Collections
+Run the sync script **after these events**:
+
+| Event | Action |
+|-------|--------|
+| Bulk data import (new year's data) | Full sync: `--recreate` |
+| New module added | Full sync: `--recreate` |
+| Data corrections in Supabase | Sync affected collection |
+| Schema changes | Full sync: `--recreate` |
+
+**No sync needed for:** User actions, exports, read-only operations.
+
+---
+
+## How to Sync
+
+### 1. Set environment variables
+
 ```bash
-SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" python3 scripts/typesense/sync_to_typesense.py --recreate
+export TYPESENSE_HOST="typesense-production-35ae.up.railway.app"
+export TYPESENSE_API_KEY="<admin-api-key-from-railway>"
+export SUPABASE_DB_URL="<database-url-from-railway>"
 ```
 
-### Sync Single Collection
+### 2. Run sync (includes mandatory audit)
+
 ```bash
-SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" python3 scripts/typesense/sync_to_typesense.py --collection [NAME] --recreate
+cd scripts/typesense
+python3 sync_to_typesense.py --recreate
+```
+
+### 3. Verify audit passes
+
+```
+✅ AUDIT PASSED: All collections verified
+Sync complete! ✅
+```
+
+**If audit fails:** Re-run with `--recreate`. Do NOT use data until audit passes.
+
+---
+
+## Commands Reference
+
+```bash
+# Full sync all collections (recommended)
+python3 sync_to_typesense.py --recreate
+
+# Sync single collection
+python3 sync_to_typesense.py --collection instrumenten --recreate
+
+# Audit only (verify without syncing)
+python3 sync_to_typesense.py --audit-only
+
+# Test search performance only
+python3 sync_to_typesense.py --test-only
 ```
 
 **Available collections:** `recipients`, `instrumenten`, `inkoop`, `publiek`, `gemeente`, `provincie`, `apparaat`
 
-### Test Search Only (No Sync)
-```bash
-python3 scripts/typesense/sync_to_typesense.py --test-only
-```
-
 ---
 
-## When to Run
+## Expected Document Counts
 
-| Scenario | Command |
-|----------|---------|
-| New data imported to Supabase | Sync all: `--recreate` |
-| Single table updated | Sync one: `--collection [NAME] --recreate` |
-| Verify search is working | Test only: `--test-only` |
+| Collection | Documents | Source |
+|------------|-----------|--------|
+| recipients | ~467K | universal_search |
+| instrumenten | ~675K | instrumenten |
+| inkoop | ~636K | inkoop |
+| publiek | ~115K | publiek |
+| gemeente | ~126K | gemeente |
+| provincie | ~67K | provincie |
+| apparaat | ~10K | apparaat (grouped) |
+
+Last verified: 2026-02-01
 
 ---
 
 ## Prerequisites
 
-**One-time setup:**
 ```bash
 pip3 install typesense psycopg2-binary
 ```
 
 ---
 
-## Connection Details
-
-| Service | Value |
-|---------|-------|
-| Typesense Host | `typesense-production-35ae.up.railway.app` |
-| Typesense API Key | `0vh4mxafjeuvd676gw92kpjflg6fuv57` |
-| Supabase Pooler | `aws-1-eu-west-1.pooler.supabase.com:5432` |
-| Supabase Project | `kmdelrgtgglcrupprkqf` |
-
----
-
-## Current Index Status
-
-| Collection | Records | Last Synced |
-|------------|---------|-------------|
-| recipients | 466,827 | 2026-01-23 |
-| apparaat | 9,628 | 2026-01-24 |
-| instrumenten | Schema only | - |
-| inkoop | Schema only | - |
-| publiek | Schema only | - |
-| gemeente | Schema only | - |
-| provincie | Schema only | - |
-
----
-
 ## Troubleshooting
 
-**"command not found: python"** → Use `python3` instead
-
-**"command not found: pip"** → Use `pip3` instead
-
-**"could not translate host name"** → Use the pooler URL (aws-1-eu-west-1.pooler.supabase.com), not the direct URL (db.xxx.supabase.co)
+| Error | Solution |
+|-------|----------|
+| "Forbidden" API key error | Use admin API key from Railway Typesense service |
+| Audit fails with count mismatch | Re-run with `--recreate` |
+| "command not found: python" | Use `python3` |
+| "could not translate host name" | Use pooler URL, not direct Supabase URL |
 
 ---
 
@@ -80,5 +103,5 @@ pip3 install typesense psycopg2-binary
 | File | Purpose |
 |------|---------|
 | `collections.json` | Typesense collection schemas |
-| `sync_to_typesense.py` | Sync script (Supabase → Typesense) |
+| `sync_to_typesense.py` | Sync script with mandatory audit |
 | `README.md` | This documentation |
