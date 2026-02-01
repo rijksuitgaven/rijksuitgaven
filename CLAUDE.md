@@ -85,6 +85,13 @@ Which do you prefer?
 - Is the fix needed in other modules?
 - Are configs (Typesense, views, search) consistent?
 
+**MANDATORY: Run test script before declaring any module fix complete:**
+```bash
+./scripts/test-all-modules.sh autocomplete "search_term"
+./scripts/test-all-modules.sh all  # Full suite
+```
+**Do NOT say "fixed" until all modules pass.**
+
 ---
 
 ## Project Context
