@@ -106,12 +106,6 @@ async def list_modules():
     return [m.value for m in ModuleName]
 
 
-@router.get("/debug/deploy-check")
-async def deploy_check():
-    """Debug endpoint to verify Railway deploys."""
-    return {"deployed_at": "2026-02-01T21:00:00", "version": "debug-v3"}
-
-
 # =============================================================================
 # Module Stats Endpoint
 # =============================================================================
@@ -206,6 +200,7 @@ async def module_autocomplete(
                 CurrentModuleResult(
                     name=r["name"],
                     totaal=r.get("totaal", 0),
+                    modules=r.get("modules", []),  # Pass modules for integraal badges
                 )
                 for r in data.get("current_module", [])
             ],
