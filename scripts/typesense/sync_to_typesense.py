@@ -494,11 +494,76 @@ def test_search(client):
     except Exception:
         print("\n  Apparaat collection: not yet populated")
 
+def audit_collections(client, conn):
+    """
+    MANDATORY audit after sync: verify Typesense counts match PostgreSQL.
+
+    This prevents incomplete indexes that cause missing search results.
+    The sync script will EXIT WITH ERROR if counts don't match.
+    """
+    print("\n" + "="*50)
+    print("AUDIT: Verifying Typesense vs PostgreSQL counts")
+    print("="*50)
+
+    cursor = conn.cursor()
+
+    # Collection name -> (PostgreSQL query, tolerance %)
+    checks = [
+        ('recipients', "SELECT COUNT(*) FROM universal_search WHERE ontvanger IS NOT NULL AND ontvanger != ''", 0),
+        ('instrumenten', "SELECT COUNT(*) FROM instrumenten WHERE ontvanger IS NOT NULL AND ontvanger != ''", 0),
+        ('inkoop', "SELECT COUNT(*) FROM inkoop WHERE leverancier IS NOT NULL AND leverancier != ''", 0),
+        ('publiek', "SELECT COUNT(*) FROM publiek WHERE ontvanger IS NOT NULL AND ontvanger != ''", 0),
+        ('gemeente', "SELECT COUNT(*) FROM gemeente WHERE ontvanger IS NOT NULL AND ontvanger != ''", 0),
+        ('provincie', "SELECT COUNT(*) FROM provincie WHERE ontvanger IS NOT NULL AND ontvanger != ''", 0),
+        ('apparaat', """SELECT COUNT(*) FROM (
+            SELECT 1 FROM apparaat WHERE kostensoort IS NOT NULL AND kostensoort != ''
+            GROUP BY kostensoort, begrotingsnaam, artikel, detail
+        ) t""", 0),
+    ]
+
+    all_passed = True
+
+    for collection, query, tolerance in checks:
+        try:
+            info = client.collections[collection].retrieve()
+            ts_count = info.get('num_documents', 0)
+        except Exception as e:
+            print(f"  ❌ {collection}: Cannot retrieve from Typesense ({e})")
+            all_passed = False
+            continue
+
+        cursor.execute(query)
+        pg_count = cursor.fetchone()[0]
+
+        diff = abs(ts_count - pg_count)
+        pct = (diff / pg_count * 100) if pg_count > 0 else 0
+
+        if diff == 0:
+            print(f"  ✅ {collection}: {ts_count:,} documents (exact match)")
+        elif pct <= tolerance:
+            print(f"  ⚠️  {collection}: {ts_count:,} vs {pg_count:,} ({pct:.1f}% diff, within tolerance)")
+        else:
+            print(f"  ❌ {collection}: {ts_count:,} vs {pg_count:,} ({diff:,} missing, {pct:.1f}%)")
+            all_passed = False
+
+    cursor.close()
+
+    print()
+    if all_passed:
+        print("✅ AUDIT PASSED: All collections verified")
+    else:
+        print("❌ AUDIT FAILED: Some collections have mismatches!")
+        print("   Data integrity issue - DO NOT USE until fixed.")
+
+    return all_passed
+
+
 def main():
     parser = argparse.ArgumentParser(description='Sync data to Typesense')
     parser.add_argument('--collection', help='Only sync specific collection')
     parser.add_argument('--recreate', action='store_true', help='Recreate collections')
     parser.add_argument('--test-only', action='store_true', help='Only run search test')
+    parser.add_argument('--audit-only', action='store_true', help='Only run audit (no sync)')
     args = parser.parse_args()
 
     print("="*50)
@@ -522,6 +587,12 @@ def main():
     conn = get_db_connection()
     print(f"Database connection: ✅ Connected")
 
+    if args.audit_only:
+        # Just run audit without syncing
+        passed = audit_collections(client, conn)
+        conn.close()
+        sys.exit(0 if passed else 1)
+
     collections_to_sync = {
         'recipients': index_recipients,
         'instrumenten': index_instrumenten,
@@ -543,13 +614,20 @@ def main():
         for name, func in collections_to_sync.items():
             func(client, conn, args.recreate)
 
-    conn.close()
-
     # Run search test
     test_search(client)
 
+    # MANDATORY: Audit after sync to verify data integrity
+    passed = audit_collections(client, conn)
+    conn.close()
+
     print("\n" + "="*50)
-    print("Sync complete!")
+    if passed:
+        print("Sync complete! ✅")
+    else:
+        print("Sync complete but AUDIT FAILED! ❌")
+        print("Check for data issues before using in production.")
+        sys.exit(1)
     print("="*50)
 
 if __name__ == '__main__':

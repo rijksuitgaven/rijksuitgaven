@@ -115,6 +115,7 @@ Senior specialist (10+ years equivalent) in all disciplines. Never ask technical
 | Export | 500 rows max, always |
 | Auth | Magic Link only, no social |
 | Performance | <100ms search, <1s page load |
+| Railway deploy | ~2 minutes after push to main |
 
 ---
 
