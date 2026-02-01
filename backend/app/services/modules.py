@@ -1594,6 +1594,7 @@ async def get_integraal_autocomplete(
         "prefix": "true",
         "per_page": str(limit),
         "sort_by": "totaal:desc",
+        "include_fields": "name,totaal,sources",  # Explicitly request sources field
     }
 
     data = await _typesense_search("recipients", params)
@@ -1602,7 +1603,8 @@ async def get_integraal_autocomplete(
     for hit in data.get("hits", []):
         doc = hit.get("document", {})
         name = doc.get("name", "")
-        sources = doc.get("sources", [])
+        # Handle both None and missing sources field
+        sources = doc.get("sources") or []
         totaal = doc.get("totaal", 0)
 
         if name:
