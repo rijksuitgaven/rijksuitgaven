@@ -421,8 +421,8 @@ def index_apparaat(client, conn, recreate=False):
     count = 0
 
     for row in cursor:
-        # Create unique ID from kostensoort + begrotingsnaam combination
-        id_str = f"{row['kostensoort']}|{row['begrotingsnaam'] or 'unknown'}"
+        # Create unique ID from all 4 grouped fields to prevent collisions
+        id_str = f"{row['kostensoort']}|{row['begrotingsnaam'] or ''}|{row['artikel'] or ''}|{row['detail'] or ''}"
         doc = {
             'id': id_str[:512],  # Typesense max ID length
             'kostensoort': row['kostensoort'] or '',
