@@ -1498,14 +1498,16 @@ async def get_module_autocomplete(
             if len(field_matches) >= limit:
                 break
 
-    # 3. Search recipients collection for matches in OTHER modules
+    # 3. Search recipients collection for matches
+    # Recipients in current module go to current_module_results
+    # Recipients only in other modules go to other_modules_results
     current_names = {r["name"].upper() for r in current_module_results}
 
     params = {
         "q": search,
         "query_by": "name,name_lower",
         "prefix": "true",
-        "per_page": str(limit * 2),  # Get extra to filter
+        "per_page": str(limit * 3),  # Get extra to filter
         "sort_by": "totaal:desc",
     }
 
@@ -1515,26 +1517,41 @@ async def get_module_autocomplete(
         doc = hit.get("document", {})
         name = doc.get("name", "")
         sources = doc.get("sources", [])
+        totaal = doc.get("totaal", 0)
 
         if not name or name.upper() in current_names:
             continue
 
-        # Filter out current module from sources
+        # Check if recipient is in current module
+        # sources may use full names like "instrumenten" or display names
         current_module_lower = module.lower()
-        other_sources = [
-            MODULE_DISPLAY_NAMES.get(s.lower(), s)
+        is_in_current_module = any(
+            s.lower() == current_module_lower or
+            s.lower().startswith(current_module_lower) or
+            current_module_lower in s.lower()
             for s in sources
-            if s.lower() != current_module_lower
-        ]
+        )
 
-        if other_sources:
-            other_modules_results.append({
-                "name": name,
-                "modules": other_sources,
-            })
+        if is_in_current_module:
+            # Add to current module results
+            if len(current_module_results) < limit:
+                current_module_results.append({
+                    "name": name,
+                    "totaal": int(totaal),
+                })
+                current_names.add(name.upper())
+        else:
+            # Add to other modules results
+            other_sources = [
+                MODULE_DISPLAY_NAMES.get(s.lower(), s)
+                for s in sources
+            ]
 
-            if len(other_modules_results) >= limit:
-                break
+            if other_sources and len(other_modules_results) < limit:
+                other_modules_results.append({
+                    "name": name,
+                    "modules": other_sources,
+                })
 
     return {
         "current_module": current_module_results,

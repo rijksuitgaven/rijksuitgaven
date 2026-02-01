@@ -801,9 +801,9 @@ export function FilterPanel({
                             <div className="font-medium text-[var(--navy-dark)] truncate">
                               {result.value}
                             </div>
-                            <div className="text-xs text-[var(--muted-foreground)] whitespace-nowrap">
-                              in {FIELD_LABELS[result.field] || result.field}
-                            </div>
+                            <span className="text-xs px-1.5 py-0.5 bg-[var(--blue-light)]/20 text-[var(--navy-medium)] rounded whitespace-nowrap">
+                              {FIELD_LABELS[result.field] || result.field}
+                            </span>
                           </div>
                         </button>
                       )
