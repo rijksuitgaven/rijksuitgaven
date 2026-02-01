@@ -1,7 +1,7 @@
 # Data Update Runbook
 
 **Purpose:** Step-by-step guide for updating data in Rijksuitgaven.nl
-**Last Updated:** 2026-01-26
+**Last Updated:** 2026-02-01
 **Frequency:** Monthly (government data updates)
 
 ---
@@ -31,14 +31,18 @@ After importing new data (Steps 1-3), run these 2 commands from terminal:
 ```
 
 ```bash
-# Step 5: Re-sync Typesense
+# Step 5: Re-sync Typesense (includes mandatory audit)
+cd scripts/typesense
+export TYPESENSE_HOST="typesense-production-35ae.up.railway.app"
+export TYPESENSE_API_KEY="<admin-key-from-railway>"
 export SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
-python3 scripts/typesense/sync_to_typesense.py --recreate
+python3 sync_to_typesense.py --recreate
+# Must see: ✅ AUDIT PASSED
 ```
 
 **Expected results:**
 - Views: "7 rows" returned (one per view)
-- Typesense: ~451,445 recipients + module collections indexed
+- Typesense: `✅ AUDIT PASSED` with ~2M total documents across all collections
 
 ---
 
@@ -170,23 +174,42 @@ ORDER BY view_name;
 **This step is MANDATORY to update search results.**
 
 ```bash
-cd /Users/michielmaandag/SynologyDrive/code/watchtower/rijksuitgaven
+cd /Users/michielmaandag/SynologyDrive/code/watchtower/rijksuitgaven/scripts/typesense
 
-# Set environment variable (replace password if needed)
+# Set environment variables
+export TYPESENSE_HOST="typesense-production-35ae.up.railway.app"
+export TYPESENSE_API_KEY="<admin-key-from-railway>"  # Get from Railway Typesense service
 export SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
 
-# Full re-sync (recreates collections)
-python3 scripts/typesense/sync_to_typesense.py --recreate
+# Full re-sync with mandatory audit
+python3 sync_to_typesense.py --recreate
 ```
 
-**Expected output:** ~451,445 recipients + module collections indexed.
+**Expected output:**
+```
+✅ AUDIT PASSED: All collections verified
+Sync complete! ✅
+```
 
-### Verify Typesense Sync
+**If audit fails:** Do NOT proceed. Re-run with `--recreate` or investigate the mismatch.
 
+### Expected Document Counts
+
+| Collection | Documents |
+|------------|-----------|
+| recipients | ~467K |
+| instrumenten | ~675K |
+| inkoop | ~636K |
+| publiek | ~115K |
+| gemeente | ~126K |
+| provincie | ~67K |
+| apparaat | ~10K |
+
+### Audit Only (Optional)
+
+To verify without syncing:
 ```bash
-# Check collection counts
-curl -s "https://typesense-production-35ae.up.railway.app/collections" \
-  -H "X-TYPESENSE-API-KEY: 0vh4mxafjeuvd676gw92kpjflg6fuv57" | jq '.[] | {name, num_documents}'
+python3 sync_to_typesense.py --audit-only
 ```
 
 ---
@@ -292,4 +315,5 @@ Use this checklist for each data update:
 
 | Date | Changes |
 |------|---------|
+| 2026-02-01 | Updated Typesense sync with mandatory audit, correct document counts |
 | 2026-01-26 | Initial version |
