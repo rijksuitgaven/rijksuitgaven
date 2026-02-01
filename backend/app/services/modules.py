@@ -50,6 +50,9 @@ async def _typesense_search(collection: str, params: dict) -> dict:
 
     url = f"{settings.typesense_protocol}://{settings.typesense_host}:{settings.typesense_port}/collections/{collection}/documents/search"
 
+    # DEBUG: Log Typesense connection details
+    logger.warning(f"TYPESENSE DEBUG: url={url}, host={settings.typesense_host}, key_prefix={settings.typesense_api_key[:8]}...")
+
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(
@@ -59,8 +62,10 @@ async def _typesense_search(collection: str, params: dict) -> dict:
                 timeout=5.0,  # Fast timeout - autocomplete must be quick
             )
 
+            logger.warning(f"TYPESENSE DEBUG: status={response.status_code}")
+
             if response.status_code != 200:
-                logger.warning(f"Typesense search failed: {response.status_code}")
+                logger.warning(f"Typesense search failed: {response.status_code}, body={response.text[:200]}")
                 return {"hits": [], "grouped_hits": []}
 
             return response.json()
@@ -1599,11 +1604,15 @@ async def get_integraal_autocomplete(
 
     data = await _typesense_search("recipients", params)
 
-    # DEBUG: Log what Typesense returns
-    logger.info(f"Integraal autocomplete: got {len(data.get('hits', []))} hits")
+    # DEBUG: Log what Typesense returns (comprehensive)
+    logger.warning(f"INTEGRAAL DEBUG: params={params}")
+    logger.warning(f"INTEGRAAL DEBUG: data keys={list(data.keys())}")
+    logger.warning(f"INTEGRAAL DEBUG: hits count={len(data.get('hits', []))}")
     if data.get("hits"):
-        first_doc = data["hits"][0].get("document", {})
-        logger.info(f"First doc keys: {list(first_doc.keys())}, sources: {first_doc.get('sources')}")
+        first_hit = data["hits"][0]
+        logger.warning(f"INTEGRAAL DEBUG: first_hit keys={list(first_hit.keys())}")
+        first_doc = first_hit.get("document", {})
+        logger.warning(f"INTEGRAAL DEBUG: first_doc={first_doc}")
 
     results = []
     for hit in data.get("hits", []):
