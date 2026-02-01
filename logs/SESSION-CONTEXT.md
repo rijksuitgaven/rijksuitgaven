@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-01-31
+**Last Updated:** 2026-02-01
 **Project Phase:** V1.0 Development
 **Current Sprint:** Mini Sprint - UI/UX Polish (before Week 6)
 
@@ -80,20 +80,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **backend/app/api/v1/modules.py** ⭐ UPDATED (2026-01-31)
+1. **backend/app/services/modules.py** ⭐ UPDATED (2026-02-01)
+   Added SOURCE_TO_MODULE mapping for autocomplete; fixed current module detection
+
+2. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-02-01)
+   Changed field match styling from "in Regeling" text to "Regeling" badge
+
+3. **backend/app/api/v1/modules.py** ⭐ UPDATED (2026-01-31)
    Added `extra_column_counts` field to Pydantic model (was being stripped from API responses)
 
-2. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-31)
+4. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-31)
    Fixed row hover effect for sticky columns using `group` / `group-hover` pattern
 
-3. **docs/VERSIONING.md** ⭐ UPDATED (2026-01-31)
+5. **docs/VERSIONING.md** ⭐ UPDATED (2026-01-31)
    Added V3 Inzichten (Self-Service BI), renumbered subsequent versions to V4-V8
-
-4. **02-requirements/backlog.md** ⭐ UPDATED (2026-01-31)
-   Added Filters UX Review, Extra Columns During Search; marked Search on Other Fields complete
-
-5. **02-requirements/search-requirements.md** ⭐ UPDATED (2026-01-31)
-   Added UX-002c (Word-Boundary), UX-002d (Gevonden in), UX-002e (+X meer)
 
 ---
 
@@ -1186,11 +1186,33 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 ---
 
+**2026-02-01 - Autocomplete UX Fixes**
+
+**Issues fixed:**
+1. "Ontvangers" section missing in autocomplete dropdown
+2. Field match styling inconsistent ("in Regeling" → badge "Regeling")
+3. Cross-module matching failed for Provincie/Gemeente modules
+
+**Root cause:** Recipients found via global `recipients` collection were showing in "Ook in andere modules" even when they belonged to the current module. Substring matching for module names failed for "Provinciale subsidieregisters" → "provincie".
+
+**Solution:**
+- Added `SOURCE_TO_MODULE` mapping to convert display names to module names
+- Recipients in current module now correctly show in "Ontvangers" section with amounts
+- Field matches now use badge styling consistent with module badges
+
+**Verified all 5 recipient-based modules:** Instrumenten, Provincie, Gemeente, Inkoop, Publiek
+
+**Commits:**
+- `3a39965` - Fix autocomplete: show current module recipients + badge styling
+- `211dc62` - Fix autocomplete module matching for all modules
+
+---
+
 **Upcoming Work Plan:**
 
 | Day | Focus |
 |-----|-------|
-| **2026-02-01** | Filters - UX/UI review + database filter work |
+| ~~**2026-02-01**~~ | ~~Filters - UX/UI review~~ → Autocomplete fixes (done) |
 | **2026-02-02** | Overzichtspagina design + implementation |
 | **2026-02-03** | Hyperlinks (cross-module navigation) |
 
