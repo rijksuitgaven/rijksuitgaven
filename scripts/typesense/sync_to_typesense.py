@@ -162,7 +162,6 @@ def index_instrumenten(client, conn, recreate=False):
             COALESCE(bedrag, 0)::bigint * 1000 as bedrag
         FROM instrumenten
         WHERE ontvanger IS NOT NULL AND ontvanger != ''
-        LIMIT 100000
     """)
 
     documents = []
