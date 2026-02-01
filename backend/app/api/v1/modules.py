@@ -149,6 +149,7 @@ class CurrentModuleResult(BaseModel):
     """Recipient result from current module."""
     name: str
     totaal: int
+    modules: list[str] = []  # Used by integraal to show module badges
 
 
 class OtherModulesResult(BaseModel):
