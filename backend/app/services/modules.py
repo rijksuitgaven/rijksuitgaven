@@ -1594,7 +1594,7 @@ async def get_integraal_autocomplete(
         "prefix": "true",
         "per_page": str(limit),
         "sort_by": "totaal:desc",
-        "include_fields": "name,totaal,sources",  # Explicitly request sources field
+        # Note: Typesense returns all fields by default, no need for include_fields
     }
 
     data = await _typesense_search("recipients", params)
