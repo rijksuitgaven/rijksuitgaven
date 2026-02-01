@@ -1584,37 +1584,37 @@ async def get_integraal_autocomplete(
 
     For integraal, we show all recipients with their module badges.
     No "current module" vs "other modules" split since integraal IS cross-module.
-    """
-    # Uses Dutch language rules to avoid false cognates
-    condition, pattern = build_search_condition("ontvanger", 2, search)
-    query = f"""
-        SELECT
-            ontvanger AS name,
-            totaal,
-            sources,
-            CASE
-                WHEN UPPER(ontvanger) = UPPER($1) THEN 1
-                ELSE 2
-            END AS relevance_score
-        FROM universal_search
-        WHERE {condition}
-        ORDER BY relevance_score ASC, totaal DESC
-        LIMIT $3
-    """
 
-    rows = await fetch_all(query, search, pattern, limit)
+    Uses Typesense for fast search (<100ms vs 800ms with PostgreSQL).
+    """
+    # Search the recipients collection (already has all recipients with sources)
+    params = {
+        "q": search,
+        "query_by": "name,name_lower",
+        "prefix": "true",
+        "per_page": str(limit),
+        "sort_by": "totaal:desc",
+    }
+
+    data = await _typesense_search("recipients", params)
 
     results = []
-    for row in rows:
-        sources = [s.strip() for s in row["sources"].split(",")] if row["sources"] else []
-        results.append({
-            "name": row["name"],
-            "totaal": int(row["totaal"] or 0),
-            "modules": sources,
-        })
+    for hit in data.get("hits", []):
+        doc = hit.get("document", {})
+        name = doc.get("name", "")
+        sources = doc.get("sources", [])
+        totaal = doc.get("totaal", 0)
+
+        if name:
+            results.append({
+                "name": name,
+                "totaal": int(totaal),
+                "modules": sources if isinstance(sources, list) else [],
+            })
 
     return {
         "current_module": results,  # For integraal, all results go in one section
+        "field_matches": [],
         "other_modules": [],
     }
 
