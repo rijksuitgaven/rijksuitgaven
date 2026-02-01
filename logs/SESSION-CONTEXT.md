@@ -151,11 +151,26 @@
 | API Key | **In Railway env vars only** (rotated 2026-01-29) |
 | Status | ✅ Running |
 | Collections | 7 (recipients, instrumenten, inkoop, publiek, gemeente, provincie, apparaat) |
-| Indexed | 451,445 recipients (after entity resolution) |
 | Performance | <25ms search (target <100ms) |
 | Scripts | `scripts/typesense/collections.json`, `scripts/typesense/sync_to_typesense.py` |
 | **Sync Docs** | `scripts/typesense/README.md` ← **Use this for re-indexing** |
+| **Data Update** | `scripts/data/DATA-UPDATE-RUNBOOK.md` ← **Full data update procedure** |
 | **Backend Proxy** | `/api/v1/search/autocomplete` - API key stays server-side |
+
+**Document Counts (verified 2026-02-01):**
+
+| Collection | Documents |
+|------------|-----------|
+| recipients | 466,827 |
+| instrumenten | 674,818 |
+| inkoop | 635,862 |
+| publiek | 115,019 |
+| gemeente | 126,376 |
+| provincie | 67,455 |
+| apparaat | 9,628 |
+| **Total** | **~2.1M** |
+
+**Mandatory Audit:** Sync script now includes automatic audit that compares Typesense counts with PostgreSQL. Sync fails if counts don't match.
 
 ### Supabase Connection String (for scripts)
 
@@ -1186,7 +1201,9 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 ---
 
-**2026-02-01 - Autocomplete UX Fixes**
+**2026-02-01 - Autocomplete UX Fixes + Typesense Data Integrity**
+
+**Session 1: Autocomplete UX Fixes**
 
 **Issues fixed:**
 1. "Ontvangers" section missing in autocomplete dropdown
@@ -1202,9 +1219,36 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 **Verified all 5 recipient-based modules:** Instrumenten, Provincie, Gemeente, Inkoop, Publiek
 
+**Session 2: Typesense Data Integrity & Audit**
+
+**Issues found:**
+1. Instrumenten incomplete: 100K indexed vs 674K actual (LIMIT 100000 in sync script)
+2. Apparaat ID collisions: 3,222 indexed vs 9,628 actual (ID generation missing 2 fields)
+3. Module badges missing in integraal: API endpoint didn't pass `modules` to Pydantic model
+
+**Fixes:**
+- Removed `LIMIT 100000` from instrumenten sync
+- Fixed apparaat ID to include all 4 GROUP BY fields
+- Added `modules=r.get("modules", [])` to API endpoint
+
+**Mandatory Audit Added:**
+- Sync script now runs automatic audit after every sync
+- Compares Typesense document counts with PostgreSQL
+- Exits with error code if mismatch (prevents incomplete indexes)
+- New `--audit-only` flag for verification without syncing
+
+**Documentation Updated:**
+- `scripts/typesense/README.md` - Manual sync process
+- `scripts/data/DATA-UPDATE-RUNBOOK.md` - Added mandatory audit to Step 5
+- `CLAUDE.md` - Added Railway deploy time (~2 min) constraint
+
 **Commits:**
 - `3a39965` - Fix autocomplete: show current module recipients + badge styling
 - `211dc62` - Fix autocomplete module matching for all modules
+- `8593871` - Fix Typesense sync: index all instrumenten records
+- `a17d3de` - Fix apparaat Typesense sync: prevent ID collisions
+- `e699f09` - Fix: Pass modules field to CurrentModuleResult for integraal badges
+- `b60b62e` - Add mandatory audit to Typesense sync script
 
 ---
 
