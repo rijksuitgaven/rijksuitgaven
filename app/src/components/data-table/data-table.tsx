@@ -195,7 +195,7 @@ function AmountCell({
       className={cn(
         'text-right tabular-nums',
         fontClass,
-        hasAnomaly && 'bg-[var(--trend-anomaly-bg)] rounded-sm'
+        hasAnomaly && 'bg-[var(--trend-anomaly-bg)] border-l-2 border-l-[var(--pink)] pl-2 pr-1 py-0.5 rounded-r-sm'
       )}
       title={percentChange !== null ? `${formatPercentage(percentChange)} vs vorig jaar` : undefined}
     >
