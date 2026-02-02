@@ -218,13 +218,19 @@ function CollapsedYearsCell({
     .filter((y) => collapsedYearRange.includes(y.year))
     .reduce((sum, y) => sum + y.amount, 0)
 
+  const formatted = formatAmount(total)
+  const fontClass = getAmountFontClass(formatted)
+
   return (
     <button
       onClick={onExpand}
-      className="flex items-center justify-end gap-1 w-full text-right tabular-nums text-sm hover:text-[var(--navy-medium)] transition-colors"
-      aria-label={`${formatAmount(total)} - klik om jaren uit te klappen`}
+      className={cn(
+        'flex items-center justify-end gap-1 w-full text-right tabular-nums hover:text-[var(--navy-medium)] transition-colors',
+        fontClass
+      )}
+      aria-label={`${formatted} - klik om jaren uit te klappen`}
     >
-      {formatAmount(total)}
+      {formatted}
       <ChevronRight className="h-3 w-3" aria-hidden="true" />
     </button>
   )
