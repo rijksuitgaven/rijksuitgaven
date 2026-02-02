@@ -570,8 +570,10 @@ export function FilterPanel({
         } else {
           setNoResultsQuery(null)
         }
-        // Always show dropdown when searching
-        setIsDropdownOpen(true)
+        // Only show dropdown when user is actively typing (not URL navigation)
+        if (hasUserTypedRef.current) {
+          setIsDropdownOpen(true)
+        }
         setSelectedIndex(-1)
       } catch (error) {
         // Ignore abort errors - they're expected when search changes rapidly
