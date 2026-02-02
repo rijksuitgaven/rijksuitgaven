@@ -704,15 +704,20 @@ async def _get_from_aggregated_view(
     use_random_threshold = False
     relevance_select = ""
     if search:
-        # When searching: exact match first, then everything else by totaal
-        # Option C: Users want exact match on top, then biggest money flows
+        # When searching: 3-tier relevance ranking
+        # 1. Exact match on name → score 1
+        # 2. Name contains search term (word boundary) → score 2
+        # 3. Match only in other fields (Regeling, etc.) → score 3
+        search_pattern = f"\\\\y{re.escape(search.lower())}\\\\y"
         relevance_select = f""",
             CASE
                 WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
-                ELSE 2
+                WHEN {primary} ~* ${param_idx + 1} THEN 2
+                ELSE 3
             END AS relevance_score"""
         params.append(search)
-        param_idx += 1
+        params.append(search_pattern)
+        param_idx += 2
         sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
     elif sort_by == "random":
         sort_clause = "ORDER BY random_order"
@@ -948,15 +953,20 @@ async def _get_from_source_table(
     # IMPORTANT: When searching, ALWAYS use relevance ranking (ignore random sort)
     relevance_select = ""
     if search:
-        # When searching: exact match first, then everything else by totaal
-        # Option C: Users want exact match on top, then biggest money flows
+        # When searching: 3-tier relevance ranking
+        # 1. Exact match on name → score 1
+        # 2. Name contains search term (word boundary) → score 2
+        # 3. Match only in other fields (Regeling, etc.) → score 3
+        search_pattern = f"\\\\y{re.escape(search.lower())}\\\\y"
         relevance_select = f""",
             CASE
                 WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
-                ELSE 2
+                WHEN {primary} ~* ${param_idx + 1} THEN 2
+                ELSE 3
             END AS relevance_score"""
         params.append(search)
-        param_idx += 1
+        params.append(search_pattern)
+        param_idx += 2
         sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
     elif sort_by == "random":
         sort_clause = "ORDER BY RANDOM()"
@@ -1203,15 +1213,20 @@ async def get_integraal_data(
     use_random_threshold = False
     relevance_select = ""
     if search:
-        # When searching: exact match first, then everything else by totaal
-        # Option C: Users want exact match on top, then biggest money flows
+        # When searching: 3-tier relevance ranking
+        # 1. Exact match on name → score 1
+        # 2. Name contains search term (word boundary) → score 2
+        # 3. Match only in other fields → score 3
+        search_pattern = f"\\\\y{re.escape(search.lower())}\\\\y"
         relevance_select = f""",
             CASE
                 WHEN UPPER(ontvanger) = UPPER(${param_idx}) THEN 1
-                ELSE 2
+                WHEN ontvanger ~* ${param_idx + 1} THEN 2
+                ELSE 3
             END AS relevance_score"""
         params.append(search)
-        param_idx += 1
+        params.append(search_pattern)
+        param_idx += 2
         sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
     elif sort_by == "random":
         sort_clause = "ORDER BY random_order"
