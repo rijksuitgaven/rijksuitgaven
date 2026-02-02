@@ -462,6 +462,9 @@ export function FilterPanel({
   const router = useRouter()
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  // Track if user has typed in search (vs pre-filled from URL)
+  // Don't auto-open dropdown if search came from URL navigation
+  const hasUserTypedRef = useRef(false)
 
   const [localFilters, setLocalFilters] = useState<FilterValues>(filters)
   const [isExpanded, setIsExpanded] = useState(false)
@@ -607,12 +610,16 @@ export function FilterPanel({
     return () => clearTimeout(timeout)
   }, [localFilters, onFilterChange])
 
-  // Sync with external filters
+  // Sync with external filters (e.g., from URL navigation)
   useEffect(() => {
     setLocalFilters(filters)
+    // Reset typing flag when filters come from URL (e.g., "Ook in" navigation)
+    // This prevents auto-opening dropdown when search is pre-filled
+    hasUserTypedRef.current = false
   }, [filters])
 
   const handleSearchChange = useCallback((value: string) => {
+    hasUserTypedRef.current = true  // User is actively typing
     setLocalFilters((prev) => ({ ...prev, search: value }))
   }, [])
 
@@ -830,7 +837,7 @@ export function FilterPanel({
               value={localFilters.search}
               onChange={(e) => handleSearchChange(e.target.value)}
               onKeyDown={handleKeyDown}
-              onFocus={() => (currentModuleResults.length > 0 || otherModulesResults.length > 0) && setIsDropdownOpen(true)}
+              onFocus={() => hasUserTypedRef.current && (currentModuleResults.length > 0 || otherModulesResults.length > 0) && setIsDropdownOpen(true)}
               placeholder={searchPlaceholder}
               aria-label="Zoeken"
               aria-expanded={isDropdownOpen}
