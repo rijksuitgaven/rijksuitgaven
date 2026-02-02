@@ -708,7 +708,7 @@ async def _get_from_aggregated_view(
         # 1. Exact match on name → score 1
         # 2. Name contains search term (word boundary) → score 2
         # 3. Match only in other fields (Regeling, etc.) → score 3
-        search_pattern = f"\\\\y{re.escape(search.lower())}\\\\y"
+        search_pattern = rf"\y{re.escape(search.lower())}\y"
         relevance_select = f""",
             CASE
                 WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
@@ -957,7 +957,7 @@ async def _get_from_source_table(
         # 1. Exact match on name → score 1
         # 2. Name contains search term (word boundary) → score 2
         # 3. Match only in other fields (Regeling, etc.) → score 3
-        search_pattern = f"\\\\y{re.escape(search.lower())}\\\\y"
+        search_pattern = rf"\y{re.escape(search.lower())}\y"
         relevance_select = f""",
             CASE
                 WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
@@ -1217,7 +1217,7 @@ async def get_integraal_data(
         # 1. Exact match on name → score 1
         # 2. Name contains search term (word boundary) → score 2
         # 3. Match only in other fields → score 3
-        search_pattern = f"\\\\y{re.escape(search.lower())}\\\\y"
+        search_pattern = rf"\y{re.escape(search.lower())}\y"
         relevance_select = f""",
             CASE
                 WHEN UPPER(ontvanger) = UPPER(${param_idx}) THEN 1
