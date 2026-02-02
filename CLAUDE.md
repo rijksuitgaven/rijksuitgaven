@@ -4,11 +4,11 @@
 
 | Check | Action |
 |-------|--------|
-| **Model** | Simple read/search? → **Haiku**. Coding? → **Sonnet**. Architecture/planning? → **Opus**. |
+| **Model** | State `**Model:** [Haiku/Sonnet/Opus] - [reason]` and WAIT for approval |
 | **Skill** | UI → `/frontend-design`. DB schema → `/database-schema-designer`. Query/RLS → `/supabase-postgres`. Creative → `/brainstorm-mode`. |
 | **Docs** | Read requirements BEFORE proposing. Check `docs/VERSIONING.md` for roadmap. |
 
-**Say it:** "Using [Model] for [reason]" or "Invoking /[skill] for [task]" before starting.
+**Model selection is MANDATORY.** Do not proceed without user approval (except for follow-ups in same task).
 
 ---
 
@@ -32,22 +32,47 @@
 
 ## Golden Rules (4 Rules - No Exceptions)
 
-### 1. Model Selection (FIRST)
+### 1. Model Selection (MANDATORY - COST CONTROL)
 
-**Before ANY task, pick the right model:**
+**You are running on Opus. Opus costs 10x more than Sonnet.**
+
+**RULE: After every user prompt, state the recommended model and wait for approval.**
+
+#### Response Format (EVERY TIME)
+
+```
+**Model:** [Haiku/Sonnet/Opus] - [one-line reason]
+```
+
+Then STOP and wait for user to say "ok", "yes", "go", or similar.
+
+#### Model Guidelines
 
 | Task Type | Model | Examples |
 |-----------|-------|----------|
-| **Simple** | Haiku | Read files, search, status checks, simple edits, git commands |
-| **Standard** | Sonnet | Multi-file code, bug fixes, features, refactoring |
-| **Complex** | Opus | Architecture decisions, 10+ doc cross-reference, planning |
+| Read, search, git, status checks | **Haiku** | "Read the log file", "git status" |
+| Code edits, bug fixes, features | **Sonnet** | "Fix this bug", "Add a button" |
+| Architecture, complex planning | **Opus** | "Design auth system", "Plan migration" |
 
-**Rules:**
-- Start with lightest model that can handle the task
-- Announce: "Using Haiku for this file read" or "Switching to Sonnet for this refactor"
-- De-escalate after complex work
+#### Examples
 
-**Cost:** Opus is 10x more expensive than Sonnet. Never use Opus for Sonnet-level tasks.
+```
+User: "Read the daily log"
+Claude: **Model:** Haiku - simple file read
+[waits for approval]
+
+User: "Fix the dropdown bug"
+Claude: **Model:** Sonnet - single-file code fix
+[waits for approval]
+
+User: "How should we structure the new API?"
+Claude: **Model:** Opus - architecture decision
+[waits for approval]
+```
+
+#### No Approval Needed
+
+Skip approval for immediate follow-ups in the same task (e.g., user says "yes" to a fix, you implement it without re-asking).
 
 ### 2. Requirements First (BEFORE Proposing)
 
