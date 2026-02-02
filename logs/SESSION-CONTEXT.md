@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-02
+**Last Updated:** 2026-02-02 (Session 7)
 **Project Phase:** V1.0 Development
 **Current Sprint:** Mini Sprint - UI/UX Polish (before Week 6)
 
@@ -80,20 +80,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-02-02)
+1. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-02-02 Session 7)
+   Collapse button for year columns; table-fixed layout; column width optimization; anomaly styling
+
+2. **app/src/lib/format.ts** ⭐ UPDATED (2026-02-02 Session 7)
+   Consistent text-xs for all amounts (removed dynamic sizing based on length)
+
+3. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-02-02)
    Added search tips popover with first-visit pulse animation; dynamic content per module
 
-2. **app/src/app/globals.css** ⭐ UPDATED (2026-02-02)
+4. **app/src/app/globals.css** ⭐ UPDATED (2026-02-02)
    Added pulse-ring animation for search tips button
 
-3. **app/src/lib/api-config.ts** ⭐ UPDATED (2026-02-02)
-   Changed API_BASE_URL to empty string (relative URLs through BFF)
-
-4. **backend/app/services/modules.py** ⭐ UPDATED (2026-02-02)
+5. **backend/app/services/modules.py** ⭐ UPDATED (2026-02-02)
    Fixed word boundary regex escaping; added Typesense word boundary filtering
-
-5. **docs/FRONTEND-DOCUMENTATION.md** ⭐ UPDATED (2026-02-02)
-   Added BFF proxy documentation, updated environment variables
 
 ---
 
@@ -1407,12 +1407,33 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 ---
 
+**2026-02-02 Session 7: Table Layout & UX Polish**
+
+**Bug Fixes:**
+1. Missing collapse button for 2016-20 years - added visible "< 2016-20" header
+2. Table too wide with extra columns - added `table-fixed` + optimized column widths
+3. Inconsistent font sizes in amounts - all amounts now use `text-xs`
+4. Anomaly highlighting too chunky - simplified to subtle bg + `px-2` padding
+
+**Decided Against:**
+- Sticky Totaal column - caused layout issues with expanded rows
+
+**Column Width Optimization:**
+- Primary: 200 → 160px
+- Extra columns: 180 → 140px
+- Year columns: 80 → 95px
+- Totaal: 100 → 110px
+
+**Commits:** 11 commits (f4c62cb through aba271d)
+
+---
+
 **Upcoming Work Plan:**
 
 | Day | Focus |
 |-----|-------|
 | ~~**2026-02-01**~~ | ~~Filters - UX/UI review~~ → Autocomplete fixes (done) |
-| ~~**2026-02-02**~~ | Filter multi-select + auto-columns + BFF proxy (done) |
+| ~~**2026-02-02**~~ | Filter multi-select + auto-columns + BFF proxy + table polish (done) |
 | **2026-02-03** | Overzichtspagina design + implementation |
 | **2026-02-04** | Hyperlinks (cross-module navigation) |
 
