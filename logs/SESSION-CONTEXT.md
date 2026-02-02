@@ -1334,6 +1334,13 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 **Commits:**
 - `ff8ddaf` - Add BFF proxy to hide backend URL from browsers
 - `f83c843` - Fix: BFF limit cap 100 → 500 to match dropdown options
+- `a429fe3` - Docs: Update for BFF proxy implementation
+- `7f1e36b` - UX: Change default results to 100, dropdown options 50/100/150/250/500
+- `0a760fa` - UX: Default to 50 results (100 requires too much scrolling)
+
+**Pagination Change:**
+- Default results per page: 25 → 50 (better for data exploration)
+- Dropdown options: 50, 100, 150, 250, 500 (was 25, 100, 150, 250, 500)
 
 ---
 
