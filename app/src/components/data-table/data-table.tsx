@@ -372,7 +372,7 @@ export function DataTable({
             </div>
           )
         },
-        minSize: 200,
+        minSize: 160,
         meta: { sticky: true }, // Mark as sticky column
       },
     ]
@@ -435,7 +435,7 @@ export function DataTable({
               }
 
               return (
-                <div className="max-w-[180px]">
+                <div className="max-w-[140px]">
                   {/* Value with 2-line max and ellipsis overflow */}
                   <div
                     className="text-sm text-[var(--navy-dark)] line-clamp-2"
@@ -456,7 +456,7 @@ export function DataTable({
                 </div>
               )
             },
-            size: 180,
+            size: 140,
           })
         }
       })
@@ -484,7 +484,7 @@ export function DataTable({
             onExpand={() => setYearsExpanded(true)}
           />
         ),
-        size: 100,
+        size: 95,
       })
     } else if (yearsExpanded && collapsedYears.length > 0) {
       // Show collapse header: "< 2016-20" that collapses on click
@@ -537,7 +537,7 @@ export function DataTable({
             />
           )
         },
-        size: 80,
+        size: 95,
       })
     })
 
@@ -559,7 +559,7 @@ export function DataTable({
           </div>
         )
       },
-      size: 100,
+      size: 110,
     })
 
     return cols
