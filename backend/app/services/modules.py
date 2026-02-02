@@ -116,6 +116,32 @@ def build_search_condition(field: str, param_idx: int, search: str) -> tuple[str
     )
 
 
+def is_word_boundary_match(search: str, text: str) -> bool:
+    """
+    Check if search term appears as a whole word in text.
+
+    Uses Python regex \\b for word boundaries.
+    "COA" matches "COA", "Centraal Bureau COA", "(COA)"
+    but NOT "Coaching", "Coach"
+
+    Args:
+        search: The search term
+        text: The text to search in
+
+    Returns:
+        True if search appears as a whole word in text
+    """
+    if not search or not text:
+        return False
+
+    # Escape regex special characters
+    escaped = re.escape(search)
+
+    # Word boundary matching: \b = word boundary in Python regex
+    pattern = rf'\b{escaped}\b'
+    return bool(re.search(pattern, text, re.IGNORECASE))
+
+
 async def _lookup_matched_fields(
     table: str,
     primary_field: str,
@@ -1462,7 +1488,7 @@ async def get_module_autocomplete(
             "q": search,
             "query_by": query_by,
             "prefix": "true",
-            "per_page": str(limit),
+            "per_page": str(limit * 5),  # Get extra since we filter by word boundary
             "sort_by": f"{sort_field}:desc",
             "group_by": primary_field,
             "group_limit": "1",
@@ -1470,7 +1496,7 @@ async def get_module_autocomplete(
 
         data = await _typesense_search(collection, params)
 
-        # Process grouped hits
+        # Process grouped hits (with word-boundary filtering)
         for group in data.get("grouped_hits", []):
             hits = group.get("hits", [])
             if not hits:
@@ -1481,11 +1507,15 @@ async def get_module_autocomplete(
             # Sum up amounts from all hits in group (or use first)
             amount = doc.get("bedrag", 0) or doc.get("totaal", 0)
 
-            if name:
+            # Filter: only include word-boundary matches
+            # "COA" matches "COA", "Bureau COA" but NOT "Coaching"
+            if name and is_word_boundary_match(search, name):
                 current_module_results.append({
                     "name": name,
                     "totaal": int(amount),
                 })
+                if len(current_module_results) >= limit:
+                    break
 
     # 2. Search for field matches (OOK GEVONDEN IN section)
     # Search non-primary fields for matching keyword values
@@ -1497,7 +1527,7 @@ async def get_module_autocomplete(
                 "q": search,
                 "query_by": field,
                 "prefix": "true",
-                "per_page": "3",
+                "per_page": "10",  # Get extra since we filter by word boundary
                 "group_by": field,
                 "group_limit": "1",
             }
@@ -1512,15 +1542,17 @@ async def get_module_autocomplete(
                 doc = hits[0].get("document", {})
                 value = doc.get(field)
 
+                # Filter: only include word-boundary matches
                 if value and len(str(value)) >= 3 and value.upper() not in seen_values:
-                    seen_values.add(value.upper())
-                    field_matches.append({
-                        "value": value,
-                        "field": field,
-                    })
+                    if is_word_boundary_match(search, str(value)):
+                        seen_values.add(value.upper())
+                        field_matches.append({
+                            "value": value,
+                            "field": field,
+                        })
 
-                    if len(field_matches) >= limit:
-                        break
+                        if len(field_matches) >= limit:
+                            break
 
             if len(field_matches) >= limit:
                 break
@@ -1534,7 +1566,7 @@ async def get_module_autocomplete(
         "q": search,
         "query_by": "name,name_lower",
         "prefix": "true",
-        "per_page": str(limit * 3),  # Get extra to filter
+        "per_page": str(limit * 5),  # Get extra since we filter by word boundary
         "sort_by": "totaal:desc",
     }
 
@@ -1547,6 +1579,11 @@ async def get_module_autocomplete(
         totaal = doc.get("totaal", 0)
 
         if not name or name.upper() in current_names:
+            continue
+
+        # Filter: only include word-boundary matches
+        # "COA" matches "COA", "Bureau COA" but NOT "Coaching"
+        if not is_word_boundary_match(search, name):
             continue
 
         # Check if recipient is in current module
@@ -1603,7 +1640,7 @@ async def get_integraal_autocomplete(
         "q": search,
         "query_by": "name,name_lower",
         "prefix": "true",
-        "per_page": str(limit),
+        "per_page": str(limit * 5),  # Get extra since we filter by word boundary
         "sort_by": "totaal:desc",
         # Note: Typesense returns all fields by default, no need for include_fields
     }
@@ -1618,12 +1655,16 @@ async def get_integraal_autocomplete(
         sources = doc.get("sources") or []
         totaal = doc.get("totaal", 0)
 
-        if name:
+        # Filter: only include word-boundary matches
+        # "COA" matches "COA", "Bureau COA" but NOT "Coaching"
+        if name and is_word_boundary_match(search, name):
             results.append({
                 "name": name,
                 "totaal": int(totaal),
                 "modules": sources if isinstance(sources, list) else [],
             })
+            if len(results) >= limit:
+                break
 
     return {
         "current_module": results,  # For integraal, all results go in one section
