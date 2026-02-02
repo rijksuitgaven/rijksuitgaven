@@ -57,6 +57,7 @@ interface DataTableProps {
   selectedColumns?: string[]  // Selected extra columns (UX-005)
   onColumnsChange?: (columns: string[]) => void  // Callback for column selection changes
   searchQuery?: string  // Current search query (for Match column display)
+  hasActiveFilters?: boolean  // True when multiselect filters are active (UX-006)
 }
 
 /**
@@ -272,6 +273,7 @@ export function DataTable({
   selectedColumns = [],
   onColumnsChange,
   searchQuery,
+  hasActiveFilters = false,
 }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
@@ -617,8 +619,8 @@ export function DataTable({
 
         {/* Right: Kolommen + CSV Export */}
         <div className="flex items-center gap-2">
-          {/* Column selector (UX-005) */}
-          {onColumnsChange && (
+          {/* Column selector (UX-005) - hidden when filters control columns (UX-006) */}
+          {onColumnsChange && !hasActiveFilters && (
             <ColumnSelector
               moduleId={moduleId}
               selectedColumns={selectedColumns}

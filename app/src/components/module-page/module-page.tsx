@@ -143,6 +143,30 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     maxBedrag: searchParams.get('max_bedrag') ? parseFloat(searchParams.get('max_bedrag')!) : null,
   }))
 
+  // Get active filter field names (multiselect filters with values selected)
+  // These will be shown as columns automatically (max 2, in filter order) - UX-006
+  const getActiveFilterColumns = useCallback((): string[] => {
+    // Standard filter keys that are NOT column fields
+    const nonColumnKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag', 'min_instanties']
+
+    const activeFields: string[] = []
+
+    // Check each filter - if it's an array with values, it's an active multiselect
+    for (const [key, value] of Object.entries(filters)) {
+      if (nonColumnKeys.includes(key)) continue
+      if (Array.isArray(value) && value.length > 0) {
+        activeFields.push(key)
+      }
+    }
+
+    // Return first 2 active filter fields
+    return activeFields.slice(0, 2)
+  }, [filters])
+
+  // Compute effective columns: active filters override user selection
+  const activeFilterColumns = getActiveFilterColumns()
+  const effectiveColumns = activeFilterColumns.length > 0 ? activeFilterColumns : selectedColumns
+
   // Reset state when switching modules (UX-002: randomize on module switch)
   // Note: selectedColumns is handled in the hydration useEffect above
   useEffect(() => {
@@ -194,8 +218,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           min_bedrag: filters.minBedrag ?? undefined,
           max_bedrag: filters.maxBedrag ?? undefined,
           min_years: minYears,
-          // Include selected extra columns (UX-005)
-          columns: selectedColumns.length > 0 ? selectedColumns : undefined,
+          // Include effective columns: active filters override user selection (UX-006)
+          columns: effectiveColumns.length > 0 ? effectiveColumns : undefined,
         }
 
         // Add module-specific filters (arrays for multiselect, strings for text)
@@ -226,7 +250,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     return () => {
       abortController.abort()
     }
-  }, [moduleId, page, perPage, sortBy, sortOrder, filters, isDefaultView, userHasSorted, selectedColumns, isHydrated])
+  }, [moduleId, page, perPage, sortBy, sortOrder, filters, isDefaultView, userHasSorted, effectiveColumns, isHydrated])
 
   const handleFilterChange = useCallback((newFilters: FilterValues) => {
     setFilters(newFilters)
@@ -343,8 +367,9 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             onRowClick={handleRowClick}
             renderExpandedRow={renderExpandedRow}
             moduleId={moduleId}
-            selectedColumns={selectedColumns}
+            selectedColumns={effectiveColumns}
             onColumnsChange={setSelectedColumns}
+            hasActiveFilters={activeFilterColumns.length > 0}
             searchQuery={filters.search}
           />
         </div>

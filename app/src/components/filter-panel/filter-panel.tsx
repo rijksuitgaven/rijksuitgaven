@@ -212,6 +212,10 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
     opt.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  // Split into selected and unselected for display
+  const selectedOptions = filteredOptions.filter(opt => value.includes(opt))
+  const unselectedOptions = filteredOptions.filter(opt => !value.includes(opt))
+
   const toggleOption = (option: string) => {
     if (value.includes(option)) {
       onChange(value.filter(v => v !== option))
@@ -299,29 +303,51 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
                 {searchQuery ? `Geen resultaten voor "${searchQuery}"` : 'Geen opties beschikbaar'}
               </div>
             ) : (
-              filteredOptions.map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => toggleOption(option)}
-                  className={cn(
-                    'w-full px-3 py-2 text-sm text-left flex items-center gap-2 hover:bg-[var(--gray-light)] transition-colors',
-                    value.includes(option) && 'bg-[var(--blue-light)]/10'
-                  )}
-                >
-                  <div className={cn(
-                    'w-4 h-4 border rounded flex items-center justify-center flex-shrink-0',
-                    value.includes(option)
-                      ? 'bg-[var(--navy-dark)] border-[var(--navy-dark)]'
-                      : 'border-[var(--border)]'
-                  )}>
-                    {value.includes(option) && (
-                      <Check className="h-3 w-3 text-white" />
+              <>
+                {/* Selected items section */}
+                {selectedOptions.length > 0 && (
+                  <>
+                    <div className="px-3 py-1.5 text-xs font-semibold text-[var(--navy-medium)] uppercase tracking-wider bg-[var(--gray-light)] border-b border-[var(--border)]">
+                      Geselecteerd
+                    </div>
+                    {selectedOptions.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => toggleOption(option)}
+                        className="w-full px-3 py-2 text-sm text-left flex items-center gap-2 hover:bg-[var(--gray-light)] transition-colors bg-[var(--blue-light)]/10"
+                      >
+                        <div className="w-4 h-4 border rounded flex items-center justify-center flex-shrink-0 bg-[var(--navy-dark)] border-[var(--navy-dark)]">
+                          <Check className="h-3 w-3 text-white" />
+                        </div>
+                        <span className="truncate">{option}</span>
+                      </button>
+                    ))}
+                  </>
+                )}
+
+                {/* Unselected items section */}
+                {unselectedOptions.length > 0 && (
+                  <>
+                    {selectedOptions.length > 0 && (
+                      <div className="px-3 py-1.5 text-xs font-semibold text-[var(--navy-medium)] uppercase tracking-wider bg-[var(--gray-light)] border-b border-[var(--border)]">
+                        Alle opties
+                      </div>
                     )}
-                  </div>
-                  <span className="truncate">{option}</span>
-                </button>
-              ))
+                    {unselectedOptions.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => toggleOption(option)}
+                        className="w-full px-3 py-2 text-sm text-left flex items-center gap-2 hover:bg-[var(--gray-light)] transition-colors"
+                      >
+                        <div className="w-4 h-4 border rounded flex items-center justify-center flex-shrink-0 border-[var(--border)]" />
+                        <span className="truncate">{option}</span>
+                      </button>
+                    ))}
+                  </>
+                )}
+              </>
             )}
           </div>
 
