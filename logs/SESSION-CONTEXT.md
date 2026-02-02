@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-02 (Session 7)
+**Last Updated:** 2026-02-02 (Day Close)
 **Project Phase:** V1.0 Development
 **Current Sprint:** Mini Sprint - UI/UX Polish (before Week 6)
 
@@ -80,19 +80,19 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-02-02 Session 7)
+1. **CLAUDE.md** ⭐ UPDATED (2026-02-02 Session 8)
+   Enforced mandatory model selection with user approval; cost awareness added
+
+2. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-02-02 Session 7)
    Collapse button for year columns; table-fixed layout; column width optimization; anomaly styling
 
-2. **app/src/lib/format.ts** ⭐ UPDATED (2026-02-02 Session 7)
+3. **app/src/lib/format.ts** ⭐ UPDATED (2026-02-02 Session 7)
    Consistent text-xs for all amounts (removed dynamic sizing based on length)
 
-3. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-02-02)
-   Added search tips popover with first-visit pulse animation; dynamic content per module
+4. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-02-02 Sessions 1-6)
+   Multi-select filters; GESELECTEERD section; search tips popover; hasUserTypedRef
 
-4. **app/src/app/globals.css** ⭐ UPDATED (2026-02-02)
-   Added pulse-ring animation for search tips button
-
-5. **backend/app/services/modules.py** ⭐ UPDATED (2026-02-02)
+5. **backend/app/services/modules.py** ⭐ UPDATED (2026-02-02 Session 5)
    Fixed word boundary regex escaping; added Typesense word boundary filtering
 
 ---
@@ -858,14 +858,11 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-01-31 - **MINI SPRINT: Supabase Security + UI/UX**
+**Last Session:** 2026-02-02 - **FILTER UX + BFF + SEARCH + TABLE POLISH**
 
-**Golden Rules added to CLAUDE.md:** 5 non-negotiable rules:
-1. Requirements Check - Verify against V1/V2 requirements before any proposal
-2. Documentation Sync - Update all affected docs immediately after any change
-3. Ask, Don't Assume - Stop and ask when in doubt
-4. Pre-Commit Audit - Audit docs and requirements before every commit
-5. Model Selection - Use appropriate model (Haiku/Sonnet/Opus) based on task complexity
+**Today's Focus:** Filter multi-select conversion, BFF proxy, search relevance, table layout
+
+**CLAUDE.md Updated:** Model selection now MANDATORY with user approval (cost control)
 
 **CRITICAL Security Fixes:**
 - Typesense API key moved to backend proxy (`/api/v1/search/autocomplete`)
@@ -1428,12 +1425,22 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 ---
 
+**2026-02-02 Completed Work:**
+- ✅ Session 1: Filter multi-select conversion (5 modules)
+- ✅ Session 2: GESELECTEERD section + auto-show filter columns (UX-006)
+- ✅ Session 3: BFF proxy implementation (8 Next.js API routes)
+- ✅ Session 4: Documentation audit + UX tweaks
+- ✅ Session 5: Search relevance fixes (word boundary regex + Typesense filtering)
+- ✅ Session 6: Search tips popover (first-visit pulse animation)
+- ✅ Session 7: Table layout polish (collapse button, table-fixed, consistent text-xs, anomaly styling)
+- ✅ Session 8: Process improvement (mandatory model selection in CLAUDE.md)
+
 **Upcoming Work Plan:**
 
 | Day | Focus |
 |-----|-------|
-| ~~**2026-02-01**~~ | ~~Filters - UX/UI review~~ → Autocomplete fixes (done) |
-| ~~**2026-02-02**~~ | Filter multi-select + auto-columns + BFF proxy + table polish (done) |
+| ~~**2026-02-01**~~ | ~~Autocomplete fixes~~ ✅ |
+| ~~**2026-02-02**~~ | ~~Filter multi-select + BFF proxy + table polish~~ ✅ |
 | **2026-02-03** | Overzichtspagina design + implementation |
 | **2026-02-04** | Hyperlinks (cross-module navigation) |
 
