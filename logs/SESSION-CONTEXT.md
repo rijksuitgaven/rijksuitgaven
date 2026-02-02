@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-01
+**Last Updated:** 2026-02-02
 **Project Phase:** V1.0 Development
 **Current Sprint:** Mini Sprint - UI/UX Polish (before Week 6)
 
@@ -80,11 +80,11 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **backend/app/services/modules.py** ⭐ UPDATED (2026-02-01)
-   Added SOURCE_TO_MODULE mapping for autocomplete; fixed current module detection
+1. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-02-02)
+   Converted all text filters to searchable multi-select dropdowns; enhanced MultiSelect with lazy loading, auto-focus, option count footer
 
-2. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-02-01)
-   Changed field match styling from "in Regeling" text to "Regeling" badge
+2. **backend/app/services/modules.py** ⭐ UPDATED (2026-02-01)
+   Added SOURCE_TO_MODULE mapping for autocomplete; fixed current module detection
 
 3. **backend/app/api/v1/modules.py** ⭐ UPDATED (2026-01-31)
    Added `extra_column_counts` field to Pydantic model (was being stripped from API responses)
@@ -1252,11 +1252,36 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 ---
 
+**2026-02-02 - Filter UX Optimization**
+
+**Focus:** Convert all filter fields to searchable multi-select dropdowns
+
+**Filters Converted (text → multiselect):**
+- Instrumenten: Begrotingsnaam, Artikel, Artikelonderdeel, Instrument, Regeling
+- Apparaat: Begrotingsnaam, Artikel, Detail
+- Inkoop: Ministerie, Categorie, Staffel
+- Gemeente: Beleidsterrein
+- Publiek: Regeling
+
+**MultiSelect Enhancements:**
+- Lazy loading: Options fetch when dropdown opens (faster initial render)
+- Auto-focus: Search input focuses automatically
+- Option count footer: Shows "2,156 opties" to communicate data breadth
+- Filtered count: Shows "24 van 2,156 opties" when searching
+- Increased height: max-h-72 (288px) for better browsing
+- Module change reset: Clears cached options when navigating
+
+**Commits:**
+- `5d79727` - Convert all filters to searchable multi-select dropdowns
+
+---
+
 **Upcoming Work Plan:**
 
 | Day | Focus |
 |-----|-------|
 | ~~**2026-02-01**~~ | ~~Filters - UX/UI review~~ → Autocomplete fixes (done) |
+| ~~**2026-02-02**~~ | ~~Overzichtspagina~~ → Filter multi-select conversion (done) |
 | **2026-02-02** | Overzichtspagina design + implementation |
 | **2026-02-03** | Hyperlinks (cross-module navigation) |
 
