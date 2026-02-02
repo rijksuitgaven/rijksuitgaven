@@ -555,28 +555,33 @@ async def _typesense_get_primary_keys_with_highlights(
 
         data = await _typesense_search(collection, params)
 
-        # Extract primary values from hits
+        # Extract primary values from hits, filtering by word boundary match
         for hit in data.get("hits", []):
             doc = hit.get("document", {})
             value = doc.get(primary_field)
             if value and value not in seen:
+                # Get the field value that was searched
+                field_value = doc.get(field)
+
+                # Only include if this field has a word boundary match
+                # (Typesense uses prefix matching, so "COA" matches "Coaching")
+                if not field_value or not is_word_boundary_match(search, str(field_value)):
+                    continue
+
                 seen.add(value)
                 primary_keys.append(value)
 
                 # If this match is from a NON-primary field, record which field matched
                 # We DON'T record primary field matches - user already sees the name
                 if field != primary_field:
-                    # Get the matched field value from the document
-                    matched_value = doc.get(field)
-                    if matched_value:
-                        matched_info[value] = (field, str(matched_value))
+                    matched_info[value] = (field, str(field_value))
 
                 if len(primary_keys) >= limit:
                     break
 
     logger.info(
-        f"Typesense search '{search}' in {collection}: found {len(primary_keys)} unique {primary_field}s, "
-        f"{len(matched_info)} with non-primary field matches"
+        f"Typesense search '{search}' in {collection}: found {len(primary_keys)} unique {primary_field}s "
+        f"(word boundary filtered), {len(matched_info)} with non-primary field matches"
     )
 
     return primary_keys, matched_info
