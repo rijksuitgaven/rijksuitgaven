@@ -1276,14 +1276,42 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 ---
 
+**2026-02-02 Session 2: UX-006 - Advanced Filter Features**
+
+**Feature 1: "GESELECTEERD" section in dropdown**
+- Selected items appear at top with "GESELECTEERD" header
+- Unselected items below with "ALLE OPTIES" header
+- Matches old WordPress system UX
+
+**Feature 2: Auto-show filter columns (max 2)**
+- Active filter fields automatically become table columns
+- First 2 active filters shown (unlimited filters allowed)
+- Column selector hidden when filters control columns
+- User's column preference returns when filters cleared
+
+**Bug Fixes:**
+- Infinite render loop: Changed useCallback to useMemo for array memoization
+- Missing filter API params: Added 11 missing Query parameters to backend
+- No results with filters: Include activeFilterColumns in isDefaultView check
+- Empty dropdown option: Filter out empty/whitespace strings
+
+**Commits:**
+- `09b113f` - UX-006: Auto-show filter columns + GESELECTEERD section
+- `5a9f242` - Fix infinite loop: use useMemo for effectiveColumns
+- `3e1a5f6` - Add missing filter Query parameters to API endpoint
+- `f591f9c` - Fix: Include multiselect filters in isDefaultView check
+- `88a139a` - Fix: Filter out empty strings from dropdown options
+
+---
+
 **Upcoming Work Plan:**
 
 | Day | Focus |
 |-----|-------|
 | ~~**2026-02-01**~~ | ~~Filters - UX/UI review~~ → Autocomplete fixes (done) |
-| ~~**2026-02-02**~~ | ~~Overzichtspagina~~ → Filter multi-select conversion (done) |
-| **2026-02-02** | Overzichtspagina design + implementation |
-| **2026-02-03** | Hyperlinks (cross-module navigation) |
+| ~~**2026-02-02**~~ | Filter multi-select + auto-columns (done) |
+| **2026-02-03** | Overzichtspagina design + implementation |
+| **2026-02-04** | Hyperlinks (cross-module navigation) |
 
 **After Mini Sprint:**
 - Week 6 - User Auth (Magic Link, user migration)
