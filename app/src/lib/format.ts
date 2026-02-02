@@ -60,13 +60,10 @@ export function formatPercentage(value: number | null): string {
   return `${sign}${value.toFixed(1)}%`
 }
 
-// Character threshold for switching to smaller font size for large amounts
-const LARGE_AMOUNT_CHAR_THRESHOLD = 10
-
 /**
- * Get font size class based on amount string length
- * Large numbers (>10 chars) get smaller font
+ * Get font size class for amounts
+ * All amounts use text-xs for visual consistency across the table
  */
-export function getAmountFontClass(formattedAmount: string): string {
-  return formattedAmount.length > LARGE_AMOUNT_CHAR_THRESHOLD ? 'text-xs' : 'text-sm'
+export function getAmountFontClass(_formattedAmount: string): string {
+  return 'text-xs'
 }
