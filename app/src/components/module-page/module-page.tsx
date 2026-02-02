@@ -191,7 +191,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   }, [filters, router, moduleId])
 
   // Determine if this is the default view (no search, no filters)
-  const isDefaultView = !filters.search && !filters.jaar && !filters.minBedrag && !filters.maxBedrag
+  // Include multiselect filters (activeFilterColumns) in the check
+  const isDefaultView = !filters.search && !filters.jaar && !filters.minBedrag && !filters.maxBedrag && activeFilterColumns.length === 0
 
   // Fetch data when filters, pagination, or sorting changes
   // Wait for hydration to ensure selectedColumns is loaded from localStorage
