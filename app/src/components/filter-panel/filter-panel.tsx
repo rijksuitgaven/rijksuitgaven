@@ -1059,7 +1059,7 @@ export function FilterPanel({
               <div className="p-5">
                 <h3 className="text-sm font-bold uppercase tracking-wider mb-3">Slim zoeken</h3>
                 <p className="text-sm text-white/80 mb-4">
-                  Doorzoekt automatisch namen, regelingen, artikelen en begrotingen.
+                  Doorzoekt automatisch {MODULE_SEARCH_TEXT[module]?.fields || 'ontvangers'}.
                 </p>
 
                 <div className="border-t border-white/20 pt-4 mb-4">
