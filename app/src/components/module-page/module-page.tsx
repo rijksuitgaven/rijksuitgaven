@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, useCallback, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { DataTable, ExpandedRow } from '@/components/data-table'
 import { FilterPanel, type FilterValues } from '@/components/filter-panel'
@@ -145,7 +145,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
   // Get active filter field names (multiselect filters with values selected)
   // These will be shown as columns automatically (max 2, in filter order) - UX-006
-  const getActiveFilterColumns = useCallback((): string[] => {
+  // Use useMemo to prevent infinite render loops from array reference changes
+  const activeFilterColumns = useMemo((): string[] => {
     // Standard filter keys that are NOT column fields
     const nonColumnKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag', 'min_instanties']
 
@@ -164,8 +165,10 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   }, [filters])
 
   // Compute effective columns: active filters override user selection
-  const activeFilterColumns = getActiveFilterColumns()
-  const effectiveColumns = activeFilterColumns.length > 0 ? activeFilterColumns : selectedColumns
+  // Memoize to prevent unnecessary re-renders
+  const effectiveColumns = useMemo(() => {
+    return activeFilterColumns.length > 0 ? activeFilterColumns : selectedColumns
+  }, [activeFilterColumns, selectedColumns])
 
   // Reset state when switching modules (UX-002: randomize on module switch)
   // Note: selectedColumns is handled in the hydration useEffect above
