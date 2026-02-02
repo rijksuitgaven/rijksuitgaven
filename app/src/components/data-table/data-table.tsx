@@ -38,7 +38,6 @@ const STICKY_PRIMARY_OFFSET_PX = 40
 // Column meta type for sticky columns
 interface ColumnMeta {
   sticky?: boolean
-  stickyRight?: boolean
 }
 
 interface DataTableProps {
@@ -536,7 +535,7 @@ export function DataTable({
       })
     })
 
-    // Totaal column - sticky on right for visibility
+    // Totaal column
     cols.push({
       id: 'total',
       accessorKey: 'total',
@@ -554,8 +553,7 @@ export function DataTable({
           </div>
         )
       },
-      size: 110,
-      meta: { stickyRight: true },
+      size: 100,
     })
 
     return cols
@@ -642,9 +640,7 @@ export function DataTable({
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="bg-[var(--navy-dark)]">
                 {headerGroup.headers.map((header, headerIndex) => {
-                  const meta = header.column.columnDef.meta as ColumnMeta | undefined
-                  const isStickyLeft = meta?.sticky || headerIndex === 0 || headerIndex === 1
-                  const isStickyRight = meta?.stickyRight
+                  const isSticky = (header.column.columnDef.meta as ColumnMeta | undefined)?.sticky || headerIndex === 0 || headerIndex === 1
                   const isTotaal = header.column.id === 'total'
                   const isFirst = headerIndex === 0
                   const isLast = headerIndex === headerGroup.headers.length - 1
@@ -656,10 +652,9 @@ export function DataTable({
                       className={cn(
                         'px-3 py-2.5 text-sm font-semibold text-white',
                         isYearOrTotal ? 'text-right' : 'text-left',
-                        isStickyLeft && 'sticky left-0 bg-[var(--navy-dark)] z-10',
+                        isSticky && 'sticky left-0 bg-[var(--navy-dark)] z-10',
                         headerIndex === 1 && `sticky bg-[var(--navy-dark)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]`,
-                        isStickyRight && 'sticky right-0 bg-[var(--navy-medium)] z-20 shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.15)]',
-                        isTotaal && !isStickyRight && 'bg-[var(--navy-medium)]',
+                        isTotaal && 'bg-[var(--navy-medium)]',
                         isFirst && 'rounded-l-lg',
                         isLast && 'rounded-r-lg'
                       )}
@@ -714,9 +709,7 @@ export function DataTable({
                     )}
                   >
                     {row.getVisibleCells().map((cell, cellIndex) => {
-                      const meta = cell.column.columnDef.meta as ColumnMeta | undefined
-                      const isStickyLeft = meta?.sticky || cellIndex === 0 || cellIndex === 1
-                      const isStickyRight = meta?.stickyRight
+                      const isSticky = (cell.column.columnDef.meta as ColumnMeta | undefined)?.sticky || cellIndex === 0 || cellIndex === 1
                       const isExpanded = row.getIsExpanded()
                       const isTotaal = cell.column.id === 'total'
                       // Year columns and Totaal are right-aligned
@@ -727,11 +720,10 @@ export function DataTable({
                           className={cn(
                             'px-3 py-2 border-b border-[var(--border)] transition-colors',
                             isYearOrTotal ? 'text-right' : 'text-left',
-                            isStickyLeft && 'sticky left-0 bg-white group-hover:bg-[var(--gray-light)] z-10',
+                            isSticky && 'sticky left-0 bg-white group-hover:bg-[var(--gray-light)] z-10',
                             cellIndex === 1 && 'sticky bg-white group-hover:bg-[var(--gray-light)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
-                            isExpanded && isStickyLeft && 'bg-[var(--gray-light)]',
-                            isStickyRight && 'sticky right-0 bg-[var(--totaal-bg)] z-20 shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.08)]',
-                            isTotaal && !isStickyRight && 'bg-[var(--totaal-bg)] font-semibold'
+                            isExpanded && isSticky && 'bg-[var(--gray-light)]',
+                            isTotaal && 'bg-[var(--totaal-bg)] font-semibold'
                           )}
                           style={{
                             width: cell.column.getSize(),
@@ -743,11 +735,11 @@ export function DataTable({
                       )
                     })}
                   </tr>
-                  {/* Expanded row content - pr-32 accounts for sticky Totaal column */}
+                  {/* Expanded row content */}
                   {row.getIsExpanded() && renderExpandedRow && (
                     <tr>
                       <td colSpan={columns.length} className="bg-[var(--gray-light)] border-b border-[var(--border)]">
-                        <div className="px-6 py-4 pr-32">
+                        <div className="px-6 py-4">
                           {renderExpandedRow(row.original)}
                         </div>
                       </td>
