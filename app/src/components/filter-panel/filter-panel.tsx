@@ -1040,14 +1040,16 @@ export function FilterPanel({
             type="button"
             onClick={handleSearchTipsClick}
             className={cn(
-              'flex items-center justify-center h-[52px] w-[52px] rounded-lg bg-white shadow-sm hover:shadow-md transition-all border border-[var(--border)]',
-              isSearchTipsOpen && 'ring-2 ring-[var(--navy-dark)]/20',
+              'flex items-center justify-center h-[52px] w-[52px] rounded-lg transition-all',
+              isSearchTipsOpen
+                ? 'bg-[var(--navy-dark)] text-white shadow-md'
+                : 'bg-white text-[var(--navy-dark)] shadow-sm hover:shadow-md',
               showSearchTipsPulse && 'animate-pulse-ring'
             )}
             aria-label="Zoektips"
             aria-expanded={isSearchTipsOpen}
           >
-            <Info className="h-5 w-5 text-[var(--navy-medium)]" />
+            <Info className={cn('h-5 w-5', isSearchTipsOpen ? 'text-white' : 'text-[var(--navy-dark)]')} />
           </button>
 
           {/* Popover */}
@@ -1097,7 +1099,7 @@ export function FilterPanel({
 
                 <div className="flex items-start gap-2 text-xs text-white/70 bg-white/5 rounded-lg p-3">
                   <span className="text-base">💡</span>
-                  <span>Gebruik filters voor specifieke jaren, bedragen of regelingen</span>
+                  <span>Combineer zoeken met filters voor preciezere resultaten</span>
                 </div>
               </div>
             </div>
