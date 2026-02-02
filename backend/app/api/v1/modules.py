@@ -251,6 +251,20 @@ async def get_module(
     provincie: Optional[list[str]] = Query(None, description="Filter by provincie(s) - multi-select"),
     gemeente: Optional[list[str]] = Query(None, description="Filter by gemeente(s) - multi-select"),
     source: Optional[list[str]] = Query(None, description="Filter by source/organisatie(s) - multi-select (publiek module)"),
+    # Instrumenten filters
+    begrotingsnaam: Optional[list[str]] = Query(None, description="Filter by begrotingsnaam(s) - multi-select"),
+    artikel: Optional[list[str]] = Query(None, description="Filter by artikel(s) - multi-select"),
+    artikelonderdeel: Optional[list[str]] = Query(None, description="Filter by artikelonderdeel(s) - multi-select"),
+    instrument: Optional[list[str]] = Query(None, description="Filter by instrument(s) - multi-select"),
+    regeling: Optional[list[str]] = Query(None, description="Filter by regeling(s) - multi-select"),
+    # Apparaat/other filters
+    detail: Optional[list[str]] = Query(None, description="Filter by detail(s) - multi-select"),
+    # Inkoop filters
+    ministerie: Optional[list[str]] = Query(None, description="Filter by ministerie(s) - multi-select"),
+    categorie: Optional[list[str]] = Query(None, description="Filter by categorie(s) - multi-select"),
+    staffel: Optional[list[str]] = Query(None, description="Filter by staffel(s) - multi-select"),
+    # Gemeente filters
+    beleidsterrein: Optional[list[str]] = Query(None, description="Filter by beleidsterrein(s) - multi-select"),
     # Integraal-specific filters
     modules: Optional[list[str]] = Query(None, description="Filter by modules recipient appears in (integraal only)"),
     min_instanties: Optional[int] = Query(None, ge=1, description="Minimum number of distinct sources (integraal only)"),
@@ -293,6 +307,26 @@ async def get_module(
         filter_fields["gemeente"] = gemeente
     if source:
         filter_fields["source"] = source
+    if begrotingsnaam:
+        filter_fields["begrotingsnaam"] = begrotingsnaam
+    if artikel:
+        filter_fields["artikel"] = artikel
+    if artikelonderdeel:
+        filter_fields["artikelonderdeel"] = artikelonderdeel
+    if instrument:
+        filter_fields["instrument"] = instrument
+    if regeling:
+        filter_fields["regeling"] = regeling
+    if detail:
+        filter_fields["detail"] = detail
+    if ministerie:
+        filter_fields["ministerie"] = ministerie
+    if categorie:
+        filter_fields["categorie"] = categorie
+    if staffel:
+        filter_fields["staffel"] = [str(s) for s in staffel]  # Convert to strings
+    if beleidsterrein:
+        filter_fields["beleidsterrein"] = beleidsterrein
 
     try:
         # Handle integraal separately (uses universal_search table)
