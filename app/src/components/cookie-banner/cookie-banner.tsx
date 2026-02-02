@@ -12,13 +12,24 @@ export function CookieBanner() {
   useEffect(() => {
     // Check localStorage after hydration (not available during SSR)
     // This is an intentional pattern for SSR apps - we must wait for client-side
-    const shouldShow = !localStorage.getItem(STORAGE_KEY)
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: SSR requires post-hydration check
-    setVisible(shouldShow)
+    // Wrapped in try-catch for private browsing mode where localStorage may throw
+    try {
+      const shouldShow = !localStorage.getItem(STORAGE_KEY)
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: SSR requires post-hydration check
+      setVisible(shouldShow)
+    } catch {
+      // localStorage unavailable (private browsing, storage full, etc.)
+      // Default to not showing banner to avoid repeated prompts
+      setVisible(false)
+    }
   }, [])
 
   const handleDismiss = () => {
-    localStorage.setItem(STORAGE_KEY, 'true')
+    try {
+      localStorage.setItem(STORAGE_KEY, 'true')
+    } catch {
+      // Ignore storage errors - banner will just reappear on next visit
+    }
     setVisible(false)
   }
 

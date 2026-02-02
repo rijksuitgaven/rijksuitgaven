@@ -64,7 +64,7 @@ export function Header() {
               </div>
             </Link>
 
-            {/* Auth */}
+            {/* Auth - TODO: Implement when authentication is added (V1.0 uses Magic Link)
             <div className="flex items-center gap-6 text-sm font-medium">
               <Link
                 href="/profiel"
@@ -79,6 +79,7 @@ export function Header() {
                 Uitloggen
               </Link>
             </div>
+            */}
           </div>
         </div>
       </div>

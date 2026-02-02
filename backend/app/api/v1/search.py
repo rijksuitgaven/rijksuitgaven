@@ -82,21 +82,34 @@ def get_typesense_url(path: str) -> str:
 
 
 async def typesense_search(collection: str, params: dict) -> dict:
-    """Execute search against Typesense."""
+    """
+    Execute search against Typesense.
+
+    Returns empty results on any error (network, timeout, non-200 response).
+    This ensures search gracefully degrades rather than crashing.
+    """
     url = get_typesense_url(f"/collections/{collection}/documents/search")
 
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            url,
-            params=params,
-            headers={"X-TYPESENSE-API-KEY": settings.typesense_api_key},
-            timeout=10.0,
-        )
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                url,
+                params=params,
+                headers={"X-TYPESENSE-API-KEY": settings.typesense_api_key},
+                timeout=10.0,
+            )
 
-        if response.status_code != 200:
-            return {"hits": [], "grouped_hits": []}
+            if response.status_code != 200:
+                logger.warning(f"Typesense returned {response.status_code} for {collection}")
+                return {"hits": [], "grouped_hits": []}
 
-        return response.json()
+            return response.json()
+    except httpx.TimeoutException:
+        logger.warning(f"Typesense timeout for collection {collection}")
+        return {"hits": [], "grouped_hits": []}
+    except httpx.RequestError as e:
+        logger.error(f"Typesense request error: {type(e).__name__}: {e}")
+        return {"hits": [], "grouped_hits": []}
 
 
 # =============================================================================

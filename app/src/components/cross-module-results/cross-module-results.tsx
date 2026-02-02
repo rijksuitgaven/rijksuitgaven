@@ -31,6 +31,9 @@ export function CrossModuleResults({ searchQuery, currentModule, className }: Cr
     const controller = new AbortController()
     const signal = controller.signal
 
+    // Timeout for each fetch request (5 seconds)
+    const FETCH_TIMEOUT_MS = 5000
+
     async function fetchCounts() {
       setIsLoading(true)
 
@@ -40,6 +43,13 @@ export function CrossModuleResults({ searchQuery, currentModule, className }: Cr
         const results = await Promise.all(
           otherModules.map(async (module) => {
             try {
+              // Create a timeout that aborts the request
+              const timeoutId = setTimeout(() => {
+                if (!signal.aborted) {
+                  // Don't abort the main controller, just skip this module
+                }
+              }, FETCH_TIMEOUT_MS)
+
               const response = await fetch(
                 `${API_BASE_URL}/api/v1/modules/${module}?` +
                 new URLSearchParams({
@@ -49,6 +59,8 @@ export function CrossModuleResults({ searchQuery, currentModule, className }: Cr
                 }),
                 { signal }
               )
+
+              clearTimeout(timeoutId)
 
               if (!response.ok) return null
 

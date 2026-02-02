@@ -53,7 +53,7 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
   )
   const totalResults = allResults.length
 
-  // Debounced search
+  // Debounced search with AbortController to prevent race conditions
   useEffect(() => {
     if (query.length < 2) {
       setKeywords([])
@@ -63,11 +63,16 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
       return
     }
 
+    const abortController = new AbortController()
+
     const timeout = setTimeout(async () => {
       setIsLoading(true)
       try {
         // Fetch search results from backend proxy
-        const { recipients: recipientsData, keywords: keywordsData } = await fetchSearchResults(query)
+        const { recipients: recipientsData, keywords: keywordsData } = await fetchSearchResults(query, abortController.signal)
+
+        // Don't update state if aborted (new search started)
+        if (abortController.signal.aborted) return
 
         setRecipients(recipientsData)
         setKeywords(keywordsData)
@@ -76,7 +81,8 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
         if (recipientsData.length === 0 && keywordsData.length === 0 && query.length >= 3) {
           setNoResultsQuery(query)
           // Try fuzzy search for suggestions
-          const fuzzySuggestions = await fetchFuzzySuggestions(query)
+          const fuzzySuggestions = await fetchFuzzySuggestions(query, abortController.signal)
+          if (abortController.signal.aborted) return
           if (fuzzySuggestions.length > 0) {
             setRecipients(fuzzySuggestions)
             setIsOpen(true)
@@ -94,23 +100,31 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
         if (error instanceof Error && error.name === 'AbortError') {
           return
         }
-        setRecipients([])
-        setKeywords([])
-        setNoResultsQuery(null)
+        if (!abortController.signal.aborted) {
+          setRecipients([])
+          setKeywords([])
+          setNoResultsQuery(null)
+        }
       } finally {
-        setIsLoading(false)
+        if (!abortController.signal.aborted) {
+          setIsLoading(false)
+        }
       }
     }, 150)
 
-    return () => clearTimeout(timeout)
+    return () => {
+      clearTimeout(timeout)
+      abortController.abort()
+    }
   }, [query])
 
   // Fetch search results from backend proxy (Typesense API key stays server-side)
-  async function fetchSearchResults(q: string): Promise<{ recipients: RecipientResult[], keywords: KeywordResult[] }> {
+  async function fetchSearchResults(q: string, signal?: AbortSignal): Promise<{ recipients: RecipientResult[], keywords: KeywordResult[] }> {
     try {
       const response = await fetch(
         `${API_BASE_URL}/api/v1/search/autocomplete?` +
         new URLSearchParams({ q }),
+        { signal }
       )
 
       if (!response.ok) {
@@ -135,11 +149,12 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
   }
 
   // Fetch fuzzy suggestions when exact search returns no results (typo tolerance)
-  async function fetchFuzzySuggestions(q: string): Promise<RecipientResult[]> {
+  async function fetchFuzzySuggestions(q: string, signal?: AbortSignal): Promise<RecipientResult[]> {
     try {
       const response = await fetch(
         `${API_BASE_URL}/api/v1/search/autocomplete?` +
         new URLSearchParams({ q, fuzzy: 'true' }),
+        { signal }
       )
 
       if (!response.ok) return []
