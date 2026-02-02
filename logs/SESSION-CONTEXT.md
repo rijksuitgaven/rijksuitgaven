@@ -80,11 +80,11 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/app/api/_lib/proxy.ts** ⭐ NEW (2026-02-02)
-   BFF proxy helper - routes all API calls through Next.js to hide backend URL from browsers
+1. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-02-02)
+   Added search tips popover with first-visit pulse animation; dynamic content per module
 
-2. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-02-02)
-   Converted all text filters to searchable multi-select dropdowns; enhanced MultiSelect with lazy loading, auto-focus, option count footer
+2. **app/src/app/globals.css** ⭐ UPDATED (2026-02-02)
+   Added pulse-ring animation for search tips button
 
 3. **app/src/lib/api-config.ts** ⭐ UPDATED (2026-02-02)
    Changed API_BASE_URL to empty string (relative URLs through BFF)
@@ -1369,6 +1369,41 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - `4177446` - Fix: Add word boundary filtering to Typesense search results
 - `5b4c93a` - UX: Don't auto-open autocomplete dropdown on URL navigation
 - `cb264e9` - Fix: Prevent dropdown opening on autocomplete results from URL navigation
+
+---
+
+**2026-02-02 Session 6: Search Tips Popover**
+
+**User Need:** Help users understand the power of the new search (old WordPress search was poor).
+
+**UX Decision:** Exception to "don't explain" rule - users burned by bad search need confidence building.
+
+**Implementation:**
+- Info icon button next to search bar (matches Filters button style)
+- First-visit pulse animation (pink glow, localStorage persisted)
+- Navy popover with pink accent (brand-aligned)
+- Dynamic content per module via `MODULE_SEARCH_TEXT`
+
+**Content (Dutch):**
+- "SLIM ZOEKEN" header
+- Module-specific searchable fields
+- 3 examples: single term, multiple words, prefix
+- Tip directing to filters
+
+**V1.1 Backlog Added:**
+- Exact phrase search (`"rode kruis"`)
+- Wildcard syntax (`prorail*`)
+
+**Files Modified:**
+- `app/src/components/filter-panel/filter-panel.tsx` - Popover component
+- `app/src/app/globals.css` - Pulse animation
+- `docs/VERSIONING.md` - V1.1 features
+
+**Commits:**
+- `4a9792c` - Docs: Add phrase search and wildcards to V1.1 backlog
+- `7dc0c0c` - UX: Add search tips popover with first-visit pulse animation
+- `1c552d9` - Fix: Make search tips dynamic per module
+- `5e0d37b` - UX: Match info button style to Filters button + simplify tip text
 
 ---
 
