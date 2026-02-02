@@ -12,7 +12,7 @@ import {
   type ExpandedState,
   type Column,
 } from '@tanstack/react-table'
-import { ChevronRight, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet } from 'lucide-react'
+import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet } from 'lucide-react'
 import * as XLSX from 'xlsx'
 import { cn } from '@/lib/utils'
 import {
@@ -456,8 +456,9 @@ export function DataTable({
       })
     }
 
-    // Collapsed years column (2016-2020)
+    // Collapsed years column (2016-2020) OR collapse header when expanded
     if (!yearsExpanded && collapsedYears.length > 0) {
+      // Show collapsed state: "2016-20 >" that expands on click
       cols.push({
         id: 'collapsed-years',
         header: () => (
@@ -478,6 +479,24 @@ export function DataTable({
           />
         ),
         size: 100,
+      })
+    } else if (yearsExpanded && collapsedYears.length > 0) {
+      // Show collapse header: "< 2016-20" that collapses on click
+      cols.push({
+        id: 'collapse-years-header',
+        header: () => (
+          <button
+            onClick={() => setYearsExpanded(false)}
+            className="flex items-center gap-1 text-sm font-semibold text-white hover:text-white/80 transition-colors"
+            aria-label={`Jaren ${COLLAPSED_YEARS_START} tot ${COLLAPSED_YEARS_END} inklappen`}
+            title="Klik om jaren in te klappen"
+          >
+            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+            {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
+          </button>
+        ),
+        cell: () => null,
+        size: 80,
       })
     }
 
@@ -515,25 +534,6 @@ export function DataTable({
         size: 80,
       })
     })
-
-    // Collapse button when expanded
-    if (yearsExpanded && collapsedYears.length > 0) {
-      cols.push({
-        id: 'collapse-years',
-        header: () => (
-          <button
-            onClick={() => setYearsExpanded(false)}
-            className="p-1 hover:bg-white/20 rounded text-white"
-            title="Jaren inklappen"
-            aria-label="Jaren inklappen"
-          >
-            <ChevronRight className="h-3 w-3 rotate-180" aria-hidden="true" />
-          </button>
-        ),
-        cell: () => null,
-        size: 30,
-      })
-    }
 
     // Totaal column
     cols.push({
