@@ -79,32 +79,32 @@ const MODULE_SEARCH_TEXT: Record<string, { fields: string; showCount: boolean }>
 
 const MODULE_FILTERS: Record<string, FilterConfig[]> = {
   instrumenten: [
-    { value: 'begrotingsnaam', label: 'Begrotingsnaam', type: 'text' },
-    { value: 'artikel', label: 'Artikel', type: 'text' },
-    { value: 'artikelonderdeel', label: 'Artikelonderdeel', type: 'text' },
-    { value: 'instrument', label: 'Instrument', type: 'text' },
-    { value: 'regeling', label: 'Regeling', type: 'text' },
+    { value: 'begrotingsnaam', label: 'Begrotingsnaam', type: 'multiselect' },
+    { value: 'artikel', label: 'Artikel', type: 'multiselect' },
+    { value: 'artikelonderdeel', label: 'Artikelonderdeel', type: 'multiselect' },
+    { value: 'instrument', label: 'Instrument', type: 'multiselect' },
+    { value: 'regeling', label: 'Regeling', type: 'multiselect' },
   ],
   apparaat: [
-    { value: 'begrotingsnaam', label: 'Begrotingsnaam', type: 'text' },
-    { value: 'artikel', label: 'Artikel', type: 'text' },
-    { value: 'detail', label: 'Detail', type: 'text' },
+    { value: 'begrotingsnaam', label: 'Begrotingsnaam', type: 'multiselect' },
+    { value: 'artikel', label: 'Artikel', type: 'multiselect' },
+    { value: 'detail', label: 'Detail', type: 'multiselect' },
   ],
   inkoop: [
-    { value: 'ministerie', label: 'Ministerie', type: 'text' },
-    { value: 'categorie', label: 'Categorie', type: 'text' },
-    { value: 'staffel', label: 'Staffel', type: 'text' },
+    { value: 'ministerie', label: 'Ministerie', type: 'multiselect' },
+    { value: 'categorie', label: 'Categorie', type: 'multiselect' },
+    { value: 'staffel', label: 'Staffel', type: 'multiselect' },
   ],
   provincie: [
     { value: 'provincie', label: 'Provincie', type: 'multiselect' },
   ],
   gemeente: [
     { value: 'gemeente', label: 'Gemeente', type: 'multiselect' },
-    { value: 'beleidsterrein', label: 'Beleidsterrein', type: 'text' },
+    { value: 'beleidsterrein', label: 'Beleidsterrein', type: 'multiselect' },
   ],
   publiek: [
     { value: 'source', label: 'Organisatie', type: 'multiselect' },
-    { value: 'regeling', label: 'Regeling', type: 'text' },
+    { value: 'regeling', label: 'Regeling', type: 'multiselect' },
   ],
   integraal: [
     { value: 'modules', label: 'Modules per ontvanger', type: 'multiselect' },
@@ -149,8 +149,12 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
   const [searchQuery, setSearchQuery] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
+  // Fetch options when dropdown opens (not on mount) for better initial page load
   useEffect(() => {
+    if (!isOpen || options.length > 0) return
+
     const abortController = new AbortController()
 
     async function fetchOptions() {
@@ -179,7 +183,20 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
     fetchOptions()
 
     return () => abortController.abort()
-  }, [module, field])
+  }, [isOpen, module, field, options.length])
+
+  // Focus search input when dropdown opens
+  useEffect(() => {
+    if (isOpen && searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+  }, [isOpen])
+
+  // Reset options when module changes (user navigated to different module)
+  useEffect(() => {
+    setOptions([])
+    setSearchQuery('')
+  }, [module])
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -239,10 +256,12 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
 
       {isOpen && (
         <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-[var(--border)] rounded-lg shadow-lg overflow-hidden">
+          {/* Search input */}
           <div className="p-2 border-b border-[var(--border)]">
             <div className="relative">
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--muted-foreground)]" />
               <input
+                ref={searchInputRef}
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -252,8 +271,9 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
             </div>
           </div>
 
+          {/* Selection summary bar */}
           {value.length > 0 && (
-            <div className="px-3 py-2 bg-[var(--gray-light)] flex items-center justify-between text-xs">
+            <div className="px-3 py-2 bg-[var(--gray-light)] flex items-center justify-between text-xs border-b border-[var(--border)]">
               <span className="text-[var(--navy-dark)] font-medium">
                 {value.length} geselecteerd
               </span>
@@ -267,14 +287,16 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
             </div>
           )}
 
-          <div className="max-h-48 overflow-y-auto">
+          {/* Options list - increased height for better browsing */}
+          <div className="max-h-72 overflow-y-auto">
             {isLoading ? (
-              <div className="px-3 py-4 text-sm text-center text-[var(--muted-foreground)]">
-                Laden...
+              <div className="px-3 py-6 text-sm text-center text-[var(--muted-foreground)]">
+                <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
+                Opties laden...
               </div>
             ) : filteredOptions.length === 0 ? (
               <div className="px-3 py-4 text-sm text-center text-[var(--muted-foreground)]">
-                Geen resultaten
+                {searchQuery ? `Geen resultaten voor "${searchQuery}"` : 'Geen opties beschikbaar'}
               </div>
             ) : (
               filteredOptions.map((option) => (
@@ -302,6 +324,15 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
               ))
             )}
           </div>
+
+          {/* Footer with count - shows wealth of options */}
+          {!isLoading && options.length > 0 && (
+            <div className="px-3 py-2 bg-[var(--gray-light)] text-xs text-[var(--muted-foreground)] border-t border-[var(--border)]">
+              {searchQuery
+                ? `${filteredOptions.length} van ${options.length} opties`
+                : `${options.length} opties`}
+            </div>
+          )}
         </div>
       )}
     </div>
