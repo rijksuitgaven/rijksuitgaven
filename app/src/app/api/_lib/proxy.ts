@@ -12,7 +12,7 @@ const TIMEOUT_MS = 30000
 
 // Security limits
 const MAX_OFFSET = 10000
-const MAX_LIMIT = 100
+const MAX_LIMIT = 500  // Matches dropdown options (25/100/150/250/500)
 
 interface ProxyOptions {
   /** Apply security sanitization (offset/limit caps, block random sort) */
