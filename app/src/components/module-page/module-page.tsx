@@ -211,8 +211,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
         const effectiveSortBy = isDefaultView && !userHasSorted ? 'random' : sortBy
         const minYears = isDefaultView && !userHasSorted ? 4 : undefined
 
-        // Build params including module-specific filters (provincie, gemeente, etc.)
-        const params: Parameters<typeof fetchModuleData>[1] = {
+        // Build base params
+        const baseParams: Parameters<typeof fetchModuleData>[1] = {
           page,
           per_page: perPage,
           sort_by: effectiveSortBy,
@@ -226,13 +226,26 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           columns: effectiveColumns.length > 0 ? effectiveColumns : undefined,
         }
 
-        // Add module-specific filters (arrays for multiselect, strings for text)
+        // Build module-specific filter params separately for type safety
+        // These are dynamic keys validated at API level
+        const excludedKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag'] as const
+        const moduleFilters: Record<string, string | string[] | number> = {}
+
         Object.entries(filters).forEach(([key, value]) => {
-          if (!['search', 'jaar', 'minBedrag', 'maxBedrag'].includes(key) && value) {
-            // Cast to any to allow dynamic keys - types are validated at API level
-            (params as Record<string, unknown>)[key] = value
+          if (!excludedKeys.includes(key as typeof excludedKeys[number]) && value !== null && value !== undefined && value !== '') {
+            // Only add non-null, non-empty values
+            if (Array.isArray(value)) {
+              if (value.length > 0) {
+                moduleFilters[key] = value
+              }
+            } else if (typeof value === 'string' || typeof value === 'number') {
+              moduleFilters[key] = value
+            }
           }
         })
+
+        // Merge params - moduleFilters has compatible index signature
+        const params = { ...baseParams, ...moduleFilters }
 
         const response = await fetchModuleData(moduleId, params, abortController.signal)
         setData(response)

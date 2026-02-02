@@ -22,6 +22,7 @@ import {
   formatPercentage,
   getAmountFontClass,
 } from '@/lib/format'
+import { FIELD_LABELS } from '@/lib/constants'
 import { ColumnSelector, MODULE_COLUMNS } from '@/components/column-selector'
 import type { RecipientRow, YearAmount } from '@/types/api'
 
@@ -232,28 +233,8 @@ function CollapsedYearsCell({
 /**
  * Main data table component with year columns, expandable rows, and CSV export
  * Supports sticky columns, sorting, pagination, and collapsible year ranges
+ * Field labels imported from @/lib/constants
  */
-// Field label mapping for Match column display
-const FIELD_LABELS: Record<string, string> = {
-  regeling: 'Regeling',
-  instrument: 'Instrument',
-  artikel: 'Artikel',
-  artikelonderdeel: 'Artikelonderdeel',
-  begrotingsnaam: 'Begroting',
-  detail: 'Detail',
-  ministerie: 'Ministerie',
-  categorie: 'Categorie',
-  staffel: 'Staffel',
-  provincie: 'Provincie',
-  omschrijving: 'Omschrijving',
-  gemeente: 'Gemeente',
-  beleidsterrein: 'Beleidsterrein',
-  source: 'Bron',
-  trefwoorden: 'Trefwoorden',
-  sectoren: 'Sectoren',
-  regio: 'Regio',
-  kostensoort: 'Kostensoort',
-}
 
 export function DataTable({
   data,

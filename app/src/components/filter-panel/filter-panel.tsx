@@ -6,7 +6,7 @@ import { Search, X, SlidersHorizontal, Check, ChevronDown, Loader2, User } from 
 import { cn } from '@/lib/utils'
 import { formatAmount } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
-import { MODULE_LABELS } from '@/lib/constants'
+import { MODULE_LABELS, FIELD_LABELS } from '@/lib/constants'
 
 // =============================================================================
 // Types
@@ -45,20 +45,7 @@ interface FieldMatchResult {
   field: string
 }
 
-// Field labels for display
-const FIELD_LABELS: Record<string, string> = {
-  regeling: 'Regeling',
-  instrument: 'Instrument',
-  omschrijving: 'Omschrijving',
-  begrotingsnaam: 'Begrotingsnaam',
-  categorie: 'Categorie',
-  ministerie: 'Ministerie',
-  staffel: 'Staffel',
-  beleidsterrein: 'Beleidsterrein',
-  trefwoorden: 'Trefwoorden',
-  sectoren: 'Sectoren',
-  regio: 'Regio',
-}
+// Field labels imported from @/lib/constants
 
 // =============================================================================
 // Module filter configuration
@@ -135,6 +122,12 @@ export interface FilterValues {
 // Multi-select dropdown component
 // =============================================================================
 
+// Debounce timeout for autocomplete search (ms)
+const AUTOCOMPLETE_DEBOUNCE_MS = 150
+
+// Maximum number of filter options to load (prevents DoS/memory issues)
+const MAX_FILTER_OPTIONS = 5000
+
 interface MultiSelectProps {
   module: string
   field: string
@@ -148,6 +141,8 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
   const [options, setOptions] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedIndex, setSelectedIndex] = useState(-1)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -159,21 +154,25 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
 
     async function fetchOptions() {
       setIsLoading(true)
+      setError(null)
       try {
         const response = await fetch(
           `${API_BASE_URL}/api/v1/modules/${module}/filters/${field}`,
           { signal: abortController.signal }
         )
-        if (response.ok) {
-          const data = await response.json()
-          setOptions(data)
-        }
-      } catch (error) {
-        // Ignore abort errors - expected when component unmounts or module changes
-        if (error instanceof Error && error.name === 'AbortError') {
+        if (!response.ok) {
+          setError('Opties laden mislukt')
           return
         }
-        // Silently fail - filter still works without pre-loaded options
+        const data = await response.json()
+        // Enforce client-side limit as defense-in-depth
+        setOptions(data.slice(0, MAX_FILTER_OPTIONS))
+      } catch (err) {
+        // Ignore abort errors - expected when component unmounts or module changes
+        if (err instanceof Error && err.name === 'AbortError') {
+          return
+        }
+        setError('Opties laden mislukt')
       } finally {
         if (!abortController.signal.aborted) {
           setIsLoading(false)
@@ -192,11 +191,14 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
     }
   }, [isOpen])
 
-  // Reset options when module changes (user navigated to different module)
+  // Reset options when module or field changes (user navigated or switched filter)
+  // This fixes the race condition where switching filters showed wrong options
   useEffect(() => {
     setOptions([])
     setSearchQuery('')
-  }, [module])
+    setError(null)
+    setSelectedIndex(-1)
+  }, [module, field])
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -216,6 +218,9 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
   const selectedOptions = filteredOptions.filter(opt => value.includes(opt))
   const unselectedOptions = filteredOptions.filter(opt => !value.includes(opt))
 
+  // Combined list for keyboard navigation (selected first, then unselected)
+  const allDisplayedOptions = [...selectedOptions, ...unselectedOptions]
+
   const toggleOption = (option: string) => {
     if (value.includes(option)) {
       onChange(value.filter(v => v !== option))
@@ -227,6 +232,35 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
   const clearAll = () => {
     onChange([])
     setSearchQuery('')
+  }
+
+  // Keyboard navigation for accessibility
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen) return
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault()
+        setSelectedIndex(prev =>
+          prev < allDisplayedOptions.length - 1 ? prev + 1 : prev
+        )
+        break
+      case 'ArrowUp':
+        e.preventDefault()
+        setSelectedIndex(prev => (prev > 0 ? prev - 1 : -1))
+        break
+      case 'Enter':
+        e.preventDefault()
+        if (selectedIndex >= 0 && selectedIndex < allDisplayedOptions.length) {
+          toggleOption(allDisplayedOptions[selectedIndex])
+        }
+        break
+      case 'Escape':
+        e.preventDefault()
+        setIsOpen(false)
+        setSelectedIndex(-1)
+        break
+    }
   }
 
   return (
@@ -268,9 +302,17 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
                 ref={searchInputRef}
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setSelectedIndex(-1) // Reset selection on search
+                }}
+                onKeyDown={handleKeyDown}
                 placeholder="Zoek..."
                 className="w-full pl-7 pr-3 py-1.5 text-sm border border-[var(--border)] rounded focus:outline-none focus:ring-1 focus:ring-[var(--navy-medium)]"
+                role="combobox"
+                aria-expanded={isOpen}
+                aria-haspopup="listbox"
+                aria-autocomplete="list"
               />
             </div>
           </div>
@@ -292,11 +334,25 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
           )}
 
           {/* Options list - increased height for better browsing */}
-          <div className="max-h-72 overflow-y-auto">
+          <div className="max-h-72 overflow-y-auto" role="listbox">
             {isLoading ? (
               <div className="px-3 py-6 text-sm text-center text-[var(--muted-foreground)]">
                 <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
                 Opties laden...
+              </div>
+            ) : error ? (
+              <div className="px-3 py-4 text-sm text-center text-[var(--error)]">
+                {error}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOptions([])
+                    setError(null)
+                  }}
+                  className="block mx-auto mt-2 text-xs text-[var(--navy-medium)] hover:underline"
+                >
+                  Opnieuw proberen
+                </button>
               </div>
             ) : filteredOptions.length === 0 ? (
               <div className="px-3 py-4 text-sm text-center text-[var(--muted-foreground)]">
@@ -310,12 +366,19 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
                     <div className="px-3 py-1.5 text-xs font-semibold text-[var(--navy-medium)] uppercase tracking-wider bg-[var(--gray-light)] border-b border-[var(--border)]">
                       Geselecteerd
                     </div>
-                    {selectedOptions.map((option) => (
+                    {selectedOptions.map((option, index) => (
                       <button
                         key={option}
                         type="button"
                         onClick={() => toggleOption(option)}
-                        className="w-full px-3 py-2 text-sm text-left flex items-center gap-2 hover:bg-[var(--gray-light)] transition-colors bg-[var(--blue-light)]/10"
+                        role="option"
+                        aria-selected={value.includes(option)}
+                        className={cn(
+                          "w-full px-3 py-2 text-sm text-left flex items-center gap-2 transition-colors bg-[var(--blue-light)]/10",
+                          selectedIndex === index
+                            ? 'bg-[var(--gray-light)]'
+                            : 'hover:bg-[var(--gray-light)]'
+                        )}
                       >
                         <div className="w-4 h-4 border rounded flex items-center justify-center flex-shrink-0 bg-[var(--navy-dark)] border-[var(--navy-dark)]">
                           <Check className="h-3 w-3 text-white" />
@@ -334,17 +397,27 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
                         Alle opties
                       </div>
                     )}
-                    {unselectedOptions.map((option) => (
-                      <button
-                        key={option}
-                        type="button"
-                        onClick={() => toggleOption(option)}
-                        className="w-full px-3 py-2 text-sm text-left flex items-center gap-2 hover:bg-[var(--gray-light)] transition-colors"
-                      >
-                        <div className="w-4 h-4 border rounded flex items-center justify-center flex-shrink-0 border-[var(--border)]" />
-                        <span className="truncate">{option}</span>
-                      </button>
-                    ))}
+                    {unselectedOptions.map((option, index) => {
+                      const globalIndex = selectedOptions.length + index
+                      return (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => toggleOption(option)}
+                          role="option"
+                          aria-selected={false}
+                          className={cn(
+                            "w-full px-3 py-2 text-sm text-left flex items-center gap-2 transition-colors",
+                            selectedIndex === globalIndex
+                              ? 'bg-[var(--gray-light)]'
+                              : 'hover:bg-[var(--gray-light)]'
+                          )}
+                        >
+                          <div className="w-4 h-4 border rounded flex items-center justify-center flex-shrink-0 border-[var(--border)]" />
+                          <span className="truncate">{option}</span>
+                        </button>
+                      )
+                    })}
                   </>
                 )}
               </>
@@ -512,7 +585,7 @@ export function FilterPanel({
           setIsSearching(false)
         }
       }
-    }, 150)
+    }, AUTOCOMPLETE_DEBOUNCE_MS)
 
     return () => {
       clearTimeout(timeout)

@@ -819,12 +819,13 @@ async def _get_from_source_table(
         for col in columns:
             validate_identifier(col, ALLOWED_COLUMNS, "column")
         # Return both the most frequent value AND the count of distinct values
+        # Quote column names for defense-in-depth (even though validated)
         mode_cols = ", ".join([
-            f"MODE() WITHIN GROUP (ORDER BY {col}) AS extra_{col}"
+            f'MODE() WITHIN GROUP (ORDER BY "{col}") AS extra_{col}'
             for col in columns
         ])
         count_cols = ", ".join([
-            f"COUNT(DISTINCT {col}) AS extra_{col}_count"
+            f'COUNT(DISTINCT "{col}") AS extra_{col}_count'
             for col in columns
         ])
         extra_columns_select = ", " + mode_cols + ", " + count_cols
@@ -1326,7 +1327,12 @@ async def get_filter_options(module: str, field: str) -> list[str]:
 
     Used for auto-populating multi-select dropdowns.
     Returns sorted list of unique values.
+
+    Limited to MAX_FILTER_OPTIONS to prevent memory issues and DoS.
     """
+    # Maximum options to return (prevents memory issues, DoS attacks)
+    MAX_FILTER_OPTIONS = 5000
+
     if module not in MODULE_CONFIG:
         raise ValueError(f"Unknown module: {module}")
 
@@ -1338,14 +1344,19 @@ async def get_filter_options(module: str, field: str) -> list[str]:
     if field not in valid_fields:
         raise ValueError(f"Invalid filter field '{field}' for module '{module}'")
 
+    # Validate identifier for defense-in-depth (already checked against filter_fields)
+    validate_identifier(field, ALLOWED_COLUMNS, "column")
+
     # Query distinct values (excluding NULL and empty strings)
     # Cast to text to handle both string and numeric columns uniformly
+    # Limited to prevent DoS/memory issues
     query = f"""
-        SELECT DISTINCT {field}::text AS value
+        SELECT DISTINCT "{field}"::text AS value
         FROM {table}
-        WHERE {field} IS NOT NULL
-          AND {field}::text != ''
-        ORDER BY {field}::text
+        WHERE "{field}" IS NOT NULL
+          AND "{field}"::text != ''
+        ORDER BY "{field}"::text
+        LIMIT {MAX_FILTER_OPTIONS}
     """
 
     rows = await fetch_all(query)
