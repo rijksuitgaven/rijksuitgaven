@@ -641,7 +641,7 @@ export function DataTable({
 
       {/* Table container with horizontal scroll for expanded years */}
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
+        <table className="w-full border-collapse table-fixed">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="bg-[var(--navy-dark)]">
