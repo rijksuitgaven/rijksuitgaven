@@ -243,7 +243,7 @@ export function DataTable({
   isLoading = false,
   totalRows = 0,
   page = 1,
-  perPage = 25,
+  perPage = 100,
   onPageChange,
   onPerPageChange,
   onSortChange,
@@ -589,7 +589,7 @@ export function DataTable({
             className="px-2 py-1.5 text-sm font-medium border border-[var(--border)] rounded bg-white"
             aria-label="Aantal resultaten weergeven"
           >
-            {[25, 100, 150, 250, 500].map((size) => (
+            {[50, 100, 150, 250, 500].map((size) => (
               <option key={size} value={size}>
                 {size}
               </option>

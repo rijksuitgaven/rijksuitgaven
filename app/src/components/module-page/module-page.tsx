@@ -117,7 +117,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(1)
-  const [perPage, setPerPage] = useState(25)
+  const [perPage, setPerPage] = useState(100)
   const [sortBy, setSortBy] = useState<string>('random')  // Default: random (UX-002)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [userHasSorted, setUserHasSorted] = useState(false)  // Track if user explicitly sorted
