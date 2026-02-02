@@ -34,7 +34,7 @@ function sanitizeParams(params: URLSearchParams): URLSearchParams {
   }
 
   // Cap limit
-  const limit = parseInt(sanitized.get('limit') || '100', 10)
+  const limit = parseInt(sanitized.get('limit') || '50', 10)
   if (limit > MAX_LIMIT) {
     sanitized.set('limit', String(MAX_LIMIT))
   }
