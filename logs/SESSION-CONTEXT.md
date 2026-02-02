@@ -89,8 +89,8 @@
 3. **app/src/lib/api-config.ts** ⭐ UPDATED (2026-02-02)
    Changed API_BASE_URL to empty string (relative URLs through BFF)
 
-4. **backend/app/services/modules.py** ⭐ UPDATED (2026-02-01)
-   Added SOURCE_TO_MODULE mapping for autocomplete; fixed current module detection
+4. **backend/app/services/modules.py** ⭐ UPDATED (2026-02-02)
+   Fixed word boundary regex escaping; added Typesense word boundary filtering
 
 5. **docs/FRONTEND-DOCUMENTATION.md** ⭐ UPDATED (2026-02-02)
    Added BFF proxy documentation, updated environment variables
@@ -1341,6 +1341,34 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 **Pagination Change:**
 - Default results per page: 25 → 50 (better for data exploration)
 - Dropdown options: 50, 100, 150, 250, 500 (was 25, 100, 150, 250, 500)
+
+---
+
+**2026-02-02 Session 5: Search Relevance & UX Fixes**
+
+**Search Relevance Bug:**
+- Search results were not properly sorted by relevance tier
+- Root cause: PostgreSQL `\y` word boundary was double-escaped (`\\y` instead of `\y`)
+- The pattern `\\ycoa\\y` meant "literal backslash + y" not word boundary
+- Fix: Changed to raw f-string `rf"\y{search}\y"` in all 3 search functions
+- Result: "Centraal Bureau COA" now ranks higher than "Dienst Justitiële Inrichtingen" (which only has COA in Regeling)
+
+**Inflated "Ook in" Counts:**
+- "COA" showed 326 results in Publiek (actual: ~5)
+- Root cause: Typesense prefix matching returned "Coaching", "Coach", etc.
+- Fix: Added `is_word_boundary_match()` filter to `_typesense_get_primary_keys_with_highlights()`
+- Only results where search term appears as complete word are now included
+
+**Dropdown UX on URL Navigation:**
+- Clicking "Ook in: Publiek" opened autocomplete dropdown instead of showing table results
+- Fix: Added `hasUserTypedRef` to track user typing vs URL pre-fill
+- Dropdown only opens when user actively types, not when search is pre-filled from URL
+
+**Commits:**
+- `33d5b3a` - Fix: Word boundary regex escaping for relevance sorting
+- `4177446` - Fix: Add word boundary filtering to Typesense search results
+- `5b4c93a` - UX: Don't auto-open autocomplete dropdown on URL navigation
+- `cb264e9` - Fix: Prevent dropdown opening on autocomplete results from URL navigation
 
 ---
 
