@@ -743,11 +743,11 @@ export function DataTable({
                       )
                     })}
                   </tr>
-                  {/* Expanded row content */}
+                  {/* Expanded row content - pr-32 accounts for sticky Totaal column */}
                   {row.getIsExpanded() && renderExpandedRow && (
                     <tr>
                       <td colSpan={columns.length} className="bg-[var(--gray-light)] border-b border-[var(--border)]">
-                        <div className="px-6 py-4">
+                        <div className="px-6 py-4 pr-32">
                           {renderExpandedRow(row.original)}
                         </div>
                       </td>
