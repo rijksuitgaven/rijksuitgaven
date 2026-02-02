@@ -80,20 +80,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-02-02)
+1. **app/src/app/api/_lib/proxy.ts** ⭐ NEW (2026-02-02)
+   BFF proxy helper - routes all API calls through Next.js to hide backend URL from browsers
+
+2. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-02-02)
    Converted all text filters to searchable multi-select dropdowns; enhanced MultiSelect with lazy loading, auto-focus, option count footer
 
-2. **backend/app/services/modules.py** ⭐ UPDATED (2026-02-01)
+3. **app/src/lib/api-config.ts** ⭐ UPDATED (2026-02-02)
+   Changed API_BASE_URL to empty string (relative URLs through BFF)
+
+4. **backend/app/services/modules.py** ⭐ UPDATED (2026-02-01)
    Added SOURCE_TO_MODULE mapping for autocomplete; fixed current module detection
 
-3. **backend/app/api/v1/modules.py** ⭐ UPDATED (2026-01-31)
-   Added `extra_column_counts` field to Pydantic model (was being stripped from API responses)
-
-4. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-01-31)
-   Fixed row hover effect for sticky columns using `group` / `group-hover` pattern
-
-5. **docs/VERSIONING.md** ⭐ UPDATED (2026-01-31)
-   Added V3 Inzichten (Self-Service BI), renumbered subsequent versions to V4-V8
+5. **docs/FRONTEND-DOCUMENTATION.md** ⭐ UPDATED (2026-02-02)
+   Added BFF proxy documentation, updated environment variables
 
 ---
 
@@ -1304,12 +1304,45 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 ---
 
+**2026-02-02 Session 3: BFF Proxy Implementation**
+
+**Goal:** Hide FastAPI backend URL from browsers for security.
+
+**Implementation:**
+- Created 8 Next.js API routes that proxy to FastAPI backend
+- All frontend API calls now go through `/api/v1/...` (relative URLs)
+- `BACKEND_API_URL` is server-side only (no `NEXT_PUBLIC_` prefix)
+
+**Security Features:**
+- Backend URL hidden from browser DevTools
+- Offset capped at 10,000 (prevents scraping)
+- Limit capped at 500 (matches dropdown options)
+- `sort_by=random` blocked (converted to `totaal`)
+- Module name validation (alphabetic only, prevents path traversal)
+- 30 second timeout
+
+**Files Created:**
+- `app/src/app/api/_lib/proxy.ts` - Shared proxy helper
+- `app/src/app/api/v1/modules/route.ts`
+- `app/src/app/api/v1/modules/[module]/route.ts`
+- `app/src/app/api/v1/modules/[module]/stats/route.ts`
+- `app/src/app/api/v1/modules/[module]/autocomplete/route.ts`
+- `app/src/app/api/v1/modules/[module]/filters/[field]/route.ts`
+- `app/src/app/api/v1/modules/[module]/[value]/details/route.ts`
+- `app/src/app/api/v1/search/autocomplete/route.ts`
+
+**Commits:**
+- `ff8ddaf` - Add BFF proxy to hide backend URL from browsers
+- `f83c843` - Fix: BFF limit cap 100 → 500 to match dropdown options
+
+---
+
 **Upcoming Work Plan:**
 
 | Day | Focus |
 |-----|-------|
 | ~~**2026-02-01**~~ | ~~Filters - UX/UI review~~ → Autocomplete fixes (done) |
-| ~~**2026-02-02**~~ | Filter multi-select + auto-columns (done) |
+| ~~**2026-02-02**~~ | Filter multi-select + auto-columns + BFF proxy (done) |
 | **2026-02-03** | Overzichtspagina design + implementation |
 | **2026-02-04** | Hyperlinks (cross-module navigation) |
 

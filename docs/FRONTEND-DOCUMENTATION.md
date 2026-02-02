@@ -1,6 +1,6 @@
 # Frontend Documentation
 
-**Last Updated:** 2026-01-31
+**Last Updated:** 2026-02-02
 **Stack:** Next.js 16.1.4 + TypeScript + Tailwind CSS + TanStack Table
 
 ---
@@ -415,9 +415,16 @@ interface ErrorBoundaryProps {
 
 ## API Client (`lib/api.ts`)
 
-**Base URL:** `https://rijksuitgaven-api-production-3448.up.railway.app`
+**Base URL:** Empty string (relative URLs)
 
-(Can be overridden with `NEXT_PUBLIC_API_URL` env var)
+All API calls go through `/api/v1/...` which is handled by Next.js BFF (Backend-for-Frontend) proxy routes. The real backend URL (`BACKEND_API_URL`) is server-side only and hidden from browsers.
+
+**BFF Security Features:**
+- Backend URL hidden from browser DevTools
+- Offset capped at 10,000
+- Limit capped at 500
+- `sort_by=random` blocked (converted to `totaal`)
+- Module name validation (alphabetic only)
 
 **Functions:**
 
@@ -536,9 +543,11 @@ npm run build
 **Environment Variables:**
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `NEXT_PUBLIC_API_URL` | Railway API URL | Backend API endpoint |
+| `BACKEND_API_URL` | `http://localhost:8000` | Backend API (server-side only, used by BFF proxy) |
 | `NEXT_PUBLIC_TYPESENSE_HOST` | `typesense-production-35ae.up.railway.app` | Typesense server |
-| `NEXT_PUBLIC_TYPESENSE_API_KEY` | (required) | Typesense search API key |
+| `TYPESENSE_API_KEY` | (required) | Typesense search API key (server-side only) |
+
+**Note:** No `NEXT_PUBLIC_` prefix for sensitive URLs/keys - they stay server-side only.
 
 **Deployment:**
 - Platform: Railway
@@ -635,3 +644,4 @@ npm run build
 | 2026-01-31 | Added ErrorBoundary component, XLS export, "Gevonden in" column |
 | 2026-01-31 | Updated pagination options (25/100/150/250/500), default columns note |
 | 2026-01-31 | Fixed Apparaat columns (Kostensoort is primary, not extra) |
+| 2026-02-02 | Added BFF proxy documentation, updated environment variables |
