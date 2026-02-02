@@ -60,6 +60,8 @@
 
 ### V1.1 - Search Improvements
 
+- Exact phrase search with quotes (`"rode kruis"`)
+- Wildcard syntax support (`prorail*`)
 - Semantic search (embeddings via Cohere)
 - Search on Regeling/Omschrijving fields
 - Recent search history
