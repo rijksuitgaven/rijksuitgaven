@@ -166,3 +166,20 @@
 .animate-fade-in {
   animation: fadeIn 150ms ease-out;
 }
+
+/* Search tips pulse animation - draws attention on first visit */
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(230, 45, 117, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(230, 45, 117, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(230, 45, 117, 0);
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.5s ease-out infinite;
+}
