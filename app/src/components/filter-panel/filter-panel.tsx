@@ -209,7 +209,7 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
   }, [])
 
   const filteredOptions = options.filter(opt =>
-    opt.toLowerCase().includes(searchQuery.toLowerCase())
+    opt && opt.trim() !== '' && opt.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   // Split into selected and unselected for display
