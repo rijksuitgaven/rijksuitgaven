@@ -70,9 +70,9 @@
 
 ### V1.0 Known Issues / Backlog
 
-| Issue | Description | Priority |
-|-------|-------------|----------|
-| **Details API total mismatch** | Expanded row details don't sum to parent row total (~€243M missing for SVB). Likely NULL grouping fields or aggregation differences. | Medium |
+*No known issues at this time.*
+
+<!-- Fixed 2026-02-03: Details API total mismatch (commit 6e2da2a) -->
 
 ### V1.2 - Search Polish
 
