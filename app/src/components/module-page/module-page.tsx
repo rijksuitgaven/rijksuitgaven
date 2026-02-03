@@ -314,8 +314,9 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
       module={moduleId}
       availableYears={data?.availableYears ?? []}
       onNavigateToModule={handleNavigateToModule}
+      extraColumnsCount={effectiveColumns.length}
     />
-  ), [moduleId, data?.availableYears, handleNavigateToModule])
+  ), [moduleId, data?.availableYears, handleNavigateToModule, effectiveColumns.length])
 
   if (error) {
     return (

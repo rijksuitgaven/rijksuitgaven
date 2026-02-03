@@ -81,6 +81,7 @@ interface ExpandedRowProps {
   module: string
   availableYears: number[]
   onNavigateToModule?: (module: string, recipient: string) => void
+  extraColumnsCount?: number  // Number of extra columns in parent table (for alignment)
 }
 
 /**
@@ -92,7 +93,11 @@ export function ExpandedRow({
   module,
   availableYears,
   onNavigateToModule,
+  extraColumnsCount = 0,
 }: ExpandedRowProps) {
+  // Calculate first column min-width to align with parent table's year columns
+  // Parent has: expand button (~40px) + primary (~160px) + extra columns (~140px each)
+  const firstColumnMinWidth = 200 + (extraColumnsCount * 140)
   const [grouping, setGrouping] = useState(GROUPABLE_FIELDS[module]?.[0]?.value ?? 'regeling')
   const [details, setDetails] = useState<DetailRow[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -188,8 +193,11 @@ export function ExpandedRow({
           <table className="w-full border-collapse text-sm">
             <thead className="bg-[var(--gray-light)]">
               <tr>
-                {/* First column: Dropdown + count + total - all in one cell */}
-                <th className="px-3 py-2 text-left border-b border-[var(--border)]">
+                {/* First column: Dropdown + count - spans content columns area for alignment */}
+                <th
+                  className="px-3 py-2 text-left border-b border-[var(--border)]"
+                  style={{ minWidth: firstColumnMinWidth }}
+                >
                   <div className="flex items-center gap-3">
                     {/* Grouping dropdown */}
                     {groupableFields.length > 1 ? (
