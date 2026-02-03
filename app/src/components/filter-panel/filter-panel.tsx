@@ -756,8 +756,16 @@ export function FilterPanel({
   }, [])
 
   const handleSelectFieldMatch = useCallback((result: FieldMatchResult) => {
-    // Set search to the field value and close dropdown
-    setLocalFilters((prev) => ({ ...prev, search: result.value }))
+    // Apply as a filter instead of a text search
+    // This shows all recipients with this regeling/artikel/etc.
+    setLocalFilters((prev) => ({
+      ...prev,
+      search: '', // Clear search text
+      [result.field]: [result.value], // Apply as filter (e.g., regeling: ["value"])
+    }))
+    setCurrentModuleResults([])
+    setFieldMatches([])
+    setOtherModulesResults([])
     setIsDropdownOpen(false)
   }, [])
 
