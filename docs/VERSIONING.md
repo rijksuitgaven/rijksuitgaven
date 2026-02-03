@@ -67,6 +67,7 @@
 - Search on Regeling/Omschrijving fields
 - Recent search history
 - Saved searches
+- **Typesense data enrichment** - Store year amounts in Typesense to skip PostgreSQL for search results (~25-50ms target)
 
 ### V1.0 Known Issues / Backlog
 
