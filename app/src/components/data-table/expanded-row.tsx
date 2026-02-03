@@ -12,31 +12,43 @@ import type { RecipientRow } from '@/types/api'
 const COLLAPSED_YEARS_START = 2016
 const COLLAPSED_YEARS_END = 2020
 
-// Groupable fields per module
+// Groupable fields per module (per search-requirements.md)
+// Ordered by usefulness - most commonly used groupings first
 const GROUPABLE_FIELDS: Record<string, { value: string; label: string }[]> = {
   instrumenten: [
     { value: 'regeling', label: 'Regeling' },
     { value: 'artikel', label: 'Artikel' },
+    { value: 'instrument', label: 'Instrument' },
     { value: 'begrotingsnaam', label: 'Begrotingsnaam' },
+    { value: 'artikelonderdeel', label: 'Artikelonderdeel' },
+    { value: 'detail', label: 'Detail' },
   ],
   apparaat: [
+    { value: 'kostensoort', label: 'Kostensoort' },
     { value: 'artikel', label: 'Artikel' },
+    { value: 'detail', label: 'Detail' },
     { value: 'begrotingsnaam', label: 'Begrotingsnaam' },
   ],
   inkoop: [
     { value: 'ministerie', label: 'Ministerie' },
     { value: 'categorie', label: 'Categorie' },
+    { value: 'staffel', label: 'Staffel' },
   ],
   provincie: [
     { value: 'provincie', label: 'Provincie' },
+    { value: 'omschrijving', label: 'Omschrijving' },
   ],
   gemeente: [
     { value: 'gemeente', label: 'Gemeente' },
     { value: 'beleidsterrein', label: 'Beleidsterrein' },
+    { value: 'regeling', label: 'Regeling' },
+    { value: 'omschrijving', label: 'Omschrijving' },
   ],
   publiek: [
     { value: 'source', label: 'Organisatie' },
     { value: 'regeling', label: 'Regeling' },
+    { value: 'sectoren', label: 'Sectoren' },
+    { value: 'trefwoorden', label: 'Trefwoorden' },
   ],
   integraal: [
     { value: 'module', label: 'Module' },
