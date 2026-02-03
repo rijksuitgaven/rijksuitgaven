@@ -15,7 +15,7 @@ const MAX_OFFSET = 10000
 const MAX_LIMIT = 500  // Matches dropdown options (25/100/150/250/500)
 
 interface ProxyOptions {
-  /** Apply security sanitization (offset/limit caps, block random sort) */
+  /** Apply security sanitization (offset/limit caps) */
   sanitize?: boolean
   /** Request timeout in milliseconds */
   timeout?: number
@@ -37,12 +37,6 @@ function sanitizeParams(params: URLSearchParams): URLSearchParams {
   const limit = parseInt(sanitized.get('limit') || '50', 10)
   if (limit > MAX_LIMIT) {
     sanitized.set('limit', String(MAX_LIMIT))
-  }
-
-  // Block random sort (replace with totaal)
-  const sortBy = sanitized.get('sort_by')
-  if (sortBy === 'random') {
-    sanitized.set('sort_by', 'totaal')
   }
 
   return sanitized
