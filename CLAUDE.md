@@ -117,6 +117,25 @@ Which do you prefer?
 ```
 **Do NOT say "fixed" until all modules pass.**
 
+### 5. Filter Resilience (No Silent Data Loss)
+
+**When adding filtering/validation logic that removes results:**
+
+1. **Fetch MORE than needed** - If filtering will discard ~80% of results, fetch 4x-5x more
+2. **Test edge cases** - Search for rare/small entities, not just common ones
+3. **Verify with production data** - Filters that work on test data may fail on real data
+
+**Example (Autocomplete):**
+```python
+# ❌ Bad: Only 25 results, word-boundary filter discards most
+per_page = limit * 5  # 25 for limit=5
+
+# ✅ Good: 100 results ensures filtered results still populate
+per_page = limit * 20  # 100 for limit=5
+```
+
+**Rule:** Adding a filter must NEVER silently break existing functionality. If you add filtering, verify the end-to-end user experience still works.
+
 ---
 
 ## Project Context
