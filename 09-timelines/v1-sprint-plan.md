@@ -336,10 +336,15 @@
 
 | Task | Priority | Status |
 |------|----------|--------|
-| Overzicht page design + implementation | HIGH | ❌ Not started (discuss next session) |
-| **Search performance optimization** | **HIGH** | ❌ Not started (**decision: optimize before launch**) |
-| Mobile responsiveness audit | MEDIUM | ❌ Parked (needs discussion) |
+| Overzicht page design + implementation | HIGH | ❌ Not started (**NEXT - blocks Week 6**) |
+| **Search performance optimization** | **HIGH** | ❌ Not started (**discuss approach**) |
+| Mobile message banner | HIGH | ❌ Not started (show "works best on larger screen" on mobile) |
 | Typography/spacing consistency audit | LOW | ❌ Not started |
+
+**Decisions (2026-02-03):**
+- Mobile responsiveness audit → SKIP for V1.0, add mobile message instead
+- Overzicht page → Must complete BEFORE starting Week 6 (Auth)
+- Search performance → Discuss optimization approach
 
 **Performance Plan:** Create optimized materialized view for search results. Target: 750ms → ~200ms. See SESSION-CONTEXT.md for details.
 

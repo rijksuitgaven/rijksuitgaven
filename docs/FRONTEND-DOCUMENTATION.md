@@ -134,6 +134,14 @@ Main data grid component using TanStack Table.
 - Filename: `rijksuitgaven-{moduleId}-{YYYY-MM-DD}.csv`
 - Columns: Primary value, year columns, Totaal
 
+**Totals Row (UX-002f):**
+- Appears when searching or filtering (not on default view)
+- Shows aggregated totals across ALL results (not just current page)
+- Navy dark background matching header
+- Displays: "Totaal" + recipient count + year sums + grand total
+- Handles collapsed years (2016-2020) sum when applicable
+- Plural handling: "1 ontvanger" vs "289 ontvangers"
+
 **Props:**
 ```typescript
 interface DataTableProps {
@@ -150,6 +158,12 @@ interface DataTableProps {
   onRowExpand?: (primaryValue: string) => void
   renderExpandedRow?: (row: RecipientRow) => React.ReactNode
   moduleId?: string  // Used for CSV export filename
+  totals?: TotalsData | null  // Aggregated totals when searching/filtering
+}
+
+interface TotalsData {
+  years: Record<number, number>  // { 2016: 0, 2017: 1000, ... }
+  totaal: number
 }
 ```
 

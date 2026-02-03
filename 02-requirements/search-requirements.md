@@ -670,6 +670,34 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-002f: Totals Row for Search Results
+
+**Requirement:** Show aggregated totals at bottom of table when searching or filtering
+
+**Behavior:**
+- Appears only when searching or filtering (not on default random view)
+- Shows accurate totals across ALL matching results, not just current page
+- Backend aggregates SUM per year column and grand total
+- Displayed in `<tfoot>` with navy dark styling matching header
+
+**Display:**
+- Row styling: Navy dark background, white text, matches header
+- Column 1: Empty (expand button placeholder)
+- Column 2: "Totaal" + count (e.g., "289 ontvangers")
+- Extra columns: Empty cells (placeholder)
+- Year columns: Sum of all matching results per year
+- Grand total: Sum across all years
+
+**Plural handling:**
+- 1 result: "1 ontvanger"
+- 2+ results: "289 ontvangers" (adds 's')
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-02-03
+
+---
+
 ### UX-003: Mobile Responsiveness
 
 **Requirement:** Optimize for mobile, but desktop-first for data work
@@ -685,7 +713,15 @@ Search "bedrijvenbeleid" shows:
 - Horizontal scroll for data tables
 - Fixed first column (Ontvanger) on horizontal scroll
 
-**Priority:** P1 (High)
+**V1.0 Mobile Message (NEW):**
+- Detect mobile viewport (< 768px)
+- Show friendly message: "Rijksuitgaven werkt het beste op een groter scherm"
+- Include option to continue anyway
+- One-time dismiss (localStorage)
+- Does NOT block access, just informs
+
+**Priority:** P1 (High) - Core mobile optimizations
+**Mobile Message:** P0 (V1.0 launch requirement)
 
 ---
 
