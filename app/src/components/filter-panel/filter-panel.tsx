@@ -951,20 +951,10 @@ export function FilterPanel({
                         )}
                       >
                         <div className="flex items-center justify-between gap-4">
-                          <div className={cn(
-                            "font-medium truncate",
-                            result.match_type === "prefix"
-                              ? "text-[var(--muted-foreground)]"
-                              : "text-[var(--navy-dark)]"
-                          )}>
+                          <div className="font-medium truncate text-[var(--navy-dark)]">
                             {result.name}
                           </div>
-                          <div className={cn(
-                            "text-sm font-medium whitespace-nowrap",
-                            result.match_type === "prefix"
-                              ? "text-[var(--muted-foreground)]"
-                              : "text-[var(--navy-dark)]"
-                          )}>
+                          <div className="text-sm font-medium whitespace-nowrap text-[var(--navy-dark)]">
                             {formatAmount(result.totaal)}
                           </div>
                         </div>
