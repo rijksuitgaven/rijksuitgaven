@@ -648,31 +648,19 @@ async def _get_from_aggregated_view(
                 params.append(typesense_primary_keys)
                 param_idx += 1
             else:
-                # Typesense returned empty - fall back to regex search
-                # This happens when Typesense not configured or no matches found
-                logger.info(f"Typesense returned 0 results for '{search}', falling back to regex")
-                view_cols = config.get("view_columns", [])
-                searchable_fields = [primary] + [col for col in view_cols if col != primary]
-
-                or_conditions = []
+                # Typesense returned empty - fall back to regex search on primary field only
+                # This happens when Typesense not configured or no word-boundary matches found
+                # Note: Only search primary field to avoid issues with secondary columns
+                logger.info(f"Typesense returned 0 results for '{search}', falling back to regex on {primary}")
                 _, pattern = build_search_condition(primary, param_idx, search)
-                for field in searchable_fields:
-                    or_conditions.append(f"{field} ~* ${param_idx}")
-
-                where_clauses.append(f"({' OR '.join(or_conditions)})")
+                where_clauses.append(f"{primary} ~* ${param_idx}")
                 params.append(pattern)
                 param_idx += 1
         else:
             # Fallback: regex search if Typesense collection not mapped
-            view_cols = config.get("view_columns", [])
-            searchable_fields = [primary] + [col for col in view_cols if col != primary]
-
-            or_conditions = []
+            # Only search primary field for simplicity and reliability
             _, pattern = build_search_condition(primary, param_idx, search)
-            for field in searchable_fields:
-                or_conditions.append(f"{field} ~* ${param_idx}")
-
-            where_clauses.append(f"({' OR '.join(or_conditions)})")
+            where_clauses.append(f"{primary} ~* ${param_idx}")
             params.append(pattern)
             param_idx += 1
 
