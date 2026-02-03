@@ -773,7 +773,14 @@ async def _get_from_aggregated_view(
     count_query = f"SELECT COUNT(*) FROM {agg_table} {count_where_sql}"
 
     # Execute queries
-    rows = await fetch_all(query, *params)
+    try:
+        rows = await fetch_all(query, *params)
+    except Exception as e:
+        logger.error(f"Query failed for {module}: {e}")
+        logger.error(f"Query: {query}")
+        logger.error(f"Params: {params}")
+        raise
+
     total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
 
     # Use Typesense highlight info for "Gevonden in" column (fast!)
