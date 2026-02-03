@@ -68,6 +68,12 @@
 - Recent search history
 - Saved searches
 
+### V1.0 Known Issues / Backlog
+
+| Issue | Description | Priority |
+|-------|-------------|----------|
+| **Details API total mismatch** | Expanded row details don't sum to parent row total (~€243M missing for SVB). Likely NULL grouping fields or aggregation differences. | Medium |
+
 ### V1.2 - Search Polish
 
 - Search analytics

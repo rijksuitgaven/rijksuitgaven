@@ -1,12 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ChevronDown, Loader2, FileText } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatAmount, getAmountFontClass } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
 import { MODULE_LABELS } from '@/lib/constants'
 import type { RecipientRow } from '@/types/api'
+
+// Collapsible year range (same as main table)
+const COLLAPSED_YEARS_START = 2016
+const COLLAPSED_YEARS_END = 2020
 
 // Groupable fields per module
 const GROUPABLE_FIELDS: Record<string, { value: string; label: string }[]> = {
@@ -37,18 +41,6 @@ const GROUPABLE_FIELDS: Record<string, { value: string; label: string }[]> = {
   integraal: [
     { value: 'module', label: 'Module' },
   ],
-}
-
-// Context fields per module (headline + breadcrumb hierarchy)
-// UX Enhancement 3: Prominent Expanded Context
-const CONTEXT_FIELDS: Record<string, { headline: string; headlineLabel: string; breadcrumb: string[] }> = {
-  instrumenten: { headline: 'regeling', headlineLabel: 'Regeling', breadcrumb: ['artikel', 'begrotingsnaam'] },
-  apparaat: { headline: 'kostensoort', headlineLabel: 'Kostensoort', breadcrumb: ['artikel', 'begrotingsnaam'] },
-  inkoop: { headline: 'categorie', headlineLabel: 'Categorie', breadcrumb: ['ministerie'] },
-  provincie: { headline: 'omschrijving', headlineLabel: 'Omschrijving', breadcrumb: ['provincie'] },
-  gemeente: { headline: 'regeling', headlineLabel: 'Regeling', breadcrumb: ['beleidsterrein', 'gemeente'] },
-  publiek: { headline: 'regeling', headlineLabel: 'Regeling', breadcrumb: ['source'] },
-  integraal: { headline: 'module', headlineLabel: 'Module', breadcrumb: [] },
 }
 
 interface DetailRow {
@@ -93,8 +85,17 @@ export function ExpandedRow({
   const [details, setDetails] = useState<DetailRow[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [yearsExpanded, setYearsExpanded] = useState(false)
 
   const groupableFields = GROUPABLE_FIELDS[module] ?? []
+
+  // Calculate collapsible years (same logic as main table)
+  const collapsedYears = availableYears.filter(
+    (y) => y >= COLLAPSED_YEARS_START && y <= COLLAPSED_YEARS_END
+  )
+  const visibleYears = yearsExpanded
+    ? availableYears
+    : availableYears.filter((y) => y > COLLAPSED_YEARS_END)
 
   // Fetch details when row is expanded or grouping changes
   useEffect(() => {
@@ -138,111 +139,25 @@ export function ExpandedRow({
   // Cross-module sources (excluding current module)
   const otherSources = row.sources?.filter((s) => s !== module && s !== 'current') ?? []
 
-  // Extract context from first detail row (UX Enhancement 3: Prominent Expanded Context)
-  const contextConfig = CONTEXT_FIELDS[module]
-  const firstDetail = details[0] as DetailRow | undefined
-
-  // Get headline value from the detail row
-  const headlineValue = firstDetail?.[contextConfig?.headline as keyof DetailRow] as string | undefined
-    || (firstDetail?.group_by === contextConfig?.headline ? firstDetail?.group_value : null)
-    || null
-
-  // Get breadcrumb values
-  const breadcrumbValues = contextConfig?.breadcrumb
-    ?.map(field => firstDetail?.[field as keyof DetailRow] as string | undefined)
-    .filter(Boolean) ?? []
-
   return (
-    <div className="space-y-4">
-      {/* Prominent Context Header (UX Enhancement 3) */}
-      {!isLoading && !error && headlineValue && (
-        <div className="bg-white border border-[var(--border)] rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <FileText className="h-5 w-5 text-[var(--navy-medium)] mt-0.5 flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              {/* Headline (e.g., Regeling name) */}
-              <h4 className="text-lg font-semibold text-[var(--navy-dark)] leading-tight">
-                {headlineValue}
-              </h4>
-              {/* Breadcrumb hierarchy (e.g., Artikel › Begrotingsnaam) */}
-              {breadcrumbValues.length > 0 && (
-                <p className="text-sm text-[var(--muted-foreground)] mt-1">
-                  {breadcrumbValues.join(' › ')}
-                </p>
-              )}
-              {/* Cross-module indicator */}
-              {otherSources.length > 0 && (
-                <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-[var(--navy-medium)]">
-                  <span className="font-medium">Ook in:</span>
-                  {otherSources.map((source) => (
-                    <button
-                      key={source}
-                      onClick={() => onNavigateToModule?.(source, row.primary_value)}
-                      className="inline-flex items-center px-2 py-0.5 rounded bg-[var(--gray-light)] hover:bg-[var(--blue-light)] transition-colors"
-                    >
-                      {MODULE_LABELS[source] || source}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+    <div className="space-y-2">
+      {/* Cross-module indicator (if applicable) */}
+      {otherSources.length > 0 && (
+        <div className="flex items-center gap-2 text-sm text-[var(--navy-medium)]">
+          <span className="font-medium">Ook in:</span>
+          {otherSources.map((source) => (
+            <button
+              key={source}
+              onClick={() => onNavigateToModule?.(source, row.primary_value)}
+              className="inline-flex items-center px-2 py-0.5 rounded bg-[var(--gray-light)] hover:bg-[var(--blue-light)] transition-colors"
+            >
+              {MODULE_LABELS[source] || source}
+            </button>
+          ))}
         </div>
       )}
 
-      {/* Recipient info and controls */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h4 className="text-base font-medium text-[var(--navy-dark)]">
-            {row.primary_value}
-          </h4>
-          {row.row_count > 1 && (
-            <p className="text-sm text-[var(--muted-foreground)] mt-0.5">
-              {row.row_count} regelingen
-            </p>
-          )}
-          {/* Cross-module indicator (fallback if no context header) */}
-          {!headlineValue && otherSources.length > 0 && (
-            <div className="mt-2 flex items-center gap-2 text-sm text-[var(--navy-medium)]">
-              <span className="font-medium">Ook in:</span>
-              {otherSources.map((source) => (
-                <button
-                  key={source}
-                  onClick={() => onNavigateToModule?.(source, row.primary_value)}
-                  className="inline-flex items-center px-2 py-0.5 rounded bg-[var(--gray-light)] hover:bg-[var(--blue-light)] transition-colors"
-                >
-                  {MODULE_LABELS[source] || source}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Grouping selector */}
-        {groupableFields.length > 1 && (
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-[var(--muted-foreground)]">
-              Groeperen op:
-            </label>
-            <div className="relative">
-              <select
-                value={grouping}
-                onChange={(e) => setGrouping(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-1.5 text-sm border border-[var(--border)] rounded bg-white hover:border-[var(--navy-medium)] transition-colors"
-              >
-                {groupableFields.map((field) => (
-                  <option key={field.value} value={field.value}>
-                    {field.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)] pointer-events-none" />
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Detail rows */}
+      {/* Detail table with integrated toolbar */}
       {isLoading ? (
         <div className="flex items-center gap-2 py-4 text-sm text-[var(--muted-foreground)]" role="status" aria-live="polite">
           <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -255,14 +170,69 @@ export function ExpandedRow({
           Geen details beschikbaar
         </div>
       ) : (
-        <div className="border border-[var(--border)] rounded overflow-x-auto">
+        <div className="border border-[var(--border)] rounded overflow-hidden">
+          {/* Table with integrated controls in header */}
+          <div className="overflow-x-auto">
           <table className="w-full border-collapse text-sm">
-            <thead className="bg-white">
+            <thead className="bg-[var(--gray-light)]">
               <tr>
-                <th className="px-3 py-2 text-left font-semibold text-[var(--navy-dark)] border-b border-[var(--border)]">
-                  {groupableFields.find((f) => f.value === grouping)?.label || 'Groep'}
+                {/* First column: Dropdown + count + total - all in one cell */}
+                <th className="px-3 py-2 text-left border-b border-[var(--border)]">
+                  <div className="flex items-center gap-3">
+                    {/* Grouping dropdown */}
+                    {groupableFields.length > 1 ? (
+                      <div className="relative">
+                        <select
+                          value={grouping}
+                          onChange={(e) => setGrouping(e.target.value)}
+                          className="appearance-none pl-2 pr-6 py-1 text-sm font-semibold text-[var(--navy-dark)] border border-[var(--border)] rounded bg-white hover:border-[var(--navy-medium)] transition-colors cursor-pointer"
+                        >
+                          {groupableFields.map((field) => (
+                            <option key={field.value} value={field.value}>
+                              {field.label}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--muted-foreground)] pointer-events-none" />
+                      </div>
+                    ) : (
+                      <span className="text-sm font-semibold text-[var(--navy-dark)]">
+                        {groupableFields[0]?.label || 'Details'}
+                      </span>
+                    )}
+                    {/* Count only - TODO: Add total back when "Details API total mismatch" backlog item is fixed (see VERSIONING.md) */}
+                    <span className="text-sm text-[var(--muted-foreground)]">
+                      {details.length} items
+                    </span>
+                  </div>
                 </th>
-                {availableYears.map((year) => (
+                {/* Collapsed years toggle (2016-2020) */}
+                {!yearsExpanded && collapsedYears.length > 0 && (
+                  <th className="px-3 py-2 text-right font-semibold text-[var(--navy-dark)] border-b border-[var(--border)] w-24">
+                    <button
+                      onClick={() => setYearsExpanded(true)}
+                      className="flex items-center gap-1 text-sm font-semibold text-[var(--navy-dark)] hover:text-[var(--navy-medium)] transition-colors ml-auto"
+                      aria-label={`Jaren ${COLLAPSED_YEARS_START} tot ${COLLAPSED_YEARS_END} uitklappen`}
+                    >
+                      {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
+                      <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  </th>
+                )}
+                {/* Collapse button when expanded */}
+                {yearsExpanded && collapsedYears.length > 0 && (
+                  <th className="px-3 py-2 text-right font-semibold text-[var(--navy-dark)] border-b border-[var(--border)] w-20">
+                    <button
+                      onClick={() => setYearsExpanded(false)}
+                      className="flex items-center gap-1 text-sm font-semibold text-[var(--navy-dark)] hover:text-[var(--navy-medium)] transition-colors"
+                      aria-label={`Jaren ${COLLAPSED_YEARS_START} tot ${COLLAPSED_YEARS_END} inklappen`}
+                    >
+                      <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                      {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
+                    </button>
+                  </th>
+                )}
+                {visibleYears.map((year) => (
                   <th
                     key={year}
                     className="px-3 py-2 text-right font-semibold text-[var(--navy-dark)] border-b border-[var(--border)] w-20"
@@ -279,6 +249,14 @@ export function ExpandedRow({
               {details.map((detail, index) => {
                 const totalFormatted = formatAmount(detail.totaal)
                 const totalFontClass = getAmountFontClass(totalFormatted)
+
+                // Calculate collapsed years total for this row
+                const collapsedTotal = collapsedYears.reduce(
+                  (sum, y) => sum + (detail.years[String(y)] || 0),
+                  0
+                )
+                const collapsedFormatted = formatAmount(collapsedTotal)
+                const collapsedFontClass = getAmountFontClass(collapsedFormatted)
 
                 return (
                   <tr
@@ -297,7 +275,23 @@ export function ExpandedRow({
                         </span>
                       </div>
                     </td>
-                    {availableYears.map((year) => {
+                    {/* Collapsed years cell (2016-2020 combined) */}
+                    {!yearsExpanded && collapsedYears.length > 0 && (
+                      <td
+                        className={cn(
+                          'px-3 py-2 text-right tabular-nums border-b border-[var(--border)]',
+                          collapsedFontClass,
+                          collapsedTotal === 0 && 'text-[var(--muted-foreground)]'
+                        )}
+                      >
+                        {collapsedTotal === 0 ? '-' : collapsedFormatted}
+                      </td>
+                    )}
+                    {/* Empty cell for collapse button column when expanded */}
+                    {yearsExpanded && collapsedYears.length > 0 && (
+                      <td className="px-3 py-2 border-b border-[var(--border)]" />
+                    )}
+                    {visibleYears.map((year) => {
                       const amount = detail.years[String(year)] || 0
                       const formatted = formatAmount(amount)
                       const fontClass = getAmountFontClass(formatted)
@@ -328,6 +322,7 @@ export function ExpandedRow({
               })}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>
