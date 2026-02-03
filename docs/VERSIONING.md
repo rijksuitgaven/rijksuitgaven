@@ -141,6 +141,16 @@
 - Theme navigation in header
 - Basic visualizations (bar, line, pie charts)
 
+**Documentation:**
+| Topic | Location |
+|-------|----------|
+| Reference data (IBOS codes) | `docs/reference/ibos-domains.md` |
+| Field mappings | `docs/reference/mapping-*.md` |
+| Progress tracking | `docs/v3-themes/PROGRESS.md` |
+| Quality metrics | `docs/v3-themes/QUALITY.md` |
+| Decisions (ADRs) | `docs/v3-themes/DECISIONS.md` |
+| SQL migrations | `scripts/sql/v3-themes/` |
+
 **Why this is a major release:**
 - Serves NEW audience (mainstream media, mainstream parties)
 - Enables NEW use case (theme-first discovery)
