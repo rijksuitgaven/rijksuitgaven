@@ -336,17 +336,22 @@
 
 | Task | Priority | Status |
 |------|----------|--------|
-| Overzicht page design + implementation | HIGH | ❌ Not started (**NEXT - blocks Week 6**) |
-| **Search performance optimization** | **HIGH** | ❌ Not started (**discuss approach**) |
-| Mobile message banner | HIGH | ❌ Not started (show "works best on larger screen" on mobile) |
+| **Mobile message banner** | **HIGH** | ❌ Not started (**NEXT**) |
+| **Search performance optimization** | **HIGH** | 🔨 Phase 1 done (~130-280ms), Phase 2 needed (<100ms) |
+| Overzicht page design + implementation | HIGH | ❌ Not started (blocks Week 6) |
 | Typography/spacing consistency audit | LOW | ❌ Not started |
 
 **Decisions (2026-02-03):**
 - Mobile responsiveness audit → SKIP for V1.0, add mobile message instead
-- Overzicht page → Must complete BEFORE starting Week 6 (Auth)
-- Search performance → Discuss optimization approach
+- Search performance Phase 1 → ✅ Solved via parallel queries (750ms → ~200ms avg)
+- Search performance Phase 2 → Continue optimizing toward <100ms target
+- Next task → Mobile message banner, then continue search optimization
 
-**Performance Plan:** Create optimized materialized view for search results. Target: 750ms → ~200ms. See SESSION-CONTEXT.md for details.
+**Performance Results (2026-02-03 - Phase 1):**
+- Implemented `asyncio.gather()` for parallel query execution
+- All modules now respond in ~130-280ms (was ~750ms)
+- Commit: `ee055a4`
+- Decision: Continue optimizing toward <100ms target
 
 ### Mini Sprint Deliverables
 - [x] Security fixes complete
