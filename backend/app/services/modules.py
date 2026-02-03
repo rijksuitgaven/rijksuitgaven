@@ -13,7 +13,7 @@ import random
 import re
 from typing import Optional
 import httpx
-from app.services.database import fetch_all, fetch_val
+from app.services.database import fetch_all, fetch_val, get_pool
 from app.config import get_settings
 
 logger = logging.getLogger(__name__)
@@ -1553,6 +1553,37 @@ async def get_module_autocomplete(
 
     # DEBUG: Log after word-boundary filtering
     logger.info(f"Autocomplete '{search}' on {module}: {len(current_module_results)} results after word-boundary filter")
+
+    # FALLBACK: If Typesense returned nothing, try PostgreSQL directly
+    # This handles cases where Typesense isn't properly indexed or configured
+    if not current_module_results and module in MODULE_CONFIG:
+        config = MODULE_CONFIG[module]
+        view = config.get("aggregated_view") or config.get("view") or config.get("table")
+        primary = config.get("primary", "ontvanger")
+
+        # Build word-boundary regex pattern
+        _, pattern = build_search_condition(primary, 1, search)
+
+        query = f"""
+            SELECT {primary} as name, totaal
+            FROM {view}
+            WHERE {primary} ~* $1
+            ORDER BY totaal DESC
+            LIMIT {limit}
+        """
+
+        try:
+            pool = await get_pool()
+            async with pool.acquire() as conn:
+                rows = await conn.fetch(query, pattern)
+                for row in rows:
+                    current_module_results.append({
+                        "name": row["name"],
+                        "totaal": int(row["totaal"] or 0),
+                    })
+            logger.info(f"Autocomplete '{search}' on {module}: PostgreSQL fallback found {len(current_module_results)} results")
+        except Exception as e:
+            logger.warning(f"Autocomplete PostgreSQL fallback failed: {e}")
 
     # 2. Search for field matches (OOK GEVONDEN IN section)
     # Search non-primary fields for matching keyword values
