@@ -755,27 +755,27 @@ export function DataTable({
           {/* Totals row - only shown when searching/filtering */}
           {totals && (
             <tfoot>
-              <tr className="bg-[var(--navy-dark)] text-white font-semibold">
+              <tr className="bg-[var(--navy-dark)] text-white font-semibold text-sm">
                 {/* Expand column placeholder */}
-                <td className="px-2 py-3 border-b border-[var(--border)]"></td>
+                <td className="px-2 py-2 border-b border-[var(--border)]"></td>
                 {/* Primary column - show "Totaal (X ontvangers)" */}
-                <td className="px-3 py-3 border-b border-[var(--border)] sticky left-[40px] bg-[var(--navy-dark)] z-10">
+                <td className="px-3 py-2 border-b border-[var(--border)] sticky left-[40px] bg-[var(--navy-dark)] z-10">
                   <div className="flex flex-col">
                     <span>Totaal</span>
-                    <span className="text-xs font-normal opacity-75">{totalRows.toLocaleString('nl-NL')} {primaryColumnName.toLowerCase()}</span>
+                    <span className="text-xs font-normal opacity-75">{totalRows.toLocaleString('nl-NL')} {primaryColumnName.toLowerCase()}{totalRows !== 1 ? 's' : ''}</span>
                   </div>
                 </td>
                 {/* Extra columns or Match column - empty for totals */}
                 {(searchQuery && searchQuery.trim().length > 0) ? (
-                  <td className="px-3 py-3 border-b border-[var(--border)]"></td>
+                  <td className="px-3 py-2 border-b border-[var(--border)]"></td>
                 ) : (
                   selectedColumns.map((col) => (
-                    <td key={`total-${col}`} className="px-3 py-3 border-b border-[var(--border)]"></td>
+                    <td key={`total-${col}`} className="px-3 py-2 border-b border-[var(--border)]"></td>
                   ))
                 )}
                 {/* Collapsed years (2016-2020) or placeholder for collapse header */}
                 {!yearsExpanded && collapsedYears.length > 0 && (
-                  <td className="px-3 py-3 text-right tabular-nums border-b border-[var(--border)]">
+                  <td className="px-3 py-2 text-right tabular-nums border-b border-[var(--border)]">
                     {formatAmount(
                       (totals.years[2016] || 0) +
                       (totals.years[2017] || 0) +
@@ -786,16 +786,16 @@ export function DataTable({
                   </td>
                 )}
                 {yearsExpanded && collapsedYears.length > 0 && (
-                  <td className="px-3 py-3 border-b border-[var(--border)]"></td>
+                  <td className="px-3 py-2 border-b border-[var(--border)]"></td>
                 )}
                 {/* Individual year columns */}
                 {(yearsExpanded ? availableYears : availableYears.filter(y => y > 2020)).map((year) => (
-                  <td key={`total-${year}`} className="px-3 py-3 text-right tabular-nums border-b border-[var(--border)]">
+                  <td key={`total-${year}`} className="px-3 py-2 text-right tabular-nums border-b border-[var(--border)]">
                     {formatAmount(totals.years[year] || 0)}
                   </td>
                 ))}
                 {/* Grand total */}
-                <td className="px-3 py-3 text-right tabular-nums border-b border-[var(--border)] bg-[var(--navy-medium)]">
+                <td className="px-3 py-2 text-right tabular-nums border-b border-[var(--border)] bg-[var(--navy-medium)]">
                   {formatAmount(totals.totaal)}
                 </td>
               </tr>
