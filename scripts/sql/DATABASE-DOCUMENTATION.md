@@ -5,7 +5,7 @@
 **Region:** eu-west-1
 **Created:** 2026-01-21
 **Data Migrated:** 2026-01-23
-**Last Updated:** 2026-01-31 (materialized view columns expanded for search)
+**Last Updated:** 2026-02-03 (functional indexes for normalize_recipient)
 
 ---
 
@@ -103,6 +103,7 @@
 - `idx_instrumenten_begrotingsjaar` - Fast year filtering
 - `idx_instrumenten_ontvanger_jaar` - Composite: recipient + year (details with year filter)
 - `idx_instrumenten_regeling` - Fast regulation search
+- `idx_instrumenten_ontvanger_normalized` - Functional index on `normalize_recipient(ontvanger)` for entity resolution
 
 ---
 

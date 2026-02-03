@@ -212,6 +212,7 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/sql/015a-f-*-years-col.sql` (6 files) | 2026-01-31 | Supabase |
 | `scripts/sql/016-instrumenten-add-instrument-col.sql` | 2026-01-31 | Supabase |
 | `scripts/sql/018-expand-view-columns.sql` | 2026-01-31 | Supabase |
+| `scripts/sql/020-normalize-recipient-indexes.sql` | 2026-02-03 | Supabase |
 
 ### Configuration Files
 
@@ -874,6 +875,15 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Refactored expanded-row.tsx: nested table → Fragment with tr elements
 - Column alignment now perfect (shares parent table structure)
 - Fixed randomizer: removed BFF proxy block on sort_by=random
+
+**Session 5 (Details API Performance Fix):**
+- Created functional indexes on `normalize_recipient()` for all source tables
+- Response time: 9.3s → 0.42s (95% improvement)
+- SQL migration: `scripts/sql/020-normalize-recipient-indexes.sql`
+
+**Session 6 (Trend Indicator Badge Fix):**
+- Fixed background not covering full number on large amounts
+- Used `-mx-2 px-2` pattern to extend background beyond content bounds
 
 **CLAUDE.md Updated:** Model selection now MANDATORY with user approval (cost control)
 
