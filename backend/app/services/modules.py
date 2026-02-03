@@ -393,7 +393,7 @@ async def get_module_data(
     min_years: Optional[int] = None,  # Filter for recipients with data in X+ years
     filter_fields: Optional[dict[str, list[str]]] = None,  # Multi-select filters
     columns: Optional[list[str]] = None,  # Extra columns to return (max 2)
-) -> tuple[list[dict], int]:
+) -> tuple[list[dict], int, dict | None]:
     """
     Get aggregated data for a module.
 
@@ -406,7 +406,8 @@ async def get_module_data(
                  Values are fetched from the source table for each aggregated row.
 
     Returns:
-        Tuple of (rows, total_count)
+        Tuple of (rows, total_count, totals_dict) where totals_dict contains year sums
+        and grand total (only when searching/filtering, None otherwise).
     """
     if module not in MODULE_CONFIG:
         raise ValueError(f"Unknown module: {module}")
@@ -599,8 +600,8 @@ async def _get_from_aggregated_view(
     offset: int = 0,
     min_years: Optional[int] = None,
     columns: Optional[list[str]] = None,  # Extra columns available in view
-) -> tuple[list[dict], int]:
-    """Fast path: query pre-computed materialized view."""
+) -> tuple[list[dict], int, dict | None]:
+    """Fast path: query pre-computed materialized view. Returns (rows, total_count, totals_dict)."""
     agg_table = config["aggregated_table"]
     primary = config["primary_field"]
 
@@ -760,6 +761,17 @@ async def _get_from_aggregated_view(
     # Count query (without random threshold for accurate total)
     count_query = f"SELECT COUNT(*) FROM {agg_table} {count_where_sql}"
 
+    # Totals query - sums per year and grand total (only when searching/filtering)
+    totals_query = f"""
+        SELECT
+            SUM("2016") AS sum_2016, SUM("2017") AS sum_2017, SUM("2018") AS sum_2018,
+            SUM("2019") AS sum_2019, SUM("2020") AS sum_2020, SUM("2021") AS sum_2021,
+            SUM("2022") AS sum_2022, SUM("2023") AS sum_2023, SUM("2024") AS sum_2024,
+            SUM(totaal) AS sum_totaal
+        FROM {agg_table}
+        {count_where_sql}
+    """
+
     # Execute queries
     try:
         rows = await fetch_all(query, *params)
@@ -770,6 +782,17 @@ async def _get_from_aggregated_view(
         raise
 
     total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
+
+    # Get totals only when there's a search or filter (not on default view)
+    totals = None
+    if search or count_where_sql:
+        totals_row = await fetch_all(totals_query, *count_params) if count_params else await fetch_all(totals_query)
+        if totals_row:
+            r = totals_row[0]
+            totals = {
+                "years": {year: int(r.get(f"sum_{year}", 0) or 0) for year in YEARS},
+                "totaal": int(r.get("sum_totaal", 0) or 0),
+            }
 
     # Use Typesense highlight info for "Gevonden in" column (fast!)
     # This replaces the slow PostgreSQL LATERAL JOIN approach.
@@ -810,7 +833,7 @@ async def _get_from_aggregated_view(
 
         result.append(row_data)
 
-    return result, total or 0
+    return result, total or 0, totals
 
 
 async def _get_from_source_table(
@@ -826,8 +849,8 @@ async def _get_from_source_table(
     min_years: Optional[int] = None,
     filter_fields: Optional[dict[str, list[str]]] = None,  # Multi-select filters
     columns: Optional[list[str]] = None,  # Extra columns to return
-) -> tuple[list[dict], int]:
-    """Slow path: aggregate from source table (needed for filter fields and extra columns)."""
+) -> tuple[list[dict], int, dict | None]:
+    """Slow path: aggregate from source table (needed for filter fields and extra columns). Returns (rows, total_count, totals_dict)."""
     table = config["table"]
     primary = config["primary_field"]
     year_field = config["year_field"]
@@ -1006,9 +1029,33 @@ async def _get_from_source_table(
         ) AS subquery
     """
 
+    # Totals query - year columns for source table aggregation
+    totals_year_sums = ", ".join([
+        f"COALESCE(SUM(CASE WHEN {year_field} = {year} THEN {amount_field} END), 0) * {multiplier} AS sum_{year}"
+        for year in YEARS
+    ])
+    totals_query = f"""
+        SELECT
+            {totals_year_sums},
+            COALESCE(SUM({amount_field}), 0) * {multiplier} AS sum_totaal
+        FROM {table}
+        {where_sql}
+    """
+
     # Execute queries
     rows = await fetch_all(query, *params)
     total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
+
+    # Get totals only when there's a search or filter (not on default view)
+    totals = None
+    if search or filter_fields or min_bedrag is not None or max_bedrag is not None:
+        totals_row = await fetch_all(totals_query, *count_params) if count_params else await fetch_all(totals_query)
+        if totals_row:
+            r = totals_row[0]
+            totals = {
+                "years": {year: int(r.get(f"sum_{year}", 0) or 0) for year in YEARS},
+                "totaal": int(r.get("sum_totaal", 0) or 0),
+            }
 
     # Transform rows
     result = []
@@ -1046,7 +1093,7 @@ async def _get_from_source_table(
 
         result.append(row_data)
 
-    return result, total or 0
+    return result, total or 0, totals
 
 
 async def get_row_details(

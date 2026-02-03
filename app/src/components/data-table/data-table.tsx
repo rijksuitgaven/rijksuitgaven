@@ -40,6 +40,12 @@ interface ColumnMeta {
   sticky?: boolean
 }
 
+// Totals row data structure (from API meta.totals)
+interface TotalsData {
+  years: Record<number, number>
+  totaal: number
+}
+
 interface DataTableProps {
   data: RecipientRow[]
   availableYears: number[]
@@ -59,6 +65,7 @@ interface DataTableProps {
   onColumnsChange?: (columns: string[]) => void  // Callback for column selection changes
   searchQuery?: string  // Current search query (for Match column display)
   hasActiveFilters?: boolean  // True when multiselect filters are active (UX-006)
+  totals?: TotalsData | null  // Aggregated totals for all search results (not just current page)
 }
 
 /**
@@ -261,6 +268,7 @@ export function DataTable({
   onColumnsChange,
   searchQuery,
   hasActiveFilters = false,
+  totals,
 }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
@@ -744,6 +752,55 @@ export function DataTable({
               ))
             )}
           </tbody>
+          {/* Totals row - only shown when searching/filtering */}
+          {totals && (
+            <tfoot>
+              <tr className="bg-[var(--navy-dark)] text-white font-semibold">
+                {/* Expand column placeholder */}
+                <td className="px-2 py-3 border-b border-[var(--border)]"></td>
+                {/* Primary column - show "Totaal (X ontvangers)" */}
+                <td className="px-3 py-3 border-b border-[var(--border)] sticky left-[40px] bg-[var(--navy-dark)] z-10">
+                  <div className="flex flex-col">
+                    <span>Totaal</span>
+                    <span className="text-xs font-normal opacity-75">{totalRows.toLocaleString('nl-NL')} {primaryColumnName.toLowerCase()}</span>
+                  </div>
+                </td>
+                {/* Extra columns or Match column - empty for totals */}
+                {(searchQuery && searchQuery.trim().length > 0) ? (
+                  <td className="px-3 py-3 border-b border-[var(--border)]"></td>
+                ) : (
+                  selectedColumns.map((col) => (
+                    <td key={`total-${col}`} className="px-3 py-3 border-b border-[var(--border)]"></td>
+                  ))
+                )}
+                {/* Collapsed years (2016-2020) or placeholder for collapse header */}
+                {!yearsExpanded && collapsedYears.length > 0 && (
+                  <td className="px-3 py-3 text-right tabular-nums border-b border-[var(--border)]">
+                    {formatAmount(
+                      (totals.years[2016] || 0) +
+                      (totals.years[2017] || 0) +
+                      (totals.years[2018] || 0) +
+                      (totals.years[2019] || 0) +
+                      (totals.years[2020] || 0)
+                    )}
+                  </td>
+                )}
+                {yearsExpanded && collapsedYears.length > 0 && (
+                  <td className="px-3 py-3 border-b border-[var(--border)]"></td>
+                )}
+                {/* Individual year columns */}
+                {(yearsExpanded ? availableYears : availableYears.filter(y => y > 2020)).map((year) => (
+                  <td key={`total-${year}`} className="px-3 py-3 text-right tabular-nums border-b border-[var(--border)]">
+                    {formatAmount(totals.years[year] || 0)}
+                  </td>
+                ))}
+                {/* Grand total */}
+                <td className="px-3 py-3 text-right tabular-nums border-b border-[var(--border)] bg-[var(--navy-medium)]">
+                  {formatAmount(totals.totaal)}
+                </td>
+              </tr>
+            </tfoot>
+          )}
         </table>
       </div>
 

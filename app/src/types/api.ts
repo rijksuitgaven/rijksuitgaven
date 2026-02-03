@@ -39,6 +39,12 @@ export interface YearAmount {
   amount: number
 }
 
+// Totals data structure (year sums + grand total)
+export interface TotalsData {
+  years: Record<number, number>  // { 2016: 0, 2017: 1000, ... }
+  totaal: number
+}
+
 export interface ApiMeta {
   total: number
   limit: number
@@ -46,6 +52,7 @@ export interface ApiMeta {
   query: string | null
   elapsed_ms: number
   years: number[]
+  totals?: TotalsData | null  // Aggregated totals when searching/filtering
 }
 
 export interface ApiModuleResponse {
@@ -69,6 +76,7 @@ export interface ModuleDataResponse {
     totalPages: number
   }
   availableYears: number[]
+  totals?: TotalsData | null  // Aggregated totals when searching/filtering
 }
 
 export interface DetailRow {

@@ -388,6 +388,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             onColumnsChange={setSelectedColumns}
             hasActiveFilters={activeFilterColumns.length > 0}
             searchQuery={filters.search}
+            totals={data?.totals}
           />
         </div>
       </main>

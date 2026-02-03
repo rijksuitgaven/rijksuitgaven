@@ -332,6 +332,7 @@ async def get_module(
 
     try:
         # Handle integraal separately (uses universal_search table)
+        totals = None
         if module == ModuleName.integraal:
             data, total = await get_integraal_data(
                 search=q,
@@ -347,8 +348,9 @@ async def get_module(
                 min_instanties=min_instanties,
             )
             primary_field = "ontvanger"
+            # TODO: Add totals support for integraal module
         else:
-            data, total = await get_module_data(
+            data, total, totals = await get_module_data(
                 module=module.value,
                 search=q,
                 jaar=jaar,
@@ -366,19 +368,24 @@ async def get_module(
 
         elapsed_ms = (time.time() - start_time) * 1000
 
+        meta = {
+            "total": total,
+            "limit": limit,
+            "offset": offset,
+            "query": q,
+            "elapsed_ms": round(elapsed_ms, 2),
+            "years": YEARS,
+        }
+        # Include totals (year sums and grand total) when searching/filtering
+        if totals:
+            meta["totals"] = totals
+
         return ModuleResponse(
             success=True,
             module=module.value,
             primary_field=primary_field,
             data=[AggregatedRow(**row) for row in data],
-            meta={
-                "total": total,
-                "limit": limit,
-                "offset": offset,
-                "query": q,
-                "elapsed_ms": round(elapsed_ms, 2),
-                "years": YEARS,
-            },
+            meta=meta,
         )
 
     except ValueError as e:

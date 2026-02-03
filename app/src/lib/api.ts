@@ -6,6 +6,7 @@ import type {
   ApiModuleResponse,
   ApiRecipientRow,
   RecipientRow,
+  TotalsData,
 } from '@/types/api'
 import { API_BASE_URL } from './api-config'
 
@@ -128,6 +129,7 @@ export async function fetchModuleData(
       totalPages,
     },
     availableYears,
+    totals: apiResponse.meta.totals as TotalsData | null | undefined,
   }
 }
 
