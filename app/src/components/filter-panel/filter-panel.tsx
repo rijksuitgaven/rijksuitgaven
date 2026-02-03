@@ -465,6 +465,8 @@ export function FilterPanel({
   // Track if user has typed in search (vs pre-filled from URL)
   // Don't auto-open dropdown if search came from URL navigation
   const hasUserTypedRef = useRef(false)
+  // Track the last search value typed by user (to detect external vs sync-back changes)
+  const lastUserSearchRef = useRef('')
 
   const [localFilters, setLocalFilters] = useState<FilterValues>(filters)
   const [isExpanded, setIsExpanded] = useState(false)
@@ -652,14 +654,24 @@ export function FilterPanel({
 
   // Sync with external filters (e.g., from URL navigation)
   useEffect(() => {
+    // Only reset typing flag if this is an EXTERNAL filter change (URL navigation, "Ook in" click)
+    // NOT when it's just a sync-back of what the user typed
+    // Use ref comparison to avoid stale closure issues
+    const isExternalChange = filters.search !== lastUserSearchRef.current
+
     setLocalFilters(filters)
-    // Reset typing flag when filters come from URL (e.g., "Ook in" navigation)
-    // This prevents auto-opening dropdown when search is pre-filled
-    hasUserTypedRef.current = false
+
+    if (isExternalChange) {
+      // External change - reset typing flag to prevent auto-opening dropdown
+      hasUserTypedRef.current = false
+      lastUserSearchRef.current = filters.search  // Sync the ref
+    }
+    // If search matches what user typed, keep hasUserTypedRef as-is (user is still typing)
   }, [filters])
 
   const handleSearchChange = useCallback((value: string) => {
     hasUserTypedRef.current = true  // User is actively typing
+    lastUserSearchRef.current = value  // Track what user typed
     setLocalFilters((prev) => ({ ...prev, search: value }))
   }, [])
 
