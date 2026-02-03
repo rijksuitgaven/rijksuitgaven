@@ -1094,7 +1094,9 @@ async def get_row_details(
     ])
 
     # Build WHERE clause
-    where_clauses = [f"{primary} = $1"]
+    # Use normalize_recipient() to match all name variations that were merged in aggregated view
+    # This ensures details total matches parent row total (fixes ~€243M mismatch for SVB)
+    where_clauses = [f"normalize_recipient({primary}) = normalize_recipient($1)"]
     params = [primary_value]
 
     if jaar:
@@ -1333,6 +1335,10 @@ async def get_integraal_details(
         # Year filter clause
         year_filter = f'AND "{jaar}" > 0' if jaar else ""
 
+        # Use normalized key for matching to handle name variations
+        # The aggregated views have {primary_field}_key column with normalized value
+        key_field = f"{primary_field}_key"
+
         query = f"""
             SELECT
                 "2016" AS y2016, "2017" AS y2017, "2018" AS y2018,
@@ -1341,7 +1347,7 @@ async def get_integraal_details(
                 totaal,
                 row_count
             FROM {agg_table}
-            WHERE {primary_field} = $1 {year_filter}
+            WHERE {key_field} = normalize_recipient($1) {year_filter}
         """
 
         rows = await fetch_all(query, primary_value)
