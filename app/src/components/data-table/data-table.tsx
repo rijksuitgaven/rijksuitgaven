@@ -350,6 +350,7 @@ export function DataTable({
               <button
                 onClick={() => onRowClick?.(row.original.primary_value)}
                 className="font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] hover:underline text-left transition-colors"
+                title={row.original.primary_value}
               >
                 {row.original.primary_value}
               </button>
