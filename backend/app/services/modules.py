@@ -1094,10 +1094,10 @@ async def get_row_details(
     ])
 
     # Build WHERE clause
-    # Use UPPER() for case-insensitive matching to catch variations like "SVB" vs "Svb"
-    # This is fast (can use indexes) unlike normalize_recipient() which scans all rows
-    # Note: Won't catch B.V./BV variations but those are rare in same-entity data
-    where_clauses = [f"UPPER({primary}) = UPPER($1)"]
+    # Use normalize_recipient() to match all case/formatting variations (SVB, Svb, etc.)
+    # This uses functional indexes created in 020-normalize-recipient-indexes.sql
+    # IMPORTANT: The index on normalize_recipient(primary_field) makes this fast
+    where_clauses = [f"normalize_recipient({primary}) = normalize_recipient($1)"]
     params = [primary_value]
 
     if jaar:
