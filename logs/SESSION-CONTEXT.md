@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-02 (Day Close)
+**Last Updated:** 2026-02-03 (Day Close)
 **Project Phase:** V1.0 Development
 **Current Sprint:** Mini Sprint - UI/UX Polish (before Week 6)
 
@@ -81,20 +81,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **CLAUDE.md** ⭐ UPDATED (2026-02-02 Session 8)
-   Enforced mandatory model selection with user approval; cost awareness added
+1. **docs/plans/2026-02-03-rijksuitgaven-reporter-design.md** ⭐ CREATED (2026-02-03)
+   V2 Rijksuitgaven Reporter complete design: architecture, DB schema, email pipeline
 
-2. **app/src/components/data-table/data-table.tsx** ⭐ UPDATED (2026-02-02 Session 7)
-   Collapse button for year columns; table-fixed layout; column width optimization; anomaly styling
+2. **docs/v3-themes/DECISIONS.md** ⭐ CREATED (2026-02-03)
+   V3 Theme Classification ADRs: row-level classification, 6-layer hybrid, confidence scores
 
-3. **app/src/lib/format.ts** ⭐ UPDATED (2026-02-02 Session 7)
-   Consistent text-xs for all amounts (removed dynamic sizing based on length)
+3. **docs/VERSIONING.md** ⭐ UPDATED (2026-02-03)
+   V2=Reporter, V3=Themes, added V9 European, V3 documentation links
 
-4. **app/src/components/filter-panel/filter-panel.tsx** ⭐ UPDATED (2026-02-02 Sessions 1-6)
-   Multi-select filters; GESELECTEERD section; search tips popover; hasUserTypedRef
+4. **docs/reference/ibos-domains.md** ⭐ CREATED (2026-02-03)
+   IBOS 30 policy domains reference (stub for V3)
 
-5. **backend/app/services/modules.py** ⭐ UPDATED (2026-02-02 Session 5)
-   Fixed word boundary regex escaping; added Typesense word boundary filtering
+5. **scripts/sql/v3-themes/README.md** ⭐ CREATED (2026-02-03)
+   V3 SQL migration guide with schema overview
 
 ---
 
@@ -859,9 +859,9 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-02 - **FILTER UX + BFF + SEARCH + TABLE POLISH**
+**Last Session:** 2026-02-03 - **STRATEGIC BRAINSTORM: V2 Reporter + V3 Themes**
 
-**Today's Focus:** Filter multi-select conversion, BFF proxy, search relevance, table layout
+**Today's Focus:** V2 Rijksuitgaven Reporter design, V3 Theme Classification documentation structure
 
 **CLAUDE.md Updated:** Model selection now MANDATORY with user approval (cost control)
 
@@ -1442,10 +1442,31 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 |-----|-------|
 | ~~**2026-02-01**~~ | ~~Autocomplete fixes~~ ✅ |
 | ~~**2026-02-02**~~ | ~~Filter multi-select + BFF proxy + table polish~~ ✅ |
-| **2026-02-03** | Overzichtspagina design + implementation |
+| ~~**2026-02-03**~~ | ~~Strategic brainstorm: V2 Reporter + V3 Themes documentation~~ ✅ |
+| **2026-02-03 (later)** | Overzichtspagina design + implementation |
 | **2026-02-04** | Hyperlinks (cross-module navigation) |
 
 **After Mini Sprint:**
 - Week 6 - User Auth (Magic Link, user migration)
 - Week 7-9 - Polish and launch
 - Beta testing preparation
+
+---
+
+**2026-02-03 - STRATEGIC BRAINSTORM SESSION**
+
+**Session 1: V2 Rijksuitgaven Reporter Design**
+- Complete design document with architecture, database schema, processing pipeline
+- Roadmap update: V2=Reporter (was Theme Discovery), all versions shifted
+- Key decisions: RSS news scanning, Claude Haiku extraction, Resend email delivery
+- Cost estimate: ~€10-15/month
+
+**Session 2: V3 Theme Classification Documentation**
+- Created documentation structure for V3 work:
+  - `docs/reference/` - IBOS domains and field mappings
+  - `docs/v3-themes/` - Progress, quality, decisions
+  - `scripts/sql/v3-themes/` - Migration guide
+- 3 ADRs documented: row-level classification, 6-layer hybrid approach, confidence scores
+- Entry point added to VERSIONING.md
+
+**5 commits** this session.
