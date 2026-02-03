@@ -1203,12 +1203,17 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 | provincie | "gelderland" | ~131ms |
 | publiek | "universiteit" | ~138ms |
 
-**Status:** ✅ Phase 1 COMPLETE - Continue optimizing toward <100ms target
+**Status:** ✅ Phase 1 COMPLETE - Phase 2 deferred to V1.1
+
+**Query Tuning Attempt (reverted):**
+- Tried moving relevance sorting from PostgreSQL to Python
+- No performance improvement - regex CASE was already fast on small result sets
+- Reverted in commit `79dc334`
 
 **Next Steps:**
 1. Mobile message banner (NEXT)
-2. Search performance Phase 2 (toward <100ms)
-3. Overzicht page (blocks Week 6)
+2. Overzicht page (blocks Week 6)
+3. V1.1: Typesense data enrichment for <100ms search
 
 ---
 

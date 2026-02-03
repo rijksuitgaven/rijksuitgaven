@@ -337,21 +337,26 @@
 | Task | Priority | Status |
 |------|----------|--------|
 | **Mobile message banner** | **HIGH** | ❌ Not started (**NEXT**) |
-| **Search performance optimization** | **HIGH** | 🔨 Phase 1 done (~130-280ms), Phase 2 needed (<100ms) |
+| **Search performance optimization** | **HIGH** | 🔨 Phase 1 done (~130-280ms), Phase 2 deferred to V1.1 |
 | Overzicht page design + implementation | HIGH | ❌ Not started (blocks Week 6) |
 | Typography/spacing consistency audit | LOW | ❌ Not started |
 
 **Decisions (2026-02-03):**
 - Mobile responsiveness audit → SKIP for V1.0, add mobile message instead
 - Search performance Phase 1 → ✅ Solved via parallel queries (750ms → ~200ms avg)
-- Search performance Phase 2 → Continue optimizing toward <100ms target
-- Next task → Mobile message banner, then continue search optimization
+- Search performance Phase 2 → **Deferred to V1.1** (Typesense data enrichment)
+- Next task → Mobile message banner
 
 **Performance Results (2026-02-03 - Phase 1):**
 - Implemented `asyncio.gather()` for parallel query execution
 - All modules now respond in ~130-280ms (was ~750ms)
 - Commit: `ee055a4`
-- Decision: Continue optimizing toward <100ms target
+- Query tuning attempt (Python relevance sorting) reverted - no improvement
+
+**V1.1 Optimization Path:**
+- Store year amounts in Typesense documents
+- Skip PostgreSQL entirely for search results
+- Target: ~25-50ms (current: ~130-280ms)
 
 ### Mini Sprint Deliverables
 - [x] Security fixes complete
