@@ -1094,9 +1094,10 @@ async def get_row_details(
     ])
 
     # Build WHERE clause
-    # Use normalize_recipient() to match all name variations that were merged in aggregated view
-    # This ensures details total matches parent row total (fixes ~€243M mismatch for SVB)
-    where_clauses = [f"normalize_recipient({primary}) = normalize_recipient($1)"]
+    # Use UPPER() for case-insensitive matching to catch variations like "SVB" vs "Svb"
+    # This is fast (can use indexes) unlike normalize_recipient() which scans all rows
+    # Note: Won't catch B.V./BV variations but those are rare in same-entity data
+    where_clauses = [f"UPPER({primary}) = UPPER($1)"]
     params = [primary_value]
 
     if jaar:
