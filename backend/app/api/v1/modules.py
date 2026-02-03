@@ -150,6 +150,7 @@ class CurrentModuleResult(BaseModel):
     name: str
     totaal: int
     modules: list[str] = []  # Used by integraal to show module badges
+    match_type: str | None = None  # "exact" (word-boundary) or "prefix" (starts with)
 
 
 class OtherModulesResult(BaseModel):
@@ -201,6 +202,7 @@ async def module_autocomplete(
                     name=r["name"],
                     totaal=r.get("totaal", 0),
                     modules=r.get("modules", []),  # Pass modules for integraal badges
+                    match_type=r.get("match_type"),  # "exact" or "prefix"
                 )
                 for r in data.get("current_module", [])
             ],
