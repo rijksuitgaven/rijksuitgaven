@@ -588,9 +588,11 @@ export function FilterPanel({
         }
 
         const data = await response.json()
+        console.log('[Autocomplete] Response for', searchValue, ':', data)
         const currentModule = data.current_module || []
         const fieldMatchesData = data.field_matches || []
         const otherModules = data.other_modules || []
+        console.log('[Autocomplete] Parsed:', { currentModule: currentModule.length, fieldMatches: fieldMatchesData.length, otherModules: otherModules.length })
 
         setCurrentModuleResults(currentModule)
         setFieldMatches(fieldMatchesData)
@@ -603,8 +605,12 @@ export function FilterPanel({
           setNoResultsQuery(null)
         }
         // Only show dropdown when user is actively typing (not URL navigation)
+        console.log('[Autocomplete] hasUserTypedRef:', hasUserTypedRef.current, 'results:', currentModule.length + fieldMatchesData.length + otherModules.length)
         if (hasUserTypedRef.current) {
+          console.log('[Autocomplete] Opening dropdown')
           setIsDropdownOpen(true)
+        } else {
+          console.log('[Autocomplete] NOT opening dropdown - hasUserTypedRef is false')
         }
         setSelectedIndex(-1)
       } catch (error) {
