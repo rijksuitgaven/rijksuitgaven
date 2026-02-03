@@ -350,7 +350,6 @@ export function DataTable({
               <button
                 onClick={() => onRowClick?.(row.original.primary_value)}
                 className="font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] hover:underline text-left transition-colors"
-                title={row.original.primary_value}
               >
                 {row.original.primary_value}
               </button>
@@ -402,7 +401,7 @@ export function DataTable({
           return (
             <div className="max-w-[200px]">
               {/* Line 1: The matched value */}
-              <div className="text-sm text-[var(--navy-dark)] truncate" title={matchedValue || undefined}>
+              <div className="text-sm text-[var(--navy-dark)] truncate" data-tooltip={matchedValue || undefined}>
                 {matchedValue || '-'}
               </div>
               {/* Line 2: The field name (small) */}
@@ -440,7 +439,7 @@ export function DataTable({
                   {/* Value with 2-line max and ellipsis overflow */}
                   <div
                     className="text-sm text-[var(--navy-dark)] line-clamp-2"
-                    title={value}
+                    data-tooltip={value}
                   >
                     {value}
                   </div>

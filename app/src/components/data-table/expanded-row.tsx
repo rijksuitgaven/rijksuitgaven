@@ -259,7 +259,7 @@ export function ExpandedRow({
             <td colSpan={contentColSpan} className="px-3 py-2.5 border-b border-[var(--border)]">
               <div className="flex items-center gap-2">
                 <span className="text-[var(--muted-foreground)]">{isLast ? '└' : '├'}</span>
-                <span className="text-sm text-[var(--navy-dark)] truncate max-w-[400px]" title={detail.group_value || '-'}>
+                <span className="text-sm text-[var(--navy-dark)] truncate max-w-[400px]" data-tooltip={detail.group_value || undefined}>
                   {detail.group_value || '-'}
                 </span>
               </div>
