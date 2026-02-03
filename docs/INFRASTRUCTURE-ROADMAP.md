@@ -2,6 +2,7 @@
 
 **Project:** Rijksuitgaven.nl
 **Created:** 2026-01-30
+**Updated:** 2026-02-03
 **Status:** Tracking Document
 
 **Principle:** Only create things when required. This document tracks what's needed for each version.
@@ -17,8 +18,8 @@
 | Next.js frontend | ✅ Deployed | Railway, Amsterdam |
 | FastAPI backend | ✅ Deployed | Railway, Amsterdam |
 | Typesense search | ✅ Deployed | Railway, 451K indexed |
-| Redis | ❌ Not needed yet | Deploy before V3 |
-| Worker service | ❌ Not needed yet | Manual sync acceptable |
+| Redis | ❌ Not needed yet | Deploy before V5 |
+| Worker service | ❌ Not needed yet | Deploy with V2 Reporter |
 
 ---
 
@@ -38,9 +39,53 @@
 
 ---
 
-## V2 - Theme Discovery
+## V2 - Rijksuitgaven Reporter
 
-**Trigger:** When starting V2 development
+**Trigger:** After V1 launch
+
+**Design document:** `docs/plans/2026-02-03-rijksuitgaven-reporter-design.md`
+
+### Database
+
+| Table | Columns | Purpose |
+|-------|---------|---------|
+| `news_articles` | id, url, title, content, source, published_at, fetched_at | Fetched news |
+| `news_analysis` | id, article_id, keywords, entities, theme, relevance_score, summary | AI extraction |
+| `news_matches` | id, article_id, module, matched_value, matched_field, match_score, amount | Data matches |
+| `user_reporter_preferences` | user_id, opted_in, profession, created_at, last_sent_at | User settings |
+
+### Infrastructure
+
+| Component | Purpose | Cost |
+|-----------|---------|------|
+| **Worker service** | RSS fetching, AI processing, email sending | €5-10/month |
+| **Resend** | Email delivery | €0 (free tier: 3K/month) |
+
+### Dependencies
+
+```
+# backend/requirements.txt additions
+feedparser>=6.0.0    # RSS parsing
+resend>=0.7.0        # Email delivery
+```
+
+### API Keys Required
+
+- [ ] ANTHROPIC_API_KEY (Claude Haiku for extraction)
+- [ ] RESEND_API_KEY (email delivery)
+
+### Cost Impact
+
+- Claude Haiku: ~€5-10/month (50 articles/day)
+- Resend: €0 (free tier)
+- Worker: ~€5/month (included)
+- **Total V2 addition: ~€10-15/month**
+
+---
+
+## V3 - Theme Discovery
+
+**Trigger:** When starting V3 development
 
 ### Database
 
@@ -60,11 +105,34 @@
 - [ ] Populate `ibos_domains` with 30 IBOS codes
 - [ ] Classify 500K recipients into domains (Claude batch API ~€30-50)
 
+### V2 + V3 Synergy
+
+When V3 launches, V2 Reporter automatically gets smarter:
+- News classified by theme → matches all recipients in that IBOS domain
+- "Wolven in het nieuws" → finds ALL nature/wildlife recipients, not just "wolf" keyword matches
+
 ---
 
-## V3 - AI Research Mode
+## V4 - Inzichten (Self-Service BI)
 
-**Trigger:** When starting V3 development
+**Trigger:** When starting V4 development
+
+### Database
+
+| Table | Columns | Purpose |
+|-------|---------|---------|
+| `user_dashboards` | id, user_id, title, config, created_at | Custom dashboards |
+| `scheduled_reports` | id, user_id, dashboard_id, schedule, recipients | Automated reports |
+
+### Infrastructure
+
+- Supabase Storage for PDF exports (included in Pro plan)
+
+---
+
+## V5 - AI Research Mode
+
+**Trigger:** When starting V5 development
 
 ### Database
 
@@ -78,22 +146,23 @@
 | Component | Purpose | Cost |
 |-----------|---------|------|
 | **Redis** | AI response caching, rate limiting | €7-10/month |
-| **Worker service** | Background AI processing | €10-12/month |
+| Worker already deployed in V2 | Background AI processing | - |
 
 ### API Keys Required
 
-- [ ] ANTHROPIC_API_KEY (Claude)
+- [ ] ANTHROPIC_API_KEY (Claude - already from V2)
 
 ### Cost Impact
 
 - Claude API: €20-40/month (with caching)
-- Total V3 addition: ~€40-60/month
+- Redis: €7-10/month
+- **Total V5 addition: ~€30-50/month**
 
 ---
 
-## V4 - Research Workspace
+## V6 - Research Workspace
 
-**Trigger:** When starting V4 development
+**Trigger:** When starting V6 development
 
 ### Database
 
@@ -108,9 +177,9 @@
 
 ---
 
-## V5 - External Integrations
+## V7 - External Integrations
 
-**Trigger:** When starting V5 development
+**Trigger:** When starting V7 development
 
 ### Database
 
@@ -126,9 +195,9 @@
 
 ---
 
-## V6 - Network Analysis (Rijksnetwerken)
+## V8 - Network Analysis (Rijksnetwerken)
 
-**Trigger:** When starting V6 development
+**Trigger:** When starting V8 development
 
 ### Database
 
@@ -162,9 +231,9 @@
 
 ---
 
-## V7 - European Platform
+## V9 - European Platform
 
-**Trigger:** When starting V7 development
+**Trigger:** When starting V9 development
 
 ### Database
 
@@ -186,12 +255,16 @@
 ```
 V1 (current)
  └─► V1.1 (saved_searches table)
- └─► V2 (ibos_domains, recipient_domain_mappings)
-       └─► V3 (embeddings, research_sessions, Redis, Worker)
-             └─► V4 (dossiers, dossier_items)
-             └─► V6 (entities, people, entity_people, KvK API)
-                   └─► V5 (legislation_cache) - can parallel with V4/V6
-                         └─► V7 (multi-tenant)
+ └─► V2 (news_*, user_reporter_preferences, Worker, Resend)
+       └─► V3 (ibos_domains, recipient_domain_mappings)
+             │    (enhances V2 Reporter with semantic matching)
+             │
+             └─► V4 (user_dashboards, scheduled_reports)
+                   └─► V5 (embeddings, research_sessions, Redis)
+                         └─► V6 (dossiers, dossier_items)
+                               └─► V7 (legislation_cache)
+                                     └─► V8 (entities, people, KvK API)
+                                           └─► V9 (multi-tenant)
 ```
 
 ---
@@ -210,4 +283,4 @@ Before starting any version:
 ---
 
 **Document maintained by:** Technical Lead
-**Last updated:** 2026-01-30
+**Last updated:** 2026-02-03

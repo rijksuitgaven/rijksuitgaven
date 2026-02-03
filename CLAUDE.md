@@ -270,10 +270,11 @@ SELECT * FROM t;
 | Version | Name | Use Case |
 |---------|------|----------|
 | V1 | Search Platform | "Who received money?" |
-| V2 | Theme Discovery | "What's in defensie?" |
-| V3 | Inzichten | "Show me trends" |
-| V4 | AI Research | "Help me investigate" |
-| V5+ | Workspace, Integrations, Network, European |
+| V2 | Rijksuitgaven Reporter | "What's in the news?" |
+| V3 | Theme Discovery | "What's in defensie?" |
+| V4 | Inzichten | "Show me trends" |
+| V5 | AI Research | "Help me investigate" |
+| V6+ | Workspace, Integrations, Network, European |
 
 ### Module Fields
 | Module | Primary | Key Fields |

@@ -10,8 +10,9 @@
 >
 > **Version context:**
 > - V1 = Search Platform (this document)
-> - V2 = Theme Discovery (IBOS domains, landing pages)
-> - V3 = AI Research Mode (see `research-mode-vision.md`)
+> - V2 = Rijksuitgaven Reporter (daily news + spending email)
+> - V3 = Theme Discovery (IBOS domains, landing pages)
+> - V5 = AI Research Mode (see `research-mode-vision.md`)
 
 ---
 

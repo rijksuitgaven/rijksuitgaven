@@ -1,17 +1,19 @@
-# Research Mode Vision (V3)
+# Research Mode Vision (V5)
 
 **Project:** Rijksuitgaven.nl SaaS Platform
-**Version:** V3 - AI Research Mode
-**Date:** 2026-01-23 (Updated: 2026-01-30)
+**Version:** V5 - AI Research Mode
+**Date:** 2026-01-23 (Updated: 2026-02-03)
 **Status:** Vision Document - Not for V1 Implementation
 
-> **Important:** This document describes V3 (AI Research Mode) features.
+> **Important:** This document describes V5 (AI Research Mode) features.
 > See `docs/VERSIONING.md` for full version roadmap.
 >
 > **Version context:**
 > - V1 = Search Platform (current development)
-> - V2 = Theme Discovery (IBOS domains, landing pages)
-> - V3 = AI Research Mode (this document)
+> - V2 = Rijksuitgaven Reporter (daily news + spending email)
+> - V3 = Theme Discovery (IBOS domains, landing pages)
+> - V4 = Inzichten (Self-Service BI)
+> - V5 = AI Research Mode (this document)
 
 ---
 

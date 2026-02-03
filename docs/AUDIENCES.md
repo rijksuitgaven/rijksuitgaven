@@ -2,6 +2,7 @@
 
 **Project:** Rijksuitgaven.nl
 **Created:** 2026-01-30
+**Updated:** 2026-02-03
 **Status:** Draft - For Discussion
 
 ---
@@ -35,7 +36,7 @@ Based on user research (50 existing users):
 | **Hunters** | Know what they're looking for | Search by recipient | "Show me ProRail spending" |
 | **Grazers** | Want insights delivered | Browse by theme | "What's happening in defensie?" |
 
-**Key insight:** Theme landing pages (V2) serve BOTH:
+**Key insight:** Theme landing pages (V3) serve BOTH:
 - Hunters get quick entry to domain
 - Grazers get ready-made insights
 
@@ -57,7 +58,7 @@ Based on user research (50 existing users):
 
 **Value proposition:** "Find the story in the numbers"
 
-**Version fit:** V1 (Search) + V2 (Themes)
+**Version fit:** V1 (Search) + V2 (Reporter) + V3 (Themes)
 
 ---
 
@@ -75,7 +76,7 @@ Based on user research (50 existing users):
 
 **Value proposition:** "Uncover what others miss"
 
-**Version fit:** V1 + V2 + V3 (AI Research) + V4 (Workspace)
+**Version fit:** V1 + V2 (Reporter) + V3 + V5 (AI Research) + V6 (Workspace)
 
 ---
 
@@ -93,7 +94,7 @@ Based on user research (50 existing users):
 
 **Value proposition:** "Get facts in seconds"
 
-**Version fit:** V1 (Search) + V2 (Themes)
+**Version fit:** V1 (Search) + V2 (Reporter - daily briefing!) + V3 (Themes)
 
 ---
 
@@ -111,7 +112,7 @@ Based on user research (50 existing users):
 
 **Value proposition:** "Reliable data for rigorous research"
 
-**Version fit:** V1 + V3 + V4 (save/export)
+**Version fit:** V1 + V5 (AI Research) + V6 (save/export)
 
 ---
 
@@ -129,11 +130,11 @@ Based on user research (50 existing users):
 
 **Value proposition:** "Know where you stand"
 
-**Version fit:** V1 + V2 + custom features
+**Version fit:** V1 + V3 + custom features
 
 ---
 
-### 6. Compliance Officers (V6 - Future)
+### 6. Compliance Officers (V8 - Future)
 
 **Who:** Banks, insurers, accountants (KYC/AML teams)
 
@@ -147,11 +148,11 @@ Based on user research (50 existing users):
 
 **Value proposition:** "See who's behind the money"
 
-**Version fit:** V6 (Rijksnetwerken)
+**Version fit:** V8 (Rijksnetwerken)
 
 ---
 
-### 7. Mainstream Parties (V2 - Future)
+### 7. Mainstream Parties (V3 - Future)
 
 **Who:** Researchers for coalition/governing parties
 
@@ -165,7 +166,7 @@ Based on user research (50 existing users):
 
 **Value proposition:** "Understand the full picture"
 
-**Version fit:** V2 (Themes) + V3 (AI Research)
+**Version fit:** V3 (Themes) + V5 (AI Research)
 
 ---
 
@@ -174,12 +175,28 @@ Based on user research (50 existing users):
 | Version | Primary Audience | New Audience |
 |---------|------------------|--------------|
 | **V1** | Opposition, journalists, researchers | - |
-| **V2** | + Mainstream parties, mainstream media | Theme-first users |
-| **V3** | + Deep researchers | AI-comfortable users |
-| **V4** | + Teams, newsrooms | Collaborative users |
-| **V5** | + Legal researchers | Context seekers |
-| **V6** | + Banks, compliance | B2B enterprise |
-| **V7** | + International | European market |
+| **V2** | Same + daily briefing recipients | Passive consumers (email) |
+| **V3** | + Mainstream parties, mainstream media | Theme-first users |
+| **V4** | + Self-service analysts | Dashboard builders |
+| **V5** | + Deep researchers | AI-comfortable users |
+| **V6** | + Teams, newsrooms | Collaborative users |
+| **V7** | + Legal researchers | Context seekers |
+| **V8** | + Banks, compliance | B2B enterprise |
+| **V9** | + International | European market |
+
+---
+
+## V2 Reporter - Audience Fit
+
+The Rijksuitgaven Reporter (V2) is particularly valuable for:
+
+| Audience | Why Reporter Helps |
+|----------|-------------------|
+| **Journalists** | Story angles delivered daily, connected to spending data |
+| **Beleidsmedewerkers** | Dossier context with relevant regelingen, trends |
+| **Opposition staff** | Ammunition delivered to inbox, less searching needed |
+
+**Key insight:** Reporter converts passive users into engaged daily readers.
 
 ---
 
@@ -206,11 +223,11 @@ Based on user research (50 existing users):
 
 1. **Priority segments:** Focus on opposition + journalists first?
 2. **Government market:** Large opportunity but long sales cycles?
-3. **Compliance market (V6):** Separate go-to-market needed?
+3. **Compliance market (V8):** Separate go-to-market needed?
 4. **Academic discount:** Worth the lower revenue?
-5. **International (V7):** Partner-led or direct?
+5. **International (V9):** Partner-led or direct?
 
 ---
 
 **Document maintained by:** Product Owner
-**Last updated:** 2026-01-30
+**Last updated:** 2026-02-03
