@@ -257,9 +257,9 @@ export function ExpandedRow({
           <tr key={`${detail.group_value}-${index}`} className="bg-[var(--gray-light)] hover:bg-[var(--gray-light)]/80 transition-colors">
             {/* Content cell with tree branch */}
             <td colSpan={contentColSpan} className="px-3 py-2.5 border-b border-[var(--border)]">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2" data-tooltip={detail.group_value || undefined}>
                 <span className="text-[var(--muted-foreground)]">{isLast ? '└' : '├'}</span>
-                <span className="text-sm text-[var(--navy-dark)] truncate max-w-[400px]" data-tooltip={detail.group_value || undefined}>
+                <span className="text-sm text-[var(--navy-dark)] truncate max-w-[400px]">
                   {detail.group_value || '-'}
                 </span>
               </div>

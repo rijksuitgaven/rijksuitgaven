@@ -399,9 +399,9 @@ export function DataTable({
           }
 
           return (
-            <div className="max-w-[200px]">
+            <div className="max-w-[200px]" data-tooltip={matchedValue || undefined}>
               {/* Line 1: The matched value */}
-              <div className="text-sm text-[var(--navy-dark)] truncate" data-tooltip={matchedValue || undefined}>
+              <div className="text-sm text-[var(--navy-dark)] truncate">
                 {matchedValue || '-'}
               </div>
               {/* Line 2: The field name (small) */}
@@ -435,12 +435,9 @@ export function DataTable({
               }
 
               return (
-                <div className="max-w-[140px]">
+                <div className="max-w-[140px]" data-tooltip={value}>
                   {/* Value with 2-line max and ellipsis overflow */}
-                  <div
-                    className="text-sm text-[var(--navy-dark)] line-clamp-2"
-                    data-tooltip={value}
-                  >
+                  <div className="text-sm text-[var(--navy-dark)] line-clamp-2">
                     {value}
                   </div>
                   {/* "+X meer" indicator when multiple distinct values exist */}
