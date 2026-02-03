@@ -741,16 +741,8 @@ export function DataTable({
                       )
                     })}
                   </tr>
-                  {/* Expanded row content */}
-                  {row.getIsExpanded() && renderExpandedRow && (
-                    <tr>
-                      <td colSpan={columns.length} className="bg-[var(--gray-light)] border-b border-[var(--border)]">
-                        <div className="px-6 py-4">
-                          {renderExpandedRow(row.original)}
-                        </div>
-                      </td>
-                    </tr>
-                  )}
+                  {/* Expanded row content - renders directly as <tr> elements */}
+                  {row.getIsExpanded() && renderExpandedRow && renderExpandedRow(row.original)}
                 </Fragment>
               ))
             )}

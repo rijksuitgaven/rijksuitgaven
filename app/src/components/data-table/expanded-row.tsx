@@ -1,11 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatAmount, getAmountFontClass } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
-import { MODULE_LABELS } from '@/lib/constants'
 import type { RecipientRow } from '@/types/api'
 
 // Collapsible year range (same as main table)
@@ -61,43 +60,25 @@ interface DetailRow {
   years: Record<string, number>
   totaal: number
   row_count: number
-  // Context fields (may be present depending on API response)
-  regeling?: string
-  artikel?: string
-  begrotingsnaam?: string
-  kostensoort?: string
-  ministerie?: string
-  categorie?: string
-  provincie?: string
-  gemeente?: string
-  beleidsterrein?: string
-  omschrijving?: string
-  source?: string
-  module?: string
 }
 
 interface ExpandedRowProps {
   row: RecipientRow
   module: string
   availableYears: number[]
-  onNavigateToModule?: (module: string, recipient: string) => void
-  extraColumnsCount?: number  // Number of extra columns in parent table (for alignment)
+  extraColumnsCount?: number
 }
 
 /**
- * Expanded row component showing detailed breakdown by grouping field
- * Fetches and displays detail data when a row is expanded in the main table
+ * Expanded row component - returns <tr> elements to render within parent table
+ * This ensures column alignment with the parent table
  */
 export function ExpandedRow({
   row,
   module,
   availableYears,
-  onNavigateToModule,
   extraColumnsCount = 0,
 }: ExpandedRowProps) {
-  // Calculate first column min-width to align with parent table's year columns
-  // Parent has: expand button (~40px) + primary (~160px) + extra columns (~140px each)
-  const firstColumnMinWidth = 200 + (extraColumnsCount * 140)
   const [grouping, setGrouping] = useState(GROUPABLE_FIELDS[module]?.[0]?.value ?? 'regeling')
   const [details, setDetails] = useState<DetailRow[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -113,6 +94,9 @@ export function ExpandedRow({
   const visibleYears = yearsExpanded
     ? availableYears
     : availableYears.filter((y) => y > COLLAPSED_YEARS_END)
+
+  // Number of columns before years: expand(1) + primary(1) + extras(N)
+  const contentColSpan = 2 + extraColumnsCount
 
   // Fetch details when row is expanded or grouping changes
   useEffect(() => {
@@ -134,7 +118,6 @@ export function ExpandedRow({
         const data = await response.json()
         setDetails(data.details || [])
       } catch (err) {
-        // Ignore abort errors - they're expected when component unmounts or deps change
         if (err instanceof Error && err.name === 'AbortError') {
           return
         }
@@ -153,198 +136,177 @@ export function ExpandedRow({
     }
   }, [row.primary_value, module, grouping])
 
-  // Cross-module sources (excluding current module)
-  const otherSources = row.sources?.filter((s) => s !== module && s !== 'current') ?? []
+  // Loading state
+  if (isLoading) {
+    return (
+      <tr className="bg-[var(--gray-light)]">
+        <td colSpan={contentColSpan + (collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
+          <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Laden...</span>
+          </div>
+        </td>
+      </tr>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <tr className="bg-[var(--gray-light)]">
+        <td colSpan={contentColSpan + (collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
+          <div className="text-sm text-[var(--error)]">{error}</div>
+        </td>
+      </tr>
+    )
+  }
+
+  // Empty state
+  if (details.length === 0) {
+    return (
+      <tr className="bg-[var(--gray-light)]">
+        <td colSpan={contentColSpan + (collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
+          <div className="text-sm text-[var(--muted-foreground)]">Geen details beschikbaar</div>
+        </td>
+      </tr>
+    )
+  }
 
   return (
-    <div className="space-y-2">
-      {/* Cross-module indicator (if applicable) */}
-      {otherSources.length > 0 && (
-        <div className="flex items-center gap-2 text-sm text-[var(--navy-medium)]">
-          <span className="font-medium">Ook in:</span>
-          {otherSources.map((source) => (
-            <button
-              key={source}
-              onClick={() => onNavigateToModule?.(source, row.primary_value)}
-              className="inline-flex items-center px-2 py-0.5 rounded bg-[var(--gray-light)] hover:bg-[var(--blue-light)] transition-colors"
-            >
-              {MODULE_LABELS[source] || source}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Detail table with integrated toolbar */}
-      {isLoading ? (
-        <div className="flex items-center gap-2 py-4 text-sm text-[var(--muted-foreground)]" role="status" aria-live="polite">
-          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-          <span>Laden...</span>
-        </div>
-      ) : error ? (
-        <div className="py-4 text-sm text-[var(--error)]">{error}</div>
-      ) : details.length === 0 ? (
-        <div className="py-4 text-sm text-[var(--muted-foreground)]">
-          Geen details beschikbaar
-        </div>
-      ) : (
-        <div className="border border-[var(--border)] rounded overflow-hidden">
-          {/* Table with integrated controls in header */}
-          <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-sm">
-            <thead className="bg-[var(--gray-light)]">
-              <tr>
-                {/* First column: Dropdown + count - spans content columns area for alignment */}
-                <th
-                  className="px-3 py-2 text-left border-b border-[var(--border)]"
-                  style={{ minWidth: firstColumnMinWidth }}
+    <Fragment>
+      {/* Header row with dropdown and year headers */}
+      <tr className="bg-[var(--gray-light)]">
+        {/* Content columns: dropdown + count */}
+        <td colSpan={contentColSpan} className="px-3 py-2 border-b border-[var(--border)]">
+          <div className="flex items-center gap-3">
+            {groupableFields.length > 1 ? (
+              <div className="relative">
+                <select
+                  value={grouping}
+                  onChange={(e) => setGrouping(e.target.value)}
+                  className="appearance-none pl-2 pr-6 py-1 text-sm font-semibold text-[var(--navy-dark)] border border-[var(--border)] rounded bg-white hover:border-[var(--navy-medium)] transition-colors cursor-pointer"
                 >
-                  <div className="flex items-center gap-3">
-                    {/* Grouping dropdown */}
-                    {groupableFields.length > 1 ? (
-                      <div className="relative">
-                        <select
-                          value={grouping}
-                          onChange={(e) => setGrouping(e.target.value)}
-                          className="appearance-none pl-2 pr-6 py-1 text-sm font-semibold text-[var(--navy-dark)] border border-[var(--border)] rounded bg-white hover:border-[var(--navy-medium)] transition-colors cursor-pointer"
-                        >
-                          {groupableFields.map((field) => (
-                            <option key={field.value} value={field.value}>
-                              {field.label}
-                            </option>
-                          ))}
-                        </select>
-                        <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--muted-foreground)] pointer-events-none" />
-                      </div>
-                    ) : (
-                      <span className="text-sm font-semibold text-[var(--navy-dark)]">
-                        {groupableFields[0]?.label || 'Details'}
-                      </span>
-                    )}
-                    {/* Count only - TODO: Add total back when "Details API total mismatch" backlog item is fixed (see VERSIONING.md) */}
-                    <span className="text-sm text-[var(--muted-foreground)]">
-                      {details.length} items
-                    </span>
-                  </div>
-                </th>
-                {/* Collapsed years toggle (2016-2020) */}
-                {!yearsExpanded && collapsedYears.length > 0 && (
-                  <th className="px-3 py-2 text-right font-semibold text-[var(--navy-dark)] border-b border-[var(--border)] w-24">
-                    <button
-                      onClick={() => setYearsExpanded(true)}
-                      className="flex items-center gap-1 text-sm font-semibold text-[var(--navy-dark)] hover:text-[var(--navy-medium)] transition-colors ml-auto"
-                      aria-label={`Jaren ${COLLAPSED_YEARS_START} tot ${COLLAPSED_YEARS_END} uitklappen`}
-                    >
-                      {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
-                      <ChevronRight className="h-4 w-4" aria-hidden="true" />
-                    </button>
-                  </th>
-                )}
-                {/* Collapse button when expanded */}
-                {yearsExpanded && collapsedYears.length > 0 && (
-                  <th className="px-3 py-2 text-right font-semibold text-[var(--navy-dark)] border-b border-[var(--border)] w-20">
-                    <button
-                      onClick={() => setYearsExpanded(false)}
-                      className="flex items-center gap-1 text-sm font-semibold text-[var(--navy-dark)] hover:text-[var(--navy-medium)] transition-colors"
-                      aria-label={`Jaren ${COLLAPSED_YEARS_START} tot ${COLLAPSED_YEARS_END} inklappen`}
-                    >
-                      <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-                      {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
-                    </button>
-                  </th>
-                )}
-                {visibleYears.map((year) => (
-                  <th
-                    key={year}
-                    className="px-3 py-2 text-right font-semibold text-[var(--navy-dark)] border-b border-[var(--border)] w-20"
-                  >
-                    {year}
-                  </th>
-                ))}
-                <th className="px-3 py-2 text-right font-semibold text-[var(--navy-dark)] border-b border-[var(--border)] w-24">
-                  Totaal
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {details.map((detail, index) => {
-                const totalFormatted = formatAmount(detail.totaal)
-                const totalFontClass = getAmountFontClass(totalFormatted)
-
-                // Calculate collapsed years total for this row
-                const collapsedTotal = collapsedYears.reduce(
-                  (sum, y) => sum + (detail.years[String(y)] || 0),
-                  0
-                )
-                const collapsedFormatted = formatAmount(collapsedTotal)
-                const collapsedFontClass = getAmountFontClass(collapsedFormatted)
-
-                return (
-                  <tr
-                    key={`${detail.group_value}-${index}`}
-                    className="hover:bg-[var(--gray-light)]/50 transition-colors"
-                  >
-                    <td className="px-3 py-2 text-[var(--navy-dark)] border-b border-[var(--border)]">
-                      <div className="flex items-center gap-2">
-                        {index === details.length - 1 ? (
-                          <span className="text-[var(--muted-foreground)]">└</span>
-                        ) : (
-                          <span className="text-[var(--muted-foreground)]">├</span>
-                        )}
-                        <span className="truncate max-w-[300px]" title={detail.group_value || '-'}>
-                          {detail.group_value || '-'}
-                        </span>
-                      </div>
-                    </td>
-                    {/* Collapsed years cell (2016-2020 combined) */}
-                    {!yearsExpanded && collapsedYears.length > 0 && (
-                      <td
-                        className={cn(
-                          'px-3 py-2 text-right tabular-nums border-b border-[var(--border)]',
-                          collapsedFontClass,
-                          collapsedTotal === 0 && 'text-[var(--muted-foreground)]'
-                        )}
-                      >
-                        {collapsedTotal === 0 ? '-' : collapsedFormatted}
-                      </td>
-                    )}
-                    {/* Empty cell for collapse button column when expanded */}
-                    {yearsExpanded && collapsedYears.length > 0 && (
-                      <td className="px-3 py-2 border-b border-[var(--border)]" />
-                    )}
-                    {visibleYears.map((year) => {
-                      const amount = detail.years[String(year)] || 0
-                      const formatted = formatAmount(amount)
-                      const fontClass = getAmountFontClass(formatted)
-
-                      return (
-                        <td
-                          key={year}
-                          className={cn(
-                            'px-3 py-2 text-right tabular-nums border-b border-[var(--border)]',
-                            fontClass,
-                            amount === 0 && 'text-[var(--muted-foreground)]'
-                          )}
-                        >
-                          {amount === 0 ? '-' : formatted}
-                        </td>
-                      )
-                    })}
-                    <td
-                      className={cn(
-                        'px-3 py-2 text-right tabular-nums font-semibold border-b border-[var(--border)]',
-                        totalFontClass
-                      )}
-                    >
-                      {totalFormatted}
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                  {groupableFields.map((field) => (
+                    <option key={field.value} value={field.value}>
+                      {field.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--muted-foreground)] pointer-events-none" />
+              </div>
+            ) : (
+              <span className="text-sm font-semibold text-[var(--navy-dark)]">
+                {groupableFields[0]?.label || 'Details'}
+              </span>
+            )}
+            <span className="text-sm text-[var(--muted-foreground)]">
+              {details.length} items
+            </span>
           </div>
-        </div>
-      )}
-    </div>
+        </td>
+        {/* Collapsed years toggle */}
+        {!yearsExpanded && collapsedYears.length > 0 && (
+          <td className="px-3 py-2 text-right border-b border-[var(--border)]">
+            <button
+              onClick={() => setYearsExpanded(true)}
+              className="flex items-center gap-1 text-sm font-semibold text-[var(--navy-dark)] hover:text-[var(--navy-medium)] transition-colors ml-auto"
+            >
+              {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </td>
+        )}
+        {/* Collapse button when expanded */}
+        {yearsExpanded && collapsedYears.length > 0 && (
+          <td className="px-3 py-2 text-right border-b border-[var(--border)]">
+            <button
+              onClick={() => setYearsExpanded(false)}
+              className="flex items-center gap-1 text-sm font-semibold text-[var(--navy-dark)] hover:text-[var(--navy-medium)] transition-colors"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
+            </button>
+          </td>
+        )}
+        {/* Year headers */}
+        {visibleYears.map((year) => (
+          <td key={year} className="px-3 py-2 text-right text-sm font-semibold text-[var(--navy-dark)] border-b border-[var(--border)]">
+            {year}
+          </td>
+        ))}
+        {/* Total header */}
+        <td className="px-3 py-2 text-right text-sm font-semibold text-[var(--navy-dark)] border-b border-[var(--border)]">
+          Totaal
+        </td>
+      </tr>
+
+      {/* Data rows */}
+      {details.map((detail, index) => {
+        const totalFormatted = formatAmount(detail.totaal)
+        const totalFontClass = getAmountFontClass(totalFormatted)
+
+        const collapsedTotal = collapsedYears.reduce(
+          (sum, y) => sum + (detail.years[String(y)] || 0),
+          0
+        )
+        const collapsedFormatted = formatAmount(collapsedTotal)
+        const collapsedFontClass = getAmountFontClass(collapsedFormatted)
+        const isLast = index === details.length - 1
+
+        return (
+          <tr key={`${detail.group_value}-${index}`} className="bg-[var(--gray-light)] hover:bg-[var(--gray-light)]/80 transition-colors">
+            {/* Content cell with tree branch */}
+            <td colSpan={contentColSpan} className="px-3 py-2.5 border-b border-[var(--border)]">
+              <div className="flex items-center gap-2">
+                <span className="text-[var(--muted-foreground)]">{isLast ? '└' : '├'}</span>
+                <span className="text-sm text-[var(--navy-dark)] truncate max-w-[400px]" title={detail.group_value || '-'}>
+                  {detail.group_value || '-'}
+                </span>
+              </div>
+            </td>
+            {/* Collapsed years cell */}
+            {!yearsExpanded && collapsedYears.length > 0 && (
+              <td className={cn(
+                'px-3 py-2.5 text-right tabular-nums border-b border-[var(--border)]',
+                collapsedFontClass,
+                collapsedTotal === 0 && 'text-[var(--muted-foreground)]'
+              )}>
+                {collapsedTotal === 0 ? '-' : collapsedFormatted}
+              </td>
+            )}
+            {/* Empty cell for collapse button column when expanded */}
+            {yearsExpanded && collapsedYears.length > 0 && (
+              <td className="px-3 py-2.5 border-b border-[var(--border)]" />
+            )}
+            {/* Year cells */}
+            {visibleYears.map((year) => {
+              const amount = detail.years[String(year)] || 0
+              const formatted = formatAmount(amount)
+              const fontClass = getAmountFontClass(formatted)
+
+              return (
+                <td
+                  key={year}
+                  className={cn(
+                    'px-3 py-2.5 text-right tabular-nums border-b border-[var(--border)]',
+                    fontClass,
+                    amount === 0 && 'text-[var(--muted-foreground)]'
+                  )}
+                >
+                  {amount === 0 ? '-' : formatted}
+                </td>
+              )
+            })}
+            {/* Total cell */}
+            <td className={cn(
+              'px-3 py-2.5 text-right tabular-nums font-semibold border-b border-[var(--border)]',
+              totalFontClass
+            )}>
+              {totalFormatted}
+            </td>
+          </tr>
+        )
+      })}
+    </Fragment>
   )
 }
