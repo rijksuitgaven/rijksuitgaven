@@ -695,13 +695,25 @@ async def _get_from_aggregated_view(
 
     # Sort field mapping - support "random" for default view (UX-002)
     # Uses pre-computed random_order column for fast random sorting (~50ms vs 3s)
-    # IMPORTANT: When searching, we sort by relevance in PYTHON after fetching
-    # (eliminates expensive regex CASE from PostgreSQL query)
+    # IMPORTANT: When searching, ALWAYS use relevance ranking (ignore random sort)
     use_random_threshold = False
+    relevance_select = ""
     if search:
-        # When searching: sort by totaal DESC in SQL, then re-sort by relevance in Python
-        # This is MUCH faster than running regex on every row in PostgreSQL
-        sort_clause = "ORDER BY totaal DESC"
+        # When searching: 3-tier relevance ranking
+        # 1. Exact match on name → score 1
+        # 2. Name contains search term (word boundary) → score 2
+        # 3. Match only in other fields (Regeling, etc.) → score 3
+        search_pattern = rf"\y{re.escape(search.lower())}\y"
+        relevance_select = f""",
+            CASE
+                WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
+                WHEN {primary} ~* ${param_idx + 1} THEN 2
+                ELSE 3
+            END AS relevance_score"""
+        params.append(search)
+        params.append(search_pattern)
+        param_idx += 2
+        sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
     elif sort_by == "random":
         sort_clause = "ORDER BY random_order"
         # For random sort on first page: use WHERE random_order > threshold
@@ -732,7 +744,6 @@ async def _get_from_aggregated_view(
     count_params = count_params_snapshot
 
     # Main query from aggregated view
-    # Note: No relevance_select - we sort by relevance in Python (eliminates expensive regex)
     query = f"""
         SELECT
             {primary} AS primary_value,
@@ -740,7 +751,7 @@ async def _get_from_aggregated_view(
             "2019" AS y2019, "2020" AS y2020, "2021" AS y2021,
             "2022" AS y2022, "2023" AS y2023, "2024" AS y2024,
             totaal,
-            row_count{extra_columns_select}
+            row_count{extra_columns_select}{relevance_select}
         FROM {agg_table}
         {where_sql}
         {sort_clause}
@@ -838,25 +849,6 @@ async def _get_from_aggregated_view(
             row_data["matched_value"] = matched[1]
 
         result.append(row_data)
-
-    # Python-based relevance sorting (replaces expensive PostgreSQL regex CASE)
-    # 3-tier relevance: 1=exact match, 2=primary field match, 3=secondary field match
-    # Secondary sort by totaal DESC (already sorted this way from SQL)
-    if search:
-        search_upper = search.upper()
-
-        def get_relevance(row_data: dict) -> int:
-            primary_upper = row_data["primary_value"].upper()
-            if primary_upper == search_upper:
-                return 1  # Exact match
-            elif row_data.get("matched_field") is None:
-                return 2  # Primary field word-boundary match
-            else:
-                return 3  # Secondary field match
-
-        # Sort by relevance (ASC), keeping totaal DESC order within each tier
-        # stable sort preserves totaal DESC from SQL
-        result.sort(key=lambda r: get_relevance(r))
 
     return result, total or 0, totals
 
@@ -998,11 +990,24 @@ async def _get_from_source_table(
     # NOTE: Source table fallback uses ORDER BY RANDOM() (slow) because it doesn't
     # have pre-computed random_order column. This path is rarely used - aggregated
     # views are preferred and have fast random sorting via random_order column.
-    # IMPORTANT: When searching, we sort by relevance in PYTHON after fetching
-    # (eliminates expensive regex CASE from PostgreSQL query)
+    # IMPORTANT: When searching, ALWAYS use relevance ranking (ignore random sort)
+    relevance_select = ""
     if search:
-        # When searching: sort by totaal DESC in SQL, then re-sort by relevance in Python
-        sort_clause = "ORDER BY totaal DESC"
+        # When searching: 3-tier relevance ranking
+        # 1. Exact match on name → score 1
+        # 2. Name contains search term (word boundary) → score 2
+        # 3. Match only in other fields (Regeling, etc.) → score 3
+        search_pattern = rf"\y{re.escape(search.lower())}\y"
+        relevance_select = f""",
+            CASE
+                WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
+                WHEN {primary} ~* ${param_idx + 1} THEN 2
+                ELSE 3
+            END AS relevance_score"""
+        params.append(search)
+        params.append(search_pattern)
+        param_idx += 2
+        sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
     elif sort_by == "random":
         sort_clause = "ORDER BY RANDOM()"
     else:
@@ -1015,13 +1020,12 @@ async def _get_from_source_table(
         sort_clause = f"ORDER BY {sort_field} {sort_direction}"
 
     # Main query with aggregation
-    # Note: No relevance_select - we sort by relevance in Python (eliminates expensive regex)
     query = f"""
         SELECT
             {primary} AS primary_value,
             {year_columns},
             COALESCE(SUM({amount_field}), 0) * {multiplier} AS totaal,
-            COUNT(*) AS row_count{extra_columns_select}{matched_field_sql}
+            COUNT(*) AS row_count{extra_columns_select}{matched_field_sql}{relevance_select}
         FROM {table}
         {where_sql}
         GROUP BY {primary}
@@ -1121,24 +1125,6 @@ async def _get_from_source_table(
             row_data["extra_column_counts"] = extra_counts
 
         result.append(row_data)
-
-    # Python-based relevance sorting (replaces expensive PostgreSQL regex CASE)
-    # 3-tier relevance: 1=exact match, 2=primary field match, 3=secondary field match
-    # Secondary sort by totaal DESC (already sorted this way from SQL)
-    if search:
-        search_upper = search.upper()
-
-        def get_relevance(row_data: dict) -> int:
-            primary_upper = row_data["primary_value"].upper()
-            if primary_upper == search_upper:
-                return 1  # Exact match
-            elif row_data.get("matched_field") is None:
-                return 2  # Primary field match
-            else:
-                return 3  # Secondary field match
-
-        # Sort by relevance (ASC), keeping totaal DESC order within each tier
-        result.sort(key=lambda r: get_relevance(r))
 
     return result, total or 0, totals
 
@@ -1306,12 +1292,25 @@ async def get_integraal_data(
 
     # Sort field mapping - support "random" for default view (UX-002)
     # Uses pre-computed random_order column for fast random sorting (~50ms vs 3s)
-    # IMPORTANT: When searching, we sort by relevance in PYTHON after fetching
-    # (eliminates expensive regex CASE from PostgreSQL query)
+    # IMPORTANT: When searching, ALWAYS use relevance ranking (ignore random sort)
     use_random_threshold = False
+    relevance_select = ""
     if search:
-        # When searching: sort by totaal DESC in SQL, then re-sort by relevance in Python
-        sort_clause = "ORDER BY totaal DESC"
+        # When searching: 3-tier relevance ranking
+        # 1. Exact match on name → score 1
+        # 2. Name contains search term (word boundary) → score 2
+        # 3. Match only in other fields → score 3
+        search_pattern = rf"\y{re.escape(search.lower())}\y"
+        relevance_select = f""",
+            CASE
+                WHEN UPPER(ontvanger) = UPPER(${param_idx}) THEN 1
+                WHEN ontvanger ~* ${param_idx + 1} THEN 2
+                ELSE 3
+            END AS relevance_score"""
+        params.append(search)
+        params.append(search_pattern)
+        param_idx += 2
+        sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
     elif sort_by == "random":
         sort_clause = "ORDER BY random_order"
         # For random sort on first page: use WHERE random_order > threshold
@@ -1340,7 +1339,6 @@ async def get_integraal_data(
     count_where_sql = f"WHERE {' AND '.join(count_where)}" if count_where else ""
     count_params = count_params_snapshot
 
-    # Note: No relevance_select - we sort by relevance in Python (eliminates expensive regex)
     query = f"""
         SELECT
             ontvanger AS primary_value,
@@ -1355,7 +1353,7 @@ async def get_integraal_data(
             "2022" AS y2022,
             "2023" AS y2023,
             "2024" AS y2024,
-            totaal
+            totaal{relevance_select}
         FROM universal_search
         {where_sql}
         {sort_clause}
@@ -1383,22 +1381,6 @@ async def get_integraal_data(
             "row_count": row["source_count"] or 1,  # Use source_count as row_count
             "modules": [s.strip() for s in row["sources"].split(",")] if row["sources"] else [],
         })
-
-    # Python-based relevance sorting (replaces expensive PostgreSQL regex CASE)
-    # 2-tier for integraal: 1=exact match, 2=contains (all matches are by ontvanger field)
-    # Secondary sort by totaal DESC (already sorted this way from SQL)
-    if search:
-        search_upper = search.upper()
-
-        def get_relevance(row_data: dict) -> int:
-            primary_upper = row_data["primary_value"].upper()
-            if primary_upper == search_upper:
-                return 1  # Exact match
-            else:
-                return 2  # Contains match
-
-        # Sort by relevance (ASC), keeping totaal DESC order within each tier
-        result.sort(key=lambda r: get_relevance(r))
 
     return result, total or 0
 
