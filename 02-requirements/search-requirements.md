@@ -897,7 +897,7 @@ Search "bedrijvenbeleid" shows:
 - [x] Cross-module search with module filtering ✅ 2026-01-26
 - [x] Export to CSV (500 rows limit) ✅ 2026-01-26
 
-**Performance Note (2026-01-31):** Target was <100ms. Achieved ~750ms via hybrid search (Typesense for discovery, PostgreSQL for data). This is 10x faster than original 5-10s. Further optimization possible but requires significant architecture changes (see backlog).
+**Performance Note (2026-02-03):** Target was <100ms. Achieved ~750ms via hybrid search (Typesense for discovery, PostgreSQL for data). This is 10x faster than original 5-10s. **Decision: Optimize before launch** (user decision 2026-02-03). See backlog for optimization plan.
 
 ### Search Bar (V1.0) - Should Have
 
@@ -935,5 +935,5 @@ Search "bedrijvenbeleid" shows:
 ---
 
 **Document Status:** V1.0 Scope - Implementation In Progress
-**Last Updated:** 2026-01-31
+**Last Updated:** 2026-02-03
 **Author:** Technical Project Manager (AI Assistant)

@@ -336,9 +336,9 @@
 
 | Task | Priority | Status |
 |------|----------|--------|
-| Overzicht page design + implementation | HIGH | ❌ Not started |
-| Performance optimization (materialized view) | HIGH | ❌ Not started |
-| Mobile responsiveness audit | MEDIUM | ❌ Not started |
+| Overzicht page design + implementation | HIGH | ❌ Not started (discuss next session) |
+| **Search performance optimization** | **HIGH** | ❌ Not started (**decision: optimize before launch**) |
+| Mobile responsiveness audit | MEDIUM | ❌ Parked (needs discussion) |
 | Typography/spacing consistency audit | LOW | ❌ Not started |
 
 **Performance Plan:** Create optimized materialized view for search results. Target: 750ms → ~200ms. See SESSION-CONTEXT.md for details.
@@ -597,8 +597,8 @@ After V1.0 is stable:
 
 ---
 
-**Document Version:** 1.1
-**Last Updated:** 2026-01-21
+**Document Version:** 1.2
+**Last Updated:** 2026-02-03
 
 ---
 

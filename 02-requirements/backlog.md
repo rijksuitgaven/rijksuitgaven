@@ -440,3 +440,53 @@ Backend API connects to Typesense via public URL, incurring egress fees. Railway
 **Decision:** Use public URL for now. Egress costs are minimal for search traffic. Investigate later if costs become significant.
 
 ---
+
+### Mobile Responsiveness Audit
+
+**Priority:** Medium (Needs Discussion)
+**Added:** 2026-02-03
+**Type:** UX / Testing
+
+**Status:** NOT STARTED - Parked pending discussion.
+
+**Task:**
+Comprehensive mobile UX testing and fixes before launch.
+
+**Areas to test:**
+- Touch targets (min 44×44px)
+- Table horizontal scroll on mobile
+- Sticky columns behavior
+- Filter panel (bottom sheet)
+- Search autocomplete dropdown
+- Expanded row content
+- Header menu navigation
+
+**Decision:** Needs discussion to determine if mobile audit should be in Mini Sprint or post-beta feedback.
+
+---
+
+### Search Performance Optimization (Pre-Launch)
+
+**Priority:** HIGH (User Decision: Optimize before launch)
+**Added:** 2026-02-03
+**Type:** Performance
+
+**Current State:**
+- Target: <100ms
+- Actual: ~750ms
+- Gap: 7.5x slower than target
+
+**Previous Optimizations (already applied):**
+1. ✅ Materialized views
+2. ✅ pg_trgm + GIN indexes
+3. ✅ Hybrid Typesense → PostgreSQL search
+4. ✅ Functional indexes on normalize_recipient()
+
+**Remaining Options:**
+1. **Materialized view for search results** (planned) - Could reduce ~750ms → ~200ms
+2. Redis/memory caching layer (if #1 insufficient)
+3. Read replica for heavy queries (unlikely needed)
+
+**Status:** To be implemented before launch per user decision (2026-02-03).
+
+---
