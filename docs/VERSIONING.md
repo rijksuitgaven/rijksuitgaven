@@ -2,6 +2,7 @@
 
 **Project:** Rijksuitgaven.nl
 **Created:** 2026-01-30
+**Updated:** 2026-02-03
 **Status:** Active
 
 ---
@@ -23,15 +24,14 @@
 | Version | Name | New Capability | New Use Case |
 |---------|------|----------------|--------------|
 | **V1** | Search Platform | Find data fast | "Who received money?" |
-| **V2** | Theme Discovery | Understand by domain | "What's happening in defensie?" |
-| **V3** | Inzichten | Self-service BI | "Show me trends and anomalies" |
-| **V4** | AI Research Mode | Conversational analysis | "Help me investigate this" |
-| **V5** | Research Workspace | Save and share findings | "Build a case, share with team" |
-| **V6** | External Integrations | Connect to legislation | "What law governs this spending?" |
-| **V7** | Network Analysis | Map people & connections | "Who runs these organizations?" |
-| **V8** | European Platform | Multi-country | "Compare NL with Germany" |
-
-> **Note:** Consider brainstorming whether V3 (Inzichten) should come before V2 (Theme Discovery).
+| **V2** | Rijksuitgaven Reporter | News + spending intelligence | "What's in the news about government spending?" |
+| **V3** | Theme Discovery | Understand by domain | "What's happening in defensie?" |
+| **V4** | Inzichten | Self-service BI | "Show me trends and anomalies" |
+| **V5** | AI Research Mode | Conversational analysis | "Help me investigate this" |
+| **V6** | Research Workspace | Save and share findings | "Build a case, share with team" |
+| **V7** | External Integrations | Connect to legislation | "What law governs this spending?" |
+| **V8** | Network Analysis | Map people & connections | "Who runs these organizations?" |
+| **V9** | European Platform | Multi-country | "Compare NL with Germany" |
 
 ---
 
@@ -41,20 +41,21 @@
 
 **New use case:** "Who received money?"
 
-### V1.0 - Search MVP ✅ (Current)
+### V1.0 - Search MVP (Current)
 
-**Status:** In development, Week 6
+**Status:** In development, Mini Sprint before Week 6
 
 **Features:**
 - Fast keyword search (<100ms via Typesense)
 - 7 modules (Instrumenten, Apparaat, Inkoop, Provincie, Gemeente, Publiek, Integraal)
-- Advanced filters per module
+- Advanced filters per module (searchable multi-select)
 - Cross-module search
 - Year columns with trend indicators
 - Expandable rows with grouping
-- CSV export (500 rows limit)
+- CSV/XLS export (500 rows limit)
 - Magic Link authentication
 - URL sharing
+- BFF proxy (security)
 
 **Target users:** Journalists, researchers, opposition parties
 
@@ -76,7 +77,49 @@
 
 ---
 
-## V2 - Theme Discovery
+## V2 - Rijksuitgaven Reporter
+
+**Core promise:** News intelligence meets spending data - daily briefings that connect current events to government spending.
+
+**New use case:** "What's in the news about government spending?"
+
+**Dependency:** Requires V1.0 complete
+
+**Design document:** `docs/plans/2026-02-03-rijksuitgaven-reporter-design.md`
+
+### V2.0 - Daily Email Briefing
+
+**Features:**
+- **AI news scanner** - Scans RSS feeds from Rijksoverheid.nl, Kamerstukken, NOS, RTL
+- **Keyword extraction** - Claude extracts topics, entities, relevance from articles
+- **Dynamic matching** - Search existing data with extracted keywords (no pre-classification needed)
+- **Daily midday email** - 3-5 items, profession-specific insights
+- **Two profession templates:**
+  - Journalist: Story angles, key recipients, trends
+  - Beleidsmedewerker: Relevant regelingen, historical context, Kamerstukken
+- **Light AI analysis** - Data + insights, not full generated articles
+- **Platform opt-in** - Settings page to enable/configure
+
+**Why this is a major release:**
+- Enables NEW use case (push intelligence, not just pull search)
+- Different interaction paradigm (passive consumption vs. active search)
+- Foundation for personalized experience
+- Increases engagement and retention
+
+**Target users:** Journalists, policy staff (same as V1, but passive engagement)
+
+**Cost:** ~€10-15/month (Claude Haiku + Resend)
+
+### V2.1 - Reporter Improvements
+
+- "Anders" profession with generic template
+- Topic preferences (defensie, zorg, onderwijs)
+- Breaking alerts for high-relevance news
+- Personalized homepage (in-app feed)
+
+---
+
+## V3 - Theme Discovery
 
 **Core promise:** Don't just search - explore by policy domain.
 
@@ -84,7 +127,7 @@
 
 **Dependency:** Requires V1.0 complete
 
-### V2.0 - Theme Landing Pages
+### V3.0 - Theme Landing Pages
 
 **Features:**
 - **IBOS domain classification** (30 policy domains mapped to 450K recipients)
@@ -105,7 +148,9 @@
 
 **Target users:** Mainstream media, political parties, universities
 
-### V2.1 - Theme Improvements
+**V2 + V3 Synergy:** When Theme Discovery launches, Reporter automatically gets smarter matching via IBOS domains.
+
+### V3.1 - Theme Improvements
 
 - More themes/domains
 - Custom theme pages for specific audiences
@@ -114,15 +159,15 @@
 
 ---
 
-## V3 - Inzichten
+## V4 - Inzichten
 
 **Core promise:** Create your own analyses and dashboards.
 
 **New use case:** "Show me trends and anomalies in my area of interest"
 
-**Dependency:** Requires V1.0 (data), benefits from V2.0 (themes)
+**Dependency:** Requires V1.0 (data), benefits from V3.0 (themes)
 
-### V3.0 - Self-Service BI
+### V4.0 - Self-Service BI
 
 **Features:**
 - Custom dashboard builder
@@ -140,7 +185,7 @@
 
 **Target users:** Policy analysts, controllers, financial journalists
 
-### V3.1 - Inzichten Improvements
+### V4.1 - Inzichten Improvements
 
 - More chart types
 - Embeddable widgets
@@ -149,15 +194,15 @@
 
 ---
 
-## V4 - AI Research Mode
+## V5 - AI Research Mode
 
 **Core promise:** Conversational analysis - ask questions, get answers.
 
 **New use case:** "Help me investigate infrastructure spending"
 
-**Dependency:** Requires V2.0 (IBOS classification for domain understanding)
+**Dependency:** Requires V3.0 (IBOS classification for domain understanding)
 
-### V4.0 - Conversational AI
+### V5.0 - Conversational AI
 
 **Features:**
 - **/research page** with chat interface
@@ -175,7 +220,7 @@
 
 **Target users:** Deep researchers, investigative journalists, policy analysts
 
-### V4.1 - AI Improvements
+### V5.1 - AI Improvements
 
 - Smarter follow-ups
 - Better visualization generation
@@ -184,15 +229,15 @@
 
 ---
 
-## V5 - Research Workspace
+## V6 - Research Workspace
 
 **Core promise:** Build cases, save findings, collaborate.
 
 **New use case:** "Build a dossier and share with my editor"
 
-**Dependency:** Requires V4.0 (Research Mode to generate findings worth saving)
+**Dependency:** Requires V5.0 (Research Mode to generate findings worth saving)
 
-### V5.0 - Save & Share
+### V6.0 - Save & Share
 
 **Features:**
 - Save research sessions
@@ -207,7 +252,7 @@
 - Creates sticky usage (saved work = retention)
 - B2B value (teams can share)
 
-### V5.1 - Workspace Improvements
+### V6.1 - Workspace Improvements
 
 - Folders and organization
 - Team workspaces
@@ -216,15 +261,15 @@
 
 ---
 
-## V6 - External Integrations
+## V7 - External Integrations
 
 **Core promise:** Connect spending to its legal and business context.
 
 **New use case:** "What regulation governs this subsidy?"
 
-**Dependency:** Requires V4.0+ (meaningful when doing research)
+**Dependency:** Requires V5.0+ (meaningful when doing research)
 
-### V6.0 - Legislation Integration
+### V7.0 - Legislation Integration
 
 **Features:**
 - **wetten.overheid.nl integration**
@@ -232,7 +277,7 @@
 - Legislation summaries in AI responses
 - "View the law" links
 
-### V6.1 - Business Integration
+### V7.1 - Business Integration
 
 - KvK integration (company profiles)
 - Beneficial ownership data
@@ -240,17 +285,17 @@
 
 ---
 
-## V7 - Network Analysis (Rijksnetwerken)
+## V8 - Network Analysis (Rijksnetwerken)
 
 **Core promise:** See who runs the organizations that receive tax money, and how they're connected.
 
 **New use case:** "Who are the people behind these organizations? Are there conflicts of interest?"
 
-**Dependency:** Requires V1 (recipient data), benefits from V4 (AI can analyze networks)
+**Dependency:** Requires V1 (recipient data), benefits from V5 (AI can analyze networks)
 
 **Tagline:** "Verbonden door geld"
 
-### V7.0 - Network Foundation
+### V8.0 - Network Foundation
 
 **Features:**
 - **KvK integration** - Link recipients to Chamber of Commerce data
@@ -289,7 +334,7 @@
 **Market size:** 40-60 organizations (banks, insurers, accountants)
 **Conservative ARR potential:** €1.1M
 
-### V7.1 - Network Improvements
+### V8.1 - Network Improvements
 
 - Beneficial ownership (UBO) data
 - International director connections
@@ -299,15 +344,15 @@
 
 ---
 
-## V8 - European Platform
+## V9 - European Platform
 
 **Core promise:** Every EU tax euro findable.
 
 **New use case:** "Compare Dutch defense spending with German"
 
-**Dependency:** V1-V4 proven in NL market
+**Dependency:** V1-V5 proven in NL market
 
-### V8.0 - Multi-Country Foundation
+### V9.0 - Multi-Country Foundation
 
 **Features:**
 - Multi-tenant architecture
@@ -316,7 +361,7 @@
 - Franchise onboarding tools
 - White-label theming
 
-### V8.1+ - Country Rollouts
+### V9.1+ - Country Rollouts
 
 - Pilot countries
 - Data pipeline templates
@@ -332,11 +377,11 @@ Tiers control ACCESS to versions:
 | Tier | Price | Version Access |
 |------|-------|----------------|
 | **Pro** | €1,500/year | V1 + V2 + V3 |
-| **Research** | TBD | V1-V5 |
-| **Voor Overheden** | €9,000+ | V1-V6 + municipality features |
-| **Voor Universiteiten** | €3,000+ | V1-V6 + academic features |
-| **Rijksnetwerken** | €25,000+/year | V7 (compliance/KYC module) |
-| **Franchise** | License | V8 (white-label European) |
+| **Research** | TBD | V1-V6 |
+| **Voor Overheden** | €9,000+ | V1-V7 + municipality features |
+| **Voor Universiteiten** | €3,000+ | V1-V7 + academic features |
+| **Rijksnetwerken** | €25,000+/year | V8 (compliance/KYC module) |
+| **Franchise** | License | V9 (white-label European) |
 
 ---
 
@@ -347,28 +392,31 @@ V1.0 Search ──────────────────────�
   │
   ├─► V1.1, V1.2 (improvements)
   │
-  ├─► V2.0 Theme Discovery
+  ├─► V2.0 Rijksuitgaven Reporter ◄─────────── NEXT
   │     │
-  │     ├─► V2.1 (improvements)
+  │     └─► V2.1 (improvements)
+  │
+  ├─► V3.0 Theme Discovery
+  │     │   (enhances V2 with semantic matching)
   │     │
-  │     └─► V3.0 Inzichten (Self-Service BI)
+  │     └─► V4.0 Inzichten (Self-Service BI)
   │           │
-  │           └─► V4.0 AI Research Mode
+  │           └─► V5.0 AI Research Mode
   │                 │
-  │                 ├─► V4.1 (improvements)
+  │                 ├─► V5.1 (improvements)
   │                 │
-  │                 ├─► V5.0 Research Workspace
+  │                 ├─► V6.0 Research Workspace
   │                 │     │
-  │                 │     └─► V6.0 External Integrations
+  │                 │     └─► V7.0 External Integrations
   │                 │
-  │                 └─► V7.0 Network Analysis ◄──┐
+  │                 └─► V8.0 Network Analysis ◄──┐
   │                       (benefits from AI)     │
   │                                              │
   └──────────────────────────────────────────────┘
         (requires recipient data)
 
-V8.0 European Platform
-  └─► Requires V1-V4 proven in NL market
+V9.0 European Platform
+  └─► Requires V1-V5 proven in NL market
 ```
 
 ---
@@ -377,15 +425,16 @@ V8.0 European Platform
 
 | Version | Status | Timeline |
 |---------|--------|----------|
-| V1.0 | 🔨 Building | Now (Week 6 of 9) |
+| V1.0 | 🔨 Building | Now (Mini Sprint, then Week 6-9) |
 | V1.1 | 📋 Planned | Post-launch |
-| V2.0 | 📋 Planned | Q1-Q2 2026 |
-| V3.0 | 📋 Planned | Q2 2026 |
-| V4.0 | 📋 Planned | Q2-Q3 2026 |
-| V5.0 | 📋 Planned | Q3 2026 |
+| V2.0 | 📋 Planned | Post V1.0 launch |
+| V3.0 | 📋 Planned | Q1-Q2 2026 |
+| V4.0 | 📋 Planned | Q2 2026 |
+| V5.0 | 📋 Planned | Q2-Q3 2026 |
 | V6.0 | 📋 Planned | Q3 2026 |
-| V7.0 | 📋 Planned | Q3+ 2026 (can start after V1, benefits from V4) |
-| V8.0 | 📋 Planned | 2027+ (after NL market proven) |
+| V7.0 | 📋 Planned | Q3 2026 |
+| V8.0 | 📋 Planned | Q3+ 2026 (can start after V1, benefits from V5) |
+| V9.0 | 📋 Planned | 2027+ (after NL market proven) |
 
 ---
 
@@ -395,11 +444,11 @@ V8.0 European Platform
 
 | Change | Version Type | Example |
 |--------|--------------|---------|
-| New capability / new use case | **Major (X.0)** | Theme pages, AI chat |
+| New capability / new use case | **Major (X.0)** | Reporter, Theme pages, AI chat |
 | Improvement to existing capability | **Minor (X.Y)** | Better search, faster AI |
 | Bug fix | **Patch (X.Y.Z)** | Fix search ranking |
 
 ---
 
 **Document maintained by:** Product Owner
-**Last updated:** 2026-01-31
+**Last updated:** 2026-02-03

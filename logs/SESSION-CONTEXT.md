@@ -6,20 +6,21 @@
 
 ---
 
-## Product Versioning (UPDATED 2026-01-31)
+## Product Versioning (UPDATED 2026-02-03)
 
 **Source of truth:** `docs/VERSIONING.md`
 
 | Version | Name | Use Case | Status |
 |---------|------|----------|--------|
 | **V1** | Search Platform | "Who received money?" | 🔨 Building |
-| **V2** | Theme Discovery | "What's happening in defensie?" | 📋 Planned |
-| **V3** | Inzichten (Self-Service BI) | "Show me trends and anomalies" | 📋 Planned |
-| **V4** | AI Research Mode | "Help me investigate this" | 📋 Planned |
-| **V5** | Research Workspace | "Build a case, share with team" | 📋 Planned |
-| **V6** | External Integrations | "What law governs this?" | 📋 Planned |
-| **V7** | Network Analysis | "Who runs these organizations?" | 📋 Planned |
-| **V8** | European Platform | "Compare NL with Germany" | 📋 Planned |
+| **V2** | Rijksuitgaven Reporter | "What's in the news about spending?" | 📋 Planned |
+| **V3** | Theme Discovery | "What's happening in defensie?" | 📋 Planned |
+| **V4** | Inzichten (Self-Service BI) | "Show me trends and anomalies" | 📋 Planned |
+| **V5** | AI Research Mode | "Help me investigate this" | 📋 Planned |
+| **V6** | Research Workspace | "Build a case, share with team" | 📋 Planned |
+| **V7** | External Integrations | "What law governs this?" | 📋 Planned |
+| **V8** | Network Analysis | "Who runs these organizations?" | 📋 Planned |
+| **V9** | European Platform | "Compare NL with Germany" | 📋 Planned |
 
 **Version scheme:** X.0 = Major (new capability) | X.Y = Minor (improvements) | X.Y.Z = Patch (fixes)
 
