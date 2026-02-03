@@ -1523,8 +1523,15 @@ async def get_module_autocomplete(
 
         data = await _typesense_search(collection, params)
 
+        # DEBUG: Log Typesense results for autocomplete investigation
+        grouped_hits = data.get("grouped_hits", [])
+        logger.info(f"Autocomplete '{search}' on {module}: Typesense returned {len(grouped_hits)} grouped hits")
+        if grouped_hits:
+            sample_names = [g.get("hits", [{}])[0].get("document", {}).get(primary_field, "?")[:40] for g in grouped_hits[:5]]
+            logger.info(f"Autocomplete '{search}' sample: {sample_names}")
+
         # Process grouped hits (with word-boundary filtering)
-        for group in data.get("grouped_hits", []):
+        for group in grouped_hits:
             hits = group.get("hits", [])
             if not hits:
                 continue
@@ -1543,6 +1550,9 @@ async def get_module_autocomplete(
                 })
                 if len(current_module_results) >= limit:
                     break
+
+    # DEBUG: Log after word-boundary filtering
+    logger.info(f"Autocomplete '{search}' on {module}: {len(current_module_results)} results after word-boundary filter")
 
     # 2. Search for field matches (OOK GEVONDEN IN section)
     # Search non-primary fields for matching keyword values
