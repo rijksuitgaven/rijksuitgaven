@@ -1515,7 +1515,7 @@ async def get_module_autocomplete(
             "q": search,
             "query_by": query_by,
             "prefix": "true",
-            "per_page": str(limit * 5),  # Get extra since we filter by word boundary
+            "per_page": str(limit * 20),  # Get many more since word-boundary filter discards ~80%
             "sort_by": f"{sort_field}:desc",
             "group_by": primary_field,
             "group_limit": "1",
@@ -1593,7 +1593,7 @@ async def get_module_autocomplete(
         "q": search,
         "query_by": "name,name_lower",
         "prefix": "true",
-        "per_page": str(limit * 5),  # Get extra since we filter by word boundary
+        "per_page": str(limit * 20),  # Get many more since word-boundary filter discards ~80%
         "sort_by": "totaal:desc",
     }
 
@@ -1667,7 +1667,7 @@ async def get_integraal_autocomplete(
         "q": search,
         "query_by": "name,name_lower",
         "prefix": "true",
-        "per_page": str(limit * 5),  # Get extra since we filter by word boundary
+        "per_page": str(limit * 20),  # Get many more since word-boundary filter discards ~80%
         "sort_by": "totaal:desc",
         # Note: Typesense returns all fields by default, no need for include_fields
     }
