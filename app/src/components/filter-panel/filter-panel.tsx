@@ -31,6 +31,7 @@ interface FilterConfig {
 interface CurrentModuleResult {
   name: string
   totaal: number
+  match_type?: "exact" | "prefix"  // exact = word-boundary match, prefix = starts with
 }
 
 // Other modules result (with module badges)
@@ -590,11 +591,9 @@ export function FilterPanel({
         }
 
         const data = await response.json()
-        console.log('[Autocomplete] Response for', searchValue, ':', data)
         const currentModule = data.current_module || []
         const fieldMatchesData = data.field_matches || []
         const otherModules = data.other_modules || []
-        console.log('[Autocomplete] Parsed:', { currentModule: currentModule.length, fieldMatches: fieldMatchesData.length, otherModules: otherModules.length })
 
         setCurrentModuleResults(currentModule)
         setFieldMatches(fieldMatchesData)
@@ -607,12 +606,8 @@ export function FilterPanel({
           setNoResultsQuery(null)
         }
         // Only show dropdown when user is actively typing (not URL navigation)
-        console.log('[Autocomplete] hasUserTypedRef:', hasUserTypedRef.current, 'results:', currentModule.length + fieldMatchesData.length + otherModules.length)
         if (hasUserTypedRef.current) {
-          console.log('[Autocomplete] Opening dropdown')
           setIsDropdownOpen(true)
-        } else {
-          console.log('[Autocomplete] NOT opening dropdown - hasUserTypedRef is false')
         }
         setSelectedIndex(-1)
       } catch (error) {
@@ -956,10 +951,20 @@ export function FilterPanel({
                         )}
                       >
                         <div className="flex items-center justify-between gap-4">
-                          <div className="font-medium text-[var(--navy-dark)] truncate">
+                          <div className={cn(
+                            "font-medium truncate",
+                            result.match_type === "prefix"
+                              ? "text-[var(--muted-foreground)]"
+                              : "text-[var(--navy-dark)]"
+                          )}>
                             {result.name}
                           </div>
-                          <div className="text-sm font-medium text-[var(--navy-dark)] whitespace-nowrap">
+                          <div className={cn(
+                            "text-sm font-medium whitespace-nowrap",
+                            result.match_type === "prefix"
+                              ? "text-[var(--muted-foreground)]"
+                              : "text-[var(--navy-dark)]"
+                          )}>
                             {formatAmount(result.totaal)}
                           </div>
                         </div>

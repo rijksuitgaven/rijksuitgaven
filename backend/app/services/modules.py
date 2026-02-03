@@ -1523,14 +1523,13 @@ async def get_module_autocomplete(
 
         data = await _typesense_search(collection, params)
 
-        # DEBUG: Log Typesense results for autocomplete investigation
         grouped_hits = data.get("grouped_hits", [])
-        logger.info(f"Autocomplete '{search}' on {module}: Typesense returned {len(grouped_hits)} grouped hits")
-        if grouped_hits:
-            sample_names = [g.get("hits", [{}])[0].get("document", {}).get(primary_field, "?")[:40] for g in grouped_hits[:5]]
-            logger.info(f"Autocomplete '{search}' sample: {sample_names}")
 
-        # Process grouped hits (with word-boundary filtering)
+        # Process grouped hits - keep both exact (word-boundary) and prefix matches
+        # Exact matches ranked higher, prefix matches shown with visual de-emphasis
+        exact_matches = []
+        prefix_matches = []
+
         for group in grouped_hits:
             hits = group.get("hits", [])
             if not hits:
@@ -1541,18 +1540,28 @@ async def get_module_autocomplete(
             # Sum up amounts from all hits in group (or use first)
             amount = doc.get("bedrag", 0) or doc.get("totaal", 0)
 
-            # Filter: only include word-boundary matches
-            # "COA" matches "COA", "Bureau COA" but NOT "Coaching"
-            if name and is_word_boundary_match(search, name):
-                current_module_results.append({
+            if not name:
+                continue
+
+            # Classify: exact (word-boundary) vs prefix-only match
+            if is_word_boundary_match(search, name):
+                exact_matches.append({
                     "name": name,
                     "totaal": int(amount),
+                    "match_type": "exact",
                 })
-                if len(current_module_results) >= limit:
-                    break
+            else:
+                prefix_matches.append({
+                    "name": name,
+                    "totaal": int(amount),
+                    "match_type": "prefix",
+                })
 
-    # DEBUG: Log after word-boundary filtering
-    logger.info(f"Autocomplete '{search}' on {module}: {len(current_module_results)} results after word-boundary filter")
+        # Combine: exact matches first, then prefix matches (both already sorted by amount from Typesense)
+        current_module_results = exact_matches[:limit]
+        remaining_slots = limit - len(current_module_results)
+        if remaining_slots > 0:
+            current_module_results.extend(prefix_matches[:remaining_slots])
 
     # FALLBACK: If Typesense returned nothing, try PostgreSQL directly
     # This handles cases where Typesense isn't properly indexed or configured
@@ -1577,9 +1586,11 @@ async def get_module_autocomplete(
             async with pool.acquire() as conn:
                 rows = await conn.fetch(query, pattern)
                 for row in rows:
+                    name = row["name"]
                     current_module_results.append({
-                        "name": row["name"],
+                        "name": name,
                         "totaal": int(row["totaal"] or 0),
+                        "match_type": "exact" if is_word_boundary_match(search, name) else "prefix",
                     })
             logger.info(f"Autocomplete '{search}' on {module}: PostgreSQL fallback found {len(current_module_results)} results")
         except Exception as e:
@@ -1640,6 +1651,10 @@ async def get_module_autocomplete(
 
     data = await _typesense_search("recipients", params)
 
+    # Collect exact and prefix matches from recipients
+    recipients_exact = []
+    recipients_prefix = []
+
     for hit in data.get("hits", []):
         doc = hit.get("document", {})
         name = doc.get("name", "")
@@ -1649,14 +1664,10 @@ async def get_module_autocomplete(
         if not name or name.upper() in current_names:
             continue
 
-        # Filter: only include word-boundary matches
-        # "COA" matches "COA", "Bureau COA" but NOT "Coaching"
-        if not is_word_boundary_match(search, name):
-            continue
+        # Classify match type
+        is_exact = is_word_boundary_match(search, name)
 
         # Check if recipient is in current module
-        # Sources use display names like "Provinciale subsidieregisters"
-        # Use SOURCE_TO_MODULE mapping to normalize to module names
         current_module_lower = module.lower()
         is_in_current_module = any(
             SOURCE_TO_MODULE.get(s.lower(), s.lower()) == current_module_lower
@@ -1664,25 +1675,28 @@ async def get_module_autocomplete(
         )
 
         if is_in_current_module:
-            # Add to current module results
-            if len(current_module_results) < limit:
-                current_module_results.append({
-                    "name": name,
-                    "totaal": int(totaal),
-                })
-                current_names.add(name.upper())
+            entry = {"name": name, "totaal": int(totaal), "match_type": "exact" if is_exact else "prefix"}
+            if is_exact:
+                recipients_exact.append(entry)
+            else:
+                recipients_prefix.append(entry)
         else:
-            # Add to other modules results
-            other_sources = [
-                MODULE_DISPLAY_NAMES.get(s.lower(), s)
-                for s in sources
-            ]
+            # Other modules - only include exact matches (prefix would be noise)
+            if is_exact:
+                other_sources = [MODULE_DISPLAY_NAMES.get(s.lower(), s) for s in sources]
+                if other_sources and len(other_modules_results) < limit:
+                    other_modules_results.append({"name": name, "modules": other_sources})
 
-            if other_sources and len(other_modules_results) < limit:
-                other_modules_results.append({
-                    "name": name,
-                    "modules": other_sources,
-                })
+    # Add recipients to current_module_results: exact first, then prefix
+    for entry in recipients_exact:
+        if len(current_module_results) < limit:
+            current_module_results.append(entry)
+            current_names.add(entry["name"].upper())
+
+    for entry in recipients_prefix:
+        if len(current_module_results) < limit:
+            current_module_results.append(entry)
+            current_names.add(entry["name"].upper())
 
     return {
         "current_module": current_module_results,
