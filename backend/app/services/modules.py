@@ -8,6 +8,7 @@ SECURITY NOTE: All SQL identifiers (table names, column names) are validated
 against whitelists before being used in queries. User input is NEVER used
 directly as identifiers - only as parameterized values.
 """
+import asyncio
 import logging
 import random
 import re
@@ -772,27 +773,43 @@ async def _get_from_aggregated_view(
         {count_where_sql}
     """
 
-    # Execute queries
+    # Execute queries in PARALLEL for performance (750ms → ~250ms)
+    # Previously sequential: rows, then count, then totals = 3x latency
     try:
-        rows = await fetch_all(query, *params)
+        # Build list of coroutines to run
+        coros = [
+            fetch_all(query, *params),
+            fetch_val(count_query, *count_params) if count_params else fetch_val(count_query),
+        ]
+
+        # Add totals query only when searching/filtering
+        run_totals = bool(search or count_where_sql)
+        if run_totals:
+            coros.append(
+                fetch_all(totals_query, *count_params) if count_params else fetch_all(totals_query)
+            )
+
+        # Run all queries in parallel
+        results = await asyncio.gather(*coros)
+
+        rows = results[0]
+        total = results[1]
+
+        # Extract totals if we ran that query
+        totals = None
+        if run_totals and len(results) > 2:
+            totals_row = results[2]
+            if totals_row:
+                r = totals_row[0]
+                totals = {
+                    "years": {year: int(r.get(f"sum_{year}", 0) or 0) for year in YEARS},
+                    "totaal": int(r.get("sum_totaal", 0) or 0),
+                }
     except Exception as e:
         logger.error(f"Query failed for {module}: {e}")
         logger.error(f"Query: {query}")
         logger.error(f"Params: {params}")
         raise
-
-    total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
-
-    # Get totals only when there's a search or filter (not on default view)
-    totals = None
-    if search or count_where_sql:
-        totals_row = await fetch_all(totals_query, *count_params) if count_params else await fetch_all(totals_query)
-        if totals_row:
-            r = totals_row[0]
-            totals = {
-                "years": {year: int(r.get(f"sum_{year}", 0) or 0) for year in YEARS},
-                "totaal": int(r.get("sum_totaal", 0) or 0),
-            }
 
     # Use Typesense highlight info for "Gevonden in" column (fast!)
     # This replaces the slow PostgreSQL LATERAL JOIN approach.
@@ -1042,20 +1059,36 @@ async def _get_from_source_table(
         {where_sql}
     """
 
-    # Execute queries
-    rows = await fetch_all(query, *params)
-    total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
+    # Execute queries in PARALLEL for performance (750ms → ~250ms)
+    try:
+        coros = [
+            fetch_all(query, *params),
+            fetch_val(count_query, *count_params) if count_params else fetch_val(count_query),
+        ]
 
-    # Get totals only when there's a search or filter (not on default view)
-    totals = None
-    if search or filter_fields or min_bedrag is not None or max_bedrag is not None:
-        totals_row = await fetch_all(totals_query, *count_params) if count_params else await fetch_all(totals_query)
-        if totals_row:
-            r = totals_row[0]
-            totals = {
-                "years": {year: int(r.get(f"sum_{year}", 0) or 0) for year in YEARS},
-                "totaal": int(r.get("sum_totaal", 0) or 0),
-            }
+        # Include totals query only when there's a search or filter (not on default view)
+        run_totals = bool(search or filter_fields or min_bedrag is not None or max_bedrag is not None)
+        if run_totals:
+            coros.append(
+                fetch_all(totals_query, *count_params) if count_params else fetch_all(totals_query)
+            )
+
+        results = await asyncio.gather(*coros)
+        rows = results[0]
+        total = results[1]
+
+        totals = None
+        if run_totals and len(results) > 2:
+            totals_row = results[2]
+            if totals_row:
+                r = totals_row[0]
+                totals = {
+                    "years": {year: int(r.get(f"sum_{year}", 0) or 0) for year in YEARS},
+                    "totaal": int(r.get("sum_totaal", 0) or 0),
+                }
+    except Exception as e:
+        logger.error(f"Query failed in _get_from_source_table for {module}: {e}")
+        raise
 
     # Transform rows
     result = []
