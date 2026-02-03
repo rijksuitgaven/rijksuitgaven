@@ -1,6 +1,6 @@
 # Frontend Documentation
 
-**Last Updated:** 2026-02-02
+**Last Updated:** 2026-02-03
 **Stack:** Next.js 16.1.4 + TypeScript + Tailwind CSS + TanStack Table
 
 ---
@@ -120,7 +120,7 @@ Main data grid component using TanStack Table.
   - Click "+X meer": Opens detail panel for full breakdown
   - Styling: 12px, Navy Medium (`#436FA3`), cursor pointer, no underline/hover
 - Sticky columns on mobile (expand button + primary column)
-- Server-side pagination (25/100/150/250/500 rows per page)
+- Server-side pagination (50/100/150/250/500 rows per page)
 - Sortable columns
 - Loading skeleton
 - Empty state with suggestions
@@ -155,38 +155,31 @@ interface DataTableProps {
 
 ### ExpandedRow (`components/data-table/expanded-row.tsx`)
 
-Content displayed when a table row is expanded.
+Content displayed when a table row is expanded. Returns `<tr>` elements directly (via Fragment) to share parent table's column structure for perfect alignment.
 
 **Features:**
-- **Prominent context header** (UX Enhancement 3): Shows Regeling/primary context as headline with breadcrumb hierarchy
-- Cross-module indicator ("Ook in: Instrumenten, Publiek") in context header
-- Recipient name and row count below context
+- **Integrated header row**: Grouping dropdown + item count + year headers in single row
+- **Collapsible years**: 2016-2020 collapsed by default (matches main table)
 - Grouping selector dropdown (per-module fields)
 - Detail rows with tree structure (├ └ connectors)
 - Lazy loading of detail data
+- Year columns align perfectly with parent table
 
-**Context Header Per Module:**
-
-| Module | Headline | Breadcrumb |
-|--------|----------|------------|
-| instrumenten | Regeling | Artikel › Begrotingsnaam |
-| apparaat | Kostensoort | Artikel › Begrotingsnaam |
-| inkoop | Categorie | Ministerie |
-| provincie | Omschrijving | Provincie |
-| gemeente | Regeling | Beleidsterrein › Gemeente |
-| publiek | Regeling | Organisatie |
-| integraal | Module | - |
+**Architecture:**
+- Returns `<Fragment>` with multiple `<tr>` elements (not a nested table)
+- Uses `colSpan` for content columns to match parent structure
+- Shares parent table's column widths for alignment
 
 **Groupable Fields Per Module:**
 
-| Module | Fields |
-|--------|--------|
-| instrumenten | Regeling, Artikel, Begrotingsnaam |
-| apparaat | Artikel, Begrotingsnaam |
-| inkoop | Ministerie, Categorie |
-| provincie | Provincie |
-| gemeente | Gemeente, Beleidsterrein |
-| publiek | Organisatie, Regeling |
+| Module | Fields (ordered by usefulness) |
+|--------|-------------------------------|
+| instrumenten | Regeling, Artikel, Instrument, Begrotingsnaam, Artikelonderdeel, Detail |
+| apparaat | Kostensoort, Artikel, Detail, Begrotingsnaam |
+| inkoop | Ministerie, Categorie, Staffel |
+| provincie | Provincie, Omschrijving |
+| gemeente | Gemeente, Beleidsterrein, Regeling, Omschrijving |
+| publiek | Organisatie, Regeling, Sectoren, Trefwoorden |
 | integraal | Module |
 
 ### FilterPanel (`components/filter-panel/filter-panel.tsx`)
@@ -423,7 +416,6 @@ All API calls go through `/api/v1/...` which is handled by Next.js BFF (Backend-
 - Backend URL hidden from browser DevTools
 - Offset capped at 10,000
 - Limit capped at 500
-- `sort_by=random` blocked (converted to `totaal`)
 - Module name validation (alphabetic only)
 
 **Functions:**
@@ -645,3 +637,4 @@ npm run build
 | 2026-01-31 | Updated pagination options (25/100/150/250/500), default columns note |
 | 2026-01-31 | Fixed Apparaat columns (Kostensoort is primary, not extra) |
 | 2026-02-02 | Added BFF proxy documentation, updated environment variables |
+| 2026-02-03 | Updated ExpandedRow (Fragment architecture, full groupable fields), fixed pagination (50 default), removed random sort block from BFF |

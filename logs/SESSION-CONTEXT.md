@@ -859,9 +859,9 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-03 - **V2 Reporter Brainstorm + Expanded Row UX**
+**Last Session:** 2026-02-03 - **V2 Reporter Brainstorm + Expanded Row Fixes**
 
-**Today's Focus:** V2 Rijksuitgaven Reporter design, V3 Theme Classification docs, Expanded Row UI redesign
+**Today's Focus:** V2 Rijksuitgaven Reporter design, V3 Theme Classification docs, Expanded Row column alignment
 
 **Session 3 (Expanded Row UX):**
 - Removed redundant context header and recipient name
@@ -869,6 +869,11 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - Added collapsible 2016-2020 years (matches main table)
 - Found bug: Details API total mismatch (~€243M missing) - added to backlog
 - Removed total display until bug fixed
+
+**Session 4 (Column Alignment + Random Fix):**
+- Refactored expanded-row.tsx: nested table → Fragment with tr elements
+- Column alignment now perfect (shares parent table structure)
+- Fixed randomizer: removed BFF proxy block on sort_by=random
 
 **CLAUDE.md Updated:** Model selection now MANDATORY with user approval (cost control)
 

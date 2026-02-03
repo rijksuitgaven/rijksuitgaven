@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-01-31 (added filters review)
+**Last Updated:** 2026-02-03
 
 Items logged for future versions, not in V1.0 scope.
 
