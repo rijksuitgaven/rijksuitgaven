@@ -860,30 +860,35 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-03 - **V2 Reporter Brainstorm + Expanded Row Fixes**
+**Last Session:** 2026-02-03 - **V2 Reporter Brainstorm + Autocomplete Fixes + Instant Tooltips**
 
-**Today's Focus:** V2 Rijksuitgaven Reporter design, V3 Theme Classification docs, Expanded Row column alignment
+**Today's Focus:** V2 Rijksuitgaven Reporter design, V3 Theme Classification docs, Expanded Row fixes, Autocomplete improvements, Instant tooltips
 
-**Session 3 (Expanded Row UX):**
-- Removed redundant context header and recipient name
-- Integrated "Groeperen op" dropdown into table header (no whitespace)
-- Added collapsible 2016-2020 years (matches main table)
-- Found bug: Details API total mismatch (~€243M missing) - added to backlog
-- Removed total display until bug fixed
+**Sessions 1-2:** V2 Reporter design + V3 Theme Classification documentation
 
-**Session 4 (Column Alignment + Random Fix):**
-- Refactored expanded-row.tsx: nested table → Fragment with tr elements
-- Column alignment now perfect (shares parent table structure)
-- Fixed randomizer: removed BFF proxy block on sort_by=random
+**Sessions 3-6:** Expanded Row UX, column alignment, Details API performance, trend indicator fix
 
-**Session 5 (Details API Performance Fix):**
-- Created functional indexes on `normalize_recipient()` for all source tables
-- Response time: 9.3s → 0.42s (95% improvement)
-- SQL migration: `scripts/sql/020-normalize-recipient-indexes.sql`
+**Session 7 (Autocomplete Dropdown Regression):**
+- Fixed dropdown not appearing when typing "eff"
+- Root cause: Only fetching 25 results before word-boundary filtering discarded ~80%
+- Solution: Increased Typesense per_page to 100
 
-**Session 6 (Trend Indicator Badge Fix):**
-- Fixed background not covering full number on large amounts
-- Used `-mx-2 px-2` pattern to extend background beyond content bounds
+**Session 8 (Smart Autocomplete):**
+- Added match_type classification: "exact" (word-boundary) vs "prefix"
+- Fixed inkoop 500 error (simplified regex fallback)
+- Fixed hasUserTypedRef timing issue
+
+**Session 9 (Visual Simplification):**
+- Removed muted styling for prefix matches (ranking alone is sufficient)
+
+**Session 10 (Field Match Click Fix):**
+- Fixed: clicking "OOK GEVONDEN IN" items now applies as filter, not text search
+- Before: put regeling name in search → 0 results
+- After: applies `regeling: ["value"]` filter → shows recipients
+
+**Session 11 (Instant Tooltips):**
+- CSS-only tooltips replacing native title (~500ms delay → instant)
+- Fixed overflow clipping by positioning above text + moving to parent wrappers
 
 **CLAUDE.md Updated:** Model selection now MANDATORY with user approval (cost control)
 
