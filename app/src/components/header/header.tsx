@@ -1,10 +1,18 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+
+// Force hard navigation to reset all filters and page state
+function useHardNavigation() {
+  return useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault()
+    window.location.href = href
+  }, [])
+}
 
 // Ontvangers modules (recipient-based data)
 const ONTVANGERS_MODULES = [
@@ -24,6 +32,7 @@ const KOSTEN_MODULES = [
 export function Header() {
   const pathname = usePathname()
   const navRef = useRef<HTMLElement>(null)
+  const handleHardNav = useHardNavigation()
 
   // Scroll active tab into view on mobile
   useEffect(() => {
@@ -104,6 +113,7 @@ export function Header() {
                     <Link
                       key={module.id}
                       href={`/${module.id}`}
+                      onClick={(e) => handleHardNav(e, `/${module.id}`)}
                       data-active={isActive}
                       className={cn(
                         'group relative flex items-center gap-1 px-3 py-5 text-sm font-medium transition-colors whitespace-nowrap',
@@ -143,6 +153,7 @@ export function Header() {
                     <Link
                       key={module.id}
                       href={`/${module.id}`}
+                      onClick={(e) => handleHardNav(e, `/${module.id}`)}
                       data-active={isActive}
                       className={cn(
                         'group relative flex items-center px-3 py-5 text-sm font-medium transition-colors whitespace-nowrap',
