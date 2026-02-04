@@ -67,6 +67,7 @@ interface ExpandedRowProps {
   module: string
   availableYears: number[]
   extraColumnsCount?: number
+  onFilterLinkClick?: (field: string, value: string) => void
 }
 
 /**
@@ -78,6 +79,7 @@ export function ExpandedRow({
   module,
   availableYears,
   extraColumnsCount = 0,
+  onFilterLinkClick,
 }: ExpandedRowProps) {
   const [grouping, setGrouping] = useState(GROUPABLE_FIELDS[module]?.[0]?.value ?? 'regeling')
   const [details, setDetails] = useState<DetailRow[]>([])
@@ -259,9 +261,16 @@ export function ExpandedRow({
             <td colSpan={contentColSpan} className="px-3 py-2.5 border-b border-[var(--border)]">
               <div className="flex items-center gap-2" data-tooltip={detail.group_value || undefined}>
                 <span className="text-[var(--muted-foreground)]">{isLast ? '└' : '├'}</span>
-                <span className="text-sm text-[var(--navy-dark)] truncate max-w-[400px]">
-                  {detail.group_value || '-'}
-                </span>
+                {detail.group_value ? (
+                  <button
+                    onClick={() => onFilterLinkClick?.(grouping, detail.group_value!)}
+                    className="text-sm text-[var(--navy-dark)] truncate max-w-[400px] text-left hover:text-[var(--pink)] transition-colors cursor-pointer"
+                  >
+                    {detail.group_value}
+                  </button>
+                ) : (
+                  <span className="text-sm text-[var(--muted-foreground)]">-</span>
+                )}
               </div>
             </td>
             {/* Collapsed years cell */}

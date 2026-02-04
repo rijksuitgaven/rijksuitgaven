@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, Fragment } from 'react'
+import { useState, useMemo, Fragment, useEffect } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
@@ -59,6 +59,7 @@ interface DataTableProps {
   onSortChange?: (column: string, direction: 'asc' | 'desc') => void
   onRowExpand?: (primaryValue: string) => void
   onRowClick?: (primaryValue: string) => void // Click on recipient name to open detail panel
+  onFilterLinkClick?: (field: string, value: string) => void // Click on extra column value to filter
   renderExpandedRow?: (row: RecipientRow) => React.ReactNode
   moduleId?: string // For export filename
   selectedColumns?: string[]  // Selected extra columns (UX-005)
@@ -262,6 +263,7 @@ export function DataTable({
   onSortChange,
   onRowExpand,
   onRowClick,
+  onFilterLinkClick,
   renderExpandedRow,
   moduleId = 'export',
   selectedColumns = [],
@@ -273,6 +275,11 @@ export function DataTable({
   const [sorting, setSorting] = useState<SortingState>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [yearsExpanded, setYearsExpanded] = useState(false)
+
+  // Reset expanded state when data changes (e.g., after filter applied)
+  useEffect(() => {
+    setExpanded({})
+  }, [data])
   const [isExportingCSV, setIsExportingCSV] = useState(false)
   const [isExportingXLS, setIsExportingXLS] = useState(false)
 
@@ -444,10 +451,16 @@ export function DataTable({
 
               return (
                 <div className="max-w-[140px]" data-tooltip={value}>
-                  {/* Value with 2-line max and ellipsis overflow */}
-                  <div className="text-sm text-[var(--navy-dark)] line-clamp-2">
+                  {/* Clickable value - filters to show all recipients with this value */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onFilterLinkClick?.(colKey, value)
+                    }}
+                    className="text-sm text-[var(--navy-dark)] line-clamp-2 text-left hover:text-[var(--pink)] transition-colors cursor-pointer"
+                  >
                     {value}
-                  </div>
+                  </button>
                   {/* "+X meer" indicator when multiple distinct values exist */}
                   {hasMore && (
                     <button
@@ -568,7 +581,7 @@ export function DataTable({
     })
 
     return cols
-  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onRowClick, selectedColumns, moduleId, searchQuery])
+  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onRowClick, onFilterLinkClick, selectedColumns, moduleId, searchQuery])
 
   const table = useReactTable({
     data,

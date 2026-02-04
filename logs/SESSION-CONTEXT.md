@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-03 (Day Close)
+**Last Updated:** 2026-02-04
 **Project Phase:** V1.0 Development
 **Current Sprint:** Mini Sprint - UI/UX Polish (before Week 6)
 
@@ -81,20 +81,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **docs/plans/2026-02-03-rijksuitgaven-reporter-design.md** ⭐ CREATED (2026-02-03)
+1. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-04)
+   UX-007: Added `onFilterLinkClick` prop, clickable extra columns with pink hover, `useEffect` to reset expanded state on data change
+
+2. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-04)
+   UX-007: Added `onFilterLinkClick` prop, clickable grouped values with pink hover
+
+3. **app/src/components/module-page/module-page.tsx** ⭐ MODIFIED (2026-02-04)
+   UX-007: Added `handleFilterLinkClick` handler, dynamic URL param parsing, callback passed to components
+
+4. **logs/daily/2026-02-04.md** ⭐ CREATED (2026-02-04)
+   Daily log for hyperlinks feature (UX-007)
+
+5. **docs/plans/2026-02-03-rijksuitgaven-reporter-design.md** ⭐ CREATED (2026-02-03)
    V2 Rijksuitgaven Reporter complete design: architecture, DB schema, email pipeline
-
-2. **docs/v3-themes/DECISIONS.md** ⭐ CREATED (2026-02-03)
-   V3 Theme Classification ADRs: row-level classification, 6-layer hybrid, confidence scores
-
-3. **docs/VERSIONING.md** ⭐ UPDATED (2026-02-03)
-   V2=Reporter, V3=Themes, added V9 European, V3 documentation links
-
-4. **docs/reference/ibos-domains.md** ⭐ CREATED (2026-02-03)
-   IBOS 30 policy domains reference (stub for V3)
-
-5. **scripts/sql/v3-themes/README.md** ⭐ CREATED (2026-02-03)
-   V3 SQL migration guide with schema overview
 
 ---
 
@@ -860,17 +860,17 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-03 - **V2 Reporter Brainstorm + Search Performance + 14 Sessions (49 commits)**
+**Last Session:** 2026-02-04 - **UX-007: Clickable Hyperlinks Feature**
 
-**Today's Focus:** V2 Rijksuitgaven Reporter design, V3 Theme Classification docs, Expanded Row fixes, Autocomplete improvements, Instant tooltips, Totals Row feature, Search Performance optimization
+**Today's Focus:** Hyperlinks feature - extra column values and expanded row grouped values are now clickable to filter the data (drill-down exploration)
 
-**Sessions 1-2:** V2 Reporter design + V3 Theme Classification documentation
+**2026-02-04 Session 1:** UX-007 Hyperlinks feature - clickable extra columns and expanded row values
 
-**Sessions 3-6:** Expanded Row UX, column alignment, Details API performance, trend indicator fix
-
-**Sessions 7-11:** Autocomplete regression fix, smart matching (exact vs prefix), visual simplification, field match click fix, instant tooltips
-
-**Sessions 12-14:** Totals Row implementation, Search performance optimization (parallel queries 750ms → ~200ms), Query tuning attempt (reverted)
+**Previous (2026-02-03):**
+- Sessions 1-2: V2 Reporter design + V3 Theme Classification documentation
+- Sessions 3-6: Expanded Row UX, column alignment, Details API performance, trend indicator fix
+- Sessions 7-11: Autocomplete regression fix, smart matching (exact vs prefix), visual simplification, field match click fix, instant tooltips
+- Sessions 12-14: Totals Row implementation, Search performance optimization (parallel queries 750ms → ~200ms), Query tuning attempt (reverted)
 
 **Session 7 (Autocomplete Dropdown Regression):**
 - Fixed dropdown not appearing when typing "eff"
@@ -1494,13 +1494,56 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 | ~~**2026-02-01**~~ | ~~Autocomplete fixes~~ ✅ |
 | ~~**2026-02-02**~~ | ~~Filter multi-select + BFF proxy + table polish~~ ✅ |
 | ~~**2026-02-03**~~ | ~~Strategic brainstorm: V2 Reporter + V3 Themes documentation~~ ✅ |
-| **2026-02-03 (later)** | Overzichtspagina design + implementation |
-| **2026-02-04** | Hyperlinks (cross-module navigation) |
+| ~~**2026-02-04**~~ | ~~Hyperlinks (clickable filter values)~~ ✅ |
+| **Next** | Mobile message banner |
+| **Next** | Overzichtspagina design + implementation |
 
 **After Mini Sprint:**
 - Week 6 - User Auth (Magic Link, user migration)
 - Week 7-9 - Polish and launch
 - Beta testing preparation
+
+---
+
+**2026-02-04 - UX-007 CLICKABLE HYPERLINKS**
+
+**Focus:** Make extra column values and expanded row grouped values clickable for drill-down data exploration
+
+**Feature Implemented:**
+- Click on extra column values (Artikel, Regeling, etc.) to filter by that value
+- Click on expanded row grouped values to filter by that value
+- Clear start behavior: clicking clears all existing filters and applies only the clicked filter
+- Visual: text turns pink (#E62D75) on hover, cursor pointer, no underline
+- All rows collapse when new filtered data loads
+
+**Technical Implementation:**
+- Added `onFilterLinkClick` callback prop to DataTable and ExpandedRow components
+- Added `handleFilterLinkClick` handler in ModulePage that calls `setFilters()` directly
+- Added `useEffect` to reset expanded state when data changes (fixes rows staying expanded)
+- Used direct state update instead of router.push() to avoid infinite render loops
+
+**Bug Fixes During Implementation:**
+1. Click not working → Changed from router.push() to direct setFilters() call
+2. Infinite render loop → Removed URL-to-state sync effect
+3. Rows staying expanded → Added useEffect to reset expanded state on data change
+
+**Files Modified:**
+- `app/src/components/data-table/data-table.tsx`
+- `app/src/components/data-table/expanded-row.tsx`
+- `app/src/components/module-page/module-page.tsx`
+
+**Applies to all 6 modules:**
+| Module | Clickable Extra Columns |
+|--------|------------------------|
+| Instrumenten | Artikel, Regeling |
+| Apparaat | Artikel, Detail |
+| Inkoop | Categorie, Staffel |
+| Provincie | Provincie, Omschrijving |
+| Gemeente | Gemeente, Omschrijving |
+| Publiek | Organisatie |
+
+**Commits:** (pending)
+- UX-007: Clickable hyperlinks for extra columns and expanded row values
 
 ---
 

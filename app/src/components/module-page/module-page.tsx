@@ -135,13 +135,25 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     setIsHydrated(true)
   }, [moduleId])
 
-  // Initialize filters from URL params
-  const [filters, setFilters] = useState<FilterValues>(() => ({
-    search: searchParams.get('q') ?? '',
-    jaar: searchParams.get('jaar') ? parseInt(searchParams.get('jaar')!, 10) : null,
-    minBedrag: searchParams.get('min_bedrag') ? parseFloat(searchParams.get('min_bedrag')!) : null,
-    maxBedrag: searchParams.get('max_bedrag') ? parseFloat(searchParams.get('max_bedrag')!) : null,
-  }))
+  // Initialize filters from URL params (including dynamic filter fields)
+  const [filters, setFilters] = useState<FilterValues>(() => {
+    const baseFilters: FilterValues = {
+      search: searchParams.get('q') ?? '',
+      jaar: searchParams.get('jaar') ? parseInt(searchParams.get('jaar')!, 10) : null,
+      minBedrag: searchParams.get('min_bedrag') ? parseFloat(searchParams.get('min_bedrag')!) : null,
+      maxBedrag: searchParams.get('max_bedrag') ? parseFloat(searchParams.get('max_bedrag')!) : null,
+    }
+
+    // Parse dynamic filter params (e.g., regeling=value, artikel=value)
+    const standardKeys = ['q', 'jaar', 'min_bedrag', 'max_bedrag']
+    searchParams.forEach((value, key) => {
+      if (!standardKeys.includes(key) && value) {
+        baseFilters[key] = [value]
+      }
+    })
+
+    return baseFilters
+  })
 
   // Get active filter field names (multiselect filters with values selected)
   // These will be shown as columns automatically (max 2, in filter order) - UX-006
@@ -185,6 +197,16 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     if (filters.jaar) params.set('jaar', String(filters.jaar))
     if (filters.minBedrag) params.set('min_bedrag', String(filters.minBedrag))
     if (filters.maxBedrag) params.set('max_bedrag', String(filters.maxBedrag))
+
+    // Include dynamic filter params (multiselect filters)
+    const standardKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag']
+    Object.entries(filters).forEach(([key, value]) => {
+      if (!standardKeys.includes(key) && Array.isArray(value) && value.length > 0) {
+        // For multiselect, only include first value in URL (simple link sharing)
+        // Full multi-value would need comma-separated or multiple params
+        params.set(key, value[0])
+      }
+    })
 
     const newUrl = params.toString() ? `/${moduleId}?${params.toString()}` : `/${moduleId}`
     router.replace(newUrl, { scroll: false })
@@ -308,14 +330,28 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     setIsDetailOpen(false)
   }, [])
 
+  // Handle click on extra column value - apply filter (clear start)
+  const handleFilterLinkClick = useCallback((field: string, value: string) => {
+    // Clear all filters and apply only the clicked filter
+    setFilters({
+      search: '',
+      jaar: null,
+      minBedrag: null,
+      maxBedrag: null,
+      [field]: [value],
+    })
+    setPage(1)
+  }, [])
+
   const renderExpandedRow = useCallback((row: RecipientRow) => (
     <ExpandedRow
       row={row}
       module={moduleId}
       availableYears={data?.availableYears ?? []}
       extraColumnsCount={effectiveColumns.length}
+      onFilterLinkClick={handleFilterLinkClick}
     />
-  ), [moduleId, data?.availableYears, effectiveColumns.length])
+  ), [moduleId, data?.availableYears, effectiveColumns.length, handleFilterLinkClick])
 
   if (error) {
     return (
@@ -382,6 +418,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             onSortChange={handleSortChange}
             onRowExpand={handleRowExpand}
             onRowClick={handleRowClick}
+            onFilterLinkClick={handleFilterLinkClick}
             renderExpandedRow={renderExpandedRow}
             moduleId={moduleId}
             selectedColumns={effectiveColumns}
