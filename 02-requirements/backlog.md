@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-02-03
+**Last Updated:** 2026-02-04
 
 Items logged for future versions, not in V1.0 scope.
 
@@ -465,28 +465,31 @@ Comprehensive mobile UX testing and fixes before launch.
 
 ---
 
-### Search Performance Optimization (Pre-Launch)
+### Search Performance Optimization
 
-**Priority:** HIGH (User Decision: Optimize before launch)
+**Priority:** ✅ PHASE 1 COMPLETE (V1.1 for Phase 2)
 **Added:** 2026-02-03
+**Updated:** 2026-02-04
 **Type:** Performance
 
-**Current State:**
+**Phase 1 - COMPLETE (2026-02-03):**
 - Target: <100ms
-- Actual: ~750ms
-- Gap: 7.5x slower than target
+- Achieved: ~130-280ms (via parallel query execution)
+- Implementation: `asyncio.gather()` for main/count/totals queries
+- Commit: `ee055a4`
 
 **Previous Optimizations (already applied):**
 1. ✅ Materialized views
 2. ✅ pg_trgm + GIN indexes
 3. ✅ Hybrid Typesense → PostgreSQL search
 4. ✅ Functional indexes on normalize_recipient()
+5. ✅ Parallel query execution (Phase 1)
 
-**Remaining Options:**
-1. **Materialized view for search results** (planned) - Could reduce ~750ms → ~200ms
-2. Redis/memory caching layer (if #1 insufficient)
-3. Read replica for heavy queries (unlikely needed)
+**Phase 2 - Deferred to V1.1:**
+- Store year amounts in Typesense documents
+- Skip PostgreSQL entirely for search results
+- Target: ~25-50ms
 
-**Status:** To be implemented before launch per user decision (2026-02-03).
+**Status:** Phase 1 complete. Phase 2 deferred to V1.1 per user decision (2026-02-03).
 
 ---

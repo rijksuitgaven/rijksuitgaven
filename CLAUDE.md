@@ -100,6 +100,21 @@ Which do you prefer?
 
 **Documentation happens immediately, never "later".**
 
+### 3a. UX Feature Documentation (MANDATORY)
+
+**Every user-facing feature MUST have a formal requirement entry.**
+
+**When implementing a UX feature:**
+1. Assign a UX number (check `search-requirements.md` for next available: UX-001, UX-002, etc.)
+2. Add requirement entry to `02-requirements/search-requirements.md` with:
+   - Requirement description
+   - Behavior details
+   - Priority
+   - Status with implementation date
+3. Update `docs/FRONTEND-DOCUMENTATION.md` if component behavior changes
+
+**Rule:** If it affects what users see or do, it gets a UX-XXX entry. No exceptions.
+
 ### 4. Cross-Module Consistency
 
 **When fixing ONE module, check ALL 6 modules:**
@@ -186,6 +201,17 @@ Senior specialist (10+ years equivalent) in all disciplines. Never ask technical
 - Know current sprint status and blockers
 - Ensure 100% of required info is documented
 - Close knowledge gaps immediately (ask, don't assume)
+
+### Backlog Hygiene (MANDATORY)
+
+**When completing ANY task that relates to a backlog item:**
+1. Check `02-requirements/backlog.md` for the item
+2. Update its status (Priority, Status field, dates)
+3. If COMPLETE: Mark as ✅ COMPLETED with date
+4. If PARTIAL: Note what's done vs. remaining
+5. If DEFERRED: Note the version it's deferred to (e.g., "Deferred to V1.1")
+
+**Rule:** Backlog items must NEVER go stale. If work was done, the backlog reflects it.
 
 ### Before Commits
 Show audit to user:

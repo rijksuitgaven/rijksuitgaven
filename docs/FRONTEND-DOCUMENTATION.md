@@ -231,15 +231,17 @@ Column customization for expanded row detail fields (UX-005).
 
 **Available Columns Per Module:**
 
+*Note: Max 2 columns displayed (MAX_SELECTED_COLUMNS = 2). Asterisk (*) indicates default.*
+
 | Module | Columns (* = default) |
 |--------|----------------------|
 | instrumenten | Artikel*, Regeling*, Instrument, Artikelonderdeel, Begrotingsnaam, Detail |
 | apparaat | Artikel*, Detail*, Begrotingsnaam |
-| inkoop | Ministerie*, Categorie*, Staffel* |
+| inkoop | Categorie*, Staffel*, Ministerie |
 | provincie | Provincie*, Omschrijving* |
 | gemeente | Gemeente*, Omschrijving*, Beleidsterrein, Regeling |
 | publiek | Organisatie*, Regeling, Trefwoorden, Sectoren, Regio |
-| integraal | Modules* |
+| integraal | (none - modules shown inline) |
 
 ### ModulePage (`components/module-page/module-page.tsx`)
 

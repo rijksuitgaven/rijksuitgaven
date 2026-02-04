@@ -735,6 +735,33 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-009: Search Tips Popover
+
+**Requirement:** Help users understand the power of the new search system
+
+**Behavior:**
+- Info icon button next to search bar (matches Filters button style)
+- First-visit pulse animation (pink glow, localStorage persisted)
+- Navy popover with pink accent (brand-aligned)
+- Dynamic content per module showing searchable fields
+
+**Content (Dutch):**
+- "SLIM ZOEKEN" header
+- Module-specific searchable fields list
+- 3 examples: single term, multiple words, prefix
+- Tip directing to filters for more precision
+
+**Rationale:**
+- Exception to "don't explain" rule
+- Users burned by poor WordPress search need confidence in new system
+- One-time attention grab via pulse animation
+
+**Priority:** P2 (Medium)
+
+**Status:** ✅ Implemented 2026-02-02
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload
