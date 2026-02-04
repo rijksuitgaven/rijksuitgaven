@@ -457,7 +457,7 @@ export function DataTable({
                       e.stopPropagation()
                       onFilterLinkClick?.(colKey, value)
                     }}
-                    className="text-sm text-[var(--navy-dark)] line-clamp-2 text-left hover:text-[var(--pink)] transition-colors cursor-pointer"
+                    className="text-sm text-[var(--navy-dark)] line-clamp-2 text-left hover:text-[var(--pink)] hover:underline transition-colors cursor-pointer"
                   >
                     {value}
                   </button>
