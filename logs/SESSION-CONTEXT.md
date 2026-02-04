@@ -81,20 +81,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-04)
-   UX-007: Added `onFilterLinkClick` prop, clickable extra columns with pink hover, `useEffect` to reset expanded state on data change
+1. **CLAUDE.md** ⭐ MODIFIED (2026-02-04)
+   Added Backlog Hygiene rule + UX Feature Documentation rule (3a) to prevent documentation drift
 
-2. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-04)
-   UX-007: Added `onFilterLinkClick` prop, clickable grouped values with pink hover
+2. **02-requirements/search-requirements.md** ⭐ MODIFIED (2026-02-04)
+   Added UX-007 (hyperlinks), UX-008 (hard navigation), UX-009 (search tips popover)
 
-3. **app/src/components/module-page/module-page.tsx** ⭐ MODIFIED (2026-02-04)
-   UX-007: Added `handleFilterLinkClick` handler, dynamic URL param parsing, callback passed to components
+3. **app/src/components/header/header.tsx** ⭐ MODIFIED (2026-02-04)
+   UX-008: Added useHardNavigation hook for module menu clicks
 
-4. **logs/daily/2026-02-04.md** ⭐ CREATED (2026-02-04)
-   Daily log for hyperlinks feature (UX-007)
+4. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-04)
+   UX-007: Added onFilterLinkClick prop, clickable extra columns, expanded state reset
 
-5. **docs/plans/2026-02-03-rijksuitgaven-reporter-design.md** ⭐ CREATED (2026-02-03)
-   V2 Rijksuitgaven Reporter complete design: architecture, DB schema, email pipeline
+5. **app/src/components/module-page/module-page.tsx** ⭐ MODIFIED (2026-02-04)
+   UX-007: Added handleFilterLinkClick handler, direct state updates
 
 ---
 
@@ -860,13 +860,16 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-04 - **UX-007: Clickable Hyperlinks Feature**
+**Last Session:** 2026-02-04 - **UX-007/UX-008 + PM Process Improvements (3 sessions, 5 commits)**
 
-**Today's Focus:** Hyperlinks feature - extra column values and expanded row grouped values are now clickable to filter the data (drill-down exploration)
+**Today's Focus:** Hyperlinks feature + hard navigation + documentation audit with PM process improvements
 
 **2026-02-04 Sessions:**
 - Session 1: UX-007 Hyperlinks feature - clickable extra columns and expanded row values
 - Session 2: UX-008 Hard navigation - module menu clicks reset filters and reload page
+- Session 3: Documentation audit - identified gaps, added PM rules to CLAUDE.md, updated requirements
+
+**Estimated Project Total:** ~73 hours across 15 working days (since 2026-01-14)
 
 **Previous (2026-02-03):**
 - Sessions 1-2: V2 Reporter design + V3 Theme Classification documentation
