@@ -336,6 +336,8 @@
 
 | Task | Priority | Status |
 |------|----------|--------|
+| **Clickable hyperlinks (UX-007)** | **HIGH** | ✅ Completed 2026-02-04 |
+| **Hard navigation (UX-008)** | **HIGH** | ✅ Completed 2026-02-04 |
 | **Mobile message banner** | **HIGH** | ❌ Not started (**NEXT**) |
 | **Search performance optimization** | **HIGH** | 🔨 Phase 1 done (~130-280ms), Phase 2 deferred to V1.1 |
 | Overzicht page design + implementation | HIGH | ❌ Not started (blocks Week 6) |

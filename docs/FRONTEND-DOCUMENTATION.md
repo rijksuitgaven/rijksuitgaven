@@ -1,6 +1,6 @@
 # Frontend Documentation
 
-**Last Updated:** 2026-02-03
+**Last Updated:** 2026-02-04
 **Stack:** Next.js 16.1.4 + TypeScript + Tailwind CSS + TanStack Table
 
 ---
@@ -126,6 +126,10 @@ Main data grid component using TanStack Table.
 - Empty state with suggestions
 - CSV export (max 500 rows)
 - XLS export (max 500 rows) - via xlsx library
+- **Clickable extra columns** (UX-007): Click value to filter by that field
+  - Hover: pink text + underline
+  - Click: clears all filters, applies only clicked filter
+  - All rows collapse after filter applied
 
 **CSV Export:**
 - Max 500 rows (constant: `MAX_EXPORT_ROWS`)
@@ -156,6 +160,8 @@ interface DataTableProps {
   onPerPageChange?: (perPage: number) => void
   onSortChange?: (column: string, direction: 'asc' | 'desc') => void
   onRowExpand?: (primaryValue: string) => void
+  onRowClick?: (primaryValue: string) => void
+  onFilterLinkClick?: (field: string, value: string) => void  // UX-007: Click extra column to filter
   renderExpandedRow?: (row: RecipientRow) => React.ReactNode
   moduleId?: string  // Used for CSV export filename
   totals?: TotalsData | null  // Aggregated totals when searching/filtering
@@ -178,6 +184,9 @@ Content displayed when a table row is expanded. Returns `<tr>` elements directly
 - Detail rows with tree structure (├ └ connectors)
 - Lazy loading of detail data
 - Year columns align perfectly with parent table
+- **Clickable grouped values** (UX-007): Click value to filter by that field
+  - Hover: pink text + underline
+  - Click: clears all filters, applies only clicked filter
 
 **Architecture:**
 - Returns `<Fragment>` with multiple `<tr>` elements (not a nested table)
@@ -268,6 +277,7 @@ Global navigation header (rendered in layout.tsx).
 - Privacy policy link
 - Login button (placeholder for Week 6)
 - Sticky positioning (z-index 40)
+- **Hard navigation** (UX-008): Module clicks force full page reload, resetting all filters
 
 **Responsive Behavior:**
 | Screen Size | Navigation | Search | Menu |
@@ -652,3 +662,4 @@ npm run build
 | 2026-01-31 | Fixed Apparaat columns (Kostensoort is primary, not extra) |
 | 2026-02-02 | Added BFF proxy documentation, updated environment variables |
 | 2026-02-03 | Updated ExpandedRow (Fragment architecture, full groupable fields), fixed pagination (50 default), removed random sort block from BFF |
+| 2026-02-04 | Added UX-007 clickable hyperlinks (extra columns + expanded row), UX-008 hard navigation on module menu |

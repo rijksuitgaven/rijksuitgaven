@@ -698,6 +698,63 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-007: Clickable Hyperlinks for Drill-Down
+
+**Requirement:** Extra column values and expanded row grouped values are clickable to filter the data
+
+**Behavior:**
+- Click extra column value (Artikel, Regeling, etc.) → filters table by that value
+- Click expanded row grouped value → filters table by that value
+- **Clear start:** Click clears ALL existing filters and applies only the clicked filter
+- All rows collapse when new filtered data loads
+
+**Visual:**
+- Hover: Text turns pink (#E62D75) + underline
+- Cursor: pointer
+- No underline when not hovering
+
+**Clickable columns per module:**
+
+| Module | Clickable Extra Columns |
+|--------|------------------------|
+| Instrumenten | Artikel, Regeling |
+| Apparaat | Artikel, Detail |
+| Inkoop | Categorie, Staffel |
+| Provincie | Provincie, Omschrijving |
+| Gemeente | Gemeente, Omschrijving |
+| Publiek | Organisatie |
+
+**Implementation:**
+- `onFilterLinkClick` callback prop on DataTable and ExpandedRow
+- Direct state update via `setFilters()` (not URL navigation to avoid render loops)
+- `useEffect` resets expanded state when data changes
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-02-04
+
+---
+
+### UX-008: Hard Navigation on Module Menu
+
+**Requirement:** Clicking a module in the navigation menu forces a full page reload
+
+**Behavior:**
+- Click any module tab → full page reload (not client-side navigation)
+- Resets all filters to defaults
+- Shows fresh random data (per UX-002 randomization)
+
+**Rationale:**
+- Users expect clicking a module to show a "fresh" view
+- Client-side navigation preserved filter state unexpectedly
+- Consistent behavior whether clicking current or different module
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-02-04
+
+---
+
 ### UX-003: Mobile Responsiveness
 
 **Requirement:** Optimize for mobile, but desktop-first for data work
@@ -971,5 +1028,5 @@ Search "bedrijvenbeleid" shows:
 ---
 
 **Document Status:** V1.0 Scope - Implementation In Progress
-**Last Updated:** 2026-02-03
+**Last Updated:** 2026-02-04
 **Author:** Technical Project Manager (AI Assistant)

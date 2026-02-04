@@ -864,7 +864,9 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 **Today's Focus:** Hyperlinks feature - extra column values and expanded row grouped values are now clickable to filter the data (drill-down exploration)
 
-**2026-02-04 Session 1:** UX-007 Hyperlinks feature - clickable extra columns and expanded row values
+**2026-02-04 Sessions:**
+- Session 1: UX-007 Hyperlinks feature - clickable extra columns and expanded row values
+- Session 2: UX-008 Hard navigation - module menu clicks reset filters and reload page
 
 **Previous (2026-02-03):**
 - Sessions 1-2: V2 Reporter design + V3 Theme Classification documentation
