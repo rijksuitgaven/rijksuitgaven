@@ -97,7 +97,7 @@ export function MobileBanner() {
               onClick={handleDismiss}
               className="w-full bg-[var(--pink)] hover:opacity-90 text-white px-6 py-3 rounded-lg text-sm font-medium transition-opacity"
             >
-              Toch doorgaan
+              Doorgaan
             </button>
           </div>
 
