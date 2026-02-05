@@ -5,7 +5,7 @@
 **Region:** eu-west-1
 **Created:** 2026-01-21
 **Data Migrated:** 2026-01-23
-**Last Updated:** 2026-02-03 (functional indexes for normalize_recipient)
+**Last Updated:** 2026-02-05 (filter column indexes for DISTINCT queries)
 
 ---
 
@@ -104,6 +104,10 @@
 - `idx_instrumenten_ontvanger_jaar` - Composite: recipient + year (details with year filter)
 - `idx_instrumenten_regeling` - Fast regulation search
 - `idx_instrumenten_ontvanger_normalized` - Functional index on `normalize_recipient(ontvanger)` for entity resolution
+- `idx_instrumenten_begrotingsnaam` - Filter dropdown DISTINCT (2026-02-05)
+- `idx_instrumenten_artikel` - Filter dropdown DISTINCT (2026-02-05)
+- `idx_instrumenten_artikelonderdeel` - Filter dropdown DISTINCT (2026-02-05)
+- `idx_instrumenten_instrument` - Filter dropdown DISTINCT (2026-02-05)
 
 ---
 
@@ -134,6 +138,9 @@
 - `idx_apparaat_kostensoort_details` - Details query optimization
 - `idx_apparaat_begrotingsjaar` - Fast year filtering
 - `idx_apparaat_kostensoort_jaar` - Composite: kostensoort + year
+- `idx_apparaat_begrotingsnaam` - Filter dropdown DISTINCT (2026-02-05)
+- `idx_apparaat_artikel` - Filter dropdown DISTINCT (2026-02-05)
+- `idx_apparaat_detail` - Filter dropdown DISTINCT (2026-02-05)
 
 ---
 
@@ -159,7 +166,9 @@
 - `idx_inkoop_leverancier_details` - Details query optimization
 - `idx_inkoop_jaar` - Fast year filtering
 - `idx_inkoop_leverancier_jaar` - Composite: supplier + year
-- `idx_inkoop_ministerie` - Fast ministry filtering
+- `idx_inkoop_ministerie` - Fast ministry filtering / Filter dropdown DISTINCT
+- `idx_inkoop_categorie` - Filter dropdown DISTINCT (2026-02-05)
+- `idx_inkoop_staffel` - Filter dropdown DISTINCT (2026-02-05)
 
 ---
 
@@ -185,7 +194,7 @@
 - `idx_provincie_ontvanger_details` - Details query optimization
 - `idx_provincie_jaar` - Fast year filtering
 - `idx_provincie_ontvanger_jaar` - Composite: recipient + year
-- `idx_provincie_provincie` - Fast province filtering
+- `idx_provincie_provincie` - Fast province filtering / Filter dropdown DISTINCT (2026-02-05)
 
 ---
 
@@ -214,7 +223,8 @@
 - `idx_gemeente_ontvanger_details` - Details query optimization
 - `idx_gemeente_jaar` - Fast year filtering
 - `idx_gemeente_ontvanger_jaar` - Composite: recipient + year
-- `idx_gemeente_gemeente` - Fast municipality filtering
+- `idx_gemeente_gemeente` - Fast municipality filtering / Filter dropdown DISTINCT
+- `idx_gemeente_beleidsterrein` - Filter dropdown DISTINCT (2026-02-05)
 
 **Note:** Column was renamed from `stad` to `gemeente` during migration.
 
@@ -250,7 +260,8 @@
 - `idx_publiek_ontvanger_details` - Details query optimization
 - `idx_publiek_jaar` - Fast year filtering
 - `idx_publiek_ontvanger_jaar` - Composite: recipient + year
-- `idx_publiek_source` - Fast source filtering
+- `idx_publiek_source` - Fast source filtering / Filter dropdown DISTINCT (2026-02-05)
+- `idx_publiek_regeling` - Filter dropdown DISTINCT (2026-02-05)
 
 **Note:** Uses PostGIS geometry for location data.
 
@@ -676,6 +687,8 @@ VACUUM ANALYZE universal_search;
 | `007-search-optimization-indexes.sql` | pg_trgm + GIN indexes for ILIKE | Once after views created (done) |
 | `008-source-table-indexes.sql` | Source table indexes for details | Once (done) |
 | `009-entity-resolution-normalization.sql` | Entity resolution + universal_search | Once (done) |
+| `020-normalize-recipient-indexes.sql` | Functional indexes for normalize_recipient | Once (done) |
+| `021-filter-column-indexes.sql` | B-tree indexes on filter columns for DISTINCT | Once (done 2026-02-05) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---

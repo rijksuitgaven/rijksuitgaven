@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-04
+**Last Updated:** 2026-02-05
 **Project Phase:** V1.0 Development
 **Current Sprint:** Mini Sprint - UI/UX Polish (before Week 6)
 
@@ -81,20 +81,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **CLAUDE.md** ⭐ MODIFIED (2026-02-04)
-   Added Backlog Hygiene rule + UX Feature Documentation rule (3a) to prevent documentation drift
+1. **app/src/components/mobile-banner/mobile-banner.tsx** ⭐ CREATED (2026-02-05)
+   UX-003: Mobile message banner for viewports < 768px
 
-2. **02-requirements/search-requirements.md** ⭐ MODIFIED (2026-02-04)
-   Added UX-007 (hyperlinks), UX-008 (hard navigation), UX-009 (search tips popover)
+2. **scripts/sql/021-filter-column-indexes.sql** ⭐ CREATED (2026-02-05)
+   B-tree indexes on 17 filter columns for faster DISTINCT queries (70% improvement)
 
-3. **app/src/components/header/header.tsx** ⭐ MODIFIED (2026-02-04)
-   UX-008: Added useHardNavigation hook for module menu clicks
+3. **docs/VERSIONING.md** ⭐ MODIFIED (2026-02-05)
+   Added Typesense facets to V1.1 roadmap
 
-4. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-04)
-   UX-007: Added onFilterLinkClick prop, clickable extra columns, expanded state reset
+4. **02-requirements/backlog.md** ⭐ MODIFIED (2026-02-05)
+   Updated Filter Performance section with V1.1 Typesense facets solution
 
-5. **app/src/components/module-page/module-page.tsx** ⭐ MODIFIED (2026-02-04)
-   UX-007: Added handleFilterLinkClick handler, direct state updates
+5. **app/src/app/globals.css** ⭐ MODIFIED (2026-02-05)
+   Added slideUp animation keyframes for mobile banner
 
 ---
 
@@ -213,6 +213,7 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/sql/016-instrumenten-add-instrument-col.sql` | 2026-01-31 | Supabase |
 | `scripts/sql/018-expand-view-columns.sql` | 2026-01-31 | Supabase |
 | `scripts/sql/020-normalize-recipient-indexes.sql` | 2026-02-03 | Supabase |
+| `scripts/sql/021-filter-column-indexes.sql` | 2026-02-05 | Supabase |
 
 ### Configuration Files
 
@@ -860,9 +861,13 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-04 - **UX-007/UX-008 + PM Process Improvements (3 sessions, 5 commits)**
+**Last Session:** 2026-02-05 - **UX-003 Mobile Banner + Filter Performance (2 sessions, 4 commits)**
 
-**Today's Focus:** Hyperlinks feature + hard navigation + documentation audit with PM process improvements
+**Today's Focus:** Mobile message banner + filter dropdown performance optimization
+
+**2026-02-05 Sessions:**
+- Session 1: UX-003 Mobile message banner - friendly message for users on small screens
+- Session 2: Filter Performance Investigation - B-tree indexes on 17 filter columns (70% faster)
 
 **2026-02-04 Sessions:**
 - Session 1: UX-007 Hyperlinks feature - clickable extra columns and expanded row values

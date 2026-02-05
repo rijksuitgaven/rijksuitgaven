@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-02-04
+**Last Updated:** 2026-02-05
 
 Items logged for future versions, not in V1.0 scope.
 
@@ -484,14 +484,15 @@ When switching between filter dropdowns (e.g., Regeling → Artikel), the new dr
 
 ### Mobile Responsiveness Audit
 
-**Priority:** Medium (Needs Discussion)
+**Priority:** Low (Post-V1.0)
 **Added:** 2026-02-03
+**Updated:** 2026-02-05
 **Type:** UX / Testing
 
-**Status:** NOT STARTED - Parked pending discussion.
+**Status:** BACKLOGGED - Deferred to post-V1.0 (mobile message banner is V1.0 solution)
 
 **Task:**
-Comprehensive mobile UX testing and fixes before launch.
+Comprehensive mobile UX testing and fixes based on user feedback.
 
 **Areas to test:**
 - Touch targets (min 44×44px)
@@ -502,7 +503,9 @@ Comprehensive mobile UX testing and fixes before launch.
 - Expanded row content
 - Header menu navigation
 
-**Decision:** Needs discussion to determine if mobile audit should be in Mini Sprint or post-beta feedback.
+**V1.0 Solution:** Mobile message banner (UX-003) informs users the app works best on larger screens. Non-blocking - users can continue.
+
+**Decision (2026-02-05):** Mobile banner is sufficient for V1.0 launch. Full audit deferred to post-launch based on beta feedback.
 
 ---
 

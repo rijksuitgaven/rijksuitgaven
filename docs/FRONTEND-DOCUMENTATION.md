@@ -1,6 +1,6 @@
 # Frontend Documentation
 
-**Last Updated:** 2026-02-04
+**Last Updated:** 2026-02-05
 **Stack:** Next.js 16.1.4 + TypeScript + Tailwind CSS + TanStack Table
 
 ---
@@ -30,6 +30,9 @@ app/src/
 │   │   └── index.ts
 │   ├── error-boundary/           # React error boundary wrapper
 │   │   ├── error-boundary.tsx
+│   │   └── index.ts
+│   ├── mobile-banner/            # Mobile message banner (UX-003)
+│   │   ├── mobile-banner.tsx
 │   │   └── index.ts
 │   ├── cross-module-results/     # "Ook in:" cross-module counts
 │   │   ├── cross-module-results.tsx
@@ -405,6 +408,35 @@ GDPR-compliant disclosure banner (essential cookies only).
 4. Fixed bottom position, z-index 50
 5. Fade-in animation (150ms)
 
+### MobileBanner (`components/mobile-banner/mobile-banner.tsx`)
+
+Friendly message for mobile users that the app works best on larger screens (UX-003).
+
+**Features:**
+- Detects viewport < 768px
+- Bottom sheet with slide-up animation
+- One-time dismiss via localStorage
+- Non-blocking (users can continue)
+- Navy background, Monitor icon, pink CTA
+
+**Behavior:**
+1. Shows on mobile viewport (<768px) if not previously dismissed
+2. User clicks "Doorgaan" → saves to localStorage, hides banner
+3. Never shows again on that device
+
+**Styling:**
+- Position: Fixed bottom, full width
+- Background: Navy dark (#0E3261)
+- Animation: slideUp 300ms ease-out
+- Z-index: 50
+
+**SSR Safety:**
+- Initial state is `null` (not rendered during SSR)
+- `useEffect` checks viewport and localStorage on client
+- Prevents hydration mismatch
+
+---
+
 ### ErrorBoundary (`components/error-boundary/error-boundary.tsx`)
 
 React error boundary for graceful error handling.
@@ -665,3 +697,4 @@ npm run build
 | 2026-02-02 | Added BFF proxy documentation, updated environment variables |
 | 2026-02-03 | Updated ExpandedRow (Fragment architecture, full groupable fields), fixed pagination (50 default), removed random sort block from BFF |
 | 2026-02-04 | Added UX-007 clickable hyperlinks (extra columns + expanded row), UX-008 hard navigation on module menu |
+| 2026-02-05 | Added MobileBanner component (UX-003) |
