@@ -861,13 +861,14 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-05 - **UX-003 Mobile Banner + Filter Performance (2 sessions, 4 commits)**
+**Last Session:** 2026-02-05 - **UX-003 Mobile Banner + Filter Performance + Process Rules (3 sessions, 6 commits)**
 
-**Today's Focus:** Mobile message banner + filter dropdown performance optimization
+**Today's Focus:** Mobile message banner + filter dropdown performance + documentation audit + process improvements
 
 **2026-02-05 Sessions:**
 - Session 1: UX-003 Mobile message banner - friendly message for users on small screens
 - Session 2: Filter Performance Investigation - B-tree indexes on 17 filter columns (70% faster)
+- Session 3: Documentation audit + Rule 6 (no feature removal without approval)
 
 **2026-02-04 Sessions:**
 - Session 1: UX-007 Hyperlinks feature - clickable extra columns and expanded row values
