@@ -441,6 +441,44 @@ Backend API connects to Typesense via public URL, incurring egress fees. Railway
 
 ---
 
+### Filter Performance Optimization
+
+**Priority:** Medium (UX Impact)
+**Added:** 2026-02-05
+**Type:** Performance
+
+**Problem 1: Large filter result sets are slow**
+When filtering by a Regeling or Begroting with many recipients, the query takes 500ms+.
+- Current path: Typesense → PostgreSQL aggregated view with WHERE clause
+- Large result sets need re-aggregation
+
+**Problem 2: Filter dropdown options are slow to load**
+When switching between filter dropdowns (e.g., Regeling → Artikel), the new dropdown takes a long time to populate.
+- Each dropdown calls `/api/v1/modules/{module}/filters/{field}`
+- Queries DISTINCT values from database
+- Large fields (Regeling: 2000+ options) are slow
+
+**Solutions Pipeline:**
+
+| Option | Problem Solved | Effort | Impact |
+|--------|----------------|--------|--------|
+| **Filter-specific indexes** | #1 | 2 hours | Medium |
+| **Pre-cache filter options** | #2 | 4 hours | High |
+| **Typesense data enrichment (V1.1)** | #1 | 1-2 days | High |
+| **Progressive dropdown loading** | #2 | 4 hours | Medium |
+| **Redis cache for filter combos** | #1, #2 | 4-8 hours | High |
+
+**Quick Wins (V1.0):**
+1. Add indexes on filter columns in materialized views
+2. Pre-fetch and cache filter options on page load (not on dropdown open)
+
+**V1.1 Solution:**
+Typesense data enrichment - filters run in Typesense (~25ms) instead of PostgreSQL
+
+**Decision:** Evaluate quick wins for V1.0, full solution in V1.1.
+
+---
+
 ### Mobile Responsiveness Audit
 
 **Priority:** Medium (Needs Discussion)
