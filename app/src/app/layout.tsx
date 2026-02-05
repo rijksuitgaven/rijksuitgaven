@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_Condensed, Brawler } from "next/font/google";
 import { CookieBanner } from "@/components/cookie-banner";
+import { MobileBanner } from "@/components/mobile-banner";
 import { Header } from "@/components/header";
 import "./globals.css";
 
@@ -37,6 +38,7 @@ export default function RootLayout({
         <Header />
         {children}
         <CookieBanner />
+        <MobileBanner />
       </body>
     </html>
   );

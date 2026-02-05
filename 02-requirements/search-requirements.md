@@ -807,6 +807,15 @@ Search "bedrijvenbeleid" shows:
 **Priority:** P1 (High) - Core mobile optimizations
 **Mobile Message:** P0 (V1.0 launch requirement)
 
+**Status:** ✅ Mobile Message Implemented 2026-02-05
+
+**Implementation Details:**
+- Bottom sheet with slide-up animation
+- Navy background, Monitor icon, pink CTA
+- Dutch copy: "Beter op een groter scherm"
+- "Toch doorgaan" button (non-blocking)
+- localStorage persistence (one-time per device)
+
 ---
 
 ### UX-004: Multi-Language Support

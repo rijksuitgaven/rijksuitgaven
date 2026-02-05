@@ -184,6 +184,22 @@
   animation: pulse-ring 1.5s ease-out infinite;
 }
 
+/* Mobile banner slide-up animation */
+@keyframes slideUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 300ms ease-out;
+}
+
 /* Instant CSS tooltip - appears on hover without delay */
 [data-tooltip] {
   position: relative;

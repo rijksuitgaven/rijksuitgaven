@@ -74,6 +74,28 @@ Claude: **Model:** Opus - architecture decision
 
 Skip approval for immediate follow-ups in the same task (e.g., user says "yes" to a fix, you implement it without re-asking).
 
+### 1b. Design Discussion (BEFORE Implementation)
+
+**For any UI/UX feature, present the approach BEFORE writing code:**
+
+1. State proposed design decisions (position, behavior, styling)
+2. List any questions or trade-offs
+3. Wait for user approval
+
+**Format:**
+```
+**Proposed Design:**
+- [Key decision 1]
+- [Key decision 2]
+
+**Questions:**
+- [Any clarifications needed]
+
+Ready to implement?
+```
+
+**Rule:** No code until design is approved.
+
 ### 2. Requirements First (BEFORE Proposing)
 
 **Before proposing ANY solution:**
