@@ -469,13 +469,16 @@ When switching between filter dropdowns (e.g., Regeling → Artikel), the new dr
 | **Redis cache for filter combos** | #1, #2 | 4-8 hours | High |
 
 **Quick Wins (V1.0):**
-1. Add indexes on filter columns in materialized views
-2. Pre-fetch and cache filter options on page load (not on dropdown open)
+1. Add B-tree indexes on filter columns in source tables (reduces 900ms → 300ms)
 
-**V1.1 Solution:**
-Typesense data enrichment - filters run in Typesense (~25ms) instead of PostgreSQL
+**V1.1 Solution (Recommended):**
+- **Typesense facets** - Use built-in faceting feature for filter dropdowns
+- Single request returns search results + all filter option counts
+- ~10ms response time (vs 300-900ms PostgreSQL DISTINCT)
+- Aligns with Typesense data enrichment work
+- No additional infrastructure needed
 
-**Decision:** Evaluate quick wins for V1.0, full solution in V1.1.
+**Decision:** V1.0 quick fix with indexes. V1.1 full solution with Typesense facets.
 
 ---
 
