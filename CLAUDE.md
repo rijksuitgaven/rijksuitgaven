@@ -30,7 +30,7 @@
 
 ---
 
-## Golden Rules (4 Rules - No Exceptions)
+## Golden Rules (6 Rules - No Exceptions)
 
 ### 1. Model Selection (MANDATORY - COST CONTROL)
 
@@ -172,6 +172,33 @@ per_page = limit * 20  # 100 for limit=5
 ```
 
 **Rule:** Adding a filter must NEVER silently break existing functionality. If you add filtering, verify the end-to-end user experience still works.
+
+### 6. No Feature Removal Without Approval
+
+**NEVER remove, comment out, or disable existing features without explicit approval.**
+
+This includes:
+- Visible UI elements (buttons, links, sections)
+- Placeholder features awaiting implementation
+- Commented code that represents planned functionality
+- Any user-facing behavior
+
+**"Redesign" does NOT mean "rewrite from scratch":**
+- Visual/structural changes: ✅ OK
+- Removing existing functionality: ❌ Requires approval
+
+**Before any removal:**
+1. List what will be removed/disabled
+2. Explain why
+3. Wait for explicit approval
+
+**Commit messages must list removed features:**
+```
+❌ Bad: "Header redesign"
+✅ Good: "Header redesign (auth links temporarily removed - pending Week 6)"
+```
+
+**Rule:** If it existed before and won't exist after, get approval first.
 
 ---
 
