@@ -50,27 +50,28 @@ export function Header() {
       <div className="border-b border-[var(--gray-light)]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-24">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-4 group">
+            {/* Logo - Hybrid: icon on mobile, full designed logo on desktop */}
+            <Link href="/" className="flex items-center group">
+              {/* Mobile: icon only */}
               <Image
                 src="/logo-icon.png"
                 alt="Rijksuitgaven"
-                width={56}
-                height={56}
-                className="h-14 w-auto transition-transform group-hover:scale-105"
+                width={48}
+                height={48}
+                className="h-12 w-12 sm:hidden transition-transform group-hover:scale-105"
                 priority
               />
-              <div className="hidden sm:block">
-                <h1
-                  className="text-2xl font-bold text-[var(--navy-dark)] tracking-tight"
-                  style={{ fontFamily: 'var(--font-heading), serif' }}
-                >
-                  Rijksuitgaven
-                </h1>
-                <p className="text-sm text-[var(--pink)] font-medium -mt-0.5">
-                  Snel inzicht voor krachtige analyses
-                </p>
-              </div>
+              {/* Desktop: full designed logo asset (pixel-perfect alignment) */}
+              <Image
+                src="/logo.png"
+                alt="Rijksuitgaven - Snel inzicht voor krachtige analyses"
+                width={280}
+                height={80}
+                className="hidden sm:block h-14 w-auto transition-transform group-hover:scale-[1.02]"
+                priority
+              />
+              {/* Screen reader accessible title */}
+              <h1 className="sr-only">Rijksuitgaven</h1>
             </Link>
 
             {/* Auth - TODO: Implement when authentication is added (V1.0 uses Magic Link)

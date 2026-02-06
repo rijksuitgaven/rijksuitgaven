@@ -54,6 +54,31 @@ Build **Recipient Profile Panel** as slide-out panel:
 
 ---
 
+### Logo Asset Optimization
+
+**Priority:** Low (V1.1)
+**Added:** 2026-02-06
+**Type:** Design / Brand
+
+**Problem:**
+Current `logo.png` (1900×540px) includes tagline "Snel inzicht voor krachtige analyses" which becomes unreadable when scaled down for compact headers. The full logo requires h-14 (56px) minimum height to be legible.
+
+**Current state:**
+- Using full designed logo asset (Option C hybrid approach)
+- Desktop: h-14 (56px) logo in h-24 (96px) masthead
+- Mobile: icon only (h-12, 48px)
+- Tagline barely readable at current size
+
+**Options to explore:**
+1. Create compact logo variant without tagline (just icon + "Rijksuitgaven")
+2. Create SVG version for crisp scaling at any size
+3. Redesign tagline with larger font in source file
+4. Accept current size as brand presence vs. space trade-off
+
+**Decision:** Keep current implementation for V1.0 launch. Revisit in V1.1 UX polish phase.
+
+---
+
 ### Integraal View Redesign (Brainstorm Required)
 
 **Priority:** Medium
