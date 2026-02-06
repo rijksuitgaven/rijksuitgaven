@@ -47,9 +47,9 @@ export function Footer({ isLoggedIn = false, userEmail }: FooterProps) {
               <Image
                 src="/logo-white.png"
                 alt="Rijksuitgaven"
-                width={200}
-                height={57}
-                className="h-12 w-auto"
+                width={280}
+                height={80}
+                className="h-16 w-auto"
               />
             </Link>
           </div>
