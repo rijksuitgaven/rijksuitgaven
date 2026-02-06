@@ -432,17 +432,18 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 
 **Key insight:** Cross-module = discovery layer, Module page = detail layer.
 
-### Overzicht Page (2026-01-20) ⭐ NEW
+### Overzicht Page (2026-01-20) → DEFERRED TO V5 (2026-02-06)
 
-Dedicated overview page showing module-level totals with year columns.
+~~Dedicated overview page showing module-level totals with year columns.~~
 
-| Feature | Description |
-|---------|-------------|
-| Purpose | High-level spending overview, entry point to platform |
-| Location | Dedicated page, first nav item after logo |
-| Modules | All 6 modules with totals per year |
-| Sub-sources | Publiek (RVO/COA/NWO), Provincies (12), Gemeentes (top 10 + "show all") |
-| Click behavior | Module/sub-source → navigate to module page (with filter) |
+**Decision (2026-02-06):** Deferred to V5 (AI Research Mode).
+
+**Rationale:**
+- V1 expanded row covers functional need (groupings, year breakdown, Google link)
+- Full "Recipient Profile Panel" becomes essential in V5 when AI needs context
+- Will be built as slide-out panel for AI Research Mode
+
+**See:** `02-requirements/backlog.md` for full analysis
 | Data | Pre-computed `module_totals` table (monthly refresh) |
 | Footer | Grand total row across all modules |
 

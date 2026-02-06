@@ -1,12 +1,58 @@
 # Product Backlog
 
-**Last Updated:** 2026-02-05
+**Last Updated:** 2026-02-06
 
 Items logged for future versions, not in V1.0 scope.
 
 ---
 
 ## Post-V1.0 Backlog
+
+### Overzichtspagina / Recipient Profile Panel
+
+**Priority:** Deferred to V5 (AI Research Mode)
+**Added:** 2026-01-20 (original)
+**Updated:** 2026-02-06 (deferred decision)
+**Type:** Feature / UX
+
+**Original Request:**
+High-level overview page showing module totals per year, as entry point to platform.
+
+**Analysis (2026-02-06):**
+Compared WordPress "detail page" with current V1 expanded row:
+
+| Feature | WordPress Detail Page | V1 Expanded Row |
+|---------|----------------------|-----------------|
+| Scope | All metadata at once | One grouping at a time |
+| Year breakdown | ✅ | ✅ |
+| Groupable fields | Links to filter | Clickable filters |
+| Google search link | ✅ | ✅ (added 2026-02-06) |
+
+**Conclusion:** V1 expanded row covers the functional need. A comprehensive "Recipient Profile Panel" is not needed until V5.
+
+**Where This Functionality Fits:**
+
+| Version | Need Level | Reason |
+|---------|------------|--------|
+| V1 | Low | Expanded row suffices for "who received money" |
+| V2 | Low | Email briefings, not interactive exploration |
+| V3 | Medium | Theme pages link to recipients, but search handles it |
+| V5 | **HIGH** | AI Research needs full recipient context to analyze |
+| V6 | **HIGH** | Workspace needs full profile to save/annotate |
+| V8 | **CRITICAL** | Network analysis: click node → see full profile + connections |
+
+**V5 Implementation (Recommended):**
+Build **Recipient Profile Panel** as slide-out panel:
+- All years across all modules
+- All metadata fields
+- Cross-module summary ("€450M total: Instrumenten €300M, Publiek €150M")
+- External links (Google, KvK in V7)
+- AI context reference
+- "Add to Dossier" action (V6)
+
+**Decision:** Skip for V1.0. Build as part of V5 AI Research Mode where it becomes essential.
+
+---
 
 ### Integraal View Redesign (Brainstorm Required)
 
