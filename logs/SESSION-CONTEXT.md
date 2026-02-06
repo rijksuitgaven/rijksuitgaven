@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-05
+**Last Updated:** 2026-02-06
 **Project Phase:** V1.0 Development
 **Current Sprint:** Mini Sprint - UI/UX Polish (before Week 6)
 
@@ -81,20 +81,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/mobile-banner/mobile-banner.tsx** ⭐ CREATED (2026-02-05)
-   UX-003: Mobile message banner for viewports < 768px
+1. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-06)
+   UX-010: Added Google search link with ExternalLink icon next to recipient names
 
-2. **scripts/sql/021-filter-column-indexes.sql** ⭐ CREATED (2026-02-05)
-   B-tree indexes on 17 filter columns for faster DISTINCT queries (70% improvement)
+2. **app/src/app/globals.css** ⭐ MODIFIED (2026-02-06)
+   Added `[data-tooltip-center]` CSS for compact centered tooltips
 
-3. **docs/VERSIONING.md** ⭐ MODIFIED (2026-02-05)
-   Added Typesense facets to V1.1 roadmap
+3. **02-requirements/backlog.md** ⭐ MODIFIED (2026-02-06)
+   Added Overzichtspagina / Recipient Profile Panel deferral to V5
 
-4. **02-requirements/backlog.md** ⭐ MODIFIED (2026-02-05)
-   Updated Filter Performance section with V1.1 Typesense facets solution
+4. **02-requirements/search-requirements.md** ⭐ MODIFIED (2026-02-06)
+   Added UX-010: Google Search Link for Recipients
 
-5. **app/src/app/globals.css** ⭐ MODIFIED (2026-02-05)
-   Added slideUp animation keyframes for mobile banner
+5. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-06)
+   Removed Google link (moved to main table)
 
 ---
 
@@ -444,8 +444,6 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 - Will be built as slide-out panel for AI Research Mode
 
 **See:** `02-requirements/backlog.md` for full analysis
-| Data | Pre-computed `module_totals` table (monthly refresh) |
-| Footer | Grand total row across all modules |
 
 ### Marketing Pages (2026-01-20) ⭐ NEW
 
@@ -862,9 +860,14 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-05 - **UX-003 Mobile Banner + Filter Performance + Process Rules (3 sessions, 6 commits)**
+**Last Session:** 2026-02-06 - **UX-010 Google Search Link + Overzichtspagina Deferral + Documentation Audit**
 
-**Today's Focus:** Mobile message banner + filter dropdown performance + documentation audit + process improvements
+**Today's Focus:** Google search link for recipients, Overzichtspagina scope decision (deferred to V5), comprehensive documentation audit
+
+**2026-02-06 Sessions:**
+- Session 1: UX-010 Google search link - ExternalLink icon next to recipient names
+- Session 2: Overzichtspagina decision - deferred to V5 (V1 expanded row suffices)
+- Session 3: Documentation audit - verified requirements, fixed gaps, updated all docs
 
 **2026-02-05 Sessions:**
 - Session 1: UX-003 Mobile message banner - friendly message for users on small screens
@@ -1507,10 +1510,12 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 | ~~**2026-02-02**~~ | ~~Filter multi-select + BFF proxy + table polish~~ ✅ |
 | ~~**2026-02-03**~~ | ~~Strategic brainstorm: V2 Reporter + V3 Themes documentation~~ ✅ |
 | ~~**2026-02-04**~~ | ~~Hyperlinks (clickable filter values)~~ ✅ |
-| **Next** | Mobile message banner |
-| **Next** | Overzichtspagina design + implementation |
+| ~~**2026-02-05**~~ | ~~Mobile message banner + filter performance~~ ✅ |
+| ~~**2026-02-06**~~ | ~~UX-010 Google link + Overzichtspagina decision (deferred to V5)~~ ✅ |
 
-**After Mini Sprint:**
+**Mini Sprint COMPLETE - Ready for Week 6**
+
+**Week 6 (Next):**
 - Week 6 - User Auth (Magic Link, user migration)
 - Week 7-9 - Polish and launch
 - Beta testing preparation

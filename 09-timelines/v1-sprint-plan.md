@@ -341,7 +341,7 @@
 | **Mobile message banner (UX-003)** | **HIGH** | ✅ Completed 2026-02-05 |
 | **Filter performance (indexes)** | **HIGH** | ✅ Completed 2026-02-05 (70% faster) |
 | **Search performance optimization** | **HIGH** | ✅ Phase 1 done (~130-280ms), Phase 2 deferred to V1.1 |
-| Overzicht page design + implementation | HIGH | ❌ Not started (**NEXT** - blocks Week 6) |
+| Overzicht page design + implementation | ~~HIGH~~ | ✅ Deferred to V5 (2026-02-06) - V1 expanded row suffices |
 | Typography/spacing consistency audit | LOW | ❌ Not started |
 | Mobile responsiveness audit | LOW | ❌ Backlog (post-V1.0) |
 
@@ -365,9 +365,9 @@
 ### Mini Sprint Deliverables
 - [x] Security fixes complete
 - [x] Code audit issues resolved
-- [x] Search performance acceptable (~750ms)
-- [ ] Overzicht page complete
-- [ ] Mobile UX verified
+- [x] Search performance acceptable (~130-280ms)
+- [x] Overzicht page → Deferred to V5 (V1 expanded row suffices)
+- [x] Mobile message banner (UX-003)
 - [ ] Ready for Week 6 (Auth)
 
 ---

@@ -1,6 +1,6 @@
 # Frontend Documentation
 
-**Last Updated:** 2026-02-05
+**Last Updated:** 2026-02-06
 **Stack:** Next.js 16.1.4 + TypeScript + Tailwind CSS + TanStack Table
 
 ---
@@ -129,6 +129,11 @@ Main data grid component using TanStack Table.
 - Empty state with suggestions
 - CSV export (max 500 rows)
 - XLS export (max 500 rows) - via xlsx library
+- **Google search link** (UX-010): ExternalLink icon (14px) next to recipient names
+  - Always visible (not hover-only)
+  - Color: Navy medium → pink on hover
+  - Opens Google search in new tab
+  - CSS-only instant tooltip "Zoek op Google" (centered above icon)
 - **Clickable extra columns** (UX-007): Click value to filter by that field
   - Hover: pink text + underline
   - Click: clears all filters, applies only clicked filter
@@ -698,3 +703,4 @@ npm run build
 | 2026-02-03 | Updated ExpandedRow (Fragment architecture, full groupable fields), fixed pagination (50 default), removed random sort block from BFF |
 | 2026-02-04 | Added UX-007 clickable hyperlinks (extra columns + expanded row), UX-008 hard navigation on module menu |
 | 2026-02-05 | Added MobileBanner component (UX-003) |
+| 2026-02-06 | Added UX-010 Google search link in DataTable |
