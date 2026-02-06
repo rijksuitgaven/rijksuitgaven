@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-02-06
 **Project Phase:** V1.0 Development
-**Current Sprint:** Mini Sprint - UI/UX Polish (before Week 6)
+**Current Sprint:** Week 6 - User Authentication (Mini Sprint COMPLETE 2026-02-06)
 
 ---
 
@@ -860,16 +860,17 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-06 - **UI/UX Polish Day: Footer, Logo, Code Audit, Bug Fixes**
+**Last Session:** 2026-02-06 - **Mini Sprint COMPLETE: Footer, Data Availability Design, UX-010/011**
 
-**Today's Focus:** Site-wide footer, module-specific amount text, code audit fixes, totals row fix
+**Mini Sprint Summary (2026-01-29 → 2026-02-06):** All UI/UX polish tasks complete. Ready for Week 6 (Auth).
 
-**2026-02-06 Sessions (11 commits):**
+**2026-02-06 Sessions (14 commits):**
 - Sessions 1-3: UX-010 Google search link, Overzichtspagina deferred to V5, Header logo hybrid
 - Session 4: Code audit fixes (security, error handling, accessibility)
-- Session 5: Module-specific footer text (Inkoop/Publiek staffelbedragen)
+- Session 5: Module-specific footer text (Inkoop/Publiek staffelbedragen) - UX-011
 - Session 6: Site-wide footer component (3-column, auth-aware)
 - Session 7: Bug fixes (totals row overflow, Inloggen link styling)
+- Session 8: Documentation audit, Data Availability Indicators design approved
 
 **Mini Sprint Status:** UI/UX Polish COMPLETE - Ready for Week 6 (Auth)
 

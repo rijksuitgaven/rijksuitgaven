@@ -296,7 +296,8 @@
 
 **Goal:** Complete all UI/UX refinements before moving to auth and launch prep
 **Started:** 2026-01-29
-**Status:** 🔨 IN PROGRESS
+**Completed:** 2026-02-06
+**Status:** ✅ COMPLETE
 
 ### Completed Work
 
@@ -342,8 +343,13 @@
 | **Filter performance (indexes)** | **HIGH** | ✅ Completed 2026-02-05 (70% faster) |
 | **Search performance optimization** | **HIGH** | ✅ Phase 1 done (~130-280ms), Phase 2 deferred to V1.1 |
 | Overzicht page design + implementation | ~~HIGH~~ | ✅ Deferred to V5 (2026-02-06) - V1 expanded row suffices |
-| Typography/spacing consistency audit | LOW | ❌ Not started |
-| Mobile responsiveness audit | LOW | ❌ Backlog (post-V1.0) |
+| **UX-010: Google search link** | **HIGH** | ✅ Completed 2026-02-06 |
+| **UX-011: Module-specific footer text** | **MEDIUM** | ✅ Completed 2026-02-06 |
+| **Site-wide footer component** | **HIGH** | ✅ Completed 2026-02-06 |
+| **Code audit (security, accessibility)** | **HIGH** | ✅ Completed 2026-02-06 |
+| **Data availability indicators design** | **HIGH** | ✅ Design approved 2026-02-06, implementation next |
+| Typography/spacing consistency audit | LOW | ❌ Deferred (post-V1.0) |
+| Mobile responsiveness audit | LOW | ❌ Deferred (post-V1.0) |
 
 **Decisions (2026-02-03):**
 - Mobile responsiveness audit → SKIP for V1.0, add mobile message instead
@@ -368,14 +374,18 @@
 - [x] Search performance acceptable (~130-280ms)
 - [x] Overzicht page → Deferred to V5 (V1 expanded row suffices)
 - [x] Mobile message banner (UX-003)
-- [ ] Ready for Week 6 (Auth)
+- [x] Google search link (UX-010)
+- [x] Module-specific footer text (UX-011)
+- [x] Site-wide footer component
+- [x] Data availability indicators design (approved, implementation next session)
+- [x] Ready for Week 6 (Auth)
 
 ---
 
 ## Week 6: Auth + Overzicht
 
 **Goal:** Magic Link auth, user migration, protected routes
-**Status:** ❌ NOT STARTED (blocked by Mini Sprint completion)
+**Status:** ⏳ READY TO START (Mini Sprint complete 2026-02-06)
 
 ### Day 1-2: Supabase Auth Setup
 
