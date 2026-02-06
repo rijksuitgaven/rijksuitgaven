@@ -96,14 +96,18 @@ async def typesense_search(collection: str, params: dict) -> dict:
                 url,
                 params=params,
                 headers={"X-TYPESENSE-API-KEY": settings.typesense_api_key},
-                timeout=10.0,
+                timeout=5.0,  # Unified timeout for Typesense calls
             )
 
             if response.status_code != 200:
                 logger.warning(f"Typesense returned {response.status_code} for {collection}")
                 return {"hits": [], "grouped_hits": []}
 
-            return response.json()
+            try:
+                return response.json()
+            except ValueError as json_err:
+                logger.error(f"Typesense returned invalid JSON: {json_err}")
+                return {"hits": [], "grouped_hits": []}
     except httpx.TimeoutException:
         logger.warning(f"Typesense timeout for collection {collection}")
         return {"hits": [], "grouped_hits": []}

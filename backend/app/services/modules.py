@@ -64,9 +64,16 @@ async def _typesense_search(collection: str, params: dict) -> dict:
                 logger.warning(f"Typesense search failed: {response.status_code}")
                 return {"hits": [], "grouped_hits": []}
 
-            return response.json()
-    except Exception as e:
-        logger.error(f"Typesense search error: {type(e).__name__}: {e}")
+            try:
+                return response.json()
+            except ValueError as json_err:
+                logger.error(f"Typesense returned invalid JSON: {json_err}")
+                return {"hits": [], "grouped_hits": []}
+    except httpx.TimeoutException:
+        logger.warning("Typesense search timeout")
+        return {"hits": [], "grouped_hits": []}
+    except httpx.RequestError as e:
+        logger.error(f"Typesense request error: {type(e).__name__}: {e}")
         return {"hits": [], "grouped_hits": []}
 
 
@@ -806,9 +813,8 @@ async def _get_from_aggregated_view(
                     "totaal": int(r.get("sum_totaal", 0) or 0),
                 }
     except Exception as e:
-        logger.error(f"Query failed for {module}: {e}")
-        logger.error(f"Query: {query}")
-        logger.error(f"Params: {params}")
+        # Log error without exposing SQL query or params (security)
+        logger.error(f"Query failed for {module}: {type(e).__name__}: {e}")
         raise
 
     # Use Typesense highlight info for "Gevonden in" column (fast!)

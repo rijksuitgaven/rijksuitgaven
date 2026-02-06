@@ -337,9 +337,9 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
           {/* Options list - increased height for better browsing */}
           <div className="max-h-72 overflow-y-auto" role="listbox">
             {isLoading ? (
-              <div className="px-3 py-6 text-sm text-center text-[var(--muted-foreground)]">
-                <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
-                Opties laden...
+              <div className="px-3 py-6 text-sm text-center text-[var(--muted-foreground)]" role="status" aria-live="polite">
+                <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" aria-hidden="true" />
+                <span>Opties laden...</span>
               </div>
             ) : error ? (
               <div className="px-3 py-4 text-sm text-center text-[var(--error)]">

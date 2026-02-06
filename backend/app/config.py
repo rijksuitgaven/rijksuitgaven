@@ -22,11 +22,14 @@ class Settings(BaseSettings):
     typesense_protocol: str = "https"
     typesense_port: int = 443
 
-    # CORS
+    # CORS - localhost included for development (local-only, minimal security risk)
+    # Override via CORS_ORIGINS env var in production if needed
     cors_origins: list[str] = [
         "http://localhost:3000",
+        "http://localhost:3001",
         "https://beta.rijksuitgaven.nl",
         "https://rijksuitgaven.nl",
+        "https://www.rijksuitgaven.nl",
     ]
 
     class Config:

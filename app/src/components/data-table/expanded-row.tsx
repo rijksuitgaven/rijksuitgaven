@@ -143,8 +143,8 @@ export function ExpandedRow({
     return (
       <tr className="bg-[var(--gray-light)]">
         <td colSpan={contentColSpan + (collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
-          <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
-            <Loader2 className="h-4 w-4 animate-spin" />
+          <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]" role="status" aria-live="polite">
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
             <span>Laden...</span>
           </div>
         </td>

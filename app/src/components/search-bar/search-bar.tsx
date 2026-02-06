@@ -95,12 +95,15 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
         }
         setSelectedIndex(-1)
       } catch (error) {
-        // Silently handle errors - user sees no results instead of error
         // AbortError is expected when search changes rapidly
         if (error instanceof Error && error.name === 'AbortError') {
           return
         }
+        // Log error for debugging, but show "no results" to user (graceful degradation)
         if (!abortController.signal.aborted) {
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Search error:', error)
+          }
           setRecipients([])
           setKeywords([])
           setNoResultsQuery(null)

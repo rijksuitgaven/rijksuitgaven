@@ -4,7 +4,7 @@ Database service for Supabase/PostgreSQL connection.
 Uses asyncpg for async database operations.
 """
 import asyncpg
-from typing import Optional
+from typing import Any, Optional
 from contextlib import asynccontextmanager
 
 from app.config import get_settings
@@ -72,7 +72,7 @@ async def fetch_one(query: str, *args) -> Optional[dict]:
         return dict(row) if row else None
 
 
-async def fetch_val(query: str, *args):
+async def fetch_val(query: str, *args) -> Any:
     """Execute query and return single value."""
     async with get_connection() as conn:
         return await conn.fetchval(query, *args)
