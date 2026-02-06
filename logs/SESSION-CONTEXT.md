@@ -81,20 +81,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-06)
-   UX-010: Added Google search link with ExternalLink icon next to recipient names
+1. **app/src/components/footer/footer.tsx** ⭐ CREATED (2026-02-06)
+   Site-wide footer component with auth-aware content (3-column layout, social icons)
 
-2. **app/src/app/globals.css** ⭐ MODIFIED (2026-02-06)
-   Added `[data-tooltip-center]` CSS for compact centered tooltips
+2. **docs/plans/2026-02-06-data-availability-indicators-design.md** ⭐ CREATED (2026-02-06)
+   Design document for distinguishing "no data" vs "zero" in table cells
 
-3. **02-requirements/backlog.md** ⭐ MODIFIED (2026-02-06)
-   Added Overzichtspagina / Recipient Profile Panel deferral to V5
+3. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-06)
+   UX-010: Google search link, UX-011: Module-specific footer text, totals row fix
 
-4. **02-requirements/search-requirements.md** ⭐ MODIFIED (2026-02-06)
-   Added UX-010: Google Search Link for Recipients
+4. **app/src/app/layout.tsx** ⭐ MODIFIED (2026-02-06)
+   Added Footer component to site layout
 
-5. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-06)
-   Removed Google link (moved to main table)
+5. **02-requirements/backlog.md** ⭐ MODIFIED (2026-02-06)
+   Added Staffelbedrag explanation (V1.0), Overzichtspagina deferred to V5
 
 ---
 

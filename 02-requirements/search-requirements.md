@@ -788,6 +788,30 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-011: Module-Specific Amount Explanations
+
+**Requirement:** Table footer explains the type of amounts shown, varying by module
+
+**Behavior:**
+- Footer text below table explains what the amounts represent
+- Text varies based on module:
+  - **Default** (Instrumenten, Apparaat, Provincie, Gemeente): "Absolute bedragen in €"
+  - **Inkoop**: "Gemiddelde staffelbedragen in €, incl. BTW"
+  - **Publiek**: "RVO, ZonMW en NWO: absolute bedragen. COA: gemiddeld staffelbedrag incl. BTW"
+
+**Rationale:**
+- Inkoop and COA (Publiek) use staffelbedragen (bracketed amount ranges), not precise figures
+- Users need to understand they're seeing estimated midpoints, not exact amounts
+- Prevents misinterpretation of data precision
+
+**Related:** Staffelbedrag Explanation (backlog item) - user education on what staffelbedragen mean
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-02-06
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload

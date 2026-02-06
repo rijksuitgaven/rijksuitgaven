@@ -49,6 +49,40 @@ Results show the **midpoint** of each staffel range. For staffel 13 (>€150M), 
 
 ---
 
+### Data Availability Indicators (Implementation Ready)
+
+**Priority:** High (V1.0)
+**Added:** 2026-02-06
+**Status:** Design approved, implementation pending
+**Effort:** 3-5 hours
+**Type:** Feature / UX
+
+**Problem:**
+Users cannot distinguish between:
+- **Real zero** - Entity received €0 (confirmed data)
+- **No data** - Data doesn't exist for this entity/year combination
+
+Example: Gemeente Amersfoort has data for 2020-2024, but not 2016-2019. Currently all show `-` which is ambiguous.
+
+**Solution (Approved Design):**
+- `—` (em-dash) for "no data exists"
+- `0` for "real zero"
+- Tooltip: "Geen data beschikbaar voor deze periode"
+- Database table `data_availability` tracks year ranges per entity
+- API returns `data_available_from` and `data_available_to` per row
+
+**Design Document:** `docs/plans/2026-02-06-data-availability-indicators-design.md`
+
+**Implementation Steps:**
+1. Database: Create `data_availability` table + RLS
+2. Backend: Add availability fields to API response
+3. Frontend: Update cell rendering logic
+4. Expanded rows: Apply same rendering
+
+**Decision:** Implementation starts next session.
+
+---
+
 ## Post-V1.0 Backlog
 
 ### Overzichtspagina / Recipient Profile Panel
