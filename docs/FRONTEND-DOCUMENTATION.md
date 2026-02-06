@@ -47,6 +47,9 @@ app/src/
 │   ├── filter-panel/             # Search and filter UI
 │   │   ├── filter-panel.tsx
 │   │   └── index.ts
+│   ├── footer/                   # Site-wide footer (auth-aware)
+│   │   ├── footer.tsx
+│   │   └── index.ts
 │   ├── header/                   # Global navigation header
 │   │   ├── header.tsx
 │   │   └── index.ts
@@ -308,6 +311,41 @@ const MODULES = [
   { id: 'publiek', name: 'Publiek', description: 'RVO, COA, NWO' },
 ]
 ```
+
+### Footer (`components/footer/footer.tsx`)
+
+Site-wide footer (rendered in layout.tsx). Auth-aware with different content for logged in vs not logged in users.
+
+**Features:**
+- 3-column layout: Logo | Links | Social + Contact
+- White logo on navy dark background
+- Social icons: X (Twitter), Bluesky, LinkedIn (inline SVGs)
+- Contact: Phone + Email
+- Copyright bar with optional user email + logout (when logged in)
+
+**Props:**
+```typescript
+interface FooterProps {
+  isLoggedIn?: boolean  // Controls which links to show
+  userEmail?: string    // Shown in bottom bar when logged in
+}
+```
+
+**Content by Auth State:**
+
+| Section | Not Logged In | Logged In |
+|---------|---------------|-----------|
+| Column 2 Title | "Ontdek Rijksuitgaven" | "Support" + "Juridisch" |
+| Links | Over ons, FAQ, Vacatures, Abonnementen, Privacy, Inloggen | FAQ, Contact, Feedback, Privacy, Cookies |
+| Bottom Bar | Copyright only | Copyright + email + Uitloggen |
+
+**Integration:**
+Footer is included in `layout.tsx`. When auth is implemented (Week 6), pass auth state:
+```tsx
+<Footer isLoggedIn={session?.user != null} userEmail={session?.user?.email} />
+```
+
+---
 
 ### SearchBar (`components/search-bar/search-bar.tsx`)
 
