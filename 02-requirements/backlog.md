@@ -6,6 +6,49 @@ Items logged for future versions, not in V1.0 scope.
 
 ---
 
+## V1.0 Backlog
+
+### Staffelbedrag Explanation (User Education)
+
+**Priority:** Medium (V1.0)
+**Added:** 2026-02-06
+**Type:** UX / Documentation
+
+**Problem:**
+Users unfamiliar with government data may not understand what "staffelbedrag" means. The Inkoop and Publiek (COA) modules show averaged staffel amounts, not precise figures.
+
+**Staffel Definition (source: data.overheid.nl):**
+
+| Staffel | Range |
+|---------|-------|
+| 0 | Negatief – €0 |
+| 1 | €1 – €10.000 |
+| 2 | €10.001 – €50.000 |
+| 3 | €50.001 – €100.000 |
+| 4 | €100.001 – €250.000 |
+| 5 | €250.001 – €500.000 |
+| 6 | €500.001 – €1.000.000 |
+| 7 | €1.000.001 – €5.000.000 |
+| 8 | €5.000.001 – €10.000.000 |
+| 9 | €10.000.001 – €25.000.000 |
+| 10 | €25.000.001 – €50.000.000 |
+| 11 | €50.000.001 – €100.000.000 |
+| 12 | €100.000.001 – €150.000.000 |
+| 13 | Meer dan €150.000.001 |
+
+**How we display it:**
+Results show the **midpoint** of each staffel range. For staffel 13 (>€150M), we use €225M as the representative value.
+
+**Options to explore:**
+1. Info icon (ⓘ) next to footer text with popover explanation
+2. Tooltip on "staffelbedrag" in footer
+3. Dedicated help/FAQ page with all data methodology
+4. Collapsible "About the data" section on module pages
+
+**Decision:** Find appropriate place to explain this during V1.0 polish.
+
+---
+
 ## Post-V1.0 Backlog
 
 ### Overzichtspagina / Recipient Profile Panel

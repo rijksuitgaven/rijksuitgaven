@@ -831,9 +831,15 @@ export function DataTable({
 
       {/* Footer */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-2">
-        {/* Left: Amount note */}
+        {/* Left: Amount note - module-specific */}
         <div className="text-sm text-[var(--muted-foreground)]">
-          Absolute bedragen in &euro;
+          {moduleId === 'inkoop' ? (
+            'Gemiddelde staffelbedragen in €, incl. BTW'
+          ) : moduleId === 'publiek' ? (
+            'RVO, ZonMW en NWO: absolute bedragen. COA: gemiddeld staffelbedrag incl. BTW'
+          ) : (
+            'Absolute bedragen in €'
+          )}
           {availableYears.includes(Math.max(...availableYears)) && (
             <span className="ml-4">* Data nog niet compleet</span>
           )}
