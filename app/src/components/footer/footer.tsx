@@ -127,7 +127,7 @@ export function Footer({ isLoggedIn = false, userEmail }: FooterProps) {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/login" className="text-white/80 hover:text-white transition-colors font-medium">
+                    <Link href="/login" className="text-white/80 hover:text-white transition-colors">
                       Inloggen
                     </Link>
                   </li>
