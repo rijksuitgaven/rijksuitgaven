@@ -232,3 +232,35 @@
   opacity: 1;
   visibility: visible;
 }
+
+/* Compact tooltip for icons - single line, centered */
+[data-tooltip-center] {
+  position: relative;
+}
+
+[data-tooltip-center]::after {
+  content: attr(data-tooltip-center);
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  margin-bottom: 6px;
+  padding: 5px 10px;
+  background: var(--navy-dark, #1e3a5f);
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 100ms ease-out;
+}
+
+[data-tooltip-center]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}

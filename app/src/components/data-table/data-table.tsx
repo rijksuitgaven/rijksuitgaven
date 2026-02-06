@@ -12,7 +12,7 @@ import {
   type ExpandedState,
   type Column,
 } from '@tanstack/react-table'
-import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet } from 'lucide-react'
+import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet, ExternalLink } from 'lucide-react'
 import * as XLSX from 'xlsx'
 import { cn } from '@/lib/utils'
 import {
@@ -362,12 +362,24 @@ export function DataTable({
 
           return (
             <div>
-              <button
-                onClick={() => onRowClick?.(row.original.primary_value)}
-                className="font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] hover:underline text-left transition-colors"
-              >
-                {row.original.primary_value}
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => onRowClick?.(row.original.primary_value)}
+                  className="font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] hover:underline text-left transition-colors"
+                >
+                  {row.original.primary_value}
+                </button>
+                <a
+                  href={`https://www.google.com/search?q=${encodeURIComponent(row.original.primary_value)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-tooltip-center="Zoek op Google"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex-shrink-0 text-[var(--navy-medium)] hover:text-[var(--pink)] transition-colors"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </div>
               {/* Module indicator - different behavior for Integraal vs other modules */}
               {!isSearching && moduleId === 'integraal' ? (
                 // Integraal: Always show "In: [modules]" - this IS the overview page

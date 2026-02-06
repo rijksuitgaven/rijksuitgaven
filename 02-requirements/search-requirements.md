@@ -762,6 +762,32 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-010: Google Search Link for Recipients
+
+**Requirement:** Provide quick access to Google search for any recipient name
+
+**Behavior:**
+- Small external link icon (↗) appears next to every recipient name in main table
+- Always visible (not hover-only) - this is important functionality
+- Click opens Google search for recipient name in new tab
+- Tooltip "Zoek op Google" appears instantly on hover (centered above icon)
+
+**Rationale:**
+- Matches WordPress detail page feature ("Zoek op Google" link)
+- Enables quick research/verification of recipient identity
+- High value, low effort feature
+
+**Visual:**
+- Icon: Lucide ExternalLink (14px)
+- Color: Navy medium (`--navy-medium`) → pink on hover
+- Tooltip: CSS-only instant tooltip, single-line, centered
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-02-06
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload
