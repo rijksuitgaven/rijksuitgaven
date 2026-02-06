@@ -3,6 +3,7 @@ import { IBM_Plex_Sans_Condensed, Brawler } from "next/font/google";
 import { CookieBanner } from "@/components/cookie-banner";
 import { MobileBanner } from "@/components/mobile-banner";
 import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
 import "./globals.css";
 
 // Body text - IBM Plex Sans Condensed
@@ -37,6 +38,7 @@ export default function RootLayout({
       >
         <Header />
         {children}
+        <Footer />
         <CookieBanner />
         <MobileBanner />
       </body>
