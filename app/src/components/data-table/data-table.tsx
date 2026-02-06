@@ -800,7 +800,7 @@ export function DataTable({
                 )}
                 {/* Collapsed years (2016-2020) or placeholder for collapse header */}
                 {!yearsExpanded && collapsedYears.length > 0 && (
-                  <td className="px-3 py-2 text-right tabular-nums border-b border-[var(--border)]">
+                  <td className="px-3 py-2 text-right tabular-nums text-xs border-b border-[var(--border)]">
                     {formatAmount(
                       (totals.years[2016] || 0) +
                       (totals.years[2017] || 0) +
@@ -815,12 +815,12 @@ export function DataTable({
                 )}
                 {/* Individual year columns */}
                 {(yearsExpanded ? availableYears : availableYears.filter(y => y > 2020)).map((year) => (
-                  <td key={`total-${year}`} className="px-3 py-2 text-right tabular-nums border-b border-[var(--border)]">
+                  <td key={`total-${year}`} className="px-3 py-2 text-right tabular-nums text-xs border-b border-[var(--border)]">
                     {formatAmount(totals.years[year] || 0)}
                   </td>
                 ))}
                 {/* Grand total */}
-                <td className="px-3 py-2 text-right tabular-nums border-b border-[var(--border)] bg-[var(--navy-medium)]">
+                <td className="px-3 py-2 text-right tabular-nums text-xs border-b border-[var(--border)] bg-[var(--navy-medium)]">
                   {formatAmount(totals.totaal)}
                 </td>
               </tr>
