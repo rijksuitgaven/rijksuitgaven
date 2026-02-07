@@ -49,12 +49,28 @@ Results show the **midpoint** of each staffel range. For staffel 13 (>€150M), 
 
 ---
 
-### Data Availability Indicators (Implementation Ready)
+### Data Quality: "Amsersfoort" Typo in Gemeente Data (COMPLETED)
+
+**Priority:** Medium (V1.0)
+**Added:** 2026-02-07
+**Completed:** 2026-02-07
+**Status:** ✅ COMPLETED
+**Type:** Data Quality / Bug
+
+**Problem:**
+The gemeente table contained "Amsersfoort" (typo) alongside "Amersfoort". 1,168 duplicate rows.
+
+**Resolution:** SQL UPDATE, refreshed materialized views, re-synced Typesense gemeente collection. Migration: `023-fix-amsersfoort-typo.sql`.
+
+---
+
+### Data Availability Indicators (COMPLETED)
 
 **Priority:** High (V1.0)
 **Added:** 2026-02-06
-**Status:** Design approved, implementation pending
-**Effort:** 3-5 hours
+**Completed:** 2026-02-07
+**Status:** ✅ COMPLETED
+**Effort:** 3-5 hours (actual ~2 hours)
 **Type:** Feature / UX
 
 **Problem:**

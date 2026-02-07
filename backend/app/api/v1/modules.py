@@ -68,6 +68,8 @@ class AggregatedRow(BaseModel):
     extra_column_counts: Optional[dict[str, int]] = None  # Distinct value counts for "+X meer" indicator
     matched_field: Optional[str] = None  # Which field matched the search (when searching)
     matched_value: Optional[str] = None  # The value that matched (when searching)
+    data_available_from: Optional[int] = None  # First year with data for this entity
+    data_available_to: Optional[int] = None  # Last year with data for this entity
 
 
 class ModuleResponse(BaseModel):

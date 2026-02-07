@@ -183,6 +183,31 @@ function createYearMap(years: YearAmount[]): Map<number, number> {
   return new Map(years.map(y => [y.year, y.amount]))
 }
 
+/**
+ * Check if a year falls within a row's data availability range.
+ * Returns true if data exists for this year (amount may be 0).
+ * Returns false if no data exists (should show em-dash).
+ */
+function isYearAvailable(year: number, row: RecipientRow): boolean {
+  const from = row.dataAvailableFrom
+  const to = row.dataAvailableTo
+  // If no availability info, assume all years are available (backwards compat)
+  if (from == null || to == null) return true
+  return year >= from && year <= to
+}
+
+// No-data cell (em-dash with tooltip)
+function NoDataCell() {
+  return (
+    <div
+      className="text-right text-[var(--muted-foreground)]"
+      title="Geen data beschikbaar voor deze periode"
+    >
+      —
+    </div>
+  )
+}
+
 // Amount cell with trend anomaly indicator
 function AmountCell({
   amount,
@@ -216,14 +241,35 @@ function AmountCell({
 function CollapsedYearsCell({
   years,
   collapsedYearRange,
+  row,
   onExpand,
 }: {
   years: YearAmount[]
   collapsedYearRange: number[]
+  row: RecipientRow
   onExpand: () => void
 }) {
+  // Filter to only available years
+  const availableCollapsedYears = collapsedYearRange.filter((y) => isYearAvailable(y, row))
+
+  // All collapsed years are outside availability range
+  if (availableCollapsedYears.length === 0) {
+    return (
+      <button
+        onClick={onExpand}
+        className="flex items-center justify-end gap-1 w-full text-right text-[var(--muted-foreground)] hover:text-[var(--navy-medium)] transition-colors"
+        title="Geen data beschikbaar voor deze periode"
+        aria-label="Geen data - klik om jaren uit te klappen"
+      >
+        —
+        <ChevronRight className="h-3 w-3" aria-hidden="true" />
+      </button>
+    )
+  }
+
+  // Sum only available years
   const total = years
-    .filter((y) => collapsedYearRange.includes(y.year))
+    .filter((y) => availableCollapsedYears.includes(y.year))
     .reduce((sum, y) => sum + y.amount, 0)
 
   const formatted = formatAmount(total)
@@ -511,6 +557,7 @@ export function DataTable({
           <CollapsedYearsCell
             years={row.original.years}
             collapsedYearRange={collapsedYears}
+            row={row.original}
             onExpand={() => setYearsExpanded(true)}
           />
         ),
@@ -547,13 +594,14 @@ export function DataTable({
         header: ({ column }) => (
           <SortableHeader column={column} onSortChange={onSortChange}>
             {year}
-            {/* Partial data indicator - will be populated from data_freshness */}
-            {year === Math.max(...availableYears) && (
-              <span className="text-[var(--warning)]" title="Data nog niet compleet">*</span>
-            )}
           </SortableHeader>
         ),
         cell: ({ row }) => {
+          // Check if year is within this row's data availability range
+          if (!isYearAvailable(year, row.original)) {
+            return <NoDataCell />
+          }
+
           const amount = row.original.years.find((y) => y.year === year)?.amount ?? 0
           const prevAmount = previousYear
             ? row.original.years.find((y) => y.year === previousYear)?.amount
@@ -839,9 +887,6 @@ export function DataTable({
             'RVO, ZonMW en NWO: absolute bedragen. COA: gemiddeld staffelbedrag incl. BTW'
           ) : (
             'Absolute bedragen in €'
-          )}
-          {availableYears.includes(Math.max(...availableYears)) && (
-            <span className="ml-4">* Data nog niet compleet</span>
           )}
         </div>
 

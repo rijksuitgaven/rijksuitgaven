@@ -274,21 +274,60 @@ export function ExpandedRow({
               </div>
             </td>
             {/* Collapsed years cell */}
-            {!yearsExpanded && collapsedYears.length > 0 && (
-              <td className={cn(
-                'px-3 py-2.5 text-right tabular-nums border-b border-[var(--border)]',
-                collapsedFontClass,
-                collapsedTotal === 0 && 'text-[var(--muted-foreground)]'
-              )}>
-                {collapsedTotal === 0 ? '-' : collapsedFormatted}
-              </td>
-            )}
+            {!yearsExpanded && collapsedYears.length > 0 && (() => {
+              const availableCollapsed = collapsedYears.filter((y) => {
+                const from = row.dataAvailableFrom
+                const to = row.dataAvailableTo
+                if (from == null || to == null) return true
+                return y >= from && y <= to
+              })
+              if (availableCollapsed.length === 0) {
+                return (
+                  <td className="px-3 py-2.5 text-right text-[var(--muted-foreground)] border-b border-[var(--border)]"
+                    title="Geen data beschikbaar voor deze periode"
+                  >
+                    —
+                  </td>
+                )
+              }
+              const availTotal = availableCollapsed.reduce(
+                (sum, y) => sum + (detail.years[String(y)] || 0), 0
+              )
+              const availFormatted = formatAmount(availTotal)
+              const availFontClass = getAmountFontClass(availFormatted)
+              return (
+                <td className={cn(
+                  'px-3 py-2.5 text-right tabular-nums border-b border-[var(--border)]',
+                  availFontClass,
+                  availTotal === 0 && 'text-[var(--muted-foreground)]'
+                )}>
+                  {availTotal === 0 ? '-' : availFormatted}
+                </td>
+              )
+            })()}
             {/* Empty cell for collapse button column when expanded */}
             {yearsExpanded && collapsedYears.length > 0 && (
               <td className="px-3 py-2.5 border-b border-[var(--border)]" />
             )}
             {/* Year cells */}
             {visibleYears.map((year) => {
+              // Check availability from parent row
+              const from = row.dataAvailableFrom
+              const to = row.dataAvailableTo
+              const available = (from == null || to == null) ? true : (year >= from && year <= to)
+
+              if (!available) {
+                return (
+                  <td
+                    key={year}
+                    className="px-3 py-2.5 text-right text-[var(--muted-foreground)] border-b border-[var(--border)]"
+                    title="Geen data beschikbaar voor deze periode"
+                  >
+                    —
+                  </td>
+                )
+              }
+
               const amount = detail.years[String(year)] || 0
               const formatted = formatAmount(amount)
               const fontClass = getAmountFontClass(formatted)

@@ -81,20 +81,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/footer/footer.tsx** ⭐ CREATED (2026-02-06)
-   Site-wide footer component with auth-aware content (3-column layout, social icons)
+1. **scripts/sql/022-data-availability.sql** ⭐ CREATED (2026-02-07)
+   Data availability table with auto-population from source data
 
-2. **docs/plans/2026-02-06-data-availability-indicators-design.md** ⭐ CREATED (2026-02-06)
-   Design document for distinguishing "no data" vs "zero" in table cells
+2. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-07)
+   Availability lookup, caching, injection into all query paths (aggregated, source, integraal)
 
-3. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-06)
-   UX-010: Google search link, UX-011: Module-specific footer text, totals row fix
+3. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-07)
+   NoDataCell component, availability-aware rendering, removed "* Data nog niet compleet"
 
-4. **app/src/app/layout.tsx** ⭐ MODIFIED (2026-02-06)
-   Added Footer component to site layout
+4. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-07)
+   Availability-aware year cells and collapsed years in expanded rows
 
-5. **02-requirements/backlog.md** ⭐ MODIFIED (2026-02-06)
-   Added Staffelbedrag explanation (V1.0), Overzichtspagina deferred to V5
+5. **app/src/types/api.ts** ⭐ MODIFIED (2026-02-07)
+   Added dataAvailableFrom/dataAvailableTo to row interfaces
 
 ---
 

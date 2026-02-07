@@ -1,7 +1,7 @@
 # Data Update Runbook
 
 **Purpose:** Step-by-step guide for updating data in Rijksuitgaven.nl
-**Last Updated:** 2026-02-01
+**Last Updated:** 2026-02-07
 **Frequency:** Monthly (government data updates)
 
 ---
@@ -13,9 +13,11 @@
 | 1 | Export new data from source | ~10 min |
 | 2 | Transform CSV files | ~5 min |
 | 3 | Import to Supabase | ~10-30 min |
-| 4 | Refresh materialized views | ~2 min |
-| 5 | Re-sync Typesense | ~5 min |
-| 6 | Verify | ~5 min |
+| 4 | Update data_availability table | ~5 min |
+| 5 | Refresh materialized views | ~2 min |
+| 6 | Re-sync Typesense | ~5 min |
+| 7 | Restart backend (clear cache) | ~2 min |
+| 8 | Verify | ~5 min |
 
 **Total time:** ~30-60 minutes depending on data volume
 
@@ -23,26 +25,63 @@
 
 ## Post-Import Commands (Copy-Paste Ready)
 
-After importing new data (Steps 1-3), run these 2 commands from terminal:
+After importing new data (Steps 1-3), run these commands from terminal:
+
+### Option A: With psql installed
 
 ```bash
-# Step 4: Refresh all materialized views
+# Step 5: Refresh all materialized views
 /usr/local/opt/libpq/bin/psql "postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" -f scripts/sql/refresh-all-views.sql
 ```
 
+### Option B: Without psql (Python fallback)
+
 ```bash
-# Step 5: Re-sync Typesense (includes mandatory audit)
-cd scripts/typesense
-export TYPESENSE_HOST="typesense-production-35ae.up.railway.app"
-export TYPESENSE_API_KEY="<admin-key-from-railway>"
-export SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
-python3 sync_to_typesense.py --recreate
+python3 -c "
+import psycopg2
+conn = psycopg2.connect('postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres')
+conn.autocommit = True
+cur = conn.cursor()
+cur.execute('SET statement_timeout = 300000')
+views = [
+    'instrumenten_aggregated', 'apparaat_aggregated', 'inkoop_aggregated',
+    'provincie_aggregated', 'gemeente_aggregated', 'publiek_aggregated',
+]
+for v in views:
+    print(f'Refreshing {v}...')
+    cur.execute(f'REFRESH MATERIALIZED VIEW {v}')
+    print(f'  Done.')
+print('Refreshing universal_search (CONCURRENTLY)...')
+cur.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY universal_search')
+print('  Done.')
+cur.close()
+conn.close()
+print('All views refreshed.')
+"
+```
+
+### Step 6: Re-sync Typesense
+
+```bash
+# Re-sync Typesense (includes mandatory audit)
+SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" \
+TYPESENSE_API_KEY="<admin-key-from-railway>" \
+python3 scripts/typesense/sync_to_typesense.py --recreate
 # Must see: ✅ AUDIT PASSED
 ```
 
+**Typesense API keys:**
+- **Admin key** (write access, for sync): Get from Railway dashboard → Typesense service → Variables
+- **Search key** (read-only, in `.env`): `0vh4mxafjeuvd676gw92kpjflg6fuv57`
+
+**To sync only one collection** (faster, when only one module changed):
+```bash
+python3 scripts/typesense/sync_to_typesense.py --collection gemeente --recreate
+```
+
 **Expected results:**
-- Views: "7 rows" returned (one per view)
-- Typesense: `✅ AUDIT PASSED` with ~2M total documents across all collections
+- Views: Row counts printed for verification
+- Typesense: `✅ AUDIT PASSED` with matching document counts
 
 ---
 
@@ -50,8 +89,8 @@ python3 sync_to_typesense.py --recreate
 
 - Access to Supabase dashboard (SQL Editor)
 - Access to data sources (varies per module)
-- Terminal with psql and Python installed
-- Environment variables set (see `docs/LOCAL-SETUP.md`)
+- Terminal with Python 3 + psycopg2 installed
+- Typesense admin API key (from Railway dashboard)
 
 ---
 
@@ -131,17 +170,88 @@ ORDER BY table_name;
 
 ---
 
-## Step 4: Refresh Materialized Views ⚠️ REQUIRED
+## Step 4: Update data_availability Table ⚠️ REQUIRED
 
-**This step is MANDATORY after any data change.**
+**This step is MANDATORY when:**
+- A new year of data is added (update `year_to`)
+- A new entity appears (add new row)
+- A module gets new historical data (update `year_from`)
 
-**Recommended: Run via psql (no timeout issues):**
+### What is data_availability?
+
+This table tells the frontend which years have real data per module/entity. Without it, the UI cannot distinguish "no data" from "real zero". See `docs/plans/2026-02-06-data-availability-indicators-design.md` for full design.
+
+### Granularity
+
+| Module | Level | What to update |
+|--------|-------|----------------|
+| instrumenten | Module-level | Single row (entity_type=NULL) |
+| inkoop | Module-level | Single row (entity_type=NULL) |
+| apparaat | Module-level | Single row (entity_type=NULL) |
+| gemeente | Per gemeente | One row per gemeente |
+| provincie | Per provincie | One row per provincie |
+| publiek | Per source | One row per source (RVO, COA, NWO, ZonMW) |
+
+### Option A: Supabase Studio (Recommended)
+
+1. Go to Supabase Dashboard → Table Editor → `data_availability`
+2. Find the relevant row(s)
+3. Edit `year_to` (or `year_from`) inline
+4. For new entities: click "Insert Row" and fill in module, entity_type, entity_name, year_from, year_to
+
+### Option B: SQL (for bulk updates)
+
+```sql
+-- Example: New year 2025 data arrived for all module-level modules
+UPDATE data_availability SET year_to = 2025, updated_at = NOW()
+WHERE module IN ('instrumenten', 'inkoop', 'apparaat') AND entity_type IS NULL;
+
+-- Example: New year 2025 data for all provincies
+UPDATE data_availability SET year_to = 2025, updated_at = NOW()
+WHERE module = 'provincie' AND entity_type = 'provincie';
+
+-- Example: New gemeente "Eindhoven" added with data from 2018
+INSERT INTO data_availability (module, entity_type, entity_name, year_from, year_to)
+VALUES ('gemeente', 'gemeente', 'Eindhoven', 2018, 2025);
+
+-- Example: COA now has data back to 2016
+UPDATE data_availability SET year_from = 2016, updated_at = NOW()
+WHERE module = 'publiek' AND entity_type = 'source' AND entity_name = 'COA';
+```
+
+### Verify data_availability
+
+```sql
+SELECT module, entity_type, entity_name, year_from, year_to
+FROM data_availability
+ORDER BY module, entity_type, entity_name;
+```
+
+### Current Entities
+
+**Gemeentes (12):** Almere, Amersfoort, Amsterdam, Arnhem, Barendrecht, Breda, De Ronde Venen, Den Haag, Groningen, Haarlem, Tilburg, Utrecht
+
+**Provincies (10):** Drenthe, Friesland, Gelderland, Limburg, Noord-Brabant, Noord-Holland, Overijssel, Utrecht, Zeeland, Zuid-Holland
+
+**Publiek sources (4):** COA, NWO, RVO, ZonMW
+
+---
+
+## Step 5: Refresh Materialized Views ⚠️ REQUIRED
+
+**This step is MANDATORY after any source data change.**
+
+### Option A: psql (if installed)
 
 ```bash
 /usr/local/opt/libpq/bin/psql "postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" -f scripts/sql/refresh-all-views.sql
 ```
 
-**Alternative: Supabase SQL Editor (run each separately to avoid timeout):**
+### Option B: Python (if psql not installed)
+
+See "Post-Import Commands" section above for copy-paste Python script.
+
+### Option C: Supabase SQL Editor (run each separately to avoid timeout)
 
 ```sql
 REFRESH MATERIALIZED VIEW instrumenten_aggregated;
@@ -153,10 +263,11 @@ REFRESH MATERIALIZED VIEW publiek_aggregated;
 REFRESH MATERIALIZED VIEW CONCURRENTLY universal_search;
 ```
 
+**Important:** `universal_search` can time out in the SQL Editor. If it does, use the Python approach with `SET statement_timeout = 300000` (5 minutes).
+
 ### Verify Refresh
 
 ```sql
--- Check aggregated view row counts
 SELECT 'instrumenten_aggregated' as view_name, COUNT(*) as rows FROM instrumenten_aggregated
 UNION ALL SELECT 'apparaat_aggregated', COUNT(*) FROM apparaat_aggregated
 UNION ALL SELECT 'inkoop_aggregated', COUNT(*) FROM inkoop_aggregated
@@ -169,20 +280,24 @@ ORDER BY view_name;
 
 ---
 
-## Step 5: Re-sync Typesense ⚠️ REQUIRED
+## Step 6: Re-sync Typesense ⚠️ REQUIRED
 
 **This step is MANDATORY to update search results.**
 
 ```bash
-cd /Users/michielmaandag/SynologyDrive/code/watchtower/rijksuitgaven/scripts/typesense
+cd /Users/michielmaandag/SynologyDrive/code/watchtower/rijksuitgaven
 
-# Set environment variables
-export TYPESENSE_HOST="typesense-production-35ae.up.railway.app"
-export TYPESENSE_API_KEY="<admin-key-from-railway>"  # Get from Railway Typesense service
-export SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
+SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" \
+TYPESENSE_API_KEY="<admin-key-from-railway>" \
+python3 scripts/typesense/sync_to_typesense.py --recreate
+```
 
-# Full re-sync with mandatory audit
-python3 sync_to_typesense.py --recreate
+**Typesense admin key:** Get from Railway dashboard → Typesense service → Variables. Do NOT use the search-only key from `.env` (it will fail with 401 Forbidden on write operations).
+
+**To sync only affected collections** (faster):
+```bash
+# Only sync gemeente after gemeente data change
+python3 scripts/typesense/sync_to_typesense.py --collection gemeente --recreate
 ```
 
 **Expected output:**
@@ -209,30 +324,52 @@ Sync complete! ✅
 
 To verify without syncing:
 ```bash
-python3 sync_to_typesense.py --audit-only
+python3 scripts/typesense/sync_to_typesense.py --audit-only
 ```
 
 ---
 
-## Step 6: Verify Everything Works
+## Step 7: Restart Backend (Clear Cache) ⚠️ IF data_availability CHANGED
 
-### 6.1 Test API Endpoints
+**Only needed if you changed the `data_availability` table in Step 4.**
+
+The backend caches module-level availability in memory (`_availability_cache`). This cache has no expiry and only clears on server restart.
+
+### Railway (Production)
+
+Go to Railway dashboard → Backend service → click "Restart"
+
+### Local Development
+
+Stop and restart the backend server.
+
+**Note:** If you only changed source data (Steps 1-3) but not `data_availability`, you can skip this step.
+
+---
+
+## Step 8: Verify Everything Works
+
+### 8.1 Test API Endpoints
 
 ```bash
 # Test instrumenten
-curl -s "https://rijksuitgaven-api-production-3448.up.railway.app/api/v1/modules/instrumenten?limit=5" | jq '.meta.total'
+curl -s "https://rijksuitgaven-api-production-3448.up.railway.app/api/v1/modules/instrumenten?limit=5" | python3 -m json.tool | grep total
 
 # Test search
-curl -s "https://rijksuitgaven-api-production-3448.up.railway.app/api/v1/modules/instrumenten?q=prorail&limit=5" | jq '.meta.total'
+curl -s "https://rijksuitgaven-api-production-3448.up.railway.app/api/v1/modules/instrumenten?q=prorail&limit=5" | python3 -m json.tool | grep total
+
+# Test data_availability fields are present
+curl -s "https://rijksuitgaven-api-production-3448.up.railway.app/api/v1/modules/gemeente?limit=1" | python3 -m json.tool | grep data_available
 ```
 
-### 6.2 Test Search in UI
+### 8.2 Test Search in UI
 
 1. Go to https://beta.rijksuitgaven.nl
 2. Search for a known recipient
 3. Verify results appear
+4. Check gemeente module: verify em-dash (—) appears for entities with limited year ranges
 
-### 6.3 Update data_freshness Table (Optional)
+### 8.3 Update data_freshness Table (Optional)
 
 ```sql
 -- Record when data was updated
@@ -252,21 +389,51 @@ VALUES ('Financiële instrumenten', NULL, 2024, CURRENT_DATE, true,
 iconv -f ISO-8859-1 -t UTF-8 input.csv > output.csv
 ```
 
-### Materialized View Refresh Takes Too Long
+### Materialized View Refresh Takes Too Long / Times Out
 
-Large tables may take 30-60 seconds per view. This is normal.
+Supabase SQL Editor has a default statement timeout. Use the Python approach:
 
-### Typesense Sync Fails
+```bash
+python3 -c "
+import psycopg2
+conn = psycopg2.connect('postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres')
+conn.autocommit = True
+cur = conn.cursor()
+cur.execute('SET statement_timeout = 300000')  # 5 minutes
+cur.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY universal_search')
+print('Done.')
+cur.close()
+conn.close()
+"
+```
+
+### refresh_all_views() Function Not Found
+
+This function does not exist on Supabase. Use the individual REFRESH commands or the Python script instead.
+
+### Typesense Sync Fails with 401 Forbidden
+
+You're using the search-only API key. Use the admin key from Railway dashboard → Typesense service → Variables.
+
+### Typesense Sync Fails with Connection Error
 
 1. Check Typesense is running: `curl https://typesense-production-35ae.up.railway.app/health`
-2. Check API key is correct
+2. Check API key is correct (admin key, not search key)
 3. Check Supabase connection string
 
 ### API Returns Old Data
 
-Make sure you completed:
-1. ✅ Step 4: Refresh materialized views
-2. ✅ Step 5: Re-sync Typesense
+Make sure you completed ALL steps:
+1. ✅ Step 4: Updated data_availability (if applicable)
+2. ✅ Step 5: Refreshed materialized views
+3. ✅ Step 6: Re-synced Typesense
+4. ✅ Step 7: Restarted backend (if data_availability changed)
+
+### Em-dash (—) Not Showing for New Entities
+
+1. Check `data_availability` table has a row for the new entity
+2. Check backend was restarted (Step 7) to clear the cache
+3. Check the `entity_name` matches exactly (case-sensitive)
 
 ---
 
@@ -286,11 +453,14 @@ Use this checklist for each data update:
 - [ ] Import to Supabase
 - [ ] Verify row counts
 
-### Post-Import (REQUIRED)
+### Post-Import (ALL REQUIRED)
+- [ ] Update data_availability table (year_to, new entities)
 - [ ] Refresh materialized views
-- [ ] Re-sync Typesense
+- [ ] Re-sync Typesense (with admin key)
+- [ ] Restart backend if data_availability changed
 - [ ] Test API endpoints
 - [ ] Test search in UI
+- [ ] Verify em-dash display for limited-range entities
 
 ### Documentation
 - [ ] Update data_freshness table
@@ -305,9 +475,10 @@ Use this checklist for each data update:
 |----------|---------|
 | `scripts/sql/DATABASE-DOCUMENTATION.md` | Database schema reference |
 | `scripts/sql/refresh-all-views.sql` | View refresh script |
+| `scripts/sql/022-data-availability.sql` | Data availability table + initial data |
 | `scripts/typesense/README.md` | Typesense sync documentation |
 | `scripts/data/DATA-MIGRATION-README.md` | Initial migration process |
-| `docs/LOCAL-SETUP.md` | Local development setup |
+| `docs/plans/2026-02-06-data-availability-indicators-design.md` | Data availability design |
 
 ---
 
@@ -315,5 +486,6 @@ Use this checklist for each data update:
 
 | Date | Changes |
 |------|---------|
+| 2026-02-07 | Added Step 4 (data_availability), Step 7 (cache clear), Python fallback for views, Typesense key guidance, troubleshooting for common issues |
 | 2026-02-01 | Updated Typesense sync with mandatory audit, correct document counts |
 | 2026-01-26 | Initial version |

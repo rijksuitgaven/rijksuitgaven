@@ -22,6 +22,90 @@ logger = logging.getLogger(__name__)
 # Available years in the data
 YEARS = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
 
+# Data availability: module → entity_type for entity-level lookups
+# Module-level modules (entity_type=NULL): instrumenten, inkoop, apparaat
+# Entity-level modules: gemeente, provincie, publiek
+AVAILABILITY_ENTITY_TYPE = {
+    "gemeente": "gemeente",
+    "provincie": "provincie",
+    "publiek": "source",
+}
+
+# Cache for module-level availability (rarely changes, avoid repeated queries)
+_availability_cache: dict[str, tuple[int, int]] = {}
+
+
+async def _get_module_availability(module: str) -> tuple[int | None, int | None]:
+    """Get module-level year range from data_availability table."""
+    if module in _availability_cache:
+        return _availability_cache[module]
+    row = await fetch_all(
+        "SELECT year_from, year_to FROM data_availability WHERE module = $1 AND entity_type IS NULL",
+        module,
+    )
+    if row:
+        result = (row[0]["year_from"], row[0]["year_to"])
+        _availability_cache[module] = result
+        return result
+    return (None, None)
+
+
+async def _get_entity_availability(module: str) -> dict[str, tuple[int, int]]:
+    """Get entity-level year ranges for a module. Returns {entity_name: (year_from, year_to)}."""
+    entity_type = AVAILABILITY_ENTITY_TYPE.get(module)
+    if not entity_type:
+        return {}
+    rows = await fetch_all(
+        "SELECT entity_name, year_from, year_to FROM data_availability WHERE module = $1 AND entity_type = $2",
+        module, entity_type,
+    )
+    return {r["entity_name"]: (r["year_from"], r["year_to"]) for r in rows}
+
+
+async def _inject_availability(rows: list[dict], module: str, config: dict) -> list[dict]:
+    """Add data_available_from/to fields to each row based on module type."""
+    entity_type = AVAILABILITY_ENTITY_TYPE.get(module)
+
+    if entity_type:
+        # Entity-level: look up per entity
+        entity_avail = await _get_entity_availability(module)
+        module_default = await _get_module_availability(module)
+
+        # For entity-level modules, we need to know which column holds the entity
+        # For gemeente: the entity is the "gemeente" field, but primary_value is "ontvanger"
+        # We need to map primary_value to entity. For gemeente/provincie, the entity column
+        # might differ from primary_value. However, in the aggregated views, we only have
+        # primary_value. The design doc says to join on entity column, but for the aggregated
+        # view we don't have that column. So we apply module-level default for rows where
+        # we can't determine the entity, and entity-level for rows where primary_value
+        # matches an entity_name (e.g., in publiek, primary_value=ontvanger but entity=source).
+        #
+        # For publiek: entity is "source" (RVO, COA, etc.) but primary_value is "ontvanger"
+        # So we need to use module-level default for publiek in aggregated view.
+        # For gemeente: primary_value is ontvanger (e.g., "Stichting X") not gemeente name.
+        # So we also use module-level default.
+        #
+        # Entity-level availability is most useful when we have extra columns showing
+        # the entity (e.g., gemeente column in expanded view). For main rows, module-level
+        # is the safe fallback.
+        for row in rows:
+            # Try entity match (works for modules where primary = entity, rare in practice)
+            avail = entity_avail.get(row["primary_value"])
+            if avail:
+                row["data_available_from"] = avail[0]
+                row["data_available_to"] = avail[1]
+            else:
+                row["data_available_from"] = module_default[0]
+                row["data_available_to"] = module_default[1]
+    else:
+        # Module-level: same range for all rows
+        year_from, year_to = await _get_module_availability(module)
+        for row in rows:
+            row["data_available_from"] = year_from
+            row["data_available_to"] = year_to
+
+    return rows
+
 
 # =============================================================================
 # Typesense Client Helper (for fast autocomplete)
@@ -452,7 +536,7 @@ async def get_module_data(
     )
 
     if use_aggregated:
-        return await _get_from_aggregated_view(
+        rows, total, totals = await _get_from_aggregated_view(
             config=config,
             search=search,
             jaar=jaar,
@@ -466,7 +550,7 @@ async def get_module_data(
             columns=valid_columns if valid_columns else None,  # Pass columns to view query
         )
     else:
-        return await _get_from_source_table(
+        rows, total, totals = await _get_from_source_table(
             config=config,
             search=search,
             jaar=jaar,
@@ -480,6 +564,11 @@ async def get_module_data(
             filter_fields=filter_fields,
             columns=valid_columns,
         )
+
+    # Inject data availability info (year range per entity/module)
+    await _inject_availability(rows, module, config)
+
+    return rows, total, totals
 
 
 # Fields with _lower variants in Typesense (for prefix matching)
@@ -1374,18 +1463,39 @@ async def get_integraal_data(
     rows = await fetch_all(query, *params)
     total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
 
+    # Fetch all module-level availabilities for integraal range computation
+    all_avail = await fetch_all(
+        "SELECT module, year_from, year_to FROM data_availability WHERE entity_type IS NULL"
+    )
+    module_avail = {r["module"]: (r["year_from"], r["year_to"]) for r in all_avail}
+
     result = []
     for row in rows:
         years_dict = {
             year: int(row.get(f"y{year}", 0) or 0)
             for year in YEARS
         }
+        row_modules = [s.strip() for s in row["sources"].split(",")] if row["sources"] else []
+
+        # Compute combined availability range from all modules this entity appears in
+        year_from = None
+        year_to = None
+        for mod in row_modules:
+            avail = module_avail.get(mod)
+            if avail:
+                if year_from is None or avail[0] < year_from:
+                    year_from = avail[0]
+                if year_to is None or avail[1] > year_to:
+                    year_to = avail[1]
+
         result.append({
             "primary_value": row["primary_value"],
             "years": years_dict,
             "totaal": int(row["totaal"] or 0),
             "row_count": row["source_count"] or 1,  # Use source_count as row_count
-            "modules": [s.strip() for s in row["sources"].split(",")] if row["sources"] else [],
+            "modules": row_modules,
+            "data_available_from": year_from,
+            "data_available_to": year_to,
         })
 
     return result, total or 0

@@ -69,6 +69,31 @@
 
 ## Tables
 
+### 0. data_availability (Data Availability Indicators)
+
+**Description:** Tracks which years have data per module/entity. Used by frontend to distinguish "no data" (em-dash) from "real zero" (0).
+
+**Migration:** `022-data-availability.sql`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | SERIAL | Primary key |
+| module | TEXT | Module name (e.g., 'instrumenten', 'gemeente') |
+| entity_type | TEXT | NULL for module-level, 'gemeente'/'provincie'/'source' for entity-level |
+| entity_name | TEXT | NULL for module-level, entity value for entity-level |
+| year_from | INT | First year with data |
+| year_to | INT | Last year with data |
+| updated_at | TIMESTAMP | Last update time |
+
+**Granularity:**
+- Module-level (entity_type=NULL): instrumenten, inkoop, apparaat - all entities share same year range
+- Entity-level: gemeente (per gemeente), provincie (per provincie), publiek (per source/organisatie)
+- Module-level fallbacks exist for entity-level modules (used when entity not found)
+
+**Maintenance:** Update `year_to` when new year data arrives. Edit via Supabase Studio.
+
+---
+
 ### 1. instrumenten (Financiële Instrumenten)
 
 **Description:** Rijksbegroting financial instruments - subsidies, grants, and financial transfers from the national government.

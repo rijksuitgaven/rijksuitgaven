@@ -19,6 +19,8 @@ export interface ApiRecipientRow {
   extra_column_counts?: Record<string, number>  // Distinct value counts per column (for "+X meer" indicator)
   matched_field?: string | null  // Which field matched the search (when searching)
   matched_value?: string | null  // The value that matched (when searching)
+  data_available_from?: number | null  // First year with data for this entity
+  data_available_to?: number | null  // Last year with data for this entity
 }
 
 // Internal row format - years as array (easier for iteration)
@@ -32,6 +34,8 @@ export interface RecipientRow {
   extraColumnCounts?: Record<string, number>  // Distinct value counts per column (for "+X meer" indicator)
   matchedField?: string | null  // Which field matched the search (when searching)
   matchedValue?: string | null  // The value that matched (when searching)
+  dataAvailableFrom?: number | null  // First year with data for this entity
+  dataAvailableTo?: number | null  // Last year with data for this entity
 }
 
 export interface YearAmount {
