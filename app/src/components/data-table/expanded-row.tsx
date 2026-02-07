@@ -263,12 +263,21 @@ export function ExpandedRow({
               <div className="flex items-center gap-2" data-tooltip={detail.group_value || undefined}>
                 <span className="text-[var(--muted-foreground)]">{isLast ? '└' : '├'}</span>
                 {detail.group_value ? (
-                  <button
-                    onClick={() => onFilterLinkClick?.(grouping, detail.group_value!)}
-                    className="text-sm text-[var(--navy-dark)] truncate max-w-[400px] text-left hover:text-[var(--pink)] hover:underline transition-colors cursor-pointer"
-                  >
-                    {detail.group_value}
-                  </button>
+                  grouping === 'module' ? (
+                    <a
+                      href={`/${detail.group_value}?q=${encodeURIComponent(row.primary_value)}`}
+                      className="text-sm text-[var(--navy-dark)] truncate max-w-[400px] text-left hover:text-[var(--pink)] hover:underline transition-colors cursor-pointer"
+                    >
+                      {detail.group_value}
+                    </a>
+                  ) : (
+                    <button
+                      onClick={() => onFilterLinkClick?.(grouping, detail.group_value!)}
+                      className="text-sm text-[var(--navy-dark)] truncate max-w-[400px] text-left hover:text-[var(--pink)] hover:underline transition-colors cursor-pointer"
+                    >
+                      {detail.group_value}
+                    </button>
+                  )
                 ) : (
                   <span className="text-sm text-[var(--muted-foreground)]">-</span>
                 )}
