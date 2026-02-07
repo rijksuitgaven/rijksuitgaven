@@ -868,8 +868,8 @@ async def _get_from_aggregated_view(
             fetch_val(count_query, *count_params) if count_params else fetch_val(count_query),
         ]
 
-        # Add totals query only when searching/filtering
-        run_totals = bool(search or count_where_sql)
+        # Add totals query only when user actively searches/filters (not min_years alone)
+        run_totals = bool(search or jaar or min_bedrag is not None or max_bedrag is not None)
         if run_totals:
             coros.append(
                 fetch_all(totals_query, *count_params) if count_params else fetch_all(totals_query)
@@ -1460,7 +1460,8 @@ async def get_integraal_data(
     """
 
     # Execute queries in PARALLEL for performance
-    run_totals = bool(search or count_where_sql)
+    # Only compute totals when user actively searches/filters (not min_years alone)
+    run_totals = bool(search or jaar or min_bedrag is not None or max_bedrag is not None or filter_modules or (min_instanties is not None and min_instanties > 1))
     coros = [
         fetch_all(query, *params),
         fetch_val(count_query, *count_params) if count_params else fetch_val(count_query),
