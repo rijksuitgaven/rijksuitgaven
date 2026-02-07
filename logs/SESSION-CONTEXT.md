@@ -358,7 +358,7 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | **Cross-module indicator** | "Ook in: Instrumenten, Publiek" on recipient rows | ✅ Done |
 | **Prominent expanded context** | Regeling as headline, breadcrumb hierarchy | ✅ Done |
 | **URL sharing** | Search + key filters preserved | ✅ Done |
-| **Trend anomaly indicator** | Red highlight for 10%+ year-over-year changes (magnitude only) | ✅ Done |
+| **Trend anomaly indicator** | Red highlight for 50%+ year-over-year changes (raised from 10% on 2026-02-07) | ✅ Done |
 | **Cross-module search results** | Always show "Ook in:" with counts above table | ✅ Done |
 | **Integraal as landing** | Move Integraal tab to first position | ✅ Done |
 

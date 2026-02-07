@@ -399,10 +399,9 @@ interface SearchBarProps {
 **Minimum query:** 2 characters
 
 **Environment Variables:**
-| Variable | Default |
-|----------|---------|
-| `NEXT_PUBLIC_TYPESENSE_HOST` | `typesense-production-35ae.up.railway.app` |
-| `NEXT_PUBLIC_TYPESENSE_API_KEY` | (set in deployment) |
+None required. SearchBar uses the BFF proxy (`/api/v1/search/autocomplete`) which handles Typesense access server-side.
+
+> **Note (2026-02-08):** `NEXT_PUBLIC_TYPESENSE_HOST` and `NEXT_PUBLIC_TYPESENSE_API_KEY` are no longer used. All Typesense access goes through the BFF proxy. These can be removed from Railway environment config.
 
 ### DetailPanel (`components/detail-panel/detail-panel.tsx`) — INACTIVE
 
@@ -666,7 +665,7 @@ npm run build
 - [ ] Trend anomaly highlight (50%+ change)
 - [ ] Cross-module indicator shows ("Ook in:")
 - [ ] Sorting works (click headers)
-- [ ] Pagination controls work (25/50/100)
+- [ ] Pagination controls work (50/100/150/250/500)
 - [ ] Row expand/collapse works
 - [ ] Sticky columns on mobile scroll
 - [ ] CSV export downloads correctly
@@ -697,16 +696,8 @@ npm run build
 - [ ] Clear button works
 - [ ] Click outside closes dropdown
 
-### DetailPanel
-- [ ] Opens when clicking recipient name in table
-- [ ] Shows year breakdown correctly
-- [ ] "Alle jaren" expands to show full history
-- [ ] Module-specific fields display
-- [ ] "Ook in:" badges appear for cross-module recipients
-- [ ] Google search link opens in new tab
-- [ ] CSV export downloads correctly
-- [ ] Close button/Escape key closes panel
-- [ ] Switching recipient updates panel content
+### DetailPanel — DEFERRED TO V5
+> Component exists but is inactive. Testing checklist will be added when rebuilt for AI Research Mode.
 
 ### CrossModuleResults
 - [ ] Appears when search query entered

@@ -44,7 +44,7 @@ export function calculateYoYChange(
 const ANOMALY_THRESHOLD_PERCENT = 50
 
 /**
- * Check if a YoY change is an anomaly (10%+ change)
+ * Check if a YoY change is an anomaly (50%+ change)
  */
 export function isAnomaly(percentChange: number | null): boolean {
   if (percentChange === null) return false

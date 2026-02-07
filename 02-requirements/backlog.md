@@ -342,13 +342,13 @@ Add error tracking to catch and debug production issues.
 **Added:** 2026-01-21
 **Source:** UX Brainstorm Session
 
-V1.0 has fixed 50% threshold for trend anomaly highlighting (red cells). Originally 10% but raised to 50% as normal government budget adjustments (5-20% YoY) created too much noise.
+V1.0 has fixed 50% threshold for trend anomaly highlighting (red cells). Originally 10% but raised to 50% on 2026-02-07 as normal government budget adjustments (5-20% YoY) created too much noise.
 
 **Future enhancement:** Allow users to configure their own threshold:
-- 10% (sensitive - more highlights)
-- 25%
-- 15% (less sensitive)
-- 20% (only major changes)
+- 25% (sensitive - more highlights)
+- 50% (current default)
+- 75% (less sensitive)
+- 100% (only major changes)
 
 **Location:** User settings/preferences.
 

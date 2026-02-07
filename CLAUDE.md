@@ -78,12 +78,15 @@ Skip approval for immediate follow-ups in the same task (e.g., user says "yes" t
 
 **For any UI/UX feature, present the approach BEFORE writing code:**
 
-1. State proposed design decisions (position, behavior, styling)
-2. List any questions or trade-offs
-3. Wait for user approval
+1. **Assign UX number** (per Rule 3a) and write requirement entry
+2. State proposed design decisions (position, behavior, styling)
+3. List any questions or trade-offs
+4. Wait for user approval
 
 **Format:**
 ```
+**UX-XXX: [Feature Name]**
+
 **Proposed Design:**
 - [Key decision 1]
 - [Key decision 2]
@@ -94,7 +97,7 @@ Skip approval for immediate follow-ups in the same task (e.g., user says "yes" t
 Ready to implement?
 ```
 
-**Rule:** No code until design is approved.
+**Rule:** No code until design is approved AND UX requirement is written.
 
 ### 2. Requirements First (BEFORE Proposing)
 
@@ -122,20 +125,51 @@ Which do you prefer?
 
 **Documentation happens immediately, never "later".**
 
-### 3a. UX Feature Documentation (MANDATORY)
+### 3a. Requirements-First Documentation (MANDATORY)
 
-**Every user-facing feature MUST have a formal requirement entry.**
+**Every user-facing feature MUST have a formal requirement entry BEFORE implementation starts.**
 
-**When implementing a UX feature:**
-1. Assign a UX number (check `search-requirements.md` for next available: UX-001, UX-002, etc.)
-2. Add requirement entry to `02-requirements/search-requirements.md` with:
+**The Requirement Gate (3 steps BEFORE writing code):**
+
+1. **Assign UX number:** Check `02-requirements/search-requirements.md` for next available number
+2. **Write the requirement entry** with:
+   - `### UX-XXX: [Name]`
    - Requirement description
-   - Behavior details
-   - Priority
-   - Status with implementation date
-3. Update `docs/FRONTEND-DOCUMENTATION.md` if component behavior changes
+   - Behavior details (what the user sees/does)
+   - Priority (P0/P1/P2)
+   - Status: `⏳ In Development`
+3. **Show the user:** Include the UX number in your design discussion (Rule 1b)
 
-**Rule:** If it affects what users see or do, it gets a UX-XXX entry. No exceptions.
+**After implementation:**
+4. Update status to `✅ Implemented YYYY-MM-DD`
+5. Update `docs/FRONTEND-DOCUMENTATION.md` if component behavior changes
+6. Update `02-requirements/backlog.md` if it was a backlog item
+
+**What counts as "user-facing"?**
+
+| Needs UX-XXX | Does NOT need UX-XXX |
+|--------------|---------------------|
+| New UI element or component | Backend refactoring |
+| Changed user interaction/behavior | Performance optimization (invisible) |
+| New page or route | Security hardening |
+| Visual design changes | Infrastructure changes |
+| Error/empty states users see | Code cleanup/imports |
+| Legal compliance displays | API changes (not visible to user) |
+| Export formats | Database migrations |
+
+**Format for design discussion:**
+```
+**UX-XXX: [Feature Name]**
+**Proposed Design:**
+- [Key decision 1]
+- [Key decision 2]
+
+Ready to implement?
+```
+
+**Rule:** If it affects what users see or do, it gets a UX-XXX entry. No exceptions. The entry is created BEFORE code, not after.
+
+**Current UX numbers used:** UX-001 through UX-018. Next available: **UX-019**.
 
 ### 4. Cross-Module Consistency
 

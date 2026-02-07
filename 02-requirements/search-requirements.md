@@ -698,6 +698,34 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-006: Advanced Filter Features
+
+**Requirement:** Enhance filter dropdowns with selection visibility and automatic column display
+
+**Behavior:**
+
+**Feature 1: "GESELECTEERD" section in dropdown**
+- Selected items appear at top of dropdown with "GESELECTEERD" header
+- Unselected items below with "ALLE OPTIES" header
+- Matches old WordPress system UX pattern
+
+**Feature 2: Auto-show filter columns (max 2)**
+- Active filter fields automatically become visible table columns
+- First 2 active filters shown as columns (unlimited filters allowed)
+- Column selector hidden when filters control columns
+- User's column preference returns when filters cleared
+
+**Rationale:**
+- Users need visibility of their active filter selections
+- Showing filtered fields as columns provides immediate context
+- Mirrors the WordPress system behavior users are familiar with
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-02-02
+
+---
+
 ### UX-007: Clickable Hyperlinks for Drill-Down
 
 **Requirement:** Extra column values and expanded row grouped values are clickable to filter the data
@@ -877,6 +905,121 @@ Search "bedrijvenbeleid" shows:
 **Priority:** P2 (Medium)
 
 **Status:** ✅ Implemented 2026-02-07
+
+---
+
+### UX-014: Cookie Banner (GDPR Disclosure)
+
+**Requirement:** Display essential cookie disclosure banner on first visit
+
+**Behavior:**
+- Simple bottom bar, non-blocking (does NOT require consent mechanism)
+- Shows on first visit, checks localStorage for dismissal
+- Dismisses permanently on "OK" click
+- Links to `/privacybeleid` (privacy policy)
+- Fixed bottom position, z-index 50, fade-in animation
+
+**Content (Dutch):**
+"Deze website gebruikt alleen noodzakelijke cookies voor het functioneren van de site."
+
+**Rationale:**
+- Essential cookies only = simple disclosure (no consent mechanism needed under GDPR)
+- Self-hosted fonts (no external Google Fonts requests)
+- No analytics in V1.0
+
+**Related:** Privacy policy page (`/privacybeleid`)
+
+**Priority:** P0 (Legal requirement for launch)
+
+**Status:** ✅ Implemented 2026-01-27
+
+> **Note:** When analytics is added (V1.1+), replace simple banner with proper consent mechanism.
+
+---
+
+### UX-015: Error Boundary
+
+**Requirement:** Catch JavaScript errors in components and show user-friendly error message
+
+**Behavior:**
+- Wraps module page components
+- On error: shows "Er is iets misgegaan" with "Probeer opnieuw" button
+- Prevents blank white screen on JavaScript errors
+- Logs errors to console (production: would send to error tracking when added)
+
+**Priority:** P2 (Medium)
+
+**Status:** ✅ Implemented 2026-01-29
+
+---
+
+### UX-016: XLS Export
+
+**Requirement:** Export data to Excel (.xlsx) format in addition to CSV
+
+**Behavior:**
+- "XLS" button alongside CSV in table toolbar
+- Max 500 rows (same as CSV)
+- Uses xlsx library for generation
+- Filename: `rijksuitgaven-{moduleId}-{YYYY-MM-DD}.xlsx`
+- Includes: Primary value, year columns, Totaal
+
+**Rationale:**
+- Many users prefer Excel format directly (avoids CSV import step)
+- Dutch organizations commonly use Excel for data analysis
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-01-31
+
+---
+
+### UX-017: Visual Design System (Header + Table + Brand)
+
+**Requirement:** Comprehensive visual polish applying brand identity consistently across all pages
+
+**Changes implemented:**
+- **Header:** Compact 2-row layout (~100px height), grouped module tabs with gaps
+- **Module names:** Full Dutch names (Financiële instrumenten, Provinciale subsidieregisters, etc.)
+- **Page background:** White → #E1EAF2 (Gray Light) with gradient + white content card
+- **Table header:** Navy #0E3261, rounded corners, 14px semibold, right-aligned year columns
+- **Totaal column:** Bold + #D0DEEA background tint
+- **Logo:** Full logo on desktop, icon only on mobile
+- **Amount formatting:** Consistent text-xs for all amounts
+- **Anomaly highlighting:** Subtle red background + px-2 padding
+- **Column widths:** Primary 160px, extra 140px, years 95px, totaal 110px
+- **Collapse button:** Visible "< 2016-20" header for collapsible years
+- **Table layout:** `table-fixed` for predictable widths
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-01-29 through 2026-02-02
+
+---
+
+### UX-018: Mobile Message Banner
+
+**Requirement:** Friendly message for users on mobile devices that the app works best on larger screens
+
+**Behavior:**
+- Detects viewport < 768px
+- Bottom sheet with slide-up animation (300ms ease-out)
+- Navy dark background, Monitor icon, pink CTA
+- Dutch copy: "Beter op een groter scherm"
+- "Toch doorgaan" button (non-blocking)
+- One-time dismiss via localStorage (never shows again on that device)
+- Does NOT block access to the app
+
+**Rationale:**
+- V1.0 is desktop-first for data work
+- Mobile banner is lighter than full responsive audit
+- Users can still continue if they choose
+
+**Related:** UX-003 (Mobile Responsiveness - broader scope, deferred)
+
+**Priority:** P0 (V1.0 launch requirement)
+
+**Status:** ✅ Implemented 2026-02-05
 
 ---
 
@@ -1182,5 +1325,5 @@ Search "bedrijvenbeleid" shows:
 ---
 
 **Document Status:** V1.0 Scope - Implementation In Progress
-**Last Updated:** 2026-02-07
+**Last Updated:** 2026-02-08
 **Author:** Technical Project Manager (AI Assistant)

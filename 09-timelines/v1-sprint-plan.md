@@ -161,7 +161,7 @@
 | Totaal column | Row sum |
 | Sorting | Click column headers |
 | Pagination | 25/50/100 rows per page |
-| **Trend anomaly indicator** | Red highlight for 10%+ year-over-year changes (UX enhancement) |
+| **Trend anomaly indicator** | Red highlight for 50%+ year-over-year changes (UX enhancement, threshold raised from 10% on 2026-02-07) |
 | **Hover tooltip** | Shows exact % change vs previous year |
 
 **UX Reference:** See `docs/plans/2026-01-21-v1-search-ux-enhancement.md` (Enhancement 5)
@@ -382,10 +382,12 @@
 
 ---
 
-## Week 6: Auth + Overzicht
+## Week 6: Auth
 
 **Goal:** Magic Link auth, user migration, protected routes
 **Status:** ⏳ READY TO START (Mini Sprint complete 2026-02-06)
+
+> **Note:** Overzicht page was originally planned for this week but deferred to V5 (AI Research Mode) on 2026-02-06. V1 expanded row covers the functional need.
 
 ### Day 1-2: Supabase Auth Setup
 
