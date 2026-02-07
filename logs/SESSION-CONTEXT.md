@@ -864,7 +864,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 **Last Session:** 2026-02-07 - **Data Availability Indicators LIVE + Amersfoort typo fix**
 
-**2026-02-07 Summary:** Implemented data availability feature end-to-end. 29 curated year ranges in `data_availability` table. Frontend shows em-dash for unavailable years. Fixed Amsersfoort typo (1,168 rows). Comprehensive data update runbook. 2 commits, deployed to production.
+**2026-02-07 Summary:** Implemented data availability feature end-to-end. 29 curated year ranges in `data_availability` table. Frontend shows em-dash for unavailable years (individual rows + totals row). Fixed Amsersfoort typo (1,168 rows). Comprehensive data update runbook. Fixed totals row em-dash for fully unavailable years. 5 commits, deployed to production.
 
 **Mini Sprint Summary (2026-01-29 → 2026-02-06):** All UI/UX polish tasks complete. Ready for Week 6 (Auth).
 

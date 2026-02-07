@@ -61,6 +61,8 @@ app/src/
 │       └── index.ts
 ├── lib/
 │   ├── api.ts                    # API client for backend
+│   ├── api-config.ts             # Centralized API base URL
+│   ├── constants.ts              # Shared MODULE_LABELS, FIELD_LABELS, ALL_MODULES
 │   ├── format.ts                 # Number formatting utilities
 │   └── utils.ts                  # CN utility for Tailwind
 └── types/

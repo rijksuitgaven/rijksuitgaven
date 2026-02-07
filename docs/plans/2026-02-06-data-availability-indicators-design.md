@@ -215,8 +215,9 @@ The em-dash with tooltip is self-explanatory.
 ## Edge Cases
 
 ### Totals Row
-- Shows sum of available data (no special indicator)
-- This is already correct behavior
+- Shows em-dash `—` for years where ALL visible rows have no data for that year
+- Shows sum of available data when at least one row has data for the year
+- Collapsed years (2016-2020): shows em-dash if all collapsed years are unavailable for all rows
 
 ### Expanded Row
 - Inherits `data_available_from/to` from parent row

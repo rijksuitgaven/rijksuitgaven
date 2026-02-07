@@ -822,6 +822,7 @@ Search "bedrijvenbeleid" shows:
 - Years within range show actual amount (including `0` for confirmed zero)
 - Collapsed years column (2016-20) only sums years within availability range
 - Expanded rows inherit availability from parent row
+- **Totals row:** Shows em-dash for years where ALL visible rows have no data; sums normally otherwise
 
 **Granularity:**
 | Module | Level |
