@@ -41,7 +41,7 @@ export function calculateYoYChange(
 }
 
 // Threshold for flagging year-over-year changes as anomalies
-const ANOMALY_THRESHOLD_PERCENT = 10
+const ANOMALY_THRESHOLD_PERCENT = 50
 
 /**
  * Check if a YoY change is an anomaly (10%+ change)

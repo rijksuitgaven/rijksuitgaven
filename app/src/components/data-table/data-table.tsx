@@ -229,7 +229,7 @@ function AmountCell({
         fontClass,
         hasAnomaly && 'bg-[var(--trend-anomaly-bg)] rounded-sm -mx-2 px-2'
       )}
-      title={percentChange !== null ? `${formatPercentage(percentChange)} vs vorig jaar` : undefined}
+      data-tooltip-center={percentChange !== null ? `${formatPercentage(percentChange)} vs vorig jaar` : undefined}
     >
       {formatted}
     </div>
