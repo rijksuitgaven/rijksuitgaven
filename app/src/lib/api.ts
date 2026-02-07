@@ -147,7 +147,8 @@ export async function fetchDetailData(
   primaryValue: string,
   groupingField?: string
 ): Promise<DetailResponse> {
-  const encodedValue = encodeURIComponent(primaryValue)
+  // Double-encode to preserve %2F through Next.js routing (slashes in kostensoort like "Vaklit/abonn/overig")
+  const encodedValue = encodeURIComponent(encodeURIComponent(primaryValue))
   let url = `${API_BASE_URL}/api/v1/modules/${module}/${encodedValue}/details`
 
   if (groupingField) {

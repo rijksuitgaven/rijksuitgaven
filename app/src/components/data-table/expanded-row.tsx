@@ -109,7 +109,8 @@ export function ExpandedRow({
       setError(null)
 
       try {
-        const encodedValue = encodeURIComponent(row.primary_value)
+        // Double-encode to preserve %2F through Next.js routing (slashes in kostensoort like "Vaklit/abonn/overig")
+        const encodedValue = encodeURIComponent(encodeURIComponent(row.primary_value))
         const url = `${API_BASE_URL}/api/v1/modules/${module}/${encodedValue}/details?group_by=${grouping}`
 
         const response = await fetch(url, { signal: abortController.signal })
