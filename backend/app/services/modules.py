@@ -1449,16 +1449,16 @@ async def get_integraal_data(
     # Count query (without random threshold for accurate total)
     count_query = f"SELECT COUNT(*) FROM universal_search {count_where_sql}"
 
-    # Execute queries
-    rows = await fetch_all(query, *params)
-    total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
-
-    # Fetch module-level availabilities for integraal range computation
-    # Module-level modules (instrumenten, inkoop, apparaat) have entity_type IS NULL
-    # Entity-level modules (gemeente, provincie, publiek) use full range as fallback
-    all_avail = await fetch_all(
-        "SELECT module, year_from, year_to FROM data_availability WHERE entity_type IS NULL"
-    )
+    # Execute queries in PARALLEL for performance
+    coros = [
+        fetch_all(query, *params),
+        fetch_val(count_query, *count_params) if count_params else fetch_val(count_query),
+        fetch_all("SELECT module, year_from, year_to FROM data_availability WHERE entity_type IS NULL"),
+    ]
+    results = await asyncio.gather(*coros)
+    rows = results[0]
+    total = results[1]
+    all_avail = results[2]
     module_avail = {r["module"]: (r["year_from"], r["year_to"]) for r in all_avail}
     for mod in AVAILABILITY_ENTITY_TYPE:
         if mod not in module_avail:
@@ -1516,14 +1516,10 @@ async def get_integraal_details(
         ("publiek", "publiek_aggregated", "ontvanger"),
     ]
 
-    result = []
-
+    # Build all 5 queries and run in PARALLEL
+    coros = []
     for module_name, agg_table, primary_field in modules_to_query:
-        # Year filter clause
         year_filter = f'AND "{jaar}" > 0' if jaar else ""
-
-        # Use normalized key for matching to handle name variations
-        # The aggregated views have {primary_field}_key column with normalized value
         key_field = f"{primary_field}_key"
 
         query = f"""
@@ -1536,9 +1532,12 @@ async def get_integraal_details(
             FROM {agg_table}
             WHERE {key_field} = normalize_recipient($1) {year_filter}
         """
+        coros.append(fetch_all(query, primary_value))
 
-        rows = await fetch_all(query, primary_value)
+    all_results = await asyncio.gather(*coros)
 
+    result = []
+    for (module_name, _, _), rows in zip(modules_to_query, all_results):
         if rows:
             row = rows[0]
             years_dict = {year: int(row.get(f"y{year}", 0) or 0) for year in YEARS}
