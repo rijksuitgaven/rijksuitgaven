@@ -81,20 +81,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-07)
+1. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-07)
+   Totals row em-dash, click ontvanger expands row, removed onRowClick prop
+
+2. **app/src/components/module-page/module-page.tsx** ⭐ MODIFIED (2026-02-07)
+   Removed detail panel (deferred to V5), removed handleRowClick
+
+3. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-07)
+   Double-encode for slash values in detail API calls
+
+4. **app/src/lib/api.ts** ⭐ MODIFIED (2026-02-07)
+   Double-encode for detail API calls (slash values)
+
+5. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-07)
    Filter-aware availability lookup: entity-level when filtered, full range when unfiltered
-
-2. **scripts/sql/022-data-availability.sql** ⭐ CREATED + EXECUTED (2026-02-07)
-   Data availability table with 29 curated entries, RLS, indexes
-
-3. **scripts/sql/023-fix-amsersfoort-typo.sql** ⭐ CREATED + EXECUTED (2026-02-07)
-   Fixed Amsersfoort→Amersfoort typo (1,168 rows)
-
-4. **scripts/data/DATA-UPDATE-RUNBOOK.md** ⭐ REWRITTEN (2026-02-07)
-   Comprehensive 8-step data update process
-
-5. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-07)
-   NoDataCell component, availability-aware rendering, removed "* Data nog niet compleet"
 
 ---
 
@@ -864,7 +864,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 **Last Session:** 2026-02-07 - **Data Availability Indicators LIVE + Amersfoort typo fix**
 
-**2026-02-07 Summary:** Implemented data availability feature end-to-end. 29 curated year ranges in `data_availability` table. Frontend shows em-dash for unavailable years (individual rows + totals row). Fixed Amsersfoort typo (1,168 rows). Comprehensive data update runbook. Fixed totals row em-dash for fully unavailable years. 5 commits, deployed to production.
+**2026-02-07 Summary:** Data availability indicators (UX-012) live. Totals row em-dash fix. Click ontvanger now expands row (detail panel deferred to V5). Fixed slash encoding bug for Apparaat values like "Vaklit/abonn/overig". 8 commits, all deployed.
 
 **Mini Sprint Summary (2026-01-29 → 2026-02-06):** All UI/UX polish tasks complete. Ready for Week 6 (Auth).
 

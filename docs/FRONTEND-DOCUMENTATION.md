@@ -125,7 +125,7 @@ Main data grid component using TanStack Table.
 - **Extra column enhancements** (all modules):
   - Text wrapping: Max 2 lines with ellipsis overflow (`line-clamp-2`)
   - "+X meer" indicator: Shows when multiple distinct values exist (Gmail-style)
-  - Click "+X meer": Opens detail panel for full breakdown
+  - Click "+X meer": Expands the row to show detail breakdown
   - Styling: 12px, Navy Medium (`#436FA3`), cursor pointer, no underline/hover
 - Sticky columns on mobile (expand button + primary column)
 - Server-side pagination (50/100/150/250/500 rows per page)
@@ -398,32 +398,13 @@ interface SearchBarProps {
 | `NEXT_PUBLIC_TYPESENSE_HOST` | `typesense-production-35ae.up.railway.app` |
 | `NEXT_PUBLIC_TYPESENSE_API_KEY` | (set in deployment) |
 
-### DetailPanel (`components/detail-panel/detail-panel.tsx`)
+### DetailPanel (`components/detail-panel/detail-panel.tsx`) — INACTIVE
 
-Side panel showing comprehensive recipient information.
+**Status:** Component exists but is no longer used in module pages. Deferred to V5 (AI Research Mode) where it will become the Recipient Profile Panel.
 
-**Features:**
-- 50% width on desktop, full screen on mobile
-- Recipient name with Google search link
-- Year breakdown (expandable to show all years)
-- Module-specific detail fields (Regeling, Artikel, etc.)
-- "Ook in:" cross-module badges with navigation
-- CSV export for recipient data
-- Close via X button or Escape key
-- Switch between recipients without closing
+**Previous usage:** Opened when user clicked recipient name. Now clicking recipient name expands the row instead (2026-02-07).
 
-**Props:**
-```typescript
-interface DetailPanelProps {
-  recipientName: string
-  moduleId: string
-  isOpen: boolean
-  onClose: () => void
-  onNavigateToModule?: (module: string, recipientName: string) => void
-}
-```
-
-**Usage:** Opens when user clicks recipient name in DataTable.
+**V5 plan:** Rebuild as slide-out panel with full recipient context for AI Research Mode. See `02-requirements/backlog.md`.
 
 ### CrossModuleResults (`components/cross-module-results/cross-module-results.tsx`)
 
@@ -769,3 +750,4 @@ npm run build
 | 2026-02-05 | Added MobileBanner component (UX-003) |
 | 2026-02-06 | Added UX-010 Google search link in DataTable |
 | 2026-02-07 | Added UX-012 data availability indicators, updated RecipientRow/ApiRecipientRow interfaces, testing checklist |
+| 2026-02-07 | DetailPanel marked inactive (deferred to V5), click ontvanger expands row, added constants.ts/api-config.ts to project structure |
