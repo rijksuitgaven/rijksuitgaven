@@ -347,7 +347,7 @@
 | **UX-011: Module-specific footer text** | **MEDIUM** | ✅ Completed 2026-02-06 |
 | **Site-wide footer component** | **HIGH** | ✅ Completed 2026-02-06 |
 | **Code audit (security, accessibility)** | **HIGH** | ✅ Completed 2026-02-06 |
-| **Data availability indicators design** | **HIGH** | ✅ Design approved 2026-02-06, implementation next |
+| **Data availability indicators (UX-012)** | **HIGH** | ✅ Implemented 2026-02-07 (design 02-06, live 02-07) |
 | Typography/spacing consistency audit | LOW | ❌ Deferred (post-V1.0) |
 | Mobile responsiveness audit | LOW | ❌ Deferred (post-V1.0) |
 
@@ -377,7 +377,7 @@
 - [x] Google search link (UX-010)
 - [x] Module-specific footer text (UX-011)
 - [x] Site-wide footer component
-- [x] Data availability indicators design (approved, implementation next session)
+- [x] Data availability indicators (UX-012): designed 02-06, implemented + deployed 02-07
 - [x] Ready for Week 6 (Auth)
 
 ---
@@ -627,7 +627,7 @@ After V1.0 is stable:
 ---
 
 **Document Version:** 1.3
-**Last Updated:** 2026-02-05
+**Last Updated:** 2026-02-07
 
 ---
 

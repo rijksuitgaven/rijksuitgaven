@@ -1,6 +1,6 @@
 # Frontend Documentation
 
-**Last Updated:** 2026-02-06
+**Last Updated:** 2026-02-07
 **Stack:** Next.js 16.1.4 + TypeScript + Tailwind CSS + TanStack Table
 
 ---
@@ -141,6 +141,11 @@ Main data grid component using TanStack Table.
   - Hover: pink text + underline
   - Click: clears all filters, applies only clicked filter
   - All rows collapse after filter applied
+- **Data availability indicators** (UX-012): Em-dash for unavailable years
+  - `isYearAvailable()` helper checks year against `dataAvailableFrom`/`dataAvailableTo`
+  - `NoDataCell` component renders em-dash `—` with tooltip "Geen data beschikbaar voor deze periode"
+  - Collapsed years (2016-20) only sum years within availability range
+  - Null availability = assume all years available (backwards compat)
 
 **CSV Export:**
 - Max 500 rows (constant: `MAX_EXPORT_ROWS`)
@@ -552,13 +557,19 @@ All API calls go through `/api/v1/...` which is handled by Next.js BFF (Backend-
 **Key Interfaces:**
 
 ```typescript
-// Row displayed in table
+// Row displayed in table (internal format)
 interface RecipientRow {
   primary_value: string
   years: YearAmount[]  // Array for iteration
   total: number
   row_count: number
   sources: string[] | null  // Cross-module indicator
+  extraColumns?: Record<string, string | null>  // Dynamic columns (max 2)
+  extraColumnCounts?: Record<string, number>  // Distinct value counts ("+X meer")
+  matchedField?: string | null  // Which field matched search
+  matchedValue?: string | null  // The matched value
+  dataAvailableFrom?: number | null  // First year with data (UX-012)
+  dataAvailableTo?: number | null  // Last year with data (UX-012)
 }
 
 // API response (before transformation)
@@ -568,6 +579,12 @@ interface ApiRecipientRow {
   totaal: number
   row_count: number
   modules: string[] | null
+  extra_columns?: Record<string, string | null>
+  extra_column_counts?: Record<string, number>
+  matched_field?: string | null
+  matched_value?: string | null
+  data_available_from?: number | null  // UX-012
+  data_available_to?: number | null  // UX-012
 }
 
 // Query parameters
@@ -580,6 +597,8 @@ interface ModuleQueryParams {
   jaar?: number
   min_bedrag?: number
   max_bedrag?: number
+  min_years?: number  // Recipients with data in X+ years (UX-002)
+  columns?: string[]  // Dynamic extra columns (max 2, UX-005)
 }
 ```
 
@@ -664,6 +683,11 @@ npm run build
 - [ ] CSV export downloads correctly
 - [ ] CSV export limited to 500 rows
 - [ ] CSV opens correctly in Dutch Excel (semicolon format)
+- [ ] Em-dash (—) shows for years outside availability range (UX-012)
+- [ ] Tooltip "Geen data beschikbaar voor deze periode" on em-dash hover
+- [ ] Collapsed years only sums available years
+- [ ] Entity-level availability when filtering (e.g., ?gemeente=Amersfoort → 2020-2024)
+- [ ] Expanded row inherits availability from parent row
 
 ### Header
 - [ ] Logo links to home
@@ -742,3 +766,4 @@ npm run build
 | 2026-02-04 | Added UX-007 clickable hyperlinks (extra columns + expanded row), UX-008 hard navigation on module menu |
 | 2026-02-05 | Added MobileBanner component (UX-003) |
 | 2026-02-06 | Added UX-010 Google search link in DataTable |
+| 2026-02-07 | Added UX-012 data availability indicators, updated RecipientRow/ApiRecipientRow interfaces, testing checklist |

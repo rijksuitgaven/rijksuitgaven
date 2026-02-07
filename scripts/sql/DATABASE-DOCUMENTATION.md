@@ -88,7 +88,7 @@
 **Granularity:**
 - Module-level (entity_type=NULL): instrumenten, inkoop, apparaat - all entities share same year range
 - Entity-level: gemeente (per gemeente), provincie (per provincie), publiek (per source/organisatie)
-- Module-level fallbacks exist for entity-level modules (used when entity not found)
+- No module-level rows for entity-level modules; backend defaults to full range (2016-2024) when unfiltered
 
 **Maintenance:** Update `year_to` when new year data arrives. Edit via Supabase Studio.
 

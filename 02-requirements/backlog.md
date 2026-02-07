@@ -95,7 +95,7 @@ Example: Gemeente Amersfoort has data for 2020-2024, but not 2016-2019. Currentl
 3. Frontend: Update cell rendering logic
 4. Expanded rows: Apply same rendering
 
-**Decision:** Implementation starts next session.
+**Implementation:** Complete (2026-02-07). Migration 022 executed, API verified, deployed to production.
 
 ---
 
