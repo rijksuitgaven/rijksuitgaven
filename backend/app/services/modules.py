@@ -62,41 +62,31 @@ async def _get_entity_availability(module: str) -> dict[str, tuple[int, int]]:
     return {r["entity_name"]: (r["year_from"], r["year_to"]) for r in rows}
 
 
-async def _inject_availability(rows: list[dict], module: str, config: dict) -> list[dict]:
+async def _inject_availability(
+    rows: list[dict], module: str, config: dict,
+    filter_fields: dict[str, list[str]] | None = None,
+) -> list[dict]:
     """Add data_available_from/to fields to each row based on module type."""
     entity_type = AVAILABILITY_ENTITY_TYPE.get(module)
 
     if entity_type:
-        # Entity-level: look up per entity
-        entity_avail = await _get_entity_availability(module)
-        module_default = await _get_module_availability(module)
+        # Entity-level module (gemeente/provincie/publiek)
+        # The entity column name matches entity_type (gemeente→gemeente, source→source)
+        entity_filter = (filter_fields or {}).get(entity_type, [])
 
-        # For entity-level modules, we need to know which column holds the entity
-        # For gemeente: the entity is the "gemeente" field, but primary_value is "ontvanger"
-        # We need to map primary_value to entity. For gemeente/provincie, the entity column
-        # might differ from primary_value. However, in the aggregated views, we only have
-        # primary_value. The design doc says to join on entity column, but for the aggregated
-        # view we don't have that column. So we apply module-level default for rows where
-        # we can't determine the entity, and entity-level for rows where primary_value
-        # matches an entity_name (e.g., in publiek, primary_value=ontvanger but entity=source).
-        #
-        # For publiek: entity is "source" (RVO, COA, etc.) but primary_value is "ontvanger"
-        # So we need to use module-level default for publiek in aggregated view.
-        # For gemeente: primary_value is ontvanger (e.g., "Stichting X") not gemeente name.
-        # So we also use module-level default.
-        #
-        # Entity-level availability is most useful when we have extra columns showing
-        # the entity (e.g., gemeente column in expanded view). For main rows, module-level
-        # is the safe fallback.
-        for row in rows:
-            # Try entity match (works for modules where primary = entity, rare in practice)
-            avail = entity_avail.get(row["primary_value"])
-            if avail:
+        if len(entity_filter) == 1:
+            # Filtered to a single entity (e.g., ?gemeente=Amersfoort)
+            # Use that entity's specific availability
+            entity_avail = await _get_entity_availability(module)
+            avail = entity_avail.get(entity_filter[0], (YEARS[0], YEARS[-1]))
+            for row in rows:
                 row["data_available_from"] = avail[0]
                 row["data_available_to"] = avail[1]
-            else:
-                row["data_available_from"] = module_default[0]
-                row["data_available_to"] = module_default[1]
+        else:
+            # Unfiltered or multi-entity: assume full range (design doc fallback)
+            for row in rows:
+                row["data_available_from"] = YEARS[0]
+                row["data_available_to"] = YEARS[-1]
     else:
         # Module-level: same range for all rows
         year_from, year_to = await _get_module_availability(module)
@@ -566,7 +556,7 @@ async def get_module_data(
         )
 
     # Inject data availability info (year range per entity/module)
-    await _inject_availability(rows, module, config)
+    await _inject_availability(rows, module, config, filter_fields=filter_fields)
 
     return rows, total, totals
 
@@ -1463,11 +1453,16 @@ async def get_integraal_data(
     rows = await fetch_all(query, *params)
     total = await fetch_val(count_query, *count_params) if count_params else await fetch_val(count_query)
 
-    # Fetch all module-level availabilities for integraal range computation
+    # Fetch module-level availabilities for integraal range computation
+    # Module-level modules (instrumenten, inkoop, apparaat) have entity_type IS NULL
+    # Entity-level modules (gemeente, provincie, publiek) use full range as fallback
     all_avail = await fetch_all(
         "SELECT module, year_from, year_to FROM data_availability WHERE entity_type IS NULL"
     )
     module_avail = {r["module"]: (r["year_from"], r["year_to"]) for r in all_avail}
+    for mod in AVAILABILITY_ENTITY_TYPE:
+        if mod not in module_avail:
+            module_avail[mod] = (YEARS[0], YEARS[-1])
 
     result = []
     for row in rows:
