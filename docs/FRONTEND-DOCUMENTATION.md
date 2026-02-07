@@ -148,6 +148,12 @@ Main data grid component using TanStack Table.
   - `NoDataCell` component renders em-dash `—` with tooltip "Geen data beschikbaar voor deze periode"
   - Collapsed years (2016-20) only sum years within availability range
   - Null availability = assume all years available (backwards compat)
+- **Staffelbedrag explanation popover** (UX-013): Info popover on Inkoop/Publiek
+  - Info icon (ⓘ) next to footer text triggers popover
+  - Word "staffelbedrag(en)" in footer is also clickable (dotted underline)
+  - Navy dark popover with pink accent bar (matches search tips pattern)
+  - Content: staffel range table (1-13), midpoint explanation, source reference
+  - Click-outside handler closes popover
 
 **CSV Export:**
 - Max 500 rows (constant: `MAX_EXPORT_ROWS`)
@@ -178,7 +184,6 @@ interface DataTableProps {
   onPerPageChange?: (perPage: number) => void
   onSortChange?: (column: string, direction: 'asc' | 'desc') => void
   onRowExpand?: (primaryValue: string) => void
-  onRowClick?: (primaryValue: string) => void
   onFilterLinkClick?: (field: string, value: string) => void  // UX-007: Click extra column to filter
   renderExpandedRow?: (row: RecipientRow) => React.ReactNode
   moduleId?: string  // Used for CSV export filename
@@ -751,3 +756,4 @@ npm run build
 | 2026-02-06 | Added UX-010 Google search link in DataTable |
 | 2026-02-07 | Added UX-012 data availability indicators, updated RecipientRow/ApiRecipientRow interfaces, testing checklist |
 | 2026-02-07 | DetailPanel marked inactive (deferred to V5), click ontvanger expands row, added constants.ts/api-config.ts to project structure |
+| 2026-02-07 | Added UX-013 staffelbedrag explanation popover on Inkoop/Publiek footer |

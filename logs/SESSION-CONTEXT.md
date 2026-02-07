@@ -862,9 +862,9 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-07 - **Data Availability Indicators LIVE + Amersfoort typo fix**
+**Last Session:** 2026-02-07 - **Data Availability Indicators + Staffelbedrag Popover**
 
-**2026-02-07 Summary:** Data availability indicators (UX-012) live. Totals row em-dash fix. Click ontvanger now expands row (detail panel deferred to V5). Fixed slash encoding bug for Apparaat values like "Vaklit/abonn/overig". 8 commits, all deployed.
+**2026-02-07 Summary:** Data availability indicators (UX-012) live. Totals row em-dash fix. Click ontvanger now expands row (detail panel deferred to V5). Fixed slash encoding bug for Apparaat values like "Vaklit/abonn/overig". Staffelbedrag explanation popover (UX-013) on Inkoop/Publiek with clickable word triggers. 9 commits, all deployed. V1.0 backlog complete.
 
 **Mini Sprint Summary (2026-01-29 → 2026-02-06):** All UI/UX polish tasks complete. Ready for Week 6 (Auth).
 

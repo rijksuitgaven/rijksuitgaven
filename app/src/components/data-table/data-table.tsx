@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, Fragment, useEffect } from 'react'
+import { useState, useMemo, useRef, Fragment, useEffect } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
@@ -12,7 +12,7 @@ import {
   type ExpandedState,
   type Column,
 } from '@tanstack/react-table'
-import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet, ExternalLink } from 'lucide-react'
+import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet, ExternalLink, Info } from 'lucide-react'
 import * as XLSX from 'xlsx'
 import { cn } from '@/lib/utils'
 import {
@@ -326,6 +326,20 @@ export function DataTable({
   }, [data])
   const [isExportingCSV, setIsExportingCSV] = useState(false)
   const [isExportingXLS, setIsExportingXLS] = useState(false)
+  const [isStaffelOpen, setIsStaffelOpen] = useState(false)
+  const staffelRef = useRef<HTMLDivElement>(null)
+
+  // Close staffel popover when clicking outside
+  useEffect(() => {
+    if (!isStaffelOpen) return
+    function handleClickOutside(e: MouseEvent) {
+      if (staffelRef.current && !staffelRef.current.contains(e.target as Node)) {
+        setIsStaffelOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isStaffelOpen])
 
   // CSV Export handler
   const handleExportCSV = () => {
@@ -892,13 +906,69 @@ export function DataTable({
       {/* Footer */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-2">
         {/* Left: Amount note - module-specific */}
-        <div className="text-sm text-[var(--muted-foreground)]">
+        <div className="text-sm text-[var(--muted-foreground)] flex items-center gap-1.5">
           {moduleId === 'inkoop' ? (
-            'Gemiddelde staffelbedragen in €, incl. BTW'
+            <>Gemiddelde <button type="button" onClick={() => setIsStaffelOpen(!isStaffelOpen)} className="underline decoration-dotted underline-offset-2 hover:text-[var(--navy-dark)] transition-colors cursor-pointer">staffelbedragen</button> in €, incl. BTW</>
           ) : moduleId === 'publiek' ? (
-            'RVO, ZonMW en NWO: absolute bedragen. COA: gemiddeld staffelbedrag incl. BTW'
+            <>RVO, ZonMW en NWO: absolute bedragen. COA: gemiddeld <button type="button" onClick={() => setIsStaffelOpen(!isStaffelOpen)} className="underline decoration-dotted underline-offset-2 hover:text-[var(--navy-dark)] transition-colors cursor-pointer">staffelbedrag</button> incl. BTW</>
           ) : (
             'Absolute bedragen in €'
+          )}
+          {(moduleId === 'inkoop' || moduleId === 'publiek') && (
+            <div className="relative" ref={staffelRef}>
+              <button
+                type="button"
+                onClick={() => setIsStaffelOpen(!isStaffelOpen)}
+                className={cn(
+                  'inline-flex items-center justify-center h-5 w-5 rounded-full transition-all',
+                  isStaffelOpen
+                    ? 'bg-[var(--navy-dark)] text-white'
+                    : 'text-[var(--navy-medium)] hover:text-[var(--navy-dark)]'
+                )}
+                aria-label="Uitleg staffelbedragen"
+                aria-expanded={isStaffelOpen}
+              >
+                <Info className="h-3.5 w-3.5" />
+              </button>
+
+              {isStaffelOpen && (
+                <div className="absolute bottom-full left-0 mb-2 w-80 bg-[var(--navy-dark)] text-white rounded-lg shadow-xl z-50 overflow-hidden">
+                  <div className="h-1 bg-[var(--pink)]" />
+                  <div className="p-4">
+                    <h3 className="text-sm font-bold uppercase tracking-wider mb-2">Staffelbedragen</h3>
+                    <p className="text-xs text-white/80 mb-3">
+                      Inkoopuitgaven en COA-subsidies worden niet als exact bedrag gepubliceerd, maar in staffels (bandbreedtes). De getoonde bedragen zijn het <strong>gemiddelde</strong> van elke staffel.
+                    </p>
+                    <div className="border-t border-white/20 pt-3 mb-3">
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="text-white/60">
+                            <th className="text-left pb-1 font-semibold">Staffel</th>
+                            <th className="text-left pb-1 font-semibold">Bandbreedte</th>
+                          </tr>
+                        </thead>
+                        <tbody className="text-white/80">
+                          <tr><td className="py-0.5">1</td><td>€1 – €10.000</td></tr>
+                          <tr><td className="py-0.5">2</td><td>€10.001 – €50.000</td></tr>
+                          <tr><td className="py-0.5">3</td><td>€50.001 – €100.000</td></tr>
+                          <tr><td className="py-0.5">4</td><td>€100.001 – €250.000</td></tr>
+                          <tr><td className="py-0.5">5</td><td>€250.001 – €500.000</td></tr>
+                          <tr><td className="py-0.5">6</td><td>€500.001 – €1.000.000</td></tr>
+                          <tr><td className="py-0.5">7</td><td>€1M – €5M</td></tr>
+                          <tr><td className="py-0.5">8</td><td>€5M – €10M</td></tr>
+                          <tr><td className="py-0.5">9</td><td>€10M – €25M</td></tr>
+                          <tr><td className="py-0.5">10–13</td><td>€25M – €150M+</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="flex items-start gap-2 text-xs text-white/70 bg-white/5 rounded-lg p-2.5">
+                      <span className="text-sm leading-none mt-0.5">ℹ</span>
+                      <span>Bron: data.overheid.nl. Bedragen incl. BTW.</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
 

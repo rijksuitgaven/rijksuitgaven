@@ -850,6 +850,36 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-013: Staffelbedrag Explanation Popover
+
+**Requirement:** Help users understand what staffelbedragen mean in Inkoop and Publiek modules
+
+**Behavior:**
+- Info icon (ⓘ) appears next to footer text on Inkoop and Publiek modules
+- Click opens navy popover with staffel range table and explanation (Dutch)
+- Word "staffelbedrag(en)" in footer text is also clickable (dotted underline, opens same popover)
+- Popover matches search tips pattern (navy dark bg + pink accent bar)
+- Click outside closes popover
+
+**Content (Dutch):**
+- "STAFFELBEDRAGEN" header
+- Explanation: amounts published as ranges, shown as midpoints
+- Staffel 1-13 range table
+- Source reference: data.overheid.nl
+
+**Rationale:**
+- Inkoop and COA (Publiek) show averaged staffel amounts, not precise figures
+- Users unfamiliar with government data methodology need explanation
+- Builds on UX-011 module-specific footer text
+
+**Related:** UX-011 (Module-Specific Amount Explanations)
+
+**Priority:** P2 (Medium)
+
+**Status:** ✅ Implemented 2026-02-07
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload
