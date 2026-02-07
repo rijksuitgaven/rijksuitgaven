@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.api.v1 import router as api_v1_router
-from app.services.database import close_pool
+from app.services.database import close_pool, get_pool
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -26,8 +26,14 @@ async def lifespan(app: FastAPI):
     - Startup: Nothing needed (pool created lazily on first request)
     - Shutdown: Close database connection pool to prevent resource leaks
     """
-    # Startup
-    logger.info("Application starting up")
+    # Startup: pre-warm database pool so first request doesn't pay connection cost
+    logger.info("Application starting up, pre-warming database pool")
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        await conn.fetchval("SELECT 1")
+        # Warm PostgreSQL buffer cache for universal_search (integraal module)
+        await conn.fetchval("SELECT COUNT(*) FROM universal_search")
+    logger.info("Database pool ready")
     yield
     # Shutdown
     logger.info("Application shutting down, closing database pool")
