@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { DataTable, ExpandedRow } from '@/components/data-table'
 import { FilterPanel, type FilterValues } from '@/components/filter-panel'
-import { DetailPanel } from '@/components/detail-panel'
 import { CrossModuleResults } from '@/components/cross-module-results'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { fetchModuleData } from '@/lib/api'
@@ -121,8 +120,6 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const [sortBy, setSortBy] = useState<string>('random')  // Default: random (UX-002)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [userHasSorted, setUserHasSorted] = useState(false)  // Track if user explicitly sorted
-  const [selectedRecipient, setSelectedRecipient] = useState<string | null>(null)
-  const [isDetailOpen, setIsDetailOpen] = useState(false)
   // Selected extra columns state - lifted from DataTable (UX-005)
   // Initialize with defaults (SSR-safe), then sync from localStorage after hydration
   const [selectedColumns, setSelectedColumns] = useState<string[]>(() => getDefaultColumns(moduleId))
@@ -321,15 +318,6 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     router.push(`/${targetModule}?q=${encodeURIComponent(recipient)}`)
   }, [router])
 
-  const handleRowClick = useCallback((recipientName: string) => {
-    setSelectedRecipient(recipientName)
-    setIsDetailOpen(true)
-  }, [])
-
-  const handleCloseDetail = useCallback(() => {
-    setIsDetailOpen(false)
-  }, [])
-
   // Handle click on extra column value - apply filter (clear start)
   const handleFilterLinkClick = useCallback((field: string, value: string) => {
     // Clear all filters and apply only the clicked filter
@@ -417,7 +405,6 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             onPerPageChange={handlePerPageChange}
             onSortChange={handleSortChange}
             onRowExpand={handleRowExpand}
-            onRowClick={handleRowClick}
             onFilterLinkClick={handleFilterLinkClick}
             renderExpandedRow={renderExpandedRow}
             moduleId={moduleId}
@@ -430,16 +417,6 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
         </div>
       </main>
 
-      {/* Detail Side Panel */}
-      {selectedRecipient && (
-        <DetailPanel
-          recipientName={selectedRecipient}
-          moduleId={moduleId}
-          isOpen={isDetailOpen}
-          onClose={handleCloseDetail}
-          onNavigateToModule={handleNavigateToModule}
-        />
-      )}
     </div>
   )
 }

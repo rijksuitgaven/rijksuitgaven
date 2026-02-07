@@ -58,7 +58,6 @@ interface DataTableProps {
   onPerPageChange?: (perPage: number) => void
   onSortChange?: (column: string, direction: 'asc' | 'desc') => void
   onRowExpand?: (primaryValue: string) => void
-  onRowClick?: (primaryValue: string) => void // Click on recipient name to open detail panel
   onFilterLinkClick?: (field: string, value: string) => void // Click on extra column value to filter
   renderExpandedRow?: (row: RecipientRow) => React.ReactNode
   moduleId?: string // For export filename
@@ -308,7 +307,6 @@ export function DataTable({
   onPerPageChange,
   onSortChange,
   onRowExpand,
-  onRowClick,
   onFilterLinkClick,
   renderExpandedRow,
   moduleId = 'export',
@@ -410,7 +408,12 @@ export function DataTable({
             <div>
               <div className="flex items-center gap-1.5">
                 <button
-                  onClick={() => onRowClick?.(row.original.primary_value)}
+                  onClick={() => {
+                    row.toggleExpanded()
+                    if (!row.getIsExpanded() && onRowExpand) {
+                      onRowExpand(row.original.primary_value)
+                    }
+                  }}
                   className="font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] hover:underline text-left transition-colors"
                 >
                   {row.original.primary_value}
@@ -522,7 +525,12 @@ export function DataTable({
                   {/* "+X meer" indicator when multiple distinct values exist */}
                   {hasMore && (
                     <button
-                      onClick={() => onRowClick?.(row.original.primary_value)}
+                      onClick={() => {
+                        row.toggleExpanded()
+                        if (!row.getIsExpanded() && onRowExpand) {
+                          onRowExpand(row.original.primary_value)
+                        }
+                      }}
                       className="text-xs text-[var(--navy-medium)] mt-0.5 cursor-pointer"
                       style={{ fontSize: '12px' }}
                     >
@@ -641,7 +649,7 @@ export function DataTable({
     })
 
     return cols
-  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onRowClick, onFilterLinkClick, selectedColumns, moduleId, searchQuery])
+  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onFilterLinkClick, selectedColumns, moduleId, searchQuery])
 
   const table = useReactTable({
     data,
