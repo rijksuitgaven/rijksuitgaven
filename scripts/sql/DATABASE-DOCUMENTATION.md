@@ -5,7 +5,7 @@
 **Region:** eu-west-1
 **Created:** 2026-01-21
 **Data Migrated:** 2026-01-23
-**Last Updated:** 2026-02-07 (data_availability table, Amersfoort typo fix)
+**Last Updated:** 2026-02-07 (data_availability table, Amersfoort typo fix, encoding corruption cleanup)
 
 ---
 
@@ -718,12 +718,36 @@ VACUUM ANALYZE universal_search;
 
 ---
 
+## Data Quality: Encoding Cleanup (2026-02-07)
+
+Legacy WordPress/MySQL data had encoding corruption from CSV export. All issues were fixed across all 6 source tables.
+
+| Type | Rows Fixed | Description |
+|------|-----------|-------------|
+| Double-encoded UTF-8 | ~4,400 | `CafÃ©` → `Café` (most common) |
+| Triple-encoded UTF-8 | ~400 | `ÃƒÂ«` → `ë` (mainly inkoop.leverancier) |
+| Lost characters (?) | ~500 | `Caf??` → `Café` (431 explicit corrections) |
+| Division sign ÷→ö | 77 | `Co÷peratie` → `Coöperatie` |
+| Section signs ç→§ | 160 | `ç1` → `§1` in provincie.omschrijving |
+| Mac Roman √ç→ä | 6 | `Matth√çus` → `Matthäus` in gemeente |
+| Euro sign ‚Çè→€ | 24 | `MON‚ÇèY` → `MON€Y` in gemeente |
+| Â-prefix artifacts | 26 | `Ja-maarÂ®` → `Ja-maar®` |
+| Ã³→ó, Ã¼→ü | 52 | Remaining double-encoded in inkoop |
+
+**Scripts:** `scripts/data/fix-encoding-phase1.py` through `phase1f.py`, `scripts/sql/025-fix-encoding-question-marks.sql`
+
+**Lesson learned:** Never do blanket character replacements across all tables. Always scope fixes to the specific tables/columns where corruption was introduced. Phase 1d demonstrated this (23,911 rows damaged, immediately reversed by Phase 1e).
+
+---
+
 ## Related Documentation
 
 | Document | Location |
 |----------|----------|
 | **Data update runbook** | `scripts/data/DATA-UPDATE-RUNBOOK.md` ⭐ Use this for updates |
 | Migration process | `scripts/data/DATA-MIGRATION-README.md` |
+| Encoding fix scripts | `scripts/data/fix-encoding-phase1*.py` (6 scripts) |
+| Encoding fix SQL | `scripts/sql/024-fix-encoding-double-utf8.sql`, `025-fix-encoding-question-marks.sql` |
 | Schema SQL | `scripts/sql/001-initial-schema.sql` |
 | Source triggers | `scripts/sql/003-source-column-triggers.sql` |
 | Typesense sync | `scripts/typesense/README.md` |

@@ -30,7 +30,7 @@ except ImportError:
 
 # Configuration
 TYPESENSE_HOST = os.environ.get('TYPESENSE_HOST', 'typesense-production-35ae.up.railway.app')
-TYPESENSE_API_KEY = os.environ.get('TYPESENSE_API_KEY', '0vh4mxafjeuvd676gw92kpjflg6fuv57')
+TYPESENSE_API_KEY = os.environ.get('TYPESENSE_API_KEY', '25613d2538ece467c801af3cfac62e95')
 TYPESENSE_PORT = os.environ.get('TYPESENSE_PORT', '443')
 TYPESENSE_PROTOCOL = os.environ.get('TYPESENSE_PROTOCOL', 'https')
 

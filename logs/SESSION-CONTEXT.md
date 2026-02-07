@@ -149,7 +149,7 @@
 |----------|-------|
 | Platform | Railway (template deployment) |
 | URL | `typesense-production-35ae.up.railway.app` |
-| API Key | **In Railway env vars only** (rotated 2026-01-29) |
+| API Key | **In Railway env vars only** (rotated 2026-02-07) |
 | Status | ✅ Running |
 | Collections | 7 (recipients, instrumenten, inkoop, publiek, gemeente, provincie, apparaat) |
 | Performance | <25ms search (target <100ms) |
@@ -158,11 +158,11 @@
 | **Data Update** | `scripts/data/DATA-UPDATE-RUNBOOK.md` ← **Full data update procedure** |
 | **Backend Proxy** | `/api/v1/search/autocomplete` - API key stays server-side |
 
-**Document Counts (verified 2026-02-01):**
+**Document Counts (verified 2026-02-07, post-encoding-cleanup):**
 
 | Collection | Documents |
 |------------|-----------|
-| recipients | 466,827 |
+| recipients | 464,996 |
 | instrumenten | 674,818 |
 | inkoop | 635,862 |
 | publiek | 115,019 |

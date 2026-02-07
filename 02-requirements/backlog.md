@@ -30,6 +30,21 @@ Users unfamiliar with government data may not understand what "staffelbedrag" me
 
 ---
 
+### Data Quality: Encoding Corruption Cleanup (COMPLETED)
+
+**Priority:** High (V1.0)
+**Added:** 2026-02-07
+**Completed:** 2026-02-07
+**Status:** ✅ COMPLETED
+**Type:** Data Quality / Bug
+
+**Problem:**
+Legacy WordPress/MySQL data had encoding corruption from CSV export. Three types: double-encoded UTF-8 (~4,400 rows, e.g., `CafÃ©`), triple-encoded (~400 rows in inkoop), and lost characters replaced with `?` (~500 rows).
+
+**Resolution:** 6 Python scripts (asyncpg parameterized queries) + 1 SQL file (431 explicit UPDATE statements). Additional targeted fixes for division signs (÷→ö), Mac Roman encoding (√ç→ä), euro signs (‚Çè→€), and section sign restoration (ç→§). All 7 materialized views refreshed, Typesense re-synced with audit passed. Scripts preserved at `scripts/data/fix-encoding-phase1*.py` and `scripts/sql/025-fix-encoding-question-marks.sql`.
+
+---
+
 ### Data Quality: "Amsersfoort" Typo in Gemeente Data (COMPLETED)
 
 **Priority:** Medium (V1.0)

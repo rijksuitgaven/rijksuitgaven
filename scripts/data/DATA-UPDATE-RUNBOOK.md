@@ -72,7 +72,7 @@ python3 scripts/typesense/sync_to_typesense.py --recreate
 
 **Typesense API keys:**
 - **Admin key** (write access, for sync): Get from Railway dashboard → Typesense service → Variables
-- **Search key** (read-only, in `.env`): `0vh4mxafjeuvd676gw92kpjflg6fuv57`
+- **Search key** (read-only, in `.env`): `25613d2538ece467c801af3cfac62e95`
 
 **To sync only one collection** (faster, when only one module changed):
 ```bash
