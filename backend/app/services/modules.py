@@ -425,6 +425,9 @@ MODULE_CONFIG = {
         "extra_columns": ["provincie", "omschrijving"],
         # Columns available in aggregated view (default columns for speed)
         "view_columns": ["provincie", "omschrijving"],
+        # Entity field: the defining dimension for this module (028 migration)
+        # Views are grouped by (recipient, entity) for accurate entity filtering
+        "entity_field": "provincie",
     },
     "gemeente": {
         "table": "gemeente",
@@ -438,6 +441,7 @@ MODULE_CONFIG = {
         "extra_columns": ["gemeente", "beleidsterrein", "regeling", "omschrijving"],
         # Columns available in aggregated view (default columns for speed)
         "view_columns": ["gemeente", "omschrijving"],
+        "entity_field": "gemeente",
     },
     "publiek": {
         "table": "publiek",
@@ -451,6 +455,7 @@ MODULE_CONFIG = {
         "extra_columns": ["source", "regeling", "trefwoorden", "sectoren", "regio", "staffel", "onderdeel"],
         # Columns available in aggregated view (default columns for speed)
         "view_columns": ["source"],
+        "entity_field": "source",
     },
 }
 
@@ -512,16 +517,26 @@ async def get_module_data(
     view_columns = set(config.get("view_columns", []))
     columns_in_view = all(col in view_columns for col in valid_columns) if valid_columns else True
 
+    # Split entity filters from non-entity filters (028 migration)
+    # Entity-level modules (provincie, gemeente, publiek) have per-entity aggregated views
+    # that support filtering by entity directly (no source table fallback needed)
+    entity_field = config.get("entity_field")
+    entity_filter_values: list[str] | None = None
+    non_entity_filters: dict[str, list[str]] | None = filter_fields
+
+    if filter_fields and entity_field and entity_field in filter_fields:
+        entity_filter_values = filter_fields[entity_field]
+        non_entity_filters = {k: v for k, v in filter_fields.items() if k != entity_field}
+        if not non_entity_filters:
+            non_entity_filters = None
+
     # Use aggregated view for fast queries when:
     # 1. Aggregated table exists
-    # 2. No filter_fields (filter fields like provincie/gemeente aren't in views)
+    # 2. No non-entity filter_fields (entity filters are supported on the view)
     # 3. Either no columns requested OR all columns are in the view
-    # Note: Search CAN use aggregated view (searches primary field only, fast)
-    # The "Gevonden in" feature won't work but performance is acceptable
-    # TODO: Implement hybrid approach for full search with matchedField/matchedValue
     use_aggregated = (
         config.get("aggregated_table") is not None
-        and not filter_fields  # Must use source table for filter fields
+        and not non_entity_filters  # Only non-entity filters force source table
         and columns_in_view  # Can use view if columns are available or none requested
     )
 
@@ -537,7 +552,8 @@ async def get_module_data(
             limit=limit,
             offset=offset,
             min_years=min_years,
-            columns=valid_columns if valid_columns else None,  # Pass columns to view query
+            columns=valid_columns if valid_columns else None,
+            entity_filter=entity_filter_values,  # Pass entity filter for direct view query
         )
     else:
         rows, total, totals = await _get_from_source_table(
@@ -687,20 +703,67 @@ async def _get_from_aggregated_view(
     offset: int = 0,
     min_years: Optional[int] = None,
     columns: Optional[list[str]] = None,  # Extra columns available in view
+    entity_filter: Optional[list[str]] = None,  # Entity filter values (028)
 ) -> tuple[list[dict], int, dict | None]:
     """Fast path: query pre-computed materialized view. Returns (rows, total_count, totals_dict)."""
     agg_table = config["aggregated_table"]
     primary = config["primary_field"]
+    entity_field = config.get("entity_field")
+    has_entity_filter = bool(entity_filter and entity_field)
+
+    # Entity-level modules (028): views are grouped by (recipient, entity).
+    # Default view (no entity filter): wrap with GROUP BY to aggregate per-recipient.
+    # Filtered view (entity filter active): query view directly with WHERE.
+    needs_entity_groupby = bool(entity_field and not has_entity_filter)
+
+    # Build the FROM clause: subquery for entity default view, direct table otherwise
+    if needs_entity_groupby:
+        # Default view: aggregate per-entity rows back to per-recipient
+        year_sum_cols = ", ".join([f'SUM("{y}") AS "{y}"' for y in YEARS])
+        years_with_data_expr = " + ".join([
+            f'CASE WHEN SUM("{y}") > 0 THEN 1 ELSE 0 END' for y in YEARS
+        ])
+
+        # Build extra column aggregations for the subquery
+        view_cols = config.get("view_columns", [])
+        extra_agg_parts = []
+        for vc in view_cols:
+            if vc == entity_field:
+                extra_agg_parts.append(f"MODE() WITHIN GROUP (ORDER BY {vc}) AS {vc}")
+                extra_agg_parts.append(f"COUNT(DISTINCT {vc}) AS {vc}_count")
+            else:
+                extra_agg_parts.append(f"MODE() WITHIN GROUP (ORDER BY {vc}) AS {vc}")
+                extra_agg_parts.append(f"MAX({vc}_count) AS {vc}_count")
+        extra_agg_sql = ", " + ", ".join(extra_agg_parts) if extra_agg_parts else ""
+
+        from_clause = f"""(
+            SELECT ontvanger_key, MIN({primary}) AS {primary},
+                {year_sum_cols},
+                SUM(totaal) AS totaal,
+                SUM(row_count) AS row_count{extra_agg_sql},
+                ({years_with_data_expr}) AS years_with_data,
+                MIN(random_order) AS random_order
+            FROM {agg_table}
+            GROUP BY ontvanger_key
+        ) AS {agg_table}"""
+    else:
+        from_clause = agg_table
 
     # Build extra columns selection if columns are requested and available in view
     # Also select count columns for "+X meer" indicator (column_count columns in view)
     extra_columns_select = ""
     if columns and not search:
         # Only include static columns when NOT searching (search uses matched_field instead)
-        # Select both the value and the count for each column
-        value_cols = ", ".join([f"{col} AS extra_{col}" for col in columns])
-        count_cols = ", ".join([f"COALESCE({col}_count, 1) AS extra_{col}_count" for col in columns])
-        extra_columns_select = ", " + value_cols + ", " + count_cols
+        value_parts = []
+        count_parts = []
+        for col in columns:
+            value_parts.append(f"{col} AS extra_{col}")
+            if has_entity_filter and col == entity_field:
+                # Entity field with active filter: each row IS one entity, count = 1
+                count_parts.append(f"1 AS extra_{col}_count")
+            else:
+                count_parts.append(f"COALESCE({col}_count, 1) AS extra_{col}_count")
+        extra_columns_select = ", " + ", ".join(value_parts) + ", " + ", ".join(count_parts)
 
     # Build WHERE clause
     where_clauses = []
@@ -768,6 +831,14 @@ async def _get_from_aggregated_view(
         params.append(max_bedrag)
         param_idx += 1
 
+    # Entity filter: filter by entity on the per-entity aggregated view (028)
+    # For entity-level modules, the entity field is a real column (not MODE)
+    if has_entity_filter:
+        placeholders = ", ".join([f"${param_idx + i}" for i in range(len(entity_filter))])
+        where_clauses.append(f"{entity_field} IN ({placeholders})")
+        params.extend(entity_filter)
+        param_idx += len(entity_filter)
+
     # Filter for recipients with data in min_years+ years (UX-002)
     # Uses pre-computed years_with_data column for fast filtering
     if min_years is not None and min_years > 0:
@@ -829,7 +900,7 @@ async def _get_from_aggregated_view(
     count_where_sql = f"WHERE {' AND '.join(count_where)}" if count_where else ""
     count_params = count_params_snapshot
 
-    # Main query from aggregated view
+    # Main query from aggregated view (or subquery for entity default view)
     query = f"""
         SELECT
             {primary} AS primary_value,
@@ -838,7 +909,7 @@ async def _get_from_aggregated_view(
             "2022" AS y2022, "2023" AS y2023, "2024" AS y2024,
             totaal,
             row_count{extra_columns_select}{relevance_select}
-        FROM {agg_table}
+        FROM {from_clause}
         {where_sql}
         {sort_clause}
         LIMIT ${param_idx} OFFSET ${param_idx + 1}
@@ -846,7 +917,7 @@ async def _get_from_aggregated_view(
     params.extend([limit, offset])
 
     # Count query (without random threshold for accurate total)
-    count_query = f"SELECT COUNT(*) FROM {agg_table} {count_where_sql}"
+    count_query = f"SELECT COUNT(*) FROM {from_clause} {count_where_sql}"
 
     # Totals query - sums per year and grand total (only when searching/filtering)
     totals_query = f"""
@@ -855,7 +926,7 @@ async def _get_from_aggregated_view(
             SUM("2019") AS sum_2019, SUM("2020") AS sum_2020, SUM("2021") AS sum_2021,
             SUM("2022") AS sum_2022, SUM("2023") AS sum_2023, SUM("2024") AS sum_2024,
             SUM(totaal) AS sum_totaal
-        FROM {agg_table}
+        FROM {from_clause}
         {count_where_sql}
     """
 
@@ -869,7 +940,7 @@ async def _get_from_aggregated_view(
         ]
 
         # Add totals query only when user actively searches/filters (not min_years alone)
-        run_totals = bool(search or jaar or min_bedrag is not None or max_bedrag is not None)
+        run_totals = bool(search or jaar or min_bedrag is not None or max_bedrag is not None or has_entity_filter)
         if run_totals:
             coros.append(
                 fetch_all(totals_query, *count_params) if count_params else fetch_all(totals_query)
@@ -1545,6 +1616,8 @@ async def get_integraal_details(
     ]
 
     # Build all 5 queries and run in PARALLEL
+    # Uses SUM to handle per-entity views (028): entity-level modules may have
+    # multiple rows per recipient (one per entity), so we sum across entities
     coros = []
     for module_name, agg_table, primary_field in modules_to_query:
         year_filter = f'AND "{jaar}" > 0' if jaar else ""
@@ -1552,11 +1625,13 @@ async def get_integraal_details(
 
         query = f"""
             SELECT
-                "2016" AS y2016, "2017" AS y2017, "2018" AS y2018,
-                "2019" AS y2019, "2020" AS y2020, "2021" AS y2021,
-                "2022" AS y2022, "2023" AS y2023, "2024" AS y2024,
-                totaal,
-                row_count
+                COALESCE(SUM("2016"), 0) AS y2016, COALESCE(SUM("2017"), 0) AS y2017,
+                COALESCE(SUM("2018"), 0) AS y2018, COALESCE(SUM("2019"), 0) AS y2019,
+                COALESCE(SUM("2020"), 0) AS y2020, COALESCE(SUM("2021"), 0) AS y2021,
+                COALESCE(SUM("2022"), 0) AS y2022, COALESCE(SUM("2023"), 0) AS y2023,
+                COALESCE(SUM("2024"), 0) AS y2024,
+                COALESCE(SUM(totaal), 0) AS totaal,
+                COALESCE(SUM(row_count), 0) AS row_count
             FROM {agg_table}
             WHERE {key_field} = normalize_recipient($1) {year_filter}
         """
@@ -1568,13 +1643,16 @@ async def get_integraal_details(
     for (module_name, _, _), rows in zip(modules_to_query, all_results):
         if rows:
             row = rows[0]
+            totaal = int(row.get("totaal", 0) or 0)
+            if totaal == 0:
+                continue  # SUM returns 0 when no matching rows, skip empty modules
             years_dict = {year: int(row.get(f"y{year}", 0) or 0) for year in YEARS}
             result.append({
                 "group_by": "module",
                 "group_value": module_name,
                 "years": years_dict,
-                "totaal": int(row["totaal"] or 0),
-                "row_count": row["row_count"],
+                "totaal": totaal,
+                "row_count": int(row.get("row_count", 0) or 0),
             })
 
     # Sort by totaal descending
@@ -2000,12 +2078,22 @@ async def get_module_stats(module: str) -> dict:
         config = MODULE_CONFIG[module]
         table = config.get("aggregated_table") or config["table"]
 
-        query = f"""
-            SELECT
-                COUNT(*) AS count,
-                SUM(totaal) AS total
-            FROM {table}
-        """
+        # Entity-level modules (028): views have multiple rows per recipient,
+        # so use COUNT(DISTINCT ontvanger_key) for unique recipient count
+        if config.get("entity_field"):
+            query = f"""
+                SELECT
+                    COUNT(DISTINCT ontvanger_key) AS count,
+                    SUM(totaal) AS total
+                FROM {table}
+            """
+        else:
+            query = f"""
+                SELECT
+                    COUNT(*) AS count,
+                    SUM(totaal) AS total
+                FROM {table}
+            """
         row = await fetch_all(query)
         row = row[0] if row else {"count": 0, "total": 0}
     else:
