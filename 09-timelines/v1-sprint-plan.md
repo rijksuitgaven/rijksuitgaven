@@ -386,6 +386,7 @@
 
 **Goal:** Magic Link auth, user migration, protected routes
 **Status:** ⏳ READY TO START (Mini Sprint complete 2026-02-06)
+**Requirements:** `02-requirements/auth-requirements.md` (18 requirements, all decisions resolved 2026-02-08)
 
 > **Note:** Overzicht page was originally planned for this week but deferred to V5 (AI Research Mode) on 2026-02-06. V1 expanded row covers the functional need.
 

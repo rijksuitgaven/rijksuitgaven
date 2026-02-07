@@ -26,7 +26,7 @@
 10. [Security Requirements](#security-requirements)
 11. [Testing Checklist](#testing-checklist)
 12. [Out of Scope](#out-of-scope)
-13. [Open Questions](#open-questions)
+13. [Decisions Log](#decisions-log)
 
 ---
 
@@ -42,8 +42,8 @@ Enable the 50 existing WordPress users to log in to the new platform using Magic
 | Auth provider | Supabase Auth (already provisioned) |
 | Method | Magic Link only (no passwords, no social) |
 | Users to migrate | ~50 (from WordPress `4yi3uwye_users` table) |
-| Session duration | TBD (see [Open Questions](#open-questions)) |
-| Email provider | Supabase built-in (SMTP) or custom (Resend/Postmark) |
+| Session duration | 30 days (refresh token lifetime) |
+| Email provider | Resend (custom domain: noreply@rijksuitgaven.nl) |
 
 ### Current State
 
