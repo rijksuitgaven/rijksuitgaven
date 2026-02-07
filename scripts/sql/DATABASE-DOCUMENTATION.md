@@ -5,7 +5,7 @@
 **Region:** eu-west-1
 **Created:** 2026-01-21
 **Data Migrated:** 2026-01-23
-**Last Updated:** 2026-02-05 (filter column indexes for DISTINCT queries)
+**Last Updated:** 2026-02-07 (data_availability table, Amersfoort typo fix)
 
 ---
 

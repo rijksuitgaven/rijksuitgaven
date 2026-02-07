@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-06
+**Last Updated:** 2026-02-07
 **Project Phase:** V1.0 Development
 **Current Sprint:** Week 6 - User Authentication (Mini Sprint COMPLETE 2026-02-06)
 
@@ -81,20 +81,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **scripts/sql/022-data-availability.sql** ⭐ CREATED (2026-02-07)
-   Data availability table with auto-population from source data
+1. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-07)
+   Filter-aware availability lookup: entity-level when filtered, full range when unfiltered
 
-2. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-07)
-   Availability lookup, caching, injection into all query paths (aggregated, source, integraal)
+2. **scripts/sql/022-data-availability.sql** ⭐ CREATED + EXECUTED (2026-02-07)
+   Data availability table with 29 curated entries, RLS, indexes
 
-3. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-07)
+3. **scripts/sql/023-fix-amsersfoort-typo.sql** ⭐ CREATED + EXECUTED (2026-02-07)
+   Fixed Amsersfoort→Amersfoort typo (1,168 rows)
+
+4. **scripts/data/DATA-UPDATE-RUNBOOK.md** ⭐ REWRITTEN (2026-02-07)
+   Comprehensive 8-step data update process
+
+5. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-07)
    NoDataCell component, availability-aware rendering, removed "* Data nog niet compleet"
-
-4. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-07)
-   Availability-aware year cells and collapsed years in expanded rows
-
-5. **app/src/types/api.ts** ⭐ MODIFIED (2026-02-07)
-   Added dataAvailableFrom/dataAvailableTo to row interfaces
 
 ---
 
@@ -214,6 +214,8 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/sql/018-expand-view-columns.sql` | 2026-01-31 | Supabase |
 | `scripts/sql/020-normalize-recipient-indexes.sql` | 2026-02-03 | Supabase |
 | `scripts/sql/021-filter-column-indexes.sql` | 2026-02-05 | Supabase |
+| `scripts/sql/022-data-availability.sql` | 2026-02-07 | Supabase |
+| `scripts/sql/023-fix-amsersfoort-typo.sql` | 2026-02-07 | Supabase |
 
 ### Configuration Files
 
@@ -860,7 +862,9 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-06 - **Mini Sprint COMPLETE: Footer, Data Availability Design, UX-010/011**
+**Last Session:** 2026-02-07 - **Data Availability Indicators LIVE + Amersfoort typo fix**
+
+**2026-02-07 Summary:** Implemented data availability feature end-to-end. 29 curated year ranges in `data_availability` table. Frontend shows em-dash for unavailable years. Fixed Amsersfoort typo (1,168 rows). Comprehensive data update runbook. 2 commits, deployed to production.
 
 **Mini Sprint Summary (2026-01-29 → 2026-02-06):** All UI/UX polish tasks complete. Ready for Week 6 (Auth).
 

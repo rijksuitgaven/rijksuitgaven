@@ -812,6 +812,43 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-012: Data Availability Indicators
+
+**Requirement:** Distinguish "no data" from "real zero" in year cells
+
+**Behavior:**
+- Years outside an entity's data availability range show em-dash `—` instead of `0`
+- Tooltip: "Geen data beschikbaar voor deze periode"
+- Years within range show actual amount (including `0` for confirmed zero)
+- Collapsed years column (2016-20) only sums years within availability range
+- Expanded rows inherit availability from parent row
+
+**Granularity:**
+| Module | Level |
+|--------|-------|
+| instrumenten, inkoop, apparaat | Module-level (same range for all rows) |
+| gemeente | Per gemeente |
+| provincie | Per provincie |
+| publiek | Per source (RVO, COA, NWO, ZonMW) |
+
+**API Response:**
+- Each row includes `data_available_from` and `data_available_to` fields
+- When filtered to single entity: uses entity-specific range
+- When unfiltered: uses full range (2016-2024)
+
+**Data Management:**
+- Year ranges maintained in `data_availability` table via Supabase Studio
+- Backend restart required after changes (clears in-memory cache)
+- See `scripts/data/DATA-UPDATE-RUNBOOK.md` Step 4
+
+**Design Doc:** `docs/plans/2026-02-06-data-availability-indicators-design.md`
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-02-07
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload
@@ -1114,5 +1151,5 @@ Search "bedrijvenbeleid" shows:
 ---
 
 **Document Status:** V1.0 Scope - Implementation In Progress
-**Last Updated:** 2026-02-06
+**Last Updated:** 2026-02-07
 **Author:** Technical Project Manager (AI Assistant)
