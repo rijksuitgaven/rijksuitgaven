@@ -139,13 +139,28 @@ Which do you prefer?
 
 ### 4. Cross-Module Consistency
 
-**When fixing ONE module, check ALL 6 modules:**
-- instrumenten, apparaat, inkoop, provincie, gemeente, publiek
+**When fixing ONE module, check ALL 7 views:**
+- instrumenten_aggregated, apparaat_aggregated, inkoop_aggregated, provincie_aggregated, gemeente_aggregated, publiek_aggregated, **universal_search**
 
-**Before completing work:**
-- Does the same issue exist in other modules?
-- Is the fix needed in other modules?
-- Are configs (Typesense, views, search) consistent?
+**`universal_search` is the 7th view.** It powers the integraal module. Every column or index added to the 6 module views MUST also be evaluated for `universal_search`. It was missed before (years_with_data) — never again.
+
+**Before completing ANY schema/view change:**
+
+| Check | How |
+|-------|-----|
+| Same column needed in other views? | Query `pg_attribute` for all 7 views, compare column lists |
+| Same index needed in other views? | Query `pg_indexes` for all 7 views, compare index lists |
+| Backend code assumes column exists? | Grep for column name in `modules.py` — is integraal using a computed fallback? |
+
+**Verification query (run after ANY view change):**
+```sql
+SELECT relname, array_agg(attname ORDER BY attnum)
+FROM pg_class c JOIN pg_attribute a ON a.attrelid = c.oid
+WHERE relname IN ('instrumenten_aggregated','apparaat_aggregated','inkoop_aggregated',
+  'provincie_aggregated','gemeente_aggregated','publiek_aggregated','universal_search')
+AND attnum > 0 AND NOT attisdropped
+GROUP BY relname ORDER BY relname;
+```
 
 **MANDATORY: Run test script before declaring any module fix complete:**
 ```bash

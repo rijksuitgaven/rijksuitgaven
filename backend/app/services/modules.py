@@ -1307,11 +1307,12 @@ async def get_integraal_data(
     min_years: Optional[int] = None,
     filter_modules: Optional[list[str]] = None,
     min_instanties: Optional[int] = None,
-) -> tuple[list[dict], int]:
+) -> tuple[list[dict], int, dict | None]:
     """
     Get cross-module data from universal_search table.
 
     This table is pre-aggregated with recipient totals across all modules.
+    Returns (rows, total_count, totals_dict_or_none).
     """
     # Map display names to source values in database
     module_name_map = {
@@ -1447,16 +1448,44 @@ async def get_integraal_data(
     # Count query (without random threshold for accurate total)
     count_query = f"SELECT COUNT(*) FROM universal_search {count_where_sql}"
 
+    # Totals query - sums per year and grand total (only when searching/filtering)
+    totals_query = f"""
+        SELECT
+            SUM("2016") AS sum_2016, SUM("2017") AS sum_2017, SUM("2018") AS sum_2018,
+            SUM("2019") AS sum_2019, SUM("2020") AS sum_2020, SUM("2021") AS sum_2021,
+            SUM("2022") AS sum_2022, SUM("2023") AS sum_2023, SUM("2024") AS sum_2024,
+            SUM(totaal) AS sum_totaal
+        FROM universal_search
+        {count_where_sql}
+    """
+
     # Execute queries in PARALLEL for performance
+    run_totals = bool(search or count_where_sql)
     coros = [
         fetch_all(query, *params),
         fetch_val(count_query, *count_params) if count_params else fetch_val(count_query),
         fetch_all("SELECT module, year_from, year_to FROM data_availability WHERE entity_type IS NULL"),
     ]
+    if run_totals:
+        coros.append(
+            fetch_all(totals_query, *count_params) if count_params else fetch_all(totals_query)
+        )
+
     results = await asyncio.gather(*coros)
     rows = results[0]
     total = results[1]
     all_avail = results[2]
+
+    # Extract totals if we ran that query
+    totals = None
+    if run_totals and len(results) > 3:
+        totals_row = results[3]
+        if totals_row:
+            r = totals_row[0]
+            totals = {
+                "years": {year: int(r.get(f"sum_{year}", 0) or 0) for year in YEARS},
+                "totaal": int(r.get("sum_totaal", 0) or 0),
+            }
     module_avail = {r["module"]: (r["year_from"], r["year_to"]) for r in all_avail}
     for mod in AVAILABILITY_ENTITY_TYPE:
         if mod not in module_avail:
@@ -1491,7 +1520,7 @@ async def get_integraal_data(
             "data_available_to": year_to,
         })
 
-    return result, total or 0
+    return result, total or 0, totals
 
 
 async def get_integraal_details(

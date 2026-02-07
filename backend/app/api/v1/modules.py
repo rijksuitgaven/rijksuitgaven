@@ -336,7 +336,7 @@ async def get_module(
         # Handle integraal separately (uses universal_search table)
         totals = None
         if module == ModuleName.integraal:
-            data, total = await get_integraal_data(
+            data, total, totals = await get_integraal_data(
                 search=q,
                 jaar=jaar,
                 min_bedrag=min_bedrag,
@@ -350,7 +350,6 @@ async def get_module(
                 min_instanties=min_instanties,
             )
             primary_field = "ontvanger"
-            # TODO: Add totals support for integraal module
         else:
             data, total, totals = await get_module_data(
                 module=module.value,
