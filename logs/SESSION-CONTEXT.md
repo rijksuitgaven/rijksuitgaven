@@ -82,19 +82,19 @@
 ## Recent Work (Last 5 Files)
 
 1. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-07)
-   Totals row em-dash, click ontvanger expands row, removed onRowClick prop
+   Staffelbedrag popover, instant year tooltip, click ontvanger expands row
 
-2. **app/src/components/module-page/module-page.tsx** ⭐ MODIFIED (2026-02-07)
+2. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-07)
+   Module click navigates with ontvanger searched, double-encode for slash values
+
+3. **app/src/lib/format.ts** ⭐ MODIFIED (2026-02-07)
+   Anomaly threshold 10% → 50%
+
+4. **app/src/components/module-page/module-page.tsx** ⭐ MODIFIED (2026-02-07)
    Removed detail panel (deferred to V5), removed handleRowClick
 
-3. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-07)
-   Double-encode for slash values in detail API calls
-
-4. **app/src/lib/api.ts** ⭐ MODIFIED (2026-02-07)
+5. **app/src/lib/api.ts** ⭐ MODIFIED (2026-02-07)
    Double-encode for detail API calls (slash values)
-
-5. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-07)
-   Filter-aware availability lookup: entity-level when filtered, full range when unfiltered
 
 ---
 
@@ -864,7 +864,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 **Last Session:** 2026-02-07 - **Data Availability Indicators + Staffelbedrag Popover**
 
-**2026-02-07 Summary:** Data availability indicators (UX-012) live. Totals row em-dash fix. Click ontvanger now expands row (detail panel deferred to V5). Fixed slash encoding bug for Apparaat values like "Vaklit/abonn/overig". Staffelbedrag explanation popover (UX-013) on Inkoop/Publiek with clickable word triggers. 9 commits, all deployed. V1.0 backlog complete.
+**2026-02-07 Summary:** Data availability indicators (UX-012) live. Totals row em-dash fix. Click ontvanger expands row (detail panel deferred to V5). Slash encoding bug fix. Staffelbedrag popover (UX-013). Anomaly threshold 10%→50%. Instant year tooltips. Integraal module click navigates with ontvanger. 13 commits, all deployed. V1.0 backlog complete.
 
 **Mini Sprint Summary (2026-01-29 → 2026-02-06):** All UI/UX polish tasks complete. Ready for Week 6 (Auth).
 

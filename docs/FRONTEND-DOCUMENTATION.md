@@ -106,7 +106,7 @@ Defined in `globals.css`:
 | `--success` | #85C97D | Positive indicators |
 | `--warning` | #FFC857 | Attention |
 | `--error` | #E30101 | Error, negative trends |
-| `--trend-anomaly-bg` | rgba(227,1,1,0.1) | 10%+ YoY change highlight |
+| `--trend-anomaly-bg` | rgba(227,1,1,0.1) | 50%+ YoY change highlight |
 
 ---
 
@@ -119,7 +119,7 @@ Main data grid component using TanStack Table.
 **Features:**
 - Dynamic year columns (2016-2025)
 - Collapsible 2016-2020 range (click to expand)
-- Trend anomaly indicator (red highlight for 10%+ YoY change)
+- Trend anomaly indicator (red highlight for 50%+ YoY change)
 - Cross-module indicator ("Ook in: Instrumenten, Publiek")
 - **"Gevonden in" column** (when searching): Shows which field matched if not primary field
 - **Extra column enhancements** (all modules):
@@ -210,6 +210,7 @@ Content displayed when a table row is expanded. Returns `<tr>` elements directly
 - **Clickable grouped values** (UX-007): Click value to filter by that field
   - Hover: pink text + underline
   - Click: clears all filters, applies only clicked filter
+- **Integraal module navigation**: When grouping by Module, click navigates to `/{module}?q={ontvanger}` instead of filtering
 
 **Architecture:**
 - Returns `<Fragment>` with multiple `<tr>` elements (not a nested table)
@@ -662,7 +663,7 @@ npm run build
 ### DataTable
 - [ ] Year columns display correctly
 - [ ] Collapsed years (2016-20) expandable
-- [ ] Trend anomaly highlight (10%+ change)
+- [ ] Trend anomaly highlight (50%+ change)
 - [ ] Cross-module indicator shows ("Ook in:")
 - [ ] Sorting works (click headers)
 - [ ] Pagination controls work (25/50/100)
@@ -757,3 +758,4 @@ npm run build
 | 2026-02-07 | Added UX-012 data availability indicators, updated RecipientRow/ApiRecipientRow interfaces, testing checklist |
 | 2026-02-07 | DetailPanel marked inactive (deferred to V5), click ontvanger expands row, added constants.ts/api-config.ts to project structure |
 | 2026-02-07 | Added UX-013 staffelbedrag explanation popover on Inkoop/Publiek footer |
+| 2026-02-07 | Anomaly threshold 10%→50%, instant year tooltips, integraal module navigation |
