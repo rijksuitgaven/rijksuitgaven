@@ -216,6 +216,10 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/sql/021-filter-column-indexes.sql` | 2026-02-05 | Supabase |
 | `scripts/sql/022-data-availability.sql` | 2026-02-07 | Supabase |
 | `scripts/sql/023-fix-amsersfoort-typo.sql` | 2026-02-07 | Supabase |
+| `scripts/data/fix-encoding-phase1*.py` (6 scripts) | 2026-02-07 | Local → Supabase |
+| `scripts/sql/025-fix-encoding-question-marks.sql` | 2026-02-07 | Supabase (via psql) |
+| Additional encoding fixes (÷→ö, √ç→ä, ‚Çè→€, ç→§) | 2026-02-07 | Local → Supabase |
+| `REFRESH MATERIALIZED VIEW` (all 7 views) | 2026-02-07 | Supabase |
 
 ### Configuration Files
 
@@ -862,9 +866,9 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-07 - **Data Availability Indicators + Staffelbedrag Popover**
+**Last Session:** 2026-02-07 - **Encoding Corruption Cleanup**
 
-**2026-02-07 Summary:** Data availability indicators (UX-012) live. Totals row em-dash fix. Click ontvanger expands row (detail panel deferred to V5). Slash encoding bug fix. Staffelbedrag popover (UX-013). Anomaly threshold 10%→50%. Instant year tooltips. Integraal module click navigates with ontvanger. 13 commits, all deployed. V1.0 backlog complete.
+**2026-02-07 Summary:** Sessions 1-4: Data availability indicators (UX-012), totals row em-dash, expand row on click, slash encoding fix, staffelbedrag popover (UX-013), anomaly threshold 50%, instant tooltips, integraal navigation. Session 5: Major encoding cleanup across all 6 tables - fixed double-encoded UTF-8 (~4,400 rows), triple-encoded inkoop (~400 rows), question mark corruption (~500 rows), plus miscellaneous fixes (÷→ö, √ç→ä, ‚Çè→€, ç→§). All 7 materialized views refreshed. Typesense sync pending (API key expired).
 
 **Mini Sprint Summary (2026-01-29 → 2026-02-06):** All UI/UX polish tasks complete. Ready for Week 6 (Auth).
 
