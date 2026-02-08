@@ -81,20 +81,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-08)
-   Fix: `::text` cast for INTEGER filter columns (inkoop.staffel), cascading filter function, MODULE_CONFIG updates
+1. **app/src/components/filter-panel/filter-panel.tsx** ⭐ MODIFIED (2026-02-08)
+   UX-021 cascading mode + Staffel label popover + CustomSelect component
 
-2. **app/src/components/filter-panel/filter-panel.tsx** ⭐ MODIFIED (2026-02-08)
-   UX-021: MultiSelect cascading mode + FilterPanel orchestration + new MODULE_FILTERS entries
+2. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-08)
+   Removed (i) icon from footer, kept clickable word with StaffelPopover
 
-3. **backend/app/api/v1/modules.py** ⭐ MODIFIED (2026-02-08)
-   Added POST filter-options endpoint, Pydantic models, new query params
+3. **app/src/components/staffel-popover/staffel-popover.tsx** ⭐ CREATED (2026-02-08)
+   Shared StaffelPopover component with position prop
 
-4. **app/src/app/api/v1/modules/[module]/filters/route.ts** ⭐ CREATED (2026-02-08)
-   BFF POST proxy for cascading filter options
+4. **app/src/components/footer/footer.tsx** ⭐ MODIFIED (2026-02-08)
+   Email changed from info@ to contact@rijksuitgaven.nl
 
-5. **app/src/lib/api.ts** ⭐ MODIFIED (2026-02-08)
-   Added FilterOption type + fetchCascadingFilterOptions()
+5. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-08)
+   Fix: `::text` cast for INTEGER filter columns, cascading filter function
 
 ---
 
@@ -869,7 +869,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 
 **Last Session:** 2026-02-08 - **Documentation Audit + Auth Requirements + Data Validation + UI Requirements + Cascading Filters**
 
-**2026-02-08 Summary:** Session 1: Full documentation audit - fixed 6 discrepancies, added 6 missing UX requirements (UX-006, UX-014-018), strengthened CLAUDE.md Rule 3a with Requirements-First Gate. Session 2: Created detailed auth requirements doc (18 requirements + 4 security) with all 5 open questions resolved: 30-day sessions, Resend SMTP, minimal login header, homepage→/login redirect, noreply@rijksuitgaven.nl. Session 3: Full data migration validation - all 6 modules pass (EUR 1.77 trillion, 1.6M rows). Full-stack UI validation: API with filter params all match exactly. Complete chain validated: CSV → PostgreSQL → Views → FastAPI → BFF → Frontend. Session 4: UX-019 (Table Info Popover) - compact icon+one-liner legend in results toolbar, iterated through 5 design rounds with UX review. UX-020 (Filter Menu Auto-Open) - filter panel auto-expands when clicking column values. Session 5: UX-021 Cascading Bidirectional Filters - full-stack implementation across all 6 modules with counts. Extended with new filter fields for Apparaat, Provincie, Gemeente, Publiek. 4 commits deployed to production. Session 6: Systematic filter audit (25 combinations tested) — found and fixed inkoop staffel 500 error (INTEGER→text type mismatch with asyncpg).
+**2026-02-08 Summary:** Session 1: Full documentation audit - fixed 6 discrepancies, added 6 missing UX requirements (UX-006, UX-014-018), strengthened CLAUDE.md Rule 3a with Requirements-First Gate. Session 2: Created detailed auth requirements doc (18 requirements + 4 security) with all 5 open questions resolved: 30-day sessions, Resend SMTP, minimal login header, homepage→/login redirect, noreply@rijksuitgaven.nl. Session 3: Full data migration validation - all 6 modules pass (EUR 1.77 trillion, 1.6M rows). Full-stack UI validation: API with filter params all match exactly. Complete chain validated: CSV → PostgreSQL → Views → FastAPI → BFF → Frontend. Session 4: UX-019 (Table Info Popover) - compact icon+one-liner legend in results toolbar, iterated through 5 design rounds with UX review. UX-020 (Filter Menu Auto-Open) - filter panel auto-expands when clicking column values. Session 5: UX-021 Cascading Bidirectional Filters - full-stack implementation across all 6 modules with counts. Extended with new filter fields for Apparaat, Provincie, Gemeente, Publiek. 4 commits deployed to production. Session 6: Systematic filter audit (25 combinations tested) — found and fixed inkoop staffel 500 error (INTEGER→text type mismatch with asyncpg). Session 7: Staffel popover relocated to filter label (icon removed from footer), footer email changed to contact@, custom select dropdown for Integraal, comprehensive documentation audit.
 
 **2026-02-07 Summary:** Sessions 1-4: Data availability indicators (UX-012), totals row em-dash, expand row on click, slash encoding fix, staffelbedrag popover (UX-013), anomaly threshold 50%, instant tooltips, integraal navigation. Session 5: Major encoding cleanup across all 6 tables - fixed double-encoded UTF-8 (~4,400 rows), triple-encoded inkoop (~400 rows), question mark corruption (~500 rows), plus miscellaneous fixes (÷→ö, √ç→ä, ‚Çè→€, ç→§). All 7 materialized views refreshed.
 

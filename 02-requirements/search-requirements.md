@@ -882,9 +882,9 @@ Search "bedrijvenbeleid" shows:
 **Requirement:** Help users understand what staffelbedragen mean in Inkoop and Publiek modules
 
 **Behavior:**
-- Info icon (ⓘ) appears next to footer text on Inkoop and Publiek modules
-- Click opens navy popover with staffel range table and explanation (Dutch)
-- Word "staffelbedrag(en)" in footer text is also clickable (dotted underline, opens same popover)
+- "Staffel" filter label in filter panel is clickable (dotted underline, pink hover) → opens popover below
+- Word "staffelbedrag(en)" in footer text is also clickable (dotted underline) → opens popover above
+- Shared `StaffelPopover` component with `position` prop ("above"/"below")
 - Popover matches search tips pattern (navy dark bg + pink accent bar)
 - Click outside closes popover
 

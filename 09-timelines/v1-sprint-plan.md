@@ -380,6 +380,22 @@
 - [x] Data availability indicators (UX-012): designed 02-06, implemented + deployed 02-07
 - [x] Ready for Week 6 (Auth)
 
+### Mini Sprint Extension (2026-02-08)
+
+Additional UI/UX work completed after mini sprint was marked complete:
+
+| Task | Status |
+|------|--------|
+| UX-019: Table Info Popover | ✅ Compact icon+one-liner legend in results toolbar |
+| UX-020: Filter Auto-Expand on Column Click | ✅ Filter panel auto-expands when clicking column values |
+| UX-021: Cascading Bidirectional Filters | ✅ All 6 modules, counts, parallel queries |
+| Inkoop staffel filter 500 error fix | ✅ INTEGER→text cast for asyncpg |
+| Staffel popover relocation (UX-013 update) | ✅ Filter label clickable, icon removed from footer |
+| Footer email update (info→contact) | ✅ |
+| Custom select dropdown (Integraal) | ✅ Replaced native select |
+| Data migration validation | ✅ EUR 1.77 trillion across 1.6M rows verified |
+| Auth requirements document | ✅ 18 requirements + 4 security, all decisions resolved |
+
 ---
 
 ## Week 6: Auth

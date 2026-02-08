@@ -1,6 +1,6 @@
 # Frontend Documentation
 
-**Last Updated:** 2026-02-07
+**Last Updated:** 2026-02-08
 **Stack:** Next.js 16.1.4 + TypeScript + Tailwind CSS + TanStack Table
 
 ---
@@ -56,9 +56,11 @@ app/src/
 │   ├── module-page/              # Reusable module page template
 │   │   ├── module-page.tsx
 │   │   └── index.ts
-│   └── search-bar/               # Typesense autocomplete search
-│       ├── search-bar.tsx
-│       └── index.ts
+│   ├── search-bar/               # Typesense autocomplete search
+│   │   ├── search-bar.tsx
+│   │   └── index.ts
+│   └── staffel-popover/          # Staffelbedrag explanation (shared)
+│       └── staffel-popover.tsx
 ├── lib/
 │   ├── api.ts                    # API client for backend
 │   ├── api-config.ts             # Centralized API base URL
@@ -148,12 +150,13 @@ Main data grid component using TanStack Table.
   - `NoDataCell` component renders em-dash `—` with tooltip "Geen data beschikbaar voor deze periode"
   - Collapsed years (2016-20) only sum years within availability range
   - Null availability = assume all years available (backwards compat)
-- **Staffelbedrag explanation popover** (UX-013): Info popover on Inkoop/Publiek
-  - Info icon (ⓘ) next to footer text triggers popover
-  - Word "staffelbedrag(en)" in footer is also clickable (dotted underline)
+- **Staffelbedrag explanation popover** (UX-013): Shared `StaffelPopover` component on Inkoop/Publiek
+  - Clickable word "staffelbedrag(en)" in footer opens popover above
+  - Uses shared `StaffelPopover` component (`components/staffel-popover/staffel-popover.tsx`)
   - Navy dark popover with pink accent bar (matches search tips pattern)
   - Content: staffel range table (1-13), midpoint explanation, source reference
   - Click-outside handler closes popover
+  - Note: Filter panel also uses `StaffelPopover` (see FilterPanel section)
 
 **CSV Export:**
 - Max 500 rows (constant: `MAX_EXPORT_ROWS`)
@@ -229,6 +232,21 @@ Content displayed when a table row is expanded. Returns `<tr>` elements directly
 | publiek | Organisatie, Regeling, Sectoren, Trefwoorden |
 | integraal | Module |
 
+### StaffelPopover (`components/staffel-popover/staffel-popover.tsx`)
+
+Shared staffelbedrag explanation popover, used in both DataTable footer and FilterPanel.
+
+**Props:**
+```typescript
+interface StaffelPopoverProps {
+  position?: 'above' | 'below'  // 'above' for footer (opens upward), 'below' for filter label (opens downward)
+}
+```
+
+**Content:** Staffel 1-13 range table, midpoint explanation, source reference (data.overheid.nl).
+
+**Usage:** Used in Inkoop and Publiek modules only.
+
 ### FilterPanel (`components/filter-panel/filter-panel.tsx`)
 
 Search and filter controls.
@@ -238,9 +256,18 @@ Search and filter controls.
 - Year dropdown filter
 - Expandable "Filters" section with **badge count** (e.g., "Filters (3)")
 - Amount range (min/max)
-- Module-specific filters
+- Module-specific filters (MultiSelect dropdowns)
+- **Cascading bidirectional filters** (UX-021): All modules except integraal
+  - When a value is selected in one filter, all other filter dropdowns update to show only relevant options
+  - Each option shows a count of matching rows: `"Subsidie (1.234)"`
+  - Invalid selections shown as `(0 resultaten)` in red
+  - Debounced 200ms fetch with AbortController
+  - Uses `POST /{module}/filter-options` BFF endpoint
+- **Staffel filter label popover** (Inkoop/Publiek): "Staffel" label is clickable with dotted underline → opens `StaffelPopover` below
+- **CustomSelect component**: Custom dropdown for Integraal "Instanties per ontvanger" (matches MultiSelect styling)
 - Clear all button
 - URL state sync (filters in query params)
+- **Auto-expand on column click** (UX-020): Filter panel auto-expands when clicking column values
 
 ### ColumnSelector (`components/column-selector/column-selector.tsx`)
 
@@ -519,6 +546,7 @@ All API calls go through `/api/v1/...` which is handled by Next.js BFF (Backend-
 | `fetchModules()` | Get list of available modules |
 | `fetchModuleData(module, params)` | Get paginated, filtered module data |
 | `fetchDetailData(module, value, grouping)` | Get expanded row details |
+| `fetchCascadingFilterOptions(module, activeFilters, signal?)` | Get cascading filter options with counts (POST) |
 
 **Response Transformation:**
 - API returns years as object: `{ "2016": 0, "2017": 1000 }`
@@ -534,7 +562,7 @@ All API calls go through `/api/v1/...` which is handled by Next.js BFF (Backend-
 |----------|---------|
 | `formatAmount(amount)` | Dutch number formatting (1.234.567) |
 | `calculateYoYChange(current, previous)` | Calculate year-over-year % change |
-| `isAnomaly(percentChange)` | Check if change >= 10% |
+| `isAnomaly(percentChange)` | Check if change >= 50% |
 | `formatPercentage(value)` | Format as "+12.3%" or "-5.0%" |
 | `getAmountFontClass(formatted)` | Return smaller font class for large numbers |
 
@@ -606,6 +634,21 @@ interface ModuleQueryParams {
 | `/integraal` | Module | Cross-module search |
 | `/privacybeleid` | Static | Privacy policy |
 | `/login` | Auth | Login page (Week 6 - placeholder) |
+
+### BFF API Routes (`app/src/app/api/`)
+
+All frontend API calls are proxied through Next.js BFF routes:
+
+| Route | Method | Backend Target |
+|-------|--------|---------------|
+| `/api/v1/modules` | GET | List modules |
+| `/api/v1/modules/[module]` | GET | Module data |
+| `/api/v1/modules/[module]/stats` | GET | Module statistics |
+| `/api/v1/modules/[module]/autocomplete` | GET | Module autocomplete |
+| `/api/v1/modules/[module]/filters/[field]` | GET | Filter options |
+| `/api/v1/modules/[module]/filters` | POST | Cascading filter options with counts (UX-021) |
+| `/api/v1/modules/[module]/[value]/details` | GET | Expanded row details |
+| `/api/v1/search/autocomplete` | GET | Global Typesense search |
 
 ---
 
@@ -750,3 +793,7 @@ npm run build
 | 2026-02-07 | DetailPanel marked inactive (deferred to V5), click ontvanger expands row, added constants.ts/api-config.ts to project structure |
 | 2026-02-07 | Added UX-013 staffelbedrag explanation popover on Inkoop/Publiek footer |
 | 2026-02-07 | Anomaly threshold 10%→50%, instant year tooltips, integraal module navigation |
+| 2026-02-08 | Added UX-019 table info popover, UX-020 filter auto-expand, UX-021 cascading bidirectional filters |
+| 2026-02-08 | Added StaffelPopover shared component, updated UX-013 (filter label clickable, icon removed from footer) |
+| 2026-02-08 | Added CustomSelect component for Integraal, BFF POST route for cascading filters |
+| 2026-02-08 | Added fetchCascadingFilterOptions() to API client, FilterOption type |
