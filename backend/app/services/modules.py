@@ -1738,6 +1738,9 @@ async def get_cascading_filter_options(
         if key not in filter_fields:
             raise ValueError(f"Invalid filter field '{key}' for module '{module}'")
 
+    primary_field = config["primary_field"]
+    validate_identifier(primary_field, ALLOWED_COLUMNS, "column")
+
     async def _query_field(field: str) -> tuple[str, list[dict]]:
         """Query distinct values + counts for one field, applying cross-filters."""
         validate_identifier(field, ALLOWED_COLUMNS, "column")
@@ -1757,8 +1760,9 @@ async def get_cascading_filter_options(
             param_idx += len(values)
 
         where_sql = " AND ".join(where_clauses)
+        # Count distinct primary values (ontvangers) — matches the aggregated table row count
         query = f"""
-            SELECT "{field}"::text AS value, COUNT(*) AS count
+            SELECT "{field}"::text AS value, COUNT(DISTINCT "{primary_field}") AS count
             FROM {table}
             WHERE {where_sql}
             GROUP BY "{field}"::text
