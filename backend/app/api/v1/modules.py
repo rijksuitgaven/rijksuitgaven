@@ -270,6 +270,14 @@ async def get_module(
     staffel: Optional[list[str]] = Query(None, description="Filter by staffel(s) - multi-select"),
     # Gemeente filters
     beleidsterrein: Optional[list[str]] = Query(None, description="Filter by beleidsterrein(s) - multi-select"),
+    omschrijving: Optional[list[str]] = Query(None, description="Filter by omschrijving(s) - multi-select"),
+    # Apparaat filters
+    kostensoort: Optional[list[str]] = Query(None, description="Filter by kostensoort(s) - multi-select"),
+    # Publiek filters
+    trefwoorden: Optional[list[str]] = Query(None, description="Filter by trefwoorden - multi-select"),
+    sectoren: Optional[list[str]] = Query(None, description="Filter by sectoren - multi-select"),
+    regio: Optional[list[str]] = Query(None, description="Filter by regio - multi-select"),
+    onderdeel: Optional[list[str]] = Query(None, description="Filter by onderdeel - multi-select"),
     # Integraal-specific filters
     modules: Optional[list[str]] = Query(None, description="Filter by modules recipient appears in (integraal only)"),
     min_instanties: Optional[int] = Query(None, ge=1, description="Minimum number of distinct sources (integraal only)"),
@@ -332,6 +340,18 @@ async def get_module(
         filter_fields["staffel"] = [str(s) for s in staffel]  # Convert to strings
     if beleidsterrein:
         filter_fields["beleidsterrein"] = beleidsterrein
+    if omschrijving:
+        filter_fields["omschrijving"] = omschrijving
+    if kostensoort:
+        filter_fields["kostensoort"] = kostensoort
+    if trefwoorden:
+        filter_fields["trefwoorden"] = trefwoorden
+    if sectoren:
+        filter_fields["sectoren"] = sectoren
+    if regio:
+        filter_fields["regio"] = regio
+    if onderdeel:
+        filter_fields["onderdeel"] = onderdeel
 
     try:
         # Handle integraal separately (uses universal_search table)

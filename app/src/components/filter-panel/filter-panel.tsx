@@ -78,6 +78,7 @@ const MODULE_FILTERS: Record<string, FilterConfig[]> = {
     { value: 'begrotingsnaam', label: 'Begrotingsnaam', type: 'multiselect' },
     { value: 'artikel', label: 'Artikel', type: 'multiselect' },
     { value: 'detail', label: 'Detail', type: 'multiselect' },
+    { value: 'kostensoort', label: 'Kostensoort', type: 'multiselect' },
   ],
   inkoop: [
     { value: 'ministerie', label: 'Ministerie', type: 'multiselect' },
@@ -86,14 +87,22 @@ const MODULE_FILTERS: Record<string, FilterConfig[]> = {
   ],
   provincie: [
     { value: 'provincie', label: 'Provincie', type: 'multiselect' },
+    { value: 'omschrijving', label: 'Omschrijving', type: 'multiselect' },
   ],
   gemeente: [
     { value: 'gemeente', label: 'Gemeente', type: 'multiselect' },
     { value: 'beleidsterrein', label: 'Beleidsterrein', type: 'multiselect' },
+    { value: 'regeling', label: 'Regeling', type: 'multiselect' },
+    { value: 'omschrijving', label: 'Omschrijving', type: 'multiselect' },
   ],
   publiek: [
     { value: 'source', label: 'Organisatie', type: 'multiselect' },
-    { value: 'regeling', label: 'Regeling', type: 'multiselect' },
+    { value: 'regeling', label: 'Regeling (RVO/COA)', type: 'multiselect' },
+    { value: 'trefwoorden', label: 'Trefwoorden (RVO)', type: 'multiselect' },
+    { value: 'sectoren', label: 'Sectoren (RVO)', type: 'multiselect' },
+    { value: 'regio', label: 'Regio (RVO)', type: 'multiselect' },
+    { value: 'onderdeel', label: 'Onderdeel (NWO)', type: 'multiselect' },
+    { value: 'staffel', label: 'Staffel (COA)', type: 'multiselect' },
   ],
   integraal: [
     { value: 'modules', label: 'Modules per ontvanger', type: 'multiselect' },
@@ -532,7 +541,7 @@ export function FilterPanel({
   // =============================================================================
   // Cascading filter state (UX-021) — instrumenten only
   // =============================================================================
-  const isCascadingModule = module === 'instrumenten'
+  const isCascadingModule = module !== 'integraal'
   const [cascadingOptions, setCascadingOptions] = useState<Record<string, FilterOption[]> | null>(null)
 
   // Extract active module filter selections as Record<string, string[]>
