@@ -401,13 +401,15 @@ export function DataTable({
     }
   }
 
-  // Determine which years to show based on expansion state
-  const collapsedYears = availableYears.filter(
-    (y) => y >= COLLAPSED_YEARS_START && y <= COLLAPSED_YEARS_END
+  // Determine which years to show based on expansion state (memoized for stable refs)
+  const collapsedYears = useMemo(
+    () => availableYears.filter((y) => y >= COLLAPSED_YEARS_START && y <= COLLAPSED_YEARS_END),
+    [availableYears]
   )
-  const visibleYears = yearsExpanded
-    ? availableYears
-    : availableYears.filter((y) => y > COLLAPSED_YEARS_END)
+  const visibleYears = useMemo(
+    () => yearsExpanded ? availableYears : availableYears.filter((y) => y > COLLAPSED_YEARS_END),
+    [availableYears, yearsExpanded]
+  )
 
   // Build columns dynamically based on available years
   const columns = useMemo<ColumnDef<RecipientRow>[]>(() => {
@@ -694,7 +696,7 @@ export function DataTable({
     })
 
     return cols
-  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onFilterLinkClick, selectedColumns, moduleId, searchQuery])
+  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onFilterLinkClick, selectedColumns, moduleId, searchQuery]) // collapsedYears and visibleYears are now stable memoized refs
 
   const table = useReactTable({
     data,

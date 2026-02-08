@@ -33,6 +33,58 @@ interface SearchBarProps {
   onSearch?: (query: string) => void
 }
 
+// Fetch search results from backend proxy (Typesense API key stays server-side)
+async function fetchSearchResults(q: string, signal?: AbortSignal): Promise<{ recipients: RecipientResult[], keywords: KeywordResult[] }> {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/search/autocomplete?` +
+      new URLSearchParams({ q }),
+      { signal }
+    )
+
+    if (!response.ok) {
+      return { recipients: [], keywords: [] }
+    }
+
+    const data = await response.json()
+    return {
+      recipients: (data.recipients || []).map((r: RecipientResult) => ({
+        ...r,
+        type: 'recipient' as const,
+      })),
+      keywords: (data.keywords || []).map((k: KeywordResult) => ({
+        ...k,
+        type: 'keyword' as const,
+      })),
+    }
+  } catch {
+    // Silently handle errors - return empty results
+    return { recipients: [], keywords: [] }
+  }
+}
+
+// Fetch fuzzy suggestions when exact search returns no results (typo tolerance)
+async function fetchFuzzySuggestions(q: string, signal?: AbortSignal): Promise<RecipientResult[]> {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/search/autocomplete?` +
+      new URLSearchParams({ q, fuzzy: 'true' }),
+      { signal }
+    )
+
+    if (!response.ok) return []
+
+    const data = await response.json()
+    return (data.recipients || []).map((r: RecipientResult) => ({
+      ...r,
+      type: 'recipient' as const,
+    }))
+  } catch {
+    // Silently handle errors - return empty suggestions
+    return []
+  }
+}
+
 export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regeling...', onSearch }: SearchBarProps) {
   const router = useRouter()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -120,58 +172,6 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
       abortController.abort()
     }
   }, [query])
-
-  // Fetch search results from backend proxy (Typesense API key stays server-side)
-  async function fetchSearchResults(q: string, signal?: AbortSignal): Promise<{ recipients: RecipientResult[], keywords: KeywordResult[] }> {
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/search/autocomplete?` +
-        new URLSearchParams({ q }),
-        { signal }
-      )
-
-      if (!response.ok) {
-        return { recipients: [], keywords: [] }
-      }
-
-      const data = await response.json()
-      return {
-        recipients: (data.recipients || []).map((r: RecipientResult) => ({
-          ...r,
-          type: 'recipient' as const,
-        })),
-        keywords: (data.keywords || []).map((k: KeywordResult) => ({
-          ...k,
-          type: 'keyword' as const,
-        })),
-      }
-    } catch {
-      // Silently handle errors - return empty results
-      return { recipients: [], keywords: [] }
-    }
-  }
-
-  // Fetch fuzzy suggestions when exact search returns no results (typo tolerance)
-  async function fetchFuzzySuggestions(q: string, signal?: AbortSignal): Promise<RecipientResult[]> {
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/search/autocomplete?` +
-        new URLSearchParams({ q, fuzzy: 'true' }),
-        { signal }
-      )
-
-      if (!response.ok) return []
-
-      const data = await response.json()
-      return (data.recipients || []).map((r: RecipientResult) => ({
-        ...r,
-        type: 'recipient' as const,
-      }))
-    } catch {
-      // Silently handle errors - return empty suggestions
-      return []
-    }
-  }
 
   // Handle click outside
   useEffect(() => {
@@ -284,6 +284,7 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
             aria-haspopup="listbox"
             aria-autocomplete="list"
             aria-controls="search-results-listbox"
+            aria-activedescendant={selectedIndex >= 0 ? `searchbar-option-${selectedIndex}` : undefined}
             autoComplete="off"
             className="w-full pl-10 pr-10 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all"
           />
@@ -346,6 +347,7 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
                 {recipients.map((result, index) => (
                   <button
                     key={result.name}
+                    id={`searchbar-option-${index}`}
                     type="button"
                     onClick={() => handleSelectRecipient(result)}
                     className={cn(
@@ -402,6 +404,7 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
                   return (
                     <button
                       key={`${result.keyword}-${result.field}`}
+                      id={`searchbar-option-${adjustedIndex}`}
                       type="button"
                       onClick={() => handleSelectKeyword(result)}
                       className={cn(

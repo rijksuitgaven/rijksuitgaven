@@ -77,7 +77,7 @@ export function ModulePage({ moduleId }: ModulePageProps) {
   if (!config) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[var(--gray-light)] to-white flex items-center justify-center">
-        <p className="text-lg text-[var(--error)]">Module niet gevonden: {moduleId}</p>
+        <p className="text-lg text-[var(--error)]">Module niet gevonden</p>
       </div>
     )
   }

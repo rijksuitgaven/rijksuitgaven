@@ -1,11 +1,14 @@
 """
 Health check endpoints.
 """
+import logging
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from app.config import Settings, get_settings
 from app.services.database import check_connection
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -31,7 +34,8 @@ async def health_check(settings: Settings = Depends(get_settings)):
         db_connected = await check_connection()
         db_status = "connected" if db_connected else "error"
     except Exception as e:
-        db_status = f"error: {str(e)[:50]}"
+        logger.error(f"Health check DB error: {e}")
+        db_status = "error"
 
     ts_status = "configured" if settings.typesense_host else "not_configured"
 

@@ -5,7 +5,6 @@ python-multipart==0.0.12
 
 # Database
 asyncpg==0.30.0
-sqlalchemy[asyncio]==2.0.36
 
 # Validation
 pydantic==2.10.0
@@ -21,5 +20,4 @@ python-dotenv==1.0.1
 # (included in FastAPI)
 
 # Development
-pytest==8.3.0
-pytest-asyncio==0.24.0
+# See requirements-dev.txt

@@ -7,8 +7,8 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8000'
-const TIMEOUT_MS = 30000
+export const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8000'
+export const TIMEOUT_MS = 30000
 
 // Security limits
 const MAX_OFFSET = 10000
@@ -27,16 +27,26 @@ interface ProxyOptions {
 function sanitizeParams(params: URLSearchParams): URLSearchParams {
   const sanitized = new URLSearchParams(params)
 
-  // Cap offset
-  const offset = parseInt(sanitized.get('offset') || '0', 10)
-  if (offset > MAX_OFFSET) {
-    sanitized.set('offset', String(MAX_OFFSET))
+  // Validate and cap offset
+  const offsetStr = sanitized.get('offset')
+  if (offsetStr) {
+    const offset = parseInt(offsetStr, 10)
+    if (isNaN(offset) || offset < 0) {
+      sanitized.set('offset', '0')
+    } else if (offset > MAX_OFFSET) {
+      sanitized.set('offset', String(MAX_OFFSET))
+    }
   }
 
-  // Cap limit
-  const limit = parseInt(sanitized.get('limit') || '50', 10)
-  if (limit > MAX_LIMIT) {
-    sanitized.set('limit', String(MAX_LIMIT))
+  // Validate and cap limit
+  const limitStr = sanitized.get('limit')
+  if (limitStr) {
+    const limit = parseInt(limitStr, 10)
+    if (isNaN(limit) || limit < 1) {
+      sanitized.set('limit', '50')
+    } else if (limit > MAX_LIMIT) {
+      sanitized.set('limit', String(MAX_LIMIT))
+    }
   }
 
   return sanitized
@@ -45,8 +55,10 @@ function sanitizeParams(params: URLSearchParams): URLSearchParams {
 /**
  * Validate module name (alphabetic only, prevents path traversal)
  */
+const VALID_MODULES = new Set(['instrumenten', 'apparaat', 'inkoop', 'provincie', 'gemeente', 'publiek', 'integraal'])
+
 export function validateModule(module: string): boolean {
-  return /^[a-z]+$/.test(module)
+  return VALID_MODULES.has(module)
 }
 
 /**
@@ -75,6 +87,7 @@ export async function proxyToBackend(
     // Create abort controller for timeout
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), timeout)
+    request.signal.addEventListener('abort', () => controller.abort(), { once: true })
 
     try {
       const response = await fetch(url, {
@@ -88,16 +101,18 @@ export async function proxyToBackend(
       clearTimeout(timeoutId)
 
       if (!response.ok) {
-        // Pass through error status from backend
         const errorText = await response.text()
+        console.error(`[BFF] Backend ${response.status}: ${errorText}`)
         return NextResponse.json(
-          { error: 'Backend error', details: errorText },
-          { status: response.status }
+          { error: 'Request failed' },
+          { status: response.status >= 500 ? 502 : response.status }
         )
       }
 
       const data = await response.json()
-      return NextResponse.json(data)
+      const nextResponse = NextResponse.json(data)
+      nextResponse.headers.set('Cache-Control', 'private, no-cache')
+      return nextResponse
 
     } finally {
       clearTimeout(timeoutId)

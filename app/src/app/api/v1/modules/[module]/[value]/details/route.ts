@@ -24,6 +24,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   // Value is URL-encoded by the router, pass it through
   // The backend expects the decoded value
   const decodedValue = decodeURIComponent(value)
+  if (!decodedValue || decodedValue.length > 500) {
+    return NextResponse.json({ error: 'Invalid value' }, { status: 400 })
+  }
 
   return proxyToBackend(
     request,

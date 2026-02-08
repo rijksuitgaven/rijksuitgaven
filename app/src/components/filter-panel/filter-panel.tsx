@@ -246,9 +246,16 @@ function MultiSelect({ module, field, label, value, onChange, isCascading = fals
   }, [isCascading, cascadingOptions])
 
   // Fetch options when dropdown opens (not on mount) — only for non-cascading mode
+  // Also resets state on module/field change (consolidated from separate effect)
   useEffect(() => {
+    // Reset on module/field change
+    setOptions([])
+    setSearchQuery('')
+    setError(null)
+    setSelectedIndex(-1)
+
     if (isCascading) return // Skip self-fetch in cascading mode
-    if (!isOpen || options.length > 0) return
+    if (!isOpen) return
 
     const abortController = new AbortController()
 
@@ -282,7 +289,7 @@ function MultiSelect({ module, field, label, value, onChange, isCascading = fals
     fetchOptions()
 
     return () => abortController.abort()
-  }, [isOpen, module, field, options.length, isCascading])
+  }, [isOpen, module, field, isCascading])
 
   // Focus search input when dropdown opens
   useEffect(() => {
@@ -291,16 +298,8 @@ function MultiSelect({ module, field, label, value, onChange, isCascading = fals
     }
   }, [isOpen])
 
-  // Reset options when module or field changes (user navigated or switched filter)
-  // This fixes the race condition where switching filters showed wrong options
   useEffect(() => {
-    setOptions([])
-    setSearchQuery('')
-    setError(null)
-    setSelectedIndex(-1)
-  }, [module, field])
-
-  useEffect(() => {
+    if (!isOpen) return
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false)
@@ -308,7 +307,7 @@ function MultiSelect({ module, field, label, value, onChange, isCascading = fals
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+  }, [isOpen])
 
   // Determine effective options list based on mode
   const effectiveOptions = useMemo(() => {
@@ -427,6 +426,7 @@ function MultiSelect({ module, field, label, value, onChange, isCascading = fals
                 aria-expanded={isOpen}
                 aria-haspopup="listbox"
                 aria-autocomplete="list"
+                aria-activedescendant={selectedIndex >= 0 ? `multiselect-option-${selectedIndex}` : undefined}
               />
             </div>
           </div>
@@ -486,6 +486,7 @@ function MultiSelect({ module, field, label, value, onChange, isCascading = fals
                       return (
                         <button
                           key={option}
+                          id={`multiselect-option-${index}`}
                           type="button"
                           onClick={() => toggleOption(option)}
                           role="option"
@@ -528,6 +529,7 @@ function MultiSelect({ module, field, label, value, onChange, isCascading = fals
                       return (
                         <button
                           key={option}
+                          id={`multiselect-option-${globalIndex}`}
                           type="button"
                           onClick={() => toggleOption(option)}
                           role="option"
@@ -640,7 +642,7 @@ export function FilterPanel({
     if (!isCascadingModule) return
 
     const abortController = new AbortController()
-    const filtersToSend = JSON.parse(activeModuleFiltersKey) as Record<string, string[]>
+    const filtersToSend = activeModuleFilters
 
     const timeout = setTimeout(async () => {
       try {
@@ -689,22 +691,25 @@ export function FilterPanel({
 
   // Fetch module stats for dynamic placeholder
   useEffect(() => {
+    const controller = new AbortController()
     async function fetchStats() {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/v1/modules/${module}/stats`)
-        if (response.ok) {
-          const data = await response.json()
-          setModuleStats({
-            count: data.count,
-            total: data.total,
-            total_formatted: data.total_formatted,
-          })
+        const response = await fetch(`${API_BASE_URL}/api/v1/modules/${module}/stats`, { signal: controller.signal })
+        if (!response.ok) return
+        const data = await response.json()
+        setModuleStats({
+          count: data.count,
+          total: data.total,
+          total_formatted: data.total_formatted,
+        })
+      } catch (e) {
+        if (e instanceof Error && e.name !== 'AbortError') {
+          console.error('Failed to fetch stats:', e)
         }
-      } catch {
-        // Silently fail - placeholder will use default text
       }
     }
     fetchStats()
+    return () => controller.abort()
   }, [module])
 
   // Generate dynamic placeholder based on module stats
@@ -821,13 +826,15 @@ export function FilterPanel({
 
   // Debounced filter update (300ms delay to avoid excessive API calls)
   const FILTER_DEBOUNCE_MS = 300
+  const onFilterChangeRef = useRef(onFilterChange)
+  onFilterChangeRef.current = onFilterChange
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      onFilterChange(localFilters)
+      onFilterChangeRef.current(localFilters)
     }, FILTER_DEBOUNCE_MS)
     return () => clearTimeout(timeout)
-  }, [localFilters, onFilterChange])
+  }, [localFilters])
 
   // Sync with external filters (e.g., from URL navigation)
   useEffect(() => {
@@ -1081,6 +1088,7 @@ export function FilterPanel({
               aria-haspopup="listbox"
               aria-autocomplete="list"
               aria-controls="search-results-listbox"
+              aria-activedescendant={selectedIndex >= 0 ? `search-option-${selectedIndex}` : undefined}
               autoComplete="off"
               className="w-full h-[52px] pl-12 pr-12 text-base bg-white rounded-lg shadow-md border border-[var(--border)] focus:outline-none focus:border-[var(--navy-dark)] focus:ring-2 focus:ring-[var(--navy-dark)]/20 focus:shadow-lg transition-all placeholder:text-[var(--navy-dark)]/60"
             />
@@ -1133,6 +1141,7 @@ export function FilterPanel({
                     {currentModuleResults.map((result, index) => (
                       <button
                         key={result.name}
+                        id={`search-option-${index}`}
                         type="button"
                         onClick={() => handleSelectCurrentModule(result)}
                         className={cn(
@@ -1164,6 +1173,7 @@ export function FilterPanel({
                       return (
                         <button
                           key={`${result.field}-${result.value}`}
+                          id={`search-option-${adjustedIndex}`}
                           type="button"
                           onClick={() => handleSelectFieldMatch(result)}
                           className={cn(
@@ -1197,6 +1207,7 @@ export function FilterPanel({
                       return (
                         <div
                           key={result.name}
+                          id={`search-option-${adjustedIndex}`}
                           className={cn(
                             'px-4 py-3 hover:bg-[var(--gray-light)] transition-colors border-b border-[var(--border)]',
                             selectedIndex === adjustedIndex && 'bg-[var(--gray-light)]'

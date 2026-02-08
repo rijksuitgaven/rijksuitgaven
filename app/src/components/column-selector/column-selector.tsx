@@ -61,9 +61,11 @@ export function getStoredColumns(moduleId: string): string[] {
   try {
     const stored = localStorage.getItem(`columns-${moduleId}`)
     if (stored) {
-      const parsed = JSON.parse(stored) as string[]
-      // Enforce max columns limit even for stored preferences
-      return parsed.slice(0, MAX_SELECTED_COLUMNS)
+      const parsed = JSON.parse(stored)
+      if (Array.isArray(parsed) && parsed.every((v: unknown) => typeof v === 'string')) {
+        return (parsed as string[]).slice(0, MAX_SELECTED_COLUMNS)
+      }
+      return getDefaultColumns(moduleId)
     }
   } catch {
     // Ignore parse errors

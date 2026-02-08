@@ -59,8 +59,8 @@ function transformRow(apiRow: ApiRecipientRow, years: number[]): RecipientRow {
  * Fetch all available modules from the API
  * @returns Array of module metadata (id, display name, description)
  */
-export async function fetchModules(): Promise<ModuleInfo[]> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/modules`)
+export async function fetchModules(signal?: AbortSignal): Promise<ModuleInfo[]> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/modules`, signal ? { signal } : undefined)
   if (!response.ok) {
     throw new Error(`Failed to fetch modules: ${response.statusText}`)
   }
@@ -82,7 +82,7 @@ export async function fetchModuleData(
   const searchParams = new URLSearchParams()
 
   // Convert page/per_page to limit/offset
-  const page = params.page ?? 1
+  const page = Math.max(1, params.page ?? 1)
   const perPage = params.per_page ?? params.limit ?? 25
   const offset = (page - 1) * perPage
 
@@ -184,7 +184,8 @@ export async function fetchCascadingFilterOptions(
 export async function fetchDetailData(
   module: string,
   primaryValue: string,
-  groupingField?: string
+  groupingField?: string,
+  signal?: AbortSignal
 ): Promise<DetailResponse> {
   // Double-encode to preserve %2F through Next.js routing (slashes in kostensoort like "Vaklit/abonn/overig")
   const encodedValue = encodeURIComponent(encodeURIComponent(primaryValue))
@@ -194,7 +195,7 @@ export async function fetchDetailData(
     url += `?grouping=${encodeURIComponent(groupingField)}`
   }
 
-  const response = await fetch(url)
+  const response = await fetch(url, signal ? { signal } : undefined)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch details: ${response.statusText}`)

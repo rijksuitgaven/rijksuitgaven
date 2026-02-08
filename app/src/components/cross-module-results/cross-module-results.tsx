@@ -31,51 +31,37 @@ export function CrossModuleResults({ searchQuery, currentModule, className }: Cr
     const controller = new AbortController()
     const signal = controller.signal
 
-    // Timeout for each fetch request (5 seconds)
-    const FETCH_TIMEOUT_MS = 5000
-
     async function fetchCounts() {
       setIsLoading(true)
 
       const otherModules = ALL_MODULES.filter(m => m !== currentModule && m !== 'integraal')
 
       try {
-        const results = await Promise.all(
+        const settled = await Promise.allSettled(
           otherModules.map(async (module) => {
-            try {
-              // Create a timeout that aborts the request
-              const timeoutId = setTimeout(() => {
-                if (!signal.aborted) {
-                  // Don't abort the main controller, just skip this module
-                }
-              }, FETCH_TIMEOUT_MS)
+            const response = await fetch(
+              `${API_BASE_URL}/api/v1/modules/${module}?` +
+              new URLSearchParams({
+                q: searchQuery,
+                limit: '1',
+                offset: '0',
+              }),
+              { signal }
+            )
 
-              const response = await fetch(
-                `${API_BASE_URL}/api/v1/modules/${module}?` +
-                new URLSearchParams({
-                  q: searchQuery,
-                  limit: '1',
-                  offset: '0',
-                }),
-                { signal }
-              )
+            if (!response.ok) return null
 
-              clearTimeout(timeoutId)
+            const data = await response.json()
+            // API returns meta.total (not pagination.totalRows - that's the transformed format)
+            const count = data.meta?.total ?? 0
 
-              if (!response.ok) return null
-
-              const data = await response.json()
-              // API returns meta.total (not pagination.totalRows - that's the transformed format)
-              const count = data.meta?.total ?? 0
-
-              return { module, count }
-            } catch (error) {
-              // Silently continue - one module failing shouldn't break the others
-              // AbortError is expected when search changes rapidly
-              return null
-            }
+            return { module, count }
           })
         )
+
+        const results = settled
+          .filter((r): r is PromiseFulfilledResult<ModuleCount | null> => r.status === 'fulfilled')
+          .map(r => r.value)
 
         // Filter modules with results and sort by count descending
         const validResults = results

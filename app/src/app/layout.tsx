@@ -21,8 +21,18 @@ const brawler = Brawler({
 });
 
 export const metadata: Metadata = {
-  title: "Rijksuitgaven.nl",
-  description: "Snel inzicht voor krachtige analyses",
+  metadataBase: new URL('https://beta.rijksuitgaven.nl'),
+  title: {
+    default: 'Rijksuitgaven.nl',
+    template: '%s | Rijksuitgaven.nl',
+  },
+  description: 'Snel inzicht in rijksuitgaven voor krachtige analyses',
+  openGraph: {
+    title: 'Rijksuitgaven.nl',
+    description: 'Snel inzicht in rijksuitgaven voor krachtige analyses',
+    type: 'website',
+    locale: 'nl_NL',
+  },
 };
 
 export default function RootLayout({

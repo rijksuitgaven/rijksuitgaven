@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Monitor, X } from 'lucide-react'
 
 const STORAGE_KEY = 'mobile-banner-dismissed'
@@ -17,6 +17,7 @@ const STORAGE_KEY = 'mobile-banner-dismissed'
 export function MobileBanner() {
   // null = not yet determined (SSR-safe), false = dismissed, true = show
   const [visible, setVisible] = useState<boolean | null>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     // Only show on mobile viewports (< 768px)
@@ -46,6 +47,17 @@ export function MobileBanner() {
     }
     setVisible(false)
   }
+
+  // Escape key handler and auto-focus
+  useEffect(() => {
+    if (!visible) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleDismiss()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    buttonRef.current?.focus()
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [visible])
 
   // Don't render during SSR or when not visible
   if (visible !== true) return null
@@ -94,6 +106,7 @@ export function MobileBanner() {
           {/* Actions */}
           <div className="flex flex-col gap-3">
             <button
+              ref={buttonRef}
               onClick={handleDismiss}
               className="w-full bg-[var(--pink)] hover:opacity-90 text-white px-6 py-3 rounded-lg text-sm font-medium transition-opacity"
             >

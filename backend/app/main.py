@@ -45,8 +45,8 @@ app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
     description="API for Rijksuitgaven.nl - Dutch Government Spending Data",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    docs_url="/docs" if settings.debug else None,
+    redoc_url="/redoc" if settings.debug else None,
     lifespan=lifespan,
 )
 
@@ -55,7 +55,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "X-Requested-With", "Accept"],
 )

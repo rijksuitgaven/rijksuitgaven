@@ -8,10 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { validateModule } from '../../../../_lib/proxy'
-
-const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8000'
-const TIMEOUT_MS = 15000
+import { validateModule, BACKEND_API_URL, TIMEOUT_MS } from '../../../../_lib/proxy'
 
 interface RouteParams {
   params: Promise<{ module: string }>
@@ -28,7 +25,24 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   }
 
   try {
-    const body = await request.json()
+    // Body size check
+    const contentLength = request.headers.get('content-length')
+    if (contentLength && parseInt(contentLength, 10) > 10240) {
+      return NextResponse.json({ error: 'Payload too large' }, { status: 413 })
+    }
+
+    // Parse with error handling
+    let body: unknown
+    try {
+      body = await request.json()
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+    }
+
+    // Schema validation
+    if (!body || typeof body !== 'object' || !('active_filters' in body) || typeof (body as Record<string, unknown>).active_filters !== 'object') {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+    }
 
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
@@ -51,9 +65,10 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
       if (!response.ok) {
         const errorText = await response.text()
+        console.error(`[BFF] Backend ${response.status}: ${errorText}`)
         return NextResponse.json(
-          { error: 'Backend error', details: errorText },
-          { status: response.status }
+          { error: 'Request failed' },
+          { status: response.status >= 500 ? 502 : response.status }
         )
       }
 

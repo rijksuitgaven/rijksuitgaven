@@ -81,6 +81,15 @@ def get_typesense_url(path: str) -> str:
     return f"{settings.typesense_protocol}://{settings.typesense_host}:{settings.typesense_port}{path}"
 
 
+_http_client: httpx.AsyncClient | None = None
+
+def _get_http_client() -> httpx.AsyncClient:
+    global _http_client
+    if _http_client is None:
+        _http_client = httpx.AsyncClient(timeout=5.0)
+    return _http_client
+
+
 async def typesense_search(collection: str, params: dict) -> dict:
     """
     Execute search against Typesense.
@@ -91,23 +100,22 @@ async def typesense_search(collection: str, params: dict) -> dict:
     url = get_typesense_url(f"/collections/{collection}/documents/search")
 
     try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(
-                url,
-                params=params,
-                headers={"X-TYPESENSE-API-KEY": settings.typesense_api_key},
-                timeout=5.0,  # Unified timeout for Typesense calls
-            )
+        client = _get_http_client()
+        response = await client.get(
+            url,
+            params=params,
+            headers={"X-TYPESENSE-API-KEY": settings.typesense_api_key},
+        )
 
-            if response.status_code != 200:
-                logger.warning(f"Typesense returned {response.status_code} for {collection}")
-                return {"hits": [], "grouped_hits": []}
+        if response.status_code != 200:
+            logger.warning(f"Typesense returned {response.status_code} for {collection}")
+            return {"hits": [], "grouped_hits": []}
 
-            try:
-                return response.json()
-            except ValueError as json_err:
-                logger.error(f"Typesense returned invalid JSON: {json_err}")
-                return {"hits": [], "grouped_hits": []}
+        try:
+            return response.json()
+        except ValueError as json_err:
+            logger.error(f"Typesense returned invalid JSON: {json_err}")
+            return {"hits": [], "grouped_hits": []}
     except httpx.TimeoutException:
         logger.warning(f"Typesense timeout for collection {collection}")
         return {"hits": [], "grouped_hits": []}

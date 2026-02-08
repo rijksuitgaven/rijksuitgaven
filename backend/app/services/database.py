@@ -3,6 +3,7 @@ Database service for Supabase/PostgreSQL connection.
 
 Uses asyncpg for async database operations.
 """
+import asyncio
 import asyncpg
 from typing import Any, Optional
 from contextlib import asynccontextmanager
@@ -13,6 +14,7 @@ settings = get_settings()
 
 # Connection pool (initialized on first use)
 _pool: Optional[asyncpg.Pool] = None
+_pool_lock = asyncio.Lock()
 
 
 async def get_pool() -> asyncpg.Pool:
@@ -31,14 +33,16 @@ async def get_pool() -> asyncpg.Pool:
     """
     global _pool
     if _pool is None:
-        _pool = await asyncpg.create_pool(
-            settings.database_url,
-            min_size=2,
-            max_size=10,
-            max_inactive_connection_lifetime=300,  # 5 minutes
-            command_timeout=60,
-            statement_cache_size=0,  # Required for pgbouncer transaction mode
-        )
+        async with _pool_lock:
+            if _pool is None:
+                _pool = await asyncpg.create_pool(
+                    settings.database_url,
+                    min_size=2,
+                    max_size=10,
+                    max_inactive_connection_lifetime=300,  # 5 minutes
+                    command_timeout=60,
+                    statement_cache_size=0,  # Required for pgbouncer transaction mode
+                )
     return _pool
 
 
@@ -65,23 +69,10 @@ async def fetch_all(query: str, *args) -> list[dict]:
         return [dict(row) for row in rows]
 
 
-async def fetch_one(query: str, *args) -> Optional[dict]:
-    """Execute query and return first row as dict."""
-    async with get_connection() as conn:
-        row = await conn.fetchrow(query, *args)
-        return dict(row) if row else None
-
-
 async def fetch_val(query: str, *args) -> Any:
     """Execute query and return single value."""
     async with get_connection() as conn:
         return await conn.fetchval(query, *args)
-
-
-async def execute(query: str, *args) -> str:
-    """Execute query without returning results."""
-    async with get_connection() as conn:
-        return await conn.execute(query, *args)
 
 
 async def check_connection() -> bool:

@@ -101,14 +101,13 @@ async def _inject_availability(
 # Typesense Client Helper (for fast autocomplete)
 # =============================================================================
 
-_settings = None
+_http_client: httpx.AsyncClient | None = None
 
-def _get_settings():
-    """Lazy load settings."""
-    global _settings
-    if _settings is None:
-        _settings = get_settings()
-    return _settings
+def _get_http_client() -> httpx.AsyncClient:
+    global _http_client
+    if _http_client is None:
+        _http_client = httpx.AsyncClient(timeout=5.0)
+    return _http_client
 
 
 async def _typesense_search(collection: str, params: dict) -> dict:
@@ -118,7 +117,7 @@ async def _typesense_search(collection: str, params: dict) -> dict:
     Uses httpx for async HTTP requests. Returns empty result on error.
     Typesense delivers <50ms response times vs seconds for PostgreSQL regex.
     """
-    settings = _get_settings()
+    settings = get_settings()
     if not settings.typesense_host or not settings.typesense_api_key:
         logger.warning("Typesense not configured, falling back to empty results")
         return {"hits": [], "grouped_hits": []}
@@ -126,23 +125,22 @@ async def _typesense_search(collection: str, params: dict) -> dict:
     url = f"{settings.typesense_protocol}://{settings.typesense_host}:{settings.typesense_port}/collections/{collection}/documents/search"
 
     try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(
-                url,
-                params=params,
-                headers={"X-TYPESENSE-API-KEY": settings.typesense_api_key},
-                timeout=5.0,  # Fast timeout - autocomplete must be quick
-            )
+        client = _get_http_client()
+        response = await client.get(
+            url,
+            params=params,
+            headers={"X-TYPESENSE-API-KEY": settings.typesense_api_key},
+        )
 
-            if response.status_code != 200:
-                logger.warning(f"Typesense search failed: {response.status_code}")
-                return {"hits": [], "grouped_hits": []}
+        if response.status_code != 200:
+            logger.warning(f"Typesense search failed: {response.status_code}")
+            return {"hits": [], "grouped_hits": []}
 
-            try:
-                return response.json()
-            except ValueError as json_err:
-                logger.error(f"Typesense returned invalid JSON: {json_err}")
-                return {"hits": [], "grouped_hits": []}
+        try:
+            return response.json()
+        except ValueError as json_err:
+            logger.error(f"Typesense returned invalid JSON: {json_err}")
+            return {"hits": [], "grouped_hits": []}
     except httpx.TimeoutException:
         logger.warning("Typesense search timeout")
         return {"hits": [], "grouped_hits": []}
@@ -818,6 +816,8 @@ async def _get_from_aggregated_view(
     # Year filter: show recipients who have data in that year
     # (still shows all years in response, but filters to active recipients)
     if jaar:
+        if jaar not in YEARS:
+            raise ValueError("Invalid year")
         where_clauses.append(f'"{jaar}" > 0')
 
     # Amount filters
@@ -842,7 +842,9 @@ async def _get_from_aggregated_view(
     # Filter for recipients with data in min_years+ years (UX-002)
     # Uses pre-computed years_with_data column for fast filtering
     if min_years is not None and min_years > 0:
-        where_clauses.append(f"years_with_data >= {min_years}")
+        where_clauses.append(f"years_with_data >= ${param_idx}")
+        params.append(min_years)
+        param_idx += 1
 
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
 
@@ -886,9 +888,10 @@ async def _get_from_aggregated_view(
         if sort_by == "primary":
             sort_field = primary
         elif sort_by.startswith("y") and sort_by[1:].isdigit():
-            # Map y2024 to "2024" column name
-            year = sort_by[1:]
-            sort_field = f'"{year}"'
+            year_num = int(sort_by[1:])
+            if year_num not in YEARS:
+                raise ValueError("Invalid sort year")
+            sort_field = f'"{year_num}"'
         sort_direction = "DESC" if sort_order == "desc" else "ASC"
         sort_clause = f"ORDER BY {sort_field} {sort_direction}"
 
@@ -1123,18 +1126,22 @@ async def _get_from_source_table(
     # Amount filters (on total - applied in HAVING)
     having_clauses = []
     if min_bedrag is not None:
-        having_clauses.append(f"SUM({amount_field}) * {multiplier} >= ${param_idx}")
+        having_clauses.append(f"SUM({amount_field}) * ${param_idx} >= ${param_idx + 1}")
+        params.append(multiplier)
         params.append(min_bedrag)
-        param_idx += 1
+        param_idx += 2
 
     if max_bedrag is not None:
-        having_clauses.append(f"SUM({amount_field}) * {multiplier} <= ${param_idx}")
+        having_clauses.append(f"SUM({amount_field}) * ${param_idx} <= ${param_idx + 1}")
+        params.append(multiplier)
         params.append(max_bedrag)
-        param_idx += 1
+        param_idx += 2
 
     # Filter for recipients with data in min_years+ years (UX-002)
     if min_years is not None and min_years > 0:
-        having_clauses.append(f"COUNT(DISTINCT {year_field}) >= {min_years}")
+        having_clauses.append(f"COUNT(DISTINCT {year_field}) >= ${param_idx}")
+        params.append(min_years)
+        param_idx += 1
 
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
     having_sql = f"HAVING {' AND '.join(having_clauses)}" if having_clauses else ""
@@ -1172,6 +1179,9 @@ async def _get_from_source_table(
         if sort_by == "primary":
             sort_field = primary
         elif sort_by.startswith("y") and sort_by[1:].isdigit():
+            year_num = int(sort_by[1:])
+            if year_num not in YEARS:
+                raise ValueError("Invalid sort year")
             sort_field = f"\"{sort_by}\""
         sort_direction = "DESC" if sort_order == "desc" else "ASC"
         sort_clause = f"ORDER BY {sort_field} {sort_direction}"
@@ -1244,7 +1254,7 @@ async def _get_from_source_table(
                     "totaal": int(r.get("sum_totaal", 0) or 0),
                 }
     except Exception as e:
-        logger.error(f"Query failed in _get_from_source_table for {module}: {e}")
+        logger.error(f"Query failed in _get_from_source_table for {config.get('table', 'unknown')}: {e}")
         raise
 
     # Transform rows
@@ -1318,6 +1328,16 @@ async def get_row_details(
     }
 
     group_field = group_by or default_group_by.get(module, primary)
+
+    # Validate group_field against allowed fields for this module (C-1: SQL injection prevention)
+    valid_group_fields = list(config.get("filter_fields", [])) + list(config.get("extra_columns", [])) + [primary]
+    if group_field not in valid_group_fields:
+        raise ValueError(f"Invalid group_by field")
+    validate_identifier(group_field, ALLOWED_COLUMNS, "column")
+
+    # Validate jaar against YEARS list (H-5)
+    if jaar and jaar not in YEARS:
+        raise ValueError("Invalid year")
 
     # Build year columns with multiplier for normalization
     year_columns = ", ".join([
@@ -1410,6 +1430,8 @@ async def get_integraal_data(
 
     # Year filter: show recipients who have data in that year
     if jaar:
+        if jaar not in YEARS:
+            raise ValueError("Invalid year")
         where_clauses.append(f'"{jaar}" > 0')
 
     # Amount filters
@@ -1426,14 +1448,17 @@ async def get_integraal_data(
     # Filter for recipients with data in min_years+ years (UX-002)
     # Uses pre-computed years_with_data column (indexed) for fast filtering
     if min_years is not None and min_years > 0:
-        where_clauses.append(f"years_with_data >= {min_years}")
+        where_clauses.append(f"years_with_data >= ${param_idx}")
+        params.append(min_years)
+        param_idx += 1
 
     # Filter by modules: recipient must appear in ALL selected modules
     if filter_modules:
         for mod_display in filter_modules:
             mod_db = module_name_map.get(mod_display, mod_display.lower())
+            escaped = mod_db.replace('%', '\\%').replace('_', '\\_')
             where_clauses.append(f"sources ILIKE ${param_idx}")
-            params.append(f"%{mod_db}%")
+            params.append(f"%{escaped}%")
             param_idx += 1
 
     # Filter by minimum number of instanties (source_count)
@@ -1482,8 +1507,10 @@ async def get_integraal_data(
         if sort_by == "primary":
             sort_field = "ontvanger"
         elif sort_by.startswith("y") and sort_by[1:].isdigit():
-            year = sort_by[1:]
-            sort_field = f'"{year}"'
+            year_num = int(sort_by[1:])
+            if year_num not in YEARS:
+                raise ValueError("Invalid sort year")
+            sort_field = f'"{year_num}"'
         sort_direction = "DESC" if sort_order == "desc" else "ASC"
         sort_clause = f"ORDER BY {sort_field} {sort_direction}"
 
@@ -1606,6 +1633,10 @@ async def get_integraal_details(
     Shows how much the recipient received from each module by querying
     each module's aggregated view.
     """
+    # Validate jaar (H-5)
+    if jaar and jaar not in YEARS:
+        raise ValueError("Invalid year")
+
     # Modules with their aggregated table and primary field
     # (not apparaat - it uses kostensoort, not recipients)
     modules_to_query = [
