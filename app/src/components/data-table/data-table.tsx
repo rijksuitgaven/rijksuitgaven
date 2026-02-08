@@ -555,8 +555,10 @@ export function DataTable({
         if (config) {
           cols.push({
             id: `extra-${colKey}`,
-            header: () => (
-              <span className="text-sm font-semibold text-white">{config.label}</span>
+            header: ({ column }) => (
+              <SortableHeader column={column} onSortChange={onSortChange}>
+                {config.label}
+              </SortableHeader>
             ),
             cell: ({ row }) => {
               const value = row.original.extraColumns?.[colKey]

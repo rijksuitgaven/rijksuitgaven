@@ -1518,6 +1518,8 @@ async def get_integraal_data(
         sort_field = "totaal"
         if sort_by == "primary":
             sort_field = "ontvanger"
+        elif sort_by == "extra-betalingen":
+            sort_field = "record_count"
         elif sort_by.startswith("y") and sort_by[1:].isdigit():
             year_num = int(sort_by[1:])
             if year_num not in YEARS:
