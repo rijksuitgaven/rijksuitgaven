@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-02-07
+**Last Updated:** 2026-02-08
 
 Items logged for future versions, not in V1.0 scope.
 
@@ -92,6 +92,36 @@ Example: Gemeente Amersfoort has data for 2020-2024, but not 2016-2019. Currentl
 4. Expanded rows: Apply same rendering
 
 **Implementation:** Complete (2026-02-07). Migration 022 executed, API verified, deployed to production.
+
+---
+
+### Cascading Filter Performance Optimization
+
+**Priority:** Medium (V1.1)
+**Added:** 2026-02-08
+**Status:** BACKLOGGED
+**Type:** Performance
+
+**Problem:**
+Cascading filter option requests (POST `/filter-options`) take 300-500ms per request. Each filter change triggers a new request. With the Begroting filter in instrumenten module (674K rows), loading times can feel slow.
+
+**Current State:**
+- 5 parallel queries via `asyncio.gather()` per request
+- Each query runs `SELECT DISTINCT field, COUNT(DISTINCT primary) ... GROUP BY ... ORDER BY ...`
+- ~300-500ms for instrumenten (largest table), ~100-200ms for smaller modules
+- Debounced 200ms to reduce request frequency
+
+**Potential Solutions:**
+
+| Option | Effort | Impact |
+|--------|--------|--------|
+| **Materialized filter option cache** | 4-8 hours | High — pre-compute options for unfiltered state |
+| **Redis cache for filter combos** | 4-8 hours | High — cache frequent filter combinations |
+| **Typesense facets** | 1-2 days | High — built-in faceting, ~10ms |
+| **Partial indexes on filter columns** | 2 hours | Medium — faster GROUP BY |
+| **Frontend option caching** | 2 hours | Medium — cache unfiltered options, only refetch on filter change |
+
+**Decision:** Parked for V1.1. Current performance is acceptable for launch.
 
 ---
 

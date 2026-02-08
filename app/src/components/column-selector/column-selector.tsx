@@ -127,7 +127,7 @@ export function ColumnSelector({ moduleId, selectedColumns, onColumnsChange }: C
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border rounded transition-colors',
+          'flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border rounded transition-colors',
           isOpen
             ? 'bg-[var(--navy-dark)] text-white border-[var(--navy-dark)]'
             : 'border-[var(--border)] hover:border-[var(--navy-medium)] text-[var(--navy-dark)]'

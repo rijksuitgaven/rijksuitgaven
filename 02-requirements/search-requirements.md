@@ -2,7 +2,7 @@
 
 **Project:** Rijksuitgaven.nl SaaS Platform
 **Version:** V1 - Search Platform
-**Date:** 2026-01-23 (Updated: 2026-01-31)
+**Date:** 2026-01-23 (Updated: 2026-02-08)
 **Status:** In Development
 
 > **Scope:** This document covers V1 Search Platform requirements.
@@ -315,12 +315,11 @@ User on "Financiële Instrumenten" page searches "prorail"
 ### Module 2: Apparaatsuitgaven
 
 **Filters:**
-1. **Kostensoort** (Cost type) - Dropdown (unique to this module)
-2. **Begrotingsnaam** - Dropdown
-3. **Artikel** - Dropdown
-4. **Detail** - Dropdown
-5. **Year Range** - Slider (2016-2024)
-6. **Amount Range** - Min/Max input
+1. **Begrotingsnaam** - Dropdown (cascading)
+2. **Artikel** - Dropdown (cascading)
+3. **Detail** - Dropdown (cascading)
+4. **Kostensoort** (Cost type) - Dropdown (cascading, added 2026-02-08)
+5. **Amount Range** - Min/Max input
 
 **Default Columns:** Artikel, Detail
 
@@ -341,8 +340,8 @@ User on "Financiële Instrumenten" page searches "prorail"
 ### Module 4: Provinciale Subsidieregisters
 
 **Filters:**
-1. **Provincie** (Province) - Dropdown (unique to this module)
-2. **Year Range** - Slider (2018-2024)
+1. **Provincie** (Province) - Dropdown (cascading)
+2. **Omschrijving** - Dropdown (cascading, added 2026-02-08)
 3. **Amount Range** - Min/Max input
 
 **Default Columns:** Provincie, Omschrijving
@@ -352,12 +351,11 @@ User on "Financiële Instrumenten" page searches "prorail"
 ### Module 5: Gemeentelijke Subsidieregisters
 
 **Filters:**
-1. **Gemeente** (Municipality) - Dropdown (unique to this module)
-2. **Beleidsterrein** (Policy area) - Dropdown (unique to this module)
-3. **Regeling** - Dropdown
-4. **Omschrijving** - Dropdown
-5. **Year Range** - Slider (2018-2024)
-6. **Amount Range** - Min/Max input
+1. **Gemeente** (Municipality) - Dropdown (cascading)
+2. **Beleidsterrein** (Policy area) - Dropdown (cascading)
+3. **Regeling** - Dropdown (cascading, added 2026-02-08)
+4. **Omschrijving** - Dropdown (cascading, added 2026-02-08)
+5. **Amount Range** - Min/Max input
 
 **Default Columns:** Gemeente, Omschrijving
 
@@ -366,17 +364,18 @@ User on "Financiële Instrumenten" page searches "prorail"
 ### Module 6: Publiek (Public Implementation Organizations)
 
 **Filters:**
-1. **Organisatie** (Organization: RVO, COA, NWO, etc.) - Dropdown (unique)
-2. **Regeling (RVO/COA)** - Dropdown
-3. **Trefwoorden (RVO)** (Keywords) - Dropdown (unique)
-4. **Sectoren (RVO)** (Sectors) - Dropdown (unique)
-5. **Regio (RVO)** (Region) - Dropdown
-6. **Staffel (COA)** - Dropdown
-7. **Onderdeel (NWO)** - Dropdown
-8. **Year Range** - Slider (2018-2024)
-9. **Amount Range** - Min/Max input
+1. **Organisatie** (Organization: RVO, COA, NWO, etc.) - Dropdown (cascading)
+2. **Regeling (RVO/COA)** - Dropdown (cascading)
+3. **Trefwoorden (RVO)** (Keywords) - Dropdown (cascading, added 2026-02-08)
+4. **Sectoren (RVO)** (Sectors) - Dropdown (cascading, added 2026-02-08)
+5. **Provincie (RVO)** (Province/Region) - Dropdown (cascading, added 2026-02-08)
+6. **Staffel (COA)** - Dropdown (cascading, added 2026-02-08)
+7. **Onderdeel (NWO)** - Dropdown (cascading, added 2026-02-08)
+8. **Amount Range** - Min/Max input
 
 **Default Columns:** Organisatie
+
+> **Note (2026-02-08):** The publiek source table has a `provincie` column, not `regio`. UI label shows "Provincie (RVO)" to match the actual data column.
 
 > **Future Version Context:** This module has GIS/location data (POINT geometry field). Geographic search will be enabled in V2.0. See: `research-mode-vision.md`
 
@@ -1052,6 +1051,48 @@ Search "bedrijvenbeleid" shows:
 - No other visual changes — just the panel opens automatically
 
 **Priority:** P1
+
+**Status:** ✅ Implemented 2026-02-08
+
+---
+
+### UX-021: Cascading Bidirectional Filters
+
+**Requirement:** Filter dropdowns show context-aware options with counts. Selecting a value in one filter constrains options in all other filters (bidirectional), with counts showing how many aggregated rows match each option.
+
+**Behavior:**
+- Each filter dropdown shows `(count)` next to every option value (Dutch locale formatting)
+- Selecting a value in one filter updates all OTHER filters' options and counts
+- Pattern: when computing options for field X, apply WHERE clauses from all fields EXCEPT X
+- Invalid selections (selected value no longer has matching rows) show `(0 resultaten)` in red
+- Invalid selections are NOT auto-cleared (user decides)
+- Initial load with no filters shows full unfiltered counts
+- Debounced 200ms before fetching new options (prevents excessive API calls)
+- Graceful degradation: on error, keeps previous options
+
+**Scope:**
+- All 6 modules (instrumenten, apparaat, inkoop, provincie, gemeente, publiek)
+- Integraal module excluded (no cascading filters)
+- Counts use `COUNT(DISTINCT primary_field)` to match aggregated table row counts
+
+**Filter fields per module:**
+
+| Module | Cascading Filter Fields |
+|--------|------------------------|
+| Instrumenten | Begrotingsnaam, Artikel, Artikelonderdeel, Instrument, Regeling |
+| Apparaat | Begrotingsnaam, Artikel, Detail, Kostensoort |
+| Inkoop | Ministerie, Categorie, Staffel |
+| Provincie | Provincie, Omschrijving |
+| Gemeente | Gemeente, Beleidsterrein, Regeling, Omschrijving |
+| Publiek | Organisatie, Regeling, Trefwoorden, Sectoren, Provincie, Onderdeel, Staffel |
+
+**Technical Implementation:**
+- Backend: `get_cascading_filter_options()` in `modules.py` — 5 parallel queries via `asyncio.gather()`
+- API: `POST /{module}/filter-options` endpoint with `active_filters` body
+- BFF: `app/src/app/api/v1/modules/[module]/filters/route.ts` (POST proxy)
+- Frontend: `fetchCascadingFilterOptions()` in `api.ts`, controlled MultiSelect mode in `filter-panel.tsx`
+
+**Priority:** P1 (High)
 
 **Status:** ✅ Implemented 2026-02-08
 
