@@ -400,6 +400,8 @@ Additional UI/UX work completed after mini sprint was marked complete:
 | Next.js 16.1.4→16.1.6 update | ✅ 3 high CVEs fixed, turbopack root configured |
 | Dependency cleanup | ✅ Removed unused supabase-js, typesense; split dev requirements |
 | Error/404 pages + robots.txt | ✅ Branded pages, /api/ and /login disallowed |
+| Deep security & vulnerability audit | ✅ 3 teams with adversarial verification, 15 false positives eliminated |
+| Security fixes (7) | ✅ CSP/HSTS, body size, value limits, formula injection, error messages |
 
 ---
 
