@@ -130,6 +130,72 @@ Cascading filter option requests (POST `/filter-options`) take 300-500ms per req
 
 ---
 
+### Rate Limiting (Pre-Launch)
+
+**Priority:** High (Pre-Launch)
+**Added:** 2026-02-08
+**Status:** BACKLOGGED
+**Type:** Security
+
+**Problem:**
+No rate limiting exists anywhere in the stack. An attacker can send thousands of requests/second to any BFF endpoint, saturating the backend's 10-connection asyncpg pool and degrading service for all users. The autocomplete endpoint (called on every keystroke) and cascading filters endpoint (7 parallel DB queries per request) are the most amplifiable vectors.
+
+**Potential Solutions:**
+
+| Option | Effort | Impact |
+|--------|--------|--------|
+| **Railway/Cloudflare rate limiting** | 1-2 hours | High — infrastructure-level, no code changes |
+| **Next.js middleware rate limiter** | 4 hours | High — per-IP throttling at BFF layer |
+| **Backend FastAPI rate limiter** | 2-4 hours | Medium — protects backend directly but BFF still bypassable |
+
+**Decision:** Must be implemented before public launch. Infrastructure-level preferred.
+
+---
+
+### Backend Network Isolation (Pre-Launch)
+
+**Priority:** High (Pre-Launch)
+**Added:** 2026-02-08
+**Status:** BACKLOGGED
+**Type:** Security
+
+**Problem:**
+The backend FastAPI service is directly accessible on the internet at its Railway URL. The BFF proxy pattern is cosmetic — all BFF protections (sanitization, body limits, future auth) can be bypassed by hitting the backend URL directly. The URL follows a predictable pattern (`{service}-production-{4hex}.up.railway.app`, 65K combinations).
+
+**Potential Solutions:**
+
+| Option | Effort | Impact |
+|--------|--------|--------|
+| **Railway private networking** | 1 hour | High — backend only reachable from BFF container |
+| **API key between BFF and backend** | 2-4 hours | High — backend rejects requests without secret header |
+| **IP allowlisting** | 1 hour | Medium — fragile if Railway IPs change |
+
+**Decision:** Must be implemented before auth is added. If auth only exists at BFF level, it's bypassable without backend isolation.
+
+---
+
+### xlsx Package Replacement (V1.1)
+
+**Priority:** Medium (V1.1)
+**Added:** 2026-02-08
+**Status:** BACKLOGGED
+**Type:** Security / Dependency
+
+**Problem:**
+The `xlsx` (SheetJS) npm package has known CVEs: prototype pollution (GHSA-4r6h-8v6p-xvw6, CVSS 7.8) and ReDoS (GHSA-5pgg-2g8v-p4x9, CVSS 7.5). The open-source version is abandoned (no fix available). Current usage is write-only (`aoa_to_sheet`, `writeFile` for XLS export), so CVEs targeting parse paths are not directly exploitable. However, compliance scanners will flag this.
+
+**Potential Solutions:**
+
+| Option | Effort | Impact |
+|--------|--------|--------|
+| **Replace with ExcelJS** | 4-8 hours | High — actively maintained, MIT license |
+| **Replace with commercial SheetJS** | 2 hours | Medium — requires license, different npm package |
+| **Remove XLS export** | 30 min | Low — only offer CSV (functional regression) |
+
+**Decision:** Replace with ExcelJS in V1.1. Low urgency since write-only usage.
+
+---
+
 ## Post-V1.0 Backlog
 
 ### Overzichtspagina / Recipient Profile Panel
