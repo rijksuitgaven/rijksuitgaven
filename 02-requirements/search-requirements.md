@@ -385,12 +385,10 @@ User on "Financiële Instrumenten" page searches "prorail"
 
 **Filters:**
 1. **Modules per ontvanger** (Modules per recipient) - Multi-select (unique)
-2. **Instanties per ontvanger** (Instances per recipient) - Slider
-3. **Totaal aantal betalingen** (Total payments) - Slider
-4. **Year Range** - Slider (2016-2024)
-5. **Total Amount Range** - Min/Max input
+2. **Betalingen per ontvanger** (Payments per recipient) - Bracket select: 1, 2-10, 11-50, 50+ (UX-022)
+3. **Total Amount Range** - Min/Max input
 
-**Default Columns:** Modules
+**Default Columns:** Betalingen
 
 ---
 
@@ -1091,6 +1089,38 @@ Search "bedrijvenbeleid" shows:
 - API: `POST /{module}/filter-options` endpoint with `active_filters` body
 - BFF: `app/src/app/api/v1/modules/[module]/filters/route.ts` (POST proxy)
 - Frontend: `fetchCascadingFilterOptions()` in `api.ts`, controlled MultiSelect mode in `filter-panel.tsx`
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-02-08
+
+---
+
+### UX-022: Betalingen Column + Filter for Integraal
+
+**Requirement:** Show total payment record count per recipient in the integraal module, with bracket-based filtering. Replaces the old "Instanties per ontvanger" filter (source_count, max 5) with actual payment counts.
+
+**Behavior:**
+- New `record_count` column in `universal_search` materialized view counts total source rows per recipient
+- "Betalingen per ontvanger" filter with bracket options: 1, 2-10, 11-50, 50+
+- "Betalingen" column visible by default in integraal via Kolommen selector
+- Column is sortable (sort_by=extra-betalingen → ORDER BY record_count)
+- Kolommen button now enabled for integraal module
+
+**Data Distribution (production, 463,731 recipients):**
+
+| Bracket | Recipients | % |
+|---------|-----------|---|
+| 1       | 247,208   | 53.3% |
+| 2-10    | 197,797   | 42.7% |
+| 11-50   | 16,580    | 3.6% |
+| 50+     | 2,146     | 0.5% |
+
+**Technical Implementation:**
+- SQL: `029-universal-search-record-count.sql` — DROP + recreate with `COUNT(*) AS record_count` + index
+- Backend: `BETALINGEN_BRACKETS` dict maps bracket strings to safe SQL conditions (no parameterization needed)
+- API: `betalingen` query param (string), `columns=betalingen` for extra column
+- Frontend: Bracket select in filter-panel, column-selector entry, SortableHeader on extra columns
 
 **Priority:** P1 (High)
 

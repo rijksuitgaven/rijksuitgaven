@@ -324,8 +324,11 @@ Uses `normalize_recipient()` function to merge duplicate recipients with differe
 | ontvanger | TEXT | Display name (original case, first occurrence) |
 | sources | TEXT | Comma-separated list of modules |
 | source_count | INTEGER | Number of modules recipient appears in |
-| "2016" - "2025" | BIGINT | Yearly totals in absolute euros |
+| record_count | BIGINT | Total payment rows across all modules (UX-022, added 2026-02-08) |
+| "2016" - "2024" | BIGINT | Yearly totals in absolute euros |
 | totaal | BIGINT | Grand total across all years |
+| years_with_data | INTEGER | Number of years with non-zero amounts |
+| random_order | DOUBLE PRECISION | Pre-computed random value for fast random sorting |
 
 **All amounts in ABSOLUTE EUROS** (€1 = 1)
 
@@ -334,6 +337,10 @@ Uses `normalize_recipient()` function to merge duplicate recipients with differe
 - `idx_universal_search_ontvanger` - Fast recipient search
 - `idx_universal_search_sources` - Fast source filtering
 - `idx_universal_search_totaal` - Fast sorting by amount
+- `idx_universal_search_random` - Fast random order sorting
+- `idx_universal_search_years` - Fast years_with_data filtering
+- `idx_universal_search_years_random` - Composite: years_with_data + random
+- `idx_universal_search_record_count` - Fast betalingen bracket filtering
 
 **Refresh Command:**
 ```sql

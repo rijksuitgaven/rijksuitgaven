@@ -291,8 +291,8 @@ Column customization for expanded row detail fields (UX-005).
 | inkoop | Categorie*, Staffel*, Ministerie |
 | provincie | Provincie*, Omschrijving* |
 | gemeente | Gemeente*, Omschrijving*, Beleidsterrein, Regeling |
-| publiek | Organisatie*, Regeling, Trefwoorden, Sectoren, Regio |
-| integraal | (none - modules shown inline) |
+| publiek | Organisatie*, Regeling, Trefwoorden, Sectoren, Regio, Staffel, Onderdeel |
+| integraal | Betalingen* (total payment record count per recipient, UX-022) |
 
 ### ModulePage (`components/module-page/module-page.tsx`)
 
