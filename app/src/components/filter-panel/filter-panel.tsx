@@ -131,6 +131,74 @@ export interface FilterValues {
 }
 
 // =============================================================================
+// Custom select dropdown (matches MultiSelect styling)
+// =============================================================================
+
+function CustomSelect({ value, onChange, options, label }: {
+  value: string
+  onChange: (val: string) => void
+  options: { value: string; label: string }[]
+  label: string
+}) {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!isOpen) return
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  const selectedLabel = options.find(o => o.value === value)?.label ?? label
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          'w-full px-3 py-2 border rounded-lg text-sm text-left flex items-center justify-between transition-colors',
+          'border-[var(--border)] bg-white hover:border-[var(--navy-medium)]',
+          'focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)]',
+          value && 'border-[var(--navy-medium)]'
+        )}
+      >
+        <span className={cn('truncate', !value && 'text-[var(--muted-foreground)]')}>
+          {selectedLabel}
+        </span>
+        <ChevronDown className={cn(
+          'h-4 w-4 text-[var(--muted-foreground)] transition-transform',
+          isOpen && 'rotate-180'
+        )} />
+      </button>
+      {isOpen && (
+        <div className="absolute z-50 mt-1 w-full bg-white border border-[var(--border)] rounded-lg shadow-lg max-h-60 overflow-auto">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => { onChange(opt.value); setIsOpen(false) }}
+              className={cn(
+                'w-full px-3 py-2 text-sm text-left hover:bg-[var(--gray-light)] transition-colors flex items-center gap-2',
+                value === opt.value && 'text-[var(--navy-dark)] font-medium'
+              )}
+            >
+              {value === opt.value && <Check className="h-3.5 w-3.5 text-[var(--navy-dark)]" />}
+              <span className={value !== opt.value ? 'ml-5.5' : ''}>{opt.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// =============================================================================
 // Multi-select dropdown component
 // =============================================================================
 
@@ -1240,17 +1308,12 @@ export function FilterPanel({
                   cascadingOptions={isCascadingModule ? (cascadingOptions?.[filter.value] ?? null) : undefined}
                 />
               ) : filter.type === 'select' && filter.options ? (
-                <select
+                <CustomSelect
                   value={(localFilters[filter.value] as string) ?? ''}
-                  onChange={(e) => handleModuleFilterChange(filter.value, e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)]"
-                >
-                  {filter.options.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(val) => handleModuleFilterChange(filter.value, val)}
+                  options={filter.options}
+                  label={filter.label}
+                />
               ) : (
                 <input
                   type="text"

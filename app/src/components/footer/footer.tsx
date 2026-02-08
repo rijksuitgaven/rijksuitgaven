@@ -185,10 +185,10 @@ export function Footer({ isLoggedIn = false, userEmail }: FooterProps) {
               </li>
               <li>
                 <a
-                  href="mailto:info@rijksuitgaven.nl"
+                  href="mailto:contact@rijksuitgaven.nl"
                   className="text-white/80 hover:text-white transition-colors"
                 >
-                  info@rijksuitgaven.nl
+                  contact@rijksuitgaven.nl
                 </a>
               </li>
             </ul>
