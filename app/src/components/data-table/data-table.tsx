@@ -1087,7 +1087,7 @@ function SortableHeader({
       ) : isSorted === 'desc' ? (
         <ChevronDown className="h-3 w-3" aria-hidden="true" />
       ) : (
-        <ChevronsUpDown className="h-3 w-3 opacity-50" aria-hidden="true" />
+        <ChevronsUpDown className="h-3 w-3 opacity-80" aria-hidden="true" />
       )}
     </button>
   )
