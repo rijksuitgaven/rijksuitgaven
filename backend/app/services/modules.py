@@ -2080,7 +2080,11 @@ async def get_module_autocomplete(
         else:
             # Other modules - only include exact matches (prefix would be noise)
             if is_exact:
-                other_sources = [MODULE_DISPLAY_NAMES.get(s.lower(), s) for s in sources]
+                other_sources = list(dict.fromkeys(
+                    SOURCE_TO_MODULE.get(s.lower(), s.lower()) for s in sources
+                ))
+                # Exclude current module from other modules list
+                other_sources = [m for m in other_sources if m != module.lower()]
                 if other_sources and len(other_modules_results) < limit:
                     other_modules_results.append({"name": name, "modules": other_sources})
 

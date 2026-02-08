@@ -1214,9 +1214,13 @@ export function FilterPanel({
                           )}
                         >
                           <div className="flex items-center justify-between gap-4">
-                            <div className="font-medium text-[var(--navy-dark)] truncate">
+                            <button
+                              type="button"
+                              onClick={() => handleSelectOtherModule(result.name, result.modules[0])}
+                              className="font-medium text-[var(--navy-dark)] truncate hover:text-[var(--blue-primary)] hover:underline transition-colors text-left"
+                            >
                               {result.name}
-                            </div>
+                            </button>
                             <div className="flex flex-wrap gap-1 justify-end">
                               {result.modules.slice(0, 4).map((mod) => (
                                 <button
