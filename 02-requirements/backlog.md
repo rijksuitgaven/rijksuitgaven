@@ -130,6 +130,26 @@ Cascading filter option requests (POST `/filter-options`) take 300-500ms per req
 
 ---
 
+### Custom 404 Page Design
+
+**Priority:** Medium (V1.0)
+**Added:** 2026-02-08
+**Status:** 🔲 TODO
+**Type:** UX / Design
+
+**Problem:**
+The current 404 page is the default Next.js error page — generic and off-brand. Users who hit a broken link or mistype a URL see no helpful guidance.
+
+**Solution:**
+Design a branded 404 page that:
+- Matches the site's visual identity (navy theme, typography)
+- Clearly communicates "page not found" in Dutch
+- Provides a link back to the homepage (Overzicht)
+- Optionally includes the search bar so users can find what they were looking for
+- Keeps it simple and on-brand — no gimmicks
+
+---
+
 ### Rate Limiting (Pre-Launch)
 
 **Priority:** High (Pre-Launch)
