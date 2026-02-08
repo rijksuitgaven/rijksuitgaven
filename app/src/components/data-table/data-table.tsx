@@ -615,7 +615,7 @@ export function DataTable({
             aria-label={`Jaren ${COLLAPSED_YEARS_START} tot ${COLLAPSED_YEARS_END} uitklappen`}
           >
             {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
-            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+            <ChevronRight className="h-3 w-3" aria-hidden="true" />
           </button>
         ),
         cell: ({ row }) => (
@@ -639,7 +639,7 @@ export function DataTable({
             aria-label={`Jaren ${COLLAPSED_YEARS_START} tot ${COLLAPSED_YEARS_END} inklappen`}
             title="Klik om jaren in te klappen"
           >
-            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+            <ChevronLeft className="h-3 w-3" aria-hidden="true" />
             {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
           </button>
         ),
