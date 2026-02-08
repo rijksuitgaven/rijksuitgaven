@@ -190,9 +190,14 @@ def build_search_condition(field: str, param_idx: int, search: str) -> tuple[str
     # Word boundary matching: \y = word boundary in PostgreSQL
     # Matches at: start/end of string, whitespace, punctuation
     # Does NOT match: within compound words
+    # Only add \y where the search starts/ends with a word character,
+    # because \y requires a transition between word and non-word chars.
+    # "B.V." ends with "." (non-word), so trailing \y would fail to match.
+    prefix = "\\y" if re.match(r'\w', search_lower) else ""
+    suffix = "\\y" if re.search(r'\w$', search_lower) else ""
     return (
         f"{field} ~* ${param_idx}",
-        f"\\y{escaped}\\y"
+        f"{prefix}{escaped}{suffix}"
     )
 
 

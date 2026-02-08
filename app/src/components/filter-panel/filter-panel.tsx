@@ -1150,7 +1150,7 @@ export function FilterPanel({
                         )}
                       >
                         <div className="flex items-center justify-between gap-4">
-                          <div className="font-medium truncate text-[var(--navy-dark)]">
+                          <div className="font-medium truncate text-[var(--navy-dark)] hover:text-[var(--blue-primary)] hover:underline transition-colors">
                             {result.name}
                           </div>
                           <div className="text-sm font-medium whitespace-nowrap text-[var(--navy-dark)]">
@@ -1182,7 +1182,7 @@ export function FilterPanel({
                           )}
                         >
                           <div className="flex items-center justify-between gap-4">
-                            <div className="font-medium text-[var(--navy-dark)] truncate">
+                            <div className="font-medium text-[var(--navy-dark)] truncate hover:text-[var(--blue-primary)] hover:underline transition-colors">
                               {result.value}
                             </div>
                             <span className="text-xs px-1.5 py-0.5 bg-[var(--blue-light)]/20 text-[var(--navy-medium)] rounded whitespace-nowrap">
