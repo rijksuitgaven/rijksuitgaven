@@ -158,7 +158,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   // Use useMemo to prevent infinite render loops from array reference changes
   const activeFilterColumns = useMemo((): string[] => {
     // Standard filter keys that are NOT column fields
-    const nonColumnKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag', 'min_instanties']
+    const nonColumnKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag', 'betalingen']
 
     const activeFields: string[] = []
 

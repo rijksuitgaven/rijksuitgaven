@@ -280,7 +280,7 @@ async def get_module(
     onderdeel: Optional[list[str]] = Query(None, description="Filter by onderdeel - multi-select"),
     # Integraal-specific filters
     modules: Optional[list[str]] = Query(None, description="Filter by modules recipient appears in (integraal only)"),
-    min_instanties: Optional[int] = Query(None, ge=1, description="Minimum number of distinct sources (integraal only)"),
+    betalingen: Optional[str] = Query(None, description="Filter by payment record count bracket: 1, 2-10, 11-50, 50+ (integraal only)"),
     # Dynamic columns (UX-005)
     columns: Optional[list[str]] = Query(None, description="Extra columns to display (max 2)"),
 ):
@@ -351,6 +351,10 @@ async def get_module(
     if onderdeel:
         filter_fields["onderdeel"] = onderdeel
 
+    # Validate betalingen bracket value (integraal only)
+    if betalingen and betalingen not in ("1", "2-10", "11-50", "50+"):
+        raise HTTPException(status_code=400, detail="Invalid betalingen value. Must be one of: 1, 2-10, 11-50, 50+")
+
     try:
         # Handle integraal separately (uses universal_search table)
         totals = None
@@ -366,7 +370,8 @@ async def get_module(
                 offset=offset,
                 min_years=min_years,
                 filter_modules=modules,
-                min_instanties=min_instanties,
+                betalingen=betalingen,
+                columns=columns,
             )
             primary_field = "ontvanger"
         else:

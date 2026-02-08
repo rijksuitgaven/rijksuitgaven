@@ -1392,6 +1392,14 @@ async def get_row_details(
     return result
 
 
+BETALINGEN_BRACKETS = {
+    "1": "record_count = 1",
+    "2-10": "record_count BETWEEN 2 AND 10",
+    "11-50": "record_count BETWEEN 11 AND 50",
+    "50+": "record_count >= 50",
+}
+
+
 async def get_integraal_data(
     search: Optional[str] = None,
     jaar: Optional[int] = None,
@@ -1403,7 +1411,8 @@ async def get_integraal_data(
     offset: int = 0,
     min_years: Optional[int] = None,
     filter_modules: Optional[list[str]] = None,
-    min_instanties: Optional[int] = None,
+    betalingen: Optional[str] = None,
+    columns: Optional[list[str]] = None,
 ) -> tuple[list[dict], int, dict | None]:
     """
     Get cross-module data from universal_search table.
@@ -1466,11 +1475,9 @@ async def get_integraal_data(
             params.append(f"%{escaped}%")
             param_idx += 1
 
-    # Filter by minimum number of instanties (source_count)
-    if min_instanties is not None and min_instanties > 1:
-        where_clauses.append(f"source_count >= ${param_idx}")
-        params.append(min_instanties)
-        param_idx += 1
+    # Filter by betalingen bracket (record_count) — UX-022
+    if betalingen and betalingen in BETALINGEN_BRACKETS:
+        where_clauses.append(BETALINGEN_BRACKETS[betalingen])
 
     # Store count params BEFORE adding non-WHERE params (relevance, random threshold)
     # Count query only needs WHERE clause parameters
@@ -1532,6 +1539,7 @@ async def get_integraal_data(
             ontvanger AS primary_value,
             sources,
             source_count,
+            record_count,
             "2016" AS y2016,
             "2017" AS y2017,
             "2018" AS y2018,
@@ -1565,7 +1573,7 @@ async def get_integraal_data(
 
     # Execute queries in PARALLEL for performance
     # Only compute totals when user actively searches/filters (not min_years alone)
-    run_totals = bool(search or jaar or min_bedrag is not None or max_bedrag is not None or filter_modules or (min_instanties is not None and min_instanties > 1))
+    run_totals = bool(search or jaar or min_bedrag is not None or max_bedrag is not None or filter_modules or betalingen)
     coros = [
         fetch_all(query, *params),
         fetch_val(count_query, *count_params) if count_params else fetch_val(count_query),
@@ -1615,6 +1623,10 @@ async def get_integraal_data(
                 if year_to is None or avail[1] > year_to:
                     year_to = avail[1]
 
+        extra = {}
+        if columns and "betalingen" in columns:
+            extra["betalingen"] = str(row["record_count"])
+
         result.append({
             "primary_value": row["primary_value"],
             "years": years_dict,
@@ -1623,6 +1635,7 @@ async def get_integraal_data(
             "modules": row_modules,
             "data_available_from": year_from,
             "data_available_to": year_to,
+            "extra_columns": extra if extra else None,
         })
 
     return result, total or 0, totals

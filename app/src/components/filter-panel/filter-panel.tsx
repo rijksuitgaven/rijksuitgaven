@@ -108,15 +108,15 @@ const MODULE_FILTERS: Record<string, FilterConfig[]> = {
   integraal: [
     { value: 'modules', label: 'Modules per ontvanger', type: 'multiselect' },
     {
-      value: 'min_instanties',
-      label: 'Instanties per ontvanger',
+      value: 'betalingen',
+      label: 'Betalingen per ontvanger',
       type: 'select',
       options: [
         { value: '', label: 'Alle' },
-        { value: '2', label: '2+' },
-        { value: '3', label: '3+' },
-        { value: '5', label: '5+' },
-        { value: '10', label: '10+' },
+        { value: '1', label: '1' },
+        { value: '2-10', label: '2-10' },
+        { value: '11-50', label: '11-50' },
+        { value: '50+', label: '50+' },
       ]
     },
   ],

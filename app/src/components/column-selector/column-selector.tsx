@@ -50,7 +50,7 @@ export const MODULE_COLUMNS: Record<string, { value: string; label: string; defa
     { value: 'onderdeel', label: 'Onderdeel (NWO)', default: false },
   ],
   integraal: [
-    // Integraal doesn't have extra columns - modules are shown inline
+    { value: 'betalingen', label: 'Betalingen', default: true },
   ],
 }
 
