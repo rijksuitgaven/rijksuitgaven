@@ -1782,14 +1782,17 @@ async def get_cascading_filter_options(
         param_idx = 1
 
         # Apply filters from ALL OTHER fields (not this one) — bidirectional
+        MAX_VALUES_PER_FILTER = 100
         for other_field, values in active_filters.items():
             if other_field == field or not values:
                 continue
             validate_identifier(other_field, ALLOWED_COLUMNS, "column")
-            placeholders = ", ".join([f"${param_idx + i}" for i in range(len(values))])
+            # Limit values per key to prevent expensive IN clauses
+            safe_values = values[:MAX_VALUES_PER_FILTER]
+            placeholders = ", ".join([f"${param_idx + i}" for i in range(len(safe_values))])
             where_clauses.append(f'"{other_field}"::text IN ({placeholders})')
-            params.extend(values)
-            param_idx += len(values)
+            params.extend(safe_values)
+            param_idx += len(safe_values)
 
         where_sql = " AND ".join(where_clauses)
         # Count distinct primary values (ontvangers) — matches the aggregated table row count
@@ -1961,8 +1964,8 @@ async def get_module_autocomplete(
     # This handles cases where Typesense isn't properly indexed or configured
     if not current_module_results and module in MODULE_CONFIG:
         config = MODULE_CONFIG[module]
-        view = config.get("aggregated_view") or config.get("view") or config.get("table")
-        primary = config.get("primary", "ontvanger")
+        view = config.get("aggregated_table") or config.get("table")
+        primary = config.get("primary_field", "ontvanger")
 
         # Build word-boundary regex pattern
         _, pattern = build_search_condition(primary, 1, search)

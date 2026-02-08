@@ -25,16 +25,16 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   }
 
   try {
-    // Body size check
-    const contentLength = request.headers.get('content-length')
-    if (contentLength && parseInt(contentLength, 10) > 10240) {
+    // Body size check — read actual body bytes, not trust Content-Length header
+    const rawBody = await request.text()
+    if (rawBody.length > 10240) {
       return NextResponse.json({ error: 'Payload too large' }, { status: 413 })
     }
 
-    // Parse with error handling
+    // Parse from already-read text
     let body: unknown
     try {
-      body = await request.json()
+      body = JSON.parse(rawBody)
     } catch {
       return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
     }
@@ -42,6 +42,14 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     // Schema validation
     if (!body || typeof body !== 'object' || !('active_filters' in body) || typeof (body as Record<string, unknown>).active_filters !== 'object') {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+    }
+
+    // Limit number of values per filter key to prevent expensive IN clauses
+    const filters = (body as Record<string, unknown>).active_filters as Record<string, unknown>
+    for (const values of Object.values(filters)) {
+      if (Array.isArray(values) && values.length > 100) {
+        return NextResponse.json({ error: 'Too many filter values per key (max 100)' }, { status: 400 })
+      }
     }
 
     const controller = new AbortController()

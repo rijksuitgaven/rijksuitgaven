@@ -225,7 +225,8 @@ async def module_autocomplete(
             ],
         )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        logger.warning(f"Validation error: {e}")
+        raise HTTPException(status_code=400, detail="Ongeldige parameter")
     except Exception as e:
         logger.error(f"Autocomplete failed: {type(e).__name__}: {str(e)}")
         raise HTTPException(status_code=500, detail="Er ging iets mis bij het zoeken")
@@ -409,7 +410,8 @@ async def get_module(
 
     except ValueError as e:
         # Validation errors (e.g., invalid filter field) - safe to show
-        raise HTTPException(status_code=400, detail=str(e))
+        logger.warning(f"Validation error: {e}")
+        raise HTTPException(status_code=400, detail="Ongeldige parameter")
     except Exception as e:
         # Log full error details server-side, return generic message to client
         logger.error(f"Module query failed for {module}: {type(e).__name__}: {e}", exc_info=True)
@@ -456,7 +458,8 @@ async def get_details(
         )
 
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        logger.warning(f"Validation error: {e}")
+        raise HTTPException(status_code=400, detail="Ongeldige parameter")
     except Exception as e:
         logger.error(f"Details query failed for {module}/{primary_value}: {type(e).__name__}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Er ging iets mis bij het ophalen van de details")
@@ -489,7 +492,8 @@ async def get_filter_values(
         values = await get_filter_options(module.value, field)
         return values
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        logger.warning(f"Validation error: {e}")
+        raise HTTPException(status_code=400, detail="Ongeldige parameter")
     except Exception as e:
         logger.error(f"Filter options query failed for {module}/{field}: {type(e).__name__}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Er ging iets mis bij het ophalen van de filteropties")
@@ -543,7 +547,8 @@ async def get_cascading_filters(
             },
         )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        logger.warning(f"Validation error: {e}")
+        raise HTTPException(status_code=400, detail="Ongeldige parameter")
     except Exception as e:
         logger.error(f"Cascading filter options failed for {module}: {type(e).__name__}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Er ging iets mis bij het ophalen van de filteropties")

@@ -68,9 +68,7 @@ app.include_router(api_v1_router, prefix="/api/v1")
 async def root():
     """Root endpoint - API information."""
     return {
-        "name": settings.app_name,
-        "version": settings.app_version,
-        "docs": "/docs",
+        "status": "ok",
         "health": "/api/v1/health",
     }
 

@@ -91,19 +91,29 @@ function generateCSV(
   const headers = [primaryColumnName, ...extraColumnLabels, ...availableYears.map(String), 'Totaal']
   const headerRow = headers.map(h => `"${h}"`).join(';')
 
+  // Sanitize CSV cell value to prevent formula injection (=, +, -, @, tab, CR)
+  const sanitizeCell = (value: string): string => {
+    const escaped = value.replace(/"/g, '""')
+    // Prefix formula-trigger characters with a single quote to prevent execution
+    if (/^[=+\-@\t\r]/.test(escaped)) {
+      return `"'${escaped}"`
+    }
+    return `"${escaped}"`
+  }
+
   // Data rows
   const dataRows = data.slice(0, MAX_EXPORT_ROWS).map(row => {
     // Extra column values
     const extraValues = selectedColumns.map(colKey => {
       const value = row.extraColumns?.[colKey] || ''
-      return `"${value.replace(/"/g, '""')}"`
+      return sanitizeCell(value)
     })
 
     const yearAmounts = availableYears.map(year => {
       const amount = row.years.find(y => y.year === year)?.amount ?? 0
       return amount.toFixed(2)
     })
-    return [`"${row.primary_value.replace(/"/g, '""')}"`, ...extraValues, ...yearAmounts, row.total.toFixed(2)].join(';')
+    return [sanitizeCell(row.primary_value), ...extraValues, ...yearAmounts, row.total.toFixed(2)].join(';')
   })
 
   return [headerRow, ...dataRows].join('\n')
