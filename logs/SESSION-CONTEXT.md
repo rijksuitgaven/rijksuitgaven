@@ -60,8 +60,8 @@
 - ✅ **RESOLVED:** Query performance optimized (114-989ms, was 9-19 seconds)
 - ✅ **Week 2 COMPLETE:** All 7 API endpoints working, tested, documented
 - ✅ **Mini Sprint COMPLETE** (2026-02-06): All Week 3-5 deliverables done
-- ✅ **2026-02-08:** 9 sessions — docs audit, auth requirements, data validation, UX-019/020/021, filter audit, 2 code audits (55+7 fixes), security hardening (CSP/HSTS/formula injection)
-- ⏳ **Week 6 READY:** Auth implementation can begin
+- ✅ **2026-02-08:** 11 sessions — docs audit, auth requirements, data validation, UX-019/020/021/022, filter audit, 2 code audits (55+7 fixes), security hardening, betalingen column+filter, expanded row fix
+- ⏳ **V1 Feature Close Review** — check backlog and sprints tomorrow
 
 ### Active Tasks
 | Task | Status | Notes |
@@ -84,20 +84,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/next.config.ts** ⭐ MODIFIED (2026-02-08)
-   Security audit: Added CSP policy + HSTS header with preload
+1. **scripts/sql/029-universal-search-record-count.sql** ⭐ CREATED (2026-02-08)
+   UX-022: Add record_count column to universal_search materialized view
 
-2. **app/src/app/api/v1/modules/[module]/filters/route.ts** ⭐ MODIFIED (2026-02-08)
-   Security audit: Read actual body bytes (not Content-Length), 100-value-per-key limit
+2. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-08)
+   UX-022: Betalingen bracket filter, record_count in SELECT, extra_columns, sort mapping
 
-3. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-08)
-   Security audit: CSV formula injection protection (sanitizeCell)
+3. **backend/app/api/v1/modules.py** ⭐ MODIFIED (2026-02-08)
+   UX-022: Replace min_instanties → betalingen, validation, pass columns
 
-4. **backend/app/api/v1/modules.py** ⭐ MODIFIED (2026-02-08)
-   Security audit: Generic error messages, no ValueError details to client
+4. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-08)
+   UX-022: SortableHeader on extra columns
 
-5. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-08)
-   Security audit: Filter value count limit, autocomplete fallback config key fix
+5. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-08)
+   Fix: Expanded row column alignment when searching (isSearching prop)
 
 ---
 
@@ -224,6 +224,7 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | `scripts/sql/025-fix-encoding-question-marks.sql` | 2026-02-07 | Supabase (via psql) |
 | Additional encoding fixes (÷→ö, √ç→ä, ‚Çè→€, ç→§) | 2026-02-07 | Local → Supabase |
 | `REFRESH MATERIALIZED VIEW` (all 7 views) | 2026-02-07 | Supabase |
+| `scripts/sql/029-universal-search-record-count.sql` | 2026-02-08 | Supabase |
 
 ### Configuration Files
 
@@ -870,9 +871,9 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-08 - **Documentation Audit + Auth Requirements + Data Validation + UI Requirements + Cascading Filters**
+**Last Session:** 2026-02-08 - **11 sessions: docs, auth requirements, data validation, UX-019-022, audits, security**
 
-**2026-02-08 Summary:** Session 1: Full documentation audit - fixed 6 discrepancies, added 6 missing UX requirements (UX-006, UX-014-018), strengthened CLAUDE.md Rule 3a with Requirements-First Gate. Session 2: Created detailed auth requirements doc (18 requirements + 4 security) with all 5 open questions resolved: 30-day sessions, Resend SMTP, minimal login header, homepage→/login redirect, noreply@rijksuitgaven.nl. Session 3: Full data migration validation - all 6 modules pass (EUR 1.77 trillion, 1.6M rows). Full-stack UI validation: API with filter params all match exactly. Complete chain validated: CSV → PostgreSQL → Views → FastAPI → BFF → Frontend. Session 4: UX-019 (Table Info Popover) - compact icon+one-liner legend in results toolbar, iterated through 5 design rounds with UX review. UX-020 (Filter Menu Auto-Open) - filter panel auto-expands when clicking column values. Session 5: UX-021 Cascading Bidirectional Filters - full-stack implementation across all 6 modules with counts. Extended with new filter fields for Apparaat, Provincie, Gemeente, Publiek. 4 commits deployed to production. Session 6: Systematic filter audit (25 combinations tested) — found and fixed inkoop staffel 500 error (INTEGER→text type mismatch with asyncpg). Session 7: Staffel popover relocated to filter label (icon removed from footer), footer email changed to contact@, custom select dropdown for Integraal, comprehensive documentation audit. Session 8: Full-stack code audit — 4 parallel agents found 55 issues (6 critical, 15 high). All fixed: SQL injection, error leakage, parameterization, useMemo perf, security headers, error pages, dep cleanup, accessibility. Next.js updated 16.1.4→16.1.6 (3 CVEs).
+**2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 
 **2026-02-07 Summary:** Sessions 1-4: Data availability indicators (UX-012), totals row em-dash, expand row on click, slash encoding fix, staffelbedrag popover (UX-013), anomaly threshold 50%, instant tooltips, integraal navigation. Session 5: Major encoding cleanup across all 6 tables - fixed double-encoded UTF-8 (~4,400 rows), triple-encoded inkoop (~400 rows), question mark corruption (~500 rows), plus miscellaneous fixes (÷→ö, √ç→ä, ‚Çè→€, ç→§). All 7 materialized views refreshed.
 
@@ -995,7 +996,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 | Provincie | Provincie, Omschrijving | Bedrag bereik |
 | Gemeente | Gemeente, Beleidsterrein, Regeling, Omschrijving | Bedrag bereik |
 | Publiek | Organisatie, Regeling (RVO/COA), Trefwoorden (RVO), Sectoren (RVO), Provincie (RVO), Onderdeel (NWO), Staffel (COA) | Bedrag bereik |
-| Integraal | *(no cascading)* | Modules per ontvanger, Instanties per ontvanger, Bedrag bereik |
+| Integraal | *(no cascading)* | Modules per ontvanger, Betalingen per ontvanger (1/2-10/11-50/50+), Bedrag bereik |
 
 **Search Bar Consolidation (Session 6):**
 - Merged two search bars into one (was: header + filter panel, now: filter panel only)
