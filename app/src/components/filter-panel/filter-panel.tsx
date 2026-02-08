@@ -8,6 +8,7 @@ import { formatAmount } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
 import { MODULE_LABELS, FIELD_LABELS } from '@/lib/constants'
 import { fetchCascadingFilterOptions, type FilterOption } from '@/lib/api'
+import { StaffelPopover } from '@/components/staffel-popover/staffel-popover'
 
 // =============================================================================
 // Types
@@ -594,6 +595,22 @@ export function FilterPanel({
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCascadingModule, module, activeModuleFiltersKey])
+
+  // Staffel explanation popover (UX-013 — moved from footer icon to filter label)
+  const isStaffelModule = module === 'inkoop' || module === 'publiek'
+  const [isStaffelOpen, setIsStaffelOpen] = useState(false)
+  const staffelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!isStaffelOpen) return
+    function handleClickOutside(e: MouseEvent) {
+      if (staffelRef.current && !staffelRef.current.contains(e.target as Node)) {
+        setIsStaffelOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isStaffelOpen])
 
   // Auto-expand filter panel when triggered by column click (UX-020)
   useEffect(() => {
@@ -1196,9 +1213,22 @@ export function FilterPanel({
           {/* Module-specific filters */}
           {moduleFilters.map((filter) => (
             <div key={filter.value} className="space-y-2">
-              <label className="text-sm font-medium text-[var(--navy-dark)]">
-                {filter.label}
-              </label>
+              {isStaffelModule && filter.value === 'staffel' ? (
+                <div className="relative" ref={staffelRef}>
+                  <button
+                    type="button"
+                    onClick={() => setIsStaffelOpen(!isStaffelOpen)}
+                    className="text-sm font-medium text-[var(--navy-dark)] underline decoration-dotted underline-offset-2 hover:text-[var(--pink)] transition-colors cursor-pointer"
+                  >
+                    {filter.label}
+                  </button>
+                  {isStaffelOpen && <StaffelPopover position="below" />}
+                </div>
+              ) : (
+                <label className="text-sm font-medium text-[var(--navy-dark)]">
+                  {filter.label}
+                </label>
+              )}
               {filter.type === 'multiselect' ? (
                 <MultiSelect
                   module={module}
