@@ -333,15 +333,18 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     setFilterExpandTrigger(prev => prev + 1)
   }, [])
 
+  const isSearching = Boolean(filters.search && filters.search.trim().length > 0)
+
   const renderExpandedRow = useCallback((row: RecipientRow) => (
     <ExpandedRow
       row={row}
       module={moduleId}
       availableYears={data?.availableYears ?? []}
       extraColumnsCount={effectiveColumns.length}
+      isSearching={isSearching}
       onFilterLinkClick={handleFilterLinkClick}
     />
-  ), [moduleId, data?.availableYears, effectiveColumns.length, handleFilterLinkClick])
+  ), [moduleId, data?.availableYears, effectiveColumns.length, isSearching, handleFilterLinkClick])
 
   if (error) {
     return (

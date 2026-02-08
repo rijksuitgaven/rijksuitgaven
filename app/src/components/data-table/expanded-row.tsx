@@ -67,6 +67,7 @@ interface ExpandedRowProps {
   module: string
   availableYears: number[]
   extraColumnsCount?: number
+  isSearching?: boolean
   onFilterLinkClick?: (field: string, value: string) => void
 }
 
@@ -79,6 +80,7 @@ export function ExpandedRow({
   module,
   availableYears,
   extraColumnsCount = 0,
+  isSearching = false,
   onFilterLinkClick,
 }: ExpandedRowProps) {
   const [grouping, setGrouping] = useState(GROUPABLE_FIELDS[module]?.[0]?.value ?? 'regeling')
@@ -98,7 +100,9 @@ export function ExpandedRow({
     : availableYears.filter((y) => y > COLLAPSED_YEARS_END)
 
   // Number of columns before years: expand(1) + primary(1) + extras(N)
-  const contentColSpan = 2 + extraColumnsCount
+  // When searching, extra columns are replaced by a single "Gevonden in" column
+  const extraCols = isSearching ? 1 : extraColumnsCount
+  const contentColSpan = 2 + extraCols
 
   // Fetch details when row is expanded or grouping changes
   useEffect(() => {
