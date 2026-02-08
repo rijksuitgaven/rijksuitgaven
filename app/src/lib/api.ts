@@ -135,6 +135,45 @@ export async function fetchModuleData(
   }
 }
 
+// =============================================================================
+// Cascading Filter Options (UX-021)
+// =============================================================================
+
+export interface FilterOption {
+  value: string
+  count: number
+}
+
+interface CascadingFilterResponse {
+  success: boolean
+  options: Record<string, FilterOption[]>
+}
+
+/**
+ * Fetch cascading filter options with counts.
+ * Each field's options are constrained by selections in other fields (bidirectional).
+ */
+export async function fetchCascadingFilterOptions(
+  module: string,
+  activeFilters: Record<string, string[]>,
+  signal?: AbortSignal
+): Promise<Record<string, FilterOption[]>> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/modules/${module}/filters`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ active_filters: activeFilters }),
+    signal,
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch cascading filter options: ${response.statusText}`)
+  }
+
+  const data: CascadingFilterResponse = await response.json()
+  return data.options
+}
+
+
 /**
  * Fetch detail rows for an expanded recipient
  * @param module - Module ID

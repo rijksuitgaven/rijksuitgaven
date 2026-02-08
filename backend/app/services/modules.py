@@ -1707,6 +1707,73 @@ async def get_filter_options(module: str, field: str) -> list[str]:
     return [row["value"] for row in rows]
 
 
+async def get_cascading_filter_options(
+    module: str,
+    active_filters: dict[str, list[str]],
+) -> dict[str, list[dict]]:
+    """
+    Get filter options with counts, constrained by other active filters (bidirectional).
+
+    For each filter field, computes available values + row counts by applying
+    WHERE clauses from ALL OTHER active filters (not the field itself).
+    This enables bidirectional cascading: selecting Instrument constrains Regeling
+    options and vice versa.
+
+    Returns: {"field_name": [{"value": "...", "count": 123}, ...], ...}
+    """
+    MAX_FILTER_OPTIONS = 5000
+
+    if module not in MODULE_CONFIG:
+        raise ValueError(f"Unknown module: {module}")
+
+    config = MODULE_CONFIG[module]
+    table = config["table"]
+    filter_fields = config.get("filter_fields", [])
+
+    if not filter_fields:
+        return {}
+
+    # Validate all active filter keys are valid filter fields
+    for key in active_filters:
+        if key not in filter_fields:
+            raise ValueError(f"Invalid filter field '{key}' for module '{module}'")
+
+    async def _query_field(field: str) -> tuple[str, list[dict]]:
+        """Query distinct values + counts for one field, applying cross-filters."""
+        validate_identifier(field, ALLOWED_COLUMNS, "column")
+
+        where_clauses = [f'"{field}" IS NOT NULL', f'"{field}"::text != \'\'']
+        params: list = []
+        param_idx = 1
+
+        # Apply filters from ALL OTHER fields (not this one) — bidirectional
+        for other_field, values in active_filters.items():
+            if other_field == field or not values:
+                continue
+            validate_identifier(other_field, ALLOWED_COLUMNS, "column")
+            placeholders = ", ".join([f"${param_idx + i}" for i in range(len(values))])
+            where_clauses.append(f'"{other_field}"::text IN ({placeholders})')
+            params.extend(values)
+            param_idx += len(values)
+
+        where_sql = " AND ".join(where_clauses)
+        query = f"""
+            SELECT "{field}"::text AS value, COUNT(*) AS count
+            FROM {table}
+            WHERE {where_sql}
+            GROUP BY "{field}"::text
+            ORDER BY count DESC, "{field}"::text
+            LIMIT {MAX_FILTER_OPTIONS}
+        """
+
+        rows = await fetch_all(query, *params)
+        return (field, [{"value": row["value"], "count": row["count"]} for row in rows])
+
+    # Run all field queries in parallel
+    results = await asyncio.gather(*[_query_field(f) for f in filter_fields])
+    return dict(results)
+
+
 # =============================================================================
 # Module Autocomplete (Typesense-powered for <50ms response)
 # =============================================================================

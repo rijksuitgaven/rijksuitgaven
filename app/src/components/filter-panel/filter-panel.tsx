@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { formatAmount } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
 import { MODULE_LABELS, FIELD_LABELS } from '@/lib/constants'
+import { fetchCascadingFilterOptions, type FilterOption } from '@/lib/api'
 
 // =============================================================================
 // Types
@@ -135,9 +136,18 @@ interface MultiSelectProps {
   label: string
   value: string[]
   onChange: (values: string[]) => void
+  /** When true, uses cascadingOptions instead of self-fetching */
+  isCascading?: boolean
+  /** Externally provided options with counts (null = loading) */
+  cascadingOptions?: FilterOption[] | null
 }
 
-function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps) {
+/** Format count with Dutch locale separator: 1234 → "1.234" */
+function formatCount(count: number): string {
+  return count.toLocaleString('nl-NL')
+}
+
+function MultiSelect({ module, field, label, value, onChange, isCascading = false, cascadingOptions }: MultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [options, setOptions] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState('')
@@ -147,8 +157,19 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
   const dropdownRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  // Fetch options when dropdown opens (not on mount) for better initial page load
+  // Build a count lookup map from cascading options
+  const countMap = useMemo(() => {
+    if (!isCascading || !cascadingOptions) return null
+    const map = new Map<string, number>()
+    for (const opt of cascadingOptions) {
+      map.set(opt.value, opt.count)
+    }
+    return map
+  }, [isCascading, cascadingOptions])
+
+  // Fetch options when dropdown opens (not on mount) — only for non-cascading mode
   useEffect(() => {
+    if (isCascading) return // Skip self-fetch in cascading mode
     if (!isOpen || options.length > 0) return
 
     const abortController = new AbortController()
@@ -183,7 +204,7 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
     fetchOptions()
 
     return () => abortController.abort()
-  }, [isOpen, module, field, options.length])
+  }, [isOpen, module, field, options.length, isCascading])
 
   // Focus search input when dropdown opens
   useEffect(() => {
@@ -211,7 +232,21 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const filteredOptions = options.filter(opt =>
+  // Determine effective options list based on mode
+  const effectiveOptions = useMemo(() => {
+    if (isCascading && cascadingOptions) {
+      // In cascading mode: use cascading options values
+      // Plus any selected values not in the response (count=0, invalid selection)
+      const cascadingValues = cascadingOptions.map(o => o.value)
+      const missingSelected = value.filter(v => !cascadingValues.includes(v))
+      return [...cascadingValues, ...missingSelected]
+    }
+    return options
+  }, [isCascading, cascadingOptions, options, value])
+
+  const cascadingLoading = isCascading && cascadingOptions === null
+
+  const filteredOptions = effectiveOptions.filter(opt =>
     opt && opt.trim() !== '' && opt.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
@@ -336,7 +371,7 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
 
           {/* Options list - increased height for better browsing */}
           <div className="max-h-72 overflow-y-auto" role="listbox">
-            {isLoading ? (
+            {(isLoading || cascadingLoading) ? (
               <div className="px-3 py-6 text-sm text-center text-[var(--muted-foreground)]" role="status" aria-live="polite">
                 <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" aria-hidden="true" />
                 <span>Opties laden...</span>
@@ -367,26 +402,37 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
                     <div className="px-3 py-1.5 text-xs font-semibold text-[var(--navy-medium)] uppercase tracking-wider bg-[var(--gray-light)] border-b border-[var(--border)]">
                       Geselecteerd
                     </div>
-                    {selectedOptions.map((option, index) => (
-                      <button
-                        key={option}
-                        type="button"
-                        onClick={() => toggleOption(option)}
-                        role="option"
-                        aria-selected={value.includes(option)}
-                        className={cn(
-                          "w-full px-3 py-2 text-sm text-left flex items-center gap-2 transition-colors bg-[var(--blue-light)]/10",
-                          selectedIndex === index
-                            ? 'bg-[var(--gray-light)]'
-                            : 'hover:bg-[var(--gray-light)]'
-                        )}
-                      >
-                        <div className="w-4 h-4 border rounded flex items-center justify-center flex-shrink-0 bg-[var(--navy-dark)] border-[var(--navy-dark)]">
-                          <Check className="h-3 w-3 text-white" />
-                        </div>
-                        <span className="truncate">{option}</span>
-                      </button>
-                    ))}
+                    {selectedOptions.map((option, index) => {
+                      const count = countMap?.get(option)
+                      const isZero = isCascading && count === undefined
+                      return (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => toggleOption(option)}
+                          role="option"
+                          aria-selected={value.includes(option)}
+                          className={cn(
+                            "w-full px-3 py-2 text-sm text-left flex items-center gap-2 transition-colors bg-[var(--blue-light)]/10",
+                            selectedIndex === index
+                              ? 'bg-[var(--gray-light)]'
+                              : 'hover:bg-[var(--gray-light)]'
+                          )}
+                        >
+                          <div className="w-4 h-4 border rounded flex items-center justify-center flex-shrink-0 bg-[var(--navy-dark)] border-[var(--navy-dark)]">
+                            <Check className="h-3 w-3 text-white" />
+                          </div>
+                          <span className={cn("truncate", isZero && "text-[var(--error)]")}>
+                            {option}
+                            {isCascading && (
+                              <span className={cn("ml-1.5 text-xs", isZero ? "text-[var(--error)]" : "text-[var(--muted-foreground)]")}>
+                                {isZero ? '(0 resultaten)' : `(${formatCount(count!)})`}
+                              </span>
+                            )}
+                          </span>
+                        </button>
+                      )
+                    })}
                   </>
                 )}
 
@@ -400,6 +446,7 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
                     )}
                     {unselectedOptions.map((option, index) => {
                       const globalIndex = selectedOptions.length + index
+                      const count = countMap?.get(option)
                       return (
                         <button
                           key={option}
@@ -415,7 +462,14 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
                           )}
                         >
                           <div className="w-4 h-4 border rounded flex items-center justify-center flex-shrink-0 border-[var(--border)]" />
-                          <span className="truncate">{option}</span>
+                          <span className="truncate">
+                            {option}
+                            {isCascading && count !== undefined && (
+                              <span className="ml-1.5 text-xs text-[var(--muted-foreground)]">
+                                ({formatCount(count)})
+                              </span>
+                            )}
+                          </span>
                         </button>
                       )
                     })}
@@ -426,11 +480,11 @@ function MultiSelect({ module, field, label, value, onChange }: MultiSelectProps
           </div>
 
           {/* Footer with count - shows wealth of options */}
-          {!isLoading && options.length > 0 && (
+          {!(isLoading || cascadingLoading) && effectiveOptions.length > 0 && (
             <div className="px-3 py-2 bg-[var(--gray-light)] text-xs text-[var(--muted-foreground)] border-t border-[var(--border)]">
               {searchQuery
-                ? `${filteredOptions.length} van ${options.length} opties`
-                : `${options.length} opties`}
+                ? `${filteredOptions.length} van ${effectiveOptions.length} opties`
+                : `${effectiveOptions.length} opties`}
             </div>
           )}
         </div>
@@ -474,6 +528,63 @@ export function FilterPanel({
   const [localFilters, setLocalFilters] = useState<FilterValues>(filters)
   const [isExpanded, setIsExpanded] = useState(false)
   const [moduleStats, setModuleStats] = useState<ModuleStats | null>(null)
+
+  // =============================================================================
+  // Cascading filter state (UX-021) — instrumenten only
+  // =============================================================================
+  const isCascadingModule = module === 'instrumenten'
+  const [cascadingOptions, setCascadingOptions] = useState<Record<string, FilterOption[]> | null>(null)
+
+  // Extract active module filter selections as Record<string, string[]>
+  // Stabilized with JSON key to avoid unnecessary refetches on unrelated filter changes (e.g. search)
+  const activeModuleFilters = useMemo(() => {
+    if (!isCascadingModule) return {}
+    const moduleFilterDefs = MODULE_FILTERS[module] ?? []
+    const result: Record<string, string[]> = {}
+    for (const f of moduleFilterDefs) {
+      if (f.type !== 'multiselect') continue
+      const val = localFilters[f.value]
+      if (Array.isArray(val) && val.length > 0) {
+        result[f.value] = val
+      }
+    }
+    return result
+  }, [isCascadingModule, module, localFilters])
+
+  // Stable key for comparing filter objects (prevents re-fetch on search/amount changes)
+  const activeModuleFiltersKey = useMemo(
+    () => JSON.stringify(activeModuleFilters),
+    [activeModuleFilters]
+  )
+
+  // Fetch cascading options on filter change (debounced)
+  useEffect(() => {
+    if (!isCascadingModule) return
+
+    const abortController = new AbortController()
+    const filtersToSend = JSON.parse(activeModuleFiltersKey) as Record<string, string[]>
+
+    const timeout = setTimeout(async () => {
+      try {
+        const options = await fetchCascadingFilterOptions(
+          module,
+          filtersToSend,
+          abortController.signal
+        )
+        setCascadingOptions(options)
+      } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') return
+        // On error, keep previous options (graceful degradation)
+        console.error('Cascading filter fetch failed:', err)
+      }
+    }, 200)
+
+    return () => {
+      clearTimeout(timeout)
+      abortController.abort()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCascadingModule, module, activeModuleFiltersKey])
 
   // Auto-expand filter panel when triggered by column click (UX-020)
   useEffect(() => {
@@ -1086,6 +1197,8 @@ export function FilterPanel({
                   label={filter.label}
                   value={(localFilters[filter.value] as string[]) ?? []}
                   onChange={(values) => handleModuleFilterChange(filter.value, values)}
+                  isCascading={isCascadingModule}
+                  cascadingOptions={isCascadingModule ? (cascadingOptions?.[filter.value] ?? null) : undefined}
                 />
               ) : filter.type === 'select' && filter.options ? (
                 <select

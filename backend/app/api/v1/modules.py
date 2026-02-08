@@ -26,6 +26,7 @@ from app.services.modules import (
     get_integraal_data,
     get_integraal_details,
     get_filter_options,
+    get_cascading_filter_options,
     get_module_autocomplete,
     get_integraal_autocomplete,
     get_module_stats,
@@ -474,4 +475,58 @@ async def get_filter_values(
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"Filter options query failed for {module}/{field}: {type(e).__name__}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Er ging iets mis bij het ophalen van de filteropties")
+
+
+# =============================================================================
+# Cascading Filter Options Endpoint (UX-021)
+# =============================================================================
+
+class CascadingFilterRequest(BaseModel):
+    """Request body for cascading filter options."""
+    active_filters: dict[str, list[str]] = Field(default_factory=dict)
+
+
+class FilterOptionItem(BaseModel):
+    """Single filter option with count."""
+    value: str
+    count: int
+
+
+class CascadingFilterResponse(BaseModel):
+    """Response with filter options per field, each with counts."""
+    success: bool = True
+    options: dict[str, list[FilterOptionItem]]
+
+
+@router.post("/{module}/filter-options", response_model=CascadingFilterResponse)
+async def get_cascading_filters(
+    module: ModuleName,
+    body: CascadingFilterRequest,
+):
+    """
+    Get filter options with counts, constrained by active filters (bidirectional).
+
+    When a user selects Instrument = "Subsidie", the returned options for
+    Regeling, Artikel, etc. will only include values that co-occur with "Subsidie",
+    each with a count of matching rows.
+
+    Currently supported for instrumenten module only.
+    """
+    if module == ModuleName.integraal:
+        raise HTTPException(status_code=400, detail="Cascading filters not supported for integraal module")
+
+    try:
+        options = await get_cascading_filter_options(module.value, body.active_filters)
+        return CascadingFilterResponse(
+            success=True,
+            options={
+                field: [FilterOptionItem(value=item["value"], count=item["count"]) for item in items]
+                for field, items in options.items()
+            },
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Cascading filter options failed for {module}: {type(e).__name__}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Er ging iets mis bij het ophalen van de filteropties")
