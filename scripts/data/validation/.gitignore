@@ -1,0 +1,4 @@
+# Validation output files contain data totals - not needed in repo
+*.md
+*.csv
+*.json

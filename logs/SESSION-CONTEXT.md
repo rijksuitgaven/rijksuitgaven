@@ -81,20 +81,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **02-requirements/auth-requirements.md** ⭐ CREATED (2026-02-08)
+1. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-08)
+   Added compact info popover (UX-019) with 6 icon+one-liner sections, first-visit pulse
+
+2. **app/src/components/filter-panel/filter-panel.tsx** ⭐ MODIFIED (2026-02-08)
+   Removed old search tips popover, added autoExpandTrigger prop (UX-020)
+
+3. **app/src/components/module-page/module-page.tsx** ⭐ MODIFIED (2026-02-08)
+   Added filter expand trigger for UX-020
+
+4. **02-requirements/search-requirements.md** ⭐ MODIFIED (2026-02-08)
+   Added UX-019 and UX-020 requirements
+
+5. **02-requirements/auth-requirements.md** ⭐ CREATED (2026-02-08)
    Detailed auth requirements for Week 6: 18 requirements, 4 security, all decisions resolved
-
-2. **02-requirements/search-requirements.md** ⭐ MODIFIED (2026-02-08)
-   Added 6 missing UX requirements (UX-006, UX-014 through UX-018)
-
-3. **CLAUDE.md** ⭐ MODIFIED (2026-02-08)
-   Strengthened Rule 3a with Requirements-First Gate process
-
-4. **docs/FRONTEND-DOCUMENTATION.md** ⭐ MODIFIED (2026-02-08)
-   Removed stale sections (DetailPanel, NEXT_PUBLIC_TYPESENSE), fixed pagination
-
-5. **app/src/lib/format.ts** ⭐ MODIFIED (2026-02-08)
-   Fixed comment: anomaly threshold 10% → 50%
 
 ---
 
@@ -866,9 +866,9 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-08 - **Documentation Audit + Auth Requirements**
+**Last Session:** 2026-02-08 - **Documentation Audit + Auth Requirements + Data Validation + UI Requirements**
 
-**2026-02-08 Summary:** Session 1: Full documentation audit - fixed 6 discrepancies, added 6 missing UX requirements (UX-006, UX-014-018), strengthened CLAUDE.md Rule 3a with Requirements-First Gate. Session 2: Created detailed auth requirements doc (18 requirements + 4 security) with all 5 open questions resolved: 30-day sessions, Resend SMTP, minimal login header, homepage→/login redirect, noreply@rijksuitgaven.nl.
+**2026-02-08 Summary:** Session 1: Full documentation audit - fixed 6 discrepancies, added 6 missing UX requirements (UX-006, UX-014-018), strengthened CLAUDE.md Rule 3a with Requirements-First Gate. Session 2: Created detailed auth requirements doc (18 requirements + 4 security) with all 5 open questions resolved: 30-day sessions, Resend SMTP, minimal login header, homepage→/login redirect, noreply@rijksuitgaven.nl. Session 3: Full data migration validation - all 6 modules pass (EUR 1.77 trillion, 1.6M rows). Full-stack UI validation: API with filter params all match exactly. Complete chain validated: CSV → PostgreSQL → Views → FastAPI → BFF → Frontend. Session 4: UX-019 (Table Info Popover) - compact icon+one-liner legend in results toolbar, iterated through 5 design rounds with UX review. UX-020 (Filter Menu Auto-Open) - filter panel auto-expands when clicking column values.
 
 **2026-02-07 Summary:** Sessions 1-4: Data availability indicators (UX-012), totals row em-dash, expand row on click, slash encoding fix, staffelbedrag popover (UX-013), anomaly threshold 50%, instant tooltips, integraal navigation. Session 5: Major encoding cleanup across all 6 tables - fixed double-encoded UTF-8 (~4,400 rows), triple-encoded inkoop (~400 rows), question mark corruption (~500 rows), plus miscellaneous fixes (÷→ö, √ç→ä, ‚Çè→€, ç→§). All 7 materialized views refreshed.
 

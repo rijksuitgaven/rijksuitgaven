@@ -1023,6 +1023,40 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-019: Table Info Popover
+
+**Requirement:** Expand the existing (I) search tips popover into a comprehensive "Hoe werkt deze tabel?" guide covering search, row expansion, anomaly marking, and filters.
+
+**Behavior:**
+- Replaces existing "Slim zoeken" popover content with 4 sections:
+  1. **Zoeken** — explains cross-field search and "Gevonden in" column
+  2. **Rijen uitklappen** — explains clickable ontvangers and grouping menu
+  3. **Rode markering** — explains 50%+ YoY anomaly highlighting
+  4. **Filters** — explains filter panel AND clickable table values for quick filtering
+- Same popover style (navy dark bg, pink accent bar)
+- Same (I) icon position and pulse behavior
+
+**Priority:** P1
+
+**Status:** ✅ Implemented 2026-02-08
+
+---
+
+### UX-020: Filter Menu Auto-Open on Column Click
+
+**Requirement:** When clicking a value in the extra columns (or expanded row detail), the filter panel should automatically open in addition to applying the filter.
+
+**Behavior:**
+- Clicking a clickable value in extra columns applies the filter AND expands the filter panel
+- User immediately sees which filter was applied
+- No other visual changes — just the panel opens automatically
+
+**Priority:** P1
+
+**Status:** ✅ Implemented 2026-02-08
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload

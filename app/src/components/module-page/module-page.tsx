@@ -120,6 +120,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const [sortBy, setSortBy] = useState<string>('random')  // Default: random (UX-002)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [userHasSorted, setUserHasSorted] = useState(false)  // Track if user explicitly sorted
+  const [filterExpandTrigger, setFilterExpandTrigger] = useState(0)  // UX-020: auto-expand filter panel
   // Selected extra columns state - lifted from DataTable (UX-005)
   // Initialize with defaults (SSR-safe), then sync from localStorage after hydration
   const [selectedColumns, setSelectedColumns] = useState<string[]>(() => getDefaultColumns(moduleId))
@@ -318,7 +319,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     router.push(`/${targetModule}?q=${encodeURIComponent(recipient)}`)
   }, [router])
 
-  // Handle click on extra column value - apply filter (clear start)
+  // Handle click on extra column value - apply filter (clear start) + auto-expand filter panel (UX-020)
   const handleFilterLinkClick = useCallback((field: string, value: string) => {
     // Clear all filters and apply only the clicked filter
     setFilters({
@@ -329,6 +330,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
       [field]: [value],
     })
     setPage(1)
+    setFilterExpandTrigger(prev => prev + 1)
   }, [])
 
   const renderExpandedRow = useCallback((row: RecipientRow) => (
@@ -368,6 +370,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             filters={filters}
             onFilterChange={handleFilterChange}
             isLoading={isLoading}
+            autoExpandTrigger={filterExpandTrigger}
           />
 
           {data && (

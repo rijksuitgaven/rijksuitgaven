@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, X, SlidersHorizontal, Check, ChevronDown, Loader2, User, Info } from 'lucide-react'
+import { Search, X, SlidersHorizontal, Check, ChevronDown, Loader2, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatAmount } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
@@ -448,6 +448,7 @@ interface FilterPanelProps {
   filters: FilterValues
   onFilterChange: (filters: FilterValues) => void
   isLoading?: boolean
+  autoExpandTrigger?: number
 }
 
 /**
@@ -459,6 +460,7 @@ export function FilterPanel({
   filters,
   onFilterChange,
   isLoading = false,
+  autoExpandTrigger = 0,
 }: FilterPanelProps) {
   const router = useRouter()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -472,6 +474,13 @@ export function FilterPanel({
   const [localFilters, setLocalFilters] = useState<FilterValues>(filters)
   const [isExpanded, setIsExpanded] = useState(false)
   const [moduleStats, setModuleStats] = useState<ModuleStats | null>(null)
+
+  // Auto-expand filter panel when triggered by column click (UX-020)
+  useEffect(() => {
+    if (autoExpandTrigger > 0) {
+      setIsExpanded(true)
+    }
+  }, [autoExpandTrigger])
 
   // Fetch module stats for dynamic placeholder
   useEffect(() => {
@@ -518,38 +527,6 @@ export function FilterPanel({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const [noResultsQuery, setNoResultsQuery] = useState<string | null>(null)
-
-  // Search tips popover state
-  const [isSearchTipsOpen, setIsSearchTipsOpen] = useState(false)
-  const [showSearchTipsPulse, setShowSearchTipsPulse] = useState(false)
-  const searchTipsRef = useRef<HTMLDivElement>(null)
-
-  // Check if first visit (show pulse animation)
-  useEffect(() => {
-    const hasSeenTips = localStorage.getItem('rijksuitgaven-search-tips-seen')
-    if (!hasSeenTips) {
-      setShowSearchTipsPulse(true)
-    }
-  }, [])
-
-  // Close search tips when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (searchTipsRef.current && !searchTipsRef.current.contains(event.target as Node)) {
-        setIsSearchTipsOpen(false)
-      }
-    }
-    if (isSearchTipsOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isSearchTipsOpen])
-
-  const handleSearchTipsClick = () => {
-    setIsSearchTipsOpen(!isSearchTipsOpen)
-    setShowSearchTipsPulse(false)
-    localStorage.setItem('rijksuitgaven-search-tips-seen', 'true')
-  }
 
   const moduleFilters = useMemo(() => MODULE_FILTERS[module] ?? [], [module])
 
@@ -1050,78 +1027,6 @@ export function FilterPanel({
               </div>
               <div className="px-4 py-2 bg-[var(--gray-light)] text-xs text-[var(--muted-foreground)] border-t border-[var(--border)]">
                 <span>Druk op Enter om te zoeken</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Search tips popover */}
-        <div className="relative" ref={searchTipsRef}>
-          <button
-            type="button"
-            onClick={handleSearchTipsClick}
-            className={cn(
-              'flex items-center justify-center h-[52px] w-[52px] rounded-lg transition-all',
-              isSearchTipsOpen
-                ? 'bg-[var(--navy-dark)] text-white shadow-md'
-                : 'bg-white text-[var(--navy-dark)] shadow-sm hover:shadow-md',
-              showSearchTipsPulse && 'animate-pulse-ring'
-            )}
-            aria-label="Zoektips"
-            aria-expanded={isSearchTipsOpen}
-          >
-            <Info className={cn('h-5 w-5', isSearchTipsOpen ? 'text-white' : 'text-[var(--navy-dark)]')} />
-          </button>
-
-          {/* Popover */}
-          {isSearchTipsOpen && (
-            <div className="absolute top-full right-0 mt-2 w-80 bg-[var(--navy-dark)] text-white rounded-lg shadow-xl z-50 overflow-hidden">
-              {/* Pink accent bar */}
-              <div className="h-1 bg-[var(--pink)]" />
-
-              <div className="p-5">
-                <h3 className="text-sm font-bold uppercase tracking-wider mb-3">Slim zoeken</h3>
-                <p className="text-sm text-white/80 mb-4">
-                  Doorzoekt automatisch {MODULE_SEARCH_TEXT[module]?.fields || 'ontvangers'}.
-                </p>
-
-                <div className="border-t border-white/20 pt-4 mb-4">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-3">Wat werkt</h4>
-
-                  <div className="space-y-3">
-                    <div>
-                      <div className="text-sm font-medium text-white/90">Eén zoekterm</div>
-                      <div className="text-xs text-white/60">
-                        <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded">prorail</span>
-                        <span className="mx-2">→</span>
-                        vindt alle ProRail-entiteiten
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="text-sm font-medium text-white/90">Meerdere woorden</div>
-                      <div className="text-xs text-white/60">
-                        <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded">rode kruis</span>
-                        <span className="mx-2">→</span>
-                        resultaten met beide woorden
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="text-sm font-medium text-white/90">Eerste letters</div>
-                      <div className="text-xs text-white/60">
-                        <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded">pro</span>
-                        <span className="mx-2">→</span>
-                        vindt &ldquo;ProRail&rdquo;, &ldquo;Programma&rdquo;, etc.
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2 text-xs text-white/70 bg-white/5 rounded-lg p-3">
-                  <span className="text-base">💡</span>
-                  <span>Combineer zoeken met filters voor preciezere resultaten</span>
-                </div>
               </div>
             </div>
           )}

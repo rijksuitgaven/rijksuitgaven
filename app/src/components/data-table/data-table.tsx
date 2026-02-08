@@ -12,7 +12,7 @@ import {
   type ExpandedState,
   type Column,
 } from '@tanstack/react-table'
-import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet, ExternalLink, Info } from 'lucide-react'
+import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet, ExternalLink, Info, Search, MousePointerClick, AlertTriangle, SlidersHorizontal, Columns3 } from 'lucide-react'
 import * as XLSX from 'xlsx'
 import { cn } from '@/lib/utils'
 import {
@@ -328,6 +328,17 @@ export function DataTable({
   const [isExportingXLS, setIsExportingXLS] = useState(false)
   const [isStaffelOpen, setIsStaffelOpen] = useState(false)
   const staffelRef = useRef<HTMLDivElement>(null)
+  const [isInfoOpen, setIsInfoOpen] = useState(false)
+  const [showInfoPulse, setShowInfoPulse] = useState(false)
+  const infoRef = useRef<HTMLDivElement>(null)
+
+  // Show pulse animation on first visit (UX-019)
+  useEffect(() => {
+    const hasSeen = localStorage.getItem('rijksuitgaven-info-seen')
+    if (!hasSeen) {
+      setShowInfoPulse(true)
+    }
+  }, [])
 
   // Close staffel popover when clicking outside
   useEffect(() => {
@@ -340,6 +351,25 @@ export function DataTable({
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [isStaffelOpen])
+
+  // Close info popover when clicking outside or pressing Escape (UX-019)
+  useEffect(() => {
+    if (!isInfoOpen) return
+    function handleClickOutside(e: MouseEvent) {
+      if (infoRef.current && !infoRef.current.contains(e.target as Node)) {
+        setIsInfoOpen(false)
+      }
+    }
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === 'Escape') setIsInfoOpen(false)
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isInfoOpen])
 
   // CSV Export handler
   const handleExportCSV = () => {
@@ -704,8 +734,63 @@ export function DataTable({
           <span className="text-sm text-[var(--navy-dark)]">resultaten weergeven</span>
         </div>
 
-        {/* Right: Kolommen + CSV Export */}
+        {/* Right: Info + Kolommen + CSV Export */}
         <div className="flex items-center gap-2">
+          {/* Info popover (UX-019) */}
+          <div className="relative" ref={infoRef}>
+            <button
+              type="button"
+              onClick={() => {
+                setIsInfoOpen(!isInfoOpen)
+                setShowInfoPulse(false)
+                localStorage.setItem('rijksuitgaven-info-seen', 'true')
+              }}
+              className={cn(
+                'flex items-center justify-center px-2 py-1.5 border rounded transition-all',
+                isInfoOpen
+                  ? 'bg-[var(--navy-dark)] text-white border-[var(--navy-dark)]'
+                  : 'border-[var(--border)] hover:bg-[var(--gray-light)] text-[var(--navy-dark)]',
+                showInfoPulse && 'animate-pulse-ring'
+              )}
+              aria-label="Korte uitleg"
+              aria-expanded={isInfoOpen}
+            >
+              <Info className="h-4 w-4" />
+            </button>
+
+            {isInfoOpen && (
+              <div className="absolute top-full right-0 mt-2 w-[340px] bg-[var(--navy-dark)] text-white rounded-lg shadow-xl z-50 overflow-hidden">
+                <div className="h-1 bg-[var(--pink)]" />
+                <div className="px-4 pt-4 pb-4 space-y-3">
+                  <div className="flex gap-3">
+                    <Search className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
+                    <p className="text-sm text-white/80">Doorzoekt ook regelingen, artikelen en categorieën. De kolom &ldquo;Gevonden in&rdquo; toont wáár.</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <ChevronRight className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
+                    <p className="text-sm text-white/80">Klik op een ontvanger om details te zien. Groepeer op regeling, artikel of categorie.</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <AlertTriangle className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
+                    <p className="text-sm text-white/80">Rood gemarkeerd = 50%+ mutatie t.o.v. vorig jaar. Hover voor het percentage.</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <SlidersHorizontal className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
+                    <p className="text-sm text-white/80">Filter via de knop, of klik op een waarde in de tabel om direct te filteren.</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <Columns3 className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
+                    <p className="text-sm text-white/80">Kies extra kolommen via &ldquo;Kolommen&rdquo;. Bij actieve filters passen ze automatisch aan.</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <Download className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
+                    <p className="text-sm text-white/80">Exporteer als CSV of Excel. Maximaal 500 rijen met zichtbare kolommen.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Column selector (UX-005) - hidden when filters control columns (UX-006) */}
           {onColumnsChange && !hasActiveFilters && (
             <ColumnSelector
