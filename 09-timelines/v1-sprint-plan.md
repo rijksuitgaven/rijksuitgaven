@@ -395,6 +395,11 @@ Additional UI/UX work completed after mini sprint was marked complete:
 | Custom select dropdown (Integraal) | ✅ Replaced native select |
 | Data migration validation | ✅ EUR 1.77 trillion across 1.6M rows verified |
 | Auth requirements document | ✅ 18 requirements + 4 security, all decisions resolved |
+| Full-stack code audit (55 issues) | ✅ 6 critical, 15 high, 23 medium, 18 low — all fixed |
+| Security hardening | ✅ SQL injection, error leakage, parameterization, security headers |
+| Next.js 16.1.4→16.1.6 update | ✅ 3 high CVEs fixed, turbopack root configured |
+| Dependency cleanup | ✅ Removed unused supabase-js, typesense; split dev requirements |
+| Error/404 pages + robots.txt | ✅ Branded pages, /api/ and /login disallowed |
 
 ---
 
