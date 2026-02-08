@@ -1114,8 +1114,9 @@ async def _get_from_source_table(
         for field, values in filter_fields.items():
             if field in valid_filter_fields and values:
                 # Build IN clause with parameterized values
+                # Cast to text to handle INTEGER columns (e.g., inkoop.staffel)
                 placeholders = ", ".join([f"${param_idx + i}" for i in range(len(values))])
-                where_clauses.append(f"{field} IN ({placeholders})")
+                where_clauses.append(f"{field}::text IN ({placeholders})")
                 params.extend(values)
                 param_idx += len(values)
 
