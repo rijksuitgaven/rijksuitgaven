@@ -276,7 +276,6 @@ async def get_module(
     # Publiek filters
     trefwoorden: Optional[list[str]] = Query(None, description="Filter by trefwoorden - multi-select"),
     sectoren: Optional[list[str]] = Query(None, description="Filter by sectoren - multi-select"),
-    regio: Optional[list[str]] = Query(None, description="Filter by regio - multi-select"),
     onderdeel: Optional[list[str]] = Query(None, description="Filter by onderdeel - multi-select"),
     # Integraal-specific filters
     modules: Optional[list[str]] = Query(None, description="Filter by modules recipient appears in (integraal only)"),
@@ -348,8 +347,6 @@ async def get_module(
         filter_fields["trefwoorden"] = trefwoorden
     if sectoren:
         filter_fields["sectoren"] = sectoren
-    if regio:
-        filter_fields["regio"] = regio
     if onderdeel:
         filter_fields["onderdeel"] = onderdeel
 

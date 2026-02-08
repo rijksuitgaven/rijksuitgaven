@@ -451,7 +451,7 @@ MODULE_CONFIG = {
         "amount_field": "bedrag",
         "amount_multiplier": 1,  # Already in absolute euros
         "search_fields": ["ontvanger", "omschrijving", "regeling", "trefwoorden", "sectoren"],
-        "filter_fields": ["source", "regeling", "trefwoorden", "sectoren", "regio", "onderdeel", "staffel"],
+        "filter_fields": ["source", "regeling", "trefwoorden", "sectoren", "provincie", "onderdeel", "staffel"],
         "extra_columns": ["source", "regeling", "trefwoorden", "sectoren", "regio", "staffel", "onderdeel"],
         # Columns available in aggregated view (default columns for speed)
         "view_columns": ["source"],

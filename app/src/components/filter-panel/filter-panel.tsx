@@ -100,7 +100,7 @@ const MODULE_FILTERS: Record<string, FilterConfig[]> = {
     { value: 'regeling', label: 'Regeling (RVO/COA)', type: 'multiselect' },
     { value: 'trefwoorden', label: 'Trefwoorden (RVO)', type: 'multiselect' },
     { value: 'sectoren', label: 'Sectoren (RVO)', type: 'multiselect' },
-    { value: 'regio', label: 'Regio (RVO)', type: 'multiselect' },
+    { value: 'provincie', label: 'Provincie (RVO)', type: 'multiselect' },
     { value: 'onderdeel', label: 'Onderdeel (NWO)', type: 'multiselect' },
     { value: 'staffel', label: 'Staffel (COA)', type: 'multiselect' },
   ],
