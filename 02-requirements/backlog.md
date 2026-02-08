@@ -111,6 +111,11 @@ Cascading filter option requests (POST `/filter-options`) take 300-500ms per req
 - ~300-500ms for instrumenten (largest table), ~100-200ms for smaller modules
 - Debounced 200ms to reduce request frequency
 
+**Observed (2026-02-08, local dev):**
+- Cold call (first POST, no active filters, instrumenten): **21s** (includes Turbopack compile 701ms + backend 20.3s)
+- Warm call (second POST, same params): **6.9s** (compile 4ms + backend 6.9s)
+- Production will be faster (no Turbopack compile), but unfiltered instrumenten (674K rows) remains the worst case
+
 **Potential Solutions:**
 
 | Option | Effort | Impact |
