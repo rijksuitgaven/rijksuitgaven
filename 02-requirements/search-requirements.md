@@ -1128,6 +1128,31 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-023: Custom GroupingSelect Dropdown with Counts
+
+**Requirement:** Replace the native `<select>` dropdown in the expanded row with a custom single-select dropdown matching the filter panel design, showing distinct value counts per grouping field.
+
+**Behavior:**
+- Custom dropdown trigger button with selected label, count in parentheses, and chevron
+- Dropdown menu with checkmark on selected item, counts per option in Dutch locale format (1.234)
+- Counts fetched once on row expand via new API endpoint (not re-fetched on grouping change)
+- Single-select: clicking an option selects it and closes the dropdown
+- Click-outside and Escape key close the dropdown
+- Border color matches tree connectors (`├` `└`) using `--muted-foreground` for visual cohesion
+- Integraal module excluded (only has 1 grouping option "Module")
+
+**Technical Implementation:**
+- Backend: `GROUPABLE_FIELDS` dict + `get_grouping_counts()` — single SQL query with `COUNT(DISTINCT field)` per groupable field
+- API: `GET /{module}/{primary_value}/grouping-counts` → `dict[str, int]`
+- BFF: `app/src/app/api/v1/modules/[module]/[value]/grouping-counts/route.ts`
+- Frontend: `GroupingSelect` component in `expanded-row.tsx`
+
+**Priority:** P2 (Medium — visual polish)
+
+**Status:** ✅ Implemented 2026-02-09
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload

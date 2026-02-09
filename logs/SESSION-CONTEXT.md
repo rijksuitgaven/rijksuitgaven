@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-08
+**Last Updated:** 2026-02-09
 **Project Phase:** V1.0 Development
 **Current Sprint:** Week 6 - User Authentication (Mini Sprint COMPLETE 2026-02-06)
 
@@ -61,7 +61,8 @@
 - ✅ **Week 2 COMPLETE:** All 7 API endpoints working, tested, documented
 - ✅ **Mini Sprint COMPLETE** (2026-02-06): All Week 3-5 deliverables done
 - ✅ **2026-02-08:** 11 sessions — docs audit, auth requirements, data validation, UX-019/020/021/022, filter audit, 2 code audits (55+7 fixes), security hardening, betalingen column+filter, expanded row fix
-- ⏳ **V1 Feature Close Review** — check backlog and sprints tomorrow
+- ✅ **2026-02-09:** UX-023 — Custom GroupingSelect dropdown with counts in expanded row (full-stack: backend endpoint + BFF + frontend component)
+- ⏳ **V1 Feature Close Review** — check backlog and sprints
 
 ### Active Tasks
 | Task | Status | Notes |
@@ -84,20 +85,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **scripts/sql/029-universal-search-record-count.sql** ⭐ CREATED (2026-02-08)
+1. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-09)
+   UX-023: GroupingSelect component replacing native select, counts fetch
+
+2. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-09)
+   UX-023: GROUPABLE_FIELDS dict + get_grouping_counts() function
+
+3. **backend/app/api/v1/modules.py** ⭐ MODIFIED (2026-02-09)
+   UX-023: Grouping counts endpoint
+
+4. **app/src/app/api/v1/modules/[module]/[value]/grouping-counts/route.ts** ⭐ CREATED (2026-02-09)
+   UX-023: BFF proxy route for grouping counts
+
+5. **scripts/sql/029-universal-search-record-count.sql** ⭐ CREATED (2026-02-08)
    UX-022: Add record_count column to universal_search materialized view
-
-2. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-08)
-   UX-022: Betalingen bracket filter, record_count in SELECT, extra_columns, sort mapping
-
-3. **backend/app/api/v1/modules.py** ⭐ MODIFIED (2026-02-08)
-   UX-022: Replace min_instanties → betalingen, validation, pass columns
-
-4. **app/src/components/data-table/data-table.tsx** ⭐ MODIFIED (2026-02-08)
-   UX-022: SortableHeader on extra columns
-
-5. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-08)
-   Fix: Expanded row column alignment when searching (isSearching prop)
 
 ---
 
@@ -142,6 +143,7 @@
 - `GET /api/v1/modules` - List all modules
 - `GET /api/v1/modules/{module}` - Aggregated data with year columns
 - `GET /api/v1/modules/{module}/{value}/details` - Expandable row details
+- `GET /api/v1/modules/{module}/{value}/grouping-counts` - Grouping field distinct counts ⭐ NEW 2026-02-09
 - `POST /api/v1/modules/{module}/filter-options` - Cascading filter options with counts ⭐ NEW 2026-02-08
 - `GET /api/v1/search/autocomplete` - Typesense proxy (API key server-side) ⭐ NEW 2026-01-29
 - `GET /api/v1/health` - Health check (database + Typesense status)
@@ -871,7 +873,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-08 - **11 sessions: docs, auth requirements, data validation, UX-019-022, audits, security**
+**Last Session:** 2026-02-09 - **UX-023 GroupingSelect dropdown with counts**
 
 **2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 

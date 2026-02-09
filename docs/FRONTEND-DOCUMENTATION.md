@@ -204,7 +204,8 @@ interface TotalsData {
 Content displayed when a table row is expanded. Returns `<tr>` elements directly (via Fragment) to share parent table's column structure for perfect alignment.
 
 **Features:**
-- **Integrated header row**: Grouping dropdown + item count + year headers in single row
+- **GroupingSelect dropdown** (UX-023): Custom single-select matching filter panel design, with distinct value counts per option
+- **Integrated header row**: Grouping dropdown + year headers in single row
 - **Collapsible years**: 2016-2020 collapsed by default (matches main table)
 - Grouping selector dropdown (per-module fields)
 - Detail rows with tree structure (├ └ connectors)
@@ -546,6 +547,7 @@ All API calls go through `/api/v1/...` which is handled by Next.js BFF (Backend-
 | `fetchModules()` | Get list of available modules |
 | `fetchModuleData(module, params)` | Get paginated, filtered module data |
 | `fetchDetailData(module, value, grouping)` | Get expanded row details |
+| `fetchGroupingCounts(module, value)` | Get distinct value counts per groupable field (UX-023) |
 | `fetchCascadingFilterOptions(module, activeFilters, signal?)` | Get cascading filter options with counts (POST) |
 
 **Response Transformation:**
@@ -797,3 +799,4 @@ npm run build
 | 2026-02-08 | Added StaffelPopover shared component, updated UX-013 (filter label clickable, icon removed from footer) |
 | 2026-02-08 | Added CustomSelect component for Integraal, BFF POST route for cascading filters |
 | 2026-02-08 | Added fetchCascadingFilterOptions() to API client, FilterOption type |
+| 2026-02-09 | UX-023: GroupingSelect dropdown with counts, BFF grouping-counts route, updated ExpandedRow |

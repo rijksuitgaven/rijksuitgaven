@@ -99,9 +99,8 @@ function GroupingSelect({ value, onChange, options, counts }: {
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           'px-2.5 py-1.5 border rounded-lg text-sm text-left flex items-center gap-2 transition-colors',
-          'border-[var(--border)] bg-white hover:border-[var(--navy-medium)]',
-          'focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)]',
-          isOpen && 'border-[var(--navy-medium)]'
+          'border-[var(--muted-foreground)] bg-white',
+          'focus:outline-none focus:ring-1 focus:ring-[var(--muted-foreground)]/30'
         )}
       >
         <span className="font-semibold text-[var(--navy-dark)] whitespace-nowrap">{selectedLabel}</span>
