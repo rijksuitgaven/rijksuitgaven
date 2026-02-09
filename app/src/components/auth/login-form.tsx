@@ -42,6 +42,7 @@ export function LoginForm() {
       const { error } = await supabase.auth.signInWithOtp({
         email: trimmed,
         options: {
+          shouldCreateUser: false,
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
