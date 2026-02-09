@@ -1,8 +1,8 @@
 # Session Context
 
-**Last Updated:** 2026-02-09
+**Last Updated:** 2026-02-10
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 6 - User Authentication (Mini Sprint COMPLETE 2026-02-06)
+**Current Sprint:** Week 6 - User Authentication (CORE COMPLETE 2026-02-10, user migration remaining)
 
 ---
 
@@ -62,6 +62,8 @@
 - ✅ **Mini Sprint COMPLETE** (2026-02-06): All Week 3-5 deliverables done
 - ✅ **2026-02-08:** 11 sessions — docs audit, auth requirements, data validation, UX-019/020/021/022, filter audit, 2 code audits (55+7 fixes), security hardening, betalingen column+filter, expanded row fix
 - ✅ **2026-02-09:** UX-023 GroupingSelect + autocomplete perf + Typesense enrichment + UX-024 type-ahead req (V1.1) + UX-025 feedback button req (V1.0) + beta newsletter + marketing folder + GitHub Projects eval (V1.2)
+- ✅ **2026-02-10:** Week 6 Auth — Magic Link authentication fully implemented and deployed. Supabase Auth + PKCE, Resend SMTP, middleware + BFF guards, login/logout/profile pages, X-BFF-Secret backend protection. End-to-end tested on production.
+- ⏳ **User migration** — ~50 WordPress users to import to Supabase
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
 
 ### Active Tasks

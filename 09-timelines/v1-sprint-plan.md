@@ -409,33 +409,44 @@ Additional UI/UX work completed after mini sprint was marked complete:
 ## Week 6: Auth
 
 **Goal:** Magic Link auth, user migration, protected routes
-**Status:** ⏳ READY TO START (Mini Sprint complete 2026-02-06)
+**Status:** ✅ CORE COMPLETE (2026-02-10) — user migration remaining
 **Requirements:** `02-requirements/auth-requirements.md` (18 requirements, all decisions resolved 2026-02-08)
 
 > **Note:** Overzicht page was originally planned for this week but deferred to V5 (AI Research Mode) on 2026-02-06. V1 expanded row covers the functional need.
 
-### Day 1-2: Supabase Auth Setup
+### Implementation (2026-02-10) ✅
 
-| Task | Details |
-|------|---------|
-| Enable Magic Link | Supabase dashboard → Auth → Providers |
-| Email templates | Customize login email (Dutch) |
-| Session config | Set session duration |
-| Protected routes | Middleware for `/app/*` routes |
+| Task | Status |
+|------|--------|
+| Supabase Auth + PKCE flow | ✅ Magic Link working end-to-end |
+| Email templates (Dutch) | ✅ Custom template via Resend SMTP |
+| Resend domain + DNS (DKIM/SPF/MX) | ✅ All verified |
+| Session refresh middleware | ✅ `getUser()` per navigation |
+| Protected page routes (middleware) | ✅ Redirects to `/login` |
+| Protected BFF routes (9 routes) | ✅ Returns 401 JSON |
+| Backend X-BFF-Secret protection | ✅ Shared secret middleware |
+| Login page + LoginForm component | ✅ Dutch copy, 60s cooldown |
+| Auth callback (PKCE + cross-device) | ✅ Dutch error messages |
+| Logout handler | ✅ SignOut + redirect |
+| AuthButton in header | ✅ Email + Uitloggen |
+| Footer auth state | ✅ Different links for logged in/out |
+| Profile page (minimal) | ✅ Email + logout |
+| 401 handling in frontend api.ts | ✅ All 4 fetch functions |
+| CSP updated for Supabase | ✅ Specific project URL |
+| Railway env vars configured | ✅ Supabase keys + BFF_SECRET |
 
-### Day 3-4: User Migration
+### User Migration (remaining)
 
 | Task | Details |
 |------|---------|
 | Export WordPress emails | 50 users from `4yi3uwye_users` |
 | Import to Supabase | Auth → Users → Import |
-| Test Magic Link | Send test login to yourself |
 | Announcement email | Draft "Welcome to new platform" email |
 
 **Week 6 Deliverables:**
-- [ ] Magic Link authentication working
+- [x] Magic Link authentication working
 - [ ] 50 users migrated
-- [ ] Protected routes enforced
+- [x] Protected routes enforced
 
 ---
 

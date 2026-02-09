@@ -176,7 +176,7 @@ No rate limiting exists anywhere in the stack. An attacker can send thousands of
 
 **Priority:** High (Pre-Launch)
 **Added:** 2026-02-08
-**Status:** BACKLOGGED
+**Status:** ✅ PARTIALLY COMPLETE (2026-02-10)
 **Type:** Security
 
 **Problem:**
@@ -184,13 +184,13 @@ The backend FastAPI service is directly accessible on the internet at its Railwa
 
 **Potential Solutions:**
 
-| Option | Effort | Impact |
-|--------|--------|--------|
-| **Railway private networking** | 1 hour | High — backend only reachable from BFF container |
-| **API key between BFF and backend** | 2-4 hours | High — backend rejects requests without secret header |
-| **IP allowlisting** | 1 hour | Medium — fragile if Railway IPs change |
+| Option | Effort | Impact | Status |
+|--------|--------|--------|--------|
+| **Railway private networking** | 1 hour | High — backend only reachable from BFF container | V1.1 |
+| **API key between BFF and backend** | 2-4 hours | High — backend rejects requests without secret header | ✅ Done 2026-02-10 |
+| **IP allowlisting** | 1 hour | Medium — fragile if Railway IPs change | Not needed |
 
-**Decision:** Must be implemented before auth is added. If auth only exists at BFF level, it's bypassable without backend isolation.
+**Implemented:** `X-BFF-Secret` shared secret. `proxyToBackend()` sends header; `BFFSecretMiddleware` in FastAPI validates it. Railway private networking deferred to V1.1 for full network isolation.
 
 ---
 
