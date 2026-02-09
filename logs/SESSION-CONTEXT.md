@@ -61,7 +61,7 @@
 - ✅ **Week 2 COMPLETE:** All 7 API endpoints working, tested, documented
 - ✅ **Mini Sprint COMPLETE** (2026-02-06): All Week 3-5 deliverables done
 - ✅ **2026-02-08:** 11 sessions — docs audit, auth requirements, data validation, UX-019/020/021/022, filter audit, 2 code audits (55+7 fixes), security hardening, betalingen column+filter, expanded row fix
-- ✅ **2026-02-09:** UX-023 GroupingSelect + autocomplete perf (debounce 50ms, parallel Typesense)
+- ✅ **2026-02-09:** UX-023 GroupingSelect + autocomplete perf (debounce 50ms, parallel Typesense) + Typesense data enrichment (integraal hybrid search ~100ms)
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
 
 ### Active Tasks
@@ -85,20 +85,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-09)
+1. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-09)
+   Typesense enrichment: `_typesense_search_recipient_keys()` + integraal hybrid search
+
+2. **scripts/typesense/collections.json** ⭐ MODIFIED (2026-02-09)
+   Added y2016-y2024, years_with_data, record_count to recipients schema
+
+3. **scripts/typesense/sync_to_typesense.py** ⭐ MODIFIED (2026-02-09)
+   Updated SQL + doc mapping for year amounts from universal_search
+
+4. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-09)
    UX-023: GroupingSelect component replacing native select, counts fetch
 
-2. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-09)
-   UX-023: GROUPABLE_FIELDS dict + get_grouping_counts() function
-
-3. **backend/app/api/v1/modules.py** ⭐ MODIFIED (2026-02-09)
-   UX-023: Grouping counts endpoint
-
-4. **app/src/app/api/v1/modules/[module]/[value]/grouping-counts/route.ts** ⭐ CREATED (2026-02-09)
-   UX-023: BFF proxy route for grouping counts
-
-5. **scripts/sql/029-universal-search-record-count.sql** ⭐ CREATED (2026-02-08)
-   UX-022: Add record_count column to universal_search materialized view
+5. **backend/app/api/v1/search.py** ⭐ MODIFIED (2026-02-09)
+   Parallelized search_recipients + search_keywords via asyncio.gather
 
 ---
 
@@ -164,11 +164,11 @@
 | **Data Update** | `scripts/data/DATA-UPDATE-RUNBOOK.md` ← **Full data update procedure** |
 | **Backend Proxy** | `/api/v1/search/autocomplete` - API key stays server-side |
 
-**Document Counts (verified 2026-02-07, post-encoding-cleanup):**
+**Document Counts (verified 2026-02-09, post-data-enrichment):**
 
 | Collection | Documents |
 |------------|-----------|
-| recipients | 464,996 |
+| recipients | 463,731 |
 | instrumenten | 674,818 |
 | inkoop | 635,862 |
 | publiek | 115,019 |
@@ -873,7 +873,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-09 - **UX-023 GroupingSelect + autocomplete perf optimization**
+**Last Session:** 2026-02-09 - **UX-023 GroupingSelect + autocomplete perf + Typesense data enrichment**
 
 **2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 

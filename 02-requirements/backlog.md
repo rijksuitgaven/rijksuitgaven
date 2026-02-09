@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-02-08
+**Last Updated:** 2026-02-09
 
 Items logged for future versions, not in V1.0 scope.
 
@@ -790,11 +790,12 @@ Comprehensive mobile UX testing and fixes based on user feedback.
 
 ---
 
-### Search Performance Optimization
+### Search Performance Optimization (COMPLETED)
 
-**Priority:** ✅ PHASE 1 COMPLETE (V1.1 for Phase 2)
+**Priority:** ✅ COMPLETE (Phase 1 + Phase 2)
 **Added:** 2026-02-03
-**Updated:** 2026-02-04
+**Updated:** 2026-02-09
+**Status:** ✅ COMPLETED
 **Type:** Performance
 
 **Phase 1 - COMPLETE (2026-02-03):**
@@ -810,11 +811,14 @@ Comprehensive mobile UX testing and fixes based on user feedback.
 4. ✅ Functional indexes on normalize_recipient()
 5. ✅ Parallel query execution (Phase 1)
 
-**Phase 2 - Deferred to V1.1:**
-- Store year amounts in Typesense documents
-- Skip PostgreSQL entirely for search results
-- Target: ~25-50ms
+**Phase 2 - COMPLETE (2026-02-09):**
+- Enriched recipients Typesense collection with year amounts (y2016-y2024), years_with_data, record_count
+- Integraal search now uses Typesense hybrid: `_typesense_search_recipient_keys()` → WHERE ontvanger_key = ANY($1)
+- Regex fallback if Typesense returns 0 results
+- Production results: ~97-152ms warm (was ~200ms regex)
+- Commit: `f2a97c1`
+- Recipients collection: 463,731 docs re-synced with enriched data
 
-**Status:** Phase 1 complete. Phase 2 deferred to V1.1 per user decision (2026-02-03).
+**Note:** Original Phase 2 goal was "skip PostgreSQL entirely" (~25-50ms target). Actual implementation uses Typesense for key lookup + PostgreSQL WHERE IN for data retrieval (~100ms). Full PostgreSQL bypass would require serving year amounts from Typesense directly, which isn't needed now that hybrid search is fast enough.
 
 ---

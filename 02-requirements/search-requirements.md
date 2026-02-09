@@ -1417,7 +1417,7 @@ Search "bedrijvenbeleid" shows:
 - [x] Cross-module search with module filtering ✅ 2026-01-26
 - [x] Export to CSV (500 rows limit) ✅ 2026-01-26
 
-**Performance Note (2026-02-03):** Target was <100ms. Initially achieved ~750ms via hybrid search (Typesense for discovery, PostgreSQL for data). **Optimized same day** using parallel query execution (`asyncio.gather`), now ~130-280ms across all modules. This is 20-40x faster than original 5-10s WordPress search.
+**Performance Note (2026-02-09):** Target was <100ms. Initially achieved ~750ms via hybrid search (Typesense for discovery, PostgreSQL for data). Optimized to ~130-280ms via parallel query execution (`asyncio.gather`). Further optimized to ~100-150ms via Typesense data enrichment: integraal now uses Typesense hybrid search (key lookup → WHERE IN) instead of regex. All modules 20-40x faster than original 5-10s WordPress search.
 
 ### Search Bar (V1.0) - Should Have
 
@@ -1455,5 +1455,5 @@ Search "bedrijvenbeleid" shows:
 ---
 
 **Document Status:** V1.0 Scope - Implementation In Progress
-**Last Updated:** 2026-02-08
+**Last Updated:** 2026-02-09
 **Author:** Technical Project Manager (AI Assistant)

@@ -354,7 +354,7 @@
 **Decisions (2026-02-03):**
 - Mobile responsiveness audit → SKIP for V1.0, add mobile message instead
 - Search performance Phase 1 → ✅ Solved via parallel queries (750ms → ~200ms avg)
-- Search performance Phase 2 → **Deferred to V1.1** (Typesense data enrichment)
+- Search performance Phase 2 → ✅ **Completed 2026-02-09** (moved from V1.1 to V1.0: Typesense data enrichment)
 - Next task → Mobile message banner
 
 **Performance Results (2026-02-03 - Phase 1):**
@@ -363,10 +363,11 @@
 - Commit: `ee055a4`
 - Query tuning attempt (Python relevance sorting) reverted - no improvement
 
-**V1.1 Optimization Path:**
-- Store year amounts in Typesense documents
-- Skip PostgreSQL entirely for search results
-- Target: ~25-50ms (current: ~130-280ms)
+**V1.0 Optimization (2026-02-09) — Typesense data enrichment moved from V1.1 to V1.0:**
+- ✅ Enriched recipients Typesense collection with year amounts
+- ✅ Integraal search uses Typesense hybrid (WHERE IN) instead of regex
+- ✅ Production: ~100-150ms warm (was ~200ms regex)
+- Commit: `f2a97c1`
 
 ### Mini Sprint Deliverables
 - [x] Security fixes complete

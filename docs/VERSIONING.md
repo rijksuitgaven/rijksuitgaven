@@ -56,6 +56,7 @@
 - Magic Link authentication
 - URL sharing
 - BFF proxy (security)
+- Typesense data enrichment (recipients collection with year amounts for hybrid search)
 
 **Target users:** Journalists, researchers, opposition parties
 
@@ -67,8 +68,7 @@
 - Search on Regeling/Omschrijving fields
 - Recent search history
 - Saved searches
-- **Typesense data enrichment** - Store year amounts in Typesense to skip PostgreSQL for search results (~25-50ms target)
-- **Typesense facets for filter dropdowns** - Use Typesense faceting instead of PostgreSQL DISTINCT queries for instant filter options (~10ms vs 800ms)
+- **Type-ahead prefetch on focus** - Pre-fetch autocomplete results when search bar gains focus (before user types)
 
 ### V1.0 Known Issues / Backlog
 
@@ -469,4 +469,4 @@ V9.0 European Platform
 ---
 
 **Document maintained by:** Product Owner
-**Last updated:** 2026-02-03
+**Last updated:** 2026-02-09
