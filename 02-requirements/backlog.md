@@ -425,18 +425,44 @@ V2.0: Full state in URL including expanded rows, pagination position, all filter
 
 ### Analytics Integration
 
-**Priority:** Low
+**Priority:** Medium (V1.1 or V1.2)
 **Added:** 2026-01-21
+**Updated:** 2026-02-09
+**Status:** BACKLOGGED
+**Type:** Product Analytics / GDPR
 
-Add website analytics to track user behavior and usage patterns.
+**Goal:** Track user behavior and usage patterns at scale (building for 500+ users, not just current 50).
 
-**Options to evaluate:**
-- Plausible (privacy-focused, paid)
-- Umami (self-hosted, free)
-- PostHog (product analytics)
-- Simple custom tracking
+**GDPR Analysis (2026-02-09 expert team review):**
 
-**Decision:** Not required for V1.0 launch. Add post-launch.
+| Tracking type | Consent needed? | Notes |
+|--------------|----------------|-------|
+| Server-side logs (Railway) | No | Legitimate interest, already available |
+| Supabase Auth queries (last_sign_in_at) | No | Already available |
+| Plausible/Umami (cookie-free, EU-hosted) | No (basic pageviews) | French DPA approved; Dutch DPA hasn't ruled specifically |
+| Custom events (server-side BFF logging) | No | Log API calls in BFF, no client-side tracking needed |
+| PostHog / GA4 (cookies, user profiling) | Yes | Requires consent mechanism, overkill for now |
+
+**Recommended phased approach:**
+
+| Phase | Trigger | Action | Cost |
+|-------|---------|--------|------|
+| 1 | Post-launch | Plausible or Umami Cloud (pageviews, traffic, top pages) | €9/month |
+| 2 | 200+ users | Server-side event logging in BFF (search terms, exports, filter usage) | €0 (Supabase table) |
+| 3 | 500+ users | PostHog with proper consent mechanism | Free tier |
+
+**Key rules:**
+- Never use Google Analytics (US data transfer, consent required, anti-privacy)
+- Prefer server-side event tracking over client-side scripts (no consent needed)
+- Current cookie banner ("alleen noodzakelijke cookies") stays intact through Phase 1-2
+- Phase 3 requires updating cookie banner to consent mechanism
+
+**Shortlisted tools:**
+- **Plausible** (€9/month, SaaS, easiest, ~1KB script, EU-hosted Germany)
+- **Umami** (€9/month cloud or self-host, more flexible, custom events, ~2KB script)
+- Never: Google Analytics 4, Facebook Pixel
+
+**Decision:** Parked for V1.1/V1.2. Server logs + Supabase Auth sufficient for beta. Add Plausible/Umami post-launch when traffic metrics matter.
 
 ---
 
