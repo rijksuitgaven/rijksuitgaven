@@ -822,3 +822,27 @@ Comprehensive mobile UX testing and fixes based on user feedback.
 **Note:** Original Phase 2 goal was "skip PostgreSQL entirely" (~25-50ms target). Actual implementation uses Typesense for key lookup + PostgreSQL WHERE IN for data retrieval (~100ms). Full PostgreSQL bypass would require serving year amounts from Typesense directly, which isn't needed now that hybrid search is fast enough.
 
 ---
+
+### GitHub Projects Visual Dashboard
+
+**Priority:** Low (V1.2)
+**Added:** 2026-02-09
+**Status:** BACKLOGGED
+**Type:** Tooling / Process
+
+**Problem:**
+Backlog, roadmap, and release tracking live in markdown files. Works well for development (Claude reads them directly) but lacks visual overview for non-technical stakeholders (sales partner).
+
+**Proposed Solution:**
+GitHub Projects board as a **read-only dashboard** on top of existing markdown:
+- Board view: Triage → Backlog → In Progress → Done
+- Roadmap view: timeline grouped by milestone (V1.0, V1.1, V2.0, etc.)
+- Issues are lightweight pointers (title + label + link to markdown spec)
+- Partner can submit ideas via `idea`-labeled issues → Triage column
+- Markdown stays source of truth; board is a view, not a second system
+
+**Setup:** ~30 minutes. Requires `gh auth refresh -s project` for CLI access.
+
+**Decision:** Not needed for launch. Revisit in V1.2 polish phase or when partner needs independent visibility.
+
+---
