@@ -204,7 +204,7 @@ export function Footer({ isLoggedIn = false, userEmail }: FooterProps) {
             {isLoggedIn && userEmail && (
               <div className="flex items-center gap-4">
                 <span>{userEmail}</span>
-                <Link href="/logout" className="text-white/80 hover:text-white transition-colors">
+                <Link href="/auth/logout" className="text-white/80 hover:text-white transition-colors">
                   Uitloggen
                 </Link>
               </div>

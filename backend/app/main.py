@@ -6,8 +6,10 @@ Main application entry point.
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.config import get_settings
 from app.api.v1 import router as api_v1_router
@@ -57,8 +59,25 @@ app.add_middleware(
     allow_origins=settings.cors_origins,
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With", "Accept", "X-BFF-Secret"],
 )
+
+# BFF shared secret middleware — rejects requests without valid X-BFF-Secret
+# when bff_secret is configured. Health/root endpoints are always allowed.
+class BFFSecretMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        if settings.bff_secret:
+            # Allow health checks and root without secret
+            if request.url.path not in ("/", "/health", "/api/v1/health"):
+                provided = request.headers.get("X-BFF-Secret", "")
+                if provided != settings.bff_secret:
+                    return JSONResponse(
+                        status_code=403,
+                        content={"error": "Forbidden"},
+                    )
+        return await call_next(request)
+
+app.add_middleware(BFFSecretMiddleware)
 
 # Include API routes
 app.include_router(api_v1_router, prefix="/api/v1")

@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8000'
 export const TIMEOUT_MS = 30000
+export const BFF_SECRET = process.env.BFF_SECRET || ''
 
 // Security limits
 const MAX_OFFSET = 10000
@@ -94,6 +95,7 @@ export async function proxyToBackend(
         method: 'GET',
         headers: {
           'Accept': 'application/json',
+          ...(BFF_SECRET && { 'X-BFF-Secret': BFF_SECRET }),
         },
         signal: controller.signal,
       })

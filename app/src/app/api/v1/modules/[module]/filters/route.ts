@@ -8,13 +8,17 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { validateModule, BACKEND_API_URL, TIMEOUT_MS } from '../../../../_lib/proxy'
+import { validateModule, BACKEND_API_URL, TIMEOUT_MS, BFF_SECRET } from '../../../../_lib/proxy'
+import { getAuthenticatedUser, unauthorizedResponse } from '../../../../_lib/auth'
 
 interface RouteParams {
   params: Promise<{ module: string }>
 }
 
 export async function POST(request: NextRequest, { params }: RouteParams) {
+  const session = await getAuthenticatedUser()
+  if (!session) return unauthorizedResponse()
+
   const { module } = await params
 
   if (!validateModule(module)) {
@@ -63,6 +67,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            ...(BFF_SECRET && { 'X-BFF-Secret': BFF_SECRET }),
           },
           body: JSON.stringify(body),
           signal: controller.signal,

@@ -7,12 +7,16 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { proxyToBackend, validateModule } from '../../../../../_lib/proxy'
+import { getAuthenticatedUser, unauthorizedResponse } from '../../../../../_lib/auth'
 
 interface RouteParams {
   params: Promise<{ module: string; value: string }>
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
+  const session = await getAuthenticatedUser()
+  if (!session) return unauthorizedResponse()
+
   const { module, value } = await params
 
   if (!validateModule(module)) {

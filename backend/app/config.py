@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     typesense_protocol: str = "https"
     typesense_port: int = 443
 
+    # BFF shared secret (empty = disabled, for backwards compatibility during rollout)
+    bff_secret: str = ""
+
     # CORS - localhost included for development (local-only, minimal security risk)
     # Override via CORS_ORIGINS env var in production if needed
     cors_origins: list[str] = [

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { AuthButton } from '@/components/auth'
 
 // Force hard navigation to reset all filters and page state
 function useHardNavigation() {
@@ -29,7 +30,11 @@ const KOSTEN_MODULES = [
   { id: 'apparaat', name: 'Apparaatskosten' },
 ]
 
-export function Header() {
+interface HeaderProps {
+  userEmail?: string
+}
+
+export function Header({ userEmail }: HeaderProps) {
   const pathname = usePathname()
   const navRef = useRef<HTMLElement>(null)
   const handleHardNav = useHardNavigation()
@@ -74,22 +79,7 @@ export function Header() {
               <h1 className="sr-only">Rijksuitgaven</h1>
             </Link>
 
-            {/* Auth - TODO: Implement when authentication is added (V1.0 uses Magic Link)
-            <div className="flex items-center gap-6 text-sm font-medium">
-              <Link
-                href="/profiel"
-                className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
-              >
-                Profiel
-              </Link>
-              <Link
-                href="/logout"
-                className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
-              >
-                Uitloggen
-              </Link>
-            </div>
-            */}
+            <AuthButton userEmail={userEmail} />
           </div>
         </div>
       </div>

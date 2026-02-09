@@ -61,6 +61,10 @@ function transformRow(apiRow: ApiRecipientRow, years: number[]): RecipientRow {
  */
 export async function fetchModules(signal?: AbortSignal): Promise<ModuleInfo[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/modules`, signal ? { signal } : undefined)
+  if (response.status === 401) {
+    if (typeof window !== 'undefined') window.location.href = '/login'
+    throw new Error('Niet ingelogd')
+  }
   if (!response.ok) {
     throw new Error(`Failed to fetch modules: ${response.statusText}`)
   }
@@ -107,6 +111,13 @@ export async function fetchModuleData(
 
   const url = `${API_BASE_URL}/api/v1/modules/${module}?${searchParams.toString()}`
   const response = await fetch(url, signal ? { signal } : undefined)
+
+  if (response.status === 401) {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login'
+    }
+    throw new Error('Niet ingelogd')
+  }
 
   if (!response.ok) {
     throw new Error(`Failed to fetch ${module} data: ${response.statusText}`)
@@ -165,6 +176,10 @@ export async function fetchCascadingFilterOptions(
     signal,
   })
 
+  if (response.status === 401) {
+    if (typeof window !== 'undefined') window.location.href = '/login'
+    throw new Error('Niet ingelogd')
+  }
   if (!response.ok) {
     throw new Error(`Failed to fetch cascading filter options: ${response.statusText}`)
   }
@@ -197,6 +212,10 @@ export async function fetchDetailData(
 
   const response = await fetch(url, signal ? { signal } : undefined)
 
+  if (response.status === 401) {
+    if (typeof window !== 'undefined') window.location.href = '/login'
+    throw new Error('Niet ingelogd')
+  }
   if (!response.ok) {
     throw new Error(`Failed to fetch details: ${response.statusText}`)
   }

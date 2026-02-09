@@ -4,6 +4,7 @@ import { CookieBanner } from "@/components/cookie-banner";
 import { MobileBanner } from "@/components/mobile-banner";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { createClient } from "@/lib/supabase/server";
 import "./globals.css";
 
 // Body text - IBM Plex Sans Condensed
@@ -35,20 +36,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const userEmail = user?.email ?? undefined
+
   return (
     <html lang="nl">
       <body
         className={`${ibmPlexSansCondensed.variable} ${brawler.variable} antialiased`}
         style={{ fontFamily: "var(--font-body), sans-serif" }}
       >
-        <Header />
+        <Header userEmail={userEmail} />
         {children}
-        <Footer />
+        <Footer isLoggedIn={!!user} userEmail={userEmail} />
         <CookieBanner />
         <MobileBanner />
       </body>
