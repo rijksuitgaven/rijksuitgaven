@@ -57,6 +57,7 @@
 - URL sharing
 - BFF proxy (security)
 - Typesense data enrichment (recipients collection with year amounts for hybrid search)
+- Feedback button with screenshot area selection (UX-025)
 
 **Target users:** Journalists, researchers, opposition parties
 

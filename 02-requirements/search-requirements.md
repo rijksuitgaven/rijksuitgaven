@@ -1206,6 +1206,73 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-025: Feedback Button with Screenshot Selection
+
+**Requirement:** Persistent feedback button on all logged-in pages that lets users send feedback with an optional area-selected screenshot, delivered via email.
+
+**Behavior:**
+
+**Feedback button (always visible):**
+- Floating button bottom-right corner, visible on all authenticated pages
+- Label: "Feedback" with speech bubble icon
+- Click opens a compact feedback form (popover or slide-up panel)
+- Button does not overlap with table content or pagination
+
+**Feedback form:**
+- Single text field: "Uw feedback" (placeholder: "Beschrijf wat u opvalt...")
+- "Schermafbeelding meesturen" checkbox (checked by default)
+- When checked: shows area selection tool before form opens
+- "Verstuur" button (disabled until text is entered)
+- Success state: "Bedankt voor uw feedback!" — auto-closes after 2 seconds
+
+**Screenshot area selection (must-have):**
+- User clicks feedback button → screen dims with semi-transparent overlay
+- User draws a rectangle by click-and-drag to select the relevant area
+- Selected area is highlighted (rest stays dimmed)
+- Toolbar appears: "Gebruik deze selectie" / "Opnieuw selecteren" / "Overslaan"
+- Selected area captured as PNG via canvas crop
+- If user clicks "Overslaan": form opens without screenshot
+- Capture uses `html2canvas` for the full page render, then crops to selection coordinates
+
+**Email delivery (Phase 1 — Beta):**
+- Sends email via Resend to `contact@rijksuitgaven.nl`
+- Email subject: `Feedback: [first 50 chars of message]`
+- Email body contains:
+  - User message (full text)
+  - Screenshot (inline image, if captured)
+  - Page URL where feedback was submitted
+  - User email (from auth session)
+  - Browser + OS (from User-Agent)
+  - Timestamp (ISO 8601)
+- BFF endpoint: `POST /api/v1/feedback` — accepts message + base64 screenshot
+
+**Upgrade path (Phase 2 — Post-beta):**
+- Swap Resend email for GitHub Issue creation via API
+- Issue label: `user-feedback`
+- Screenshot attached as image
+- Integrates with GitHub Projects board (V1.2 backlog item)
+
+**What this does NOT include:**
+- No categories or ratings
+- No feedback dashboard or admin view
+- No Supabase storage (email only)
+- No public feedback board
+- No anonymous feedback (requires authentication)
+
+**Technical Implementation:**
+- Frontend: React component with `html2canvas` + canvas crop overlay
+- BFF: `POST /api/v1/feedback` endpoint — validates, sends via Resend
+- Backend: not involved (BFF sends email directly)
+- Dependencies: `html2canvas` (npm), Resend SDK (already installed for Magic Link)
+
+**Estimated effort:** 3-4 hours (including area selection overlay)
+
+**Priority:** P1 (V1.0 — required before beta launch)
+
+**Status:** ⏳ In Requirements
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload
