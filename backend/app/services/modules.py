@@ -694,6 +694,47 @@ async def _typesense_get_primary_keys_with_highlights(
     return primary_keys, matched_info
 
 
+async def _typesense_search_recipient_keys(
+    search: str,
+    limit: int = 1000,
+) -> list[str]:
+    """
+    Search recipients collection in Typesense, return matching ontvanger_key IDs.
+
+    Used by get_integraal_data() for fast hybrid search:
+    Typesense finds matching recipients (~25ms) → PostgreSQL WHERE IN (~50ms)
+    instead of regex search (~200ms).
+
+    Returns list of ontvanger_key strings (Typesense document IDs).
+    Empty list means Typesense returned nothing (caller should fall back to regex).
+    """
+    params = {
+        "q": search,
+        "query_by": "name,name_lower",
+        "prefix": "true",
+        "per_page": str(min(limit * 5, 250)),
+    }
+
+    data = await _typesense_search("recipients", params)
+
+    keys = []
+    for hit in data.get("hits", []):
+        doc = hit.get("document", {})
+        name = doc.get("name")
+        doc_id = doc.get("id")
+        if not name or not doc_id:
+            continue
+        # Word boundary filter to avoid prefix false positives
+        if not is_word_boundary_match(search, name):
+            continue
+        keys.append(doc_id)
+        if len(keys) >= limit:
+            break
+
+    logger.info(f"Typesense recipients search '{search}': {len(keys)} matches (word boundary filtered)")
+    return keys
+
+
 async def _get_from_aggregated_view(
     config: dict,
     search: Optional[str] = None,
@@ -1490,12 +1531,21 @@ async def get_integraal_data(
     params = []
     param_idx = 1
 
-    # Search with Dutch language rules to avoid false cognates
+    # Hybrid search: Typesense → PostgreSQL WHERE IN (fast)
+    # Falls back to regex if Typesense returns nothing
     if search:
-        condition, pattern = build_search_condition("ontvanger", param_idx, search)
-        where_clauses.append(condition)
-        params.append(pattern)
-        param_idx += 1
+        ts_keys = await _typesense_search_recipient_keys(search, limit=1000)
+        if ts_keys:
+            where_clauses.append(f"ontvanger_key = ANY(${param_idx})")
+            params.append(ts_keys)
+            param_idx += 1
+        else:
+            # Fallback: regex search (Typesense not configured or no word-boundary matches)
+            logger.info(f"Integraal: Typesense returned 0 for '{search}', falling back to regex")
+            condition, pattern = build_search_condition("ontvanger", param_idx, search)
+            where_clauses.append(condition)
+            params.append(pattern)
+            param_idx += 1
 
     # Year filter: show recipients who have data in that year
     if jaar:

@@ -8,7 +8,18 @@
         {"name": "sources", "type": "string[]", "facet": true},
         {"name": "source_count", "type": "int32", "facet": true},
         {"name": "totaal", "type": "int64"},
-        {"name": "latest_year", "type": "int32", "facet": true}
+        {"name": "latest_year", "type": "int32", "facet": true},
+        {"name": "y2016", "type": "int64", "optional": true},
+        {"name": "y2017", "type": "int64", "optional": true},
+        {"name": "y2018", "type": "int64", "optional": true},
+        {"name": "y2019", "type": "int64", "optional": true},
+        {"name": "y2020", "type": "int64", "optional": true},
+        {"name": "y2021", "type": "int64", "optional": true},
+        {"name": "y2022", "type": "int64", "optional": true},
+        {"name": "y2023", "type": "int64", "optional": true},
+        {"name": "y2024", "type": "int64", "optional": true},
+        {"name": "years_with_data", "type": "int32", "facet": true},
+        {"name": "record_count", "type": "int32"}
       ],
       "default_sorting_field": "totaal",
       "token_separators": ["-", ".", "/"]

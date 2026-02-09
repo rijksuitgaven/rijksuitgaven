@@ -108,7 +108,18 @@ def index_recipients(client, conn, recreate=False):
                 CASE WHEN "2022" > 0 THEN 2022 ELSE 0 END,
                 CASE WHEN "2021" > 0 THEN 2021 ELSE 0 END,
                 CASE WHEN "2020" > 0 THEN 2020 ELSE 0 END
-            ) as latest_year
+            ) as latest_year,
+            COALESCE("2016", 0) as y2016,
+            COALESCE("2017", 0) as y2017,
+            COALESCE("2018", 0) as y2018,
+            COALESCE("2019", 0) as y2019,
+            COALESCE("2020", 0) as y2020,
+            COALESCE("2021", 0) as y2021,
+            COALESCE("2022", 0) as y2022,
+            COALESCE("2023", 0) as y2023,
+            COALESCE("2024", 0) as y2024,
+            COALESCE(years_with_data, 0) as years_with_data,
+            COALESCE(record_count, 0) as record_count
         FROM universal_search
         WHERE ontvanger IS NOT NULL AND ontvanger != ''
         ORDER BY totaal DESC
@@ -125,7 +136,18 @@ def index_recipients(client, conn, recreate=False):
             'sources': (row['sources'] or '').split(', ') if row['sources'] else [],
             'source_count': row['source_count'] or 0,
             'totaal': int(row['totaal'] or 0),
-            'latest_year': row['latest_year'] or 0
+            'latest_year': row['latest_year'] or 0,
+            'y2016': int(row['y2016'] or 0),
+            'y2017': int(row['y2017'] or 0),
+            'y2018': int(row['y2018'] or 0),
+            'y2019': int(row['y2019'] or 0),
+            'y2020': int(row['y2020'] or 0),
+            'y2021': int(row['y2021'] or 0),
+            'y2022': int(row['y2022'] or 0),
+            'y2023': int(row['y2023'] or 0),
+            'y2024': int(row['y2024'] or 0),
+            'years_with_data': int(row['years_with_data'] or 0),
+            'record_count': int(row['record_count'] or 0),
         }
         documents.append(doc)
 
