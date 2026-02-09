@@ -61,7 +61,7 @@
 - ✅ **Week 2 COMPLETE:** All 7 API endpoints working, tested, documented
 - ✅ **Mini Sprint COMPLETE** (2026-02-06): All Week 3-5 deliverables done
 - ✅ **2026-02-08:** 11 sessions — docs audit, auth requirements, data validation, UX-019/020/021/022, filter audit, 2 code audits (55+7 fixes), security hardening, betalingen column+filter, expanded row fix
-- ✅ **2026-02-09:** UX-023 GroupingSelect + autocomplete perf (debounce 50ms, parallel Typesense) + Typesense data enrichment (integraal hybrid search ~100ms) + UX-024 type-ahead requirement (V1.1) + beta newsletter + marketing folder + GitHub Projects evaluation (deferred V1.2)
+- ✅ **2026-02-09:** UX-023 GroupingSelect + autocomplete perf + Typesense enrichment + UX-024 type-ahead req (V1.1) + UX-025 feedback button req (V1.0) + beta newsletter + marketing folder + GitHub Projects eval (V1.2)
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
 
 ### Active Tasks
