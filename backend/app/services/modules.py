@@ -1392,6 +1392,61 @@ async def get_row_details(
     return result
 
 
+# Groupable fields per module (mirrors frontend GROUPABLE_FIELDS)
+GROUPABLE_FIELDS: dict[str, list[str]] = {
+    "instrumenten": ["regeling", "artikel", "instrument", "begrotingsnaam", "artikelonderdeel", "detail"],
+    "apparaat": ["kostensoort", "artikel", "detail", "begrotingsnaam"],
+    "inkoop": ["ministerie", "categorie", "staffel"],
+    "provincie": ["provincie", "omschrijving"],
+    "gemeente": ["gemeente", "beleidsterrein", "regeling", "omschrijving"],
+    "publiek": ["source", "regeling", "sectoren", "trefwoorden"],
+}
+
+
+async def get_grouping_counts(
+    module: str,
+    primary_value: str,
+) -> dict[str, int]:
+    """
+    Get count of distinct values per groupable field for a recipient.
+
+    Returns e.g. {"regeling": 12, "artikel": 8, "instrument": 3, ...}
+    Used by the expanded row dropdown to show how many items each grouping produces.
+    """
+    if module not in MODULE_CONFIG:
+        raise ValueError(f"Unknown module: {module}")
+
+    config = MODULE_CONFIG[module]
+    table = config["table"]
+    primary = config["primary_field"]
+
+    fields = GROUPABLE_FIELDS.get(module, [])
+    if not fields:
+        return {}
+
+    # Validate all fields against allowed columns
+    for f in fields:
+        validate_identifier(f, ALLOWED_COLUMNS, "column")
+
+    # Single query: COUNT(DISTINCT field) for each groupable field
+    count_cols = ", ".join([
+        f'COUNT(DISTINCT "{f}") AS "{f}_count"' for f in fields
+    ])
+
+    query = f"""
+        SELECT {count_cols}
+        FROM {table}
+        WHERE normalize_recipient({primary}) = normalize_recipient($1)
+    """
+
+    rows = await fetch_all(query, primary_value)
+    if not rows:
+        return {f: 0 for f in fields}
+
+    row = rows[0]
+    return {f: int(row[f"{f}_count"] or 0) for f in fields}
+
+
 BETALINGEN_BRACKETS = {
     "1": "record_count = 1",
     "2-10": "record_count BETWEEN 2 AND 10",

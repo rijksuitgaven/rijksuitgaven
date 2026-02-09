@@ -23,6 +23,7 @@ from pydantic import BaseModel, Field
 from app.services.modules import (
     get_module_data,
     get_row_details,
+    get_grouping_counts,
     get_integraal_data,
     get_integraal_details,
     get_filter_options,
@@ -468,6 +469,39 @@ async def get_details(
     except Exception as e:
         logger.error(f"Details query failed for {module}/{primary_value}: {type(e).__name__}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Er ging iets mis bij het ophalen van de details")
+
+
+@router.get("/{module}/{primary_value}/grouping-counts", response_model=dict[str, int])
+async def get_grouping_counts_endpoint(
+    module: ModuleName,
+    primary_value: str,
+):
+    """
+    Get count of distinct values per groupable field for a recipient.
+
+    Returns e.g. {"regeling": 12, "artikel": 8, ...}
+    Used by the expanded row dropdown to show item counts per grouping.
+    """
+    if module == ModuleName.integraal:
+        # Integraal only has "module" grouping, no counts needed
+        return {}
+
+    try:
+        decoded_value = primary_value
+        if not decoded_value or len(decoded_value) > 500:
+            raise HTTPException(status_code=400, detail="Ongeldige parameter")
+
+        counts = await get_grouping_counts(
+            module=module.value,
+            primary_value=decoded_value,
+        )
+        return counts
+
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Ongeldige parameter")
+    except Exception as e:
+        logger.error(f"Grouping counts failed for {module}/{primary_value}: {type(e).__name__}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Er ging iets mis")
 
 
 @router.get("/{module}/filters/{field}", response_model=list[str])

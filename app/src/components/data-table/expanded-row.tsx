@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, Fragment } from 'react'
-import { ChevronDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
+import { useState, useEffect, useRef, Fragment } from 'react'
+import { Check, ChevronDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatAmount, getAmountFontClass } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
@@ -54,6 +54,100 @@ const GROUPABLE_FIELDS: Record<string, { value: string; label: string }[]> = {
   ],
 }
 
+/** Format count with Dutch locale separator: 1234 → "1.234" */
+function formatCount(count: number): string {
+  return count.toLocaleString('nl-NL')
+}
+
+// =============================================================================
+// GroupingSelect — single-select dropdown matching MultiSelect filter styling
+// =============================================================================
+
+function GroupingSelect({ value, onChange, options, counts }: {
+  value: string
+  onChange: (val: string) => void
+  options: { value: string; label: string }[]
+  counts: Record<string, number> | null
+}) {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!isOpen) return
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === 'Escape') setIsOpen(false)
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isOpen])
+
+  const selectedLabel = options.find(o => o.value === value)?.label ?? 'Selecteer...'
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          'px-2.5 py-1.5 border rounded-lg text-sm text-left flex items-center gap-2 transition-colors',
+          'border-[var(--border)] bg-white hover:border-[var(--navy-medium)]',
+          'focus:outline-none focus:ring-2 focus:ring-[var(--navy-medium)]',
+          isOpen && 'border-[var(--navy-medium)]'
+        )}
+      >
+        <span className="font-semibold text-[var(--navy-dark)] whitespace-nowrap">{selectedLabel}</span>
+        {counts && counts[value] != null && (
+          <span className="text-[var(--navy-medium)] text-xs">({formatCount(counts[value])})</span>
+        )}
+        <ChevronDown className={cn(
+          'h-3.5 w-3.5 text-[var(--muted-foreground)] transition-transform flex-shrink-0',
+          isOpen && 'rotate-180'
+        )} />
+      </button>
+      {isOpen && (
+        <div className="absolute z-50 mt-1 w-max min-w-full bg-white border border-[var(--border)] rounded-lg shadow-lg max-h-72 overflow-auto">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => { onChange(opt.value); setIsOpen(false) }}
+              className={cn(
+                'w-full px-3 py-2 text-sm text-left hover:bg-[var(--gray-light)] transition-colors flex items-center gap-2',
+                value === opt.value && 'text-[var(--navy-dark)] font-medium'
+              )}
+            >
+              {value === opt.value ? (
+                <Check className="h-3.5 w-3.5 text-[var(--navy-dark)] flex-shrink-0" />
+              ) : (
+                <span className="w-3.5 flex-shrink-0" />
+              )}
+              <span className="whitespace-nowrap">{opt.label}</span>
+              {counts && counts[opt.value] != null && (
+                <span className="text-[var(--navy-medium)] text-xs ml-auto whitespace-nowrap">
+                  ({formatCount(counts[opt.value])})
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// =============================================================================
+// ExpandedRow
+// =============================================================================
+
 interface DetailRow {
   group_by: string
   group_value: string | null
@@ -88,6 +182,7 @@ export function ExpandedRow({
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [yearsExpanded, setYearsExpanded] = useState(false)
+  const [groupingCounts, setGroupingCounts] = useState<Record<string, number> | null>(null)
 
   const groupableFields = GROUPABLE_FIELDS[module] ?? []
 
@@ -103,6 +198,31 @@ export function ExpandedRow({
   // When searching, extra columns are replaced by a single "Gevonden in" column
   const extraCols = isSearching ? 1 : extraColumnsCount
   const contentColSpan = 2 + extraCols
+
+  // Fetch grouping counts once when the row expands (not on grouping change)
+  useEffect(() => {
+    if (module === 'integraal' || groupableFields.length <= 1) return
+
+    const abortController = new AbortController()
+
+    async function fetchCounts() {
+      try {
+        const encodedValue = encodeURIComponent(encodeURIComponent(row.primary_value))
+        const url = `${API_BASE_URL}/api/v1/modules/${module}/${encodedValue}/grouping-counts`
+        const response = await fetch(url, { signal: abortController.signal })
+        if (!response.ok) return
+        const data = await response.json()
+        if (!abortController.signal.aborted) {
+          setGroupingCounts(data)
+        }
+      } catch {
+        // Silently fail — counts are a nice-to-have enhancement
+      }
+    }
+
+    fetchCounts()
+    return () => { abortController.abort() }
+  }, [row.primary_value, module, groupableFields.length])
 
   // Fetch details when row is expanded or grouping changes
   useEffect(() => {
@@ -187,28 +307,17 @@ export function ExpandedRow({
         <td colSpan={contentColSpan} className="px-3 py-2 border-b border-[var(--border)]">
           <div className="flex items-center gap-3">
             {groupableFields.length > 1 ? (
-              <div className="relative">
-                <select
-                  value={grouping}
-                  onChange={(e) => setGrouping(e.target.value)}
-                  className="appearance-none pl-2 pr-6 py-1 text-sm font-semibold text-[var(--navy-dark)] border border-[var(--border)] rounded bg-white hover:border-[var(--navy-medium)] transition-colors cursor-pointer"
-                >
-                  {groupableFields.map((field) => (
-                    <option key={field.value} value={field.value}>
-                      {field.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--muted-foreground)] pointer-events-none" />
-              </div>
+              <GroupingSelect
+                value={grouping}
+                onChange={setGrouping}
+                options={groupableFields}
+                counts={groupingCounts}
+              />
             ) : (
               <span className="text-sm font-semibold text-[var(--navy-dark)]">
                 {groupableFields[0]?.label || 'Details'}
               </span>
             )}
-            <span className="text-sm text-[var(--muted-foreground)]">
-              {details.length} items
-            </span>
           </div>
         </td>
         {/* Collapsed years toggle */}
