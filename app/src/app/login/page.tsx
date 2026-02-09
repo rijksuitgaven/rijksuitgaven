@@ -1,7 +1,7 @@
 /**
  * Login Page (Server Component shell).
  *
- * Redirects to /integraal if user is already logged in.
+ * Redirects to / if user is already logged in.
  * Otherwise renders the LoginForm client component.
  */
 
@@ -18,7 +18,7 @@ export default async function LoginPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (user) {
-    redirect('/integraal')
+    redirect('/')
   }
 
   return (
