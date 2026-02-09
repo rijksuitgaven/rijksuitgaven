@@ -7,9 +7,9 @@
 
 ---
 
-**Subject:** `Rijksuitgaven wordt 50x sneller — wees de eerste die het ziet`
+**Subject:** `Het nieuwe Rijksuitgaven is bijna klaar - word bètatester`
 
-**Preview text:** `€1,77 biljoen doorzoekbaar in milliseconden.`
+**Preview text:** `50x sneller. Slimme filters. Eén overzicht.`
 
 ---
 
