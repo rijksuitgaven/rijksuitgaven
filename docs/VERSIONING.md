@@ -68,7 +68,7 @@
 - Search on Regeling/Omschrijving fields
 - Recent search history
 - Saved searches
-- **Type-ahead prefetch on focus** - Pre-fetch autocomplete results when search bar gains focus (before user types)
+- **UX-024: Type-ahead with recent searches** - On search bar focus, show recent search history (localStorage). Reduced debounce (50ms→30ms) + client-side response caching for instant repeat queries
 
 ### V1.0 Known Issues / Backlog
 

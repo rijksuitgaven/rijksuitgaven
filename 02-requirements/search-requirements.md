@@ -1153,6 +1153,59 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-024: Type-Ahead with Recent Searches (V1.1)
+
+**Requirement:** Show recent search history instantly when the search bar receives focus, and reduce perceived latency through client-side response caching and reduced debounce.
+
+**Behavior:**
+
+**On Focus (before typing):**
+- Search bar focus → immediately show dropdown with "Recente zoekopdrachten" section
+- Shows last 5-10 searches from localStorage (per device, no auth required)
+- Each entry shows the search term; clicking applies it as a search
+- "Wis geschiedenis" link at bottom to clear history
+- If no recent searches: dropdown stays hidden until user types (same as current behavior)
+
+**Search history storage:**
+- Stored in localStorage key `rijksuitgaven-recent-searches`
+- Array of `{query: string, module: string, timestamp: number}`
+- Max 10 entries, FIFO (oldest removed when full)
+- Saved on search execution (Enter press or result click), NOT on every keystroke
+- Module name shown as subtle label: `"prorail" — Integraal`
+
+**Reduced debounce:**
+- 2 characters → 0ms debounce (fire immediately)
+- 3+ characters → 30ms debounce (reduced from current 50ms)
+- Rationale: Typesense responds in ~25ms, so aggressive debounce is safe
+
+**Response caching (client-side):**
+- Cache autocomplete API responses in-memory (`Map<string, {results, timestamp}>`)
+- TTL: 5 minutes (data is static within a session)
+- Cache key: `${module}:${query}` (module-specific results)
+- Common pattern "type → delete → retype" becomes instant from cache
+- Cache cleared on module navigation (hard navigation already resets state)
+
+**What this does NOT include:**
+- No "popular searches" or "trending" section
+- No server-side search history (localStorage only)
+- No changes to Typesense or PostgreSQL
+- No new backend endpoints
+
+**Technical Implementation:**
+- Frontend only — no backend/BFF changes
+- `filter-panel.tsx`: Add on-focus handler, render recent searches section
+- `filter-panel.tsx`: Add response cache Map, adjust debounce timing
+- localStorage: Read/write recent searches on search execution
+- React context not needed (component-local state sufficient)
+
+**Estimated effort:** 2-3 hours
+
+**Priority:** P2 (V1.1 — improvement to existing search UX)
+
+**Status:** ⏳ Planned for V1.1
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload
