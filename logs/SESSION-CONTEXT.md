@@ -61,7 +61,7 @@
 - ✅ **Week 2 COMPLETE:** All 7 API endpoints working, tested, documented
 - ✅ **Mini Sprint COMPLETE** (2026-02-06): All Week 3-5 deliverables done
 - ✅ **2026-02-08:** 11 sessions — docs audit, auth requirements, data validation, UX-019/020/021/022, filter audit, 2 code audits (55+7 fixes), security hardening, betalingen column+filter, expanded row fix
-- ✅ **2026-02-09:** UX-023 GroupingSelect + autocomplete perf (debounce 50ms, parallel Typesense) + Typesense data enrichment (integraal hybrid search ~100ms)
+- ✅ **2026-02-09:** UX-023 GroupingSelect + autocomplete perf (debounce 50ms, parallel Typesense) + Typesense data enrichment (integraal hybrid search ~100ms) + UX-024 type-ahead requirement (V1.1) + beta newsletter + marketing folder + GitHub Projects evaluation (deferred V1.2)
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
 
 ### Active Tasks
@@ -873,7 +873,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-09 - **UX-023 GroupingSelect + autocomplete perf + Typesense data enrichment**
+**Last Session:** 2026-02-09 - **UX-023 GroupingSelect + autocomplete perf + Typesense enrichment + UX-024 req + newsletter + marketing folder**
 
 **2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 
