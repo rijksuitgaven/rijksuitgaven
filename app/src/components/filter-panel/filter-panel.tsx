@@ -203,7 +203,7 @@ function CustomSelect({ value, onChange, options, label }: {
 // =============================================================================
 
 // Debounce timeout for autocomplete search (ms)
-const AUTOCOMPLETE_DEBOUNCE_MS = 150
+const AUTOCOMPLETE_DEBOUNCE_MS = 50
 
 // Maximum number of filter options to load (prevents DoS/memory issues)
 const MAX_FILTER_OPTIONS = 5000

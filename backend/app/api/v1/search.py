@@ -5,6 +5,7 @@ This file provides a secure backend proxy for Typesense searches,
 keeping the API key server-side only.
 """
 from typing import Optional
+import asyncio
 import logging
 import httpx
 
@@ -144,8 +145,10 @@ async def autocomplete(
     """
     try:
         # Parallel search for recipients and keywords
-        recipients = await search_recipients(q, fuzzy=fuzzy)
-        keywords = await search_keywords(q)
+        recipients, keywords = await asyncio.gather(
+            search_recipients(q, fuzzy=fuzzy),
+            search_keywords(q),
+        )
 
         return SearchResponse(
             success=True,
@@ -217,25 +220,33 @@ async def search_keywords(q: str) -> list[KeywordResult]:
         {"collection": "provincie", "field": "omschrijving", "module": "provincie"},
     ]
 
+    # Fire all 4 keyword searches in parallel
+    configs = keyword_searches[:4]
+    search_tasks = []
+    for sc in configs:
+        params = {
+            "q": q,
+            "query_by": sc["field"],
+            "prefix": "true",
+            "per_page": "3",
+            "group_by": sc["field"],
+            "group_limit": "1",
+        }
+        search_tasks.append(typesense_search(sc["collection"], params))
+
+    all_data = await asyncio.gather(*search_tasks, return_exceptions=True)
+
+    # Process results sequentially (dedup across collections)
     results: list[KeywordResult] = []
     seen_keywords: set[str] = set()
 
-    # Search first 4 collections
-    for search_config in keyword_searches[:4]:
-        collection = search_config["collection"]
-        field = search_config["field"]
-        module = search_config["module"]
+    for sc, data in zip(configs, all_data):
+        if isinstance(data, Exception):
+            logger.warning(f"Keyword search failed for {sc['collection']}/{sc['field']}: {data}")
+            continue
 
-        params = {
-            "q": q,
-            "query_by": field,
-            "prefix": "true",
-            "per_page": "3",
-            "group_by": field,
-            "group_limit": "1",
-        }
-
-        data = await typesense_search(collection, params)
+        field = sc["field"]
+        module = sc["module"]
 
         for group in data.get("grouped_hits", []):
             hits = group.get("hits", [])

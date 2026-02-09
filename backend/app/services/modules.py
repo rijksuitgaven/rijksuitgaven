@@ -1971,34 +1971,74 @@ async def get_module_autocomplete(
     primary_field = TYPESENSE_PRIMARY_FIELDS.get(module, "ontvanger")
     search_fields = TYPESENSE_SEARCH_FIELDS.get(module, [])
 
-    current_module_results = []
-    field_matches = []
-    other_modules_results = []
+    current_module_results: list[dict] = []
+    field_matches: list[dict] = []
+    other_modules_results: list[dict] = []
 
-    # 1. Search current module for recipients/primary entities
+    # ── Fire ALL Typesense searches in parallel ──────────────────────────
+    # Previously sequential (~220ms), now parallel (~50ms)
+
+    tasks: list[asyncio.Task] = []
+    task_labels: list[str] = []
+
+    # Task: primary field search
     if collection:
-        # Build query_by field (primary + lowercase variant for better matching)
         query_by = f"{primary_field},{primary_field}_lower" if primary_field != "kostensoort" else "kostensoort,kostensoort_lower"
-
-        # Determine sort field (totaal for aggregated views, bedrag for raw data)
         sort_field = "totaal" if module == "apparaat" else "bedrag"
-
-        params = {
+        primary_params = {
             "q": search,
             "query_by": query_by,
             "prefix": "true",
-            "per_page": str(limit * 20),  # Get many more since word-boundary filter discards ~80%
+            "per_page": str(limit * 20),
             "sort_by": f"{sort_field}:desc",
             "group_by": primary_field,
             "group_limit": "1",
         }
+        tasks.append(asyncio.create_task(_typesense_search(collection, primary_params)))
+        task_labels.append("primary")
 
-        data = await _typesense_search(collection, params)
+    # Tasks: field match searches (up to 3 fields)
+    if collection and search_fields:
+        for field in search_fields[:3]:
+            field_params = {
+                "q": search,
+                "query_by": field,
+                "prefix": "true",
+                "per_page": "10",
+                "group_by": field,
+                "group_limit": "1",
+            }
+            tasks.append(asyncio.create_task(_typesense_search(collection, field_params)))
+            task_labels.append(f"field:{field}")
 
-        grouped_hits = data.get("grouped_hits", [])
+    # Task: recipients collection search
+    recipients_params = {
+        "q": search,
+        "query_by": "name,name_lower",
+        "prefix": "true",
+        "per_page": str(limit * 20),
+        "sort_by": "totaal:desc",
+    }
+    tasks.append(asyncio.create_task(_typesense_search("recipients", recipients_params)))
+    task_labels.append("recipients")
 
-        # Process grouped hits - keep both exact (word-boundary) and prefix matches
-        # Exact matches ranked higher, prefix matches shown with visual de-emphasis
+    # Await all Typesense calls at once
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
+    # Build label→result map (skip exceptions)
+    result_map: dict[str, dict] = {}
+    for label, result in zip(task_labels, results):
+        if isinstance(result, Exception):
+            logger.warning(f"Autocomplete Typesense call '{label}' failed: {result}")
+            result_map[label] = {}
+        else:
+            result_map[label] = result
+
+    # ── Process results sequentially ─────────────────────────────────────
+
+    # 1. Primary field results
+    if "primary" in result_map:
+        grouped_hits = result_map["primary"].get("grouped_hits", [])
         exact_matches = []
         prefix_matches = []
 
@@ -2006,45 +2046,27 @@ async def get_module_autocomplete(
             hits = group.get("hits", [])
             if not hits:
                 continue
-
             doc = hits[0].get("document", {})
             name = doc.get(primary_field, "")
-            # Sum up amounts from all hits in group (or use first)
             amount = doc.get("bedrag", 0) or doc.get("totaal", 0)
-
             if not name:
                 continue
-
-            # Classify: exact (word-boundary) vs prefix-only match
             if is_word_boundary_match(search, name):
-                exact_matches.append({
-                    "name": name,
-                    "totaal": int(amount),
-                    "match_type": "exact",
-                })
+                exact_matches.append({"name": name, "totaal": int(amount), "match_type": "exact"})
             else:
-                prefix_matches.append({
-                    "name": name,
-                    "totaal": int(amount),
-                    "match_type": "prefix",
-                })
+                prefix_matches.append({"name": name, "totaal": int(amount), "match_type": "prefix"})
 
-        # Combine: exact matches first, then prefix matches (both already sorted by amount from Typesense)
         current_module_results = exact_matches[:limit]
         remaining_slots = limit - len(current_module_results)
         if remaining_slots > 0:
             current_module_results.extend(prefix_matches[:remaining_slots])
 
     # FALLBACK: If Typesense returned nothing, try PostgreSQL directly
-    # This handles cases where Typesense isn't properly indexed or configured
     if not current_module_results and module in MODULE_CONFIG:
         config = MODULE_CONFIG[module]
         view = config.get("aggregated_table") or config.get("table")
         primary = config.get("primary_field", "ontvanger")
-
-        # Build word-boundary regex pattern
         _, pattern = build_search_condition(primary, 1, search)
-
         query = f"""
             SELECT {primary} as name, totaal
             FROM {view}
@@ -2052,7 +2074,6 @@ async def get_module_autocomplete(
             ORDER BY totaal DESC
             LIMIT {limit}
         """
-
         try:
             pool = await get_pool()
             async with pool.acquire() as conn:
@@ -2068,66 +2089,34 @@ async def get_module_autocomplete(
         except Exception as e:
             logger.warning(f"Autocomplete PostgreSQL fallback failed: {e}")
 
-    # 2. Search for field matches (OOK GEVONDEN IN section)
-    # Search non-primary fields for matching keyword values
+    # 2. Field match results (OOK GEVONDEN IN section)
     if collection and search_fields:
         seen_values: set[str] = set()
-
-        for field in search_fields[:3]:  # Limit to first 3 fields for speed
-            params = {
-                "q": search,
-                "query_by": field,
-                "prefix": "true",
-                "per_page": "10",  # Get extra since we filter by word boundary
-                "group_by": field,
-                "group_limit": "1",
-            }
-
-            data = await _typesense_search(collection, params)
-
+        for field in search_fields[:3]:
+            label = f"field:{field}"
+            data = result_map.get(label, {})
             for group in data.get("grouped_hits", []):
                 hits = group.get("hits", [])
                 if not hits:
                     continue
-
                 doc = hits[0].get("document", {})
                 value = doc.get(field)
-
-                # Filter: only include word-boundary matches
                 if value and len(str(value)) >= 3 and value.upper() not in seen_values:
                     if is_word_boundary_match(search, str(value)):
                         seen_values.add(value.upper())
-                        field_matches.append({
-                            "value": value,
-                            "field": field,
-                        })
-
+                        field_matches.append({"value": value, "field": field})
                         if len(field_matches) >= limit:
                             break
-
             if len(field_matches) >= limit:
                 break
 
-    # 3. Search recipients collection for matches
-    # Recipients in current module go to current_module_results
-    # Recipients only in other modules go to other_modules_results
+    # 3. Recipients collection results
     current_names = {r["name"].upper() for r in current_module_results}
-
-    params = {
-        "q": search,
-        "query_by": "name,name_lower",
-        "prefix": "true",
-        "per_page": str(limit * 20),  # Get many more since word-boundary filter discards ~80%
-        "sort_by": "totaal:desc",
-    }
-
-    data = await _typesense_search("recipients", params)
-
-    # Collect exact and prefix matches from recipients
+    recipients_data = result_map.get("recipients", {})
     recipients_exact = []
     recipients_prefix = []
 
-    for hit in data.get("hits", []):
+    for hit in recipients_data.get("hits", []):
         doc = hit.get("document", {})
         name = doc.get("name", "")
         sources = doc.get("sources", [])
@@ -2136,10 +2125,7 @@ async def get_module_autocomplete(
         if not name or name.upper() in current_names:
             continue
 
-        # Classify match type
         is_exact = is_word_boundary_match(search, name)
-
-        # Check if recipient is in current module
         current_module_lower = module.lower()
         is_in_current_module = any(
             SOURCE_TO_MODULE.get(s.lower(), s.lower()) == current_module_lower
@@ -2153,17 +2139,14 @@ async def get_module_autocomplete(
             else:
                 recipients_prefix.append(entry)
         else:
-            # Other modules - only include exact matches (prefix would be noise)
             if is_exact:
                 other_sources = list(dict.fromkeys(
                     SOURCE_TO_MODULE.get(s.lower(), s.lower()) for s in sources
                 ))
-                # Exclude current module from other modules list
                 other_sources = [m for m in other_sources if m != module.lower()]
                 if other_sources and len(other_modules_results) < limit:
                     other_modules_results.append({"name": name, "modules": other_sources})
 
-    # Add recipients to current_module_results: exact first, then prefix
     for entry in recipients_exact:
         if len(current_module_results) < limit:
             current_module_results.append(entry)
