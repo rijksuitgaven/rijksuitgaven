@@ -873,7 +873,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-09 - **UX-023 GroupingSelect + autocomplete perf + Typesense enrichment + UX-024 req + newsletter + marketing folder**
+**Last Session:** 2026-02-09 - **4 sessions: UX-023/perf/Typesense enrichment + UX-024/025 reqs + newsletter + marketing + analytics GDPR analysis**
 
 **2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 
