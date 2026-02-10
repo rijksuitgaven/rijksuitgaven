@@ -1,15 +1,15 @@
 /**
  * Next.js Middleware — Session Refresh + Route Protection
  *
- * Runs on every matched request (pages AND API routes):
- * 1. Refreshes expired access tokens via Supabase
- * 2. Page routes: redirects unauthenticated users to /login
- * 3. API routes: returns 401 JSON for unauthenticated requests
+ * Runs on every matched PAGE request:
+ * 1. Refreshes expired access tokens via Supabase (local JWT check)
+ * 2. Redirects unauthenticated users to /login
  *
- * IMPORTANT: API routes MUST go through middleware so that cookies()
- * in Route Handlers can read the session (Next.js 16 requirement).
+ * API routes (/api/*) are EXCLUDED — BFF handles its own auth via
+ * getAuthenticatedUser() in _lib/auth.ts (returns 401 JSON).
  *
- * EXCLUDES: /auth/* (callback, logout), /login (public), static assets.
+ * EXCLUDES: /api/* (BFF auth), /auth/* (callback, logout), /login (public),
+ * static assets.
  *
  * Rollback: Delete this file to disable all auth enforcement.
  */
@@ -28,14 +28,11 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico, icon.svg (browser icons)
+     * - api/ (BFF handles own auth with getSession())
      * - auth/ (callback, logout)
      * - login (public)
      * - Static assets (.svg, .png, .jpg, .jpeg, .gif, .webp)
-     *
-     * NOTE: /api/ routes ARE included — middleware refreshes the session
-     * so Route Handlers can read cookies via cookies(). Without this,
-     * getSession() in BFF auth guards returns null in Next.js 16.
      */
-    '/((?!_next/static|_next/image|favicon.ico|icon.svg|auth/|login|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|icon.svg|api/|auth/|login|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
