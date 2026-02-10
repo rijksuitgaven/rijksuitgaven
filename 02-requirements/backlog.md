@@ -873,24 +873,28 @@ GitHub Projects board as a **read-only dashboard** on top of existing markdown:
 
 ---
 
-### Invite Email for New Members
+### Invite Email for New Members (Pre-Launch)
 
-**Priority:** High (V1.0)
+**Priority:** High (V1.0 — just before launch)
 **Added:** 2026-02-11
 **Status:** ⏳ TODO
 **Type:** Feature
 
 **Problem:**
-When admin adds a new member via `/team/leden`, `admin.createUser()` creates the auth user but does NOT send an email. The user doesn't know they have an account.
+When admin adds a new member via `/team/leden`, `admin.createUser()` creates the auth user but does NOT send an email. Users don't know they have an account.
+
+**Why not now:** Importing ~50 WordPress users should NOT trigger invite emails. Need to control timing — import first, invite when ready.
 
 **Solution:**
-Replace `admin.createUser()` with `admin.inviteUserByEmail()` in the POST `/api/v1/team/leden` route. This creates the user AND sends an invitation email via Resend SMTP.
+Add a "Stuur uitnodiging" button per member in `/team/leden` (edit modal or row action). Button calls `admin.inviteUserByEmail()` for that specific user. Keeps `createUser()` for silent imports.
 
 **Requires:**
-- Set up "Invite User" email template in Supabase (Dutch: "U bent uitgenodigd voor Rijksuitgaven.nl")
-- Update `app/src/app/api/v1/team/leden/route.ts` to use `inviteUserByEmail()`
+- "Stuur uitnodiging" button in `/team/leden` member row or edit modal
+- API endpoint: `POST /api/v1/team/leden/[id]/invite`
+- Set up "Invite User" email template in Supabase (Dutch, branded)
+- Track invite status (optional: `invited_at` column on subscriptions)
 
-**Estimated effort:** 30 minutes
+**Estimated effort:** 1 hour
 
 ---
 
