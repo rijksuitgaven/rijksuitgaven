@@ -1273,6 +1273,40 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-026: Profile Dropdown Menu
+
+**Requirement:** Replace exposed logout button in header with an industry-standard profile dropdown menu, reducing accidental logouts.
+
+**Behavior:**
+
+**Trigger (header, logged-in users):**
+- Generic user icon (person silhouette) + chevron, right side of header
+- Chevron rotates 180° when open
+- Subtle hover state (light gray background)
+
+**Dropdown menu (click to toggle):**
+- "Ingelogd als" label + truncated email address (top section, separated by border)
+- "Mijn profiel" link → `/profiel`
+- Divider
+- "Uitloggen" button in red text with red hover background
+
+**Dismissal:**
+- Click outside closes menu
+- Escape key closes menu
+- Clicking a menu item closes menu
+
+**Not logged in:**
+- Shows "Inloggen" text link (no icon) → `/login`
+
+**Footer change:**
+- Removed email + Uitloggen from footer bottom bar (now redundant)
+
+**Priority:** P1
+
+**Status:** ✅ Implemented 2026-02-10
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload
