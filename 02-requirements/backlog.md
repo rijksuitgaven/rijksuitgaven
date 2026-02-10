@@ -872,3 +872,24 @@ GitHub Projects board as a **read-only dashboard** on top of existing markdown:
 **Decision:** Not needed for launch. Revisit in V1.2 polish phase or when partner needs independent visibility.
 
 ---
+
+### Invite Email for New Members
+
+**Priority:** High (V1.0)
+**Added:** 2026-02-11
+**Status:** ⏳ TODO
+**Type:** Feature
+
+**Problem:**
+When admin adds a new member via `/team/leden`, `admin.createUser()` creates the auth user but does NOT send an email. The user doesn't know they have an account.
+
+**Solution:**
+Replace `admin.createUser()` with `admin.inviteUserByEmail()` in the POST `/api/v1/team/leden` route. This creates the user AND sends an invitation email via Resend SMTP.
+
+**Requires:**
+- Set up "Invite User" email template in Supabase (Dutch: "U bent uitgenodigd voor Rijksuitgaven.nl")
+- Update `app/src/app/api/v1/team/leden/route.ts` to use `inviteUserByEmail()`
+
+**Estimated effort:** 30 minutes
+
+---
