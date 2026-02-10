@@ -28,12 +28,10 @@ function LinkedInIcon({ className }: { className?: string }) {
   )
 }
 
-interface FooterProps {
-  isLoggedIn?: boolean
-  userEmail?: string
-}
+import { useAuth } from '@/hooks/use-auth'
 
-export function Footer({ isLoggedIn = false, userEmail }: FooterProps) {
+export function Footer() {
+  const { isLoggedIn, userEmail } = useAuth()
   const currentYear = new Date().getFullYear()
 
   return (

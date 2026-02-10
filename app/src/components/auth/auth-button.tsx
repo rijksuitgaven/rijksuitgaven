@@ -1,12 +1,10 @@
 'use client'
 
 import Link from 'next/link'
+import { useAuth } from '@/hooks/use-auth'
 
-interface AuthButtonProps {
-  userEmail?: string
-}
-
-export function AuthButton({ userEmail }: AuthButtonProps) {
+export function AuthButton() {
+  const { userEmail } = useAuth()
   if (!userEmail) {
     return (
       <Link

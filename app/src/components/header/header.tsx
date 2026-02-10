@@ -30,11 +30,7 @@ const KOSTEN_MODULES = [
   { id: 'apparaat', name: 'Apparaatskosten' },
 ]
 
-interface HeaderProps {
-  userEmail?: string
-}
-
-export function Header({ userEmail }: HeaderProps) {
+export function Header() {
   const pathname = usePathname()
   const navRef = useRef<HTMLElement>(null)
   const handleHardNav = useHardNavigation()
@@ -79,7 +75,7 @@ export function Header({ userEmail }: HeaderProps) {
               <h1 className="sr-only">Rijksuitgaven</h1>
             </Link>
 
-            <AuthButton userEmail={userEmail} />
+            <AuthButton />
           </div>
         </div>
       </div>
