@@ -17,7 +17,14 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code')
-  const origin = request.nextUrl.origin
+
+  // Railway's reverse proxy sets x-forwarded-host/proto.
+  // request.nextUrl.origin returns the internal container URL (localhost:8080).
+  const forwardedHost = request.headers.get('x-forwarded-host')
+  const forwardedProto = request.headers.get('x-forwarded-proto') ?? 'https'
+  const origin = forwardedHost
+    ? `${forwardedProto}://${forwardedHost}`
+    : request.nextUrl.origin
 
   if (!code) {
     return NextResponse.redirect(new URL('/login?error=no_code', origin))

@@ -62,7 +62,12 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/auth')
   ) {
     console.error(`[MW] REDIRECTING to /login from ${request.nextUrl.pathname} — cookie names: ${authCookies.map(c => c.name).join(', ') || 'NONE'}`)
-    // Page routes: redirect to login
+    // Use forwarded headers for correct public URL (Railway proxy sets these)
+    const forwardedHost = request.headers.get('x-forwarded-host')
+    const forwardedProto = request.headers.get('x-forwarded-proto') ?? 'https'
+    if (forwardedHost) {
+      return NextResponse.redirect(new URL('/login', `${forwardedProto}://${forwardedHost}`))
+    }
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
