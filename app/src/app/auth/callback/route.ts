@@ -1,91 +1,104 @@
 /**
- * Auth Callback — Step 1: Server-side code exchange.
+ * Auth Callback — Server-side code exchange + Set-Cookie.
  *
- * Exchanges the PKCE code for a session (server-side has access to the
- * code_verifier cookie). Then passes tokens to a client-side page that
- * uses createBrowserClient to persist them in cookies.
+ * Uses createServerClient directly (NOT the shared server.ts client)
+ * to capture cookies from the exchange and add them to the response.
  *
- * We return HTML with a JS redirect instead of a 302 because:
- * 1. Set-Cookie headers on 302 redirects don't persist on Railway
- * 2. The client page uses createBrowserClient's serialize() which DOES persist
- * 3. Hash fragments keep tokens out of server logs / Referer headers
+ * Returns a 200 HTML page (not a 302 redirect) because:
+ * - Set-Cookie headers on 302 responses don't persist on Railway's proxy
+ * - A 200 response lets the browser process Set-Cookie before JS redirects
+ * - This is the standard Supabase SSR pattern, adapted for Railway
+ *
+ * Flow: exchange code → Set-Cookie headers on 200 response → JS redirect to /
  */
 
-import { type NextRequest } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code')
 
   if (!code) {
-    return redirectToLogin(request, 'no_code')
+    console.error('[AUTH CALLBACK] No code parameter')
+    return htmlRedirect('/login?error=no_code')
   }
 
-  const supabase = await createClient()
+  // Capture cookies that @supabase/ssr wants to set during exchange
+  const cookiesToSet: { name: string; value: string; options: Record<string, unknown> }[] = []
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookies) {
+          // Don't write to cookieStore — capture for manual response header attachment
+          cookiesToSet.push(...cookies)
+        },
+      },
+    }
+  )
+
   const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
   if (error || !data.session) {
     console.error('[AUTH CALLBACK] Exchange failed:', error?.message ?? 'no session')
-    return redirectToLogin(request, 'exchange_failed')
+    return htmlRedirect('/login?error=exchange_failed')
   }
 
-  const { access_token, refresh_token } = data.session
+  console.error(`[AUTH CALLBACK] Exchange OK — user: ${data.session.user?.email}, cookies to set: ${cookiesToSet.length}`)
 
-  // DIAGNOSTIC: log token lengths to verify exchange returned full tokens
-  console.error(`[AUTH CALLBACK] Exchange OK — access_token: ${access_token.length} chars, refresh_token: ${refresh_token.length} chars`)
+  // Log cookie sizes for debugging
+  for (const cookie of cookiesToSet) {
+    console.error(`[AUTH CALLBACK] Cookie: ${cookie.name} = ${cookie.value.length} chars`)
+  }
 
-  // Pass tokens to client page via URL hash fragment.
-  // Hash fragments are never sent to the server (safe from logs/proxies).
-  // URLSearchParams.toString() encodes values for safe embedding in JS/HTML.
-  const params = new URLSearchParams({
-    access_token,
-    refresh_token,
-  }).toString()
-
+  // Return 200 HTML with Set-Cookie headers.
+  // Browser processes Set-Cookie before executing the JS redirect.
   const html = `<!DOCTYPE html>
 <html lang="nl">
-<head>
-  <meta charset="utf-8">
-  <title>Inloggen...</title>
-</head>
+<head><meta charset="utf-8"><title>Inloggen...</title></head>
 <body>
   <p>Inloggen...</p>
-  <script>
-    window.location.replace('/auth/callback/complete#${params}');
-  </script>
+  <script>window.location.replace('/');</script>
 </body>
 </html>`
 
-  return new Response(html, {
+  const response = new NextResponse(html, {
+    status: 200,
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'no-store, no-cache, must-revalidate',
     },
   })
+
+  // Attach captured cookies as Set-Cookie headers on the 200 response
+  for (const { name, value, options } of cookiesToSet) {
+    response.cookies.set(name, value, options as Record<string, string>)
+  }
+
+  return response
 }
 
-function redirectToLogin(request: NextRequest, error: string) {
-  const url = new URL('/login', request.nextUrl.origin)
-  url.searchParams.set('error', error)
-
-  const html = `<!DOCTYPE html>
+function htmlRedirect(path: string) {
+  return new NextResponse(
+    `<!DOCTYPE html>
 <html lang="nl">
-<head>
-  <meta charset="utf-8">
-  <title>Inloggen mislukt</title>
-</head>
+<head><meta charset="utf-8"><title>Doorsturen...</title></head>
 <body>
-  <p>Inloggen mislukt. Je wordt doorgestuurd...</p>
-  <script>
-    window.location.replace('${url.pathname}${url.search}');
-  </script>
+  <p>Doorsturen...</p>
+  <script>window.location.replace('${path}');</script>
 </body>
-</html>`
-
-  return new Response(html, {
-    headers: {
-      'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'no-store, no-cache, must-revalidate',
-    },
-  })
+</html>`,
+    {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+      },
+    }
+  )
 }
