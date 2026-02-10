@@ -408,8 +408,8 @@ Additional UI/UX work completed after mini sprint was marked complete:
 
 ## Week 6: Auth
 
-**Goal:** Magic Link auth, user migration, protected routes
-**Status:** ✅ CORE COMPLETE (2026-02-10) — user migration remaining
+**Goal:** Magic Link auth, membership management, user migration, protected routes
+**Status:** ✅ AUTH + MEMBERSHIP COMPLETE (2026-02-11) — user migration remaining
 **Requirements:** `02-requirements/auth-requirements.md` (18 requirements, all decisions resolved 2026-02-08)
 
 > **Note:** Overzicht page was originally planned for this week but deferred to V5 (AI Research Mode) on 2026-02-06. V1 expanded row covers the functional need.
@@ -435,18 +435,38 @@ Additional UI/UX work completed after mini sprint was marked complete:
 | CSP updated for Supabase | ✅ Specific project URL |
 | Railway env vars configured | ✅ Supabase keys + BFF_SECRET |
 
+### Membership Management (2026-02-11) ✅
+
+| Task | Status |
+|------|--------|
+| Subscriptions table (030-subscriptions.sql) | ✅ Executed on production |
+| Middleware subscription check + /verlopen redirect | ✅ |
+| useSubscription hook (client-side) | ✅ |
+| Grace period banner (3d monthly / 14d yearly) | ✅ |
+| /verlopen expired page | ✅ |
+| /profiel with plan info | ✅ |
+| /team admin dashboard | ✅ |
+| /team/leden member management | ✅ |
+| Admin API (GET/POST/PATCH) | ✅ |
+| Admin role check + service role client | ✅ |
+| UX-026 profile dropdown | ✅ |
+| SUPABASE_SERVICE_ROLE_KEY on Railway | ✅ |
+
 ### User Migration (remaining)
 
 | Task | Details |
 |------|---------|
-| Export WordPress emails | 50 users from `4yi3uwye_users` |
-| Import to Supabase | Auth → Users → Import |
-| Announcement email | Draft "Welcome to new platform" email |
+| Export WordPress users | ~50 users from ARMember |
+| Import to Supabase | Via /team/leden or CSV script |
+| Branded email template | Magic link + invite template |
+| Send invites | "Stuur uitnodiging" button per member (pre-launch) |
 
 **Week 6 Deliverables:**
 - [x] Magic Link authentication working
-- [ ] 50 users migrated
+- [x] Membership management system
 - [x] Protected routes enforced
+- [ ] 50 users migrated
+- [ ] Branded email templates
 
 ---
 
