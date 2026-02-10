@@ -51,7 +51,15 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/auth')
   ) {
-    // No user, redirect to login
+    // API routes: return 401 JSON (BFF clients expect JSON, not redirects)
+    if (request.nextUrl.pathname.startsWith('/api/')) {
+      return NextResponse.json(
+        { error: 'Niet ingelogd' },
+        { status: 401 }
+      )
+    }
+
+    // Page routes: redirect to login
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
