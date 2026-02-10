@@ -169,7 +169,7 @@ Ready to implement?
 
 **Rule:** If it affects what users see or do, it gets a UX-XXX entry. No exceptions. The entry is created BEFORE code, not after.
 
-**Current UX numbers used:** UX-001 through UX-025. Next available: **UX-026**.
+**Current UX numbers used:** UX-001 through UX-026. Next available: **UX-027**.
 
 ### 4. Cross-Module Consistency
 

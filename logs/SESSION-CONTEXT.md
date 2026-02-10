@@ -1,8 +1,8 @@
 # Session Context
 
-**Last Updated:** 2026-02-10
+**Last Updated:** 2026-02-11
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 6 - User Authentication (COMPLETE 2026-02-10, user migration remaining)
+**Current Sprint:** Week 6 - User Auth + Membership (Auth COMPLETE 2026-02-10, Membership COMPLETE 2026-02-11, user migration remaining)
 
 ---
 
@@ -63,7 +63,9 @@
 - ✅ **2026-02-08:** 11 sessions — docs audit, auth requirements, data validation, UX-019/020/021/022, filter audit, 2 code audits (55+7 fixes), security hardening, betalingen column+filter, expanded row fix
 - ✅ **2026-02-09:** UX-023 GroupingSelect + autocomplete perf + Typesense enrichment + UX-024 type-ahead req (V1.1) + UX-025 feedback button req (V1.0) + beta newsletter + marketing folder + GitHub Projects eval (V1.2)
 - ✅ **2026-02-10:** Week 6 Auth — Magic Link authentication fully implemented and deployed. Supabase Auth + PKCE, Resend SMTP, middleware + BFF guards, login/logout/profile pages, X-BFF-Secret backend protection. **Critical cookie fix:** server-side Set-Cookie headers in Next.js 16 cleared auth cookies — switched to fully client-side PKCE exchange, removed getUser() from layout, made server.ts setAll() no-op. End-to-end tested on production.
+- ✅ **2026-02-11:** Membership management system — subscriptions table, computed status from dates (no cron), grace periods (3d monthly / 14d yearly), `/team` admin dashboard, `/team/leden` member management, `/verlopen` expired page, subscription banner, profile page with plan info. UX-026 profile dropdown completed. SQL migration + env vars configured on production.
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
+- ⏳ **Invite email** — Replace createUser with inviteUserByEmail for new member onboarding
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
 
 ### Active Tasks
@@ -87,20 +89,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/app/auth/callback/page.tsx** ⭐ CREATED (2026-02-10)
-   Client-side PKCE exchange — browser Supabase client handles cookies directly
+1. **app/src/app/team/leden/page.tsx** ⭐ CREATED (2026-02-11)
+   Admin member management — list, add, edit, deactivate/reactivate
 
-2. **app/src/hooks/use-auth.ts** ⭐ CREATED (2026-02-10)
-   Client-side auth hook — getSession() + onAuthStateChange for Header/Footer
+2. **app/src/hooks/use-subscription.ts** ⭐ CREATED (2026-02-11)
+   Client-side subscription hook — status computed from dates
 
-3. **app/src/app/layout.tsx** ⭐ MODIFIED (2026-02-10)
-   Removed getUser() — pure shell, no auth operations
+3. **app/src/lib/supabase/middleware.ts** ⭐ MODIFIED (2026-02-11)
+   Added subscription check — redirects expired users to /verlopen
 
-4. **app/src/lib/supabase/server.ts** ⭐ MODIFIED (2026-02-10)
-   setAll() is now a no-op — prevents Set-Cookie interference from Server Components
+4. **app/src/components/auth/auth-button.tsx** ⭐ MODIFIED (2026-02-11)
+   UX-026: user icon + chevron dropdown with email, profile, logout
 
-5. **app/src/lib/supabase/middleware.ts** ⭐ MODIFIED (2026-02-10)
-   Removed diagnostic logging, stale layout reference
+5. **app/src/app/profiel/page.tsx** ⭐ MODIFIED (2026-02-11)
+   Client component with plan type, end date, grace warning
 
 ---
 
@@ -229,6 +231,7 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.
 | Additional encoding fixes (÷→ö, √ç→ä, ‚Çè→€, ç→§) | 2026-02-07 | Local → Supabase |
 | `REFRESH MATERIALIZED VIEW` (all 7 views) | 2026-02-07 | Supabase |
 | `scripts/sql/029-universal-search-record-count.sql` | 2026-02-08 | Supabase |
+| `scripts/sql/030-subscriptions.sql` | 2026-02-11 | Supabase |
 
 ### Configuration Files
 
@@ -875,7 +878,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-10 - **2 sessions: Auth implementation + critical cookie fix (client-side PKCE)**
+**Last Session:** 2026-02-11 - **UX-026 profile dropdown + Membership management system (design + full implementation)**
 
 **2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 
