@@ -3,7 +3,6 @@
  *
  * Called on every page navigation to refresh expired access tokens.
  * Uses getSession() for fast local JWT validation (no network call).
- * layout.tsx uses getUser() for server-side validation on full page loads.
  *
  * CRITICAL: Must return supabaseResponse (not a fresh NextResponse.next())
  * to preserve Set-Cookie headers from session refresh.
@@ -43,26 +42,14 @@ export async function updateSession(request: NextRequest) {
   // Do not run code between createServerClient and getSession().
   // A simple mistake could make it very hard to debug auth issues.
 
-  // Use getSession() instead of getUser() to avoid a network call to Supabase
-  // on every request (including prefetches). getSession() validates the JWT
-  // locally — fast and reliable. layout.tsx still calls getUser() for full
-  // server-side validation on page loads.
-  const { data, error } = await supabase.auth.getSession()
+  const { data } = await supabase.auth.getSession()
   const session = data?.session
-
-  // TEMPORARY diagnostic logging — remove after auth bug is fixed
-  const authCookies = request.cookies.getAll().filter(c => c.name.includes('auth-token'))
-  const rscHeader = request.headers.get('RSC')
-  const prefetchHeader = request.headers.get('Next-Router-Prefetch')
-  console.error(`[MW] path=${request.nextUrl.pathname} rsc=${rscHeader} prefetch=${prefetchHeader} cookies=${authCookies.length} session=${session ? 'yes' : 'no'} error=${error?.message ?? 'none'}`)
 
   if (
     !session &&
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/auth')
   ) {
-    console.error(`[MW] REDIRECTING to /login from ${request.nextUrl.pathname} — cookie names: ${authCookies.map(c => c.name).join(', ') || 'NONE'}`)
-    // Use forwarded headers for correct public URL (Railway proxy sets these)
     const forwardedHost = request.headers.get('x-forwarded-host')
     const forwardedProto = request.headers.get('x-forwarded-proto') ?? 'https'
     if (forwardedHost) {
