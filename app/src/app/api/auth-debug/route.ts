@@ -65,6 +65,7 @@ export async function GET() {
 
   return NextResponse.json({
     totalCookies: allCookies.length,
+    allCookieNames: allCookies.map(c => c.name),
     authCookies: authCookieSummary,
     getSession: { result: sessionResult, email: sessionEmail, error: sessionError },
     getUser: { result: userResult, email: userEmail, error: userError },
