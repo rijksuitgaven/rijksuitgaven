@@ -45,62 +45,92 @@ export default function AuthCallbackComplete() {
         return
       }
 
-      // Step 3: Clear hash
+      // Step 3: Clear hash from URL
       window.history.replaceState(null, '', '/auth/callback/complete')
       addStep('4. Hash cleared', 'OK', true)
 
-      // Step 4: Cookies BEFORE setSession
-      const cookiesBefore = document.cookie
-      const authCookiesBefore = cookiesBefore.split(';').filter(c => c.includes('auth-token')).length
-      addStep('5. Cookies BEFORE', `${authCookiesBefore} auth cookies`, true)
+      // Step 4: Clear stale cookies BEFORE creating client
+      // Delete any existing auth cookies that might corrupt the singleton
+      const cookiesBefore = document.cookie.split(';').map(c => c.trim())
+      const staleCookies = cookiesBefore.filter(c => c.includes('auth-token'))
+      for (const cookie of staleCookies) {
+        const name = cookie.split('=')[0]
+        document.cookie = `${name}=; path=/; max-age=0`
+      }
+      addStep('5. Stale cookies cleared', `Removed ${staleCookies.length} auth cookies`, true)
 
-      // Step 5: Create client + setSession
+      // Step 5: Verify cookies are cleared
+      const cookiesAfterClear = document.cookie.split(';').filter(c => c.includes('auth-token')).length
+      addStep('6. Auth cookies after clear', `${cookiesAfterClear}`, cookiesAfterClear === 0)
+
+      // Step 6: Create client + signOut to reset internal state
       try {
         const supabase = createClient()
-        addStep('6. Client created', 'OK', true)
+        addStep('7. Client created', 'OK', true)
 
+        // Sign out to reset the singleton's internal auth state
+        // (ignore errors — there may be no valid session to sign out of)
+        try {
+          await supabase.auth.signOut({ scope: 'local' })
+          addStep('8. signOut (local)', 'OK', true)
+        } catch {
+          addStep('8. signOut (local)', 'Error (ignored)', true)
+        }
+
+        // Step 7: Now set the new session
         const { data, error } = await supabase.auth.setSession({
           access_token,
           refresh_token,
         })
 
         if (error) {
-          addStep('7. setSession', `ERROR: ${error.message}`, false)
+          addStep('9. setSession', `ERROR: ${error.message}`, false)
 
-          // Extra diagnostic: try to decode the JWT to see if it's valid
+          // Diagnostic: decode JWT
           try {
             const parts = access_token.split('.')
-            addStep('7a. JWT parts', `${parts.length} parts`, parts.length === 3)
+            addStep('9a. JWT parts', `${parts.length} parts`, parts.length === 3)
             if (parts[1]) {
               const payload = JSON.parse(atob(parts[1]))
               const exp = payload.exp
               const now = Math.floor(Date.now() / 1000)
-              addStep('7b. JWT exp', `exp=${exp}, now=${now}, diff=${exp - now}s`, exp > now)
-              addStep('7c. JWT iss', payload.iss ?? 'missing', !!payload.iss)
+              addStep('9b. JWT exp', `exp=${exp}, now=${now}, diff=${exp - now}s`, exp > now)
+              addStep('9c. JWT sub', payload.sub?.substring(0, 8) ?? 'missing', !!payload.sub)
             }
           } catch (e) {
-            addStep('7a. JWT decode', `Failed: ${e}`, false)
+            addStep('9a. JWT decode', `Failed: ${e}`, false)
+          }
+
+          // Alternative: try getUser directly to check if token is valid
+          try {
+            const { data: userData, error: userError } = await supabase.auth.getUser(access_token)
+            if (userError) {
+              addStep('9d. getUser', `ERROR: ${userError.message}`, false)
+            } else {
+              addStep('9d. getUser', `OK: ${userData.user?.email ?? 'no email'}`, true)
+            }
+          } catch (e) {
+            addStep('9d. getUser', `EXCEPTION: ${e}`, false)
           }
 
           setDone(true)
           return
         }
 
-        addStep('7. setSession', `OK — user: ${data.session?.user?.email ?? 'unknown'}`, true)
+        addStep('9. setSession', `OK — user: ${data.session?.user?.email ?? 'unknown'}`, true)
 
-        // Step 6: Cookies AFTER setSession
+        // Step 8: Verify cookies AFTER setSession
         const cookiesAfter = document.cookie
         const authCookiesAfter = cookiesAfter.split(';').filter(c => c.includes('auth-token')).length
-        addStep('8. Cookies AFTER', `${authCookiesAfter} auth cookies`, authCookiesAfter > 0)
+        addStep('10. Cookies AFTER', `${authCookiesAfter} auth cookies`, authCookiesAfter > 0)
 
-        // Show all cookie names
         const allNames = cookiesAfter.split(';').map(c => c.trim().split('=')[0]).filter(Boolean)
-        addStep('9. Cookie names', allNames.join(', ') || 'NONE', allNames.length > 0)
+        addStep('11. Cookie names', allNames.join(', ') || 'NONE', allNames.length > 0)
 
         addStep('RESULT', 'SUCCESS — ready to redirect', true)
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e)
-        addStep('7. setSession', `EXCEPTION: ${msg}`, false)
+        addStep('9. setSession', `EXCEPTION: ${msg}`, false)
       }
 
       setDone(true)
@@ -111,7 +141,7 @@ export default function AuthCallbackComplete() {
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'monospace', fontSize: '14px', maxWidth: '800px', margin: '0 auto' }}>
-      <h2 style={{ marginBottom: '1rem' }}>Auth Callback — Step 2 (Diagnostic)</h2>
+      <h2 style={{ marginBottom: '1rem' }}>Auth Callback — Step 2 (Diagnostic v2)</h2>
 
       {steps.map((step, i) => (
         <div key={i} style={{

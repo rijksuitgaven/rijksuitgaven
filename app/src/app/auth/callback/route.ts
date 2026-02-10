@@ -31,6 +31,9 @@ export async function GET(request: NextRequest) {
 
   const { access_token, refresh_token } = data.session
 
+  // DIAGNOSTIC: log token lengths to verify exchange returned full tokens
+  console.error(`[AUTH CALLBACK] Exchange OK — access_token: ${access_token.length} chars, refresh_token: ${refresh_token.length} chars`)
+
   // Pass tokens to client page via URL hash fragment.
   // Hash fragments are never sent to the server (safe from logs/proxies).
   // URLSearchParams.toString() encodes values for safe embedding in JS/HTML.
