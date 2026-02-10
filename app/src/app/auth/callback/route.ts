@@ -5,10 +5,9 @@
  * PKCE flow: the code_verifier cookie must be present (same device/browser).
  *
  * IMPORTANT: Uses createServerClient directly (NOT createClient from server.ts)
- * so that cookies are set on the redirect response object. The server.ts pattern
- * uses cookieStore.set() which does NOT merge into NextResponse.redirect().
+ * so that cookies are set on the redirect response object.
  *
- * Handles cross-device failure: if code_verifier is missing, shows Dutch error.
+ * TEMPORARY: Returns JSON diagnostic instead of redirecting (remove after fix).
  */
 
 import { NextResponse } from 'next/server'
@@ -25,52 +24,87 @@ function getOrigin(request: NextRequest): string {
 }
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url)
+  const requestUrl = new URL(request.url)
   const origin = getOrigin(request)
-  const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/'
+  const code = requestUrl.searchParams.get('code')
+  const next = requestUrl.searchParams.get('next') ?? '/'
 
-  if (code) {
-    // Create the redirect response FIRST, then bind cookies to it.
-    // This ensures exchangeCodeForSession() writes Set-Cookie headers
-    // directly on the response the browser receives.
-    const redirectUrl = `${origin}${next}`
-    const response = NextResponse.redirect(redirectUrl)
+  // Collect ALL request info for diagnostics
+  const allCookies = request.cookies.getAll()
+  const codeVerifierCookies = allCookies.filter(c => c.name.includes('code-verifier'))
+  const authCookies = allCookies.filter(c => c.name.includes('auth-token'))
 
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return request.cookies.getAll()
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options)
-            )
-          },
+  const debug: Record<string, unknown> = {
+    step: 'callback-entry',
+    requestUrl: request.url,
+    origin,
+    codePresent: !!code,
+    codeLength: code?.length ?? 0,
+    nextParam: next,
+    totalCookies: allCookies.length,
+    cookieNames: allCookies.map(c => c.name),
+    codeVerifierCookies: codeVerifierCookies.map(c => ({ name: c.name, len: c.value.length })),
+    authCookies: authCookies.map(c => ({ name: c.name, len: c.value.length })),
+    forwardedHost: request.headers.get('x-forwarded-host'),
+    forwardedProto: request.headers.get('x-forwarded-proto'),
+    host: request.headers.get('host'),
+    hashFragment: 'not available server-side',
+  }
+
+  if (!code) {
+    debug.step = 'no-code'
+    debug.action = 'would redirect to /login (no code in URL)'
+    // TEMPORARY: return diagnostic JSON instead of redirecting
+    return NextResponse.json(debug, { status: 200 })
+  }
+
+  // Create the redirect response FIRST, then bind cookies to it
+  const redirectUrl = `${origin}${next}`
+  const response = NextResponse.redirect(redirectUrl)
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
         },
-      }
-    )
+        setAll(cookiesToSet) {
+          debug.setAllCalled = true
+          debug.cookiesBeingSet = cookiesToSet.map(c => ({
+            name: c.name,
+            valueLen: c.value.length,
+            maxAge: c.options?.maxAge,
+          }))
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
 
+  try {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      // Successful login — return redirect WITH session cookies
-      return response
+      debug.step = 'exchange-success'
+      debug.action = `would redirect to ${redirectUrl} with cookies`
+      debug.responseCookies = response.headers.getSetCookie?.() ?? 'getSetCookie not available'
+      // TEMPORARY: return diagnostic JSON instead of redirecting
+      return NextResponse.json(debug, { status: 200 })
     }
 
-    // PKCE cross-device error or expired link
-    const errorMessage = error.message?.includes('code_verifier')
-      ? 'Deze inloglink moet geopend worden in dezelfde browser waar je de link hebt aangevraagd.'
-      : 'Deze inloglink is verlopen of ongeldig. Vraag een nieuwe aan.'
-
-    const loginUrl = new URL('/login', origin)
-    loginUrl.searchParams.set('error', errorMessage)
-    return NextResponse.redirect(loginUrl.toString())
+    debug.step = 'exchange-error'
+    debug.error = error.message
+    debug.errorCode = error.status
+    debug.action = 'would redirect to /login with error'
+  } catch (e) {
+    debug.step = 'exchange-exception'
+    debug.error = e instanceof Error ? e.message : String(e)
   }
 
-  // No code in URL — redirect to login
-  return NextResponse.redirect(`${origin}/login`)
+  // TEMPORARY: return diagnostic JSON instead of redirecting
+  return NextResponse.json(debug, { status: 200 })
 }
