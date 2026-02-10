@@ -893,3 +893,34 @@ Replace `admin.createUser()` with `admin.inviteUserByEmail()` in the POST `/api/
 **Estimated effort:** 30 minutes
 
 ---
+
+### Branded Magic Link Email Template
+
+**Priority:** High (V1.0)
+**Added:** 2026-02-11
+**Status:** ⏳ TODO
+**Type:** Polish
+
+**Problem:**
+Current magic link email is plain text (Supabase default). Looks unprofessional compared to industry standard (e.g., Claude.ai uses logo, centered card layout, prominent CTA button).
+
+**Solution:**
+Create branded HTML email template matching Rijksuitgaven brand identity:
+- Logo at top (hosted image URL)
+- Centered white card on light background
+- Heading: "Inloggen bij Rijksuitgaven.nl"
+- Subtext: "Klik op de onderstaande knop om in te loggen"
+- Pink CTA button (#E62D75): "Inloggen"
+- Footer: "Als u dit niet heeft aangevraagd, kunt u deze e-mail negeren."
+- Contact info in footer
+
+**Implementation:**
+- Paste HTML into Supabase Dashboard > Authentication > Email Templates > "Magic Link"
+- Also update "Invite User" template with same branding (for member invites)
+- Logo must be hosted at a public URL (e.g., `https://beta.rijksuitgaven.nl/logo.png`)
+
+**Reference:** Claude.ai email style — logo, centered card, large button, minimal text
+
+**Estimated effort:** 1 hour (HTML template + testing)
+
+---
