@@ -1,15 +1,15 @@
 /**
- * Auth Callback — Server-side code exchange + Set-Cookie.
+ * Auth Callback — Standard Supabase PKCE code exchange.
  *
- * Uses createServerClient directly (NOT the shared server.ts client)
- * to capture cookies from the exchange and add them to the response.
+ * Pattern: create redirect response FIRST, then create Supabase client
+ * with setAll that writes cookies directly to the response object.
  *
- * Returns a 200 HTML page (not a 302 redirect) because:
- * - Set-Cookie headers on 302 responses don't persist on Railway's proxy
- * - A 200 response lets the browser process Set-Cookie before JS redirects
- * - This is the standard Supabase SSR pattern, adapted for Railway
+ * Uses response.cookies.set() (proven to work via /api/cookie-test)
+ * instead of cookieStore.set() from next/headers (which doesn't reliably
+ * attach to the returned response).
  *
- * Flow: exchange code → Set-Cookie headers on 200 response → JS redirect to /
+ * This matches the pattern used by working Railway-deployed apps
+ * (AgentDesk, fpl-chat-app, qwikfinx).
  */
 
 import { createServerClient } from '@supabase/ssr'
@@ -17,14 +17,14 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code')
+  const origin = request.nextUrl.origin
 
   if (!code) {
-    console.error('[AUTH CALLBACK] No code parameter')
-    return htmlRedirect('/login?error=no_code')
+    return NextResponse.redirect(new URL('/login?error=no_code', origin))
   }
 
-  // Capture cookies that @supabase/ssr wants to set during exchange
-  const cookiesToSet: { name: string; value: string; options: Record<string, unknown> }[] = []
+  // Create the redirect response FIRST — cookies will be set on this object
+  const response = NextResponse.redirect(new URL('/', origin))
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -34,71 +34,22 @@ export async function GET(request: NextRequest) {
         getAll() {
           return request.cookies.getAll()
         },
-        setAll(cookies) {
-          // Don't write to cookieStore — capture for manual response header attachment
-          cookiesToSet.push(...cookies)
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            // Set directly on the response object — proven to work via cookie-test
+            response.cookies.set(name, value, options)
+          })
         },
       },
     }
   )
 
-  const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+  const { error } = await supabase.auth.exchangeCodeForSession(code)
 
-  if (error || !data.session) {
-    console.error('[AUTH CALLBACK] Exchange failed:', error?.message ?? 'no session')
-    return htmlRedirect('/login?error=exchange_failed')
-  }
-
-  console.error(`[AUTH CALLBACK] Exchange OK — user: ${data.session.user?.email}, cookies to set: ${cookiesToSet.length}`)
-
-  // Log cookie sizes for debugging
-  for (const cookie of cookiesToSet) {
-    console.error(`[AUTH CALLBACK] Cookie: ${cookie.name} = ${cookie.value.length} chars`)
-  }
-
-  // Return 200 HTML with Set-Cookie headers.
-  // Browser processes Set-Cookie before executing the JS redirect.
-  const html = `<!DOCTYPE html>
-<html lang="nl">
-<head><meta charset="utf-8"><title>Inloggen...</title></head>
-<body>
-  <p>Inloggen...</p>
-  <script>window.location.replace('/');</script>
-</body>
-</html>`
-
-  const response = new NextResponse(html, {
-    status: 200,
-    headers: {
-      'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'no-store, no-cache, must-revalidate',
-    },
-  })
-
-  // Attach captured cookies as Set-Cookie headers on the 200 response
-  for (const { name, value, options } of cookiesToSet) {
-    response.cookies.set(name, value, options as Record<string, string>)
+  if (error) {
+    console.error('[AUTH CALLBACK] Exchange failed:', error.message)
+    return NextResponse.redirect(new URL('/login?error=exchange_failed', origin))
   }
 
   return response
-}
-
-function htmlRedirect(path: string) {
-  return new NextResponse(
-    `<!DOCTYPE html>
-<html lang="nl">
-<head><meta charset="utf-8"><title>Doorsturen...</title></head>
-<body>
-  <p>Doorsturen...</p>
-  <script>window.location.replace('${path}');</script>
-</body>
-</html>`,
-    {
-      status: 200,
-      headers: {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
-      },
-    }
-  )
 }
