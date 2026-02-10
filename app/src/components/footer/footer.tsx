@@ -29,16 +29,9 @@ function LinkedInIcon({ className }: { className?: string }) {
 }
 
 import { useAuth } from '@/hooks/use-auth'
-import { createClient } from '@/lib/supabase/client'
 
 export function Footer() {
-  const { isLoggedIn, userEmail } = useAuth()
-
-  async function handleLogout() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    window.location.replace('/login')
-  }
+  const { isLoggedIn } = useAuth()
   const currentYear = new Date().getFullYear()
 
   return (
@@ -204,16 +197,8 @@ export function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-white/60">
+          <div className="flex items-center justify-center text-sm text-white/60">
             <p suppressHydrationWarning>&copy; {currentYear} Rijksuitgaven &ndash; Alle rechten voorbehouden.</p>
-            {isLoggedIn && userEmail && (
-              <div className="flex items-center gap-4">
-                <span>{userEmail}</span>
-                <button onClick={handleLogout} className="text-white/80 hover:text-white transition-colors">
-                  Uitloggen
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </div>
