@@ -4,10 +4,10 @@
  * Exchanges the authorization code from the Magic Link for a session.
  * PKCE flow: the code_verifier cookie must be present (same device/browser).
  *
- * IMPORTANT: Returns a 200 HTML page with Set-Cookie headers + JS redirect
- * instead of a 307 redirect. Railway's reverse proxy strips Set-Cookie
- * headers from redirect responses, so we must use a 200 response to ensure
- * the browser receives and stores the auth cookies.
+ * Sets session cookies via client-side JavaScript (document.cookie) instead of
+ * Set-Cookie response headers. Railway's reverse proxy does not reliably forward
+ * Set-Cookie headers to the browser, so we embed cookie assignments in an HTML
+ * page that auto-redirects after setting them.
  */
 
 import { NextResponse } from 'next/server'
@@ -23,31 +23,6 @@ function getOrigin(request: NextRequest): string {
   return new URL(request.url).origin
 }
 
-/**
- * Returns a 200 HTML page that sets cookies and redirects via JS.
- * This bypasses proxy Set-Cookie stripping on redirect responses.
- */
-function redirectWithCookies(url: string, response: NextResponse): NextResponse {
-  const html = `<!DOCTYPE html>
-<html><head>
-<meta http-equiv="refresh" content="0;url=${url}">
-<script>window.location.replace(${JSON.stringify(url)})</script>
-</head><body>Redirecting...</body></html>`
-
-  const htmlResponse = new NextResponse(html, {
-    status: 200,
-    headers: { 'Content-Type': 'text/html' },
-  })
-
-  // Copy all cookies from the original response to the HTML response
-  const setCookieHeaders = response.headers.getSetCookie()
-  for (const cookie of setCookieHeaders) {
-    htmlResponse.headers.append('Set-Cookie', cookie)
-  }
-
-  return htmlResponse
-}
-
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const origin = getOrigin(request)
@@ -55,9 +30,10 @@ export async function GET(request: NextRequest) {
   const next = requestUrl.searchParams.get('next') ?? '/'
 
   if (code) {
-    // Create a temporary redirect response to collect cookies on
     const redirectUrl = `${origin}${next}`
-    const cookieResponse = NextResponse.redirect(redirectUrl)
+
+    // Capture cookies that @supabase/ssr wants to set during exchange
+    const pendingCookies: { name: string; value: string; options: Record<string, unknown> }[] = []
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -68,9 +44,7 @@ export async function GET(request: NextRequest) {
             return request.cookies.getAll()
           },
           setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieResponse.cookies.set(name, value, options)
-            )
+            pendingCookies.push(...cookiesToSet)
           },
         },
       }
@@ -79,8 +53,31 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      // Return 200 HTML with cookies + JS redirect (bypasses proxy stripping)
-      return redirectWithCookies(redirectUrl, cookieResponse)
+      // Build document.cookie statements for client-side cookie setting.
+      // Each cookie from @supabase/ssr gets a separate document.cookie assignment.
+      const cookieJS = pendingCookies.map(({ name, value, options }) => {
+        const parts = [`${name}=${value}`]
+        if (options.path) parts.push(`path=${options.path}`)
+        if (typeof options.maxAge === 'number') parts.push(`max-age=${options.maxAge}`)
+        if (options.sameSite) parts.push(`samesite=${options.sameSite}`)
+        if (options.secure) parts.push('secure')
+        return `document.cookie=${JSON.stringify(parts.join('; '))};`
+      }).join('\n')
+
+      const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><script>
+${cookieJS}
+window.location.replace(${JSON.stringify(redirectUrl)});
+</script></head>
+<body><p>Redirecting...</p></body></html>`
+
+      return new NextResponse(html, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+        },
+      })
     }
 
     // PKCE cross-device error or expired link
