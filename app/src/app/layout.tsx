@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans_Condensed, Brawler } from "next/font/google";
 import { CookieBanner } from "@/components/cookie-banner";
 import { MobileBanner } from "@/components/mobile-banner";
+import { SubscriptionBanner } from "@/components/subscription-banner";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import "./globals.css";
@@ -47,6 +48,7 @@ export default function RootLayout({
         style={{ fontFamily: "var(--font-body), sans-serif" }}
       >
         <Header />
+        <SubscriptionBanner />
         {children}
         <Footer />
         <CookieBanner />
