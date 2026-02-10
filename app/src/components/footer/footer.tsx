@@ -29,9 +29,16 @@ function LinkedInIcon({ className }: { className?: string }) {
 }
 
 import { useAuth } from '@/hooks/use-auth'
+import { createClient } from '@/lib/supabase/client'
 
 export function Footer() {
   const { isLoggedIn, userEmail } = useAuth()
+
+  async function handleLogout() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    window.location.replace('/login')
+  }
   const currentYear = new Date().getFullYear()
 
   return (
@@ -202,9 +209,9 @@ export function Footer() {
             {isLoggedIn && userEmail && (
               <div className="flex items-center gap-4">
                 <span>{userEmail}</span>
-                <Link href="/auth/logout" className="text-white/80 hover:text-white transition-colors">
+                <button onClick={handleLogout} className="text-white/80 hover:text-white transition-colors">
                   Uitloggen
-                </Link>
+                </button>
               </div>
             )}
           </div>
