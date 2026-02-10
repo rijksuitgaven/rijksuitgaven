@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-02-10
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 6 - User Authentication (CORE COMPLETE 2026-02-10, user migration remaining)
+**Current Sprint:** Week 6 - User Authentication (COMPLETE 2026-02-10, user migration remaining)
 
 ---
 
@@ -62,7 +62,7 @@
 - ✅ **Mini Sprint COMPLETE** (2026-02-06): All Week 3-5 deliverables done
 - ✅ **2026-02-08:** 11 sessions — docs audit, auth requirements, data validation, UX-019/020/021/022, filter audit, 2 code audits (55+7 fixes), security hardening, betalingen column+filter, expanded row fix
 - ✅ **2026-02-09:** UX-023 GroupingSelect + autocomplete perf + Typesense enrichment + UX-024 type-ahead req (V1.1) + UX-025 feedback button req (V1.0) + beta newsletter + marketing folder + GitHub Projects eval (V1.2)
-- ✅ **2026-02-10:** Week 6 Auth — Magic Link authentication fully implemented and deployed. Supabase Auth + PKCE, Resend SMTP, middleware + BFF guards, login/logout/profile pages, X-BFF-Secret backend protection. End-to-end tested on production.
+- ✅ **2026-02-10:** Week 6 Auth — Magic Link authentication fully implemented and deployed. Supabase Auth + PKCE, Resend SMTP, middleware + BFF guards, login/logout/profile pages, X-BFF-Secret backend protection. **Critical cookie fix:** server-side Set-Cookie headers in Next.js 16 cleared auth cookies — switched to fully client-side PKCE exchange, removed getUser() from layout, made server.ts setAll() no-op. End-to-end tested on production.
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
 
@@ -87,20 +87,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **backend/app/services/modules.py** ⭐ MODIFIED (2026-02-09)
-   Typesense enrichment: `_typesense_search_recipient_keys()` + integraal hybrid search
+1. **app/src/app/auth/callback/page.tsx** ⭐ CREATED (2026-02-10)
+   Client-side PKCE exchange — browser Supabase client handles cookies directly
 
-2. **scripts/typesense/collections.json** ⭐ MODIFIED (2026-02-09)
-   Added y2016-y2024, years_with_data, record_count to recipients schema
+2. **app/src/hooks/use-auth.ts** ⭐ CREATED (2026-02-10)
+   Client-side auth hook — getSession() + onAuthStateChange for Header/Footer
 
-3. **scripts/typesense/sync_to_typesense.py** ⭐ MODIFIED (2026-02-09)
-   Updated SQL + doc mapping for year amounts from universal_search
+3. **app/src/app/layout.tsx** ⭐ MODIFIED (2026-02-10)
+   Removed getUser() — pure shell, no auth operations
 
-4. **app/src/components/data-table/expanded-row.tsx** ⭐ MODIFIED (2026-02-09)
-   UX-023: GroupingSelect component replacing native select, counts fetch
+4. **app/src/lib/supabase/server.ts** ⭐ MODIFIED (2026-02-10)
+   setAll() is now a no-op — prevents Set-Cookie interference from Server Components
 
-5. **backend/app/api/v1/search.py** ⭐ MODIFIED (2026-02-09)
-   Parallelized search_recipients + search_keywords via asyncio.gather
+5. **app/src/lib/supabase/middleware.ts** ⭐ MODIFIED (2026-02-10)
+   Removed diagnostic logging, stale layout reference
 
 ---
 
@@ -875,7 +875,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-09 - **4 sessions: UX-023/perf/Typesense enrichment + UX-024/025 reqs + newsletter + marketing + analytics GDPR analysis**
+**Last Session:** 2026-02-10 - **2 sessions: Auth implementation + critical cookie fix (client-side PKCE)**
 
 **2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 
