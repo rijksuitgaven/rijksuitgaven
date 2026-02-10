@@ -19,15 +19,11 @@ export async function createClient() {
         getAll() {
           return cookieStore.getAll()
         },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {
-            // The `setAll` method is called from a Server Component.
-            // This can be ignored if middleware refreshes user sessions.
-          }
+        setAll() {
+          // Intentionally a no-op. In Next.js 16 dynamic rendering,
+          // cookieStore.set() succeeds silently (no error thrown) and adds
+          // Set-Cookie headers that can clear auth cookies. Middleware
+          // handles all cookie updates via its own Supabase client.
         },
       },
     }
