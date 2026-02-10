@@ -47,15 +47,21 @@ export async function updateSession(request: NextRequest) {
   // on every request (including prefetches). getSession() validates the JWT
   // locally — fast and reliable. layout.tsx still calls getUser() for full
   // server-side validation on page loads.
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
+  const { data, error } = await supabase.auth.getSession()
+  const session = data?.session
+
+  // TEMPORARY diagnostic logging — remove after auth bug is fixed
+  const authCookies = request.cookies.getAll().filter(c => c.name.includes('auth-token'))
+  const rscHeader = request.headers.get('RSC')
+  const prefetchHeader = request.headers.get('Next-Router-Prefetch')
+  console.error(`[MW] path=${request.nextUrl.pathname} rsc=${rscHeader} prefetch=${prefetchHeader} cookies=${authCookies.length} session=${session ? 'yes' : 'no'} error=${error?.message ?? 'none'}`)
 
   if (
     !session &&
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/auth')
   ) {
+    console.error(`[MW] REDIRECTING to /login from ${request.nextUrl.pathname} — cookie names: ${authCookies.map(c => c.name).join(', ') || 'NONE'}`)
     // Page routes: redirect to login
     const url = request.nextUrl.clone()
     url.pathname = '/login'
