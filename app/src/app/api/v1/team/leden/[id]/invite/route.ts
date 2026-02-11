@@ -85,8 +85,8 @@ export async function POST(
         to: sub.email,
         subject: 'Uitnodiging voor Rijksuitgaven',
         html: `
-          <p>Hoi ${sub.first_name},</p>
-          <p>Je bent uitgenodigd voor Rijksuitgaven. Klik op de link hieronder om in te loggen:</p>
+          <p>Beste ${sub.first_name},</p>
+          <p>U bent uitgenodigd voor Rijksuitgaven. Klik op de link hieronder om in te loggen:</p>
           <p><a href="${linkData.properties.action_link}" style="display:inline-block;padding:12px 24px;background:#c81e6a;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">Inloggen bij Rijksuitgaven</a></p>
           <p>Of kopieer deze link:<br/>${linkData.properties.action_link}</p>
           <p>Met vriendelijke groet,<br/>Team Rijksuitgaven</p>

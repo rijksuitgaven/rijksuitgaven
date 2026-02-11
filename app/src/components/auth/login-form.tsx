@@ -19,7 +19,7 @@ export function LoginForm() {
     if (error) {
       const errorMessages: Record<string, string> = {
         no_code: 'De inloglink is ongeldig. Probeer opnieuw in te loggen.',
-        cross_device: 'De inloglink moet op hetzelfde apparaat worden geopend als waar je hem hebt aangevraagd.',
+        cross_device: 'De inloglink moet op hetzelfde apparaat worden geopend als waar u deze hebt aangevraagd.',
         exchange_failed: 'De inloglink is verlopen of al gebruikt. Vraag een nieuwe aan.',
       }
       setErrorMessage(errorMessages[error] || 'Er ging iets mis bij het inloggen.')
@@ -53,11 +53,27 @@ export function LoginForm() {
       })
 
       if (error) {
+        // Rate limiting — show actual error
         if (error.message?.includes('rate') || error.status === 429) {
           setErrorMessage('Te veel pogingen. Probeer het over een paar minuten opnieuw.')
-        } else {
-          setErrorMessage('Er ging iets mis. Controleer je internetverbinding en probeer het opnieuw.')
+          setState('error')
+          return
         }
+        // User not found (shouldCreateUser: false) — show success anyway
+        // to prevent email enumeration attacks
+        if (error.message?.includes('Signups not allowed') || error.message?.includes('user not found') || error.status === 422) {
+          setState('success')
+          setCooldown(60)
+          const interval = setInterval(() => {
+            setCooldown(prev => {
+              if (prev <= 1) { clearInterval(interval); return 0 }
+              return prev - 1
+            })
+          }, 1000)
+          return
+        }
+        // Genuine error
+        setErrorMessage('Er ging iets mis. Probeer het later opnieuw.')
         setState('error')
         return
       }
@@ -75,7 +91,7 @@ export function LoginForm() {
         })
       }, 1000)
     } catch {
-      setErrorMessage('Er ging iets mis. Controleer je internetverbinding en probeer het opnieuw.')
+      setErrorMessage('Er ging iets mis. Controleer uw internetverbinding en probeer het opnieuw.')
       setState('error')
     }
   }, [email, cooldown])
@@ -106,14 +122,16 @@ export function LoginForm() {
       </div>
 
       {state === 'error' && errorMessage && (
-        <p className="text-sm text-red-600">{errorMessage}</p>
+        <div className="rounded-md bg-red-50 p-3">
+          <p className="text-sm text-red-800">{errorMessage}</p>
+        </div>
       )}
 
       {state === 'success' && (
         <div className="rounded-md bg-green-50 p-3">
           <p className="text-sm text-green-800">
             Inloglink verzonden naar <strong>{email.trim().toLowerCase()}</strong>.
-            Check ook je spam folder.
+            Check ook uw spam folder.
           </p>
         </div>
       )}
@@ -134,7 +152,7 @@ export function LoginForm() {
 
       {state === 'success' && (
         <p className="text-xs text-[var(--navy-medium)] text-center">
-          Geen e-mail ontvangen? Check je spam folder of probeer het opnieuw na de wachttijd.
+          Geen e-mail ontvangen? Check uw spam folder of probeer het opnieuw na de wachttijd.
         </p>
       )}
     </form>

@@ -58,7 +58,7 @@ function CallbackHandler() {
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center">
-      <p className="text-[var(--navy-medium)]">Even geduld, je wordt ingelogd...</p>
+      <p className="text-[var(--navy-medium)]">Even geduld, u wordt ingelogd...</p>
     </div>
   )
 }
@@ -67,7 +67,7 @@ export default function AuthCallbackPage() {
   return (
     <Suspense fallback={
       <div className="min-h-[60vh] flex items-center justify-center">
-        <p className="text-[var(--navy-medium)]">Even geduld, je wordt ingelogd...</p>
+        <p className="text-[var(--navy-medium)]">Even geduld, u wordt ingelogd...</p>
       </div>
     }>
       <CallbackHandler />

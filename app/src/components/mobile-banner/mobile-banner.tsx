@@ -116,7 +116,7 @@ export function MobileBanner() {
 
           {/* Subtle hint */}
           <p className="text-xs text-white/50 mt-4">
-            Je ziet dit bericht één keer
+            U ziet dit bericht één keer
           </p>
         </div>
       </div>

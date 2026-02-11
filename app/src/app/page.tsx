@@ -60,11 +60,11 @@ function ModuleCard({ module }: { module: typeof ontvangers[number] }) {
       <h3 className="text-xl font-semibold text-[var(--navy-dark)]">
         {module.display}
       </h3>
+      <p className="text-base font-semibold text-[var(--navy-dark)] mt-1">
+        {module.stat}
+      </p>
       <p className="text-base text-[var(--muted-foreground)] mt-1">
         {module.description}
-      </p>
-      <p className="text-sm text-[var(--navy-medium)] mt-2">
-        {module.stat}
       </p>
     </Link>
   )
@@ -97,7 +97,9 @@ export default function Home() {
         <p className="text-sm font-medium uppercase tracking-wide text-[var(--muted-foreground)] mb-4 mt-10">
           Kosten
         </p>
-        <ModuleCard module={kosten[0]} />
+        <div className="grid gap-4 md:grid-cols-2">
+          <ModuleCard module={kosten[0]} />
+        </div>
       </main>
     </div>
   )

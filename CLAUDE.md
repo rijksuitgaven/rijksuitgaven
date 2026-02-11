@@ -369,6 +369,14 @@ SELECT * FROM t;
 - Always ANALYZE after creating materialized views
 - Use cursor pagination, not OFFSET
 
+### Dutch Language: Formal "u/uw" (MANDATORY)
+All user-facing Dutch text MUST use the formal form:
+- **"u"** not "je" (subject/object)
+- **"uw"** not "jouw/je" (possessive)
+- **"Beste"** not "Hoi/Hey" (greeting in emails)
+- Example: "Voer uw e-mailadres in" NOT "Voer je e-mailadres in"
+- Exception: `placeholder="jouw@email.nl"` is acceptable (UX convention)
+
 ### Security
 - No hardcoded secrets
 - Validate all inputs (Zod)

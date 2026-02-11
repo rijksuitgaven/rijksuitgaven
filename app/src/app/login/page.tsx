@@ -29,7 +29,7 @@ export default async function LoginPage() {
             Inloggen
           </h1>
           <p className="mt-2 text-sm text-[var(--navy-medium)]">
-            Voer je e-mailadres in om een inloglink te ontvangen.
+            Voer uw e-mailadres in om een inloglink te ontvangen.
           </p>
         </div>
         <LoginForm />

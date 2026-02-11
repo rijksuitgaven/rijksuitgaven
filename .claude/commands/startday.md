@@ -1,5 +1,17 @@
 Start of day briefing. As Project Manager, prepare the session by reviewing all documentation and presenting actionable next steps.
 
+## FIRST ACTION: Start Development Server (BEFORE anything else)
+
+**Do this IMMEDIATELY — before reading docs, before presenting briefing.**
+
+Start the Next.js dev server in the background so the user can test changes locally without waiting for Railway deploys (~5 min each):
+
+```bash
+cd /Users/michielmaandag/SynologyDrive/code/watchtower/rijksuitgaven/app && npm run dev
+```
+
+Run this in the background. Confirm server is running on http://localhost:3000 (or :3001 if 3000 is occupied). If it's already running, note that.
+
 ## MANDATORY: Read First (Do Not Skip)
 
 You MUST read these files before presenting the briefing:
@@ -75,17 +87,7 @@ You MUST read these files before presenting the briefing:
 
 This ensures the log exists from the start and can be updated throughout the session.
 
-## 3. Start Development Server
-
-Start the Next.js dev server so the user can test changes locally:
-
-```bash
-cd /Users/michielmaandag/SynologyDrive/code/watchtower/rijksuitgaven/app && npm run dev
-```
-
-Run this in the background. Confirm server is running on http://localhost:3000 (or :3001 if 3000 is occupied).
-
-## 4. Additional Reading (Based on Current Phase)
+## 3. Additional Reading (Based on Current Phase)
 
 If phase involves UI/wireframes, also read:
 - `03-wordpress-baseline/current-ui-overview.md`
@@ -94,14 +96,14 @@ If phase involves UI/wireframes, also read:
 If phase involves architecture decisions, also read:
 - `04-target-architecture/architecture-impact-analysis.md`
 
-## 5. Check for Blockers
+## 4. Check for Blockers
 
 Identify any:
 - Unresolved decisions blocking progress
 - Missing information needed
 - Dependencies on external input
 
-## 6. Present Session Briefing
+## 5. Present Session Briefing
 
 Output a structured briefing:
 
@@ -130,7 +132,7 @@ Output a structured briefing:
 Ready to begin?
 ```
 
-## 7. Await User Direction
+## 6. Await User Direction
 
 After presenting the briefing, wait for user to:
 - Confirm the plan
