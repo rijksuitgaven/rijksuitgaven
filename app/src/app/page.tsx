@@ -6,27 +6,33 @@ import Link from 'next/link'
 const ontvangers = [
   {
     name: 'integraal',
-    display: 'Integraal Overzicht',
+    display: 'Zoeken in alle modules',
     description: 'Alle modules gecombineerd op ontvanger.',
-    stat: '463.000+ ontvangers · 6 databronnen',
+    stat: '€1.621 mld · 463.000+ ontvangers',
   },
   {
     name: 'instrumenten',
     display: 'Financiële Instrumenten',
     description: 'Subsidies, bijdragen en bekostigingen aan organisaties en medeoverheden.',
-    stat: '€1,5 biljoen · 2016–2024',
+    stat: '€1.474 mld · 2016–2024',
+  },
+  {
+    name: 'inkoop',
+    display: 'Inkoopuitgaven',
+    description: 'Goederen en diensten ingekocht door de rijksoverheid.',
+    stat: '€85 mld · 2017–2023',
   },
   {
     name: 'provincie',
-    display: 'Provinciale Subsidies',
+    display: 'Provinciale subsidieregisters',
     description: 'Subsidieregisters van Drenthe, Friesland, Gelderland, Limburg, Noord-Brabant, Noord-Holland, Overijssel, Utrecht, Zeeland en Zuid-Holland.',
-    stat: '10 provincies · 2018–2024',
+    stat: '€14 mld · 2018–2024',
   },
   {
     name: 'gemeente',
-    display: 'Gemeentelijke Subsidies',
+    display: 'Gemeentelijke subsidieregisters',
     description: 'Subsidieregisters van Almere, Amersfoort, Amsterdam, Breda, Den Haag, Groningen, Haarlem, Tilburg en Utrecht.',
-    stat: '9 gemeentes · 2018–2024',
+    stat: '€13 mld · 2018–2024',
   },
   {
     name: 'publiek',
@@ -42,12 +48,6 @@ const kosten = [
     display: 'Apparaatsuitgaven',
     description: 'Personeel- en materieelkosten van de rijksoverheid.',
     stat: '€147 mld · 2016–2024',
-  },
-  {
-    name: 'inkoop',
-    display: 'Inkoopuitgaven',
-    description: 'Goederen en diensten ingekocht door de rijksoverheid.',
-    stat: '€85 mld · 2017–2023',
   },
 ]
 
@@ -88,24 +88,16 @@ export default function Home() {
           Ontvangers
         </p>
         <div className="grid gap-4 md:grid-cols-2 mb-4">
-          {ontvangers.slice(0, 4).map((module) => (
+          {ontvangers.slice(0, 6).map((module) => (
             <ModuleCard key={module.name} module={module} />
           ))}
-        </div>
-        {/* Publiek — full-width (5th card, long title) */}
-        <div className="mb-10">
-          <ModuleCard module={ontvangers[4]} />
         </div>
 
         {/* Kosten section */}
-        <p className="text-sm font-medium uppercase tracking-wide text-[var(--muted-foreground)] mb-4">
+        <p className="text-sm font-medium uppercase tracking-wide text-[var(--muted-foreground)] mb-4 mt-10">
           Kosten
         </p>
-        <div className="grid gap-4 md:grid-cols-2">
-          {kosten.map((module) => (
-            <ModuleCard key={module.name} module={module} />
-          ))}
-        </div>
+        <ModuleCard module={kosten[0]} />
       </main>
     </div>
   )
