@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import Link from 'next/link'
+import { TeamNav } from '@/components/team-nav'
 
 interface Member {
   id: string
@@ -348,15 +349,10 @@ export default function TeamLedenPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <div className="flex items-center gap-3 mb-1">
-            <Link href="/team" className="text-sm text-[var(--navy-medium)] hover:text-[var(--navy-dark)]">&larr; Dashboard</Link>
-          </div>
-          <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
-            Leden
-          </h1>
-        </div>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
+          Team
+        </h1>
         <button
           onClick={() => setShowForm(prev => !prev)}
           className="px-4 py-2 bg-[var(--pink)] text-white rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
@@ -364,6 +360,7 @@ export default function TeamLedenPage() {
           {showForm ? 'Verbergen' : 'Nieuw lid'}
         </button>
       </div>
+      <TeamNav />
 
       {showForm && (
         <div className="mb-6">

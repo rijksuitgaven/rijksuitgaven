@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import Link from 'next/link'
+import { TeamNav } from '@/components/team-nav'
 
 interface Member {
   id: string
@@ -83,17 +84,10 @@ export default function TeamDashboardPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
-          Dashboard
-        </h1>
-        <Link
-          href="/team/leden"
-          className="px-4 py-2 bg-[var(--pink)] text-white rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
-        >
-          Leden beheren
-        </Link>
-      </div>
+      <h1 className="text-2xl font-bold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
+        Team
+      </h1>
+      <TeamNav />
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
