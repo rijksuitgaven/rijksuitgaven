@@ -79,21 +79,24 @@ export async function POST(request: NextRequest) {
   if (!email || !first_name || !last_name || !plan || !start_date) {
     return NextResponse.json({ error: 'Verplichte velden: email, first_name, last_name, plan, start_date' }, { status: 400 })
   }
-  if (!['monthly', 'yearly'].includes(plan)) {
-    return NextResponse.json({ error: 'Plan moet "monthly" of "yearly" zijn' }, { status: 400 })
+  if (!['monthly', 'yearly', 'trial'].includes(plan)) {
+    return NextResponse.json({ error: 'Plan moet "monthly", "yearly" of "trial" zijn' }, { status: 400 })
   }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(start_date)) {
     return NextResponse.json({ error: 'start_date moet YYYY-MM-DD formaat zijn' }, { status: 400 })
   }
   // Validate role if provided (defaults to 'member' in DB)
-  if (role && !['member', 'admin'].includes(role)) {
-    return NextResponse.json({ error: 'Role moet "member" of "admin" zijn' }, { status: 400 })
+  if (role && !['member', 'trial', 'admin'].includes(role)) {
+    return NextResponse.json({ error: 'Role moet "member", "trial" of "admin" zijn' }, { status: 400 })
   }
 
   // Calculate end_date and grace_ends_at
   const start = new Date(start_date + 'T00:00:00Z')
   let endDate: Date
-  if (plan === 'monthly') {
+  if (plan === 'trial') {
+    endDate = new Date(start)
+    endDate.setUTCDate(endDate.getUTCDate() + 14)
+  } else if (plan === 'monthly') {
     endDate = new Date(start)
     endDate.setUTCMonth(endDate.getUTCMonth() + 1)
   } else {
@@ -101,7 +104,7 @@ export async function POST(request: NextRequest) {
     endDate.setUTCFullYear(endDate.getUTCFullYear() + 1)
   }
 
-  const graceDays = plan === 'monthly' ? 3 : 14
+  const graceDays = plan === 'trial' ? 0 : plan === 'monthly' ? 3 : 14
   const graceEndsAt = new Date(endDate)
   graceEndsAt.setUTCDate(graceEndsAt.getUTCDate() + graceDays)
 

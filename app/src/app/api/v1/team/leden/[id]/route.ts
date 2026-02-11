@@ -59,14 +59,14 @@ export async function PATCH(
   }
 
   // Validate plan if provided
-  if ('plan' in updates && !['monthly', 'yearly'].includes(updates.plan as string)) {
-    return NextResponse.json({ error: 'Plan moet "monthly" of "yearly" zijn' }, { status: 400 })
+  if ('plan' in updates && !['monthly', 'yearly', 'trial'].includes(updates.plan as string)) {
+    return NextResponse.json({ error: 'Plan moet "monthly", "yearly" of "trial" zijn' }, { status: 400 })
   }
 
   // Validate role if provided
   if ('role' in updates) {
-    if (!['member', 'admin'].includes(updates.role as string)) {
-      return NextResponse.json({ error: 'Role moet "member" of "admin" zijn' }, { status: 400 })
+    if (!['member', 'trial', 'admin'].includes(updates.role as string)) {
+      return NextResponse.json({ error: 'Role moet "member", "trial" of "admin" zijn' }, { status: 400 })
     }
 
     // Prevent admin from demoting themselves (would lock them out)

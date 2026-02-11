@@ -12,8 +12,8 @@ interface Member {
   first_name: string
   last_name: string
   organization: string | null
-  plan: 'monthly' | 'yearly'
-  role: 'member' | 'admin'
+  plan: 'monthly' | 'yearly' | 'trial'
+  role: 'member' | 'trial' | 'admin'
   start_date: string
   end_date: string
   grace_ends_at: string
@@ -110,6 +110,7 @@ function InviteButton({ member, onInvited }: { member: Member; onInvited: () => 
 function AddMemberForm({ onSuccess }: { onSuccess: () => void }) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [selectedRole, setSelectedRole] = useState<string>('member')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -117,12 +118,14 @@ function AddMemberForm({ onSuccess }: { onSuccess: () => void }) {
     setError(null)
 
     const form = new FormData(e.currentTarget)
+    const role = form.get('role') as string
     const body = {
       email: form.get('email'),
       first_name: form.get('first_name'),
       last_name: form.get('last_name'),
       organization: form.get('organization') || null,
-      plan: form.get('plan'),
+      plan: role === 'trial' ? 'trial' : form.get('plan'),
+      role,
       start_date: form.get('start_date'),
     }
 
@@ -170,12 +173,22 @@ function AddMemberForm({ onSuccess }: { onSuccess: () => void }) {
           <input id="last_name" name="last_name" type="text" required className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent" />
         </div>
         <div>
-          <label htmlFor="plan" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Plan *</label>
-          <select id="plan" name="plan" required className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent">
-            <option value="yearly">Jaarlijks</option>
-            <option value="monthly">Maandelijks</option>
+          <label htmlFor="role" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Rol *</label>
+          <select id="role" name="role" required value={selectedRole} onChange={e => setSelectedRole(e.target.value)} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent">
+            <option value="member">Member</option>
+            <option value="trial">Trial</option>
+            <option value="admin">Admin</option>
           </select>
         </div>
+        {selectedRole !== 'trial' && (
+          <div>
+            <label htmlFor="plan" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Plan *</label>
+            <select id="plan" name="plan" required className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent">
+              <option value="yearly">Jaarlijks</option>
+              <option value="monthly">Maandelijks</option>
+            </select>
+          </div>
+        )}
         <div>
           <label htmlFor="start_date" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Startdatum *</label>
           <input id="start_date" name="start_date" type="date" required defaultValue={today} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent" />
@@ -199,6 +212,14 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  useEffect(() => {
+    function handleEsc(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
+  }, [onClose])
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setSubmitting(true)
@@ -218,6 +239,7 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
       last_name: form.get('last_name'),
       organization: form.get('organization') || null,
       plan,
+      role: form.get('role'),
       end_date: endDate,
       grace_ends_at: graceDate.toISOString().split('T')[0],
       notes: form.get('notes') || null,
@@ -298,12 +320,21 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
             <label htmlFor="edit_organization" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Organisatie</label>
             <input id="edit_organization" name="organization" defaultValue={member.organization ?? ''} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label htmlFor="edit_role" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Rol</label>
+              <select id="edit_role" name="role" defaultValue={member.role} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]">
+                <option value="member">Member</option>
+                <option value="trial">Trial</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
             <div>
               <label htmlFor="edit_plan" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Plan</label>
               <select id="edit_plan" name="plan" defaultValue={member.plan} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]">
                 <option value="yearly">Jaarlijks</option>
                 <option value="monthly">Maandelijks</option>
+                <option value="trial">Trial</option>
               </select>
             </div>
             <div>
@@ -480,10 +511,11 @@ export default function TeamLedenPage() {
                       <td className="px-4 py-3 text-[var(--navy-dark)] font-medium">
                         {member.first_name} {member.last_name}
                         {member.role === 'admin' && <span className="ml-1.5 text-xs text-[var(--pink)]">admin</span>}
+                        {member.role === 'trial' && <span className="ml-1.5 text-xs text-blue-600">trial</span>}
                       </td>
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{member.organization || '—'}</td>
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{member.email}</td>
-                      <td className="px-4 py-3 text-[var(--navy-medium)]">{member.plan === 'yearly' ? 'Jaar' : 'Maand'}</td>
+                      <td className="px-4 py-3 text-[var(--navy-medium)]">{member.plan === 'yearly' ? 'Jaar' : member.plan === 'trial' ? 'Proef' : 'Maand'}</td>
                       <td className="px-4 py-3"><StatusBadge status={status} /></td>
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{formatDate(member.end_date)}</td>
                       <td className="px-4 py-3">
