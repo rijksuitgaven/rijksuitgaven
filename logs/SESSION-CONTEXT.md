@@ -65,8 +65,8 @@
 - ✅ **2026-02-10:** Week 6 Auth — Magic Link authentication fully implemented and deployed. Supabase Auth + PKCE, Resend SMTP, middleware + BFF guards, login/logout/profile pages, X-BFF-Secret backend protection. **Critical cookie fix:** server-side Set-Cookie headers in Next.js 16 cleared auth cookies — switched to fully client-side PKCE exchange, removed getUser() from layout, made server.ts setAll() no-op. End-to-end tested on production.
 - ✅ **2026-02-11:** Membership management system — subscriptions table, computed status from dates (no cron), grace periods (3d monthly / 14d yearly), `/team` admin dashboard, `/team/leden` member management, `/verlopen` expired page, subscription banner, profile page with plan info. UX-026 profile dropdown completed. SQL migration + env vars configured on production.
 - ✅ **2026-02-11 (Session 3):** Branded email templates (magic link + invite user) configured in Supabase. UX-025 Feedback button with element marking — Suggestie/Bug/Vraag categories, Feedbucket-style element highlighting, Resend email delivery with screenshot attachment. 5 iterations to polish UX.
+- ✅ **2026-02-11 (Session 4):** Feedback management system at `/team/feedback` (admin inbox, status workflow, categories). Dashboard redesign (Proposal B — consistent section cards). Invite flow with status lifecycle (Aangemaakt → Uitgenodigd → Actief), `invited_at` column, per-row invite/resend buttons, fallback to generateLink+Resend for existing users. Trial role (14 days, 0 grace), role dropdown (Member/Trial/Admin) in both forms, ESC to close modal. Migrations 031, 033, 034 executed.
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
-- ⏳ **Invite email** — Replace createUser with inviteUserByEmail for new member onboarding
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
 
 ### Active Tasks
@@ -90,20 +90,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/feedback/feedback-button.tsx** ⭐ CREATED (2026-02-11)
-   UX-025: Feedback widget with Suggestie/Bug/Vraag categories + element marking
+1. **app/src/app/team/leden/page.tsx** ⭐ MODIFIED (2026-02-11)
+   Full redesign: inline stats, invite buttons, role dropdown (Member/Trial/Admin), trial support
 
-2. **app/src/app/api/v1/feedback/route.ts** ⭐ CREATED (2026-02-11)
-   BFF endpoint — auth, CSRF, Resend email with category badge + screenshot
+2. **app/src/app/api/v1/team/leden/[id]/invite/route.ts** ⭐ CREATED (2026-02-11)
+   Invite endpoint — inviteUserByEmail or generateLink+Resend fallback
 
-3. **app/src/app/layout.tsx** ⭐ MODIFIED (2026-02-11)
-   Added FeedbackButton + SubscriptionBanner
+3. **app/src/app/team/page.tsx** ⭐ MODIFIED (2026-02-11)
+   Dashboard redesign: consistent section cards, inline stats, new status lifecycle
 
-4. **app/src/app/team/leden/page.tsx** ⭐ CREATED (2026-02-11)
-   Admin member management — list, add, edit, deactivate/reactivate
+4. **app/src/app/team/feedback/page.tsx** ⭐ CREATED (2026-02-11)
+   Admin feedback inbox — status/category/priority filters, inline updates, detail modal
 
-5. **app/src/hooks/use-subscription.ts** ⭐ CREATED (2026-02-11)
-   Client-side subscription hook — status computed from dates
+5. **app/src/components/team-nav/team-nav.tsx** ⭐ CREATED (2026-02-11)
+   Shared tab bar (Dashboard | Leden | Feedback) with unread count badge
 
 ---
 
@@ -235,6 +235,9 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:$SUPABASE_DB_PASSWORD@aws-1-eu-west-1
 | `REFRESH MATERIALIZED VIEW` (all 7 views) | 2026-02-07 | Supabase |
 | `scripts/sql/029-universal-search-record-count.sql` | 2026-02-08 | Supabase |
 | `scripts/sql/030-subscriptions.sql` | 2026-02-11 | Supabase |
+| `scripts/sql/031-feedback.sql` | 2026-02-11 | Supabase |
+| `scripts/sql/033-invited-at.sql` | 2026-02-11 | Supabase |
+| `scripts/sql/034-trial-role.sql` | 2026-02-11 | Supabase |
 
 ### Configuration Files
 
@@ -881,7 +884,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-11 - **UX-026 profile dropdown + Membership management + Email templates + UX-025 Feedback button**
+**Last Session:** 2026-02-11 - **UX-026 profile dropdown + Membership management + Email templates + UX-025 Feedback button + Feedback management system + Dashboard redesign + Invite flow + Trial role**
 
 **2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 

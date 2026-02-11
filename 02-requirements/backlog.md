@@ -875,39 +875,43 @@ GitHub Projects board as a **read-only dashboard** on top of existing markdown:
 
 ---
 
-### Invite Email for New Members (Pre-Launch)
+### Invite Email for New Members (COMPLETED)
 
 **Priority:** High (V1.0 — just before launch)
 **Added:** 2026-02-11
-**Updated:** 2026-02-11
-**Status:** ⏳ TODO (backlog entry updated after membership system implementation)
+**Completed:** 2026-02-11
+**Status:** ✅ COMPLETED
 **Type:** Feature
 
 **Problem:**
 When admin adds a new member via `/team/leden`, `admin.createUser()` creates the auth user but does NOT send an email. Users don't know they have an account.
 
-**Why not now:** Importing ~50 WordPress users should NOT trigger invite emails. Need to control timing — import first, invite when ready.
+**Solution Implemented:**
+- `invited_at` column on subscriptions table (migration 033)
+- `POST /api/v1/team/leden/[id]/invite` endpoint
+- Per-row "Uitnodigen" / "Opnieuw" buttons in `/team/leden`
+- Status lifecycle: Aangemaakt → Uitgenodigd → Actief
+- Handles existing users gracefully (generateLink + Resend fallback)
+
+---
+
+### Row Selector for Bulk Actions (Admin Module)
+
+**Priority:** Low (V1.1+)
+**Added:** 2026-02-11
+**Status:** ⏳ Backlog
+**Type:** Feature / UX
+
+**Problem:**
+When managing many members (e.g., after WordPress import), admin may want to perform actions on multiple members at once (invite all, deactivate selected, etc.).
 
 **Solution:**
-Replace `admin.createUser()` with `admin.inviteUserByEmail()` + add per-member "Stuur uitnodiging" button for manual sending.
+Add checkbox column to `/team/leden` table with bulk action bar:
+- Select individual rows or "select all"
+- Bulk actions: Invite selected, Deactivate selected
+- Confirmation dialog before destructive actions
 
-**Implementation Plan:**
-1. **Immediate (user import):** Keep using `admin.createUser()` for bulk WordPress import (no emails sent)
-2. **Before launch:** Add "Stuur uitnodiging" button in `/team/leden` member list
-   - Button visible only for users who haven't been invited yet (track via `invited_at` column or local state)
-   - Calls `admin.inviteUserByEmail()` for that user
-   - Shows success/error toast
-3. **Set up branded invite email template** in Supabase Dashboard (Dutch, matches magic link branding)
-
-**Requires:**
-- "Stuur uitnodiging" button in `/team/leden` member row or edit modal
-- API endpoint: `POST /api/v1/team/leden/[id]/invite`
-- Branded "Invite User" email template in Supabase (see separate backlog item)
-- Optional: `invited_at` column on subscriptions table
-
-**Estimated effort:** 1 hour
-
-**Related:** Branded magic link email template (separate backlog item)
+**Estimated effort:** 2-3 hours
 
 ---
 
