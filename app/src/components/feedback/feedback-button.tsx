@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { MessageSquare, X, Camera, Send, Loader2, Check } from 'lucide-react'
+import { MessageSquare, X, Camera, Send, Loader2, Check, RefreshCw } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 
-type FeedbackState = 'idle' | 'selecting' | 'form' | 'sending' | 'success'
+type FeedbackState = 'idle' | 'form' | 'capturing' | 'selecting' | 'sending' | 'success'
 
 interface SelectionRect {
   startX: number
@@ -18,26 +18,29 @@ export function FeedbackButton() {
   const [state, setState] = useState<FeedbackState>('idle')
   const [message, setMessage] = useState('')
   const [screenshot, setScreenshot] = useState<string | null>(null)
-  const [includeScreenshot, setIncludeScreenshot] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [screenshotError, setScreenshotError] = useState<string | null>(null)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   // Screenshot selection state
   const [pageCapture, setPageCapture] = useState<string | null>(null)
   const [selection, setSelection] = useState<SelectionRect | null>(null)
   const [isDrawing, setIsDrawing] = useState(false)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
+
+  // Preserve message across screenshot flow
+  const savedMessageRef = useRef('')
 
   // Reset everything
   const reset = useCallback(() => {
     setState('idle')
     setMessage('')
     setScreenshot(null)
-    setError(null)
+    setScreenshotError(null)
+    setSubmitError(null)
     setPageCapture(null)
     setSelection(null)
     setIsDrawing(false)
-    setIncludeScreenshot(true)
+    savedMessageRef.current = ''
   }, [])
 
   // Auto-close success state
@@ -48,30 +51,64 @@ export function FeedbackButton() {
     }
   }, [state, reset])
 
-  // Start feedback flow
-  const handleStart = useCallback(async () => {
-    if (includeScreenshot) {
-      setState('selecting')
-      try {
-        // Dynamic import to avoid SSR issues
-        const html2canvas = (await import('html2canvas')).default
-        const canvas = await html2canvas(document.body, {
-          useCORS: true,
-          logging: false,
-          scale: 1,
-        })
-        setPageCapture(canvas.toDataURL('image/png'))
-      } catch {
-        // If screenshot fails, go directly to form
-        setState('form')
+  // Escape key to cancel selection or close form
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (state === 'selecting' || state === 'capturing') {
+          // Cancel screenshot, return to form
+          setPageCapture(null)
+          setSelection(null)
+          setIsDrawing(false)
+          setMessage(savedMessageRef.current)
+          setState('form')
+        } else if (state === 'form') {
+          reset()
+        }
       }
-    } else {
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [state, reset])
+
+  // Open form (button click)
+  const handleOpen = useCallback(() => {
+    setState('form')
+  }, [])
+
+  // Start screenshot capture (from inside form)
+  const startCapture = useCallback(async () => {
+    savedMessageRef.current = message
+    setScreenshotError(null)
+    setState('capturing')
+
+    try {
+      // Small delay so the form panel disappears before capture
+      await new Promise(resolve => setTimeout(resolve, 150))
+
+      const html2canvas = (await import('html2canvas')).default
+      const canvas = await html2canvas(document.body, {
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        scale: 1,
+        windowWidth: document.documentElement.scrollWidth,
+        windowHeight: document.documentElement.scrollHeight,
+      })
+      setPageCapture(canvas.toDataURL('image/png'))
+      setState('selecting')
+    } catch (err) {
+      console.error('[Feedback] html2canvas error:', err)
+      setScreenshotError('Schermafbeelding mislukt — probeer opnieuw')
+      setMessage(savedMessageRef.current)
       setState('form')
     }
-  }, [includeScreenshot])
+  }, [message])
 
-  // Screenshot selection mouse handlers
+  // Mouse handlers for area selection
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    // Ignore clicks on toolbar buttons
+    if ((e.target as HTMLElement).closest('[data-toolbar]')) return
     const rect = overlayRef.current?.getBoundingClientRect()
     if (!rect) return
     setIsDrawing(true)
@@ -84,7 +121,7 @@ export function FeedbackButton() {
   }, [])
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isDrawing || !selection) return
+    if (!isDrawing) return
     const rect = overlayRef.current?.getBoundingClientRect()
     if (!rect) return
     setSelection(prev => prev ? {
@@ -92,27 +129,26 @@ export function FeedbackButton() {
       endX: e.clientX - rect.left,
       endY: e.clientY - rect.top,
     } : null)
-  }, [isDrawing, selection])
+  }, [isDrawing])
 
   const handleMouseUp = useCallback(() => {
     setIsDrawing(false)
   }, [])
 
-  // Crop the selection from the page capture
+  // Crop the selection
   const captureSelection = useCallback(() => {
     if (!pageCapture || !selection || !overlayRef.current) return
 
     const overlay = overlayRef.current
-    const scaleX = overlay.scrollWidth / overlay.clientWidth
-    const scaleY = overlay.scrollHeight / overlay.clientHeight
-
-    const x = Math.min(selection.startX, selection.endX) * scaleX
-    const y = Math.min(selection.startY, selection.endY) * scaleY
-    const w = Math.abs(selection.endX - selection.startX) * scaleX
-    const h = Math.abs(selection.endY - selection.startY) * scaleY
+    const x = Math.min(selection.startX, selection.endX)
+    const y = Math.min(selection.startY, selection.endY)
+    const w = Math.abs(selection.endX - selection.startX)
+    const h = Math.abs(selection.endY - selection.startY)
 
     if (w < 10 || h < 10) {
-      // Selection too small, skip
+      setScreenshotError('Selectie te klein — probeer opnieuw')
+      setMessage(savedMessageRef.current)
+      setPageCapture(null)
       setState('form')
       return
     }
@@ -120,35 +156,35 @@ export function FeedbackButton() {
     const img = new Image()
     img.onload = () => {
       const canvas = document.createElement('canvas')
-      // Scale coordinates to image dimensions
-      const imgScaleX = img.width / overlay.clientWidth
-      const imgScaleY = img.height / overlay.clientHeight
-      canvas.width = w * imgScaleX / scaleX
-      canvas.height = h * imgScaleY / scaleY
+      const scaleX = img.width / overlay.clientWidth
+      const scaleY = img.height / overlay.clientHeight
+      canvas.width = w * scaleX
+      canvas.height = h * scaleY
       const ctx = canvas.getContext('2d')
       if (ctx) {
         ctx.drawImage(
           img,
-          x * imgScaleX / scaleX,
-          y * imgScaleY / scaleY,
-          canvas.width,
-          canvas.height,
+          x * scaleX, y * scaleY,
+          canvas.width, canvas.height,
           0, 0,
-          canvas.width,
-          canvas.height,
+          canvas.width, canvas.height,
         )
         setScreenshot(canvas.toDataURL('image/png'))
       }
       setPageCapture(null)
+      setSelection(null)
+      setMessage(savedMessageRef.current)
       setState('form')
     }
     img.src = pageCapture
   }, [pageCapture, selection])
 
-  // Skip screenshot, go to form
-  const skipScreenshot = useCallback(() => {
+  // Cancel selection, return to form
+  const cancelSelection = useCallback(() => {
     setPageCapture(null)
     setSelection(null)
+    setIsDrawing(false)
+    setMessage(savedMessageRef.current)
     setState('form')
   }, [])
 
@@ -156,7 +192,7 @@ export function FeedbackButton() {
   const handleSubmit = useCallback(async () => {
     if (!message.trim()) return
     setState('sending')
-    setError(null)
+    setSubmitError(null)
 
     try {
       const res = await fetch('/api/v1/feedback', {
@@ -177,7 +213,7 @@ export function FeedbackButton() {
 
       setState('success')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Verzenden mislukt')
+      setSubmitError(err instanceof Error ? err.message : 'Verzenden mislukt')
       setState('form')
     }
   }, [message, screenshot])
@@ -185,7 +221,7 @@ export function FeedbackButton() {
   // Don't render for logged-out users
   if (!isLoggedIn) return null
 
-  // Selection rectangle dimensions for overlay
+  // Selection rectangle for overlay
   const selRect = selection ? {
     left: Math.min(selection.startX, selection.endX),
     top: Math.min(selection.startY, selection.endY),
@@ -195,7 +231,7 @@ export function FeedbackButton() {
 
   return (
     <>
-      {/* Screenshot selection overlay */}
+      {/* Screenshot area selection overlay */}
       {state === 'selecting' && pageCapture && (
         <div
           ref={overlayRef}
@@ -204,7 +240,7 @@ export function FeedbackButton() {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
         >
-          {/* Dimmed page capture background */}
+          {/* Dimmed page capture */}
           <img
             src={pageCapture}
             alt=""
@@ -213,10 +249,10 @@ export function FeedbackButton() {
             draggable={false}
           />
 
-          {/* Selection highlight (shows original brightness) */}
+          {/* Selection highlight */}
           {selRect && selRect.width > 2 && selRect.height > 2 && (
             <div
-              className="absolute border-2 border-white overflow-hidden pointer-events-none"
+              className="absolute border-2 border-white/90 overflow-hidden pointer-events-none shadow-lg"
               style={{
                 left: selRect.left,
                 top: selRect.top,
@@ -240,9 +276,12 @@ export function FeedbackButton() {
           )}
 
           {/* Toolbar */}
-          <div className="fixed top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white rounded-lg shadow-lg px-4 py-2 z-[10000]">
+          <div
+            data-toolbar
+            className="fixed top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white rounded-lg shadow-xl px-4 py-2.5 z-[10000]"
+          >
             <span className="text-sm text-gray-700 mr-2">
-              Selecteer het relevante gebied
+              Sleep om een gebied te selecteren
             </span>
             {selRect && selRect.width > 10 && selRect.height > 10 && !isDrawing && (
               <button
@@ -252,26 +291,28 @@ export function FeedbackButton() {
                 Gebruik selectie
               </button>
             )}
+            {selection && (
+              <button
+                onClick={() => setSelection(null)}
+                className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded hover:bg-gray-200 transition-colors"
+              >
+                Opnieuw
+              </button>
+            )}
             <button
-              onClick={() => setSelection(null)}
+              onClick={cancelSelection}
               className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded hover:bg-gray-200 transition-colors"
             >
-              Opnieuw
-            </button>
-            <button
-              onClick={skipScreenshot}
-              className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded hover:bg-gray-200 transition-colors"
-            >
-              Overslaan
+              Annuleren
             </button>
           </div>
         </div>
       )}
 
-      {/* Loading state while html2canvas captures */}
-      {state === 'selecting' && !pageCapture && (
+      {/* Loading state while capturing */}
+      {state === 'capturing' && (
         <div className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center">
-          <div className="bg-white rounded-lg px-6 py-4 flex items-center gap-3">
+          <div className="bg-white rounded-lg px-6 py-4 flex items-center gap-3 shadow-xl">
             <Loader2 className="w-5 h-5 animate-spin text-[#0E3261]" />
             <span className="text-sm text-gray-700">Scherm vastleggen...</span>
           </div>
@@ -283,7 +324,10 @@ export function FeedbackButton() {
         <div className="fixed bottom-20 right-5 z-50 w-[360px] bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
-            <span className="text-sm font-semibold text-[#0E3261]">Feedback</span>
+            <div>
+              <span className="text-sm font-semibold text-[#0E3261]">Feedback</span>
+              <p className="text-xs text-gray-500 mt-0.5">Laat ons weten wat beter kan</p>
+            </div>
             <button
               onClick={reset}
               className="p-1 hover:bg-gray-200 rounded transition-colors"
@@ -294,24 +338,6 @@ export function FeedbackButton() {
           </div>
 
           <div className="p-4">
-            {/* Screenshot preview */}
-            {screenshot && (
-              <div className="mb-3 relative">
-                <img
-                  src={screenshot}
-                  alt="Schermafbeelding"
-                  className="w-full rounded border border-gray-200"
-                />
-                <button
-                  onClick={() => setScreenshot(null)}
-                  className="absolute top-1 right-1 p-1 bg-black/60 hover:bg-black/80 rounded-full transition-colors"
-                  aria-label="Verwijder schermafbeelding"
-                >
-                  <X className="w-3 h-3 text-white" />
-                </button>
-              </div>
-            )}
-
             {/* Message textarea */}
             <textarea
               value={message}
@@ -322,9 +348,56 @@ export function FeedbackButton() {
               autoFocus
             />
 
-            {/* Error */}
-            {error && (
-              <p className="mt-2 text-xs text-red-600">{error}</p>
+            {/* Screenshot section */}
+            <div className="mt-3">
+              {screenshot ? (
+                /* Screenshot preview with actions */
+                <div className="relative rounded-md border border-gray-200 overflow-hidden">
+                  <img
+                    src={screenshot}
+                    alt="Schermafbeelding"
+                    className="w-full max-h-40 object-cover"
+                  />
+                  <div className="absolute top-1.5 right-1.5 flex gap-1">
+                    <button
+                      onClick={startCapture}
+                      className="p-1.5 bg-black/60 hover:bg-black/80 rounded-full transition-colors"
+                      aria-label="Opnieuw selecteren"
+                      title="Opnieuw selecteren"
+                    >
+                      <RefreshCw className="w-3 h-3 text-white" />
+                    </button>
+                    <button
+                      onClick={() => setScreenshot(null)}
+                      className="p-1.5 bg-black/60 hover:bg-black/80 rounded-full transition-colors"
+                      aria-label="Verwijder schermafbeelding"
+                      title="Verwijderen"
+                    >
+                      <X className="w-3 h-3 text-white" />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Add screenshot button */
+                <button
+                  onClick={startCapture}
+                  disabled={state === 'sending'}
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2.5 border border-dashed border-gray-300 rounded-md text-sm text-gray-500 hover:border-[#0E3261] hover:text-[#0E3261] hover:bg-[#0E3261]/5 disabled:opacity-50 transition-colors"
+                >
+                  <Camera className="w-4 h-4" />
+                  Voeg schermafbeelding toe
+                </button>
+              )}
+            </div>
+
+            {/* Screenshot error */}
+            {screenshotError && (
+              <p className="mt-2 text-xs text-amber-600">{screenshotError}</p>
+            )}
+
+            {/* Submit error */}
+            {submitError && (
+              <p className="mt-2 text-xs text-red-600">{submitError}</p>
             )}
 
             {/* Footer */}
@@ -359,32 +432,15 @@ export function FeedbackButton() {
         </div>
       )}
 
-      {/* Floating button */}
+      {/* Floating button — always visible when idle */}
       {state === 'idle' && (
-        <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-2">
-          {/* Screenshot toggle (shown on hover via group) */}
-          <div className="group">
-            <div className="mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-lg shadow-lg border border-gray-200 px-3 py-2">
-              <label className="flex items-center gap-2 cursor-pointer text-xs text-gray-600 whitespace-nowrap">
-                <input
-                  type="checkbox"
-                  checked={includeScreenshot}
-                  onChange={(e) => setIncludeScreenshot(e.target.checked)}
-                  className="rounded"
-                />
-                <Camera className="w-3.5 h-3.5" />
-                Schermafbeelding meesturen
-              </label>
-            </div>
-            <button
-              onClick={handleStart}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[#0E3261] text-white text-sm font-medium rounded-full shadow-lg hover:bg-[#0a2750] transition-colors"
-            >
-              <MessageSquare className="w-4 h-4" />
-              Feedback
-            </button>
-          </div>
-        </div>
+        <button
+          onClick={handleOpen}
+          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 bg-[#0E3261] text-white text-sm font-medium rounded-full shadow-lg hover:bg-[#0a2750] transition-colors"
+        >
+          <MessageSquare className="w-4 h-4" />
+          Feedback
+        </button>
       )}
     </>
   )
