@@ -314,7 +314,7 @@ export function FeedbackButton() {
 
       {/* Feedback form panel */}
       {(state === 'form' || state === 'sending') && (
-        <div className="fixed bottom-20 right-5 z-50 w-[360px] bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden">
+        <div className="fixed bottom-20 right-5 z-50 w-[360px] bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
             <span className="text-base font-semibold text-[#0E3261]">Feedback</span>
@@ -363,46 +363,61 @@ export function FeedbackButton() {
             <div className="mt-3">
               {marked ? (
                 /* Marked element preview */
-                <div className="rounded-md border border-gray-200 overflow-hidden">
-                  {/* Screenshot thumbnail (if captured) */}
-                  {marked.screenshot && (
+                <div className="rounded-md border border-gray-200 overflow-hidden relative group">
+                  {marked.screenshot ? (
+                    /* Screenshot with hover actions */
                     <div className="relative">
                       <img
                         src={marked.screenshot}
                         alt="Gemarkeerd element"
                         className="w-full max-h-36 object-contain bg-gray-50"
                       />
+                      {/* Action buttons — visible on hover */}
+                      <div className="absolute top-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={startMarking}
+                          className="p-1.5 bg-white/90 hover:bg-white rounded shadow-sm transition-colors"
+                          aria-label="Opnieuw markeren"
+                          title="Opnieuw markeren"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5 text-gray-600" />
+                        </button>
+                        <button
+                          onClick={removeMarked}
+                          className="p-1.5 bg-white/90 hover:bg-white rounded shadow-sm transition-colors"
+                          aria-label="Verwijderen"
+                          title="Verwijderen"
+                        >
+                          <X className="w-3.5 h-3.5 text-gray-600" />
+                        </button>
+                      </div>
                     </div>
-                  )}
-                  {/* Element info bar */}
-                  <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-t border-gray-200">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#E62D75]/10 text-[#E62D75] uppercase tracking-wide flex-shrink-0">
-                        {marked.tag}
-                      </span>
+                  ) : (
+                    /* Fallback: no screenshot, show text + actions */
+                    <div className="flex items-center justify-between px-3 py-2 bg-gray-50">
                       <span className="text-xs text-gray-500 truncate">
                         {marked.text.slice(0, 60) || marked.selector}
                       </span>
+                      <div className="flex gap-1 flex-shrink-0 ml-2">
+                        <button
+                          onClick={startMarking}
+                          className="p-1 hover:bg-gray-200 rounded transition-colors"
+                          aria-label="Opnieuw markeren"
+                          title="Opnieuw markeren"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5 text-gray-500" />
+                        </button>
+                        <button
+                          onClick={removeMarked}
+                          className="p-1 hover:bg-gray-200 rounded transition-colors"
+                          aria-label="Verwijderen"
+                          title="Verwijderen"
+                        >
+                          <X className="w-3.5 h-3.5 text-gray-500" />
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex gap-1 flex-shrink-0 ml-2">
-                      <button
-                        onClick={startMarking}
-                        className="p-1 hover:bg-gray-200 rounded transition-colors"
-                        aria-label="Opnieuw markeren"
-                        title="Opnieuw markeren"
-                      >
-                        <RefreshCw className="w-3.5 h-3.5 text-gray-500" />
-                      </button>
-                      <button
-                        onClick={removeMarked}
-                        className="p-1 hover:bg-gray-200 rounded transition-colors"
-                        aria-label="Verwijderen"
-                        title="Verwijderen"
-                      >
-                        <X className="w-3.5 h-3.5 text-gray-500" />
-                      </button>
-                    </div>
-                  </div>
+                  )}
                 </div>
               ) : (
                 /* Mark element button */
