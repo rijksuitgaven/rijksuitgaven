@@ -52,7 +52,9 @@ function getElementLabel(el: Element): string {
 export function FeedbackButton() {
   const { isLoggedIn, userEmail } = useAuth()
   const [state, setState] = useState<FeedbackState>('idle')
+  const [category, setCategory] = useState<'verbetering' | 'bug' | 'vraag'>('verbetering')
   const [message, setMessage] = useState('')
+  const [reason, setReason] = useState('')
   const [marked, setMarked] = useState<MarkedElement | null>(null)
   const [screenshotError, setScreenshotError] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -62,16 +64,21 @@ export function FeedbackButton() {
   const hoveredElRef = useRef<Element | null>(null)
   const savedMessageRef = useRef('')
 
+  const savedReasonRef = useRef('')
+
   // Reset
   const reset = useCallback(() => {
     setState('idle')
+    setCategory('verbetering')
     setMessage('')
+    setReason('')
     setMarked(null)
     setScreenshotError(null)
     setSubmitError(null)
     setHighlightRect(null)
     hoveredElRef.current = null
     savedMessageRef.current = ''
+    savedReasonRef.current = ''
   }, [])
 
   // Auto-close success
@@ -90,6 +97,7 @@ export function FeedbackButton() {
           setHighlightRect(null)
           hoveredElRef.current = null
           setMessage(savedMessageRef.current)
+          setReason(savedReasonRef.current)
           setState('form')
         } else if (state === 'form') {
           reset()
@@ -180,6 +188,7 @@ export function FeedbackButton() {
 
       setMarked({ ...elementInfo, screenshot })
       setMessage(savedMessageRef.current)
+      setReason(savedReasonRef.current)
       if (!screenshot) {
         setScreenshotError('Schermafbeelding mislukt, maar element is gemarkeerd')
       }
@@ -203,15 +212,17 @@ export function FeedbackButton() {
   // Start element marking mode
   const startMarking = useCallback(() => {
     savedMessageRef.current = message
+    savedReasonRef.current = reason
     setScreenshotError(null)
     setState('marking')
-  }, [message])
+  }, [message, reason])
 
   // Cancel marking, return to form
   const cancelMarking = useCallback(() => {
     setHighlightRect(null)
     hoveredElRef.current = null
     setMessage(savedMessageRef.current)
+    setReason(savedReasonRef.current)
     setState('form')
   }, [])
 
@@ -232,7 +243,9 @@ export function FeedbackButton() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          category,
           message: message.trim(),
+          reason: reason.trim() || undefined,
           screenshot: marked?.screenshot || undefined,
           element: marked ? {
             selector: marked.selector,
@@ -255,7 +268,7 @@ export function FeedbackButton() {
       setSubmitError(err instanceof Error ? err.message : 'Verzenden mislukt')
       setState('form')
     }
-  }, [message, marked])
+  }, [message, reason, category, marked])
 
   if (!isLoggedIn) return null
 
@@ -328,15 +341,51 @@ export function FeedbackButton() {
           </div>
 
           <div className="p-4">
+            {/* Category pills */}
+            <div className="flex gap-1 mb-3">
+              {(['verbetering', 'bug', 'vraag'] as const).map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setCategory(cat)}
+                  className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                    category === cat
+                      ? 'bg-[#0E3261] text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {cat === 'verbetering' ? 'Verbetering' : cat === 'bug' ? 'Bug' : 'Vraag'}
+                </button>
+              ))}
+            </div>
+
             {/* Message textarea */}
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Beschrijf wat u opvalt..."
-              className="w-full h-24 px-3 py-2 text-sm border border-gray-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-[#0E3261]/20 focus:border-[#0E3261]"
+              placeholder={
+                category === 'verbetering' ? 'Ik wil graag...'
+                : category === 'bug' ? 'Wat gaat er mis...'
+                : 'Mijn vraag is...'
+              }
+              className="w-full h-[72px] px-3 py-2 text-sm border border-gray-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-[#0E3261]/20 focus:border-[#0E3261]"
               disabled={state === 'sending'}
               autoFocus
             />
+
+            {/* Reason field (optional) */}
+            <div className="mt-2">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-xs font-medium text-gray-500">Waarom?</span>
+                <span className="text-[10px] text-gray-400">optioneel</span>
+              </div>
+              <textarea
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="Zodat ik..."
+                className="w-full h-[48px] px-3 py-2 text-sm border border-gray-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-[#0E3261]/20 focus:border-[#0E3261]"
+                disabled={state === 'sending'}
+              />
+            </div>
 
             {/* Element marking section */}
             <div className="mt-3">
