@@ -108,9 +108,8 @@ export default function TeamDashboardPage() {
         {/* Leden section */}
         <div className="bg-white border border-[var(--border)] rounded-lg">
           {/* Section header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
+          <div className="px-5 py-4 border-b border-[var(--border)]">
             <h2 className="text-base font-semibold text-[var(--navy-dark)]">Leden</h2>
-            <Link href="/team/leden" className="text-sm text-[var(--pink)] hover:underline">Beheren</Link>
           </div>
 
           <div className="px-5 py-4">
@@ -194,9 +193,8 @@ export default function TeamDashboardPage() {
         {/* Feedback section */}
         <div className="bg-white border border-[var(--border)] rounded-lg">
           {/* Section header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
+          <div className="px-5 py-4 border-b border-[var(--border)]">
             <h2 className="text-base font-semibold text-[var(--navy-dark)]">Feedback</h2>
-            <Link href="/team/feedback" className="text-sm text-[var(--pink)] hover:underline">Bekijk alles</Link>
           </div>
 
           <div className="px-5 py-4">
