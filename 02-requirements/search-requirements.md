@@ -1206,45 +1206,52 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
-### UX-025: Feedback Button with Screenshot Selection
+### UX-025: Feedback Button with Element Marking
 
-**Requirement:** Persistent feedback button on all logged-in pages that lets users send feedback with an optional area-selected screenshot, delivered via email.
+**Requirement:** Persistent feedback button on all logged-in pages that lets users send structured feedback with optional element marking (Feedbucket-style), delivered via email.
 
 **Behavior:**
 
 **Feedback button (always visible):**
 - Floating button bottom-right corner, visible on all authenticated pages
-- Label: "Feedback" with speech bubble icon
-- Click opens a compact feedback form (popover or slide-up panel)
-- Button does not overlap with table content or pagination
+- Label: "Feedback" with speech bubble icon (navy #0E3261 pill)
+- Click opens a compact feedback form panel
+- Only visible to logged-in users
 
 **Feedback form:**
-- Single text field: "Uw feedback" (placeholder: "Beschrijf wat u opvalt...")
-- "Schermafbeelding meesturen" checkbox (checked by default)
-- When checked: shows area selection tool before form opens
-- "Verstuur" button (disabled until text is entered)
+- Header: "Feedback" (text-base font-semibold)
+- Category pills: **Suggestie** / **Bug** / **Vraag** (navy active, gray inactive)
+- Main textarea with dynamic placeholder per category:
+  - Suggestie: "Ik wil graag... zodat ik..."
+  - Bug: "Wat gaat er mis..."
+  - Vraag: "Hoe kan ik..."
+- "Markeer op de pagina" button (dashed border, Crosshair icon) — opens marking mode
+- "Verstuur" button (pink #E62D75, disabled until text entered)
+- User email shown bottom-left
 - Success state: "Bedankt voor uw feedback!" — auto-closes after 2 seconds
+- Escape key closes form
 
-**Screenshot area selection (must-have):**
-- User clicks feedback button → screen dims with semi-transparent overlay
-- User draws a rectangle by click-and-drag to select the relevant area
-- Selected area is highlighted (rest stays dimmed)
-- Toolbar appears: "Gebruik deze selectie" / "Opnieuw selecteren" / "Overslaan"
-- Selected area captured as PNG via canvas crop
-- If user clicks "Overslaan": form opens without screenshot
-- Capture uses `html2canvas` for the full page render, then crops to selection coordinates
+**Element marking (Feedbucket-style):**
+- User clicks "Markeer op de pagina" → form hides, crosshair cursor on body
+- Elements highlight on hover with pink #E62D75 border (2px)
+- Click captures the element via `html2canvas` (single element, not full page)
+- Toolbar at top: "Klik op het element dat u wilt melden" + "Annuleren" button
+- After capture: form reopens with compact attachment chip (small thumbnail + "Gemarkeerd" label)
+- Refresh/remove buttons on chip for re-marking or removing
+- Element metadata captured: CSS selector, tag label, text, position (sent in email, hidden from user)
+- Graceful degradation: if screenshot capture fails, metadata still sent
 
 **Email delivery (Phase 1 — Beta):**
 - Sends email via Resend to `contact@rijksuitgaven.nl`
-- Email subject: `Feedback: [first 50 chars of message]`
+- Email subject: `[Suggestie/Bug/Vraag] [first 50 chars of message]`
 - Email body contains:
+  - Category badge (color-coded: green=Suggestie, red=Bug, blue=Vraag)
   - User message (full text)
-  - Screenshot (inline image, if captured)
-  - Page URL where feedback was submitted
+  - Marked element section (if provided): tag, CSS selector, text excerpt, position
+  - Screenshot attachment (PNG, if captured)
+  - Page URL, browser/OS, timestamp
   - User email (from auth session)
-  - Browser + OS (from User-Agent)
-  - Timestamp (ISO 8601)
-- BFF endpoint: `POST /api/v1/feedback` — accepts message + base64 screenshot
+- BFF endpoint: `POST /api/v1/feedback` — validates auth, CSRF, body size (10MB), sends via Resend
 
 **Upgrade path (Phase 2 — Post-beta):**
 - Swap Resend email for GitHub Issue creation via API
@@ -1252,24 +1259,15 @@ Search "bedrijvenbeleid" shows:
 - Screenshot attached as image
 - Integrates with GitHub Projects board (V1.2 backlog item)
 
-**What this does NOT include:**
-- No categories or ratings
-- No feedback dashboard or admin view
-- No Supabase storage (email only)
-- No public feedback board
-- No anonymous feedback (requires authentication)
-
 **Technical Implementation:**
-- Frontend: React component with `html2canvas` + canvas crop overlay
-- BFF: `POST /api/v1/feedback` endpoint — validates, sends via Resend
-- Backend: not involved (BFF sends email directly)
-- Dependencies: `html2canvas` (npm), Resend SDK (already installed for Magic Link)
-
-**Estimated effort:** 3-4 hours (including area selection overlay)
+- Frontend: `components/feedback/feedback-button.tsx` — client component with marking overlay
+- BFF: `app/api/v1/feedback/route.ts` — auth + CSRF + Resend email
+- Dependencies: `html2canvas` (element capture), `resend` (email delivery)
+- Element highlighting via `document.elementFromPoint()` + capture-phase event listeners
 
 **Priority:** P1 (V1.0 — required before beta launch)
 
-**Status:** ⏳ Planned for V1.0 (backlog)
+**Status:** ✅ Implemented 2026-02-11
 
 ---
 
