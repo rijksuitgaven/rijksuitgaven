@@ -1,49 +1,80 @@
 'use client'
 
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { MessageSquare, X, Camera, Send, Loader2, Check, RefreshCw } from 'lucide-react'
+import { MessageSquare, X, Crosshair, Send, Loader2, Check, RefreshCw } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 
-type FeedbackState = 'idle' | 'form' | 'capturing' | 'selecting' | 'sending' | 'success'
+type FeedbackState = 'idle' | 'form' | 'marking' | 'capturing' | 'sending' | 'success'
 
-interface SelectionRect {
-  startX: number
-  startY: number
-  endX: number
-  endY: number
+interface MarkedElement {
+  screenshot: string | null
+  selector: string
+  text: string
+  tag: string
+  rect: { x: number; y: number; width: number; height: number }
+}
+
+/** Build a human-readable CSS selector for an element */
+function getSelector(el: Element): string {
+  if (el.id) return `#${el.id}`
+  const parts: string[] = []
+  let current: Element | null = el
+  while (current && current !== document.body) {
+    let selector = current.tagName.toLowerCase()
+    if (current.className && typeof current.className === 'string') {
+      const meaningful = current.className
+        .split(/\s+/)
+        .filter(c => c && !c.startsWith('hover:') && !c.startsWith('focus:') && c.length < 30)
+        .slice(0, 2)
+      if (meaningful.length) selector += `.${meaningful.join('.')}`
+    }
+    parts.unshift(selector)
+    current = current.parentElement
+    if (parts.length >= 3) break
+  }
+  return parts.join(' > ')
+}
+
+/** Get a friendly label for an element */
+function getElementLabel(el: Element): string {
+  const tag = el.tagName.toLowerCase()
+  const labels: Record<string, string> = {
+    table: 'Tabel', tr: 'Tabelrij', td: 'Tabelcel', th: 'Tabelkop',
+    button: 'Knop', a: 'Link', input: 'Invoerveld', textarea: 'Tekstveld',
+    select: 'Selectieveld', img: 'Afbeelding', h1: 'Kop', h2: 'Kop',
+    h3: 'Kop', h4: 'Kop', p: 'Tekst', span: 'Tekst', div: 'Sectie',
+    header: 'Header', footer: 'Footer', nav: 'Navigatie', main: 'Hoofdinhoud',
+    form: 'Formulier', label: 'Label', svg: 'Icoon',
+  }
+  return labels[tag] || tag
 }
 
 export function FeedbackButton() {
   const { isLoggedIn, userEmail } = useAuth()
   const [state, setState] = useState<FeedbackState>('idle')
   const [message, setMessage] = useState('')
-  const [screenshot, setScreenshot] = useState<string | null>(null)
+  const [marked, setMarked] = useState<MarkedElement | null>(null)
   const [screenshotError, setScreenshotError] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
-  // Screenshot selection state
-  const [pageCapture, setPageCapture] = useState<string | null>(null)
-  const [selection, setSelection] = useState<SelectionRect | null>(null)
-  const [isDrawing, setIsDrawing] = useState(false)
-  const overlayRef = useRef<HTMLDivElement>(null)
-
-  // Preserve message across screenshot flow
+  // Element highlighting state
+  const [highlightRect, setHighlightRect] = useState<DOMRect | null>(null)
+  const hoveredElRef = useRef<Element | null>(null)
   const savedMessageRef = useRef('')
 
-  // Reset everything
+  // Reset
   const reset = useCallback(() => {
     setState('idle')
     setMessage('')
-    setScreenshot(null)
+    setMarked(null)
     setScreenshotError(null)
     setSubmitError(null)
-    setPageCapture(null)
-    setSelection(null)
-    setIsDrawing(false)
+    setHighlightRect(null)
+    hoveredElRef.current = null
     savedMessageRef.current = ''
   }, [])
 
-  // Auto-close success state
+  // Auto-close success
   useEffect(() => {
     if (state === 'success') {
       const timer = setTimeout(reset, 2000)
@@ -51,15 +82,13 @@ export function FeedbackButton() {
     }
   }, [state, reset])
 
-  // Escape key to cancel selection or close form
+  // Escape key handler
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (state === 'selecting' || state === 'capturing') {
-          // Cancel screenshot, return to form
-          setPageCapture(null)
-          setSelection(null)
-          setIsDrawing(false)
+        if (state === 'marking' || state === 'capturing') {
+          setHighlightRect(null)
+          hoveredElRef.current = null
           setMessage(savedMessageRef.current)
           setState('form')
         } else if (state === 'form') {
@@ -71,121 +100,116 @@ export function FeedbackButton() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [state, reset])
 
-  // Open form (button click)
+  // Element highlighting: mousemove + click handlers during marking mode
+  useEffect(() => {
+    if (state !== 'marking') return
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const el = document.elementFromPoint(e.clientX, e.clientY)
+      if (!el) return
+
+      // Skip our own overlay/toolbar elements
+      if ((el as HTMLElement).closest('[data-feedback-overlay]')) return
+
+      // Find a meaningful element (not too small, not the body)
+      let target: Element = el
+      const rect = target.getBoundingClientRect()
+      // If element is very small (icon, span), go up to parent
+      if (rect.width < 20 || rect.height < 20) {
+        target = target.parentElement || target
+      }
+      // Don't highlight body or html
+      if (target === document.body || target === document.documentElement) return
+
+      hoveredElRef.current = target
+      setHighlightRect(target.getBoundingClientRect())
+    }
+
+    const handleClick = async (e: MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+
+      const el = hoveredElRef.current
+      if (!el) return
+      // Skip clicks on our toolbar
+      if ((e.target as HTMLElement).closest('[data-feedback-overlay]')) return
+
+      // Capture the clicked element
+      setHighlightRect(null)
+      setState('capturing')
+
+      const rect = el.getBoundingClientRect()
+      const elementInfo = {
+        selector: getSelector(el),
+        text: (el.textContent || '').trim().slice(0, 200),
+        tag: getElementLabel(el),
+        rect: {
+          x: Math.round(rect.x),
+          y: Math.round(rect.y),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+        },
+      }
+
+      // Try to capture element screenshot
+      let screenshot: string | null = null
+      try {
+        const html2canvas = (await import('html2canvas')).default
+        const canvas = await html2canvas(el as HTMLElement, {
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+          scale: 1,
+          width: Math.min(rect.width, 800),
+          height: Math.min(rect.height, 600),
+        })
+        screenshot = canvas.toDataURL('image/png')
+      } catch (err) {
+        console.error('[Feedback] Element capture failed:', err)
+        // Not fatal — we still have element info
+      }
+
+      setMarked({ ...elementInfo, screenshot })
+      setMessage(savedMessageRef.current)
+      if (!screenshot) {
+        setScreenshotError('Schermafbeelding mislukt, maar element is gemarkeerd')
+      }
+      setState('form')
+    }
+
+    document.addEventListener('mousemove', handleMouseMove, true)
+    document.addEventListener('click', handleClick, true)
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove, true)
+      document.removeEventListener('click', handleClick, true)
+    }
+  }, [state])
+
+  // Open form
   const handleOpen = useCallback(() => {
     setState('form')
   }, [])
 
-  // Start screenshot capture (from inside form)
-  const startCapture = useCallback(async () => {
+  // Start element marking mode
+  const startMarking = useCallback(() => {
     savedMessageRef.current = message
     setScreenshotError(null)
-    setState('capturing')
-
-    try {
-      // Small delay so the form panel disappears before capture
-      await new Promise(resolve => setTimeout(resolve, 150))
-
-      const html2canvas = (await import('html2canvas')).default
-      const canvas = await html2canvas(document.body, {
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        scale: 1,
-        windowWidth: document.documentElement.scrollWidth,
-        windowHeight: document.documentElement.scrollHeight,
-      })
-      setPageCapture(canvas.toDataURL('image/png'))
-      setState('selecting')
-    } catch (err) {
-      console.error('[Feedback] html2canvas error:', err)
-      setScreenshotError('Schermafbeelding mislukt — probeer opnieuw')
-      setMessage(savedMessageRef.current)
-      setState('form')
-    }
+    setState('marking')
   }, [message])
 
-  // Mouse handlers for area selection
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    // Ignore clicks on toolbar buttons
-    if ((e.target as HTMLElement).closest('[data-toolbar]')) return
-    const rect = overlayRef.current?.getBoundingClientRect()
-    if (!rect) return
-    setIsDrawing(true)
-    setSelection({
-      startX: e.clientX - rect.left,
-      startY: e.clientY - rect.top,
-      endX: e.clientX - rect.left,
-      endY: e.clientY - rect.top,
-    })
-  }, [])
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isDrawing) return
-    const rect = overlayRef.current?.getBoundingClientRect()
-    if (!rect) return
-    setSelection(prev => prev ? {
-      ...prev,
-      endX: e.clientX - rect.left,
-      endY: e.clientY - rect.top,
-    } : null)
-  }, [isDrawing])
-
-  const handleMouseUp = useCallback(() => {
-    setIsDrawing(false)
-  }, [])
-
-  // Crop the selection
-  const captureSelection = useCallback(() => {
-    if (!pageCapture || !selection || !overlayRef.current) return
-
-    const overlay = overlayRef.current
-    const x = Math.min(selection.startX, selection.endX)
-    const y = Math.min(selection.startY, selection.endY)
-    const w = Math.abs(selection.endX - selection.startX)
-    const h = Math.abs(selection.endY - selection.startY)
-
-    if (w < 10 || h < 10) {
-      setScreenshotError('Selectie te klein — probeer opnieuw')
-      setMessage(savedMessageRef.current)
-      setPageCapture(null)
-      setState('form')
-      return
-    }
-
-    const img = new Image()
-    img.onload = () => {
-      const canvas = document.createElement('canvas')
-      const scaleX = img.width / overlay.clientWidth
-      const scaleY = img.height / overlay.clientHeight
-      canvas.width = w * scaleX
-      canvas.height = h * scaleY
-      const ctx = canvas.getContext('2d')
-      if (ctx) {
-        ctx.drawImage(
-          img,
-          x * scaleX, y * scaleY,
-          canvas.width, canvas.height,
-          0, 0,
-          canvas.width, canvas.height,
-        )
-        setScreenshot(canvas.toDataURL('image/png'))
-      }
-      setPageCapture(null)
-      setSelection(null)
-      setMessage(savedMessageRef.current)
-      setState('form')
-    }
-    img.src = pageCapture
-  }, [pageCapture, selection])
-
-  // Cancel selection, return to form
-  const cancelSelection = useCallback(() => {
-    setPageCapture(null)
-    setSelection(null)
-    setIsDrawing(false)
+  // Cancel marking, return to form
+  const cancelMarking = useCallback(() => {
+    setHighlightRect(null)
+    hoveredElRef.current = null
     setMessage(savedMessageRef.current)
     setState('form')
+  }, [])
+
+  // Remove marked element
+  const removeMarked = useCallback(() => {
+    setMarked(null)
+    setScreenshotError(null)
   }, [])
 
   // Submit feedback
@@ -200,7 +224,13 @@ export function FeedbackButton() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: message.trim(),
-          screenshot: screenshot || undefined,
+          screenshot: marked?.screenshot || undefined,
+          element: marked ? {
+            selector: marked.selector,
+            text: marked.text,
+            tag: marked.tag,
+            rect: marked.rect,
+          } : undefined,
           pageUrl: window.location.href,
           userAgent: navigator.userAgent,
         }),
@@ -216,105 +246,62 @@ export function FeedbackButton() {
       setSubmitError(err instanceof Error ? err.message : 'Verzenden mislukt')
       setState('form')
     }
-  }, [message, screenshot])
+  }, [message, marked])
 
-  // Don't render for logged-out users
   if (!isLoggedIn) return null
-
-  // Selection rectangle for overlay
-  const selRect = selection ? {
-    left: Math.min(selection.startX, selection.endX),
-    top: Math.min(selection.startY, selection.endY),
-    width: Math.abs(selection.endX - selection.startX),
-    height: Math.abs(selection.endY - selection.startY),
-  } : null
 
   return (
     <>
-      {/* Screenshot area selection overlay */}
-      {state === 'selecting' && pageCapture && (
-        <div
-          ref={overlayRef}
-          className="fixed inset-0 z-[9999] cursor-crosshair"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-        >
-          {/* Dimmed page capture */}
-          <img
-            src={pageCapture}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ filter: 'brightness(0.4)' }}
-            draggable={false}
-          />
-
-          {/* Selection highlight */}
-          {selRect && selRect.width > 2 && selRect.height > 2 && (
+      {/* Element highlighting overlay during marking mode */}
+      {state === 'marking' && (
+        <>
+          {/* Highlight box following hovered element */}
+          {highlightRect && (
             <div
-              className="absolute border-2 border-white/90 overflow-hidden pointer-events-none shadow-lg"
+              className="fixed pointer-events-none z-[9998] border-2 border-[#E62D75] rounded-sm"
               style={{
-                left: selRect.left,
-                top: selRect.top,
-                width: selRect.width,
-                height: selRect.height,
+                left: highlightRect.left - 2,
+                top: highlightRect.top - 2,
+                width: highlightRect.width + 4,
+                height: highlightRect.height + 4,
+                backgroundColor: 'rgba(230, 45, 117, 0.08)',
+                transition: 'all 50ms ease-out',
               }}
-            >
-              <img
-                src={pageCapture}
-                alt=""
-                className="absolute"
-                style={{
-                  left: -selRect.left,
-                  top: -selRect.top,
-                  width: overlayRef.current?.clientWidth,
-                  height: overlayRef.current?.clientHeight,
-                }}
-                draggable={false}
-              />
-            </div>
+            />
           )}
 
           {/* Toolbar */}
           <div
-            data-toolbar
-            className="fixed top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white rounded-lg shadow-xl px-4 py-2.5 z-[10000]"
+            data-feedback-overlay
+            className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 bg-white rounded-lg shadow-xl px-4 py-2.5 border border-gray-200"
           >
-            <span className="text-sm text-gray-700 mr-2">
-              Sleep om een gebied te selecteren
+            <Crosshair className="w-4 h-4 text-[#E62D75]" />
+            <span className="text-sm text-gray-700">
+              Klik op het element dat u wilt melden
             </span>
-            {selRect && selRect.width > 10 && selRect.height > 10 && !isDrawing && (
-              <button
-                onClick={captureSelection}
-                className="px-3 py-1.5 bg-[#E62D75] text-white text-sm font-medium rounded hover:bg-[#d0256a] transition-colors"
-              >
-                Gebruik selectie
-              </button>
-            )}
-            {selection && (
-              <button
-                onClick={() => setSelection(null)}
-                className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded hover:bg-gray-200 transition-colors"
-              >
-                Opnieuw
-              </button>
-            )}
             <button
-              onClick={cancelSelection}
+              onClick={cancelMarking}
               className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded hover:bg-gray-200 transition-colors"
             >
               Annuleren
             </button>
           </div>
-        </div>
+
+          {/* Semi-transparent overlay to indicate marking mode (click-through except toolbar) */}
+          <div
+            data-feedback-overlay
+            className="fixed inset-0 z-[9997]"
+            style={{ cursor: 'crosshair' }}
+          />
+        </>
       )}
 
-      {/* Loading state while capturing */}
+      {/* Loading state while capturing element */}
       {state === 'capturing' && (
-        <div className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center">
+        <div className="fixed inset-0 z-[9999] bg-black/30 flex items-center justify-center">
           <div className="bg-white rounded-lg px-6 py-4 flex items-center gap-3 shadow-xl">
             <Loader2 className="w-5 h-5 animate-spin text-[#0E3261]" />
-            <span className="text-sm text-gray-700">Scherm vastleggen...</span>
+            <span className="text-sm text-gray-700">Element vastleggen...</span>
           </div>
         </div>
       )}
@@ -348,44 +335,60 @@ export function FeedbackButton() {
               autoFocus
             />
 
-            {/* Screenshot section */}
+            {/* Element marking section */}
             <div className="mt-3">
-              {screenshot ? (
-                /* Screenshot preview with actions */
-                <div className="relative rounded-md border border-gray-200 overflow-hidden">
-                  <img
-                    src={screenshot}
-                    alt="Schermafbeelding"
-                    className="w-full max-h-40 object-cover"
-                  />
-                  <div className="absolute top-1.5 right-1.5 flex gap-1">
-                    <button
-                      onClick={startCapture}
-                      className="p-1.5 bg-black/60 hover:bg-black/80 rounded-full transition-colors"
-                      aria-label="Opnieuw selecteren"
-                      title="Opnieuw selecteren"
-                    >
-                      <RefreshCw className="w-3 h-3 text-white" />
-                    </button>
-                    <button
-                      onClick={() => setScreenshot(null)}
-                      className="p-1.5 bg-black/60 hover:bg-black/80 rounded-full transition-colors"
-                      aria-label="Verwijder schermafbeelding"
-                      title="Verwijderen"
-                    >
-                      <X className="w-3 h-3 text-white" />
-                    </button>
+              {marked ? (
+                /* Marked element preview */
+                <div className="rounded-md border border-gray-200 overflow-hidden">
+                  {/* Screenshot thumbnail (if captured) */}
+                  {marked.screenshot && (
+                    <div className="relative">
+                      <img
+                        src={marked.screenshot}
+                        alt="Gemarkeerd element"
+                        className="w-full max-h-36 object-contain bg-gray-50"
+                      />
+                    </div>
+                  )}
+                  {/* Element info bar */}
+                  <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-t border-gray-200">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#E62D75]/10 text-[#E62D75] uppercase tracking-wide flex-shrink-0">
+                        {marked.tag}
+                      </span>
+                      <span className="text-xs text-gray-500 truncate">
+                        {marked.text.slice(0, 60) || marked.selector}
+                      </span>
+                    </div>
+                    <div className="flex gap-1 flex-shrink-0 ml-2">
+                      <button
+                        onClick={startMarking}
+                        className="p-1 hover:bg-gray-200 rounded transition-colors"
+                        aria-label="Opnieuw markeren"
+                        title="Opnieuw markeren"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5 text-gray-500" />
+                      </button>
+                      <button
+                        onClick={removeMarked}
+                        className="p-1 hover:bg-gray-200 rounded transition-colors"
+                        aria-label="Verwijderen"
+                        title="Verwijderen"
+                      >
+                        <X className="w-3.5 h-3.5 text-gray-500" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ) : (
-                /* Add screenshot button */
+                /* Mark element button */
                 <button
-                  onClick={startCapture}
+                  onClick={startMarking}
                   disabled={state === 'sending'}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2.5 border border-dashed border-gray-300 rounded-md text-sm text-gray-500 hover:border-[#0E3261] hover:text-[#0E3261] hover:bg-[#0E3261]/5 disabled:opacity-50 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2.5 border border-dashed border-gray-300 rounded-md text-sm text-gray-500 hover:border-[#E62D75] hover:text-[#E62D75] hover:bg-[#E62D75]/5 disabled:opacity-50 transition-colors"
                 >
-                  <Camera className="w-4 h-4" />
-                  Voeg schermafbeelding toe
+                  <Crosshair className="w-4 h-4" />
+                  Markeer op de pagina
                 </button>
               )}
             </div>
@@ -432,7 +435,7 @@ export function FeedbackButton() {
         </div>
       )}
 
-      {/* Floating button — always visible when idle */}
+      {/* Floating button */}
       {state === 'idle' && (
         <button
           onClick={handleOpen}

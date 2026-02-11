@@ -39,9 +39,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { message, screenshot, pageUrl, userAgent } = body as {
+  const { message, screenshot, element, pageUrl, userAgent } = body as {
     message?: string
     screenshot?: string
+    element?: { selector?: string; text?: string; tag?: string; rect?: { x: number; y: number; width: number; height: number } }
     pageUrl?: string
     userAgent?: string
   }
@@ -79,6 +80,15 @@ export async function POST(request: NextRequest) {
       </div>
 
       ${screenshot ? '<p style="color: #666; font-size: 13px;">📎 Schermafbeelding bijgevoegd</p>' : ''}
+
+      ${element ? `
+      <div style="background: #fff5f7; border-left: 3px solid #E62D75; border-radius: 4px; padding: 12px; margin-bottom: 16px;">
+        <p style="margin: 0 0 4px 0; font-size: 12px; font-weight: 600; color: #E62D75; text-transform: uppercase; letter-spacing: 0.5px;">Gemarkeerd element</p>
+        <p style="margin: 0; font-size: 13px; color: #333;"><strong>${escapeHtml(element.tag || '')}</strong> — <code style="background: #f1f5f9; padding: 1px 4px; border-radius: 2px; font-size: 12px;">${escapeHtml(element.selector || '')}</code></p>
+        ${element.text ? `<p style="margin: 4px 0 0 0; font-size: 12px; color: #666;">"${escapeHtml(element.text.slice(0, 100))}"</p>` : ''}
+        ${element.rect ? `<p style="margin: 4px 0 0 0; font-size: 11px; color: #999;">Positie: ${element.rect.x},${element.rect.y} — ${element.rect.width}×${element.rect.height}px</p>` : ''}
+      </div>
+      ` : ''}
 
       <table style="font-size: 13px; color: #666; border-top: 1px solid #eee; padding-top: 12px; margin-top: 16px;">
         <tr><td style="padding: 2px 12px 2px 0; font-weight: 600;">Pagina</td><td>${escapeHtml(pageUrl || 'onbekend')}</td></tr>
