@@ -15,9 +15,15 @@ interface Member {
   end_date: string
   grace_ends_at: string
   cancelled_at: string | null
+  invited_at: string | null
+  last_sign_in_at: string | null
 }
 
-function computeStatus(member: Member): 'active' | 'grace' | 'expired' {
+type MemberStatus = 'aangemaakt' | 'uitgenodigd' | 'active' | 'grace' | 'expired'
+
+function computeStatus(member: Member): MemberStatus {
+  if (!member.invited_at) return 'aangemaakt'
+  if (!member.last_sign_in_at) return 'uitgenodigd'
   if (member.cancelled_at) return 'expired'
   const today = new Date().toISOString().split('T')[0]
   if (today <= member.end_date) return 'active'

@@ -7,6 +7,7 @@ import { TeamNav } from '@/components/team-nav'
 
 interface Member {
   id: string
+  user_id: string
   email: string
   first_name: string
   last_name: string
@@ -17,13 +18,20 @@ interface Member {
   end_date: string
   grace_ends_at: string
   cancelled_at: string | null
+  invited_at: string | null
+  last_sign_in_at: string | null
   notes: string | null
   created_at: string
 }
 
-type SubscriptionStatus = 'active' | 'grace' | 'expired'
+type MemberStatus = 'aangemaakt' | 'uitgenodigd' | 'active' | 'grace' | 'expired'
 
-function computeStatus(member: Member): SubscriptionStatus {
+function computeStatus(member: Member): MemberStatus {
+  // If never invited → Aangemaakt
+  if (!member.invited_at) return 'aangemaakt'
+  // If invited but never logged in → Uitgenodigd
+  if (!member.last_sign_in_at) return 'uitgenodigd'
+  // Normal date-based status
   if (member.cancelled_at) return 'expired'
   const today = new Date().toISOString().split('T')[0]
   if (today <= member.end_date) return 'active'
@@ -31,16 +39,19 @@ function computeStatus(member: Member): SubscriptionStatus {
   return 'expired'
 }
 
-function StatusBadge({ status }: { status: SubscriptionStatus }) {
-  const styles = {
-    active: 'bg-green-50 text-green-700 border-green-200',
-    grace: 'bg-amber-50 text-amber-700 border-amber-200',
-    expired: 'bg-red-50 text-red-700 border-red-200',
-  }
-  const labels = { active: 'Actief', grace: 'Verlengingsperiode', expired: 'Verlopen' }
+const statusConfig: Record<MemberStatus, { label: string; className: string }> = {
+  aangemaakt: { label: 'Aangemaakt', className: 'bg-gray-50 text-gray-600 border-gray-200' },
+  uitgenodigd: { label: 'Uitgenodigd', className: 'bg-blue-50 text-blue-700 border-blue-200' },
+  active: { label: 'Actief', className: 'bg-green-50 text-green-700 border-green-200' },
+  grace: { label: 'Verlengingsperiode', className: 'bg-amber-50 text-amber-700 border-amber-200' },
+  expired: { label: 'Verlopen', className: 'bg-red-50 text-red-700 border-red-200' },
+}
+
+function StatusBadge({ status }: { status: MemberStatus }) {
+  const { label, className } = statusConfig[status]
   return (
-    <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full border ${styles[status]}`}>
-      {labels[status]}
+    <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full border ${className}`}>
+      {label}
     </span>
   )
 }
@@ -51,6 +62,49 @@ function formatDate(dateStr: string) {
     month: 'short',
     year: 'numeric',
   })
+}
+
+function InviteButton({ member, onInvited }: { member: Member; onInvited: () => void }) {
+  const [sending, setSending] = useState(false)
+  const status = computeStatus(member)
+
+  if (status !== 'aangemaakt' && status !== 'uitgenodigd') return null
+
+  const isResend = status === 'uitgenodigd'
+
+  async function handleInvite(e: React.MouseEvent) {
+    e.stopPropagation()
+    setSending(true)
+    try {
+      const res = await fetch(`/api/v1/team/leden/${member.id}/invite`, { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) {
+        alert(data.error || 'Fout bij versturen uitnodiging')
+        return
+      }
+      onInvited()
+    } catch {
+      alert('Netwerkfout')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  return (
+    <button
+      onClick={handleInvite}
+      disabled={sending}
+      title={isResend ? 'Uitnodiging opnieuw versturen' : 'Uitnodiging versturen'}
+      className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors disabled:opacity-50"
+    >
+      {sending ? (
+        <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" strokeDasharray="28" strokeDashoffset="8" /></svg>
+      ) : (
+        <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z" /><path d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z" /></svg>
+      )}
+      {isResend ? 'Opnieuw' : 'Uitnodigen'}
+    </button>
+  )
 }
 
 function AddMemberForm({ onSuccess }: { onSuccess: () => void }) {
@@ -343,46 +397,52 @@ export default function TeamLedenPage() {
     )
   }
 
-  const activeCount = members.filter(m => computeStatus(m) === 'active').length
-  const graceCount = members.filter(m => computeStatus(m) === 'grace').length
-  const expiredCount = members.filter(m => computeStatus(m) === 'expired').length
+  const counts = {
+    active: members.filter(m => computeStatus(m) === 'active').length,
+    uitgenodigd: members.filter(m => computeStatus(m) === 'uitgenodigd').length,
+    aangemaakt: members.filter(m => computeStatus(m) === 'aangemaakt').length,
+    grace: members.filter(m => computeStatus(m) === 'grace').length,
+    expired: members.filter(m => computeStatus(m) === 'expired').length,
+  }
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
-          Team
-        </h1>
+      <h1 className="text-2xl font-bold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
+        Team
+      </h1>
+      <TeamNav />
+
+      {/* Inline stats + Nieuw lid button */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+          <span className="text-[var(--navy-dark)]"><span className="font-semibold">{members.length}</span> totaal</span>
+          <span className="text-green-700"><span className="font-semibold">{counts.active}</span> actief</span>
+          {counts.uitgenodigd > 0 && (
+            <span className="text-blue-700"><span className="font-semibold">{counts.uitgenodigd}</span> uitgenodigd</span>
+          )}
+          {counts.aangemaakt > 0 && (
+            <span className="text-gray-600"><span className="font-semibold">{counts.aangemaakt}</span> aangemaakt</span>
+          )}
+          {counts.grace > 0 && (
+            <span className="text-amber-700"><span className="font-semibold">{counts.grace}</span> verlengingsperiode</span>
+          )}
+          {counts.expired > 0 && (
+            <span className="text-red-700"><span className="font-semibold">{counts.expired}</span> verlopen</span>
+          )}
+        </div>
         <button
           onClick={() => setShowForm(prev => !prev)}
-          className="px-4 py-2 bg-[var(--pink)] text-white rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
+          className="px-4 py-2 bg-[var(--pink)] text-white rounded-md text-sm font-medium hover:opacity-90 transition-opacity shrink-0"
         >
-          {showForm ? 'Verbergen' : 'Nieuw lid'}
+          {showForm ? 'Verbergen' : '+ Nieuw lid'}
         </button>
       </div>
-      <TeamNav />
 
       {showForm && (
         <div className="mb-6">
           <AddMemberForm onSuccess={() => { setShowForm(false); fetchMembers() }} />
         </div>
       )}
-
-      {/* Summary stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-3">
-          <p className="text-2xl font-bold text-green-700">{activeCount}</p>
-          <p className="text-sm text-green-600">Actief</p>
-        </div>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
-          <p className="text-2xl font-bold text-amber-700">{graceCount}</p>
-          <p className="text-sm text-amber-600">Verlengingsperiode</p>
-        </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3">
-          <p className="text-2xl font-bold text-red-700">{expiredCount}</p>
-          <p className="text-sm text-red-600">Verlopen</p>
-        </div>
-      </div>
 
       {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
 
@@ -398,12 +458,13 @@ export default function TeamLedenPage() {
                 <th className="text-left px-4 py-3 font-medium text-[var(--navy-medium)]">Plan</th>
                 <th className="text-left px-4 py-3 font-medium text-[var(--navy-medium)]">Status</th>
                 <th className="text-left px-4 py-3 font-medium text-[var(--navy-medium)]">Einddatum</th>
+                <th className="px-4 py-3"><span className="sr-only">Acties</span></th>
               </tr>
             </thead>
             <tbody>
               {members.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-[var(--navy-medium)]">
+                  <td colSpan={7} className="px-4 py-8 text-center text-[var(--navy-medium)]">
                     Nog geen leden. Voeg het eerste lid toe.
                   </td>
                 </tr>
@@ -425,6 +486,9 @@ export default function TeamLedenPage() {
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{member.plan === 'yearly' ? 'Jaar' : 'Maand'}</td>
                       <td className="px-4 py-3"><StatusBadge status={status} /></td>
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{formatDate(member.end_date)}</td>
+                      <td className="px-4 py-3">
+                        <InviteButton member={member} onInvited={fetchMembers} />
+                      </td>
                     </tr>
                   )
                 })
