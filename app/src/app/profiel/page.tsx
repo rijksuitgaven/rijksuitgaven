@@ -102,7 +102,7 @@ export default function ProfielPage() {
         <div className="pt-4 border-t border-[var(--border)]">
           <button
             onClick={handleLogout}
-            className="inline-flex items-center px-4 py-2 text-sm font-medium text-[var(--navy-medium)] border border-[var(--border)] rounded-md hover:bg-gray-50 transition-colors"
+            className="text-sm font-medium text-red-600 hover:text-red-800 transition-colors"
           >
             Uitloggen
           </button>
