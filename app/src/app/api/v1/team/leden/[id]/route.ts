@@ -84,8 +84,8 @@ export async function PATCH(
     }
   }
 
-  const supabase = createAdminClient()
-  const { data, error } = await supabase
+  const adminSupabase = createAdminClient()
+  const { data, error } = await adminSupabase
     .from('subscriptions')
     .update(updates)
     .eq('id', id)

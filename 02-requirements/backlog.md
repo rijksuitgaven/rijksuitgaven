@@ -150,25 +150,27 @@ Design a branded 404 page that:
 
 ---
 
-### Rate Limiting (Pre-Launch)
+### Rate Limiting via Cloudflare (Pre-Launch)
 
 **Priority:** High (Pre-Launch)
 **Added:** 2026-02-08
-**Status:** BACKLOGGED
-**Type:** Security
+**Updated:** 2026-02-12
+**Status:** ⏳ TODO (V1.0 — before launch)
+**Type:** Security / Infrastructure
 
 **Problem:**
 No rate limiting exists anywhere in the stack. An attacker can send thousands of requests/second to any BFF endpoint, saturating the backend's 10-connection asyncpg pool and degrading service for all users. The autocomplete endpoint (called on every keystroke) and cascading filters endpoint (7 parallel DB queries per request) are the most amplifiable vectors.
 
-**Potential Solutions:**
+**Decision (2026-02-12):** Cloudflare free tier in front of Railway.
 
-| Option | Effort | Impact |
-|--------|--------|--------|
-| **Railway/Cloudflare rate limiting** | 1-2 hours | High — infrastructure-level, no code changes |
-| **Next.js middleware rate limiter** | 4 hours | High — per-IP throttling at BFF layer |
-| **Backend FastAPI rate limiter** | 2-4 hours | Medium — protects backend directly but BFF still bypassable |
+**Implementation:**
+1. Create Cloudflare account (free tier)
+2. Change DNS for `beta.rijksuitgaven.nl` (and later `rijksuitgaven.nl`) to proxy through Cloudflare
+3. Configure rate limiting rules in Cloudflare dashboard
+4. Verify Railway still receives traffic correctly
+5. Benefits: rate limiting + DDoS protection + WAF for free
 
-**Decision:** Must be implemented before public launch. Infrastructure-level preferred.
+**Estimated effort:** 30 minutes
 
 ---
 
