@@ -100,6 +100,14 @@ export function FeedbackButton() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [state, reset])
 
+  // Set crosshair cursor on body during marking mode
+  useEffect(() => {
+    if (state === 'marking') {
+      document.body.style.cursor = 'crosshair'
+      return () => { document.body.style.cursor = '' }
+    }
+  }, [state])
+
   // Element highlighting: mousemove + click handlers during marking mode
   useEffect(() => {
     if (state !== 'marking') return
@@ -126,13 +134,14 @@ export function FeedbackButton() {
     }
 
     const handleClick = async (e: MouseEvent) => {
+      // Let toolbar clicks through (Annuleren button etc.)
+      if ((e.target as HTMLElement).closest('[data-feedback-overlay]')) return
+
       e.preventDefault()
       e.stopPropagation()
 
       const el = hoveredElRef.current
       if (!el) return
-      // Skip clicks on our toolbar
-      if ((e.target as HTMLElement).closest('[data-feedback-overlay]')) return
 
       // Capture the clicked element
       setHighlightRect(null)
@@ -287,12 +296,6 @@ export function FeedbackButton() {
             </button>
           </div>
 
-          {/* Semi-transparent overlay to indicate marking mode (click-through except toolbar) */}
-          <div
-            data-feedback-overlay
-            className="fixed inset-0 z-[9997]"
-            style={{ cursor: 'crosshair' }}
-          />
         </>
       )}
 
