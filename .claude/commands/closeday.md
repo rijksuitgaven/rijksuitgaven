@@ -74,6 +74,28 @@ Create a comprehensive daily log for today and update session context. Follow th
 
 **Rule:** The day is NOT closed until all boxes are checked and all questions resolved.
 
+### Sprint Boundary Check (every 2 weeks / end of sprint)
+
+If today is the last day of a sprint, run these additional cross-file checks:
+
+**Tech consistency (30 seconds each):**
+- Grep `04-target-architecture/` for stale tech refs (MySQL, NextAuth, SQLAlchemy, Tremor, Redis as "deployed")
+- Grep all docs for hardcoded credentials or API keys
+- Grep all script docs for wrong psql path
+
+**Numbers alignment:**
+- Typesense doc counts match across `config/typesense-railway.md`, `scripts/typesense/README.md`, `SESSION-CONTEXT.md`
+- Materialized view list consistent in `DATA-UPDATE-RUNBOOK.md` and `DATABASE-DOCUMENTATION.md`
+
+**Feature coverage:**
+- Every new page/route from this sprint appears in `docs/FRONTEND-DOCUMENTATION.md`
+- Every new table/migration appears in `scripts/sql/DATABASE-DOCUMENTATION.md`
+- Every new UX feature has a status in `02-requirements/search-requirements.md`
+- `02-requirements/backlog.md` reflects completed items
+
+**Architecture stubs:**
+- No empty files in `04-target-architecture/`, `09-timelines/`, `01-project-overview/`
+
 ---
 
 ## 1. Create Daily Log (`logs/daily/YYYY-MM-DD.md`)
