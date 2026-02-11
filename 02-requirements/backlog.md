@@ -915,6 +915,37 @@ Add checkbox column to `/team/leden` table with bulk action bar:
 
 ---
 
+### Integraal View: Cross-Module Data Completeness
+
+**Priority:** Medium (V1.1 — Database Structure)
+**Added:** 2026-02-11
+**Status:** ⏳ Backlog
+**Type:** Architecture / Data
+
+**Problem:**
+The `universal_search` materialized view aggregates recipients across modules but lacks cross-module detail fields. Most notably, **regelingen** (regulations) exist in multiple modules (instrumenten, publiek) but are NOT available in the integraal view. This limits the integraal view to: ontvanger, year amounts, totaal, and module list.
+
+**Goal:**
+Enrich the integraal view so it can surface module-specific data like regelingen, making it a true cross-module discovery layer. Users searching in integraal should be able to see which regelingen a recipient is associated with, without needing to drill into each module separately.
+
+**Fields to evaluate for inclusion:**
+
+| Field | Source Modules | Priority |
+|-------|---------------|----------|
+| regelingen | instrumenten, publiek | High |
+| begrotingsnaam | instrumenten | Medium |
+| categorie | inkoop | Medium |
+| trefwoorden | publiek | Low |
+
+**Approach Options:**
+1. **JSONB column** — Store module-specific fields as JSON (e.g., `extra_data: { regelingen: [...], categorieën: [...] }`)
+2. **Separate junction table** — `recipient_regelingen` mapping table linking ontvanger_key to regelingen across modules
+3. **Array columns** — Add `regelingen text[]`, `categorieën text[]` etc. as array columns on `universal_search`
+
+**Decision:** Requires design brainstorm. Related to existing "Integraal View Redesign" backlog item. May be combined.
+
+---
+
 ### Branded Magic Link Email Template
 
 **Priority:** High (V1.0 — before launch)

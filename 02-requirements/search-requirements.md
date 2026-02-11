@@ -1305,6 +1305,38 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-027: Post-Login Landing Page (Module Hub)
+
+**Requirement:** Replace the generic landing page with an Enhanced Module Hub that gives users a clear overview of all available data modules with descriptions and stats.
+
+**Behavior:**
+
+**Welcome bar (top):**
+- Single line: "Doorzoek en vergelijk rijksoverheidsuitgaven vanaf 2016."
+- Light gray background, subtle bottom border
+
+**Integraal card (full-width, featured):**
+- Pink border + light pink background (highlighted)
+- Title: "Integraal Overzicht"
+- Description: "Alle modules gecombineerd — ontdek welke ontvangers in meerdere databronnen voorkomen."
+- Stat: "463.000+ ontvangers · 6 databronnen"
+- Ghost "Bekijk" button on desktop
+- Entire card is clickable → navigates to /integraal
+
+**Module grid (2 columns, 6 cards):**
+- Each card: title, one-line description, stat badge (amount + year range)
+- Cards are fully clickable → navigate to module page
+- Hover: border color change + shadow lift
+- Order: Instrumenten, Apparaat, Inkoop, Publiek, Provincie, Gemeente
+
+**No search bar** on landing page (search lives on module pages).
+
+**Priority:** P1
+
+**Status:** ✅ Implemented 2026-02-11
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload
