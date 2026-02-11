@@ -543,8 +543,6 @@ export default function TeamFeedbackPage() {
           <option value="requirement">Requirement</option>
           <option value="afgewezen">Afgewezen</option>
           <option value="afgerond">Afgerond</option>
-          <option value="open">Open (behandeling + req.)</option>
-          <option value="done">Gesloten (afg. + klaar)</option>
         </select>
         <select
           value={filterCategory}

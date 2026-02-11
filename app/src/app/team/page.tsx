@@ -36,14 +36,27 @@ function formatDate(dateStr: string) {
 export default function TeamDashboardPage() {
   const { role, loading: subLoading } = useSubscription()
   const [members, setMembers] = useState<Member[]>([])
+  const [feedbackStats, setFeedbackStats] = useState<{ nieuw: number; bug: number; suggestie: number; vraag: number }>({ nieuw: 0, bug: 0, suggestie: 0, vraag: 0 })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!subLoading && role === 'admin') {
-      fetch('/api/v1/team/leden')
-        .then(res => res.json())
-        .then(data => { if (data.members) setMembers(data.members) })
-        .finally(() => setLoading(false))
+      Promise.all([
+        fetch('/api/v1/team/leden').then(res => res.json()),
+        fetch('/api/v1/team/feedback').then(res => res.json()),
+      ]).then(([ledenData, feedbackData]) => {
+        if (ledenData.members) setMembers(ledenData.members)
+        if (feedbackData.items) {
+          const items = feedbackData.items as { status: string; category: string }[]
+          const open = items.filter(i => i.status !== 'afgewezen' && i.status !== 'afgerond')
+          setFeedbackStats({
+            nieuw: items.filter(i => i.status === 'nieuw').length,
+            bug: open.filter(i => i.category === 'bug').length,
+            suggestie: open.filter(i => i.category === 'suggestie').length,
+            vraag: open.filter(i => i.category === 'vraag').length,
+          })
+        }
+      }).finally(() => setLoading(false))
     } else if (!subLoading) {
       setLoading(false)
     }
@@ -107,6 +120,38 @@ export default function TeamDashboardPage() {
           <p className="text-3xl font-bold text-red-700">{expiredMembers.length}</p>
           <p className="text-sm text-red-600">Verlopen</p>
         </div>
+      </div>
+
+      {/* Feedback overview */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-semibold text-[var(--navy-dark)]">Feedback</h2>
+          <Link href="/team/feedback" className="text-sm text-[var(--pink)] hover:underline">Bekijk alles</Link>
+        </div>
+        {feedbackStats.nieuw > 0 || feedbackStats.bug > 0 || feedbackStats.suggestie > 0 || feedbackStats.vraag > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <Link href="/team/feedback" className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-4 hover:border-blue-300 transition-colors">
+              <p className="text-3xl font-bold text-blue-700">{feedbackStats.nieuw}</p>
+              <p className="text-sm text-blue-600">Nieuw</p>
+            </Link>
+            <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-4">
+              <p className="text-3xl font-bold text-red-700">{feedbackStats.bug}</p>
+              <p className="text-sm text-red-600">Bugs (open)</p>
+            </div>
+            <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-4">
+              <p className="text-3xl font-bold text-green-700">{feedbackStats.suggestie}</p>
+              <p className="text-sm text-green-600">Suggesties (open)</p>
+            </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-4">
+              <p className="text-3xl font-bold text-blue-700">{feedbackStats.vraag}</p>
+              <p className="text-sm text-blue-600">Vragen (open)</p>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-green-50 border border-green-200 rounded-lg px-6 py-4 text-center">
+            <p className="text-green-700 font-medium text-sm">Geen openstaande feedback</p>
+          </div>
+        )}
       </div>
 
       {/* Grace period - needs attention */}
