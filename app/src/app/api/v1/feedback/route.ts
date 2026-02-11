@@ -39,10 +39,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { category, message, reason, screenshot, element, pageUrl, userAgent } = body as {
+  const { category, message, screenshot, element, pageUrl, userAgent } = body as {
     category?: string
     message?: string
-    reason?: string
     screenshot?: string
     element?: { selector?: string; text?: string; tag?: string; rect?: { x: number; y: number; width: number; height: number } }
     pageUrl?: string
@@ -50,19 +49,15 @@ export async function POST(request: NextRequest) {
   }
 
   // Validate category if provided
-  const validCategories = ['verbetering', 'bug', 'vraag'] as const
+  const validCategories = ['suggestie', 'bug', 'vraag'] as const
   const feedbackCategory = validCategories.includes(category as typeof validCategories[number])
     ? (category as typeof validCategories[number])
-    : 'verbetering'
+    : 'suggestie'
 
   const categoryLabels: Record<string, string> = {
-    verbetering: 'Verbetering',
+    suggestie: 'Suggestie',
     bug: 'Bug',
     vraag: 'Vraag',
-  }
-
-  if (reason && (typeof reason !== 'string' || reason.length > 2000)) {
-    return NextResponse.json({ error: 'Reden is te lang (max 2000 tekens)' }, { status: 400 })
   }
 
   if (!message || typeof message !== 'string' || message.trim().length === 0) {
@@ -106,13 +101,6 @@ export async function POST(request: NextRequest) {
       <div style="background: #f8fafc; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
         <p style="margin: 0; white-space: pre-wrap; line-height: 1.6;">${escapeHtml(message.trim())}</p>
       </div>
-
-      ${reason?.trim() ? `
-      <div style="background: #fafafa; border-left: 3px solid #0E3261; border-radius: 4px; padding: 12px; margin-bottom: 16px;">
-        <p style="margin: 0 0 4px 0; font-size: 12px; font-weight: 600; color: #0E3261; text-transform: uppercase; letter-spacing: 0.5px;">Waarom</p>
-        <p style="margin: 0; font-size: 13px; color: #333; white-space: pre-wrap;">${escapeHtml(reason.trim())}</p>
-      </div>
-      ` : ''}
 
       ${screenshot ? '<p style="color: #666; font-size: 13px;">📎 Schermafbeelding bijgevoegd</p>' : ''}
 
