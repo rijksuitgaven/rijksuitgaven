@@ -80,9 +80,20 @@ export async function POST(request: NextRequest) {
 
   const resend = new Resend(RESEND_API_KEY)
   const userEmail = session.user.email || 'onbekend'
-  const timestamp = new Date().toISOString()
   const subjectPreview = message.trim().slice(0, 50)
   const categoryTag = categoryLabels[feedbackCategory]
+
+  // Format timestamp as Dutch: "11 feb 2026, 17:05"
+  const now = new Date()
+  const dutchMonths = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
+  const formattedTime = `${now.getDate()} ${dutchMonths[now.getMonth()]} ${now.getFullYear()}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+
+  // Parse User-Agent to friendly string: "Chrome, macOS"
+  const friendlyBrowser = parseBrowser(userAgent || '')
+
+  // Extract page name from URL: "https://beta.rijksuitgaven.nl/instrumenten" → "Instrumenten"
+  const pageName = pageUrl ? formatPageName(pageUrl) : 'onbekend'
+  const pageLink = pageUrl ? `<a href="${escapeHtml(pageUrl)}" style="color: #436FA3; text-decoration: none;">${escapeHtml(pageName)}</a>` : 'onbekend'
 
   // Build email HTML
   const emailHtml = `
@@ -104,19 +115,10 @@ export async function POST(request: NextRequest) {
 
       ${screenshot ? '<p style="color: #666; font-size: 13px;">📎 Schermafbeelding bijgevoegd</p>' : ''}
 
-      ${element ? `
-      <div style="background: #fff5f7; border-left: 3px solid #E62D75; border-radius: 4px; padding: 12px; margin-bottom: 16px;">
-        <p style="margin: 0 0 4px 0; font-size: 12px; font-weight: 600; color: #E62D75; text-transform: uppercase; letter-spacing: 0.5px;">Gemarkeerd element</p>
-        <p style="margin: 0; font-size: 13px; color: #333;"><strong>${escapeHtml(element.tag || '')}</strong> — <code style="background: #f1f5f9; padding: 1px 4px; border-radius: 2px; font-size: 12px;">${escapeHtml(element.selector || '')}</code></p>
-        ${element.text ? `<p style="margin: 4px 0 0 0; font-size: 12px; color: #666;">"${escapeHtml(element.text.slice(0, 100))}"</p>` : ''}
-        ${element.rect ? `<p style="margin: 4px 0 0 0; font-size: 11px; color: #999;">Positie: ${element.rect.x},${element.rect.y} — ${element.rect.width}×${element.rect.height}px</p>` : ''}
-      </div>
-      ` : ''}
-
       <table style="font-size: 13px; color: #666; border-top: 1px solid #eee; padding-top: 12px; margin-top: 16px;">
-        <tr><td style="padding: 2px 12px 2px 0; font-weight: 600;">Pagina</td><td>${escapeHtml(pageUrl || 'onbekend')}</td></tr>
-        <tr><td style="padding: 2px 12px 2px 0; font-weight: 600;">Browser</td><td>${escapeHtml(userAgent || 'onbekend')}</td></tr>
-        <tr><td style="padding: 2px 12px 2px 0; font-weight: 600;">Tijdstip</td><td>${timestamp}</td></tr>
+        <tr><td style="padding: 2px 12px 2px 0; font-weight: 600;">Pagina</td><td>${pageLink}</td></tr>
+        <tr><td style="padding: 2px 12px 2px 0; font-weight: 600;">Browser</td><td>${escapeHtml(friendlyBrowser)}</td></tr>
+        <tr><td style="padding: 2px 12px 2px 0; font-weight: 600;">Tijdstip</td><td>${formattedTime}</td></tr>
       </table>
     </div>
   `
@@ -157,4 +159,35 @@ function escapeHtml(str: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
+}
+
+/** Parse User-Agent to "Chrome, macOS" style string */
+function parseBrowser(ua: string): string {
+  if (!ua) return 'onbekend'
+
+  let browser = 'onbekend'
+  if (ua.includes('Firefox/')) browser = 'Firefox'
+  else if (ua.includes('Edg/')) browser = 'Edge'
+  else if (ua.includes('Chrome/')) browser = 'Chrome'
+  else if (ua.includes('Safari/') && !ua.includes('Chrome')) browser = 'Safari'
+
+  let os = ''
+  if (ua.includes('Mac OS X')) os = 'macOS'
+  else if (ua.includes('Windows')) os = 'Windows'
+  else if (ua.includes('Linux')) os = 'Linux'
+  else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS'
+  else if (ua.includes('Android')) os = 'Android'
+
+  return os ? `${browser}, ${os}` : browser
+}
+
+/** Extract page name from URL: "/instrumenten?q=foo" → "Instrumenten" */
+function formatPageName(url: string): string {
+  try {
+    const pathname = new URL(url).pathname
+    const segment = pathname.split('/').filter(Boolean)[0] || 'Home'
+    return segment.charAt(0).toUpperCase() + segment.slice(1)
+  } catch {
+    return url
+  }
 }
