@@ -17,7 +17,12 @@ export function LoginForm() {
   useEffect(() => {
     const error = searchParams.get('error')
     if (error) {
-      setErrorMessage(error)
+      const errorMessages: Record<string, string> = {
+        no_code: 'De inloglink is ongeldig. Probeer opnieuw in te loggen.',
+        cross_device: 'De inloglink moet op hetzelfde apparaat worden geopend als waar je hem hebt aangevraagd.',
+        exchange_failed: 'De inloglink is verlopen of al gebruikt. Vraag een nieuwe aan.',
+      }
+      setErrorMessage(errorMessages[error] || 'Er ging iets mis bij het inloggen.')
       setState('error')
     }
   }, [searchParams])

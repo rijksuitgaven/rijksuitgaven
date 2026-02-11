@@ -37,14 +37,18 @@ _availability_cache: dict[str, tuple[int, int]] = {}
 
 async def _get_module_availability(module: str) -> tuple[int | None, int | None]:
     """Get module-level year range from data_availability table."""
+    # Check cache first (no lock needed - cache is dict, worst case is duplicate query)
     if module in _availability_cache:
         return _availability_cache[module]
+
+    # Query database (cache miss)
     row = await fetch_all(
         "SELECT year_from, year_to FROM data_availability WHERE module = $1 AND entity_type IS NULL",
         module,
     )
     if row:
         result = (row[0]["year_from"], row[0]["year_to"])
+        # Store in cache (race condition possible but harmless - both queries return same data)
         _availability_cache[module] = result
         return result
     return (None, None)
@@ -502,6 +506,12 @@ async def get_module_data(
     if module not in MODULE_CONFIG:
         raise ValueError(f"Unknown module: {module}")
 
+    # SECURITY: Validate pagination bounds (defense-in-depth)
+    if limit < 1 or limit > 500:
+        raise ValueError(f"Invalid limit: {limit} (must be 1-500)")
+    if offset < 0 or offset > 10000:
+        raise ValueError(f"Invalid offset: {offset} (must be 0-10000)")
+
     config = MODULE_CONFIG[module]
     primary = config["primary_field"]
 
@@ -930,6 +940,7 @@ async def _get_from_aggregated_view(
             params.append(random_threshold)
             param_idx += 1
     else:
+        # SECURITY: Validate sort_by against allowed values before SQL construction
         sort_field = "totaal"
         if sort_by == "primary":
             sort_field = primary
@@ -938,6 +949,9 @@ async def _get_from_aggregated_view(
             if year_num not in YEARS:
                 raise ValueError("Invalid sort year")
             sort_field = f'"{year_num}"'
+        elif sort_by not in ["totaal", "primary", "random"]:
+            # Reject any other sort_by values (could be SQL injection attempt)
+            raise ValueError(f"Invalid sort_by value: {sort_by}")
         sort_direction = "DESC" if sort_order == "desc" else "ASC"
         sort_clause = f"ORDER BY {sort_field} {sort_direction}"
 
@@ -1221,6 +1235,7 @@ async def _get_from_source_table(
     elif sort_by == "random":
         sort_clause = "ORDER BY RANDOM()"
     else:
+        # SECURITY: Validate sort_by against allowed values before SQL construction
         sort_field = "totaal"
         if sort_by == "primary":
             sort_field = primary
@@ -1229,6 +1244,9 @@ async def _get_from_source_table(
             if year_num not in YEARS:
                 raise ValueError("Invalid sort year")
             sort_field = f"\"{sort_by}\""
+        elif sort_by not in ["totaal", "primary", "random"]:
+            # Reject any other sort_by values (could be SQL injection attempt)
+            raise ValueError(f"Invalid sort_by value: {sort_by}")
         sort_direction = "DESC" if sort_order == "desc" else "ASC"
         sort_clause = f"ORDER BY {sort_field} {sort_direction}"
 
@@ -1516,6 +1534,11 @@ async def get_integraal_data(
     This table is pre-aggregated with recipient totals across all modules.
     Returns (rows, total_count, totals_dict_or_none).
     """
+    # SECURITY: Validate pagination bounds (defense-in-depth)
+    if limit < 1 or limit > 500:
+        raise ValueError(f"Invalid limit: {limit} (must be 1-500)")
+    if offset < 0 or offset > 10000:
+        raise ValueError(f"Invalid offset: {offset} (must be 0-10000)")
     # Map display names to source values in database
     module_name_map = {
         "Instrumenten": "instrumenten",
@@ -1620,6 +1643,8 @@ async def get_integraal_data(
             params.append(random_threshold)
             param_idx += 1
     else:
+        # SECURITY: Validate sort_by against allowed values before SQL construction
+        # Whitelist: totaal, primary (ontvanger), extra-betalingen, year columns
         sort_field = "totaal"
         if sort_by == "primary":
             sort_field = "ontvanger"
@@ -1630,6 +1655,9 @@ async def get_integraal_data(
             if year_num not in YEARS:
                 raise ValueError("Invalid sort year")
             sort_field = f'"{year_num}"'
+        elif sort_by not in ["totaal", "primary", "extra-betalingen", "random"]:
+            # Reject any other sort_by values (could be SQL injection attempt)
+            raise ValueError(f"Invalid sort_by value: {sort_by}")
         sort_direction = "DESC" if sort_order == "desc" else "ASC"
         sort_clause = f"ORDER BY {sort_field} {sort_direction}"
 

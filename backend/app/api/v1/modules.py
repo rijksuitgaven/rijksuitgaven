@@ -244,7 +244,7 @@ async def get_module(
     q: Optional[str] = Query(None, min_length=1, max_length=200, description="Search query"),
     # Pagination
     limit: int = Query(25, ge=1, le=500, description="Results per page (max 500)"),
-    offset: int = Query(0, ge=0, le=50000, description="Pagination offset"),
+    offset: int = Query(0, ge=0, le=10000, description="Pagination offset (max 10,000)"),
     # Filtering
     jaar: Optional[int] = Query(None, ge=2016, le=2025, description="Filter by year"),
     min_bedrag: Optional[float] = Query(None, ge=0, description="Minimum amount"),
@@ -441,6 +441,10 @@ async def get_details(
 
     For integraal: shows breakdown by module (which modules, amounts per module).
     """
+    # Validate primary_value length (prevent excessive query cost)
+    if not primary_value or len(primary_value) > 500:
+        raise HTTPException(status_code=400, detail="Ongeldige parameter")
+
     try:
         if module == ModuleName.integraal:
             # Integraal shows module breakdown
@@ -487,13 +491,13 @@ async def get_grouping_counts_endpoint(
         return {}
 
     try:
-        decoded_value = primary_value
-        if not decoded_value or len(decoded_value) > 500:
+        # Validate primary_value length (prevent excessive query cost)
+        if not primary_value or len(primary_value) > 500:
             raise HTTPException(status_code=400, detail="Ongeldige parameter")
 
         counts = await get_grouping_counts(
             module=module.value,
-            primary_value=decoded_value,
+            primary_value=primary_value,
         )
         return counts
 

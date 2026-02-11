@@ -33,6 +33,13 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   if (!(await isAdmin())) return forbiddenResponse()
 
+  // Verify origin matches expected domain (basic CSRF protection)
+  const origin = request.headers.get('origin')
+  const host = request.headers.get('host')
+  if (origin && host && !origin.includes(host)) {
+    return NextResponse.json({ error: 'Ongeldige origin' }, { status: 403 })
+  }
+
   let body: Record<string, unknown>
   try {
     const text = await request.text()
@@ -44,13 +51,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { email, first_name, last_name, organization, plan, start_date } = body as {
+  const { email, first_name, last_name, organization, plan, start_date, role } = body as {
     email?: string
     first_name?: string
     last_name?: string
     organization?: string
     plan?: string
     start_date?: string
+    role?: string
   }
 
   // Validation
@@ -62,6 +70,10 @@ export async function POST(request: NextRequest) {
   }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(start_date)) {
     return NextResponse.json({ error: 'start_date moet YYYY-MM-DD formaat zijn' }, { status: 400 })
+  }
+  // Validate role if provided (defaults to 'member' in DB)
+  if (role && !['member', 'admin'].includes(role)) {
+    return NextResponse.json({ error: 'Role moet "member" of "admin" zijn' }, { status: 400 })
   }
 
   // Calculate end_date and grace_ends_at
@@ -121,6 +133,7 @@ export async function POST(request: NextRequest) {
           last_name,
           organization: organization || null,
           plan,
+          role: role || 'member',
           start_date,
           end_date: endDateStr,
           grace_ends_at: graceEndsAtStr,
@@ -150,6 +163,7 @@ export async function POST(request: NextRequest) {
       last_name,
       organization: organization || null,
       plan,
+      role: role || 'member',
       start_date,
       end_date: endDateStr,
       grace_ends_at: graceEndsAtStr,

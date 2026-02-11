@@ -28,6 +28,12 @@ async def lifespan(app: FastAPI):
     - Startup: Nothing needed (pool created lazily on first request)
     - Shutdown: Close database connection pool to prevent resource leaks
     """
+    # Security check: warn if BFF_SECRET is not configured
+    if not settings.bff_secret:
+        logger.warning("⚠️  BFF_SECRET is not set - backend accepts all traffic without authentication!")
+        logger.warning("⚠️  This is acceptable for local development but UNSAFE for production.")
+        logger.warning("⚠️  Set BFF_SECRET environment variable to enable request authentication.")
+
     # Startup: pre-warm database pool so first request doesn't pay connection cost
     logger.info("Application starting up, pre-warming database pool")
     pool = await get_pool()
@@ -54,9 +60,10 @@ app = FastAPI(
 
 # CORS middleware
 # Restrict headers to only what's needed (not "*" which is too permissive)
+# Localhost origins only included in development mode (debug=true or ENV=development)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
+    allow_origins=settings.get_cors_origins(),
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "X-Requested-With", "Accept", "X-BFF-Secret"],

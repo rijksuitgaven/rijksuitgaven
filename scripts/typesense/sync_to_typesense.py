@@ -29,8 +29,8 @@ except ImportError:
     sys.exit(1)
 
 # Configuration
-TYPESENSE_HOST = os.environ.get('TYPESENSE_HOST', 'typesense-production-35ae.up.railway.app')
-TYPESENSE_API_KEY = os.environ.get('TYPESENSE_API_KEY', '25613d2538ece467c801af3cfac62e95')
+TYPESENSE_HOST = os.environ.get('TYPESENSE_HOST', '')
+TYPESENSE_API_KEY = os.environ.get('TYPESENSE_API_KEY', '')
 TYPESENSE_PORT = os.environ.get('TYPESENSE_PORT', '443')
 TYPESENSE_PROTOCOL = os.environ.get('TYPESENSE_PROTOCOL', 'https')
 
@@ -42,7 +42,10 @@ BATCH_SIZE = 1000
 def get_typesense_client():
     """Create Typesense client."""
     if not TYPESENSE_HOST:
-        print("ERROR: TYPESENSE_HOST environment variable not set")
+        print("ERROR: TYPESENSE_HOST environment variable is required")
+        sys.exit(1)
+    if not TYPESENSE_API_KEY:
+        print("ERROR: TYPESENSE_API_KEY environment variable is required")
         sys.exit(1)
 
     return typesense.Client({

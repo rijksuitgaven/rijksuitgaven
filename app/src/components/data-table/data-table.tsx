@@ -136,6 +136,19 @@ function downloadCSV(content: string, filename: string) {
 }
 
 /**
+ * Sanitize XLS cell value to prevent formula injection (=, +, -, @, tab, CR)
+ * Prefix formula-trigger characters with a single quote to prevent execution
+ */
+function sanitizeXlsCell(value: string): string {
+  if (typeof value !== 'string') return value
+  // Prefix formula-trigger characters with a single quote to prevent execution
+  if (/^[=+\-@\t\r]/.test(value)) {
+    return `'${value}`
+  }
+  return value
+}
+
+/**
  * Generate and download XLS file
  * Uses same data structure as CSV export
  */
@@ -158,13 +171,13 @@ function downloadXLS(
   const headers = [primaryColumnName, ...extraColumnLabels, ...availableYears.map(String), 'Totaal']
 
   const rows = data.slice(0, MAX_EXPORT_ROWS).map(row => {
-    // Extra column values
-    const extraValues = selectedColumns.map(colKey => row.extraColumns?.[colKey] || '')
+    // Extra column values - sanitize to prevent formula injection
+    const extraValues = selectedColumns.map(colKey => sanitizeXlsCell(row.extraColumns?.[colKey] || ''))
 
     const yearAmounts = availableYears.map(year => {
       return row.years.find(y => y.year === year)?.amount ?? 0
     })
-    return [row.primary_value, ...extraValues, ...yearAmounts, row.total]
+    return [sanitizeXlsCell(row.primary_value), ...extraValues, ...yearAmounts, row.total]
   })
 
   // Create worksheet

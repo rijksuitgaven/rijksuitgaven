@@ -78,7 +78,8 @@ export async function updateSession(request: NextRequest) {
 
     if (sub) {
       const today = new Date().toISOString().split('T')[0]
-      const isExpired = sub.cancelled_at || today > sub.grace_ends_at
+      // CRITICAL: cancelled_at takes precedence - even if grace_ends_at is in the future
+      const isExpired = !!sub.cancelled_at || today > sub.grace_ends_at
 
       if (isExpired) {
         const forwardedHost = request.headers.get('x-forwarded-host')

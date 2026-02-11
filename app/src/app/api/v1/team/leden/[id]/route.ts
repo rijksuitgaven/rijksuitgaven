@@ -21,6 +21,18 @@ export async function PATCH(
 
   const { id } = await params
 
+  // Verify origin matches expected domain (basic CSRF protection)
+  const origin = request.headers.get('origin')
+  const host = request.headers.get('host')
+  if (origin && host && !origin.includes(host)) {
+    return NextResponse.json({ error: 'Ongeldige origin' }, { status: 403 })
+  }
+
+  // Get current user's subscription ID to prevent self-demotion
+  const supabase = await (await import('@/lib/supabase/server')).createClient()
+  const { data: { session } } = await supabase.auth.getSession()
+  const currentUserId = session?.user?.id
+
   let body: Record<string, unknown>
   try {
     const text = await request.text()
@@ -52,8 +64,24 @@ export async function PATCH(
   }
 
   // Validate role if provided
-  if ('role' in updates && !['member', 'admin'].includes(updates.role as string)) {
-    return NextResponse.json({ error: 'Role moet "member" of "admin" zijn' }, { status: 400 })
+  if ('role' in updates) {
+    if (!['member', 'admin'].includes(updates.role as string)) {
+      return NextResponse.json({ error: 'Role moet "member" of "admin" zijn' }, { status: 400 })
+    }
+
+    // Prevent admin from demoting themselves (would lock them out)
+    if (currentUserId) {
+      const adminClient = createAdminClient()
+      const { data: targetSub } = await adminClient
+        .from('subscriptions')
+        .select('user_id, role')
+        .eq('id', id)
+        .single()
+
+      if (targetSub?.user_id === currentUserId && targetSub.role === 'admin' && updates.role === 'member') {
+        return NextResponse.json({ error: 'Je kunt jezelf niet degraderen naar member' }, { status: 400 })
+      }
+    }
   }
 
   const supabase = createAdminClient()

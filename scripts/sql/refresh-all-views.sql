@@ -12,14 +12,26 @@
 
 -- Refresh aggregated views (for API performance)
 REFRESH MATERIALIZED VIEW instrumenten_aggregated;
+ANALYZE instrumenten_aggregated;
+
 REFRESH MATERIALIZED VIEW apparaat_aggregated;
+ANALYZE apparaat_aggregated;
+
 REFRESH MATERIALIZED VIEW inkoop_aggregated;
+ANALYZE inkoop_aggregated;
+
 REFRESH MATERIALIZED VIEW provincie_aggregated;
+ANALYZE provincie_aggregated;
+
 REFRESH MATERIALIZED VIEW gemeente_aggregated;
+ANALYZE gemeente_aggregated;
+
 REFRESH MATERIALIZED VIEW publiek_aggregated;
+ANALYZE publiek_aggregated;
 
 -- Refresh cross-module search view
 REFRESH MATERIALIZED VIEW CONCURRENTLY universal_search;
+ANALYZE universal_search;
 
 -- Verify row counts
 SELECT 'instrumenten_aggregated' as view_name, COUNT(*) as rows FROM instrumenten_aggregated
