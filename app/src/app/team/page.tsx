@@ -95,6 +95,8 @@ export default function TeamDashboardPage() {
   const expiringMembers = activeMembers.filter(m => m.end_date >= today && m.end_date <= thirtyDaysStr)
     .sort((a, b) => a.end_date.localeCompare(b.end_date))
 
+  const hasOpenFeedback = feedbackStats.nieuw > 0 || feedbackStats.bug > 0 || feedbackStats.suggestie > 0 || feedbackStats.vraag > 0
+
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
       <h1 className="text-2xl font-bold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
@@ -102,122 +104,136 @@ export default function TeamDashboardPage() {
       </h1>
       <TeamNav />
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white border border-[var(--border)] rounded-lg px-4 py-4">
-          <p className="text-3xl font-bold text-[var(--navy-dark)]">{members.length}</p>
-          <p className="text-sm text-[var(--navy-medium)]">Totaal leden</p>
+      <div className="space-y-6">
+        {/* Leden section */}
+        <div className="bg-white border border-[var(--border)] rounded-lg">
+          {/* Section header */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
+            <h2 className="text-base font-semibold text-[var(--navy-dark)]">Leden</h2>
+            <Link href="/team/leden" className="text-sm text-[var(--pink)] hover:underline">Beheren</Link>
+          </div>
+
+          <div className="px-5 py-4">
+            {/* Inline stats */}
+            <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm mb-4">
+              <span className="text-[var(--navy-dark)]"><span className="font-semibold">{members.length}</span> totaal</span>
+              <span className="text-green-700"><span className="font-semibold">{activeMembers.length}</span> actief</span>
+              {graceMembers.length > 0 && (
+                <span className="text-amber-700"><span className="font-semibold">{graceMembers.length}</span> verlengingsperiode</span>
+              )}
+              {expiredMembers.length > 0 && (
+                <span className="text-red-700"><span className="font-semibold">{expiredMembers.length}</span> verlopen</span>
+              )}
+            </div>
+
+            {/* Grace period table */}
+            {graceMembers.length > 0 && (
+              <div className="mb-4">
+                <p className="text-sm font-medium text-amber-800 mb-2">Actie vereist</p>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-amber-200">
+                        <th className="text-left px-4 py-2 font-medium text-amber-800">Naam</th>
+                        <th className="text-left px-4 py-2 font-medium text-amber-800">Organisatie</th>
+                        <th className="text-left px-4 py-2 font-medium text-amber-800">Verlopen op</th>
+                        <th className="text-left px-4 py-2 font-medium text-amber-800">Verlenging tot</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {graceMembers.map(m => (
+                        <tr key={m.id} className="border-b border-amber-100 last:border-0">
+                          <td className="px-4 py-2 text-amber-900 font-medium">{m.first_name} {m.last_name}</td>
+                          <td className="px-4 py-2 text-amber-800">{m.organization || '—'}</td>
+                          <td className="px-4 py-2 text-amber-800">{formatDate(m.end_date)}</td>
+                          <td className="px-4 py-2 text-amber-800">{formatDate(m.grace_ends_at)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Expiring within 30 days */}
+            {expiringMembers.length > 0 && (
+              <div className="mb-4">
+                <p className="text-sm font-medium text-[var(--navy-medium)] mb-2">Verloopt binnen 30 dagen</p>
+                <div className="bg-gray-50 border border-[var(--border)] rounded-lg overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-[var(--border)]">
+                        <th className="text-left px-4 py-2 font-medium text-[var(--navy-medium)]">Naam</th>
+                        <th className="text-left px-4 py-2 font-medium text-[var(--navy-medium)]">Organisatie</th>
+                        <th className="text-left px-4 py-2 font-medium text-[var(--navy-medium)]">E-mail</th>
+                        <th className="text-left px-4 py-2 font-medium text-[var(--navy-medium)]">Einddatum</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {expiringMembers.map(m => (
+                        <tr key={m.id} className="border-b border-[var(--border)] last:border-0">
+                          <td className="px-4 py-2 text-[var(--navy-dark)] font-medium">{m.first_name} {m.last_name}</td>
+                          <td className="px-4 py-2 text-[var(--navy-medium)]">{m.organization || '—'}</td>
+                          <td className="px-4 py-2 text-[var(--navy-medium)]">{m.email}</td>
+                          <td className="px-4 py-2 text-[var(--navy-medium)]">{formatDate(m.end_date)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* All good message */}
+            {graceMembers.length === 0 && expiringMembers.length === 0 && (
+              <p className="text-sm text-green-700">Alles op orde — geen actie vereist</p>
+            )}
+          </div>
         </div>
-        <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-4">
-          <p className="text-3xl font-bold text-green-700">{activeMembers.length}</p>
-          <p className="text-sm text-green-600">Actief</p>
-        </div>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-4">
-          <p className="text-3xl font-bold text-amber-700">{graceMembers.length}</p>
-          <p className="text-sm text-amber-600">Verlengingsperiode</p>
-        </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-4">
-          <p className="text-3xl font-bold text-red-700">{expiredMembers.length}</p>
-          <p className="text-sm text-red-600">Verlopen</p>
+
+        {/* Feedback section */}
+        <div className="bg-white border border-[var(--border)] rounded-lg">
+          {/* Section header */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
+            <h2 className="text-base font-semibold text-[var(--navy-dark)]">Feedback</h2>
+            <Link href="/team/feedback" className="text-sm text-[var(--pink)] hover:underline">Bekijk alles</Link>
+          </div>
+
+          <div className="px-5 py-4">
+            {hasOpenFeedback ? (
+              <>
+                {/* Category counts */}
+                <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm mb-3">
+                  <span className="text-red-700">
+                    <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-1.5" />
+                    <span className="font-semibold">{feedbackStats.bug}</span> bugs
+                  </span>
+                  <span className="text-green-700">
+                    <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5" />
+                    <span className="font-semibold">{feedbackStats.suggestie}</span> suggesties
+                  </span>
+                  <span className="text-blue-700">
+                    <span className="inline-block w-2 h-2 rounded-full bg-blue-500 mr-1.5" />
+                    <span className="font-semibold">{feedbackStats.vraag}</span> vragen
+                  </span>
+                </div>
+
+                {/* New count with link */}
+                {feedbackStats.nieuw > 0 && (
+                  <Link
+                    href="/team/feedback"
+                    className="inline-flex items-center gap-1.5 text-sm text-blue-700 hover:underline"
+                  >
+                    <span className="font-semibold">{feedbackStats.nieuw} nieuw</span> — bekijk feedback
+                  </Link>
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-green-700">Geen openstaande feedback</p>
+            )}
+          </div>
         </div>
       </div>
-
-      {/* Feedback overview */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-[var(--navy-dark)]">Feedback</h2>
-          <Link href="/team/feedback" className="text-sm text-[var(--pink)] hover:underline">Bekijk alles</Link>
-        </div>
-        {feedbackStats.nieuw > 0 || feedbackStats.bug > 0 || feedbackStats.suggestie > 0 || feedbackStats.vraag > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <Link href="/team/feedback" className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-4 hover:border-blue-300 transition-colors">
-              <p className="text-3xl font-bold text-blue-700">{feedbackStats.nieuw}</p>
-              <p className="text-sm text-blue-600">Nieuw</p>
-            </Link>
-            <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-4">
-              <p className="text-3xl font-bold text-red-700">{feedbackStats.bug}</p>
-              <p className="text-sm text-red-600">Bugs (open)</p>
-            </div>
-            <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-4">
-              <p className="text-3xl font-bold text-green-700">{feedbackStats.suggestie}</p>
-              <p className="text-sm text-green-600">Suggesties (open)</p>
-            </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-4">
-              <p className="text-3xl font-bold text-blue-700">{feedbackStats.vraag}</p>
-              <p className="text-sm text-blue-600">Vragen (open)</p>
-            </div>
-          </div>
-        ) : (
-          <div className="bg-green-50 border border-green-200 rounded-lg px-6 py-4 text-center">
-            <p className="text-green-700 font-medium text-sm">Geen openstaande feedback</p>
-          </div>
-        )}
-      </div>
-
-      {/* Grace period - needs attention */}
-      {graceMembers.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-[var(--navy-dark)] mb-3">Actie vereist</h2>
-          <div className="bg-amber-50 border border-amber-200 rounded-lg overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-amber-200">
-                  <th className="text-left px-4 py-2 font-medium text-amber-800">Naam</th>
-                  <th className="text-left px-4 py-2 font-medium text-amber-800">Organisatie</th>
-                  <th className="text-left px-4 py-2 font-medium text-amber-800">Verlopen op</th>
-                  <th className="text-left px-4 py-2 font-medium text-amber-800">Verlenging tot</th>
-                </tr>
-              </thead>
-              <tbody>
-                {graceMembers.map(m => (
-                  <tr key={m.id} className="border-b border-amber-100 last:border-0">
-                    <td className="px-4 py-2 text-amber-900 font-medium">{m.first_name} {m.last_name}</td>
-                    <td className="px-4 py-2 text-amber-800">{m.organization || '—'}</td>
-                    <td className="px-4 py-2 text-amber-800">{formatDate(m.end_date)}</td>
-                    <td className="px-4 py-2 text-amber-800">{formatDate(m.grace_ends_at)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Expiring within 30 days */}
-      {expiringMembers.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-[var(--navy-dark)] mb-3">Verloopt binnen 30 dagen</h2>
-          <div className="bg-white border border-[var(--border)] rounded-lg overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-gray-50 border-b border-[var(--border)]">
-                  <th className="text-left px-4 py-2 font-medium text-[var(--navy-medium)]">Naam</th>
-                  <th className="text-left px-4 py-2 font-medium text-[var(--navy-medium)]">Organisatie</th>
-                  <th className="text-left px-4 py-2 font-medium text-[var(--navy-medium)]">E-mail</th>
-                  <th className="text-left px-4 py-2 font-medium text-[var(--navy-medium)]">Einddatum</th>
-                </tr>
-              </thead>
-              <tbody>
-                {expiringMembers.map(m => (
-                  <tr key={m.id} className="border-b border-[var(--border)] last:border-0">
-                    <td className="px-4 py-2 text-[var(--navy-dark)] font-medium">{m.first_name} {m.last_name}</td>
-                    <td className="px-4 py-2 text-[var(--navy-medium)]">{m.organization || '—'}</td>
-                    <td className="px-4 py-2 text-[var(--navy-medium)]">{m.email}</td>
-                    <td className="px-4 py-2 text-[var(--navy-medium)]">{formatDate(m.end_date)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {graceMembers.length === 0 && expiringMembers.length === 0 && (
-        <div className="bg-green-50 border border-green-200 rounded-lg px-6 py-8 text-center">
-          <p className="text-green-700 font-medium">Alles op orde</p>
-          <p className="text-sm text-green-600 mt-1">Geen leden in verlengingsperiode of die binnenkort verlopen.</p>
-        </div>
-      )}
     </main>
   )
 }
