@@ -4,7 +4,9 @@
 Rijksuitgaven.nl SaaS Platform Migration
 
 ## Executive Summary
-Migration of rijksuitgaven.nl from the current WordPress + MySQL stack to a modern Next.js + Supabase + Typesense architecture. V1.0 delivers a single-view architecture with enhanced search capabilities. V2.0 expands into a "Bloomberg Terminal for Rijksfinancien" research platform.
+Migration of rijksuitgaven.nl from the current WordPress + MySQL stack to a modern Next.js + Supabase + Typesense architecture. V1.0 delivers a single-view architecture with enhanced search capabilities, Magic Link authentication, and membership management. V2.0 expands into a "Bloomberg Terminal for Rijksfinancien" research platform.
+
+**Current Status (2026-02-11):** V1.0 at ~90% completion. Core platform functional, pre-launch tasks in progress (user migration, marketing pages, final QA).
 
 ## Background
 Rijksuitgaven.nl is an independent platform providing insight into Dutch government expenditure data. The current system has limitations:
@@ -151,6 +153,30 @@ Research Mode development after V1.0 stabilization.
 
 ---
 
-**Document Version:** 1.0
-**Last Updated:** 2026-01-20
+---
+
+## Project Status Update (2026-02-11)
+
+**Phase:** Pre-Launch (Week 7 of 9)
+
+**Key Achievements:**
+- All 7 modules deployed and functional
+- Search performance exceeds targets (<25ms vs <100ms target)
+- 26 UX features implemented
+- Auth + membership management complete
+- Security audit and hardening complete
+
+**Outstanding V1.0 Tasks:**
+- User migration (~50 WordPress users to Supabase)
+- Branded email templates (magic link + invite)
+- Marketing pages (homepage, about, pricing, legal)
+- Rate limiting on backend
+- Final QA + launch preparation
+
+**Launch Target:** Week 9 (2026-02-26)
+
+---
+
+**Document Version:** 1.1
+**Last Updated:** 2026-02-11
 **Next Review:** After V1.0 launch

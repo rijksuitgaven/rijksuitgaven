@@ -5,31 +5,40 @@ Non-functional requirements define system qualities and constraints.
 
 ## Performance Requirements
 
+> **Note:** See `02-requirements/search-requirements.md` for detailed performance targets and acceptance criteria. This document provides high-level NFR structure only.
+
 ### Response Time
 - **NFR-PERF-001:** Page load time
-  - **Requirement:** Pages must load in < X seconds (95th percentile)
-  - **Priority:** Critical / High / Medium / Low
-  - **Measurement:** Browser performance monitoring
-  - **Rationale:**
+  - **Requirement:** Pages must load in < 1 second (95th percentile)
+  - **Priority:** Critical
+  - **Measurement:** Browser performance monitoring (target: Lighthouse score >90)
+  - **Rationale:** Fast page loads are essential for professional users analyzing data
+  - **Actual (V1.0):** <1s achieved on module pages
 
 - **NFR-PERF-002:** API response time
-  - **Requirement:** API endpoints must respond in < X milliseconds (95th percentile)
-  - **Priority:**
-  - **Measurement:**
-  - **Rationale:**
+  - **Requirement:** Search API endpoints must respond in < 100ms (P50), module data < 500ms (P50)
+  - **Priority:** Critical
+  - **Measurement:** Backend timing logs, Railway monitoring
+  - **Rationale:** Instant search is a core product differentiator vs. WordPress (5s)
+  - **Actual (V1.0):**
+    - Autocomplete: <25ms (target was <50ms)
+    - Module search: 100-150ms (target was <100ms)
+    - Cross-module (integraal): 100-150ms after Typesense enrichment
 
 ### Throughput
 - **NFR-PERF-003:** Concurrent users
-  - **Requirement:** System must support X concurrent users
-  - **Priority:**
-  - **Measurement:**
-  - **Rationale:**
+  - **Requirement:** System must support 100 concurrent users (V1.0), 500+ (V1.2)
+  - **Priority:** High
+  - **Measurement:** Load testing on Railway
+  - **Rationale:** Current user base is ~50, but must support growth to 500+
+  - **Implementation:** Railway auto-scaling, asyncpg connection pool (10 connections)
 
 - **NFR-PERF-004:** Transaction volume
-  - **Requirement:** System must process X transactions per second
-  - **Priority:**
-  - **Measurement:**
-  - **Rationale:**
+  - **Requirement:** System must process 1,000 searches/minute (V1.0)
+  - **Priority:** High
+  - **Measurement:** Backend request logging
+  - **Rationale:** Peak usage during research deadlines, journalist queries
+  - **Actual (V1.0):** Not yet measured in production (beta phase)
 
 ## Scalability Requirements
 
@@ -73,44 +82,85 @@ Non-functional requirements define system qualities and constraints.
 
 ## Security Requirements
 
+> **Note:** See `02-requirements/auth-requirements.md` for detailed auth implementation. See project memory for security audit findings (2026-02-08).
+
 ### Authentication
-- **NFR-SEC-001:** Password policy
-  - **Requirement:**
-  - **Priority:**
-  - **Rationale:**
+- **NFR-SEC-001:** Passwordless authentication only
+  - **Requirement:** Magic Link email authentication via Supabase Auth (PKCE flow)
+  - **Priority:** Critical
+  - **Rationale:** No passwords = no password breaches, simpler UX for small user base
+  - **Status:** ✅ Implemented 2026-02-10
 
 - **NFR-SEC-002:** Multi-factor authentication
-  - **Requirement:**
-  - **Priority:**
-  - **Rationale:**
+  - **Requirement:** Not required for V1.0 (50 users). Consider for V1.1+ if enterprise customers request.
+  - **Priority:** Low (V1.1+)
+  - **Rationale:** Small trusted user base, low risk profile
 
 ### Authorization
-- **NFR-SEC-003:** Role-based access control
-  - **Requirement:**
-  - **Priority:**
-  - **Rationale:**
+- **NFR-SEC-003:** Subscription-based access control
+  - **Requirement:** Supabase RLS policies protect all data tables. Middleware checks subscription status on every request.
+  - **Priority:** Critical
+  - **Rationale:** Paid SaaS platform — all data pages require active subscription
+  - **Status:** ✅ Implemented 2026-02-11 (subscriptions table + middleware + /verloren page)
+
+- **NFR-SEC-004:** Admin role for membership management
+  - **Requirement:** `subscriptions.role` column ('member' | 'admin'). Admin pages at /team and /team/leden restricted to admin role.
+  - **Priority:** High
+  - **Status:** ✅ Implemented 2026-02-11
 
 ### Data Protection
-- **NFR-SEC-004:** Encryption at rest
-  - **Requirement:**
-  - **Priority:**
-  - **Rationale:**
+- **NFR-SEC-005:** Encryption at rest
+  - **Requirement:** All data encrypted at rest (Supabase/AWS default)
+  - **Priority:** Critical
+  - **Rationale:** Financial data, user emails — must be encrypted
+  - **Status:** ✅ Enabled by default (Supabase on AWS)
 
-- **NFR-SEC-005:** Encryption in transit
-  - **Requirement:**
-  - **Priority:**
-  - **Rationale:**
+- **NFR-SEC-006:** Encryption in transit
+  - **Requirement:** HTTPS only, HSTS header, secure cookies
+  - **Priority:** Critical
+  - **Rationale:** Prevent MITM attacks, session hijacking
+  - **Status:** ✅ Implemented (CSP + HSTS headers, httpOnly cookies)
 
 ### Audit & Compliance
-- **NFR-SEC-006:** Audit logging
-  - **Requirement:**
-  - **Priority:**
-  - **Rationale:**
+- **NFR-SEC-007:** Audit logging
+  - **Requirement:** Supabase Auth logs (last_sign_in_at). Server-side event logging deferred to V1.2.
+  - **Priority:** Medium (V1.2)
+  - **Rationale:** Basic auth audit via Supabase sufficient for beta
+  - **Status:** Partial (auth events only)
 
-- **NFR-SEC-007:** GDPR compliance
-  - **Requirement:**
-  - **Priority:**
-  - **Rationale:**
+- **NFR-SEC-008:** GDPR compliance
+  - **Requirement:** Full GDPR compliance including data minimization, encryption, access control, user rights, privacy policy, and cookie disclosure.
+  - **Priority:** Critical (legal requirement)
+  - **Rationale:** EU-based SaaS platform processing personal data of Dutch government affairs professionals
+  - **Status:** ✅ Implemented (see detailed breakdown below)
+  - **Measures implemented:**
+    - **Data minimization:** Only collect email, name, organization, subscription data (no IP tracking, no analytics)
+    - **Encryption in transit:** HTTPS/TLS 1.3 with HSTS header
+    - **Encryption at rest:** Supabase/AWS AES-256 encryption for all database storage
+    - **Access control:** Row Level Security (RLS) policies, service role key for admin-only operations
+    - **User rights:** Privacy policy at /privacybeleid documents all AVG rights (inzage, rectificatie, verwijdering, beperking, bezwaar, overdraagbaarheid)
+    - **Right to deletion:** Manual deletion via Supabase dashboard (self-service deferred to V1.1+)
+    - **Data portability:** CSV/Excel export available (max 500 rows per export)
+    - **Privacy policy:** Comprehensive Dutch-language policy at /privacybeleid, updated 2026-02-12
+    - **Cookie policy:** Essential cookies only (sb-access-token, sb-refresh-token), no consent required, documented in privacy policy
+    - **Cookie banner:** Informational disclosure banner (no consent mechanism needed for functional cookies)
+    - **Data processors:** All processors documented with locations and safeguards (Supabase/Frankfurt, Railway/Amsterdam, Resend/US with SCCs)
+    - **Legal basis:** Contract performance (AVG artikel 6(1)(b)) for subscription data processing
+    - **Data retention:** Documented retention periods per data type (active/expired/cancelled subscriptions)
+    - **Supervisory authority:** Privacy policy includes right to file complaint with Autoriteit Persoonsgegevens
+
+### Additional Security (2026-02-08 Audit)
+- **NFR-SEC-009:** BFF shared secret
+  - **Requirement:** `X-BFF-Secret` header required on all BFF→backend requests
+  - **Priority:** Critical
+  - **Rationale:** Backend is publicly accessible without private networking (V1.1 deferred)
+  - **Status:** ✅ Implemented 2026-02-10
+
+- **NFR-SEC-010:** Input validation and sanitization
+  - **Requirement:** Offset capped at 10,000, limit capped at 500, module name validation, body size limits (10KB filters, 1MB exports), SQL parameterization
+  - **Priority:** Critical
+  - **Rationale:** Prevent injection attacks, DoS via large payloads
+  - **Status:** ✅ Implemented (BFF + backend validation)
 
 ## Usability Requirements
 

@@ -8,6 +8,15 @@ FastAPI backend for Rijksuitgaven.nl - Dutch Government Spending Data.
 
 - Python 3.11+
 - pip3
+- PostgreSQL client (optional, for database access)
+
+### Tech Stack
+
+- **Framework:** FastAPI (async web framework)
+- **Database:** asyncpg (direct PostgreSQL driver, NOT SQLAlchemy)
+- **Search:** Typesense integration (autocomplete + hybrid search)
+- **Auth:** Supabase Auth (via service role key for admin routes)
+- **Deployment:** Railway (auto-deploy from main branch)
 
 ### Local Development
 
@@ -91,8 +100,11 @@ backend/
 |----------|-------------|----------|
 | `DATABASE_URL` | Supabase PostgreSQL connection string | Yes |
 | `TYPESENSE_HOST` | Typesense server host | Yes |
-| `TYPESENSE_API_KEY` | Typesense API key | Yes |
+| `TYPESENSE_API_KEY` | Typesense API key (search-only) | Yes |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (admin API routes) | No* |
 | `DEBUG` | Enable debug mode | No |
+
+**Note:** `SUPABASE_SERVICE_ROLE_KEY` is required only for admin API routes that bypass RLS (e.g., membership management). Not needed for standard data endpoints.
 
 ## Deployment
 

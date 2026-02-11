@@ -13,13 +13,23 @@
 
 | Component | Status | Details |
 |-----------|--------|---------|
-| Supabase PostgreSQL | ✅ Deployed | Pro plan, Frankfurt EU |
-| pgvector extension | ✅ Enabled | Ready when needed |
-| Next.js frontend | ✅ Deployed | Railway, Amsterdam |
-| FastAPI backend | ✅ Deployed | Railway, Amsterdam |
-| Typesense search | ✅ Deployed | Railway, 451K indexed |
-| Redis | ❌ Not needed yet | Deploy before V5 |
-| Worker service | ❌ Not needed yet | Deploy with V2 Reporter |
+| **Database** | | |
+| Supabase PostgreSQL | ✅ Deployed | Pro plan, Frankfurt EU, 500MB/8GB |
+| pgvector extension | ✅ Enabled | Ready for V2+ |
+| **Hosting (Railway)** | | |
+| Next.js frontend | ✅ Deployed | Railway Amsterdam, €15-25/month |
+| FastAPI backend | ✅ Deployed | Railway Amsterdam, €15-25/month |
+| Typesense search | ✅ Deployed | Railway Amsterdam, 463K recipients |
+| **Authentication** | | |
+| Supabase Auth | ✅ Deployed | Magic Link + PKCE (2026-02-10) |
+| Resend SMTP | ✅ Configured | Magic Link email delivery |
+| **Membership** | | |
+| subscriptions table | ✅ Deployed | Computed status (2026-02-11) |
+| Admin dashboard | ✅ Deployed | /team, /team/leden |
+| **Future Components** | | |
+| Redis | ❌ Not needed yet | Deploy with V5 (AI caching) |
+| Worker service | ❌ Not needed yet | Deploy with V2 (Reporter) |
+| Claude API | ❌ Not needed yet | Deploy with V2 (Reporter) |
 
 ---
 

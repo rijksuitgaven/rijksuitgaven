@@ -406,10 +406,10 @@ Additional UI/UX work completed after mini sprint was marked complete:
 
 ---
 
-## Week 6: Auth
+## Week 6: Auth + Membership Management
 
 **Goal:** Magic Link auth, membership management, user migration, protected routes
-**Status:** ✅ AUTH + MEMBERSHIP COMPLETE (2026-02-11) — user migration remaining
+**Status:** ✅ COMPLETE (2026-02-11) — Auth + membership fully functional
 **Requirements:** `02-requirements/auth-requirements.md` (18 requirements, all decisions resolved 2026-02-08)
 
 > **Note:** Overzicht page was originally planned for this week but deferred to V5 (AI Research Mode) on 2026-02-06. V1 expanded row covers the functional need.
@@ -452,183 +452,255 @@ Additional UI/UX work completed after mini sprint was marked complete:
 | UX-026 profile dropdown | ✅ |
 | SUPABASE_SERVICE_ROLE_KEY on Railway | ✅ |
 
-### User Migration (remaining)
-
-| Task | Details |
-|------|---------|
-| Export WordPress users | ~50 users from ARMember |
-| Import to Supabase | Via /team/leden or CSV script |
-| Branded email template | Magic link + invite template |
-| Send invites | "Stuur uitnodiging" button per member (pre-launch) |
+**Membership Details (Backlog):**
+- Pricing: Monthly €150/mo, Yearly €1,500/yr
+- Grace periods: 3 days (monthly), 14 days (yearly)
+- Status: Computed from dates (no cron, no status column)
+- Admin pages: /team (dashboard), /team/leden (member management)
 
 **Week 6 Deliverables:**
-- [x] Magic Link authentication working
-- [x] Membership management system
-- [x] Protected routes enforced
-- [ ] 50 users migrated
-- [ ] Branded email templates
+- [x] Magic Link authentication working (2026-02-10)
+- [x] Membership management system (2026-02-11)
+- [x] Protected routes enforced (2026-02-10)
+- [x] Admin features functional (2026-02-11)
 
 ---
 
-## Week 7: UX/UI Optimization
+## Week 7: Pre-Launch - User Migration & Email Templates
 
-**Goal:** Polish all interfaces with senior UX/UI specialist review
+**Goal:** Migrate WordPress users to Supabase, branded emails, final pre-launch tasks
+**Status:** IN PROGRESS (Week 7 as of 2026-02-11)
 
-### Day 1-2: UX Audit
+### Day 1-2: Branded Email Templates
 
-| Task | Details |
-|------|---------|
-| Heuristic evaluation | Review all pages against UX best practices |
-| User flow analysis | Map critical paths, identify friction points |
-| Accessibility check | WCAG 2.1 AA compliance, keyboard navigation |
-| Mobile UX review | Touch targets, scroll behavior, responsive issues |
+| Task | Details | Status |
+|------|---------|--------|
+| Magic link email template | Branded HTML email for authentication | Backlog |
+| Invite email template | Branded HTML email for new member onboarding | Backlog |
+| Test both templates | Verify rendering in major email clients | Pending |
+| Deploy via Resend | Update Supabase SMTP settings if needed | Pending |
 
-### Day 3-4: Visual Design Polish
+### Day 3-4: WordPress User Migration
 
-| Task | Details |
-|------|---------|
-| Typography audit | Consistent font sizes, line heights, spacing |
-| Color consistency | Brand colors applied correctly everywhere |
-| Component alignment | Grid alignment, padding/margin consistency |
-| Icon/visual consistency | Consistent icon style, visual weight |
-| Empty/loading states | Polish skeleton loaders, empty state messages |
+| Task | Details | Status |
+|------|---------|--------|
+| Export WordPress users | ~50 users from ARMember plugin | Pending |
+| Parse user data | Extract email, name, subscription dates | Pending |
+| Import to Supabase | Via /team/leden or batch script | Pending |
+| Set subscription plans | Monthly/yearly based on WP data | Pending |
+| Verify all imports | Check subscriptions table accuracy | Pending |
 
-### Day 5-6: Interaction Refinement
+### Day 5: Invite System Implementation
 
-| Task | Details |
-|------|---------|
-| Micro-interactions | Hover states, focus states, transitions |
-| Feedback clarity | Loading indicators, success/error messages |
-| Table UX | Column widths, row heights, click targets |
-| Filter UX | Clear affordances, reset behavior, state indication |
-| Navigation flow | Breadcrumbs, back navigation, deep linking |
+| Task | Details | Status |
+|------|---------|--------|
+| "Stuur uitnodiging" button | Per-member button in /team/leden | Backlog |
+| Invite API endpoint | POST /api/admin/members/:id/invite | Pending |
+| Email trigger | Send branded invite email via Resend | Pending |
+| Test invite flow | End-to-end verification | Pending |
 
-### Day 7: Final Polish
+### Day 6-7: Final Pre-Launch Tasks
 
-| Task | Details |
-|------|---------|
-| Cross-browser testing | Chrome, Firefox, Safari, Edge |
-| Responsive breakpoints | 320px, 768px, 1024px, 1440px |
-| Performance perception | Perceived speed improvements |
-| Documentation | Update FRONTEND-DOCUMENTATION.md with changes |
-| **Railway private networking** | Configure internal network between services |
+| Task | Details | Status |
+|------|---------|--------|
+| UX-025: Feedback button | Persistent button for user feedback | Backlog |
+| 404 page | Branded not-found page | Completed (exists) |
+| Rate limiting (backend) | Add rate limiting middleware | Backlog |
+| Final QA pass | Test all critical user flows | Pending |
 
 **Week 7 Deliverables:**
-- [ ] UX audit completed with findings documented
-- [ ] All critical UX issues resolved
-- [ ] Visual design consistent across all pages
-- [ ] Accessibility basics verified (WCAG AA)
-- [ ] Mobile experience polished
-- [ ] Railway private networking configured
+- [ ] Branded magic link email template
+- [ ] Branded invite email template
+- [ ] ~50 WordPress users migrated to Supabase
+- [ ] Invite system functional
+- [ ] UX-025 feedback button
+- [ ] Rate limiting on backend
+- [ ] All systems QA verified
 
 ---
 
-## Week 8: Marketing Pages
+## Week 8: Marketing Pages & Final Polish
 
-**Goal:** All public pages live
+**Goal:** All public pages live, final visual polish
+**Status:** PLANNED (starts 2026-02-17)
 
 ### Day 1-2: Homepage
 
-| Section | Details |
-|---------|---------|
-| Hero | Port from WordPress (same copy) |
-| Value props | 3 cards |
-| Sample data | Live table preview |
-| Features grid | 6 features |
-| Pricing | €150/month |
-| CTA | Demo request |
+| Section | Details | Status |
+|---------|---------|--------|
+| Hero | Port from WordPress (same copy) | Pending |
+| Value props | 3 cards | Pending |
+| Sample data | Live table preview | Pending |
+| Features grid | 6 features | Pending |
+| Pricing | €150/month or €1,500/year | Pending |
+| CTA | Login / Demo request | Pending |
 
-### Day 3-4: Support Pages
+### Day 3-4: Support & Legal Pages
 
-| Page | Details |
-|------|---------|
-| `/support` | Index with search |
-| `/support/[slug]` | Markdown articles |
-| Content | Getting started, FAQ, Data sources, Export guide |
+| Page | Details | Status |
+|------|---------|--------|
+| `/about` | Mission, data sources | Pending |
+| `/contact` | Contact form (Resend) | Pending |
+| `/pricing` | Pricing details, FAQ | Pending |
+| `/privacy` | Privacy policy + subscription data clause | Pending |
+| `/terms` | Terms of service | Pending |
 
-### Day 5-6: Other Pages
+### Day 5-6: SEO & Final Polish
 
-| Page | Details |
-|------|---------|
-| `/about` | Mission, data sources |
-| `/contact` | Contact form (Resend/Postmark) |
-| `/pricing` | Pricing details, FAQ |
-| `/demo` | Calendly embed |
-| `/terms`, `/privacy` | Legal pages |
+| Task | Details | Status |
+|------|---------|--------|
+| SEO | Meta tags, Open Graph, structured data | Pending |
+| Footer updates | Ensure all links correct | Completed (footer exists) |
+| Favicon | Brand icon | Pending |
+| Cross-browser test | Chrome, Firefox, Safari, Edge | Pending |
+| Mobile responsiveness | Test on real devices | Pending |
 
-### Day 7: Polish
+### Day 7: Performance & Accessibility
 
-| Task | Details |
-|------|---------|
-| SEO | Meta tags, Open Graph |
-| Footer | Links, social, legal |
-| 404 page | Custom not found |
-| Favicon | Brand icon |
+| Task | Details | Status |
+|------|---------|--------|
+| Lighthouse audit | Score >90 all pages | Pending |
+| Accessibility check | WCAG 2.1 AA compliance | Pending |
+| Performance test | <1s page load verified | Pending |
+| Documentation update | Update FRONTEND-DOCUMENTATION.md | Pending |
 
 **Week 8 Deliverables:**
 - [ ] Homepage live
-- [ ] All support pages
+- [ ] All legal pages (privacy, terms)
 - [ ] Contact form working
-- [ ] All marketing pages complete
+- [ ] SEO optimized
+- [ ] Lighthouse score >90
+- [ ] Accessibility verified
 
 ---
 
 ## Week 9: Launch
 
 **Goal:** Go live with V1.0
+**Status:** PLANNED (starts 2026-02-24)
 
-### Day 1-2: Testing
+### Day 1-2: Final Testing & QA
 
-| Test | Details |
-|------|---------|
-| Functional | All features work end-to-end |
-| Performance | Search <100ms, page load <1s |
-| Mobile | Test on phone/tablet |
-| Auth flow | Magic Link complete flow |
-| Edge cases | Empty results, long text, special characters |
+| Test | Details | Status |
+|------|---------|--------|
+| Functional | All features work end-to-end | Pending |
+| Performance | Search <25ms, page load <1s | Pending |
+| Mobile | Test on phone/tablet | Pending |
+| Auth flow | Magic Link complete flow | Pending |
+| Membership | Subscription lifecycle (active/grace/expired) | Pending |
+| Admin features | /team and /team/leden functionality | Pending |
+| Edge cases | Empty results, long text, special characters | Pending |
+| Load testing | 50 concurrent users simulation | Pending |
 
-### Day 3-4: Performance & Security
+### Day 3-4: Security & Infrastructure Final Check
 
-| Task | Details |
-|------|---------|
-| Lighthouse audit | Score >90 |
-| Security review | RLS policies, no data leaks |
-| Error logging | Railway built-in logs (Sentry = backlog) |
-| Analytics | Skip for launch (backlog item) |
+| Task | Details | Status |
+|------|---------|--------|
+| Security audit | RLS policies, no data leaks | Pending |
+| Rate limiting | Backend rate limiting enabled | Pending |
+| Error logging | Railway logs verified | Completed |
+| Backups | Supabase daily backups confirmed | Pending |
+| Monitoring | Railway + Supabase dashboards | Completed |
+| DNS TTL | Lower to 300s for quick cutover | Pending |
 
-### Day 5-6: Beta Testing + Cutover Prep
+### Day 5: Beta Testing
 
-| Task | Details |
-|------|---------|
-| Beta testing | 5 testers on beta.rijksuitgaven.nl |
-| Fix critical issues | Resolve any blockers |
-| Import 50 users | All user emails in Supabase Auth |
-| Draft announcement | "Welcome to new platform" email |
-| Lower DNS TTL | If not already low (speeds up switch) |
+| Task | Details | Status |
+|------|---------|--------|
+| Beta invite | 3-5 testers on beta.rijksuitgaven.nl | Pending |
+| Collect feedback | Critical issues only | Pending |
+| Fix blockers | Resolve any launch-blocking issues | Pending |
+| Final smoke test | Login → search → export flow | Pending |
 
-### Day 6-7: Go Live
+### Day 6: Launch Preparation
 
-| Task | Details |
-|------|---------|
-| DNS switch | `rijksuitgaven.nl` A/CNAME → Railway |
-| Verify HTTPS | SSL certificate working |
-| Smoke test | Login, search, one module end-to-end |
-| Send announcement | Email 50 users with Magic Link instructions |
-| Monitor | Watch for issues first 24-48 hours |
+| Task | Details | Status |
+|------|---------|--------|
+| Draft announcement email | "Welcome to new platform" | Pending |
+| Verify all 50 users | Check subscriptions table | Pending |
+| Rollback plan | Document DNS rollback steps | Pending |
+| Launch checklist | Final go/no-go review | Pending |
+
+### Day 7: Go Live
+
+| Task | Details | Status |
+|------|---------|--------|
+| DNS switch | `rijksuitgaven.nl` CNAME → Railway | Pending |
+| Verify HTTPS | SSL certificate working | Pending |
+| Smoke test | Login, search, one module end-to-end | Pending |
+| Send announcement | Email 50 users with Magic Link instructions | Pending |
+| Monitor actively | Watch Railway + Supabase for issues | Pending |
 
 ### Post-Launch (Week 10+)
 
-| Task | Details |
-|------|---------|
-| Monitor | 1-2 weeks stability check |
-| WordPress | Shut down after stable period |
-| Cleanup | Remove beta subdomain or keep for future testing |
+| Task | Details | Timeline |
+|------|---------|----------|
+| Monitor stability | Watch for bugs, performance issues | Days 1-7 |
+| User feedback | Collect and prioritize issues | Days 1-14 |
+| WordPress shutdown | Decommission old system | Week 11 |
+| V1.1 planning | Plan next iteration | Week 10 |
 
 **Week 9 Deliverables:**
 - [ ] All tests passing
-- [ ] Performance targets met
-- [ ] 50 users notified and migrated
-- [ ] V1.0 LIVE
+- [ ] Performance targets met (search <25ms, page <1s)
+- [ ] 50 users migrated and notified
+- [ ] V1.0 LIVE on rijksuitgaven.nl
+- [ ] Monitoring active
+- [ ] Rollback plan ready
+
+---
+
+## V1.0 Launch Checklist
+
+**MUST BE COMPLETE BEFORE DNS SWITCH:**
+
+### User Migration
+- [ ] All 50 WordPress users migrated to Supabase
+- [ ] Subscription plans assigned (monthly/yearly)
+- [ ] Admin roles configured
+- [ ] Invite emails sent to all users
+
+### Feature Completeness
+- [ ] All 7 modules functional (instrumenten, apparaat, inkoop, provincie, gemeente, publiek, integraal)
+- [ ] Search <25ms (Typesense verified)
+- [ ] Autocomplete working
+- [ ] Cascading filters on all modules
+- [ ] CSV export (500 rows)
+- [ ] Magic Link authentication
+- [ ] Membership management (/team, /team/leden)
+- [ ] Profile dropdown (UX-026)
+- [ ] Feedback button (UX-025)
+
+### Marketing Pages
+- [ ] Homepage live
+- [ ] /about page
+- [ ] /pricing page
+- [ ] /privacy page (includes subscription data)
+- [ ] /terms page
+- [ ] /contact page
+- [ ] 404 page
+
+### Technical Readiness
+- [ ] Rate limiting enabled on backend
+- [ ] Security headers (CSP, HSTS) configured
+- [ ] RLS policies verified
+- [ ] Error monitoring active
+- [ ] Backup strategy verified
+- [ ] Performance tested (load testing)
+- [ ] DNS TTL lowered (300s)
+- [ ] Rollback plan documented
+
+### Communication
+- [ ] Announcement email drafted
+- [ ] Support email ready (contact@rijksuitgaven.nl)
+- [ ] Known issues documented
+
+### Monitoring & Rollback
+- [ ] Railway dashboard accessible
+- [ ] Supabase dashboard accessible
+- [ ] Typesense dashboard accessible
+- [ ] Rollback DNS steps documented
+- [ ] Old WordPress kept running for 1 week
 
 ---
 
@@ -684,8 +756,27 @@ After V1.0 is stable:
 
 ---
 
-**Document Version:** 1.3
-**Last Updated:** 2026-02-07
+**Document Version:** 1.4
+**Last Updated:** 2026-02-11
+
+---
+
+## Project Status Summary
+
+| Week | Dates | Status | Key Deliverables |
+|------|-------|--------|------------------|
+| Week 1 | 2026-01-20–26 | ✅ COMPLETE | Data migration (3.1M rows), Typesense (<25ms), Next.js deployed |
+| Week 2 | 2026-01-27–02 | ✅ COMPLETE | All 7 API endpoints, materialized views, <500ms queries |
+| Week 3 | 2026-02-03–09 | ✅ COMPLETE | DataTable, expandable rows, filters, autocomplete |
+| Week 4 | 2026-02-03–09 | ✅ COMPLETE | All 6 module pages + integraal, mobile-friendly |
+| Week 5 | 2026-02-03–09 | ✅ COMPLETE | Global search, CSV export, column customization, keyboard shortcuts |
+| Mini Sprint | 2026-01-29–02-09 | ✅ COMPLETE | Security fixes, cascading filters, UX-012–021, Typesense enrichment |
+| Week 6 | 2026-02-10–11 | ✅ COMPLETE | Auth (Magic Link), membership management, UX-026 profile dropdown |
+| **Week 7** | **2026-02-12–18** | **IN PROGRESS** | User migration, branded emails, invite system, feedback button |
+| Week 8 | 2026-02-19–25 | PLANNED | Marketing pages, SEO, final polish |
+| Week 9 | 2026-02-26–04 | PLANNED | Final testing, launch |
+
+**V1.0 Progress:** ~90% complete | **Next: Week 7 user migration & email templates**
 
 ---
 

@@ -6,8 +6,15 @@ This script reverses Phase 1d to restore the correct characters.
 """
 import asyncio
 import asyncpg
+import os
+import sys
 
-DB_URL = "postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
+DB_PASSWORD = os.environ.get('SUPABASE_DB_PASSWORD')
+if not DB_PASSWORD:
+    print("ERROR: Set SUPABASE_DB_PASSWORD environment variable first")
+    sys.exit(1)
+
+DB_URL = f"postgresql://postgres.kmdelrgtgglcrupprkqf:{DB_PASSWORD}@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
 
 # Reverse Phase 1d Step 1: ´→ô in ALL tables
 UNDO_STEP1 = [('´', 'ô', '´→ô')]

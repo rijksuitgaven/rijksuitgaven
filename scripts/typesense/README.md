@@ -52,12 +52,14 @@ python3 sync_to_typesense.py --recreate
 # Sync single collection
 python3 sync_to_typesense.py --collection instrumenten --recreate
 
-# Audit only (verify without syncing)
+# Audit only (recommended for verification)
 python3 sync_to_typesense.py --audit-only
 
 # Test search performance only
 python3 sync_to_typesense.py --test-only
 ```
+
+**Audit-only mode:** Verifies document counts match between database and Typesense without modifying data. Use this to check sync status before/after manual changes.
 
 **Available collections:** `recipients`, `instrumenten`, `inkoop`, `publiek`, `gemeente`, `provincie`, `apparaat`
 
@@ -65,17 +67,22 @@ python3 sync_to_typesense.py --test-only
 
 ## Expected Document Counts
 
-| Collection | Documents | Source |
-|------------|-----------|--------|
-| recipients | ~467K | universal_search |
-| instrumenten | ~675K | instrumenten |
-| inkoop | ~636K | inkoop |
-| publiek | ~115K | publiek |
-| gemeente | ~126K | gemeente |
-| provincie | ~67K | provincie |
-| apparaat | ~10K | apparaat (grouped) |
+| Collection | Documents | Source | Enriched Fields |
+|------------|-----------|--------|----------------|
+| recipients | 463,731 | universal_search | y2016-y2024, years_with_data, record_count |
+| instrumenten | ~675K | instrumenten | - |
+| inkoop | ~636K | inkoop | - |
+| publiek | ~115K | publiek | - |
+| gemeente | ~126K | gemeente | - |
+| provincie | ~67K | provincie | - |
+| apparaat | ~10K | apparaat (grouped) | - |
 
-Last verified: 2026-02-01
+Last verified: 2026-02-09
+
+**Enriched Fields Explanation:**
+- **y2016-y2024**: Yearly amounts for each recipient (integer fields)
+- **years_with_data**: Array of years with non-zero amounts
+- **record_count**: Total number of payment rows across all modules
 
 ---
 

@@ -2,9 +2,9 @@
 
 **Project:** Rijksuitgaven.nl SaaS Platform
 **Version:** V1.0 - Search Platform
-**Date:** 2026-02-08
-**Status:** Ready for Implementation
-**Sprint:** Week 6 (Auth)
+**Date:** 2026-02-08 (Updated: 2026-02-11)
+**Status:** ✅ Implemented 2026-02-10 (PKCE flow, client-side exchange)
+**Sprint:** Week 6 (Auth) - COMPLETE
 
 > **Scope:** This document covers V1.0 authentication requirements only.
 > Magic Link email authentication via Supabase Auth.
@@ -45,18 +45,42 @@ Enable the 50 existing WordPress users to log in to the new platform using Magic
 | Session duration | 30 days (refresh token lifetime) |
 | Email provider | Resend (custom domain: noreply@rijksuitgaven.nl) |
 
-### Current State
+### Implementation Status (Completed 2026-02-10)
 
 | Component | Status |
 |-----------|--------|
-| `@supabase/supabase-js` | Installed (package.json) |
-| `NEXT_PUBLIC_SUPABASE_URL` | Configured (.env.local + Railway) |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Configured (.env.local + Railway) |
-| Supabase client initialization | Not created yet |
-| Middleware (route protection) | Not created yet |
-| Login page | Not created yet |
-| Header auth UI | Placeholder exists (commented out in header.tsx) |
-| Footer "Inloggen" link | Exists, points to `/login` (no page yet) |
+| `@supabase/supabase-js` + `@supabase/ssr` | ✅ Installed |
+| `NEXT_PUBLIC_SUPABASE_URL` | ✅ Configured (.env.local + Railway) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ Configured (.env.local + Railway) |
+| Supabase client initialization | ✅ Created (`lib/supabase/client.ts`, `server.ts`, `middleware.ts`) |
+| Middleware (route protection) | ✅ Implemented (`middleware.ts`) |
+| Login page | ✅ Implemented (`app/login/page.tsx`) |
+| Auth callback | ✅ Implemented (`app/auth/callback/page.tsx` - client-side PKCE) |
+| Profile page | ✅ Implemented (`app/profiel/page.tsx`) |
+| Header auth UI | ✅ Implemented (UX-026: Profile dropdown with user icon + chevron) |
+| Footer auth state | ✅ Updated (removed email + logout from bottom bar) |
+| BFF route protection | ✅ Implemented (session check on all API routes) |
+| Membership system | ✅ Implemented (subscriptions table, admin pages at /team) |
+
+### Implementation Highlights
+
+**PKCE Flow (Fully Client-Side):**
+- Magic Link email received → user clicks link
+- Redirects to `/auth/callback` (Page Component, not Route Handler)
+- `createBrowserClient()` exchanges code for session client-side
+- Session cookies set by browser client (NEVER server-side in Next.js 16 on Railway)
+- Redirects to `/integraal` after successful auth
+
+**Key Decision:** Server-side cookie setting with `cookieStore.set()` in Next.js 16 on Railway FAILS silently. All auth flows use browser client exclusively.
+
+**Auth Hooks:**
+- `useAuth()` at `hooks/use-auth.ts` — reads session via browser client
+- `useSubscription()` at `hooks/use-subscription.ts` — reads subscription status
+
+**Middleware:**
+- Protects all module pages + /profiel + /team routes
+- Checks subscription status (redirects to /verlopen if expired)
+- No subscription row = allow access (safe default during setup)
 
 ---
 
@@ -622,6 +646,119 @@ app/src/
 - [ ] Spam "Send" button → rate limit message
 - [ ] No internet when clicking send → network error
 - [ ] Supabase down → generic error message
+
+---
+
+## Privacy & Data Retention
+
+### AUTH-019: Data Retention for Cancelled Members
+
+**Requirement:** When a member's subscription expires or is cancelled, their account data is NOT automatically deleted.
+
+**Rationale:**
+- Simplifies renewal process (member can easily reactivate)
+- Preserves organizational relationship (member may return later)
+- Admin retains control over data lifecycle
+- Avoids accidental data loss from temporary cancellations
+
+**Data lifecycle:**
+
+| Subscription State | User Data Status | Access to Platform |
+|-------------------|------------------|-------------------|
+| Active | Retained | Full access |
+| Expired (grace period) | Retained | Full access |
+| Expired (past grace) | Retained | Redirected to /verlopen page |
+| Cancelled | Retained | Redirected to /verlopen page |
+| Admin-deleted | Removed from database | No authentication possible |
+
+**Deletion process:**
+1. **V1.0:** Manual deletion by admin via Supabase Dashboard
+2. **V1.1+ (planned):** Self-service deletion button in profile page
+3. **Future consideration:** Optional auto-deletion X days after cancellation (not implemented in V1.0)
+
+**GDPR compliance:**
+- Privacy policy documents retention policy
+- Users can request deletion via contact@rijksuitgaven.nl
+- Admin processes deletion requests within 30 days
+- No automatic deletion ensures no accidental data loss
+
+**Priority:** P1 (High) — Important for business operations and GDPR compliance
+
+---
+
+### AUTH-020: Data Minimization
+
+**Requirement:** Only collect personal data that is strictly necessary for service delivery.
+
+**Data collected:**
+
+| Field | Required? | Purpose | Legal Basis |
+|-------|-----------|---------|-------------|
+| Email | Yes | Authentication (Magic Link) | Contract performance (AVG 6(1)(b)) |
+| Name | Yes | Identification within platform | Contract performance (AVG 6(1)(b)) |
+| Organization | Yes | Organizational affiliation | Contract performance (AVG 6(1)(b)) |
+| Subscription plan | Yes | Access control, billing | Contract performance (AVG 6(1)(b)) |
+| Subscription dates | Yes | Access control | Contract performance (AVG 6(1)(b)) |
+| Role (member/admin) | Yes | Authorization for /team pages | Contract performance (AVG 6(1)(b)) |
+| Notes (admin-only) | No | Administrative reference | Legitimate interest (AVG 6(1)(f)) |
+
+**Data NOT collected:**
+- No passwords (passwordless authentication)
+- No IP addresses (no logging/tracking)
+- No device information
+- No behavioral analytics
+- No third-party tracking
+
+**Priority:** P0 (Critical) — GDPR requirement
+
+---
+
+### AUTH-021: Data Processor Documentation
+
+**Requirement:** Document all third-party services that process personal data.
+
+**Data processors:**
+
+| Processor | Service | Data Processed | Location | Safeguards |
+|-----------|---------|----------------|----------|------------|
+| Supabase Inc. | Database + Auth | Email, name, org, subscription data, session tokens | Frankfurt, Germany (AWS EU-Central-1) | AVG processor agreement, data stays in EU |
+| Railway Corp. | Application hosting | Session cookies (in transit), no persistent storage | Amsterdam, Netherlands | AVG processor agreement, data stays in EU |
+| Resend Inc. | Email delivery (Magic Links) | Email addresses (transient) | United States (with EU processing) | Standard Contractual Clauses (SCCs), AVG processor agreement |
+
+**Sub-processors:**
+- Supabase uses AWS (Frankfurt datacenter) — covered by Supabase DPA
+- Railway uses Google Cloud (Amsterdam) — covered by Railway DPA
+- All processors maintain sub-processor lists per GDPR requirements
+
+**Documentation location:** Privacy policy at `/privacybeleid` (Article 4)
+
+**Priority:** P0 (Critical) — GDPR requirement (AVG artikel 28)
+
+---
+
+### AUTH-022: User Rights Implementation
+
+**Requirement:** Enable users to exercise their GDPR rights.
+
+**Rights supported:**
+
+| Right | AVG Article | Implementation | Status |
+|-------|-------------|----------------|--------|
+| Right to access | 15 | User can request data export via contact@rijksuitgaven.nl | ✅ Manual process |
+| Right to rectification | 16 | User can request corrections via contact@rijksuitgaven.nl | ✅ Manual process |
+| Right to erasure | 17 | Admin deletes account via Supabase Dashboard | ✅ Manual (V1.0) |
+| Right to restriction | 18 | User can request processing limitation via contact@rijksuitgaven.nl | ✅ Manual process |
+| Right to data portability | 20 | CSV/Excel export available in-app (max 500 rows) | ✅ Implemented |
+| Right to object | 21 | User can request deletion (no profiling/marketing occurs) | ✅ Manual process |
+| Right to lodge complaint | 77 | Privacy policy includes link to Autoriteit Persoonsgegevens | ✅ Documented |
+
+**Response time:** 30 days (GDPR requirement: 1 month)
+
+**Self-service (planned V1.1+):**
+- Profile page: Download my data (JSON export)
+- Profile page: Delete my account (with confirmation)
+
+**Priority:** P0 (Critical) — GDPR requirement
 
 ---
 

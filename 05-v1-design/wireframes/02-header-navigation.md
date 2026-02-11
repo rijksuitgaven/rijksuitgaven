@@ -308,4 +308,6 @@ None - design follows current UI patterns.
 
 ---
 
-**Document Status:** Draft - Awaiting Review
+**Document Status:** Approved - Implemented with modifications
+
+**Implementation Note (2026-02-11):** Profile dropdown pattern implemented as UX-026. Replaces the original "Profiel ▾" text dropdown design with an industry-standard user icon + chevron pattern (matches Stripe, Linear, Notion). See `02-requirements/search-requirements.md` UX-026 for full specification. Footer logout removed — now contained in profile dropdown only.

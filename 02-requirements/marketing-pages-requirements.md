@@ -1,8 +1,12 @@
 # Marketing Pages Requirements
 
 **Created:** 2026-01-20
+**Updated:** 2026-02-11 (status verification)
 **Version:** V1.0
 **Source:** Brainstorm session
+
+**Status:** ⏳ PLANNED FOR WEEK 8-9 (not yet built)
+**Current State:** Only privacy policy page (`/privacybeleid`) is implemented. Marketing pages (homepage, pricing, about, contact, support) are planned for Week 8 sprint before public launch.
 
 ---
 

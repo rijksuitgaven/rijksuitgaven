@@ -11,7 +11,7 @@ DB_HOST="aws-1-eu-west-1.pooler.supabase.com"
 DB_PORT="5432"
 DB_NAME="postgres"
 DB_USER="postgres.kmdelrgtgglcrupprkqf"
-PSQL="/usr/local/opt/libpq/bin/psql"
+PSQL="/usr/local/Cellar/libpq/18.1/bin/psql"
 CSV_DIR="/Users/michielmaandag/SynologyDrive/code/watchtower/rijksuitgavenSQL/transformed"
 
 # Check for password

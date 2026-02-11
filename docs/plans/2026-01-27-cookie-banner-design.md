@@ -269,8 +269,32 @@ The `/privacybeleid` page content is ready: `content/privacybeleid.md`
 
 ---
 
+## Post-Implementation Verification (2026-02-12)
+
+**Status:** ✅ Cookie disclosure matches deployed system
+
+The cookie banner design correctly described the actual cookie usage:
+
+| Design Specification | Deployed Reality | Status |
+|---------------------|------------------|--------|
+| Essential cookies only | ✅ Only `sb-access-token` and `sb-refresh-token` (Supabase auth) | Match |
+| No analytics cookies | ✅ No Google Analytics or other tracking | Match |
+| No marketing/advertising | ✅ No third-party marketing cookies | Match |
+| Self-hosted fonts | ✅ Next.js `next/font` self-hosts fonts | Match |
+| Session cookie (1 hour) | ✅ `sb-access-token` expires after 1 hour | Match |
+| Refresh token (30 days) | ✅ `sb-refresh-token` max 30 days | Match |
+| localStorage for preferences | ✅ Column settings, UI state in localStorage | Match |
+| No consent mechanism needed | ✅ Banner is disclosure-only (OK button) | Match |
+
+**Cookies added since initial design:** None. The membership management system (2026-02-11) uses the same Supabase auth cookies that were already specified in the original design.
+
+**Privacy policy alignment:** The updated privacy policy (2026-02-12) accurately documents all cookies listed in this design, including technical details (httpOnly, secure, sameSite attributes).
+
+---
+
 ## Document History
 
 | Date | Change |
 |------|--------|
 | 2026-01-27 | Initial design approved |
+| 2026-02-12 | Post-implementation verification: design matches deployed system |

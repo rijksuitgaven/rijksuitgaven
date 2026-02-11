@@ -1,9 +1,120 @@
 # Architecture Overview
 
+> **⚠️ HISTORICAL PROPOSAL (2026-01-14)**
+> This document was written before implementation began. The actual system diverged significantly.
+> For current architecture, see the "Current Architecture (2026-02-11)" section below, or refer to `logs/SESSION-CONTEXT.md`.
+
 **Project:** Rijksuitgaven.nl SaaS Platform
 **Version:** 1.0
 **Date:** 2026-01-14
-**Status:** Proposed (Awaiting Approval)
+**Status:** Historical Document (see Current Architecture below)
+
+---
+
+## Current Architecture (2026-02-11)
+
+### Actual Tech Stack
+
+| Layer | Technology | Rationale |
+|-------|------------|-----------|
+| **Database** | **Supabase PostgreSQL (Frankfurt EU)** | Pro plan, pgvector enabled, Auth built-in |
+| **Backend** | **FastAPI + asyncpg** | Raw parameterized queries (NOT SQLAlchemy/Alembic) |
+| **Frontend** | **Next.js 16 + TanStack Table + Recharts** | React 19 compatible, NOT Tremor |
+| **Search** | **Typesense** | 7 collections, 463K recipients enriched |
+| **Auth** | **Supabase Auth + Magic Link + PKCE** | Fully client-side, NOT NextAuth.js |
+| **Hosting** | **Railway (Amsterdam)** | Next.js + FastAPI + Typesense |
+| **Cache** | **None deployed yet** | Redis deferred to V5 (AI Research Mode) |
+| **AI** | **None deployed yet** | Deferred to V2+ (Rijksuitgaven Reporter, Research Mode) |
+
+### Actual Data Flow
+
+```
+User Browser
+    │
+    ▼
+Next.js Frontend (Railway)
+    │ HTTPS/JSON
+    │ (8 BFF proxy routes)
+    │
+    ▼
+FastAPI Backend (Railway)
+    │ X-BFF-Secret header
+    │
+    ├──► Supabase PostgreSQL (Read-only queries via asyncpg)
+    │     • 7 source tables (instrumenten, apparaat, inkoop, etc.)
+    │     • 7 materialized views (*_aggregated)
+    │     • subscriptions table (membership management)
+    │
+    └──► Typesense (Search autocomplete)
+          • 7 collections (recipients, 6 modules)
+          • <25ms search performance
+```
+
+### Actual Authentication Flow
+
+**Supabase Magic Link + PKCE (Fully Client-Side)**
+
+1. User enters email → `/api/auth/magiclink` (BFF) → Supabase Auth
+2. User clicks email link → `/auth/callback` page
+3. **Client-side PKCE exchange** (createBrowserClient) → Sets httpOnly cookies
+4. Middleware validates session on every request
+5. Subscription check: `subscriptions` table (status computed from dates)
+
+**Critical:** NO server-side cookie setting in Next.js 16. All auth state managed client-side.
+
+### Actual Membership System
+
+**Subscriptions Table (No Cron Job)**
+
+- Status computed from dates: `cancelled_at`, `end_date`, `grace_ends_at`
+- Grace periods: 3 days (monthly), 14 days (yearly)
+- Admin role: `subscriptions.role` column ('member' | 'admin')
+- Admin pages: `/team` (dashboard), `/team/leden` (member management)
+- Service role client bypasses RLS for admin operations
+
+### Actual Security Architecture
+
+| Layer | Implementation |
+|-------|----------------|
+| **Network** | BFF proxy pattern, X-BFF-Secret shared secret |
+| **Auth** | Supabase session tokens, middleware guards |
+| **Database** | RLS policies on all tables, service_role for admin only |
+| **HTTP** | CSP (default-src 'self'), HSTS with preload |
+| **Input** | Body size validation (read actual bytes), SQL identifier whitelist |
+| **Export** | CSV formula injection prevention (prefix with single quote) |
+
+### Actual Infrastructure Costs
+
+```
+Supabase (Pro):           €25/month (PostgreSQL + Auth + Storage)
+Railway:
+  - Next.js frontend:     €15-25/month
+  - FastAPI backend:      €15-25/month
+  - Typesense:            €15-25/month
+─────────────────────────────────────
+V1 Total:                 €70-100/month
+Budget:                   €180/month
+Buffer:                   €80-110/month
+```
+
+### Key Divergences from Original Proposal
+
+| Component | Proposed (2026-01-14) | Actual (2026-02-11) | Reason |
+|-----------|-----------------------|---------------------|--------|
+| Database | MySQL Phase 1 → PostgreSQL Phase 2 | **Supabase PostgreSQL** (direct migration) | pgvector needed for V2, Auth built-in |
+| ORM | SQLAlchemy + Alembic | **asyncpg raw queries** | Simpler, no migration overhead |
+| Auth | NextAuth.js | **Supabase Auth + Magic Link** | Built-in, passwordless |
+| Auth Flow | JWT in httpOnly cookies | **PKCE client-side exchange** | Next.js 16 cookie issues |
+| Charts | Tremor | **Recharts** | React 19 compatible |
+| Cache | Redis (deployed) | **Not deployed yet** | Not needed until V5 |
+| AI | OpenAI + Claude (deployed) | **Not deployed yet** | Deferred to V2+ |
+| MCP Server | Implemented | **Not implemented yet** | Deferred to V5 (Research Mode) |
+
+---
+
+## Original Proposal (2026-01-14) - Historical Record
+
+*The content below describes the system as originally envisioned. Refer to the "Current Architecture" section above for the actual deployed system.*
 
 ---
 
@@ -83,7 +194,7 @@
 │  │  │  • TypeScript                                 │   │           │
 │  │  │  • Tailwind CSS + Shadcn/ui                   │   │           │
 │  │  │  • TanStack Query (data fetching)             │   │           │
-│  │  │  • NextAuth.js (authentication)               │   │           │
+│  │  │  • Supabase Auth (authentication)             │   │           │
 │  │  └───────────────────┬───────────────────────────┘   │           │
 │  │                      │                               │           │
 │  │                      │ HTTPS / JSON                  │           │
@@ -94,7 +205,7 @@
 │  │  │  • Async/await (high concurrency)             │   │           │
 │  │  │  • Pydantic validation                        │   │           │
 │  │  │  • Auto-generated OpenAPI docs                │   │           │
-│  │  │  • JWT authentication                         │   │           │
+│  │  │  • PKCE authentication                        │   │           │
 │  │  │  • Rate limiting                              │   │           │
 │  │  │  • MCP server implementation                  │   │           │
 │  │  │  • Business logic layer                       │   │           │
@@ -142,7 +253,7 @@
 - Tailwind CSS (styling)
 - Shadcn/ui (component library)
 - TanStack Query (server state management)
-- NextAuth.js (authentication)
+- Supabase Auth (authentication)
 - Zod (validation)
 
 **Responsibilities:**
@@ -185,7 +296,7 @@
 
 **Responsibilities:**
 - RESTful API endpoints
-- Authentication & authorization (JWT)
+- Authentication & authorization (Supabase session tokens)
 - Database queries (read-only initially)
 - Search orchestration (Typesense)
 - AI query processing
@@ -337,7 +448,7 @@ POST   /mcp/search_recipients
    - 80% cache hit rate target
 
 2. **Session Storage**
-   - User sessions (JWT refresh tokens)
+   - User sessions (Supabase refresh tokens)
    - Authentication state
    - 24-hour TTL
 
@@ -700,8 +811,8 @@ def search_recipients(query: str, filters: dict):
    - Cost: €15-25/month
    - Environment:
      - NEXT_PUBLIC_API_URL
-     - NEXTAUTH_URL
-     - NEXTAUTH_SECRET
+     - NEXT_PUBLIC_SUPABASE_URL
+     - NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 2. backend-fastapi:
    - Image: Python 3.11
@@ -793,7 +904,7 @@ See [RECOMMENDED-TECH-STACK.md](./RECOMMENDED-TECH-STACK.md) for detailed ration
 
 ### Authentication & Authorization
 
-**Authentication:** JWT (JSON Web Tokens)
+**Authentication:** Supabase session tokens (access + refresh)
 - Issued by FastAPI backend
 - 15-minute access token lifetime
 - 7-day refresh token lifetime (stored in Redis)
@@ -917,7 +1028,7 @@ PREMIUM = {
 
 1. **Frontend ↔ Backend**
    - Protocol: HTTPS/JSON
-   - Authentication: JWT in cookies
+   - Authentication: Supabase session tokens in httpOnly cookies
    - Error handling: Standardized error codes
 
 2. **Backend ↔ Database**

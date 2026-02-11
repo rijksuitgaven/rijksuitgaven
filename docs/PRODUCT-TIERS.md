@@ -31,13 +31,32 @@ Tiers control ACCESS to versions. Each tier unlocks specific capabilities.
 
 **Current tier - V1 launch**
 
+**Pricing:**
+- Monthly: €150/month
+- Yearly: €1,500/year (€125/month equivalent, 17% discount)
+
 **Includes:**
-- Fast keyword search (<100ms)
+- Fast keyword search (<25ms via Typesense)
 - All 7 modules
-- Advanced filters
+- Advanced filters (cascading bidirectional filters)
 - Year columns with trend indicators
-- CSV export (500 rows)
+- CSV export (500 rows max)
 - URL sharing
+- Magic Link authentication
+- Admin member management (organization owners)
+
+**Subscription Management:**
+- Status computed from dates (active/grace/expired)
+- Grace periods: 3 days (monthly), 14 days (yearly)
+- No manual status updates or cron jobs required
+- Admin dashboard at /team (view metrics)
+- Member management at /team/leden (add/edit/deactivate members)
+- Service role bypasses RLS for admin operations
+
+**Database:**
+- `subscriptions` table with user_id (FK to auth.users), email, name, org, plan, role ('member'|'admin'), dates
+- RLS policies enforce row-level access control
+- Middleware checks subscription status on every page request
 
 **V2 adds:**
 - Theme landing pages (/thema/defensie, etc.)
@@ -181,5 +200,43 @@ Tiers control ACCESS to versions. Each tier unlocks specific capabilities.
 
 ---
 
+---
+
+## Technical Implementation Notes
+
+### Membership System Architecture
+
+**Status Lifecycle:**
+```
+active → grace → expired
+```
+
+**Status Computation (no status column):**
+- `cancelled_at` is set → expired
+- `today <= end_date` → active
+- `today <= grace_ends_at` → grace (3d monthly / 14d yearly)
+- else → expired
+
+**Grace Period Calculation:**
+- Monthly: 3 days after `end_date`
+- Yearly: 14 days after `end_date`
+- Computed dynamically, no cron jobs
+
+**Admin Features:**
+- Role column: `'member'` or `'admin'`
+- Admin-only pages: `/team` (dashboard), `/team/leden` (member management)
+- Service role client at `app/api/_lib/supabase-admin.ts` bypasses RLS
+- Requires `SUPABASE_SERVICE_ROLE_KEY` env var on Railway frontend
+
+**Middleware Protection:**
+1. Check auth (Supabase session)
+2. Check subscription (query subscriptions table)
+3. If expired → redirect to `/verlopen`
+4. If grace → show banner
+
+**No subscription row = allow access** (safe default during setup)
+
+---
+
 **Document maintained by:** Product Owner
-**Last updated:** 2026-01-30
+**Last updated:** 2026-02-11

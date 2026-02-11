@@ -53,10 +53,11 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
 │  │                         NEXT.JS FRONTEND                            │   │
 │  │                                                                     │   │
 │  │  UI Components:    shadcn/ui (Tailwind-based)                       │   │
-│  │  Charts:           Recharts (+ Nivo for V2)                         │   │
+│  │  Charts:           Recharts (React 19 compatible)                   │   │
 │  │  Tables:           TanStack Table v8                                │   │
 │  │  Forms:            React Hook Form + Zod                            │   │
 │  │  State:            TanStack Query (server state)                    │   │
+│  │  Auth:             Supabase Auth (Magic Link + PKCE)                │   │
 │  │  Icons:            Lucide React                                     │   │
 │  │  Maps (V2):        react-map-gl (Mapbox)                            │   │
 │  │                                                                     │   │
@@ -246,46 +247,47 @@ import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 │       └── schemas.py
 ```
 
-**Key Libraries:
-- **SQLAlchemy** - Database ORM
-- **Alembic** - Database migrations
+**Key Libraries (V1.0 - Current):**
+- **asyncpg** - PostgreSQL async driver (NOT SQLAlchemy)
 - **Pydantic** - Data validation
 - **python-dotenv** - Environment configuration
 - **httpx** - Async HTTP client
-- **anthropic** - Claude API (primary AI provider) ⭐ Updated
-- **openai** - OpenAI API (fallback only)
-- **LangChain** - AI orchestration and agent framework ⭐ V2.0
+- **typesense** - Typesense search client
+
+**Future Libraries (V2+):**
+- **anthropic** - Claude API (V2 Reporter, V5 Research Mode)
+- **LangChain** - AI orchestration (V5 Research Mode)
 - **langchain-anthropic** - Claude integration for LangChain
-- **MCP SDK** - MCP server implementation
-- **WeasyPrint** - PDF report generation ⭐ V2.0
-- **BeautifulSoup4** - Web scraping (wetten.overheid.nl)
+- **MCP SDK** - MCP server implementation (V5 Research Mode)
+- **BeautifulSoup4** - Web scraping wetten.overheid.nl (V7)
 
 ---
 
-### Database: Supabase (PostgreSQL) ⭐ UPDATED 2026-01-20
+### Database: Supabase (PostgreSQL) ⭐ DEPLOYED 2026-01-23
 
-**Decision:** Migrate to Supabase immediately for V1.0
+**Decision:** Migrated to Supabase for V1.0
 
 **Why Supabase:**
-- ✅ PostgreSQL with pgvector included (needed for V2.0)
-- ✅ Authentication built-in (Magic Link)
+- ✅ PostgreSQL with pgvector included (ready for V2.0+)
+- ✅ Authentication built-in (Magic Link + PKCE)
 - ✅ Easy GUI dashboard (copy/paste friendly)
-- ✅ Row Level Security for multi-tenant
+- ✅ Row Level Security enabled on all tables
 - ✅ Real-time subscriptions (future use)
-- ✅ Free tier for development
-- Pro plan: ~€25/month
+- ✅ Deployed: Frankfurt EU region
+- Pro plan: €25/month
 
 **Migration from MySQL:**
-- Export current MySQL data
-- Import into Supabase PostgreSQL
-- Update schema for PostgreSQL compatibility
-- One-time effort during V1.0 development
+- ✅ COMPLETED 2026-01-23
+- Exported WordPress MySQL data
+- Imported into Supabase PostgreSQL
+- 3.1M rows across 7 source tables
+- Schema updated for PostgreSQL compatibility
 
-**Why NOT keep MySQL:**
-- pgvector not available (needed for V2.0)
-- No built-in auth
-- Would need separate auth service
-- Two databases to manage later
+**Current Setup:**
+- Project: `kmdelrgtgglcrupprkqf.supabase.co`
+- Plan: Pro (€25/month)
+- Database: 500MB / 8GB capacity
+- Extensions: postgis, vector (pgvector)
 
 **V2-Ready Database Schema:** ⭐ UPDATED 2026-01-20
 
@@ -508,37 +510,46 @@ Result: All defense-related recipients (FREE, <100ms)
 
 ---
 
-### Caching: Redis
+### Caching: Redis (NOT YET DEPLOYED)
 
-**Why:**
-- ✅ Cache frequent queries
-- ✅ Session storage
-- ✅ Rate limiting
-- ✅ Real-time features (future)
+**Status:** Deferred to V5 (AI Research Mode)
 
-**Railway Redis:** ~€7-10/month
+**Why deferred:**
+- V1 traffic too low to justify cost
+- Supabase query performance adequate (<200ms)
+- Will add for AI response caching in V5
 
-**Alternatives:**
-- None needed - Redis is industry standard
+**Future use cases (V5+):**
+- ✅ Cache AI responses (80% hit rate expected)
+- ✅ Rate limiting for AI queries
+- ✅ Session storage (currently in Supabase)
+
+**Railway Redis:** ~€7-10/month (when deployed)
 
 ---
 
-### AI Integration: Claude Primary Strategy ⭐ Updated
+### AI Integration: NOT YET DEPLOYED
 
-#### Primary: Claude Sonnet 4.5 (Anthropic)
-**Cost:** ~€25-35/month (with caching)
-**Why:**
-- **10x cheaper** for conversations (€0.003 vs €0.03 per 1K tokens)
-- Native MCP support (critical for Research Mode)
-- 200K context window (full conversation history)
-- Excellent multi-step reasoning
-- Better for Research Mode's "Bloomberg Terminal" conversations
+**Status:** Deferred to V2+ (Rijksuitgaven Reporter, Research Mode)
 
-#### Fallback: OpenAI GPT-4 (Emergency only)
-**Cost:** ~€5-10/month (5% of queries)
-**When:**
+#### V2.0 - Rijksuitgaven Reporter (Planned)
+
+**Primary: Claude Haiku (Anthropic)**
+- News article keyword extraction
+- Lightweight AI analysis
+- Cost: ~€10-15/month
+
+#### V5.0 - AI Research Mode (Planned)
+
+**Primary: Claude Sonnet 4.5 (Anthropic)**
+- Conversational analysis
+- Multi-step reasoning
+- Native MCP support
+- Cost: ~€25-35/month (with caching)
+
+**Fallback: OpenAI GPT-4 (Emergency only)**
 - Claude API unavailable
-- Specific tasks where OpenAI excels (rare)
+- Cost: ~€5-10/month (5% of queries)
 
 #### V2.0 Research Mode AI Architecture
 ```
@@ -653,36 +664,48 @@ Supabase (Pro):            €25
 Railway:
   - Frontend (Next.js):    €15-25
   - Backend (FastAPI):     €15-25
-  - Worker (background):   €10-12  ← V2-ready addition
   - Typesense:             €15-25
-  - Redis:                 €7-10
 ──────────────────────────────
-V1 Infrastructure:         €87-122
+V1 Infrastructure:         €70-100
+Budget:                    €180/month
+Buffer:                    €80-110
 ```
 
-**V2 Additions (when enabled):**
+**Not yet deployed (deferred to V2+):**
+- Worker service (V2 Reporter): €5-10/month
+- Redis (V5 Research Mode): €7-10/month
+- Claude API (V2 Reporter + V5 Research Mode): €10-40/month
+
+**Future V2 Additions (when enabled):**
 ```
 AI Services:
-  - Claude (cached):       €20-40
-External APIs:
-  - KvK API:               €0-50 (usage based)
-  - Mapbox:                €0 (free tier)
-Puppeteer service:         €5-10
+  - Claude Haiku (V2):     €10-15
+  - Claude Sonnet (V5):    €20-35
+Worker service:            €5-10
 ──────────────────────────────
-V2 Additions:              €25-100
+V2 Additions:              €35-60
+```
+
+**Future V5 Additions (when enabled):**
+```
+Redis (caching):           €7-10
+──────────────────────────────
+V5 Additions:              €7-10
 ```
 
 **Total:**
 ```
-V1 Phase:                  €87-122/month
-V2 Phase:                  €112-222/month
+V1 Phase (current):        €70-100/month
+V2 Phase:                  €105-160/month
+V5 Phase:                  €112-170/month
 Budget:                    €180/month
 
-V1 Buffer:                 €58-93
-V2 Buffer:                 €0-68 (may need budget increase)
+V1 Buffer:                 €80-110 ✅
+V2 Buffer:                 €20-75 ✅
+V5 Buffer:                 €10-68 ✅
 ```
 
-**Note:** V2 AI costs depend heavily on usage. Caching reduces costs 60-80%.
+**Note:** All future phases fit within €180 budget with caching.
 
 **Why not alternatives:**
 - **AWS/Google Cloud:** Too complex, need IaC knowledge, harder to debug
@@ -730,7 +753,7 @@ main (production)
 - [ ] Next.js frontend setup
 
 ### Week 3-4: Core Features
-- [ ] Authentication (NextAuth + FastAPI)
+- [x] Authentication (Supabase Auth + Magic Link - Completed Week 6)
 - [ ] User migration from ARMember
 - [ ] Data API endpoints (7 modules)
 - [ ] Basic search (Typesense setup)

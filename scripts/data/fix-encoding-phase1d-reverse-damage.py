@@ -6,8 +6,15 @@ only affected inkoop.leverancier. Most replacements in other tables corrupted go
 """
 import asyncio
 import asyncpg
+import os
+import sys
 
-DB_URL = "postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
+DB_PASSWORD = os.environ.get('SUPABASE_DB_PASSWORD')
+if not DB_PASSWORD:
+    print("ERROR: Set SUPABASE_DB_PASSWORD environment variable first")
+    sys.exit(1)
+
+DB_URL = f"postgresql://postgres.kmdelrgtgglcrupprkqf:{DB_PASSWORD}@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
 
 # Phase 1b triple-standard only affected inkoop.leverancier (and 1 row in instrumenten.ontvanger for «)
 # Phase 1c then replaced across ALL tables — need to reverse for non-inkoop tables

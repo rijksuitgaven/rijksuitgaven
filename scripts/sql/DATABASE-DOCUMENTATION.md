@@ -5,7 +5,7 @@
 **Region:** eu-west-1
 **Created:** 2026-01-21
 **Data Migrated:** 2026-01-23
-**Last Updated:** 2026-02-07 (data_availability table, Amersfoort typo fix, encoding corruption cleanup)
+**Last Updated:** 2026-02-11 (subscriptions table, membership management)
 
 ---
 
@@ -90,7 +90,56 @@
 - Entity-level: gemeente (per gemeente), provincie (per provincie), publiek (per source/organisatie)
 - No module-level rows for entity-level modules; backend defaults to full range (2016-2024) when unfiltered
 
-**Maintenance:** Update `year_to` when new year data arrives. Edit via Supabase Studio.
+**Indexes:**
+- Primary key on id
+- Composite index on (module, entity_type, entity_name) for fast lookups
+
+**Maintenance:** Update `year_to` when new year data arrives. Edit via Supabase Studio. After updates, restart backend to clear `_availability_cache`.
+
+---
+
+### 0b. subscriptions (Membership Management)
+
+**Description:** User subscription and membership data. Status computed from dates (no status column). Linked to Supabase Auth.
+
+**Migration:** `030-subscriptions.sql` (added 2026-02-11)
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (default gen_random_uuid()) |
+| user_id | UUID | Foreign key to auth.users (UNIQUE) |
+| email | TEXT | User email (NOT NULL) |
+| name | TEXT | User full name |
+| organization | TEXT | Organization name |
+| plan | TEXT | 'monthly' or 'yearly' |
+| role | TEXT | 'member' or 'admin' (default: 'member') |
+| start_date | DATE | Subscription start date |
+| end_date | DATE | Subscription end date |
+| grace_ends_at | DATE | Grace period end date (3 days monthly, 14 days yearly) |
+| cancelled_at | TIMESTAMPTZ | When subscription was cancelled |
+| notes | TEXT | Admin notes |
+| created_at | TIMESTAMPTZ | Row creation time (default NOW()) |
+| updated_at | TIMESTAMPTZ | Last update time (default NOW()) |
+
+**Status Logic (computed, not stored):**
+- `cancelled_at` IS NOT NULL → expired
+- TODAY <= `end_date` → active
+- TODAY <= `grace_ends_at` → grace
+- Otherwise → expired
+
+**RLS Policies:**
+- Users can read own row: `(SELECT auth.uid()) = user_id`
+- Service role has full access (no RLS)
+
+**Indexes:**
+- `subscriptions_user_id_key` (UNIQUE) - Fast lookup by user_id (used by middleware)
+- `idx_subscriptions_end_date` - Fast admin queries for expiring subscriptions
+
+**Usage:**
+- Middleware checks subscription on every page request (after auth)
+- Admin pages: `/team` (dashboard) and `/team/leden` (member management)
+- Service role client: `app/api/_lib/supabase-admin.ts` (bypasses RLS)
+- Requires: `SUPABASE_SERVICE_ROLE_KEY` env var on Railway frontend
 
 ---
 
@@ -444,29 +493,60 @@ REFRESH MATERIALIZED VIEW publiek_aggregated;
 
 ---
 
-### 9. user_profiles (Authentication)
+### 9. subscriptions (Membership Management)
 
-**Description:** User profile data linked to Supabase Auth.
+**Description:** Subscription and membership data. Status computed from dates (no status column, no cron job).
 
-**Rows:** TBD (users to be migrated)
+**Migration:** `030-subscriptions.sql`
+**Created:** 2026-02-11
 
 | Column | Type | Description |
 |--------|------|-------------|
-| id | UUID | Primary key (references auth.users) |
+| id | UUID | Primary key (gen_random_uuid()) |
+| user_id | UUID | Foreign key to auth.users (UNIQUE, NOT NULL) |
 | email | TEXT | User email (NOT NULL) |
-| first_name | TEXT | First name |
-| last_name | TEXT | Last name |
-| organisation | TEXT | Organization name |
-| role | TEXT | User role |
-| phone | TEXT | Phone number |
-| subscription_type | TEXT | 'yearly' or 'monthly' |
-| subscription_start | DATE | Subscription start date |
-| subscription_end | DATE | Subscription end date |
-| user_list | TEXT | Legacy list category |
-| created_at | TIMESTAMP | Account creation time |
-| preferences | JSONB | User preferences (JSON) |
+| name | TEXT | Full name |
+| organization | TEXT | Organization name |
+| plan | TEXT | 'monthly' or 'yearly' (NOT NULL) |
+| role | TEXT | 'member' or 'admin' (default: 'member', NOT NULL) |
+| start_date | DATE | Subscription start date (NOT NULL) |
+| end_date | DATE | Subscription end date (NOT NULL) |
+| grace_ends_at | DATE | Grace period end date (auto-computed: end_date + 3d for monthly, +14d for yearly) |
+| cancelled_at | TIMESTAMPTZ | When subscription was cancelled (NULL if active) |
+| notes | TEXT | Admin notes |
+| created_at | TIMESTAMPTZ | Record creation timestamp |
+| updated_at | TIMESTAMPTZ | Last update timestamp |
 
-**Note:** Linked to Supabase Auth via foreign key to `auth.users`.
+**Status Calculation (computed, not stored):**
+```typescript
+if (cancelled_at !== null) return 'expired'
+if (today <= end_date) return 'active'
+if (today <= grace_ends_at) return 'grace'
+return 'expired'
+```
+
+**Grace Periods:**
+- Monthly: 3 days (end_date + 3)
+- Yearly: 14 days (end_date + 14)
+
+**Indexes:**
+- `idx_subscriptions_user_id` - UNIQUE on user_id (one subscription per user)
+- `idx_subscriptions_end_date` - Fast lookup for expiration checks
+
+**RLS Policies:**
+```sql
+-- Users can read their own subscription
+CREATE POLICY "Users can read own subscription" ON subscriptions
+  FOR SELECT USING (auth.uid() = user_id);
+
+-- Service role has full access (for admin operations)
+CREATE POLICY "Service role full access" ON subscriptions
+  FOR ALL USING (auth.role() = 'service_role');
+```
+
+**Admin Access:** Admin pages at `/team` and `/team/leden` use service role client (`lib/supabase/admin.ts`) with `SUPABASE_SERVICE_ROLE_KEY` to bypass RLS.
+
+**No Status Column Rationale:** Status is purely time-based and computed on every request. Storing status would require cron jobs to keep it in sync, adding complexity for no benefit. Current approach is simpler and always accurate.
 
 ---
 
@@ -651,7 +731,7 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY universal_search;
 
 **Via psql:**
 ```bash
-/usr/local/opt/libpq/bin/psql "postgresql://postgres.kmdelrgtgglcrupprkqf:${SUPABASE_DB_PASSWORD}@aws-1-eu-west-1.pooler.supabase.com:5432/postgres?sslmode=require" -c "REFRESH MATERIALIZED VIEW CONCURRENTLY universal_search;"
+/usr/local/Cellar/libpq/18.1/bin/psql "postgresql://postgres.kmdelrgtgglcrupprkqf:${SUPABASE_DB_PASSWORD}@aws-1-eu-west-1.pooler.supabase.com:5432/postgres?sslmode=require" -c "REFRESH MATERIALIZED VIEW CONCURRENTLY universal_search;"
 ```
 
 ---
@@ -721,6 +801,12 @@ VACUUM ANALYZE universal_search;
 | `009-entity-resolution-normalization.sql` | Entity resolution + universal_search | Once (done) |
 | `020-normalize-recipient-indexes.sql` | Functional indexes for normalize_recipient | Once (done) |
 | `021-filter-column-indexes.sql` | B-tree indexes on filter columns for DISTINCT | Once (done 2026-02-05) |
+| `022-data-availability.sql` | Create data_availability table + populate | Once (done 2026-02-07) |
+| `023-fix-amsersfoort-typo.sql` | Fix "Amsersfoort" → "Amersfoort" in gemeente | Once (done 2026-02-07) |
+| `024-fix-encoding-double-utf8.sql` | Fix double-encoded UTF-8 across all tables | Once (done 2026-02-07) |
+| `025-fix-encoding-question-marks.sql` | Fix lost characters (431 explicit corrections) | Once (done 2026-02-07) |
+| `029-universal-search-record-count.sql` | Add record_count to universal_search (UX-022) | Once (done 2026-02-08) |
+| `030-subscriptions.sql` | Create subscriptions table + RLS policies | Once (done 2026-02-11) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---

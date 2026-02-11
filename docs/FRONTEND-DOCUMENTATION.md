@@ -14,6 +14,14 @@ app/src/
 │   ├── globals.css               # Global styles (brand colors, animations)
 │   ├── page.tsx                  # Home page (hero + module cards)
 │   ├── privacybeleid/page.tsx    # Privacy policy page
+│   ├── login/page.tsx            # Login page (Magic Link form)
+│   ├── auth/
+│   │   └── callback/page.tsx     # Auth callback (client-side PKCE exchange)
+│   ├── profiel/page.tsx          # Profile page (user info + subscription status)
+│   ├── team/
+│   │   ├── page.tsx              # Admin dashboard (subscription overview)
+│   │   └── leden/page.tsx        # Member management (admin only)
+│   ├── verlopen/page.tsx         # Expired subscription page
 │   ├── instrumenten/page.tsx     # Module page
 │   ├── apparaat/page.tsx         # Module page
 │   ├── inkoop/page.tsx           # Module page
@@ -22,6 +30,9 @@ app/src/
 │   ├── publiek/page.tsx          # Module page
 │   └── integraal/page.tsx        # Cross-module search page
 ├── components/
+│   ├── auth/                     # Authentication components
+│   │   ├── auth-button.tsx       # Profile dropdown (UX-026)
+│   │   └── subscription-banner.tsx # Grace period warning banner
 │   ├── column-selector/          # Column customization (UX-005)
 │   │   ├── column-selector.tsx
 │   │   └── index.ts
@@ -66,7 +77,15 @@ app/src/
 │   ├── api-config.ts             # Centralized API base URL
 │   ├── constants.ts              # Shared MODULE_LABELS, FIELD_LABELS, ALL_MODULES
 │   ├── format.ts                 # Number formatting utilities
-│   └── utils.ts                  # CN utility for Tailwind
+│   ├── utils.ts                  # CN utility for Tailwind
+│   └── supabase/                 # Supabase client initialization
+│       ├── client.ts             # Browser client (use in components)
+│       ├── server.ts             # Server client (use in Server Components, API routes)
+│       └── middleware.ts         # Middleware client (use in middleware.ts)
+├── hooks/
+│   ├── use-auth.ts               # useAuth() - client-side session hook
+│   └── use-subscription.ts       # useSubscription() - client-side subscription status hook
+├── middleware.ts                 # Route protection + subscription check
 └── types/
     └── api.ts                    # TypeScript interfaces
 ```
@@ -329,7 +348,7 @@ Global navigation header (rendered in layout.tsx).
 - Mobile hamburger menu
 - Integrated search bar
 - Privacy policy link
-- Login button (placeholder for Week 6)
+- **AuthButton** (UX-026): Profile dropdown with user icon + chevron (logged in) OR "Inloggen" link (logged out)
 - Sticky positioning (z-index 40)
 - **Hard navigation** (UX-008): Module clicks force full page reload, resetting all filters
 
@@ -362,7 +381,7 @@ Site-wide footer (rendered in layout.tsx). Auth-aware with different content for
 - White logo on navy dark background
 - Social icons: X (Twitter), Bluesky, LinkedIn (inline SVGs)
 - Contact: Phone + Email
-- Copyright bar with optional user email + logout (when logged in)
+- Copyright bar only (email + logout removed in UX-026, now in profile dropdown)
 
 **Props:**
 ```typescript
@@ -501,6 +520,50 @@ Friendly message for mobile users that the app works best on larger screens (UX-
 
 ---
 
+### AuthButton (`components/auth/auth-button.tsx`) — UX-026
+
+Profile dropdown menu component for header (replaced exposed logout button).
+
+**Features:**
+- **Logged in:** User icon + chevron → dropdown menu
+- **Logged out:** "Inloggen" text link → `/login`
+- Dropdown menu contents:
+  - "Ingelogd als" + truncated email (top section, border below)
+  - "Mijn profiel" link → `/profiel`
+  - Divider
+  - "Uitloggen" button (red text, red hover background)
+- Click outside or Escape closes menu
+- Chevron rotates 180° when open
+
+**Priority:** P1 (High)
+**Status:** ✅ Implemented 2026-02-11
+
+**Rationale:** Industry-standard pattern (Stripe, Linear, Notion) reduces accidental logouts
+
+---
+
+### SubscriptionBanner (`components/auth/subscription-banner.tsx`)
+
+Grace period warning banner shown when subscription is in grace period (expired but within grace window).
+
+**Features:**
+- Shown only when subscription status is 'grace' (after end_date, before grace_ends_at)
+- Yellow/warning styling
+- Message: "Je abonnement is verlopen. Je hebt nog X dagen toegang."
+- "Verlengen" button → contact page
+- Dismissible (localStorage)
+- Fixed top position, below header
+
+**Props:**
+```typescript
+interface SubscriptionBannerProps {
+  daysRemaining: number
+  graceEndsAt: string  // ISO date string
+}
+```
+
+---
+
 ### ErrorBoundary (`components/error-boundary/error-boundary.tsx`)
 
 React error boundary for graceful error handling.
@@ -622,35 +685,105 @@ interface ModuleQueryParams {
 
 ---
 
+## Hooks
+
+### useAuth() (`hooks/use-auth.ts`)
+
+Client-side auth hook using Supabase browser client.
+
+**Returns:**
+```typescript
+{
+  user: User | null
+  session: Session | null
+  loading: boolean
+}
+```
+
+**Usage:**
+```tsx
+const { user, session, loading } = useAuth()
+
+if (loading) return <LoadingSpinner />
+if (!user) return <LoginPrompt />
+return <UserContent user={user} />
+```
+
+**Implementation:** Calls `supabase.auth.getSession()` on mount, no realtime listener (sessions managed by middleware).
+
+---
+
+### useSubscription() (`hooks/use-subscription.ts`)
+
+Client-side subscription status hook.
+
+**Returns:**
+```typescript
+{
+  subscription: Subscription | null
+  status: 'active' | 'grace' | 'expired' | 'unknown'
+  loading: boolean
+  daysRemaining?: number  // Days left in grace period (if status='grace')
+}
+```
+
+**Status calculation:**
+- `cancelled_at` set → expired
+- `today <= end_date` → active
+- `today <= grace_ends_at` → grace
+- else → expired
+
+**Grace periods:** 3 days (monthly), 14 days (yearly)
+
+**Usage:**
+```tsx
+const { subscription, status, loading, daysRemaining } = useSubscription()
+
+if (status === 'grace') return <SubscriptionBanner daysRemaining={daysRemaining} />
+if (status === 'expired') redirect('/verlopen')
+```
+
+---
+
 ## Routes
 
 | Route | Page | Description |
 |-------|------|-------------|
-| `/` | Home | Hero section + module cards |
-| `/instrumenten` | Module | Financiële Instrumenten |
-| `/apparaat` | Module | Apparaatsuitgaven |
-| `/inkoop` | Module | Inkoopuitgaven |
-| `/provincie` | Module | Provinciale Subsidies |
-| `/gemeente` | Module | Gemeentelijke Subsidies |
-| `/publiek` | Module | Publiek (RVO/COA/NWO) |
-| `/integraal` | Module | Cross-module search |
-| `/privacybeleid` | Static | Privacy policy |
-| `/login` | Auth | Login page (Week 6 - placeholder) |
+| `/` | Home | Hero section + module cards (public) |
+| `/login` | Auth | Login page (Magic Link form) |
+| `/auth/callback` | Auth | Auth callback handler (client-side PKCE exchange) |
+| `/profiel` | Protected | User profile page (subscription info, logout) |
+| `/team` | Protected (Admin) | Admin dashboard (subscription overview) |
+| `/team/leden` | Protected (Admin) | Member management (CRUD operations) |
+| `/verlopen` | Public | Expired subscription page |
+| `/instrumenten` | Protected | Financiële Instrumenten module |
+| `/apparaat` | Protected | Apparaatsuitgaven module |
+| `/inkoop` | Protected | Inkoopuitgaven module |
+| `/provincie` | Protected | Provinciale Subsidies module |
+| `/gemeente` | Protected | Gemeentelijke Subsidies module |
+| `/publiek` | Protected | Publiek (RVO/COA/NWO) module |
+| `/integraal` | Protected | Cross-module search |
+| `/privacybeleid` | Public | Privacy policy |
 
 ### BFF API Routes (`app/src/app/api/`)
 
 All frontend API calls are proxied through Next.js BFF routes:
 
-| Route | Method | Backend Target |
-|-------|--------|---------------|
-| `/api/v1/modules` | GET | List modules |
-| `/api/v1/modules/[module]` | GET | Module data |
-| `/api/v1/modules/[module]/stats` | GET | Module statistics |
-| `/api/v1/modules/[module]/autocomplete` | GET | Module autocomplete |
-| `/api/v1/modules/[module]/filters/[field]` | GET | Filter options |
-| `/api/v1/modules/[module]/filters` | POST | Cascading filter options with counts (UX-021) |
-| `/api/v1/modules/[module]/[value]/details` | GET | Expanded row details |
-| `/api/v1/search/autocomplete` | GET | Global Typesense search |
+| Route | Method | Backend Target | Auth Required |
+|-------|--------|---------------|---------------|
+| `/api/v1/modules` | GET | List modules | Yes |
+| `/api/v1/modules/[module]` | GET | Module data | Yes |
+| `/api/v1/modules/[module]/stats` | GET | Module statistics | Yes |
+| `/api/v1/modules/[module]/autocomplete` | GET | Module autocomplete | Yes |
+| `/api/v1/modules/[module]/filters/[field]` | GET | Filter options | Yes |
+| `/api/v1/modules/[module]/filters` | POST | Cascading filter options with counts (UX-021) | Yes |
+| `/api/v1/modules/[module]/[value]/details` | GET | Expanded row details | Yes |
+| `/api/v1/modules/[module]/[value]/grouping-counts` | GET | Grouping field counts (UX-023) | Yes |
+| `/api/v1/search/autocomplete` | GET | Global Typesense search | Yes |
+| `/api/v1/team/leden` | GET | List members (admin only) | Yes (Admin) |
+| `/api/v1/team/leden/[id]` | GET/PUT/DELETE | Member CRUD (admin only) | Yes (Admin) |
+
+**Auth Protection:** All BFF routes check for valid Supabase session via server-side client. Returns 401 if unauthenticated. Admin routes additionally check `subscriptions.role = 'admin'`.
 
 ---
 
@@ -689,10 +822,14 @@ npm run build
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `BACKEND_API_URL` | `http://localhost:8000` | Backend API (server-side only, used by BFF proxy) |
-| `NEXT_PUBLIC_TYPESENSE_HOST` | `typesense-production-35ae.up.railway.app` | Typesense server |
+| `NEXT_PUBLIC_SUPABASE_URL` | (required) | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | (required) | Supabase anon/public key (safe to expose) |
+| `SUPABASE_SERVICE_ROLE_KEY` | (required) | Supabase service role key (server-side only, for admin operations) |
+| `NEXT_PUBLIC_TYPESENSE_HOST` | `typesense-production-35ae.up.railway.app` | Typesense server (unused - all access via BFF) |
 | `TYPESENSE_API_KEY` | (required) | Typesense search API key (server-side only) |
+| `BFF_SECRET` | (required) | Shared secret for BFF→backend auth (X-BFF-Secret header) |
 
-**Note:** No `NEXT_PUBLIC_` prefix for sensitive URLs/keys - they stay server-side only.
+**Note:** No `NEXT_PUBLIC_` prefix for sensitive URLs/keys - they stay server-side only. Exception: Supabase URL and anon key are designed to be public per Supabase architecture.
 
 **Deployment:**
 - Platform: Railway
@@ -800,3 +937,4 @@ npm run build
 | 2026-02-08 | Added CustomSelect component for Integraal, BFF POST route for cascading filters |
 | 2026-02-08 | Added fetchCascadingFilterOptions() to API client, FilterOption type |
 | 2026-02-09 | UX-023: GroupingSelect dropdown with counts, BFF grouping-counts route, updated ExpandedRow |
+| 2026-02-11 | WS-3: Auth pages, hooks, admin routes, subscription components, profile dropdown (UX-026) |

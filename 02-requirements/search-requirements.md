@@ -1269,7 +1269,7 @@ Search "bedrijvenbeleid" shows:
 
 **Priority:** P1 (V1.0 — required before beta launch)
 
-**Status:** ⏳ In Requirements
+**Status:** ⏳ Planned for V1.0 (backlog)
 
 ---
 
@@ -1303,7 +1303,7 @@ Search "bedrijvenbeleid" shows:
 
 **Priority:** P1
 
-**Status:** ✅ Implemented 2026-02-10
+**Status:** ✅ Implemented 2026-02-11
 
 ---
 

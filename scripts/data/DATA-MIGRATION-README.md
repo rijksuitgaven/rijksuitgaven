@@ -1,5 +1,7 @@
 # Data Migration: MySQL → Supabase
 
+> ⚠️ **HISTORICAL DOCUMENT**: Initial migration (2026-01-23) is complete. For regular data updates, see **[DATA-UPDATE-RUNBOOK.md](DATA-UPDATE-RUNBOOK.md)**.
+
 **Created:** 2026-01-23
 **Completed:** 2026-01-23
 **Status:** ✅ Complete
@@ -18,8 +20,10 @@ Successfully migrated 3.1 million rows across 7 tables from MySQL (WordPress) to
 | provincie | 67,456 | ✅ |
 | gemeente | 126,377 | ✅ |
 | publiek | 115,020 | ✅ |
-| universal_search | 1,456,095 | ✅ |
+| universal_search | 1,456,095 (pre-ER) → ~451,445 (post-ER) | ✅ |
 | **Total** | **3,096,955** | ✅ |
+
+**Note:** universal_search row count shown is pre-entity-resolution (1,456,095). After entity resolution normalization (2026-01-26), count dropped to ~451,445 due to merging duplicate recipients with different spellings.
 
 ---
 
@@ -239,7 +243,7 @@ DB_HOST="aws-1-eu-west-1.pooler.supabase.com"
 DB_PORT="5432"
 DB_NAME="postgres"
 DB_USER="postgres.kmdelrgtgglcrupprkqf"
-PSQL="/usr/local/opt/libpq/bin/psql"
+PSQL="/usr/local/Cellar/libpq/18.1/bin/psql"
 CSV_DIR="/Users/michielmaandag/Downloads/RoijksuitgavenSQL/transformed"
 
 # Check for password
@@ -653,7 +657,7 @@ Database triggers automatically set the `source` column on INSERT:
 
 If triggers weren't active during import, run:
 ```bash
-/usr/local/opt/libpq/bin/psql "$CONN" -f scripts/sql/002-normalize-source-column.sql
+/usr/local/Cellar/libpq/18.1/bin/psql "$CONN" -f scripts/sql/002-normalize-source-column.sql
 ```
 
 **Normalization script:** `scripts/sql/002-normalize-source-column.sql`
@@ -731,7 +735,7 @@ UNION ALL SELECT 'inkoop', jaar::text, leverancier, totaal_avg::bigint FROM inko
 | gemeente | 126,377 | 126,377 | ✅ |
 | inkoop | 635,866 | 635,866 | ✅ |
 | instrumenten | 674,826 | 674,826 | ✅ |
-| universal_search | 1,456,095 | 1,456,095 | ✅ |
+| universal_search | 1,456,095 | 1,456,095 (pre-ER) | ✅ |
 | **Total** | **3,096,955** | **3,096,955** | ✅ |
 
 **Encoding verified:** Dutch characters (ö, é, ë, etc.) display correctly.

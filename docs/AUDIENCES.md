@@ -98,7 +98,41 @@ Based on user research (50 existing users):
 
 ---
 
-### 4. Academic Researchers
+### 4. Organization Admins (V1 - Current)
+
+**Who:** Organization owners/managers with admin role
+
+**Need:** Manage team members, subscriptions, access control
+
+**Behavior:**
+- Add new members to organization subscription
+- Edit member details (name, email)
+- Deactivate members when they leave
+- Monitor subscription status (dashboard)
+- Send invite emails to new members
+
+**Access:**
+- `/team` - Admin dashboard with organization metrics
+- `/team/leden` - Member management page (add/edit/deactivate)
+- Service role API access (bypasses RLS)
+
+**Role Management:**
+- Role column in subscriptions table: `'member'` or `'admin'`
+- Admin-only routes protected by role check
+- Admin API endpoints require admin role
+
+**Value proposition:** "Manage your team's access efficiently"
+
+**Version fit:** V1 (current)
+
+**Technical:**
+- RLS policies enforce row-level access
+- Service role client bypasses RLS for admin operations
+- Admin checks in middleware + API routes
+
+---
+
+### 5. Academic Researchers
 
 **Who:** University researchers, PhD students, policy institutes
 
@@ -116,7 +150,7 @@ Based on user research (50 existing users):
 
 ---
 
-### 5. Government (Internal)
+### 6. Government (Internal)
 
 **Who:** Municipalities, provinces, ministries
 
@@ -134,7 +168,7 @@ Based on user research (50 existing users):
 
 ---
 
-### 6. Compliance Officers (V8 - Future)
+### 7. Compliance Officers (V8 - Future)
 
 **Who:** Banks, insurers, accountants (KYC/AML teams)
 
@@ -152,7 +186,7 @@ Based on user research (50 existing users):
 
 ---
 
-### 7. Mainstream Parties (V3 - Future)
+### 8. Mainstream Parties (V3 - Future)
 
 **Who:** Researchers for coalition/governing parties
 
@@ -230,4 +264,4 @@ The Rijksuitgaven Reporter (V2) is particularly valuable for:
 ---
 
 **Document maintained by:** Product Owner
-**Last updated:** 2026-02-03
+**Last updated:** 2026-02-11

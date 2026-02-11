@@ -1,8 +1,12 @@
 # Overzicht Page Requirements
 
 **Created:** 2026-01-20
-**Version:** V1.0
+**Updated:** 2026-02-11 (status verification)
+**Version:** Deferred to V5
 **Source:** Brainstorm session
+
+**Status:** ⏳ DEFERRED TO V5 (AI Research Mode)
+**Rationale:** See backlog.md "Overzichtspagina / Recipient Profile Panel" — V1 expanded row covers the functional need. A comprehensive recipient profile panel is not needed until V5 when AI Research requires full recipient context.
 
 ---
 

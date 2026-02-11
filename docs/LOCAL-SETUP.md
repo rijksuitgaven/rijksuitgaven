@@ -47,10 +47,10 @@ node --version    # Should be v18+
 npm --version     # Should be v9+
 python3 --version # Should be 3.10+
 git --version     # Any version
-/usr/local/opt/libpq/bin/psql --version  # Any version (for data updates)
+/usr/local/Cellar/libpq/18.1/bin/psql --version  # Any version (for data updates)
 ```
 
-**Note:** psql is installed via libpq but not symlinked. Use full path: `/usr/local/opt/libpq/bin/psql`
+**Note:** psql is installed via libpq but not symlinked. Use full path: `/usr/local/Cellar/libpq/18.1/bin/psql`
 
 ---
 
@@ -118,14 +118,14 @@ NEXT_PUBLIC_SUPABASE_URL=https://kmdelrgtgglcrupprkqf.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=[get from Supabase dashboard]
 SUPABASE_SERVICE_ROLE_KEY=[get from Supabase dashboard]
 
-# Typesense
+# Typesense (API key from Railway dashboard)
 NEXT_PUBLIC_TYPESENSE_HOST=typesense-production-35ae.up.railway.app
 NEXT_PUBLIC_TYPESENSE_PORT=443
 NEXT_PUBLIC_TYPESENSE_PROTOCOL=https
-TYPESENSE_API_KEY=0vh4mxafjeuvd676gw92kpjflg6fuv57
+TYPESENSE_API_KEY=<admin-key-from-railway-dashboard>
 
 # Database (for scripts only, not Next.js)
-SUPABASE_DB_URL=postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres
+SUPABASE_DB_URL=postgresql://postgres.kmdelrgtgglcrupprkqf:$SUPABASE_DB_PASSWORD@aws-1-eu-west-1.pooler.supabase.com:5432/postgres
 ```
 
 **Note:** `NEXT_PUBLIC_API_URL` defaults to the Railway API if not set.
@@ -150,7 +150,7 @@ Opens at: http://localhost:3000
 
 ```bash
 cd /Users/michielmaandag/SynologyDrive/code/watchtower/rijksuitgaven
-SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" python3 scripts/typesense/sync_to_typesense.py --recreate
+SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:$SUPABASE_DB_PASSWORD@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" python3 scripts/typesense/sync_to_typesense.py --recreate
 ```
 
 ---
@@ -256,11 +256,11 @@ Create `backend/.env`:
 
 ```env
 # Supabase (PostgreSQL) - Use pooler URL
-DATABASE_URL=postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres
+DATABASE_URL=postgresql://postgres.kmdelrgtgglcrupprkqf:$SUPABASE_DB_PASSWORD@aws-1-eu-west-1.pooler.supabase.com:5432/postgres
 
-# Typesense
+# Typesense (API key from Railway dashboard)
 TYPESENSE_HOST=typesense-production-35ae.up.railway.app
-TYPESENSE_API_KEY=0vh4mxafjeuvd676gw92kpjflg6fuv57
+TYPESENSE_API_KEY=<admin-key-from-railway-dashboard>
 TYPESENSE_PROTOCOL=https
 TYPESENSE_PORT=443
 

@@ -1,9 +1,12 @@
 # Architecture Impact Analysis
 
+> **⚠️ HISTORICAL ANALYSIS (2026-01-23)**
+> This document was written before implementation. The actual system uses Supabase PostgreSQL (NOT MySQL), asyncpg (NOT SQLAlchemy), and Supabase Auth (NOT NextAuth.js). For current architecture, see `logs/SESSION-CONTEXT.md`.
+
 **Project:** Rijksuitgaven.nl SaaS Platform
 **Version:** 1.0
 **Date:** 2026-01-23
-**Status:** Validated
+**Status:** Historical Document
 
 ---
 
@@ -66,22 +69,22 @@ The recommended stack (Typesense + FastAPI + Next.js) **fully supports** Search 
 
 ## Search Bar Requirements vs Typesense
 
-| Requirement | Typesense Capability | Status | Notes |
-|-------------|----------------------|--------|-------|
-| **<100ms search** | Yes, <50ms typical | ✅ | Native capability |
-| **Autocomplete** | Yes, instant | ✅ | Dedicated autocomplete API |
-| **Typo tolerance** | Yes, fuzzy matching | ✅ | Configurable (up to 2 edits) |
-| **Boolean operators** | Yes (AND, OR, NOT) | ✅ | Native support |
-| **Wildcards** | Partial | ⚠️ | Prefix matching native, full wildcards via query expansion |
-| **Fuzzy matching** | Yes | ✅ | Automatic |
-| **Cross-module search** | Yes | ✅ | Multi-collection search |
-| **Filter by fields** | Yes | ✅ | Filter parameters on any field |
-| **Numeric ranges** | Yes | ✅ | Range queries (amount:1000000..5000000) |
-| **Faceted filtering** | Yes | ✅ | Facet counts for UI |
-| **Sort options** | Yes | ✅ | Multi-field sorting |
-| **Field weighting** | Yes | ✅ | Query-time boost per field |
+| Requirement | Typesense Capability | Status (Actual V1.0) | Notes |
+|-------------|----------------------|----------------------|-------|
+| **<100ms search** | Yes, <50ms typical | ✅ **<25ms deployed** | Exceeds target |
+| **Autocomplete** | Yes, instant | ✅ **Deployed** | 7 collections indexed |
+| **Typo tolerance** | Yes, fuzzy matching | ✅ **Deployed** | Up to 2 edits |
+| **Boolean operators** | Yes (AND, OR, NOT) | ✅ **Deployed** | Native support |
+| **Wildcards** | Partial | ✅ **Prefix matching deployed** | Full wildcards deferred to V1.1 |
+| **Fuzzy matching** | Yes | ✅ **Deployed** | Automatic |
+| **Cross-module search** | Yes | ✅ **Deployed** | Universal_search collection |
+| **Filter by fields** | Yes | ✅ **Deployed** | Cascading filters (UX-021) |
+| **Numeric ranges** | Yes | ⏳ **V1.1** | Not yet exposed in UI |
+| **Faceted filtering** | Yes | ✅ **Deployed** | Filter options API |
+| **Sort options** | Yes | ✅ **Deployed** | Multi-field sorting |
+| **Field weighting** | Yes | ⏳ **V1.1** | Not yet configured |
 
-**Conclusion:** Typesense is an **excellent fit** for Search Bar (V1.0). No changes needed.
+**Conclusion:** Typesense **exceeded** performance targets. V1.0 deployed successfully. Additional features deferred to V1.1.
 
 ---
 

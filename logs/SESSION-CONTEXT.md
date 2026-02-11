@@ -185,8 +185,10 @@
 
 ### Supabase Connection String (for scripts)
 
+**Setup:** Export `SUPABASE_DB_PASSWORD` from your password manager or Railway dashboard before running scripts.
+
 ```
-postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres
+postgresql://postgres.kmdelrgtgglcrupprkqf:$SUPABASE_DB_PASSWORD@aws-1-eu-west-1.pooler.supabase.com:5432/postgres
 ```
 
 **Note:** Use pooler URL (`aws-1-eu-west-1.pooler.supabase.com`), NOT direct URL (`db.xxx.supabase.co`).

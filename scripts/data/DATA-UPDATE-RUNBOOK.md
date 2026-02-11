@@ -31,7 +31,7 @@ After importing new data (Steps 1-3), run these commands from terminal:
 
 ```bash
 # Step 5: Refresh all materialized views
-/usr/local/opt/libpq/bin/psql "postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" -f scripts/sql/refresh-all-views.sql
+/usr/local/Cellar/libpq/18.1/bin/psql "postgresql://postgres.kmdelrgtgglcrupprkqf:$SUPABASE_DB_PASSWORD@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" -f scripts/sql/refresh-all-views.sql
 ```
 
 ### Option B: Without psql (Python fallback)
@@ -39,7 +39,8 @@ After importing new data (Steps 1-3), run these commands from terminal:
 ```bash
 python3 -c "
 import psycopg2
-conn = psycopg2.connect('postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres')
+import os
+conn = psycopg2.connect(f\"postgresql://postgres.kmdelrgtgglcrupprkqf:{os.environ['SUPABASE_DB_PASSWORD']}@aws-1-eu-west-1.pooler.supabase.com:5432/postgres\")
 conn.autocommit = True
 cur = conn.cursor()
 cur.execute('SET statement_timeout = 300000')
@@ -62,17 +63,23 @@ print('All views refreshed.')
 
 ### Step 6: Re-sync Typesense
 
+**Setup:** Export both environment variables before running:
+```bash
+export SUPABASE_DB_PASSWORD="<from-password-manager>"
+export TYPESENSE_API_KEY="<admin-key-from-railway-dashboard>"
+```
+
+Then sync:
 ```bash
 # Re-sync Typesense (includes mandatory audit)
-SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" \
-TYPESENSE_API_KEY="<admin-key-from-railway>" \
+SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:$SUPABASE_DB_PASSWORD@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" \
+TYPESENSE_API_KEY="$TYPESENSE_API_KEY" \
 python3 scripts/typesense/sync_to_typesense.py --recreate
 # Must see: ✅ AUDIT PASSED
 ```
 
 **Typesense API keys:**
 - **Admin key** (write access, for sync): Get from Railway dashboard → Typesense service → Variables
-- **Search key** (read-only, in `.env`): `25613d2538ece467c801af3cfac62e95`
 
 **To sync only one collection** (faster, when only one module changed):
 ```bash
@@ -147,7 +154,7 @@ Use psql command line:
 export SUPABASE_DB_PASSWORD="your-password-here"
 
 # Import CSV to specific table
-/usr/local/opt/libpq/bin/psql "postgresql://postgres.kmdelrgtgglcrupprkqf:${SUPABASE_DB_PASSWORD}@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" \
+/usr/local/Cellar/libpq/18.1/bin/psql "postgresql://postgres.kmdelrgtgglcrupprkqf:${SUPABASE_DB_PASSWORD}@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" \
   -c "\COPY tablename FROM 'path/to/file.csv' WITH (FORMAT csv, HEADER true, ENCODING 'UTF8')"
 ```
 
@@ -244,7 +251,7 @@ ORDER BY module, entity_type, entity_name;
 ### Option A: psql (if installed)
 
 ```bash
-/usr/local/opt/libpq/bin/psql "postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" -f scripts/sql/refresh-all-views.sql
+/usr/local/Cellar/libpq/18.1/bin/psql "postgresql://postgres.kmdelrgtgglcrupprkqf:$SUPABASE_DB_PASSWORD@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" -f scripts/sql/refresh-all-views.sql
 ```
 
 ### Option B: Python (if psql not installed)
@@ -282,13 +289,19 @@ ORDER BY view_name;
 
 ## Step 6: Re-sync Typesense ⚠️ REQUIRED
 
-**This step is MANDATORY to update search results.**
+**This step is MANDATORY to update search results and enriched fields (y2016-y2024, years_with_data, record_count).**
+
+After refreshing materialized views (Step 5), re-sync Typesense to update:
+- Search indexes with new data
+- Enriched yearly amount fields (y2016-y2024) in recipients collection
+- years_with_data arrays
+- record_count values
 
 ```bash
 cd /Users/michielmaandag/SynologyDrive/code/watchtower/rijksuitgaven
 
-SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" \
-TYPESENSE_API_KEY="<admin-key-from-railway>" \
+SUPABASE_DB_URL="postgresql://postgres.kmdelrgtgglcrupprkqf:$SUPABASE_DB_PASSWORD@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" \
+TYPESENSE_API_KEY="$TYPESENSE_API_KEY" \
 python3 scripts/typesense/sync_to_typesense.py --recreate
 ```
 
@@ -310,15 +323,17 @@ Sync complete! ✅
 
 ### Expected Document Counts
 
-| Collection | Documents |
-|------------|-----------|
-| recipients | ~467K |
-| instrumenten | ~675K |
-| inkoop | ~636K |
-| publiek | ~115K |
-| gemeente | ~126K |
-| provincie | ~67K |
-| apparaat | ~10K |
+| Collection | Documents | Enriched Fields |
+|------------|-----------|----------------|
+| recipients | 463,731 | y2016-y2024, years_with_data, record_count |
+| instrumenten | ~675K | - |
+| inkoop | ~636K | - |
+| publiek | ~115K | - |
+| gemeente | ~126K | - |
+| provincie | ~67K | - |
+| apparaat | ~10K | - |
+
+**Note:** Recipients collection is enriched with yearly amounts (y2016-y2024), years_with_data array, and record_count. These fields are computed during sync and must be re-synced after data updates.
 
 ### Audit Only (Optional)
 
@@ -396,7 +411,8 @@ Supabase SQL Editor has a default statement timeout. Use the Python approach:
 ```bash
 python3 -c "
 import psycopg2
-conn = psycopg2.connect('postgresql://postgres.kmdelrgtgglcrupprkqf:bahwyq-6botry-veStad@aws-1-eu-west-1.pooler.supabase.com:5432/postgres')
+import os
+conn = psycopg2.connect(f\"postgresql://postgres.kmdelrgtgglcrupprkqf:{os.environ['SUPABASE_DB_PASSWORD']}@aws-1-eu-west-1.pooler.supabase.com:5432/postgres\")
 conn.autocommit = True
 cur = conn.cursor()
 cur.execute('SET statement_timeout = 300000')  # 5 minutes

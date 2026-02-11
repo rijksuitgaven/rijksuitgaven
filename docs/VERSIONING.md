@@ -444,7 +444,7 @@ V9.0 European Platform
 
 | Version | Status | Timeline |
 |---------|--------|----------|
-| V1.0 | 🔨 Building | Now (Mini Sprint, then Week 6-9) |
+| V1.0 | 🔨 90% Complete (auth + membership done, user migration remaining) | Week 6-9 |
 | V1.1 | 📋 Planned | Post-launch |
 | V2.0 | 📋 Planned | Post V1.0 launch |
 | V3.0 | 📋 Planned | Q1-Q2 2026 |
@@ -454,6 +454,14 @@ V9.0 European Platform
 | V7.0 | 📋 Planned | Q3 2026 |
 | V8.0 | 📋 Planned | Q3+ 2026 (can start after V1, benefits from V5) |
 | V9.0 | 📋 Planned | 2027+ (after NL market proven) |
+
+**V1.0 Deployed Infrastructure (as of 2026-02-11):**
+- ✅ Supabase PostgreSQL (Frankfurt EU, Pro plan)
+- ✅ Next.js Frontend (Railway Amsterdam)
+- ✅ FastAPI Backend (Railway Amsterdam)
+- ✅ Typesense Search (Railway Amsterdam, 463K recipients)
+- ✅ Supabase Auth (Magic Link + PKCE)
+- ✅ Subscriptions table (membership management)
 
 ---
 

@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-02-09
+**Last Updated:** 2026-02-11
 
 Items logged for future versions, not in V1.0 scope.
 
@@ -176,7 +176,7 @@ No rate limiting exists anywhere in the stack. An attacker can send thousands of
 
 **Priority:** High (Pre-Launch)
 **Added:** 2026-02-08
-**Status:** ✅ PARTIALLY COMPLETE (2026-02-10)
+**Status:** ✅ COMPLETE (BFF secret implemented 2026-02-10, private networking deferred to V1.1)
 **Type:** Security
 
 **Problem:**
@@ -877,7 +877,8 @@ GitHub Projects board as a **read-only dashboard** on top of existing markdown:
 
 **Priority:** High (V1.0 — just before launch)
 **Added:** 2026-02-11
-**Status:** ⏳ TODO
+**Updated:** 2026-02-11
+**Status:** ⏳ TODO (backlog entry updated after membership system implementation)
 **Type:** Feature
 
 **Problem:**
@@ -886,27 +887,37 @@ When admin adds a new member via `/team/leden`, `admin.createUser()` creates the
 **Why not now:** Importing ~50 WordPress users should NOT trigger invite emails. Need to control timing — import first, invite when ready.
 
 **Solution:**
-Add a "Stuur uitnodiging" button per member in `/team/leden` (edit modal or row action). Button calls `admin.inviteUserByEmail()` for that specific user. Keeps `createUser()` for silent imports.
+Replace `admin.createUser()` with `admin.inviteUserByEmail()` + add per-member "Stuur uitnodiging" button for manual sending.
+
+**Implementation Plan:**
+1. **Immediate (user import):** Keep using `admin.createUser()` for bulk WordPress import (no emails sent)
+2. **Before launch:** Add "Stuur uitnodiging" button in `/team/leden` member list
+   - Button visible only for users who haven't been invited yet (track via `invited_at` column or local state)
+   - Calls `admin.inviteUserByEmail()` for that user
+   - Shows success/error toast
+3. **Set up branded invite email template** in Supabase Dashboard (Dutch, matches magic link branding)
 
 **Requires:**
 - "Stuur uitnodiging" button in `/team/leden` member row or edit modal
 - API endpoint: `POST /api/v1/team/leden/[id]/invite`
-- Set up "Invite User" email template in Supabase (Dutch, branded)
-- Track invite status (optional: `invited_at` column on subscriptions)
+- Branded "Invite User" email template in Supabase (see separate backlog item)
+- Optional: `invited_at` column on subscriptions table
 
 **Estimated effort:** 1 hour
+
+**Related:** Branded magic link email template (separate backlog item)
 
 ---
 
 ### Branded Magic Link Email Template
 
-**Priority:** High (V1.0)
+**Priority:** High (V1.0 — before launch)
 **Added:** 2026-02-11
-**Status:** ⏳ TODO
+**Status:** ⏳ TODO (pre-launch)
 **Type:** Polish
 
 **Problem:**
-Current magic link email is plain text (Supabase default). Looks unprofessional compared to industry standard (e.g., Claude.ai uses logo, centered card layout, prominent CTA button).
+Current magic link email uses Supabase default template. Looks unprofessional compared to industry standard (e.g., Claude.ai uses logo, centered card layout, prominent CTA button).
 
 **Solution:**
 Create branded HTML email template matching Rijksuitgaven brand identity:
@@ -919,12 +930,21 @@ Create branded HTML email template matching Rijksuitgaven brand identity:
 - Contact info in footer
 
 **Implementation:**
-- Paste HTML into Supabase Dashboard > Authentication > Email Templates > "Magic Link"
-- Also update "Invite User" template with same branding (for member invites)
-- Logo must be hosted at a public URL (e.g., `https://beta.rijksuitgaven.nl/logo.png`)
+1. Upload logo to public URL (e.g., `https://beta.rijksuitgaven.nl/logo.png`)
+2. Create HTML template (use Resend/MJML/React Email for responsive design)
+3. Test template with email preview tool
+4. Paste HTML into Supabase Dashboard > Authentication > Email Templates > "Magic Link"
+5. Also update "Invite User" template with same branding (for member invites)
+6. Send test emails to verify rendering across clients (Gmail, Outlook, Apple Mail)
+
+**Templates to update:**
+- Magic Link (for login)
+- Invite User (for new member onboarding)
 
 **Reference:** Claude.ai email style — logo, centered card, large button, minimal text
 
 **Estimated effort:** 1 hour (HTML template + testing)
+
+**Related:** Invite email for new members (separate backlog item)
 
 ---
