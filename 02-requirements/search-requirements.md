@@ -1315,25 +1315,23 @@ Search "bedrijvenbeleid" shows:
 - Single line: "Doorzoek en vergelijk rijksoverheidsuitgaven vanaf 2016."
 - Light gray background, subtle bottom border
 
-**Integraal card (full-width, featured):**
-- Pink border + light pink background (highlighted)
-- Title: "Integraal Overzicht"
-- Description: "Alle modules gecombineerd — ontdek welke ontvangers in meerdere databronnen voorkomen."
-- Stat: "463.000+ ontvangers · 6 databronnen"
-- Ghost "Bekijk" button on desktop
-- Entire card is clickable → navigates to /integraal
+**Two sections: Ontvangers and Kosten:**
+- Uppercase section labels (tracking-wider, text-xs, font-semibold)
+- Ontvangers: 6 cards (Integraal, Instrumenten, Inkoop, Provincie, Gemeente, Publiek)
+- Kosten: 1 card (Apparaat) in half-width grid
 
-**Module grid (2 columns, 6 cards):**
-- Each card: title, one-line description, stat badge (amount + year range)
+**Module cards (2-column grid):**
+- Each card: Title (text-xl semibold) → Stat line (text-base semibold navy) → Description (text-base muted)
+- Stat line shows euro total + year range (e.g., "€1.474 mld · 2016–2024")
 - Cards are fully clickable → navigate to module page
 - Hover: border color change + shadow lift
-- Order: Instrumenten, Apparaat, Inkoop, Publiek, Provincie, Gemeente
+- User-specified titles (e.g., "Zoeken in alle modules", "Financiële Instrumenten", etc.)
 
 **No search bar** on landing page (search lives on module pages).
 
 **Priority:** P1
 
-**Status:** ✅ Implemented 2026-02-11
+**Status:** ✅ Implemented 2026-02-12
 
 ---
 

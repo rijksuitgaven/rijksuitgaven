@@ -1,8 +1,8 @@
 # Session Context
 
-**Last Updated:** 2026-02-11
+**Last Updated:** 2026-02-12
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 6 - User Auth + Membership (Auth COMPLETE 2026-02-10, Membership COMPLETE 2026-02-11, user migration remaining)
+**Current Sprint:** Week 6 - User Auth + Membership (Auth COMPLETE 2026-02-10, Membership COMPLETE 2026-02-11, Landing Page COMPLETE 2026-02-12, user migration remaining)
 
 ---
 
@@ -66,6 +66,7 @@
 - ✅ **2026-02-11:** Membership management system — subscriptions table, computed status from dates (no cron), grace periods (3d monthly / 14d yearly), `/team` admin dashboard, `/team/leden` member management, `/verlopen` expired page, subscription banner, profile page with plan info. UX-026 profile dropdown completed. SQL migration + env vars configured on production.
 - ✅ **2026-02-11 (Session 3):** Branded email templates (magic link + invite user) configured in Supabase. UX-025 Feedback button with element marking — Suggestie/Bug/Vraag categories, Feedbucket-style element highlighting, Resend email delivery with screenshot attachment. 5 iterations to polish UX.
 - ✅ **2026-02-11 (Session 4):** Feedback management system at `/team/feedback` (admin inbox, status workflow, categories). Dashboard redesign (Proposal B — consistent section cards). Invite flow with status lifecycle (Aangemaakt → Uitgenodigd → Actief), `invited_at` column, per-row invite/resend buttons, fallback to generateLink+Resend for existing users. Trial role (14 days, 0 grace), role dropdown (Member/Trial/Admin) in both forms, ESC to close modal. Migrations 031, 033, 034 executed.
+- ✅ **2026-02-12 (Session 5):** UX-027 Post-login landing page (Module Hub) — 6+ design iterations: Ontvangers/Kosten grouping, euro totals, user-specified titles. Formal Dutch (u/uw) enforced across entire frontend. Login security: email enumeration prevention (OWASP). activated_at tracking (migration 035, /me/activate endpoint). Profile logout button restyle. 6 commits.
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
 
@@ -90,20 +91,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/app/team/leden/page.tsx** ⭐ MODIFIED (2026-02-11)
-   Full redesign: inline stats, invite buttons, role dropdown (Member/Trial/Admin), trial support
+1. **app/src/app/page.tsx** ⭐ REWRITTEN (2026-02-12)
+   Module Hub landing page — Ontvangers/Kosten grouping, euro totals, stat lines
 
-2. **app/src/app/api/v1/team/leden/[id]/invite/route.ts** ⭐ CREATED (2026-02-11)
-   Invite endpoint — inviteUserByEmail or generateLink+Resend fallback
+2. **app/src/components/auth/login-form.tsx** ⭐ MODIFIED (2026-02-12)
+   Formal Dutch (u/uw), email enumeration prevention, error box restyle
 
-3. **app/src/app/team/page.tsx** ⭐ MODIFIED (2026-02-11)
-   Dashboard redesign: consistent section cards, inline stats, new status lifecycle
+3. **app/src/app/api/v1/me/activate/route.ts** ⭐ CREATED (2026-02-12)
+   First-login activation endpoint — sets activated_at once
 
-4. **app/src/app/team/feedback/page.tsx** ⭐ CREATED (2026-02-11)
-   Admin feedback inbox — status/category/priority filters, inline updates, detail modal
+4. **scripts/sql/035-activated-at.sql** ⭐ CREATED (2026-02-12)
+   Migration: activated_at column + backfill from auth.users
 
-5. **app/src/components/team-nav/team-nav.tsx** ⭐ CREATED (2026-02-11)
-   Shared tab bar (Dashboard | Leden | Feedback) with unread count badge
+5. **app/src/app/profiel/page.tsx** ⭐ MODIFIED (2026-02-12)
+   Logout button restyled as simple red text link
 
 ---
 
@@ -238,6 +239,7 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:$SUPABASE_DB_PASSWORD@aws-1-eu-west-1
 | `scripts/sql/031-feedback.sql` | 2026-02-11 | Supabase |
 | `scripts/sql/033-invited-at.sql` | 2026-02-11 | Supabase |
 | `scripts/sql/034-trial-role.sql` | 2026-02-11 | Supabase |
+| `scripts/sql/035-activated-at.sql` | 2026-02-12 | Supabase |
 
 ### Configuration Files
 
@@ -884,7 +886,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-11 - **UX-026 profile dropdown + Membership management + Email templates + UX-025 Feedback button + Feedback management system + Dashboard redesign + Invite flow + Trial role**
+**Last Session:** 2026-02-12 - **UX-027 Landing page (Module Hub) + Formal Dutch (u/uw) + Email enumeration prevention + activated_at tracking + Profile polish**
 
 **2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 
