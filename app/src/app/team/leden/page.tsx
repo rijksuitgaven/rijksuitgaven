@@ -19,6 +19,7 @@ interface Member {
   grace_ends_at: string
   cancelled_at: string | null
   invited_at: string | null
+  activated_at: string | null
   last_sign_in_at: string | null
   notes: string | null
   created_at: string
@@ -61,6 +62,16 @@ function formatDate(dateStr: string) {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
+  })
+}
+
+function formatDateTime(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('nl-NL', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   })
 }
 
@@ -304,6 +315,19 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
         </div>
 
         <p className="text-sm text-[var(--navy-medium)]">{member.email}</p>
+
+        {/* Activity dates */}
+        <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-[var(--navy-medium)]">
+          {member.activated_at && (
+            <span>Eerste login: <span className="font-medium">{formatDateTime(member.activated_at)}</span></span>
+          )}
+          {member.last_sign_in_at && (
+            <span>Laatst actief: <span className="font-medium">{formatDateTime(member.last_sign_in_at)}</span></span>
+          )}
+          {!member.activated_at && !member.last_sign_in_at && (
+            <span>Nog niet ingelogd</span>
+          )}
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">

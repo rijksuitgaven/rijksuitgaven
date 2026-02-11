@@ -51,7 +51,9 @@ function CallbackHandler() {
         return
       }
 
-      // Success — cookies set by browser client. Navigate to homepage.
+      // Success — cookies set by browser client.
+      // Set activated_at on first login (fire-and-forget, don't block redirect)
+      fetch('/api/v1/me/activate', { method: 'POST' }).catch(() => {})
       window.location.replace('/')
     })
   }, [searchParams])

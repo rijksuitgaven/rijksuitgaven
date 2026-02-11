@@ -16,6 +16,7 @@ interface Member {
   grace_ends_at: string
   cancelled_at: string | null
   invited_at: string | null
+  activated_at: string | null
   last_sign_in_at: string | null
 }
 
