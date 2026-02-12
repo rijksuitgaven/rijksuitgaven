@@ -987,6 +987,62 @@ Create branded HTML email template matching Rijksuitgaven brand identity:
 
 ---
 
+### Search: Accurate Multi-Field Match Reporting
+
+**Priority:** Medium (V1.1)
+**Added:** 2026-02-12
+**Status:** BACKLOGGED
+**Type:** Search / UX
+
+**Problem:**
+With multi-word AND search (e.g., `rode kruis`), the "Gevonden in" column uses a heuristic: it checks only the **first word** to determine which field matched. This can be inaccurate when words match across different fields (e.g., "rode" in `ontvanger`, "kruis" in `regeling`). Since matched_field is a UI hint (not a filter), this is acceptable for V1.0.
+
+**V1.1 Improvement:**
+- Check all words against all fields, report all matched fields
+- Possibly highlight each word in its respective field
+- Requires minor UI change to show multiple matched fields
+
+**Estimated effort:** 2-4 hours
+
+---
+
+### Search: Fuzzy/Typo Tolerance
+
+**Priority:** Medium (V1.1)
+**Added:** 2026-02-12
+**Status:** BACKLOGGED
+**Type:** Search / UX
+
+**Problem:**
+V1.0 search requires exact spelling. Users who misspell recipient names (e.g., "proraill" instead of "prorail") get no results. Typesense already supports `num_typos` parameter for typo tolerance, but it's not exposed in the current implementation.
+
+**V1.1 Improvement:**
+- Enable Typesense `num_typos: 1` or `2` for autocomplete and search
+- PostgreSQL regex fallback stays exact (acceptable — Typesense handles most searches)
+- May need UI indicator: "Bedoelde u: ProRail?" for fuzzy matches
+
+**Estimated effort:** 2-4 hours
+
+---
+
+### Search: Field-Specific Search Syntax
+
+**Priority:** Low (V2+)
+**Added:** 2026-02-12
+**Status:** BACKLOGGED
+**Type:** Search / Power User
+
+**Problem:**
+Power users may want to search within specific fields. Currently all searches go across all searchable fields for a module. There's no way to say "only search in leverancier" or "only search in regeling".
+
+**Syntax idea:** `leverancier:prorail` or `regeling:subsidie`
+
+**Deferred to V2+** — requires parser extension, field validation per module, and UI for field selection. Not needed for V1.0 audience.
+
+**Estimated effort:** 4-8 hours
+
+---
+
 ### Email Campaign Management (Resend Broadcasts)
 
 **Priority:** High (V1.0 — before launch, replaces WordPress/Mailster)

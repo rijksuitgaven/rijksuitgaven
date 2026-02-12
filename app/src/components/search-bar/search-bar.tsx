@@ -105,25 +105,36 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
   )
   const totalResults = allResults.length
 
-  // Debounced search with AbortController to prevent race conditions
+  // Track when the last autocomplete request fired (for leading-edge debounce)
+  const lastFireTimeRef = useRef(0)
+
+  // Leading-edge + trailing debounce: first keystroke fires immediately, subsequent debounce 150ms
   useEffect(() => {
-    if (query.length < 2) {
+    if (query.length < 1) {
       setKeywords([])
       setRecipients([])
       setNoResultsQuery(null)
       setIsOpen(false)
+      lastFireTimeRef.current = 0
       return
     }
 
+    // Show loading state immediately (skeleton appears before API returns)
+    setIsLoading(true)
+    setIsOpen(true)
+
     const abortController = new AbortController()
 
-    const timeout = setTimeout(async () => {
-      setIsLoading(true)
+    // Leading-edge: fire immediately if idle for >300ms, otherwise debounce 150ms
+    const now = Date.now()
+    const timeSinceLastFire = now - lastFireTimeRef.current
+    const delay = timeSinceLastFire > 300 ? 0 : 150
+
+    const doSearch = async () => {
+      lastFireTimeRef.current = Date.now()
       try {
-        // Fetch search results from backend proxy
         const { recipients: recipientsData, keywords: keywordsData } = await fetchSearchResults(query, abortController.signal)
 
-        // Don't update state if aborted (new search started)
         if (abortController.signal.aborted) return
 
         setRecipients(recipientsData)
@@ -132,14 +143,13 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
         // Track if no results found (for "did you mean" suggestions)
         if (recipientsData.length === 0 && keywordsData.length === 0 && query.length >= 3) {
           setNoResultsQuery(query)
-          // Try fuzzy search for suggestions
           const fuzzySuggestions = await fetchFuzzySuggestions(query, abortController.signal)
           if (abortController.signal.aborted) return
           if (fuzzySuggestions.length > 0) {
             setRecipients(fuzzySuggestions)
             setIsOpen(true)
           } else {
-            setIsOpen(true) // Show "no results" state
+            setIsOpen(true)
           }
         } else {
           setNoResultsQuery(null)
@@ -147,11 +157,9 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
         }
         setSelectedIndex(-1)
       } catch (error) {
-        // AbortError is expected when search changes rapidly
         if (error instanceof Error && error.name === 'AbortError') {
           return
         }
-        // Log error for debugging, but show "no results" to user (graceful degradation)
         if (!abortController.signal.aborted) {
           if (process.env.NODE_ENV === 'development') {
             console.error('Search error:', error)
@@ -165,7 +173,9 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
           setIsLoading(false)
         }
       }
-    }, 150)
+    }
+
+    const timeout = setTimeout(doSearch, delay)
 
     return () => {
       clearTimeout(timeout)
@@ -307,6 +317,16 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
         </div>
       </form>
 
+      {/* Accessible result count announcement */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {!isLoading && isOpen && totalResults > 0 && (
+          `${totalResults} ${totalResults === 1 ? 'resultaat' : 'resultaten'} gevonden`
+        )}
+        {!isLoading && isOpen && totalResults === 0 && noResultsQuery && (
+          'Geen resultaten gevonden'
+        )}
+      </div>
+
       {/* Autocomplete dropdown */}
       {isOpen && (
         <div
@@ -315,7 +335,24 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
           role="listbox"
           className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-[var(--border)] z-50 overflow-hidden"
         >
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-[min(24rem,50vh)] overflow-y-auto">
+            {/* Loading skeleton — shown while waiting for first results */}
+            {isLoading && recipients.length === 0 && keywords.length === 0 && !noResultsQuery && (
+              <div className="animate-pulse">
+                <div className="px-4 py-2 bg-[var(--gray-light)]">
+                  <div className="h-3 w-32 bg-[var(--border)] rounded" />
+                </div>
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="px-4 py-3 border-b border-[var(--border)]">
+                    <div className="flex items-center justify-between">
+                      <div className="h-4 bg-[var(--border)] rounded" style={{ width: `${120 + i * 24}px` }} />
+                      <div className="h-4 w-16 bg-[var(--border)] rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* "Did you mean" suggestion when no exact results */}
             {noResultsQuery && recipients.length > 0 && (
               <div className="px-4 py-2 bg-[var(--warning)]/10 border-b border-[var(--border)]">

@@ -202,8 +202,9 @@ function CustomSelect({ value, onChange, options, label }: {
 // Multi-select dropdown component
 // =============================================================================
 
-// Debounce timeout for autocomplete search (ms)
-const AUTOCOMPLETE_DEBOUNCE_MS = 50
+// Debounce timeout for autocomplete search (ms) — trailing debounce for rapid typing
+// Leading edge fires immediately on first keystroke after idle
+const AUTOCOMPLETE_DEBOUNCE_MS = 150
 
 // Maximum number of filter options to load (prevents DoS/memory issues)
 const MAX_FILTER_OPTIONS = 5000
@@ -747,23 +748,40 @@ export function FilterPanel({
   // Autocomplete search - uses module-specific endpoint with AbortController
   // =============================================================================
 
-  // Debounced autocomplete search with AbortController to prevent race conditions
+  // Track when the last autocomplete request fired (for leading-edge debounce)
+  const lastAutocompleteFireRef = useRef(0)
+
+  // Debounced autocomplete search with leading-edge + trailing debounce
+  // First keystroke after idle fires immediately (~0ms), subsequent keystrokes debounce (150ms)
   useEffect(() => {
     const searchValue = localFilters.search
-    if (searchValue.length < 2) {
+    if (searchValue.length < 1) {
       setCurrentModuleResults([])
       setOtherModulesResults([])
+      setFieldMatches([])
       setNoResultsQuery(null)
       setIsDropdownOpen(false)
+      lastAutocompleteFireRef.current = 0
       return
+    }
+
+    // Show loading state immediately when user types (skeleton appears before API returns)
+    if (hasUserTypedRef.current) {
+      setIsSearching(true)
+      setNoResultsQuery(null) // Clear previous no-results so skeleton shows
+      setIsDropdownOpen(true)
     }
 
     const abortController = new AbortController()
 
-    const timeout = setTimeout(async () => {
-      setIsSearching(true)
+    // Leading-edge: fire immediately if idle for >300ms, otherwise debounce
+    const now = Date.now()
+    const timeSinceLastFire = now - lastAutocompleteFireRef.current
+    const delay = timeSinceLastFire > 300 ? 0 : AUTOCOMPLETE_DEBOUNCE_MS
+
+    const doSearch = async () => {
+      lastAutocompleteFireRef.current = Date.now()
       try {
-        // Pass abort signal to fetch
         const response = await fetch(
           `${API_BASE_URL}/api/v1/modules/${module}/autocomplete?` +
           new URLSearchParams({ q: searchValue }),
@@ -786,23 +804,19 @@ export function FilterPanel({
         setFieldMatches(fieldMatchesData)
         setOtherModulesResults(otherModules)
 
-        // Show "no results" if nothing found
         if (currentModule.length === 0 && fieldMatchesData.length === 0 && otherModules.length === 0) {
           setNoResultsQuery(searchValue)
         } else {
           setNoResultsQuery(null)
         }
-        // Only show dropdown when user is actively typing (not URL navigation)
         if (hasUserTypedRef.current) {
           setIsDropdownOpen(true)
         }
         setSelectedIndex(-1)
       } catch (error) {
-        // Ignore abort errors - they're expected when search changes rapidly
         if (error instanceof Error && error.name === 'AbortError') {
           return
         }
-        // Search failed - show empty results (error already handled above)
         setCurrentModuleResults([])
         setFieldMatches([])
         setOtherModulesResults([])
@@ -812,7 +826,9 @@ export function FilterPanel({
           setIsSearching(false)
         }
       }
-    }, AUTOCOMPLETE_DEBOUNCE_MS)
+    }
+
+    const timeout = setTimeout(doSearch, delay)
 
     return () => {
       clearTimeout(timeout)
@@ -824,12 +840,20 @@ export function FilterPanel({
   // Filter change handlers
   // =============================================================================
 
-  // Debounced filter update (300ms delay to avoid excessive API calls)
-  const FILTER_DEBOUNCE_MS = 300
+  // Debounced filter update (150ms delay to avoid excessive API calls during typing)
+  const FILTER_DEBOUNCE_MS = 150
   const onFilterChangeRef = useRef(onFilterChange)
   onFilterChangeRef.current = onFilterChange
+  // Track whether next filter change should skip debounce (explicit user action)
+  const skipDebounceRef = useRef(false)
 
   useEffect(() => {
+    if (skipDebounceRef.current) {
+      // Explicit action (Enter, click selection) — apply immediately
+      skipDebounceRef.current = false
+      onFilterChangeRef.current(localFilters)
+      return
+    }
     const timeout = setTimeout(() => {
       onFilterChangeRef.current(localFilters)
     }, FILTER_DEBOUNCE_MS)
@@ -926,6 +950,7 @@ export function FilterPanel({
   const handleSelectCurrentModule = useCallback((result: CurrentModuleResult) => {
     // Set search to recipient name and close dropdown
     // Stays on current module, filters the table
+    skipDebounceRef.current = true // Explicit action — apply filter immediately
     setLocalFilters((prev) => ({ ...prev, search: result.name }))
     setIsDropdownOpen(false)
   }, [])
@@ -947,6 +972,7 @@ export function FilterPanel({
   const handleSelectFieldMatch = useCallback((result: FieldMatchResult) => {
     // Apply as a filter instead of a text search
     // This shows all recipients with this regeling/artikel/etc.
+    skipDebounceRef.current = true // Explicit action — apply filter immediately
     setLocalFilters((prev) => ({
       ...prev,
       search: '', // Clear search text
@@ -994,7 +1020,8 @@ export function FilterPanel({
             }
           }
         } else {
-          // No item selected - just close dropdown and blur to show results
+          // No item selected - just close dropdown and apply search immediately
+          skipDebounceRef.current = true
           setIsDropdownOpen(false)
           inputRef.current?.blur()
         }
@@ -1111,6 +1138,16 @@ export function FilterPanel({
           </div>
 
           {/* Autocomplete dropdown */}
+          {/* Accessible result count announcement */}
+          <div aria-live="polite" aria-atomic="true" className="sr-only">
+            {!isSearching && isDropdownOpen && totalResults > 0 && (
+              `${totalResults} ${totalResults === 1 ? 'resultaat' : 'resultaten'} gevonden`
+            )}
+            {!isSearching && isDropdownOpen && totalResults === 0 && noResultsQuery && (
+              'Geen resultaten gevonden'
+            )}
+          </div>
+
           {isDropdownOpen && (
             <div
               ref={dropdownRef}
@@ -1118,7 +1155,24 @@ export function FilterPanel({
               role="listbox"
               className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-[var(--border)] z-50 overflow-hidden"
             >
-              <div className="max-h-96 overflow-y-auto">
+              <div className="max-h-[min(24rem,50vh)] overflow-y-auto">
+                {/* Loading skeleton — shown while waiting for first results */}
+                {isSearching && currentModuleResults.length === 0 && otherModulesResults.length === 0 && fieldMatches.length === 0 && !noResultsQuery && (
+                  <div className="animate-pulse">
+                    <div className="px-4 py-2 bg-[var(--gray-light)]">
+                      <div className="h-3 w-40 bg-[var(--border)] rounded" />
+                    </div>
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <div key={i} className="px-4 py-3 border-b border-[var(--border)]">
+                        <div className="flex items-center justify-between">
+                          <div className="h-4 bg-[var(--border)] rounded" style={{ width: `${140 + i * 20}px` }} />
+                          <div className="h-4 w-20 bg-[var(--border)] rounded" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {/* No results */}
                 {noResultsQuery && currentModuleResults.length === 0 && otherModulesResults.length === 0 && (
                   <div className="px-4 py-6 text-center">

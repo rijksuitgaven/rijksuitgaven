@@ -181,6 +181,42 @@ User types: "prorai" (typo)
 
 **Priority:** P0 (Critical for keyword/phrase), P1 (High for boolean/wildcards)
 
+**V1.0 Implementation Scope (2026-02-12):**
+
+| Type | V1.0 | Syntax | Behavior |
+|------|------|--------|----------|
+| Multi-word AND | ✅ | `rode kruis` | All words must be present (default) |
+| Exact phrase | ✅ | `"rode kruis"` | Consecutive words in order |
+| Prefix/wildcard | ✅ | `prorail*` | Word starts with prefix |
+| Single keyword | ✅ | `prorail` | Word boundary match (existing) |
+| Fuzzy/typo-tolerant | V1.1 | — | Typesense `num_typos` |
+| Field-specific | V2+ | `leverancier:prorail` | Search within specific field |
+| Boolean operators | V2+ | `prorail AND NOT ns` | Explicit boolean logic |
+| Filters in query | V2+ | `prorail year:2024` | Query-embedded filters |
+| Numeric ranges | V2+ | `amount:1000000-5000000` | Query-embedded ranges |
+
+**Edge Case Handling (parser sanitization):**
+
+| Input | Behavior |
+|-------|----------|
+| `"rode kruis` (unmatched quote) | Strip stray quotes → AND search: `rode kruis` |
+| `rode kruis"` (trailing quote) | Strip stray quotes → AND search: `rode kruis` |
+| `""` or `"  "` (empty quotes) | Treat as empty search |
+| `*` (bare asterisk) | Treat as empty search |
+| `pro rail*` (asterisk with spaces) | AND search: `pro rail` (prefix only for single words) |
+| `*prorail` (leading asterisk) | AND search: `prorail` (strip leading `*`) |
+
+**"Gevonden in" Column Behavior (V1.0 known limitation):**
+
+The "Gevonden in" column identifies which non-primary field matched the search. With multi-word AND, this uses a heuristic: the first word's pattern determines the matched field. This is acceptable because:
+- "Gevonden in" is a UI hint, not a data filter — no results are lost
+- Most multi-word searches target the same entity (both words in same field)
+- Cross-field multi-word matches (word 1 in primary, word 2 in regeling) are rare
+
+The same heuristic applies to relevance scoring (3-tier ranking). Results still appear correctly, ordering may be slightly suboptimal for cross-field matches.
+
+**Deferred to V1.1:** Accurate multi-field match reporting (check all words, report all matched fields). See backlog: "Search: Accurate Multi-Field Match Reporting".
+
 ---
 
 ### SR-006: No Syntax Required
