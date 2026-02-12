@@ -58,13 +58,14 @@
 - BFF proxy (security)
 - Typesense data enrichment (recipients collection with year amounts for hybrid search)
 - Feedback button with screenshot area selection (UX-025)
+- Exact phrase search with quotes (`"rode kruis"`)
+- Wildcard syntax support (`prorail*`)
+- Email campaigns via Resend Broadcasts (replaces WordPress/Mailster)
 
 **Target users:** Journalists, researchers, opposition parties
 
 ### V1.1 - Search Improvements
 
-- Exact phrase search with quotes (`"rode kruis"`)
-- Wildcard syntax support (`prorail*`)
 - Semantic search (embeddings via Cohere)
 - Search on Regeling/Omschrijving fields
 - Recent search history

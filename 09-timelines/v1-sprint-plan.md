@@ -509,12 +509,18 @@ Additional UI/UX work completed after mini sprint was marked complete:
 | Final QA pass | Test all critical user flows | Pending |
 
 **Week 7 Deliverables:**
-- [ ] Branded magic link email template
-- [ ] Branded invite email template
+- [x] Branded magic link email template (2026-02-11, `docs/email-templates/magic-link.html`)
+- [x] Branded invite email template (2026-02-11, `docs/email-templates/invite-user.html`)
 - [ ] ~50 WordPress users migrated to Supabase
-- [ ] Invite system functional
-- [ ] UX-025 feedback button
-- [ ] Rate limiting on backend
+- [x] Invite system functional (2026-02-11)
+- [x] UX-025 feedback button (2026-02-11)
+- [ ] Exact phrase search (`"rode kruis"`) — moved from V1.1 to V1.0
+- [ ] Wildcard syntax (`prorail*`) — moved from V1.1 to V1.0
+- [ ] `contacts` table + admin UI at `/team/contacten` (prospects + subscribers)
+- [ ] Resend Audience sync (contacts → Resend on create/update)
+- [ ] Resend Broadcasts setup (campaign template, test send)
+- [ ] Migrate Mailster contacts into `contacts` table
+- [ ] Rate limiting on backend (Cloudflare)
 - [ ] All systems QA verified
 
 ---
@@ -670,6 +676,9 @@ Additional UI/UX work completed after mini sprint was marked complete:
 - [ ] Membership management (/team, /team/leden)
 - [ ] Profile dropdown (UX-026)
 - [ ] Feedback button (UX-025)
+- [ ] Exact phrase search + wildcard syntax
+- [ ] Contacts table + admin UI (`/team/contacten`)
+- [ ] Resend Broadcasts (contacts synced, campaign template, test send verified)
 
 ### Marketing Pages
 - [ ] Homepage live

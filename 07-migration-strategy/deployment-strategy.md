@@ -182,39 +182,40 @@ beta.rijksuitgaven.nl    (remove or keep for future testing)
 
 ---
 
-## Marketing Email Strategy (2026-01-21)
+## Marketing Email Strategy
 
-**Decision:** Keep Mailster + Mailgun on subdomain
+**Decision (2026-02-12):** Resend Broadcasts — replaces WordPress/Mailster entirely
 
-### Current Setup
-- WordPress + Mailster plugin + Mailgun
-- Tracks open rates, campaigns, subscriber management
+~~**Previous decision (2026-01-21):** Keep Mailster + Mailgun on subdomain~~ — superseded, Mailster not up to standard.
 
-### V1.0 Approach
+### Current Setup (being replaced)
+- WordPress + Mailster plugin + Mailgun on `nieuws.rijksuitgaven.nl`
+
+### New Approach (V1.0)
 ```
-nieuws.rijksuitgaven.nl  → WordPress (Mailster only)
 rijksuitgaven.nl         → New platform (Next.js on Railway)
+Resend Broadcasts        → Email campaigns (same vendor as transactional)
+nieuws.rijksuitgaven.nl  → DECOMMISSION after launch
 ```
 
-### Why This Approach
-- No migration of working email system
-- Preserves subscriber data, templates, history
-- Reduces V1.0 risk and scope
-- Can migrate to dedicated platform post-V1.0
+### Why Resend Broadcasts
+- Already in stack (magic links, invite emails)
+- Single contact list shared with transactional (subscriptions table)
+- React Email templates (same tech as existing branded templates)
+- Open/click/bounce tracking built in
+- Broadcast API for V2 Reporter (programmatic sends)
+- Free for 1,000 contacts, $40/mo for 5,000+
+- Eliminates WordPress server dependency
 
-### Setup Tasks (Week 1)
-1. DNS: Add `nieuws.rijksuitgaven.nl` pointing to current server
-2. Strip WordPress to essentials (Mailster + Mailgun only)
-3. Update Mailster settings if needed for new subdomain
+### Setup Tasks (Week 7)
+1. Create Resend Audience, sync contacts from subscriptions table
+2. Build branded campaign template (React Email)
+3. Test broadcast with open/click tracking
+4. Migrate any remaining Mailster-only contacts
 
-### Post-Switch Tasks (Week 8)
-- Update email template links to point to new rijksuitgaven.nl
-- Test email delivery from nieuws subdomain
-
-### Future (Post-V1.0)
-Evaluate migration to dedicated email platform:
-- Mailchimp, ConvertKit, Buttondown, or Loops
-- Decision based on feature needs and cost
+### Post-Launch
+- Decommission `nieuws.rijksuitgaven.nl` and WordPress server
+- Remove DNS record for nieuws subdomain
 
 ---
 

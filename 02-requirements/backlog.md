@@ -950,7 +950,8 @@ Enrich the integraal view so it can surface module-specific data like regelingen
 
 **Priority:** High (V1.0 — before launch)
 **Added:** 2026-02-11
-**Status:** ⏳ TODO (pre-launch)
+**Completed:** 2026-02-11
+**Status:** ✅ COMPLETED
 **Type:** Polish
 
 **Problem:**
@@ -983,5 +984,74 @@ Create branded HTML email template matching Rijksuitgaven brand identity:
 **Estimated effort:** 1 hour (HTML template + testing)
 
 **Related:** Invite email for new members (separate backlog item)
+
+---
+
+### Email Campaign Management (Resend Broadcasts)
+
+**Priority:** High (V1.0 — before launch, replaces WordPress/Mailster)
+**Added:** 2026-02-12
+**Status:** ⏳ TODO
+**Type:** Infrastructure / Marketing
+
+**Problem:**
+Current email campaigns run on WordPress + Mailster + Mailgun at `nieuws.rijksuitgaven.nl`. This requires maintaining a separate WordPress server, the tooling is dated, and it's disconnected from the new platform. Goal is to cut WordPress entirely at launch.
+
+**Decision:** Resend Broadcasts (already in stack for transactional email).
+
+**Why Resend:**
+- Already handles magic link + invite emails (zero new vendors)
+- Single contact list shared with transactional (subscriptions → Resend Audience)
+- React Email templates (same tech as existing `docs/email-templates/`)
+- Broadcast API enables programmatic sends (V2 Reporter ready)
+- Free for 1,000 contacts, $40/mo for 5,000+
+- Kills WordPress dependency entirely
+
+**Implementation Steps:**
+1. Create `contacts` table in Supabase (single source of truth for all contacts)
+2. Build admin UI at `/team/contacten` (new tab in team nav)
+3. Sync contacts → Resend Audience (on create/update)
+4. Build branded campaign template (React Email, reuse existing brand components)
+5. Send test broadcast, verify open/click tracking
+6. Migrate Mailster contacts into `contacts` table
+7. Document campaign workflow for founder (dashboard → new broadcast → send)
+8. After launch: decommission `nieuws.rijksuitgaven.nl` and WordPress server
+
+**Contacts Table Design:**
+```sql
+contacts (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  email text NOT NULL UNIQUE,
+  first_name text,
+  last_name text,
+  organization text,
+  type text NOT NULL DEFAULT 'prospect',  -- prospect | subscriber | churned
+  source text,                             -- website | event | referral | import
+  notes text,
+  resend_contact_id text,                  -- Resend Audience contact ID
+  subscription_id uuid REFERENCES subscriptions(id),  -- link to subscription if exists
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+)
+```
+
+- Subscribers auto-created from `subscriptions` table (backfill + trigger/sync)
+- Prospects added via `/team/contacten` admin page
+- Type transitions: prospect → subscriber (on subscription create), subscriber → churned (on expiry)
+- Sync to Resend Audience on create/update via API
+
+**What Resend Broadcasts provides:**
+- Visual block editor (headings, text, images, buttons, dividers)
+- Open rate + click tracking + bounce tracking
+- Audience management with auto-unsubscribe (GDPR)
+- Scheduling (natural language: "tomorrow at 9am")
+- Personalization with audience data variables
+
+**What it does NOT provide (acceptable trade-offs):**
+- No drag-and-drop multi-column layouts (use React Email for complex templates)
+- No A/B subject line testing (yet)
+- No automation sequences / drip campaigns (yet — single broadcasts only)
+
+**Estimated effort:** 6-10 hours (contacts table + admin UI + Resend sync + campaign template)
 
 ---
