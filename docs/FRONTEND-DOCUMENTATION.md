@@ -20,7 +20,8 @@ app/src/
 │   ├── profiel/page.tsx          # Profile page (user info + subscription status)
 │   ├── team/
 │   │   ├── page.tsx              # Admin dashboard (subscription overview)
-│   │   └── leden/page.tsx        # Member management (admin only)
+│   │   ├── leden/page.tsx        # Member management (admin only)
+│   │   └── feedback/page.tsx     # Feedback inbox (admin only)
 │   ├── verlopen/page.tsx         # Expired subscription page
 │   ├── instrumenten/page.tsx     # Module page
 │   ├── apparaat/page.tsx         # Module page
@@ -755,6 +756,7 @@ if (status === 'expired') redirect('/verlopen')
 | `/profiel` | Protected | User profile page (subscription info, logout) |
 | `/team` | Protected (Admin) | Admin dashboard (subscription overview) |
 | `/team/leden` | Protected (Admin) | Member management (CRUD operations) |
+| `/team/feedback` | Protected (Admin) | Feedback inbox (status workflow, categories) |
 | `/verlopen` | Public | Expired subscription page |
 | `/instrumenten` | Protected | Financiële Instrumenten module |
 | `/apparaat` | Protected | Apparaatsuitgaven module |
@@ -782,6 +784,11 @@ All frontend API calls are proxied through Next.js BFF routes:
 | `/api/v1/search/autocomplete` | GET | Global Typesense search | Yes |
 | `/api/v1/team/leden` | GET | List members (admin only) | Yes (Admin) |
 | `/api/v1/team/leden/[id]` | GET/PUT/DELETE | Member CRUD (admin only) | Yes (Admin) |
+| `/api/v1/team/leden/[id]/invite` | POST | Send invite email to member (admin only) | Yes (Admin) |
+| `/api/v1/team/feedback` | GET | List feedback items (admin only) | Yes (Admin) |
+| `/api/v1/team/feedback/[id]` | PATCH | Update feedback status/priority (admin only) | Yes (Admin) |
+| `/api/v1/me/activate` | POST | Set activated_at on first login | Yes |
+| `/api/v1/feedback` | POST | Submit user feedback (with screenshot) | Yes |
 
 **Auth Protection:** All BFF routes check for valid Supabase session via server-side client. Returns 401 if unauthenticated. Admin routes additionally check `subscriptions.role = 'admin'`.
 

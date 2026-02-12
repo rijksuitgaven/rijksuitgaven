@@ -43,7 +43,7 @@
 
 ### V1.0 - Search MVP (Current)
 
-**Status:** In development, Mini Sprint before Week 6
+**Status:** In development (~90% complete, Week 7 in progress)
 
 **Features:**
 - Fast keyword search (<100ms via Typesense)

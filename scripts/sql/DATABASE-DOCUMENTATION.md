@@ -135,11 +135,50 @@
 - `subscriptions_user_id_key` (UNIQUE) - Fast lookup by user_id (used by middleware)
 - `idx_subscriptions_end_date` - Fast admin queries for expiring subscriptions
 
+**Additional columns (added post-initial migration):**
+- `first_name` TEXT, `last_name` TEXT — split name fields (migration 030)
+- `invited_at` TIMESTAMPTZ — when invite email was sent (migration 033)
+- `activated_at` TIMESTAMPTZ — first login timestamp, set once (migration 035)
+- `role` supports 'trial' in addition to 'member'/'admin' (migration 034)
+
 **Usage:**
 - Middleware checks subscription on every page request (after auth)
 - Admin pages: `/team` (dashboard) and `/team/leden` (member management)
 - Service role client: `app/api/_lib/supabase-admin.ts` (bypasses RLS)
 - Requires: `SUPABASE_SERVICE_ROLE_KEY` env var on Railway frontend
+
+---
+
+### 0c. feedback (User Feedback)
+
+**Description:** User-submitted feedback items with screenshot support. Managed via `/team/feedback` admin page.
+
+**Migration:** `031-feedback.sql` (added 2026-02-11)
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (default gen_random_uuid()) |
+| user_id | UUID | Foreign key to auth.users |
+| email | TEXT | User email at time of submission |
+| category | TEXT | 'suggestie', 'bug', or 'vraag' |
+| message | TEXT | User's feedback message |
+| page_url | TEXT | URL where feedback was submitted |
+| screenshot | TEXT | Base64 screenshot of marked element |
+| element_html | TEXT | HTML of marked element (if any) |
+| status | TEXT | 'nieuw', 'in_behandeling', 'afgerond', 'afgewezen' (default: 'nieuw') |
+| priority | TEXT | 'laag', 'normaal', 'hoog' (default: 'normaal') |
+| admin_notes | TEXT | Admin notes on the feedback item |
+| created_at | TIMESTAMPTZ | Submission time (default NOW()) |
+
+**RLS Policies:**
+- Users can insert own feedback: `(SELECT auth.uid()) = user_id`
+- Users can read own feedback: `(SELECT auth.uid()) = user_id`
+- Service role has full access (admin operations)
+
+**Usage:**
+- Submit: POST `/api/v1/feedback` (from feedback button UX-025)
+- Admin inbox: `/team/feedback` with status/category filters
+- Email notification: sent to `contact@rijksuitgaven.nl` via Resend on new feedback
 
 ---
 
@@ -807,6 +846,10 @@ VACUUM ANALYZE universal_search;
 | `025-fix-encoding-question-marks.sql` | Fix lost characters (431 explicit corrections) | Once (done 2026-02-07) |
 | `029-universal-search-record-count.sql` | Add record_count to universal_search (UX-022) | Once (done 2026-02-08) |
 | `030-subscriptions.sql` | Create subscriptions table + RLS policies | Once (done 2026-02-11) |
+| `031-feedback.sql` | Create feedback table + RLS policies | Once (done 2026-02-11) |
+| `033-invited-at.sql` | Add invited_at column to subscriptions | Once (done 2026-02-11) |
+| `034-trial-role.sql` | Add trial role support to subscriptions | Once (done 2026-02-11) |
+| `035-activated-at.sql` | Add activated_at column to subscriptions + backfill | Once (done 2026-02-12) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---
