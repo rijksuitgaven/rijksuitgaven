@@ -5,7 +5,7 @@
 **Region:** eu-west-1
 **Created:** 2026-01-21
 **Data Migrated:** 2026-01-23
-**Last Updated:** 2026-02-11 (subscriptions table, membership management)
+**Last Updated:** 2026-02-13 (contacts table, last_active_at tracking)
 
 ---
 
@@ -139,10 +139,11 @@
 - `first_name` TEXT, `last_name` TEXT — split name fields (migration 030)
 - `invited_at` TIMESTAMPTZ — when invite email was sent (migration 033)
 - `activated_at` TIMESTAMPTZ — first login timestamp, set once (migration 035)
+- `last_active_at` TIMESTAMPTZ — real user activity, updated by middleware every 5 min (migration 037)
 - `role` supports 'trial' in addition to 'member'/'admin' (migration 034)
 
 **Usage:**
-- Middleware checks subscription on every page request (after auth)
+- Middleware checks subscription on every page request (after auth), updates `last_active_at` (throttled 5 min)
 - Admin pages: `/team` (dashboard) and `/team/leden` (member management)
 - Service role client: `app/api/_lib/supabase-admin.ts` (bypasses RLS)
 - Requires: `SUPABASE_SERVICE_ROLE_KEY` env var on Railway frontend
@@ -179,6 +180,55 @@
 - Submit: POST `/api/v1/feedback` (from feedback button UX-025)
 - Admin inbox: `/team/feedback` with status/category filters
 - Email notification: sent to `contact@rijksuitgaven.nl` via Resend on new feedback
+
+---
+
+### 0d. contacts (Contact Management / CRM)
+
+**Description:** Lightweight CRM for email campaign management. Tracks prospects, subscribers, and churned contacts. Syncs to Resend Audience for broadcasts. Managed via `/team/contacten` admin page.
+
+**Migration:** `036-contacts.sql` (added 2026-02-13)
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (default gen_random_uuid()) |
+| email | TEXT | Contact email (NOT NULL, UNIQUE) |
+| first_name | TEXT | First name |
+| last_name | TEXT | Last name |
+| organization | TEXT | Organization name |
+| type | TEXT | 'prospect', 'subscriber', or 'churned' (default: 'prospect') |
+| source | TEXT | How contact was acquired (website, event, referral, import) |
+| notes | TEXT | Admin notes |
+| resend_contact_id | TEXT | Resend Audience contact ID (for sync) |
+| subscription_id | UUID | Foreign key to subscriptions (ON DELETE SET NULL) |
+| created_at | TIMESTAMPTZ | Row creation time (default NOW()) |
+| updated_at | TIMESTAMPTZ | Last update time (auto-updated by trigger) |
+
+**Semi-automatic type transitions:**
+- Linking `subscription_id` auto-sets type to 'subscriber'
+- Manual override always available
+
+**RLS Policies:**
+- Row Level Security enabled (service role bypasses)
+
+**Indexes:**
+- `contacts_email_key` (UNIQUE) — prevent duplicate contacts
+- `idx_contacts_type` — fast filtering by type
+- `idx_contacts_subscription_id` — fast subscription lookup
+
+**Trigger:** `contacts_updated_at` — auto-updates `updated_at` on every row change
+
+**Resend Audience Sync:**
+- On create: syncs to Resend Audience, stores `resend_contact_id`
+- On update: syncs name changes to Resend
+- On delete: removes from Resend Audience
+- Fire-and-forget: sync failures logged but don't block operations
+- Helper: `app/api/_lib/resend-audience.ts`
+
+**Usage:**
+- Admin page: `/team/contacten` (CRUD, sortable table, type badges)
+- API: GET/POST `/api/v1/team/contacten`, PATCH/DELETE `/api/v1/team/contacten/[id]`
+- Requires: `RESEND_API_KEY` + `RESEND_AUDIENCE_ID` env vars on Railway
 
 ---
 
@@ -850,6 +900,8 @@ VACUUM ANALYZE universal_search;
 | `033-invited-at.sql` | Add invited_at column to subscriptions | Once (done 2026-02-11) |
 | `034-trial-role.sql` | Add trial role support to subscriptions | Once (done 2026-02-11) |
 | `035-activated-at.sql` | Add activated_at column to subscriptions + backfill | Once (done 2026-02-12) |
+| `036-contacts.sql` | Create contacts table (CRM) + RLS + trigger | Once (done 2026-02-13) |
+| `037-last-active-at.sql` | Add last_active_at to subscriptions + backfill | Once (done 2026-02-13) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---

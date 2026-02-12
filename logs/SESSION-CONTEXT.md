@@ -1,8 +1,8 @@
 # Session Context
 
-**Last Updated:** 2026-02-12
+**Last Updated:** 2026-02-13
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 6 - User Auth + Membership (Auth COMPLETE 2026-02-10, Membership COMPLETE 2026-02-11, Landing Page COMPLETE 2026-02-12, user migration remaining)
+**Current Sprint:** Week 7 - Pre-Launch Tasks (contacts COMPLETE 2026-02-13, search enhancements next, user migration remaining)
 
 ---
 
@@ -68,7 +68,7 @@
 - ✅ **2026-02-11 (Session 4):** Feedback management system at `/team/feedback` (admin inbox, status workflow, categories). Dashboard redesign (Proposal B — consistent section cards). Invite flow with status lifecycle (Aangemaakt → Uitgenodigd → Actief), `invited_at` column, per-row invite/resend buttons, fallback to generateLink+Resend for existing users. Trial role (14 days, 0 grace), role dropdown (Member/Trial/Admin) in both forms, ESC to close modal. Migrations 031, 033, 034 executed.
 - ✅ **2026-02-12 (Session 5):** UX-027 Post-login landing page (Module Hub) — 6+ design iterations: Ontvangers/Kosten grouping, euro totals, user-specified titles. Formal Dutch (u/uw) enforced across entire frontend. Login security: email enumeration prevention (OWASP). activated_at tracking (migration 035, /me/activate endpoint). Profile logout button restyle. 6 commits.
 - ✅ **2026-02-12 (Session 6):** V1.0 scope review + planning. Branded email templates confirmed complete. Moved exact phrase search + wildcard syntax from V1.1 → V1.0. Decision: Resend Broadcasts replaces WordPress/Mailster (kill `nieuws.rijksuitgaven.nl`). Decision: `contacts` table as lightweight CRM (prospect/subscriber/churned) with `/team/contacten` admin UI + Resend Audience sync. Documentation audit: 4 gaps fixed (FRONTEND-DOCUMENTATION, DATABASE-DOCUMENTATION).
-- ✅ **2026-02-13 (Session 1):** UX-028 Contacts Management — full-stack implementation. SQL migration (036-contacts.sql), CRUD API routes (GET/POST/PATCH/DELETE), Resend Audience sync helper, `/team/contacten` admin page with sortable table, add/edit/delete modals, type badges (prospect/subscriber/churned), stats bar, semi-automatic type transitions (subscription link → subscriber). TeamNav updated with Contacten tab. **Migration not yet executed on production.**
+- ✅ **2026-02-13 (Session 1):** UX-028 Contacts Management — full-stack implementation. SQL migration (036-contacts.sql), CRUD API routes (GET/POST/PATCH/DELETE), Resend Audience sync helper, `/team/contacten` admin page with sortable table, add/edit/delete modals, type badges (prospect/subscriber/churned), stats bar, semi-automatic type transitions (subscription link → subscriber). TeamNav updated with Contacten tab. Resend Audience configured. `last_active_at` activity tracking (migration 037) — middleware updates on every page visit (throttled 5 min), replaces stale `last_sign_in_at`. Both migrations executed on production, both deployed.
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
 
@@ -242,6 +242,8 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:$SUPABASE_DB_PASSWORD@aws-1-eu-west-1
 | `scripts/sql/033-invited-at.sql` | 2026-02-11 | Supabase |
 | `scripts/sql/034-trial-role.sql` | 2026-02-11 | Supabase |
 | `scripts/sql/035-activated-at.sql` | 2026-02-12 | Supabase |
+| `scripts/sql/036-contacts.sql` | 2026-02-13 | Supabase |
+| `scripts/sql/037-last-active-at.sql` | 2026-02-13 | Supabase |
 
 ### Configuration Files
 
