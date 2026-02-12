@@ -1,6 +1,6 @@
 # Frontend Documentation
 
-**Last Updated:** 2026-02-08
+**Last Updated:** 2026-02-13
 **Stack:** Next.js 16.1.4 + TypeScript + Tailwind CSS + TanStack Table
 
 ---
@@ -21,7 +21,8 @@ app/src/
 │   ├── team/
 │   │   ├── page.tsx              # Admin dashboard (subscription overview)
 │   │   ├── leden/page.tsx        # Member management (admin only)
-│   │   └── feedback/page.tsx     # Feedback inbox (admin only)
+│   │   ├── feedback/page.tsx     # Feedback inbox (admin only)
+│   │   └── contacten/page.tsx    # Contacts management (admin only) — UX-028
 │   ├── verlopen/page.tsx         # Expired subscription page
 │   ├── instrumenten/page.tsx     # Module page
 │   ├── apparaat/page.tsx         # Module page
@@ -31,6 +32,17 @@ app/src/
 │   ├── publiek/page.tsx          # Module page
 │   └── integraal/page.tsx        # Cross-module search page
 ├── components/
+│   ├── app-shell/                # Page wrapper for non-app pages
+│   │   └── app-shell.tsx         # Header/footer wrapper
+│   ├── homepage/                 # Public homepage (pre-login)
+│   │   ├── public-homepage.tsx   # Full homepage (~960 lines, 7 sections)
+│   │   └── index.ts
+│   ├── ui/                       # shadcn/ui primitives (Radix-based)
+│   │   ├── accordion.tsx, badge.tsx, button.tsx, card.tsx, checkbox.tsx
+│   │   ├── command.tsx, dialog.tsx, dropdown-menu.tsx, input.tsx
+│   │   ├── label.tsx, popover.tsx, scroll-area.tsx, select.tsx
+│   │   ├── separator.tsx, sheet.tsx, sonner.tsx, switch.tsx
+│   │   ├── tabs.tsx, textarea.tsx, tooltip.tsx
 │   ├── auth/                     # Authentication components
 │   │   ├── auth-button.tsx       # Profile dropdown (UX-026)
 │   │   └── subscription-banner.tsx # Grace period warning banner
@@ -85,7 +97,8 @@ app/src/
 │       └── middleware.ts         # Middleware client (use in middleware.ts)
 ├── hooks/
 │   ├── use-auth.ts               # useAuth() - client-side session hook
-│   └── use-subscription.ts       # useSubscription() - client-side subscription status hook
+│   ├── use-subscription.ts       # useSubscription() - client-side subscription status hook
+│   └── use-scroll-reveal.ts      # IntersectionObserver hook for scroll animations
 ├── middleware.ts                 # Route protection + subscription check
 └── types/
     └── api.ts                    # TypeScript interfaces
@@ -789,8 +802,11 @@ All frontend API calls are proxied through Next.js BFF routes:
 | `/api/v1/team/feedback/[id]` | PATCH | Update feedback status/priority (admin only) | Yes (Admin) |
 | `/api/v1/me/activate` | POST | Set activated_at on first login | Yes |
 | `/api/v1/feedback` | POST | Submit user feedback (with screenshot) | Yes |
+| `/api/v1/contact` | POST | Demo request form (stores in contacts + sends email) | **No** (public) |
+| `/api/v1/team/contacten` | GET/POST | List/create contacts (admin only) | Yes (Admin) |
+| `/api/v1/team/contacten/[id]` | PATCH/DELETE | Update/delete contact (admin only) | Yes (Admin) |
 
-**Auth Protection:** All BFF routes check for valid Supabase session via server-side client. Returns 401 if unauthenticated. Admin routes additionally check `subscriptions.role = 'admin'`.
+**Auth Protection:** All BFF routes check for valid Supabase session via server-side client. Returns 401 if unauthenticated. Admin routes additionally check `subscriptions.role = 'admin'`. Exception: `/api/v1/contact` is public (homepage demo request form).
 
 ---
 
