@@ -1115,3 +1115,106 @@ contacts (
 **Estimated effort:** 6-10 hours (contacts table + admin UI + Resend sync + campaign template)
 
 ---
+
+### Interactive Search Demo on Homepage (No Login Required)
+
+**Priority:** High (V1.0 — work on soon)
+**Added:** 2026-02-12
+**Status:** ⏳ Backlog
+**Type:** Feature / Conversion
+**Source:** Homepage audit — creative team Brief 2, item 6
+
+**Problem:**
+The homepage describes the product with screenshots and copy but never lets visitors *experience* it. Top-performing SaaS companies (Algolia, Airtable, Notion) convert by letting visitors touch the product before signing up.
+
+**Proposed Solution:**
+A sandboxed search experience embedded on the homepage — limited to one module (e.g., Instrumenten) and one year (e.g., 2024). Visitor types a query, sees real results with real amounts, experiences the speed. Teaser data only (no drill-down, no export). CTA at bottom: "Wilt u alle 9 jaren en 6 databronnen? Vraag een demo aan."
+
+**Technical Approach:**
+- Public BFF endpoint: `GET /api/v1/public/search?q=...` (rate-limited, no auth)
+- Returns top 5 recipients with name + 2024 amount only
+- Backend: query `universal_search` with LIMIT 5, single year column
+- Frontend: lightweight search input + results list component on homepage
+- No TanStack Table, no filters, no export — minimal UI
+
+**Key Decisions Needed:**
+1. Which module/year to expose?
+2. Rate limiting strategy (Cloudflare required first — see rate limiting backlog item)
+3. Should results link to login page or contact form?
+
+**Estimated effort:** 8-12 hours (BFF endpoint + frontend component + rate limiting)
+
+---
+
+### Tab-Based Feature Explorer (Homepage Features Section)
+
+**Priority:** Medium (V1.1)
+**Added:** 2026-02-12
+**Status:** ⏳ Backlog
+**Type:** UX / Design
+**Source:** Homepage audit — creative team, Features section review
+
+**Problem:**
+The current features section uses a 3x2 grid of equal-sized screenshot cards. While functional, this is a generic SaaS pattern. World-class data platforms (Linear, Stripe, Notion) use more engaging formats that keep visitors in the section longer and create visual hierarchy.
+
+**Proposed Solution:**
+Replace the 6-card grid with a tab-based feature explorer — one large browser frame with 6 tabs above it. Click a tab, the screenshot and description change. Mirrors the Audience section interaction pattern already on the page.
+
+```
+[ Zoeken ] [ Details ] [ Integraal ] [ Begroting ] [ Filteren ] [ Export ]
+┌─────────────────────────────────────┐
+│                                     │
+│          LARGE SCREENSHOT           │
+│                                     │
+└─────────────────────────────────────┘
+  Title and description below
+```
+
+**Benefits:**
+- Larger screenshots = more readable product previews
+- Tab clicks = micro-engagement → higher conversion on CTA below
+- Consistent interaction pattern with Audience section
+- Mobile-friendly (tabs as pills, single screenshot)
+- Government buyers are methodical — they'll click through each tab
+
+**Also consider (when implementing):**
+- Update card content: replace "Ontdek bestedingen", "Wat is er nieuw?", "Wie ontvangt het meest?" with "Integraal doorzoeken", "Slim filteren", "Exporteren naar Excel"
+- Auto-advance with progress bar (same as Audience section)
+- Keyboard navigation between tabs
+
+**Estimated effort:** 4-5 hours
+
+---
+
+### Audience-Personalized Landing Variants
+
+**Priority:** Medium (V1.1)
+**Added:** 2026-02-12
+**Status:** ⏳ Backlog
+**Type:** Feature / Marketing
+**Source:** Homepage audit — creative team Brief 2, item 7
+
+**Problem:**
+One homepage serves 5 distinct audiences (journalists, municipalities, political parties, businesses, academics). Each has different buying triggers, pain points, and language. A journalist cares about "onthullingen" while a municipality cares about "vergelijkbaarheid." Serving everyone the same page means no one gets the most compelling pitch.
+
+**Proposed Solution:**
+Audience-specific landing variants using query params or UTM paths:
+- `rijksuitgaven.nl/?ref=journalist` → Media-focused hero, case study, export emphasis
+- `rijksuitgaven.nl/?ref=gemeente` → B2G section first, compliance language, onboarding CTA
+- `rijksuitgaven.nl/?ref=politiek` → Accountability angle, transparency focus
+- `rijksuitgaven.nl` (default) → General page (current)
+
+**Technical Approach:**
+- Same `PublicHomepage` component, conditional content via `useSearchParams()`
+- Content arrays per audience (hero copy, featured case study, CTA text)
+- Section order rearranged per audience (e.g., B2G first for gemeente)
+- Shared components, no code duplication
+
+**Key Decisions Needed:**
+1. Which audiences get their own variant? (Start with journalist + gemeente?)
+2. How are visitors routed? (UTM links from campaigns, LinkedIn ads, etc.)
+3. Do we need analytics per variant first? (See Analytics backlog item)
+
+**Estimated effort:** 6-8 hours per variant (copy + conditional rendering + testing)
+
+---

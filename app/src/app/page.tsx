@@ -1,7 +1,13 @@
-import Link from 'next/link'
+'use client'
 
-// UX-027: Post-login landing page — Enhanced Module Hub
-// Grouped by: Ontvangers (who receives) / Kosten (what it costs)
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { useAuth } from '@/hooks/use-auth'
+import { PublicHomepage } from '@/components/homepage'
+
+// =============================================================================
+// Post-Login Module Hub (UX-027)
+// =============================================================================
 
 const ontvangers = [
   {
@@ -70,7 +76,7 @@ function ModuleCard({ module }: { module: typeof ontvangers[number] }) {
   )
 }
 
-export default function Home() {
+function ModuleHub() {
   return (
     <div className="min-h-screen bg-white">
       {/* Welcome bar */}
@@ -103,4 +109,25 @@ export default function Home() {
       </main>
     </div>
   )
+}
+
+// =============================================================================
+// Root Page — Auth-aware routing
+// =============================================================================
+
+export default function Home() {
+  const { isLoggedIn } = useAuth()
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    // Mark as ready after first auth check (cookie-based, ~1ms)
+    setReady(true)
+  }, [])
+
+  // Brief loading state while auth is determined
+  if (!ready) {
+    return <div className="min-h-screen bg-white" />
+  }
+
+  return isLoggedIn ? <ModuleHub /> : <PublicHomepage />
 }

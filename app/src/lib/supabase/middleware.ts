@@ -47,11 +47,14 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getSession()
   const session = data?.session
 
-  if (
-    !session &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
-  ) {
+  // Public paths that don't require authentication
+  const isPublicPath =
+    request.nextUrl.pathname === '/' ||
+    request.nextUrl.pathname.startsWith('/login') ||
+    request.nextUrl.pathname.startsWith('/auth') ||
+    request.nextUrl.pathname === '/privacybeleid'
+
+  if (!session && !isPublicPath) {
     const forwardedHost = request.headers.get('x-forwarded-host')
     const forwardedProto = request.headers.get('x-forwarded-proto') ?? 'https'
     if (forwardedHost) {

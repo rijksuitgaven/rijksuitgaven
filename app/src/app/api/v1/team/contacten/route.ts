@@ -20,7 +20,7 @@ export async function GET() {
   const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('contacts')
-    .select('id, email, first_name, last_name, organization, type, source, notes, resend_contact_id, subscription_id, created_at, updated_at')
+    .select('id, email, first_name, last_name, organization, phone, type, source, notes, resend_contact_id, subscription_id, created_at, updated_at')
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -51,11 +51,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { email, first_name, last_name, organization, type, source, notes } = body as {
+  const { email, first_name, last_name, organization, phone, type, source, notes } = body as {
     email?: string
     first_name?: string
     last_name?: string
     organization?: string
+    phone?: string
     type?: string
     source?: string
     notes?: string
@@ -88,6 +89,7 @@ export async function POST(request: NextRequest) {
       first_name: first_name || null,
       last_name: last_name || null,
       organization: organization || null,
+      phone: phone || null,
       type: type || 'prospect',
       source: source || null,
       notes: notes || null,

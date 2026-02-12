@@ -70,6 +70,8 @@
 - ✅ **2026-02-12 (Session 6):** V1.0 scope review + planning. Branded email templates confirmed complete. Moved exact phrase search + wildcard syntax from V1.1 → V1.0. Decision: Resend Broadcasts replaces WordPress/Mailster (kill `nieuws.rijksuitgaven.nl`). Decision: `contacts` table as lightweight CRM (prospect/subscriber/churned) with `/team/contacten` admin UI + Resend Audience sync. Documentation audit: 4 gaps fixed (FRONTEND-DOCUMENTATION, DATABASE-DOCUMENTATION).
 - ✅ **2026-02-13 (Session 1):** UX-028 Contacts Management — full-stack implementation. SQL migration (036-contacts.sql), CRUD API routes (GET/POST/PATCH/DELETE), Resend Audience sync helper, `/team/contacten` admin page with sortable table, add/edit/delete modals, type badges (prospect/subscriber/churned), stats bar, semi-automatic type transitions (subscription link → subscriber). TeamNav updated with Contacten tab. Resend Audience configured. `last_active_at` activity tracking (migration 037) — middleware updates on every page visit (throttled 5 min), replaces stale `last_sign_in_at`. Both migrations executed on production, both deployed.
 - ✅ **2026-02-13 (Session 2):** Search enhancement design (expert panel review — multi-word AND, exact phrase, prefix). SR-005 V1.0 scope documented with edge cases. 3 V1.1 backlog items added. Search box performance: 6 improvements deployed (1-char trigger, leading-edge debounce 0ms+150ms, loading skeleton, aria-live, instant selection, 150ms filter debounce). Backend min_length 2→1. Perceived latency ~500ms → ~50ms.
+- ✅ **2026-02-13 (Session 3):** Homepage redesign — SaaS marketing team (7 experts, 2 briefs). Brief 1: 8 improvements implemented (section reorder, trust bar, Brawler headings, hero screenshot, conversion CTA, response time, scroll animations, outcome-first copy). Headline: "Waar gaat €1.700 miljard naartoe?" Features heading: "Het meest complete platform voor overheidsuitgaven." Contact form with CRM integration (Resend + Supabase). shadcn/ui primitives installed. 3 backlog items added. Brief 2 (out-of-the-box) discussion pending.
+- ⏳ **Brief 2 discussion** — Out-of-the-box homepage concepts from marketing team
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
@@ -95,20 +97,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/filter-panel/filter-panel.tsx** MODIFIED (2026-02-13)
-   Search box perf: 1-char trigger, leading-edge debounce, skeleton, aria-live, instant selection
+1. **app/src/components/homepage/public-homepage.tsx** CREATED (2026-02-13)
+   Full public homepage: 7 sections, Brawler headings, trust bar, scroll animations, contact form
 
-2. **app/src/components/search-bar/search-bar.tsx** MODIFIED (2026-02-13)
-   Search box perf: 1-char trigger, leading-edge debounce, skeleton, aria-live
+2. **app/src/app/globals.css** MODIFIED (2026-02-13)
+   Added scroll-reveal-scale, stagger-children, audience animations, CSS tooltips
 
-3. **backend/app/api/v1/modules.py** MODIFIED (2026-02-13)
-   Autocomplete min_length 2→1
+3. **app/src/app/layout.tsx** MODIFIED (2026-02-13)
+   Brawler font import, conditional header/footer for public pages
 
-4. **02-requirements/search-requirements.md** MODIFIED (2026-02-13)
-   SR-005 V1.0 search scope + edge case handling documented
+4. **app/src/app/api/v1/contact/route.ts** CREATED (2026-02-13)
+   Public demo request API with Resend email + Supabase contacts upsert
 
 5. **02-requirements/backlog.md** MODIFIED (2026-02-13)
-   3 search backlog items: multi-field match (V1.1), fuzzy (V1.1), field-specific (V2+)
+   3 homepage backlog items: interactive search demo, tab-based explorer, audience variants
 
 ---
 
@@ -892,7 +894,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-13 - **Search enhancement design (expert review) + search box perf (6 improvements deployed)**
+**Last Session:** 2026-02-13 - **Homepage redesign (Brief 1: 8 improvements) + contact form CRM integration + shadcn/ui setup**
 
 **2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 

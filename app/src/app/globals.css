@@ -54,6 +54,7 @@
   --navy-medium: #436FA3;
   --blue-light: #8DBADC;
   --pink: #E62D75;
+  --pink-hover: #cc2968;
   --gray-light: #E1EAF2;
 
   /* Status Colors */
@@ -199,6 +200,58 @@
 .animate-slide-up {
   animation: slideUp 300ms ease-out;
 }
+
+/* Audience tab bar animations */
+@keyframes pillFadeIn {
+  0% { opacity: 0; transform: scale(0.92); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes audienceFadeIn {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes progressFill {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* Scroll reveal animation — Stripe-inspired: translateY + opacity, fires once */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.2, 1, 0.2, 1),
+              transform 0.7s cubic-bezier(0.2, 1, 0.2, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scroll reveal scale variant — for trust bar and compact elements */
+.scroll-reveal-scale {
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.6s cubic-bezier(0.2, 1, 0.2, 1),
+              transform 0.6s cubic-bezier(0.2, 1, 0.2, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Stagger children — each child delays 100ms after the previous */
+.stagger-children > .scroll-reveal:nth-child(1) { transition-delay: 0ms; }
+.stagger-children > .scroll-reveal:nth-child(2) { transition-delay: 100ms; }
+.stagger-children > .scroll-reveal:nth-child(3) { transition-delay: 200ms; }
+.stagger-children > .scroll-reveal:nth-child(4) { transition-delay: 300ms; }
+.stagger-children > .scroll-reveal:nth-child(5) { transition-delay: 400ms; }
+.stagger-children > .scroll-reveal:nth-child(6) { transition-delay: 500ms; }
 
 /* Instant CSS tooltip - appears on hover without delay */
 [data-tooltip] {

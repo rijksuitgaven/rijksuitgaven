@@ -1,18 +1,15 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans_Condensed, Brawler } from "next/font/google";
+import { Libre_Franklin, Brawler } from "next/font/google";
 import { CookieBanner } from "@/components/cookie-banner";
-import { MobileBanner } from "@/components/mobile-banner";
-import { SubscriptionBanner } from "@/components/subscription-banner";
-import { FeedbackButton } from "@/components/feedback";
-import { Header } from "@/components/header";
+import { AppShell } from "@/components/app-shell/app-shell";
 import { Footer } from "@/components/footer";
 import "./globals.css";
 
-// Body text - IBM Plex Sans Condensed
-const ibmPlexSansCondensed = IBM_Plex_Sans_Condensed({
+// Body text - Libre Franklin (matches WordPress)
+const libreFranklin = Libre_Franklin({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 // Headings - Brawler (serif)
@@ -45,16 +42,14 @@ export default function RootLayout({
   return (
     <html lang="nl">
       <body
-        className={`${ibmPlexSansCondensed.variable} ${brawler.variable} antialiased`}
+        className={`${libreFranklin.variable} ${brawler.variable}`}
         style={{ fontFamily: "var(--font-body), sans-serif" }}
       >
-        <Header />
-        <SubscriptionBanner />
-        {children}
+        <AppShell>
+          {children}
+        </AppShell>
         <Footer />
-        <FeedbackButton />
         <CookieBanner />
-        <MobileBanner />
       </body>
     </html>
   );
