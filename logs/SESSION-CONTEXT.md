@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-02-13
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 7 - Pre-Launch Tasks (contacts COMPLETE 2026-02-13, search enhancements next, user migration remaining)
+**Current Sprint:** Week 7 - Pre-Launch Tasks (contacts COMPLETE, search box perf COMPLETE, search syntax design COMPLETE — implementation pending user review, user migration remaining)
 
 ---
 
@@ -69,6 +69,8 @@
 - ✅ **2026-02-12 (Session 5):** UX-027 Post-login landing page (Module Hub) — 6+ design iterations: Ontvangers/Kosten grouping, euro totals, user-specified titles. Formal Dutch (u/uw) enforced across entire frontend. Login security: email enumeration prevention (OWASP). activated_at tracking (migration 035, /me/activate endpoint). Profile logout button restyle. 6 commits.
 - ✅ **2026-02-12 (Session 6):** V1.0 scope review + planning. Branded email templates confirmed complete. Moved exact phrase search + wildcard syntax from V1.1 → V1.0. Decision: Resend Broadcasts replaces WordPress/Mailster (kill `nieuws.rijksuitgaven.nl`). Decision: `contacts` table as lightweight CRM (prospect/subscriber/churned) with `/team/contacten` admin UI + Resend Audience sync. Documentation audit: 4 gaps fixed (FRONTEND-DOCUMENTATION, DATABASE-DOCUMENTATION).
 - ✅ **2026-02-13 (Session 1):** UX-028 Contacts Management — full-stack implementation. SQL migration (036-contacts.sql), CRUD API routes (GET/POST/PATCH/DELETE), Resend Audience sync helper, `/team/contacten` admin page with sortable table, add/edit/delete modals, type badges (prospect/subscriber/churned), stats bar, semi-automatic type transitions (subscription link → subscriber). TeamNav updated with Contacten tab. Resend Audience configured. `last_active_at` activity tracking (migration 037) — middleware updates on every page visit (throttled 5 min), replaces stale `last_sign_in_at`. Both migrations executed on production, both deployed.
+- ✅ **2026-02-13 (Session 2):** Search enhancement design (expert panel review — multi-word AND, exact phrase, prefix). SR-005 V1.0 scope documented with edge cases. 3 V1.1 backlog items added. Search box performance: 6 improvements deployed (1-char trigger, leading-edge debounce 0ms+150ms, loading skeleton, aria-live, instant selection, 150ms filter debounce). Backend min_length 2→1. Perceived latency ~500ms → ~50ms.
+- ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
 
@@ -93,20 +95,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/app/team/contacten/page.tsx** ⭐ CREATED (2026-02-13)
-   Contacts management admin page — sortable table, add/edit/delete modals, type badges
+1. **app/src/components/filter-panel/filter-panel.tsx** MODIFIED (2026-02-13)
+   Search box perf: 1-char trigger, leading-edge debounce, skeleton, aria-live, instant selection
 
-2. **app/src/app/api/v1/team/contacten/route.ts** ⭐ CREATED (2026-02-13)
-   Contact CRUD API — GET (list all) + POST (create with duplicate check + Resend sync)
+2. **app/src/components/search-bar/search-bar.tsx** MODIFIED (2026-02-13)
+   Search box perf: 1-char trigger, leading-edge debounce, skeleton, aria-live
 
-3. **app/src/app/api/v1/team/contacten/[id]/route.ts** ⭐ CREATED (2026-02-13)
-   Contact API — PATCH (update + semi-auto type) + DELETE (with Resend cleanup)
+3. **backend/app/api/v1/modules.py** MODIFIED (2026-02-13)
+   Autocomplete min_length 2→1
 
-4. **app/src/app/api/_lib/resend-audience.ts** ⭐ CREATED (2026-02-13)
-   Resend Audience sync helper — create/update/delete contacts in Resend
+4. **02-requirements/search-requirements.md** MODIFIED (2026-02-13)
+   SR-005 V1.0 search scope + edge case handling documented
 
-5. **scripts/sql/036-contacts.sql** ⭐ CREATED (2026-02-13)
-   Migration: contacts table with RLS, indexes, trigger — NOT YET EXECUTED
+5. **02-requirements/backlog.md** MODIFIED (2026-02-13)
+   3 search backlog items: multi-field match (V1.1), fuzzy (V1.1), field-specific (V2+)
 
 ---
 
@@ -890,7 +892,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-13 - **UX-028 Contacts Management — full-stack implementation (SQL + API + admin page + Resend sync)**
+**Last Session:** 2026-02-13 - **Search enhancement design (expert review) + search box perf (6 improvements deployed)**
 
 **2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 
