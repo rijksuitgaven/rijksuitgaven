@@ -19,7 +19,7 @@ export async function GET() {
   const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('subscriptions')
-    .select('id, user_id, email, first_name, last_name, organization, plan, role, start_date, end_date, grace_ends_at, cancelled_at, invited_at, activated_at, notes, created_at')
+    .select('id, user_id, email, first_name, last_name, organization, plan, role, start_date, end_date, grace_ends_at, cancelled_at, invited_at, activated_at, last_active_at, notes, created_at')
     .order('end_date', { ascending: true })
 
   if (error) {
@@ -27,21 +27,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Fout bij ophalen leden' }, { status: 500 })
   }
 
-  // Enrich with last_sign_in_at from auth.users
-  const { data: { users } } = await supabase.auth.admin.listUsers()
-  const signInMap = new Map<string, string | null>()
-  if (users) {
-    for (const u of users) {
-      signInMap.set(u.id, u.last_sign_in_at ?? null)
-    }
-  }
-
-  const members = (data ?? []).map(row => ({
-    ...row,
-    last_sign_in_at: signInMap.get(row.user_id) ?? null,
-  }))
-
-  return NextResponse.json({ members })
+  return NextResponse.json({ members: data ?? [] })
 }
 
 export async function POST(request: NextRequest) {

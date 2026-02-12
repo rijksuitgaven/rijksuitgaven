@@ -20,7 +20,7 @@ interface Member {
   cancelled_at: string | null
   invited_at: string | null
   activated_at: string | null
-  last_sign_in_at: string | null
+  last_active_at: string | null
   notes: string | null
   created_at: string
 }
@@ -31,7 +31,7 @@ function computeStatus(member: Member): MemberStatus {
   // If never invited → Aangemaakt
   if (!member.invited_at) return 'aangemaakt'
   // If invited but never logged in → Uitgenodigd
-  if (!member.last_sign_in_at) return 'uitgenodigd'
+  if (!member.last_active_at) return 'uitgenodigd'
   // Normal date-based status
   if (member.cancelled_at) return 'expired'
   const today = new Date().toISOString().split('T')[0]
@@ -321,10 +321,10 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
           {member.activated_at && (
             <span>Eerste login: <span className="font-medium">{formatDateTime(member.activated_at)}</span></span>
           )}
-          {member.last_sign_in_at && (
-            <span>Laatst actief: <span className="font-medium">{formatDateTime(member.last_sign_in_at)}</span></span>
+          {member.last_active_at && (
+            <span>Laatst actief: <span className="font-medium">{formatDateTime(member.last_active_at)}</span></span>
           )}
-          {!member.activated_at && !member.last_sign_in_at && (
+          {!member.activated_at && !member.last_active_at && (
             <span>Nog niet ingelogd</span>
           )}
         </div>

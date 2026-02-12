@@ -91,6 +91,23 @@ export async function updateSession(request: NextRequest) {
         url.pathname = '/verlopen'
         return NextResponse.redirect(url)
       }
+
+      // Track last_active_at (throttled: max once per 5 minutes via cookie)
+      const lastPing = request.cookies.get('_la')?.value
+      const now = Date.now()
+      if (!lastPing || now - Number(lastPing) > 5 * 60 * 1000) {
+        // Fire-and-forget: don't await, don't block the response
+        supabase
+          .from('subscriptions')
+          .update({ last_active_at: new Date().toISOString() })
+          .eq('user_id', session.user.id)
+          .then(() => {})
+        supabaseResponse.cookies.set('_la', String(now), {
+          httpOnly: true,
+          sameSite: 'lax',
+          maxAge: 300,
+        })
+      }
     }
     // No subscription row = allow access (new users before subscription is created,
     // or admin setting up the system). Access control tightened once subscriptions
