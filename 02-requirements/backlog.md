@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-02-11
+**Last Updated:** 2026-02-13
 
 Items logged for future versions, not in V1.0 scope.
 
@@ -991,7 +991,8 @@ Create branded HTML email template matching Rijksuitgaven brand identity:
 
 **Priority:** High (V1.0 — before launch, replaces WordPress/Mailster)
 **Added:** 2026-02-12
-**Status:** ⏳ TODO
+**Updated:** 2026-02-13
+**Status:** ⏳ IN PROGRESS (contacts table + admin UI done, migration + Resend Audience + campaign template remaining)
 **Type:** Infrastructure / Marketing
 
 **Problem:**
@@ -1008,14 +1009,17 @@ Current email campaigns run on WordPress + Mailster + Mailgun at `nieuws.rijksui
 - Kills WordPress dependency entirely
 
 **Implementation Steps:**
-1. Create `contacts` table in Supabase (single source of truth for all contacts)
-2. Build admin UI at `/team/contacten` (new tab in team nav)
-3. Sync contacts → Resend Audience (on create/update)
-4. Build branded campaign template (React Email, reuse existing brand components)
-5. Send test broadcast, verify open/click tracking
-6. Migrate Mailster contacts into `contacts` table
-7. Document campaign workflow for founder (dashboard → new broadcast → send)
-8. After launch: decommission `nieuws.rijksuitgaven.nl` and WordPress server
+1. ✅ Create `contacts` table in Supabase (migration 036-contacts.sql written, not yet executed)
+2. ✅ Build admin UI at `/team/contacten` (new tab in team nav) — UX-028
+3. ✅ Sync contacts → Resend Audience (on create/update/delete) — fire-and-forget helper
+4. ⏳ Execute migration on Supabase production
+5. ⏳ Create Resend Audience and configure `RESEND_AUDIENCE_ID` env var
+6. ⏳ Build branded campaign template (React Email, reuse existing brand components)
+7. ⏳ Send test broadcast, verify open/click tracking
+8. ⏳ Migrate Mailster contacts into `contacts` table
+9. ⏳ Backfill contacts from subscriptions table (subscriber type)
+10. ⏳ Document campaign workflow for founder (dashboard → new broadcast → send)
+11. After launch: decommission `nieuws.rijksuitgaven.nl` and WordPress server
 
 **Contacts Table Design:**
 ```sql

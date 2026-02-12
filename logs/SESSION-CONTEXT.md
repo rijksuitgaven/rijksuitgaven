@@ -68,6 +68,7 @@
 - ✅ **2026-02-11 (Session 4):** Feedback management system at `/team/feedback` (admin inbox, status workflow, categories). Dashboard redesign (Proposal B — consistent section cards). Invite flow with status lifecycle (Aangemaakt → Uitgenodigd → Actief), `invited_at` column, per-row invite/resend buttons, fallback to generateLink+Resend for existing users. Trial role (14 days, 0 grace), role dropdown (Member/Trial/Admin) in both forms, ESC to close modal. Migrations 031, 033, 034 executed.
 - ✅ **2026-02-12 (Session 5):** UX-027 Post-login landing page (Module Hub) — 6+ design iterations: Ontvangers/Kosten grouping, euro totals, user-specified titles. Formal Dutch (u/uw) enforced across entire frontend. Login security: email enumeration prevention (OWASP). activated_at tracking (migration 035, /me/activate endpoint). Profile logout button restyle. 6 commits.
 - ✅ **2026-02-12 (Session 6):** V1.0 scope review + planning. Branded email templates confirmed complete. Moved exact phrase search + wildcard syntax from V1.1 → V1.0. Decision: Resend Broadcasts replaces WordPress/Mailster (kill `nieuws.rijksuitgaven.nl`). Decision: `contacts` table as lightweight CRM (prospect/subscriber/churned) with `/team/contacten` admin UI + Resend Audience sync. Documentation audit: 4 gaps fixed (FRONTEND-DOCUMENTATION, DATABASE-DOCUMENTATION).
+- ✅ **2026-02-13 (Session 1):** UX-028 Contacts Management — full-stack implementation. SQL migration (036-contacts.sql), CRUD API routes (GET/POST/PATCH/DELETE), Resend Audience sync helper, `/team/contacten` admin page with sortable table, add/edit/delete modals, type badges (prospect/subscriber/churned), stats bar, semi-automatic type transitions (subscription link → subscriber). TeamNav updated with Contacten tab. **Migration not yet executed on production.**
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
 
@@ -92,20 +93,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/app/page.tsx** ⭐ REWRITTEN (2026-02-12)
-   Module Hub landing page — Ontvangers/Kosten grouping, euro totals, stat lines
+1. **app/src/app/team/contacten/page.tsx** ⭐ CREATED (2026-02-13)
+   Contacts management admin page — sortable table, add/edit/delete modals, type badges
 
-2. **app/src/components/auth/login-form.tsx** ⭐ MODIFIED (2026-02-12)
-   Formal Dutch (u/uw), email enumeration prevention, error box restyle
+2. **app/src/app/api/v1/team/contacten/route.ts** ⭐ CREATED (2026-02-13)
+   Contact CRUD API — GET (list all) + POST (create with duplicate check + Resend sync)
 
-3. **app/src/app/api/v1/me/activate/route.ts** ⭐ CREATED (2026-02-12)
-   First-login activation endpoint — sets activated_at once
+3. **app/src/app/api/v1/team/contacten/[id]/route.ts** ⭐ CREATED (2026-02-13)
+   Contact API — PATCH (update + semi-auto type) + DELETE (with Resend cleanup)
 
-4. **scripts/sql/035-activated-at.sql** ⭐ CREATED (2026-02-12)
-   Migration: activated_at column + backfill from auth.users
+4. **app/src/app/api/_lib/resend-audience.ts** ⭐ CREATED (2026-02-13)
+   Resend Audience sync helper — create/update/delete contacts in Resend
 
-5. **app/src/app/profiel/page.tsx** ⭐ MODIFIED (2026-02-12)
-   Logout button restyled as simple red text link
+5. **scripts/sql/036-contacts.sql** ⭐ CREATED (2026-02-13)
+   Migration: contacts table with RLS, indexes, trigger — NOT YET EXECUTED
 
 ---
 
@@ -887,7 +888,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-12 - **UX-027 Landing page + Formal Dutch + Login security + activated_at + Resend Broadcasts decision + contacts table decision + V1.0 scope update**
+**Last Session:** 2026-02-13 - **UX-028 Contacts Management — full-stack implementation (SQL + API + admin page + Resend sync)**
 
 **2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 

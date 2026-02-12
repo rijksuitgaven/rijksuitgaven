@@ -18,6 +18,7 @@ export function TeamNav() {
   const tabs = [
     { href: '/team', label: 'Dashboard', exact: true },
     { href: '/team/leden', label: 'Leden', exact: false },
+    { href: '/team/contacten', label: 'Contacten', exact: false },
     { href: '/team/feedback', label: 'Feedback', exact: false, count: newCount },
   ]
 

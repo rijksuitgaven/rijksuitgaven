@@ -1335,6 +1335,45 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-028: Contacts Management (`/team/contacten`)
+
+**Requirement:** Admin page for managing all contacts (prospects, subscribers, churned) with Resend Audience sync for email campaigns.
+
+**Behavior:**
+
+**Database: `contacts` table**
+- Fields: email (unique), first_name, last_name, organization, type, source, notes, resend_contact_id, subscription_id
+- Type: `prospect` | `subscriber` | `churned` (semi-automatic transitions)
+- Source: `website` | `event` | `referral` | `import` (free text)
+- RLS enabled, admin-only access
+
+**Admin page (`/team/contacten`):**
+- New tab in TeamNav between "Leden" and "Feedback"
+- Inline stats bar: Total, Prospects, Subscribers, Churned counts
+- Add Contact form (email, first_name, last_name, organization, type, source, notes)
+- Sortable table: Name | Organization | Email | Type | Source | Created
+- Row click → Edit modal (same pattern as `/team/leden`)
+- Type badges: green=subscriber, blue=prospect, gray=churned
+- Resend sync indicator on synced contacts
+- Delete contact with confirmation
+
+**Semi-automatic type transitions:**
+- Linking a subscription → type auto-changes to `subscriber`
+- Subscription expires → type auto-changes to `churned`
+- Manual override always available
+
+**Resend Audience sync:**
+- On create: add contact to Resend Audience
+- On update: update Resend contact
+- On delete: remove from Resend Audience
+- Graceful degradation: sync failure logged, not user-facing
+
+**Priority:** P1 (V1.0 — required for email campaigns, replaces WordPress/Mailster)
+
+**Status:** ⏳ In Development
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload
