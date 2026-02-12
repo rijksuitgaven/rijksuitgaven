@@ -180,7 +180,7 @@ class AutocompleteResponse(BaseModel):
 @router.get("/{module}/autocomplete", response_model=AutocompleteResponse)
 async def module_autocomplete(
     module: ModuleName,
-    q: str = Query(..., min_length=2, max_length=200, description="Search query"),
+    q: str = Query(..., min_length=1, max_length=200, description="Search query"),
     limit: int = Query(5, ge=1, le=10, description="Max results per section"),
 ):
     """

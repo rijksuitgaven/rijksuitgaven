@@ -131,7 +131,7 @@ async def typesense_search(collection: str, params: dict) -> dict:
 
 @router.get("/autocomplete", response_model=SearchResponse)
 async def autocomplete(
-    q: str = Query(..., min_length=2, max_length=200, description="Search query"),
+    q: str = Query(..., min_length=1, max_length=200, description="Search query"),
     fuzzy: bool = Query(False, description="Enable fuzzy/typo-tolerant search"),
 ):
     """
@@ -162,7 +162,7 @@ async def autocomplete(
 
 @router.get("/recipients", response_model=list[RecipientResult])
 async def search_recipients_endpoint(
-    q: str = Query(..., min_length=2, max_length=200),
+    q: str = Query(..., min_length=1, max_length=200),
     limit: int = Query(5, ge=1, le=20),
     fuzzy: bool = Query(False),
 ):
