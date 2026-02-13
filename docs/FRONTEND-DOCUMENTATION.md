@@ -30,7 +30,10 @@ app/src/
 │   ├── provincie/page.tsx        # Module page
 │   ├── gemeente/page.tsx         # Module page
 │   ├── publiek/page.tsx          # Module page
-│   └── integraal/page.tsx        # Cross-module search page
+│   ├── integraal/page.tsx        # Cross-module search page
+│   ├── not-found.tsx             # Custom 404 page (UX-029, branded)
+│   ├── h1/ through h5/          # Brief 2 prototype pages (design exploration)
+│   └── error.tsx                 # Error page
 ├── components/
 │   ├── app-shell/                # Page wrapper for non-app pages
 │   │   └── app-shell.tsx         # Header/footer wrapper
@@ -106,22 +109,35 @@ app/src/
 
 ---
 
-## Fonts (Brand Identity)
+## Fonts (Brand Identity) — Dual-Width IBM Plex System
 
-| Font | Variable | Usage |
-|------|----------|-------|
-| Brawler | `--font-heading` | Headings, page titles |
-| IBM Plex Sans Condensed | `--font-body` | Body text, UI elements |
+| Font | Variable | Weight | Usage |
+|------|----------|--------|-------|
+| IBM Plex Sans | `--font-body` | 400-700 | Public pages, module hub, headings |
+| IBM Plex Sans | `--font-heading` | 400-700 | Alias for `--font-body` (resolved in globals.css) |
+| IBM Plex Sans Condensed | `--font-condensed` | 400-700 | Data-dense logged-in pages (modules, team, profiel) |
 
-Both fonts are self-hosted via `next/font/google` - no external requests to Google.
+All fonts self-hosted via `next/font/google` — no external requests.
+
+**Design rationale:** Same typeface family, two widths. Public pages use the wider Sans for readability. Data pages use Condensed to fit more columns in tables.
+
+**Where each font applies:**
+- Public pages (homepage, login, privacybeleid, verlopen): inherit `--font-body` (IBM Plex Sans)
+- Module hub (authenticated `/`): inherits `--font-body` (IBM Plex Sans)
+- Data pages: `style={{ fontFamily: 'var(--font-condensed)' }}` on `<main>` wrapper
+  - `module-page.tsx` wraps ErrorBoundary content (all 7 modules)
+  - `team/*`, `profiel`, `detail-panel`: individual `<main>` overrides
 
 **Usage in CSS:**
 ```css
 .heading {
-  font-family: var(--font-heading), serif;
+  font-family: var(--font-heading), sans-serif; /* resolves to IBM Plex Sans */
 }
 .body {
-  font-family: var(--font-body), sans-serif;
+  font-family: var(--font-body), sans-serif; /* IBM Plex Sans */
+}
+.data-page {
+  font-family: var(--font-condensed), sans-serif; /* IBM Plex Sans Condensed */
 }
 ```
 
@@ -779,6 +795,8 @@ if (status === 'expired') redirect('/verlopen')
 | `/publiek` | Protected | Publiek (RVO/COA/NWO) module |
 | `/integraal` | Protected | Cross-module search |
 | `/privacybeleid` | Public | Privacy policy |
+| `/h1` - `/h5` | Public | Brief 2 prototype pages (design exploration) |
+| `not-found` | Public | Custom branded 404 page (UX-029) |
 
 ### BFF API Routes (`app/src/app/api/`)
 
@@ -961,3 +979,4 @@ npm run build
 | 2026-02-08 | Added fetchCascadingFilterOptions() to API client, FilterOption type |
 | 2026-02-09 | UX-023: GroupingSelect dropdown with counts, BFF grouping-counts route, updated ExpandedRow |
 | 2026-02-11 | WS-3: Auth pages, hooks, admin routes, subscription components, profile dropdown (UX-026) |
+| 2026-02-13 | Typography: IBM Plex Sans dual-width system (replaced Brawler). Added /h1-/h5 prototypes, 404 page (UX-029), AppShell, contacten route |
