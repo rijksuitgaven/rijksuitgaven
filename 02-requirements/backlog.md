@@ -134,7 +134,8 @@ Cascading filter option requests (POST `/filter-options`) take 300-500ms per req
 
 **Priority:** Medium (V1.0)
 **Added:** 2026-02-08
-**Status:** 🔲 TODO
+**Completed:** 2026-02-13
+**Status:** ✅ COMPLETED
 **Type:** UX / Design
 
 **Problem:**
