@@ -96,7 +96,7 @@ export function PublicHeader() {
             </a>
             <Link
               href="/login"
-              className="inline-flex items-center px-4 py-2 text-[15px] font-bold text-[var(--navy-dark)] border border-[var(--gray-light)] rounded-lg hover:border-[var(--navy-medium)] hover:bg-[#f8f9fb] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pink)] focus-visible:ring-offset-2"
+              className="inline-flex items-center px-4 py-2 text-[15px] font-bold text-[var(--pink)] border border-[var(--pink)] rounded-lg bg-white hover:bg-[#fce8f0] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pink)] focus-visible:ring-offset-2"
             >
               Login
             </Link>
