@@ -72,6 +72,9 @@
 - ✅ **2026-02-13 (Session 2):** Search enhancement design (expert panel review — multi-word AND, exact phrase, prefix). SR-005 V1.0 scope documented with edge cases. 3 V1.1 backlog items added. Search box performance: 6 improvements deployed (1-char trigger, leading-edge debounce 0ms+150ms, loading skeleton, aria-live, instant selection, 150ms filter debounce). Backend min_length 2→1. Perceived latency ~500ms → ~50ms.
 - ✅ **2026-02-13 (Session 3):** Homepage redesign — SaaS marketing team (7 experts, 2 briefs). Brief 1: 8 improvements implemented (section reorder, trust bar, Brawler headings, hero screenshot, conversion CTA, response time, scroll animations, outcome-first copy). Headline: "Waar gaat €1.700 miljard naartoe?" Features heading: "Het meest complete platform voor overheidsuitgaven." Contact form with CRM integration (Resend + Supabase). shadcn/ui primitives installed. 3 backlog items added. Brief 2 (out-of-the-box) discussion pending.
 - ✅ **Brief 2 discussion** — 5 out-of-the-box concepts documented at `02-requirements/homepage-brief2-out-of-the-box.md` (De Geldstroom, Probeer het zelf, Ontdekking van de Week, Geldkaart, Het Verschil). Awaiting prioritization.
+- ✅ **2026-02-13 (Session 4):** Typography system overhaul — dual-width IBM Plex family (Sans for public pages, Condensed for data pages). Replaced Brawler heading font. Login button restyled to match WordPress (pink outline + hover wash).
+- ✅ **2026-02-13 (Session 5):** Brief 2 prototype visualizations — 5 standalone pages (/h1-/h5) built in parallel. De Geldstroom (animated Sankey), Probeer het zelf (live search), Ontdekking van de Week (data stories carousel), Geldkaart (SVG Netherlands map), Het Verschil (scroll-driven before/after). All self-contained, zero dependencies, brand palette. Middleware updated to allow public access.
+- ⏳ **Brief 2 brainstorm** — founder reviews /h1-/h5 prototypes, decides which concepts to prioritize for V1.0/V1.1
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
@@ -97,20 +100,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/components/homepage/public-homepage.tsx** CREATED (2026-02-13)
-   Full public homepage: 7 sections, Brawler headings, trust bar, scroll animations, contact form
+1. **app/src/app/h1/page.tsx** through **h5/page.tsx** CREATED (2026-02-13)
+   Brief 2 prototype visualizations: De Geldstroom, Probeer het zelf, Ontdekking van de Week, Geldkaart, Het Verschil
 
-2. **app/src/app/globals.css** MODIFIED (2026-02-13)
-   Added scroll-reveal-scale, stagger-children, audience animations, CSS tooltips
+2. **app/src/middleware.ts** MODIFIED (2026-02-13)
+   Added h[1-5] to public route exclusions for prototype pages
 
 3. **app/src/app/layout.tsx** MODIFIED (2026-02-13)
-   Brawler font import, conditional header/footer for public pages
+   IBM Plex Sans replaces Brawler, dual-width font system
 
-4. **app/src/app/api/v1/contact/route.ts** CREATED (2026-02-13)
+4. **app/src/components/homepage/public-homepage.tsx** CREATED (2026-02-13)
+   Full public homepage: 7 sections, IBM Plex headings, trust bar, scroll animations, contact form
+
+5. **app/src/app/api/v1/contact/route.ts** CREATED (2026-02-13)
    Public demo request API with Resend email + Supabase contacts upsert
-
-5. **02-requirements/backlog.md** MODIFIED (2026-02-13)
-   3 homepage backlog items: interactive search demo, tab-based explorer, audience variants
 
 ---
 
@@ -894,7 +897,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-13 - **Homepage redesign (Brief 1: 8 improvements) + contact form CRM integration + shadcn/ui setup**
+**Last Session:** 2026-02-13 - **Typography overhaul (IBM Plex dual-width) + Brief 2 prototype visualizations (/h1-/h5)**
 
 **2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 
