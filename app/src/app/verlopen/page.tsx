@@ -33,7 +33,7 @@ export default function VerlopenPage() {
           </svg>
         </div>
 
-        <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
+        <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
           Abonnement verlopen
         </h1>
 

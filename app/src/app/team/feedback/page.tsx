@@ -493,8 +493,8 @@ export default function TeamFeedbackPage() {
   const doneCount = items.filter(i => i.status === 'afgewezen' || i.status === 'afgerond').length
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <h1 className="text-2xl font-bold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8" style={{ fontFamily: 'var(--font-condensed), sans-serif' }}>
+      <h1 className="text-2xl font-bold text-[var(--navy-dark)] mb-4">
         Team
       </h1>
       <TeamNav />

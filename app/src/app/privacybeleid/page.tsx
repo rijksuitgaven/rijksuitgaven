@@ -14,7 +14,7 @@ export default function PrivacybeleidPage() {
           <Link href="/" className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)] text-sm mb-4 inline-block">
             &larr; Terug naar home
           </Link>
-          <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
+          <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
             Privacybeleid
           </h1>
           <p className="text-[var(--muted-foreground)] mt-1 text-sm">
@@ -25,7 +25,7 @@ export default function PrivacybeleidPage() {
         <article className="prose prose-slate max-w-none">
           {/* Artikel 1 */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
               Artikel 1 - Algemeen
             </h2>
             <p className="text-[var(--foreground)] mb-3">
@@ -38,7 +38,7 @@ export default function PrivacybeleidPage() {
 
           {/* Artikel 2 */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
               Artikel 2 - Verzameling van persoonsgegevens
             </h2>
             <p className="text-[var(--foreground)] mb-3">
@@ -51,7 +51,7 @@ export default function PrivacybeleidPage() {
 
           {/* Artikel 3 */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
               Artikel 3 - Gebruik van persoonsgegevens
             </h2>
             <p className="text-[var(--foreground)] mb-3">
@@ -68,7 +68,7 @@ export default function PrivacybeleidPage() {
 
           {/* Artikel 4 */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
               Artikel 4 - Delen van persoonsgegevens
             </h2>
             <p className="text-[var(--foreground)] mb-3">
@@ -81,7 +81,7 @@ export default function PrivacybeleidPage() {
 
           {/* Artikel 5 */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
               Artikel 5 - Beveiliging van persoonsgegevens
             </h2>
             <p className="text-[var(--foreground)] mb-3">
@@ -97,7 +97,7 @@ export default function PrivacybeleidPage() {
 
           {/* Artikel 6 */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
               Artikel 6 - Bewaartermijnen
             </h2>
             <p className="text-[var(--foreground)] mb-3">
@@ -110,7 +110,7 @@ export default function PrivacybeleidPage() {
 
           {/* Artikel 7 */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
               Artikel 7 - Rechten van gebruikers
             </h2>
             <p className="text-[var(--foreground)] mb-3">
@@ -126,7 +126,7 @@ export default function PrivacybeleidPage() {
 
           {/* Artikel 8 - Cookies */}
           <section className="mb-10" id="artikel-8-cookies">
-            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
               Artikel 8 - Cookies
             </h2>
             <p className="text-[var(--foreground)] mb-3">
@@ -171,7 +171,7 @@ export default function PrivacybeleidPage() {
 
           {/* Artikel 9 */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
               Artikel 9 - Wijzigingen in het privacybeleid
             </h2>
             <p className="text-[var(--foreground)]">
@@ -181,7 +181,7 @@ export default function PrivacybeleidPage() {
 
           {/* Artikel 10 */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-4" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
               Artikel 10 - Contact
             </h2>
             <p className="text-[var(--foreground)] mb-3">

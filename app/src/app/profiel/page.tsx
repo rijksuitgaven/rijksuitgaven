@@ -34,8 +34,8 @@ export default function ProfielPage() {
     : null
 
   return (
-    <main className="min-h-[calc(100vh-theme(spacing.24)-theme(spacing.16))] max-w-2xl mx-auto px-4 py-12">
-      <h1 className="text-2xl font-bold text-[var(--navy-dark)] mb-8" style={{ fontFamily: 'var(--font-heading), serif' }}>
+    <main className="min-h-[calc(100vh-theme(spacing.24)-theme(spacing.16))] max-w-2xl mx-auto px-4 py-12" style={{ fontFamily: 'var(--font-condensed), sans-serif' }}>
+      <h1 className="text-2xl font-bold text-[var(--navy-dark)] mb-8">
         Profiel
       </h1>
 

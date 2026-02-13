@@ -1,7 +1,7 @@
 # Brand Identity - Rijksuitgaven.nl
 
 **Source:** `brand book.png`
-**Last Updated:** 2026-01-23
+**Last Updated:** 2026-02-13
 
 ---
 
@@ -15,22 +15,29 @@
 
 ## Typography
 
-### Headings & Logo
+### Public Pages & Module Hub — IBM Plex Sans
 
 | Weight | Font |
 |--------|------|
-| Regular | Brawler Regular |
-| Bold | Brawler Bold |
+| Regular (400) | IBM Plex Sans Regular |
+| Medium (500) | IBM Plex Sans Medium |
+| SemiBold (600) | IBM Plex Sans SemiBold |
+| Bold (700) | IBM Plex Sans Bold |
 
-### Body Text & UI
+**Usage:** Homepage, login, privacybeleid, verlopen, module hub (authenticated homepage). Regular width for marketing and navigation contexts.
+
+### Data Pages (Logged-in) — IBM Plex Sans Condensed
 
 | Weight | Font |
 |--------|------|
-| Regular | IBM Plex Sans Condensed Regular |
-| Medium | IBM Plex Sans Condensed Medium |
-| Bold | IBM Plex Sans Condensed Bold |
+| Regular (400) | IBM Plex Sans Condensed Regular |
+| Medium (500) | IBM Plex Sans Condensed Medium |
+| SemiBold (600) | IBM Plex Sans Condensed SemiBold |
+| Bold (700) | IBM Plex Sans Condensed Bold |
 
-**Note:** IBM Plex Sans Condensed is a Google Font (free). Brawler may require licensing.
+**Usage:** Module data tables, team admin pages, profiel, detail panel. Condensed width optimized for data-dense tables with 9 year-columns at 95px.
+
+**Note:** Both are Google Fonts (free). Same typeface family (IBM Plex), two widths — seamless visual transition between contexts. Changed from Libre Franklin on 2026-02-13 — Libre Franklin was too wide for data tables.
 
 ---
 
@@ -100,8 +107,9 @@
   --color-error: #E30101;
 
   /* Typography */
-  --font-heading: 'Brawler', serif;
-  --font-body: 'IBM Plex Sans Condensed', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;            /* weights 400-700, global default */
+  --font-heading: var(--font-body);                    /* same as body */
+  --font-condensed: 'IBM Plex Sans Condensed', sans-serif; /* weights 400-700, data pages */
 }
 ```
 

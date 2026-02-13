@@ -259,6 +259,7 @@ export function DetailPanel({
 
       {/* Panel */}
       <div
+        style={{ fontFamily: 'var(--font-condensed), sans-serif' }}
         className={cn(
           'fixed top-0 right-0 h-full bg-white shadow-xl z-50 flex flex-col',
           'w-full lg:w-1/2 xl:w-[500px]',
@@ -307,7 +308,6 @@ export function DetailPanel({
               <div>
                 <h2
                   className="text-xl font-bold text-[var(--navy-dark)]"
-                  style={{ fontFamily: 'var(--font-heading), serif' }}
                 >
                   {data.primary_value}
                 </h2>

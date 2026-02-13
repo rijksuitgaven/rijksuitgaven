@@ -84,9 +84,11 @@ export function ModulePage({ moduleId }: ModulePageProps) {
 
   return (
     <ErrorBoundary>
-      <Suspense fallback={<ModulePageSkeleton config={config} />}>
-        <ModulePageContent moduleId={moduleId} config={config} />
-      </Suspense>
+      <div style={{ fontFamily: 'var(--font-condensed), sans-serif' }}>
+        <Suspense fallback={<ModulePageSkeleton config={config} />}>
+          <ModulePageContent moduleId={moduleId} config={config} />
+        </Suspense>
+      </div>
     </ErrorBoundary>
   )
 }

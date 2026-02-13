@@ -25,7 +25,7 @@ export default async function LoginPage() {
     <main className="min-h-[calc(100vh-theme(spacing.24)-theme(spacing.16))] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
+          <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
             Inloggen
           </h1>
           <p className="mt-2 text-sm text-[var(--navy-medium)]">

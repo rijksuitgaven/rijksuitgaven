@@ -117,7 +117,7 @@ function HeroSection() {
     <section className="bg-white pt-16 md:pt-20 pb-12 md:pb-16">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
         <ScrollReveal>
-          <h2 className="text-[32px] md:text-[44px] lg:text-[54px] font-bold leading-[1.1] tracking-tight text-[var(--pink)]" style={{ fontFamily: 'var(--font-heading), serif', textWrap: 'balance' } as React.CSSProperties}>
+          <h2 className="text-[32px] md:text-[44px] lg:text-[54px] font-bold leading-[1.1] tracking-tight text-[var(--pink)]" style={{ fontFamily: 'var(--font-heading), sans-serif', textWrap: 'balance' } as React.CSSProperties}>
             Waar gaat €1.700 miljard naartoe?
           </h2>
         </ScrollReveal>
@@ -221,19 +221,19 @@ function TrustBar() {
         <ScrollReveal>
           <div className="flex flex-wrap justify-center gap-8 md:gap-14 py-6 border-y border-[var(--gray-light)]">
             <div className="text-center">
-              <p className="text-[26px] md:text-[32px] font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>&euro;1.700+&nbsp;mld</p>
+              <p className="text-[26px] md:text-[32px] font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>&euro;1.700+&nbsp;mld</p>
               <p className="text-[13px] uppercase tracking-wider text-[var(--navy-medium)] mt-1">aan uitgaven</p>
             </div>
             <div className="text-center">
-              <p className="text-[26px] md:text-[32px] font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>4.900+</p>
+              <p className="text-[26px] md:text-[32px] font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>4.900+</p>
               <p className="text-[13px] uppercase tracking-wider text-[var(--navy-medium)] mt-1">regelingen</p>
             </div>
             <div className="text-center">
-              <p className="text-[26px] md:text-[32px] font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>9</p>
+              <p className="text-[26px] md:text-[32px] font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>9</p>
               <p className="text-[13px] uppercase tracking-wider text-[var(--navy-medium)] mt-1">begrotingsjaren</p>
             </div>
             <div className="text-center">
-              <p className="text-[26px] md:text-[32px] font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>6</p>
+              <p className="text-[26px] md:text-[32px] font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>6</p>
               <p className="text-[13px] uppercase tracking-wider text-[var(--navy-medium)] mt-1">databronnen</p>
             </div>
           </div>
@@ -258,7 +258,7 @@ function B2GSection() {
             <span className="inline-block px-3 py-1 text-[13px] font-bold uppercase tracking-wider text-white bg-[var(--navy-dark)] rounded-md">
               Nieuwe dienst
             </span>
-            <h2 className="mt-5 text-[32px] md:text-[44px] lg:text-[54px] font-bold leading-[1.1] tracking-tight text-[var(--pink)]" style={{ fontFamily: 'var(--font-heading), serif', textWrap: 'balance' } as React.CSSProperties}>
+            <h2 className="mt-5 text-[32px] md:text-[44px] lg:text-[54px] font-bold leading-[1.1] tracking-tight text-[var(--pink)]" style={{ fontFamily: 'var(--font-heading), sans-serif', textWrap: 'balance' } as React.CSSProperties}>
               Rijksuitgaven voor Overheden
             </h2>
             <p className="mt-5 text-[22px] md:text-[24px] leading-[1.4] text-[var(--navy-dark)]">
@@ -459,7 +459,7 @@ function AudienceSection() {
             <h3
               key={`title-${active}`}
               className="text-[20px] md:text-[24px] font-bold leading-[1.2] text-[var(--navy-dark)] tracking-tight"
-              style={{ fontFamily: 'var(--font-heading), serif', animation: 'audienceFadeIn 350ms ease-out' }}
+              style={{ fontFamily: 'var(--font-heading), sans-serif', animation: 'audienceFadeIn 350ms ease-out' }}
             >
               {audiences[active].title}
             </h3>
@@ -509,12 +509,12 @@ function FeaturesSection() {
     <section id="features" className="bg-gradient-to-b from-[#f8f9fb] from-[30%] to-[#eef2f7] pt-16 md:pt-20 pb-16 md:pb-24">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
         <ScrollReveal>
-          <p className="text-[28px] md:text-[38px] lg:text-[46px] text-[var(--pink)] font-bold leading-[1.1] tracking-tight" style={{ fontFamily: 'var(--font-heading), serif', textWrap: 'balance' } as React.CSSProperties}>
+          <p className="text-[28px] md:text-[38px] lg:text-[46px] text-[var(--pink)] font-bold leading-[1.1] tracking-tight" style={{ fontFamily: 'var(--font-heading), sans-serif', textWrap: 'balance' } as React.CSSProperties}>
             Het meest complete platform voor overheidsuitgaven
           </p>
         </ScrollReveal>
         <ScrollReveal>
-          <h2 className="mt-4 text-[20px] md:text-[24px] font-bold leading-[1.3] text-[var(--navy-dark)] max-w-[680px]" style={{ fontFamily: 'var(--font-heading), serif' }}>
+          <h2 className="mt-4 text-[20px] md:text-[24px] font-bold leading-[1.3] text-[var(--navy-dark)] max-w-[680px]" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
             Alles doorzoekbaar en vergelijkbaar.
           </h2>
         </ScrollReveal>
@@ -591,7 +591,7 @@ function FeaturesSection() {
         {/* Conversion CTA — peak interest moment after seeing all features */}
         <ScrollReveal>
           <div className="mt-12 bg-white rounded-xl p-8 md:p-10 text-center shadow-[0_0_40px_rgba(14,50,97,0.06),0_1px_3px_rgba(14,50,97,0.08)]">
-            <p className="text-[22px] md:text-[26px] font-bold leading-[1.3] text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            <p className="text-[22px] md:text-[26px] font-bold leading-[1.3] text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
               463.000+ ontvangers doorzoekbaar in 6 databronnen
             </p>
             <p className="mt-2 text-[16px] leading-[1.6] text-[var(--navy-dark)]/70">
@@ -668,7 +668,7 @@ function SubscriptionSection() {
     <section className="bg-gradient-to-b from-[#eef2f7] to-white pt-12 md:pt-16 pb-16 md:pb-24">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
         <ScrollReveal>
-          <h2 className="text-[28px] md:text-[38px] lg:text-[46px] font-bold leading-[1.1] tracking-tight text-[var(--pink)]" style={{ fontFamily: 'var(--font-heading), serif', textWrap: 'balance' } as React.CSSProperties}>
+          <h2 className="text-[28px] md:text-[38px] lg:text-[46px] font-bold leading-[1.1] tracking-tight text-[var(--pink)]" style={{ fontFamily: 'var(--font-heading), sans-serif', textWrap: 'balance' } as React.CSSProperties}>
             Onze abonnementen
           </h2>
         </ScrollReveal>
@@ -677,7 +677,7 @@ function SubscriptionSection() {
         <ScrollReveal>
           <div className="mt-8 md:mt-10 overflow-hidden rounded-xl shadow-[0_0_40px_rgba(14,50,97,0.06),0_1px_3px_rgba(14,50,97,0.08)]">
             <div className="bg-[var(--navy-dark)] px-6 py-3.5">
-              <h3 className="text-[22px] font-bold leading-[1.5] text-white text-center" style={{ fontFamily: 'var(--font-heading), serif' }}>
+              <h3 className="text-[22px] font-bold leading-[1.5] text-white text-center" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
                 Professioneel
               </h3>
             </div>
@@ -751,7 +751,7 @@ function SubscriptionSection() {
         {/* Op maat */}
         <ScrollReveal>
           <div className="mt-5 bg-[var(--navy-dark)] rounded-xl p-6 md:p-8 overflow-hidden shadow-[0_20px_60px_rgba(14,50,97,0.3)]" style={{ backgroundImage: 'url(/icons/wave-menu.webp)', backgroundSize: '53%', backgroundPosition: 'left bottom', backgroundRepeat: 'no-repeat' }}>
-            <h3 className="text-[22px] font-bold leading-[1.4] text-white" style={{ fontFamily: 'var(--font-heading), serif' }}>
+            <h3 className="text-[22px] font-bold leading-[1.4] text-white" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
               Op maat
             </h3>
             <p className="mt-2 text-[15px] leading-[1.7] text-white/85">
@@ -834,7 +834,7 @@ function ContactSection() {
           {/* Left: text */}
           <ScrollReveal>
             <div>
-              <h2 className="text-[30px] md:text-[36px] font-bold leading-[1.3] text-white" style={{ fontFamily: 'var(--font-heading), serif', textWrap: 'balance' } as React.CSSProperties}>
+              <h2 className="text-[30px] md:text-[36px] font-bold leading-[1.3] text-white" style={{ fontFamily: 'var(--font-heading), sans-serif', textWrap: 'balance' } as React.CSSProperties}>
                 Interesse? Vraag meteen een demo aan
               </h2>
               <p className="mt-5 text-[18px] md:text-[20px] leading-[1.6] text-white/90">

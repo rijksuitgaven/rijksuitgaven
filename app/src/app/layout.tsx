@@ -1,22 +1,22 @@
 import type { Metadata } from "next";
-import { Libre_Franklin, Brawler } from "next/font/google";
+import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { CookieBanner } from "@/components/cookie-banner";
 import { AppShell } from "@/components/app-shell/app-shell";
 import { Footer } from "@/components/footer";
 import "./globals.css";
 
-// Body text - Libre Franklin (matches WordPress)
-const libreFranklin = Libre_Franklin({
+// Default body & headings — IBM Plex Sans (public pages, module hub)
+const ibmPlexSans = IBM_Plex_Sans({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
 });
 
-// Headings - Brawler (serif)
-const brawler = Brawler({
-  variable: "--font-heading",
+// Data-dense pages — IBM Plex Sans Condensed (modules, team, profiel)
+const ibmPlexSansCondensed = IBM_Plex_Sans_Condensed({
+  variable: "--font-condensed",
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -42,7 +42,7 @@ export default function RootLayout({
   return (
     <html lang="nl">
       <body
-        className={`${libreFranklin.variable} ${brawler.variable}`}
+        className={`${ibmPlexSans.variable} ${ibmPlexSansCondensed.variable}`}
         style={{ fontFamily: "var(--font-body), sans-serif" }}
       >
         <AppShell>
