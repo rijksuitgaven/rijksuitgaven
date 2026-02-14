@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
+import { AlertTriangle } from 'lucide-react'
 
 interface Member {
   id: string
@@ -44,6 +45,7 @@ export default function TeamDashboardPage() {
   const { role, loading: subLoading } = useSubscription()
   const [members, setMembers] = useState<Member[]>([])
   const [feedbackStats, setFeedbackStats] = useState<{ nieuw: number; bug: number; suggestie: number; vraag: number }>({ nieuw: 0, bug: 0, suggestie: 0, vraag: 0 })
+  const [errors, setErrors] = useState<{ module: string; message: string; created_at: string }[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -51,7 +53,8 @@ export default function TeamDashboardPage() {
       Promise.all([
         fetch('/api/v1/team/leden').then(res => res.json()),
         fetch('/api/v1/team/feedback').then(res => res.json()),
-      ]).then(([ledenData, feedbackData]) => {
+        fetch('/api/v1/team/statistieken?days=7').then(res => res.json()).catch(() => null),
+      ]).then(([ledenData, feedbackData, statsData]) => {
         if (ledenData.members) setMembers(ledenData.members)
         if (feedbackData.items) {
           const items = feedbackData.items as { status: string; category: string }[]
@@ -63,6 +66,7 @@ export default function TeamDashboardPage() {
             vraag: open.filter(i => i.category === 'vraag').length,
           })
         }
+        if (statsData?.errors) setErrors(statsData.errors)
       }).finally(() => setLoading(false))
     } else if (!subLoading) {
       setLoading(false)
@@ -112,6 +116,26 @@ export default function TeamDashboardPage() {
       <TeamNav />
 
       <div className="space-y-6">
+        {/* Errors alert */}
+        {errors.length > 0 && (
+          <Link href="/team/statistieken" className="block">
+            <div className="bg-red-50 border border-red-200 rounded-lg px-5 py-4 hover:bg-red-100/60 transition-colors">
+              <div className="flex items-center gap-2.5">
+                <AlertTriangle className="w-5 h-5 text-red-500 shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-red-700">
+                    {errors.length} {errors.length === 1 ? 'fout' : 'fouten'} in de afgelopen 7 dagen
+                  </p>
+                  <p className="text-xs text-red-600 mt-0.5">
+                    {[...new Set(errors.map(e => e.module))].filter(Boolean).join(', ') || 'Diverse modules'}
+                    {' — '}bekijk in Statistieken
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Link>
+        )}
+
         {/* Leden section */}
         <div className="bg-white border border-[var(--border)] rounded-lg">
           {/* Section header */}
