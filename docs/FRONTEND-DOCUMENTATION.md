@@ -780,9 +780,10 @@ Client-side analytics event batching hook with pseudonymized tracking.
 }
 ```
 
-**Event Types (12):**
+**Event Types (13):**
 - Core (module-page): `module_view`, `search`, `row_expand`, `filter_apply`, `export`, `column_change`, `sort_change`, `page_change`, `cross_module_nav`, `error`
 - Search bar: `autocomplete_search`, `autocomplete_click`
+- External: `external_link` (Google search clicks in data-table + detail-panel)
 
 **Batching Behavior:**
 - Events queue in module-level array (shared across all hook instances)
@@ -1054,4 +1055,6 @@ npm run build
 | 2026-02-14 | UX-032 V2 final: Error event type (12th), immediate error flush, BFF whitelist fix (6→12 types), year sort fix, errors section card redesign, DELETE endpoint for clearing errors, migration 040 |
 | 2026-02-14 | Error message UX: universal "Er is iets misgegaan", shared ErrorReport component, "Fout melden" → countdown → router.back(), no English leaks |
 | 2026-02-14 | Error trigger tracking: `lastTrigger` ref in module-page, "Actie" pill in dashboard |
+| 2026-02-14 | Comprehensive error tracking: 7 components instrumented (expanded-row, detail-panel, filter-panel, search-bar, feedback, login, homepage) |
+| 2026-02-14 | Complete UI event tracking: 9 tracking points, `external_link` event type (13th), 404/react_render error tracking, autocomplete selections, detail-panel export/nav |
 | 2026-02-14 | Comprehensive error tracking: 7 components instrumented (expanded-row, detail-panel, filter-panel, search-bar, feedback-button, login-form, public-homepage). 7 new trigger labels in dashboard |

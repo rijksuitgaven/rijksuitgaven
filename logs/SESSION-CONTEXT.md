@@ -82,6 +82,7 @@
 - ✅ **2026-02-14 (Session 6):** UX-032 COMPLETE — Error tracking + errors section redesign. Added `error` as 12th event type with immediate flush. Fixed BFF VALID_EVENT_TYPES whitelist (6→12 types — sendBeacon silently swallowed 400 rejections). Fixed year column sort crash (`year-2024`→`y2024` transform). Migration 040 (get_usage_errors). Errors section redesigned from sparse table to stacked cards (/frontend-design review). DELETE endpoint for clearing errors. **UX-032 marked complete (post-V1.0).**
 - ✅ **2026-02-14 (Session 7):** Error message UX overhaul — expert panel (5 specialists). Universal "Er is iets misgegaan" message (industry standard). Fixed English error leaks from `lib/api.ts`. Shared `ErrorReport` component: "Fout melden" → "✓ Fout is gemeld" → countdown 3-2-1 → `router.back()`. Three-tier error model (silent/inline/page). Error trigger tracking: `lastTrigger` ref captures what user action caused the error, dashboard "Actie" pill shows Dutch labels.
 - ✅ **2026-02-14 (Session 8):** Comprehensive error tracking — audit found only 1 of 35 catch blocks tracked errors (97% blind). Added `track('error', ...)` to 7 critical components: expanded-row, detail-panel, filter-panel (2 catch blocks), search-bar, feedback-button, login-form (3 error paths), public-homepage (2 error paths). Dashboard updated with 7 new Dutch trigger labels. All errors now report with trigger context (row_expand, detail_panel, filter_load, autocomplete, feedback_submit, login, contact_form).
+- ✅ **2026-02-14 (Session 9):** Complete UI event tracking — exhaustive audit found ~75 untracked actions. Expert team scoped to 9 tracking points. New `external_link` event type (13th) for "Zoek op Google" clicks. Tracked: detail-panel CSV export + cross-module nav, cross-module-results links, filter-panel autocomplete selections (3 handlers), 404 page views, React render crashes (direct sendBeacon in class component), grouping counts errors. Dashboard: "Externe links" pulse card + formatEventLine + trigger labels (404, react_render) + path pill. Homepage analytics deferred to V1.1 backlog.
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
@@ -108,11 +109,11 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **7 components** MODIFIED (2026-02-14)
-   Comprehensive error tracking: expanded-row, detail-panel, filter-panel, search-bar, feedback-button, login-form, public-homepage — all now report errors to analytics with trigger context.
+1. **11 files** MODIFIED (2026-02-14 Session 9)
+   Complete UI event tracking: `external_link` type added, 9 tracking points across data-table, detail-panel, expanded-row, filter-panel, cross-module-results, not-found, error-boundary, statistieken. Dashboard: "Externe links" pulse card.
 
-2. **app/src/app/team/statistieken/page.tsx** MODIFIED (2026-02-14)
-   Dashboard V2 + errors section card redesign + 7 new trigger labels for comprehensive error tracking.
+2. **02-requirements/backlog.md** MODIFIED (2026-02-14)
+   Added "Homepage Analytics Tracking" V1.1 backlog item (deferred from UX-032 scope).
 
 3. **app/src/components/error-boundary/error-report.tsx** CREATED (2026-02-14)
    Shared ErrorReport component — "Fout melden" → countdown → router.back().
