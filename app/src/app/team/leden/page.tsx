@@ -5,6 +5,7 @@ import { useSubscription } from '@/hooks/use-subscription'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
+import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react'
 
 interface Member {
   id: string
@@ -459,7 +460,8 @@ export default function TeamLedenPage() {
   const [error, setError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [editingMember, setEditingMember] = useState<Member | null>(null)
-  const [sortBy, setSortBy] = useState<'last_active_at' | 'end_date' | null>(null)
+  type SortField = 'name' | 'organization' | 'email' | 'plan' | 'status' | 'last_active_at' | 'end_date'
+  const [sortBy, setSortBy] = useState<SortField | null>(null)
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
 
   useEffect(() => {
@@ -512,21 +514,58 @@ export default function TeamLedenPage() {
     )
   }
 
-  function toggleSort(col: 'last_active_at' | 'end_date') {
+  function toggleSort(col: SortField) {
     if (sortBy === col) {
       setSortDir(prev => prev === 'desc' ? 'asc' : 'desc')
     } else {
       setSortBy(col)
-      setSortDir('desc')
+      setSortDir('asc')
     }
+  }
+
+  function SortIcon({ field }: { field: SortField }) {
+    if (sortBy !== field) return <ChevronsUpDown className="h-3 w-3 opacity-40" />
+    return sortDir === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
   }
 
   const sortedMembers = [...members].sort((a, b) => {
     if (!sortBy) return 0
-    const aVal = a[sortBy] ?? ''
-    const bVal = b[sortBy] ?? ''
-    const cmp = aVal < bVal ? -1 : aVal > bVal ? 1 : 0
-    return sortDir === 'desc' ? -cmp : cmp
+    let aVal: string
+    let bVal: string
+    switch (sortBy) {
+      case 'name':
+        aVal = `${a.first_name} ${a.last_name}`.toLowerCase()
+        bVal = `${b.first_name} ${b.last_name}`.toLowerCase()
+        break
+      case 'organization':
+        aVal = (a.organization || '').toLowerCase()
+        bVal = (b.organization || '').toLowerCase()
+        break
+      case 'email':
+        aVal = a.email.toLowerCase()
+        bVal = b.email.toLowerCase()
+        break
+      case 'plan':
+        aVal = a.plan
+        bVal = b.plan
+        break
+      case 'status':
+        aVal = computeStatus(a)
+        bVal = computeStatus(b)
+        break
+      case 'last_active_at':
+        aVal = a.last_active_at ?? ''
+        bVal = b.last_active_at ?? ''
+        break
+      case 'end_date':
+        aVal = a.end_date
+        bVal = b.end_date
+        break
+      default:
+        return 0
+    }
+    const cmp = aVal.localeCompare(bVal)
+    return sortDir === 'asc' ? cmp : -cmp
   })
 
   const counts = {
@@ -584,23 +623,11 @@ export default function TeamLedenPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-[var(--border)]">
-                <th className="text-left px-4 py-3 font-medium text-[var(--navy-medium)]">Naam</th>
-                <th className="text-left px-4 py-3 font-medium text-[var(--navy-medium)]">Organisatie</th>
-                <th className="text-left px-4 py-3 font-medium text-[var(--navy-medium)]">E-mail</th>
-                <th className="text-left px-4 py-3 font-medium text-[var(--navy-medium)]">Plan</th>
-                <th className="text-left px-4 py-3 font-medium text-[var(--navy-medium)]">Status</th>
-                <th
-                  className="text-left px-4 py-3 font-medium text-[var(--navy-medium)] cursor-pointer select-none hover:text-[var(--navy-dark)]"
-                  onClick={() => toggleSort('last_active_at')}
-                >
-                  Laatst actief {sortBy === 'last_active_at' ? (sortDir === 'desc' ? '↓' : '↑') : ''}
-                </th>
-                <th
-                  className="text-left px-4 py-3 font-medium text-[var(--navy-medium)] cursor-pointer select-none hover:text-[var(--navy-dark)]"
-                  onClick={() => toggleSort('end_date')}
-                >
-                  Einddatum {sortBy === 'end_date' ? (sortDir === 'desc' ? '↓' : '↑') : ''}
-                </th>
+                {([['name', 'Naam'], ['organization', 'Organisatie'], ['email', 'E-mail'], ['plan', 'Plan'], ['status', 'Status'], ['last_active_at', 'Laatst actief'], ['end_date', 'Einddatum']] as [SortField, string][]).map(([field, label]) => (
+                  <th key={field} onClick={() => toggleSort(field)} className="text-left px-4 py-3 font-medium text-[var(--navy-medium)] cursor-pointer select-none hover:text-[var(--navy-dark)]">
+                    <span className="inline-flex items-center gap-1">{label} <SortIcon field={field} /></span>
+                  </th>
+                ))}
                 <th className="px-4 py-3"><span className="sr-only">Acties</span></th>
               </tr>
             </thead>

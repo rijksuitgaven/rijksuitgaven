@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
+import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react'
 
 interface Contact {
   id: string
@@ -60,10 +61,14 @@ function SortableHeader({ label, field, sortField, sortDir, onSort }: {
       onClick={() => onSort(field)}
       className="text-left px-4 py-3 font-medium text-[var(--navy-medium)] cursor-pointer hover:text-[var(--navy-dark)] select-none"
     >
-      {label}
-      {isActive && (
-        <span className="ml-1 text-xs">{sortDir === 'asc' ? '▲' : '▼'}</span>
-      )}
+      <span className="inline-flex items-center gap-1">
+        {label}
+        {isActive ? (
+          sortDir === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
+        ) : (
+          <ChevronsUpDown className="h-3 w-3 opacity-40" />
+        )}
+      </span>
     </th>
   )
 }
