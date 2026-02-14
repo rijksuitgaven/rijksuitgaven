@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { X, ExternalLink, Download, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
+import { ErrorReport } from '@/components/error-boundary'
 import { cn } from '@/lib/utils'
 import { formatAmount } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
@@ -164,7 +165,8 @@ export function DetailPanel({
         if (error instanceof Error && error.name === 'AbortError') {
           return
         }
-        setError('Kon gegevens niet laden')
+        console.error('[DetailPanel]', error instanceof Error ? error.message : error)
+        setError('Gegevens konden niet worden geladen')
       } finally {
         if (!abortController.signal.aborted) {
           setIsLoading(false)
@@ -291,14 +293,8 @@ export function DetailPanel({
           )}
 
           {error && (
-            <div className="flex flex-col items-center justify-center h-64 text-center px-6">
-              <p className="text-[var(--error)] mb-4">{error}</p>
-              <button
-                onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-[var(--navy-dark)] text-white rounded-lg hover:bg-[var(--navy-medium)] transition-colors"
-              >
-                Opnieuw proberen
-              </button>
+            <div className="flex items-center justify-center h-64 px-6">
+              <ErrorReport message={error} />
             </div>
           )}
 

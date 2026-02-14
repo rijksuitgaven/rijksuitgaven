@@ -269,7 +269,7 @@ function MultiSelect({ module, field, label, value, onChange, isCascading = fals
           { signal: abortController.signal }
         )
         if (!response.ok) {
-          setError('Opties laden mislukt')
+          setError('Filteropties niet beschikbaar')
           return
         }
         const data = await response.json()
@@ -280,7 +280,7 @@ function MultiSelect({ module, field, label, value, onChange, isCascading = fals
         if (err instanceof Error && err.name === 'AbortError') {
           return
         }
-        setError('Opties laden mislukt')
+        setError('Filteropties niet beschikbaar')
       } finally {
         if (!abortController.signal.aborted) {
           setIsLoading(false)
@@ -466,7 +466,7 @@ function MultiSelect({ module, field, label, value, onChange, isCascading = fals
                   }}
                   className="block mx-auto mt-2 text-xs text-[var(--navy-medium)] hover:underline"
                 >
-                  Opnieuw proberen
+                  Opnieuw
                 </button>
               </div>
             ) : filteredOptions.length === 0 ? (

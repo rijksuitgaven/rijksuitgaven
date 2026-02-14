@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { DataTable, ExpandedRow } from '@/components/data-table'
 import { FilterPanel, type FilterValues } from '@/components/filter-panel'
 import { CrossModuleResults } from '@/components/cross-module-results'
-import { ErrorBoundary } from '@/components/error-boundary'
+import { ErrorBoundary, ErrorReport } from '@/components/error-boundary'
 import { fetchModuleData } from '@/lib/api'
 import { getStoredColumns, getDefaultColumns } from '@/components/column-selector'
 import { useAnalytics } from '@/hooks/use-analytics'
@@ -329,10 +329,11 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
         if (err instanceof Error && err.name === 'AbortError') {
           return
         }
-        const errorMsg = err instanceof Error ? err.message : 'Er ging iets mis'
-        setError(errorMsg)
+        const internalMsg = err instanceof Error ? err.message : String(err)
+        console.error('[Module]', internalMsg)
+        setError('De gegevens konden niet worden geladen')
         track('error', moduleId, {
-          message: errorMsg,
+          message: internalMsg,
           search_query: filters.search || undefined,
           sort_by: sortBy,
           has_filters: !isDefaultView,
@@ -445,16 +446,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[var(--gray-light)] to-white flex items-center justify-center">
-        <div className="text-center bg-white rounded-lg border border-[var(--border)] p-8 shadow-sm">
-          <p className="text-lg font-medium text-[var(--error)]">Er ging iets mis</p>
-          <p className="text-sm text-[var(--muted-foreground)] mt-2">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-[var(--pink)] text-white rounded hover:opacity-90 transition-opacity"
-          >
-            Opnieuw proberen
-          </button>
-        </div>
+        <ErrorReport message={error} />
       </div>
     )
   }

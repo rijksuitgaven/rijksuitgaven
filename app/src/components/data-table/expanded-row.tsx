@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, Fragment } from 'react'
 import { Check, ChevronDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
+import { ErrorReport } from '@/components/error-boundary'
 import { cn } from '@/lib/utils'
 import { formatAmount, getAmountFontClass } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
@@ -247,7 +248,8 @@ export function ExpandedRow({
         if (err instanceof Error && err.name === 'AbortError') {
           return
         }
-        setError(err instanceof Error ? err.message : 'Er ging iets mis')
+        console.error('[ExpandedRow]', err instanceof Error ? err.message : err)
+        setError('Details konden niet worden geladen')
       } finally {
         if (!abortController.signal.aborted) {
           setIsLoading(false)
@@ -281,7 +283,7 @@ export function ExpandedRow({
     return (
       <tr className="bg-[var(--gray-light)]">
         <td colSpan={contentColSpan + (collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
-          <div className="text-sm text-[var(--error)]">{error}</div>
+          <ErrorReport message={error} variant="inline" />
         </td>
       </tr>
     )

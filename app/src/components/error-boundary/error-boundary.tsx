@@ -1,7 +1,7 @@
 'use client'
 
 import { Component, type ReactNode, type ErrorInfo } from 'react'
-import { AlertTriangle } from 'lucide-react'
+import { ErrorReport } from './error-report'
 
 interface ErrorBoundaryProps {
   children: ReactNode
@@ -58,28 +58,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       // Default error UI
       return (
         <div className="flex flex-col items-center justify-center min-h-[200px] p-6 bg-[var(--gray-light)] rounded-lg">
-          <AlertTriangle className="h-12 w-12 text-[var(--warning)] mb-4" />
-          <h2 className="text-lg font-semibold text-[var(--navy-dark)] mb-2">
-            Er is iets misgegaan
-          </h2>
-          <p className="text-sm text-[var(--muted-foreground)] text-center mb-4 max-w-md">
-            Er is een fout opgetreden bij het laden van deze sectie.
-            Probeer de pagina te vernieuwen of neem contact op met support als het probleem aanhoudt.
-          </p>
-          <div className="flex gap-3">
-            <button
-              onClick={this.handleRetry}
-              className="px-4 py-2 text-sm font-medium bg-[var(--navy-dark)] text-white rounded-lg hover:bg-[var(--navy-medium)] transition-colors"
-            >
-              Opnieuw proberen
-            </button>
-            <button
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 text-sm font-medium border border-[var(--border)] rounded-lg hover:bg-white transition-colors"
-            >
-              Pagina vernieuwen
-            </button>
-          </div>
+          <ErrorReport message="Er is een fout opgetreden bij het laden van deze sectie." />
           {process.env.NODE_ENV === 'development' && this.state.error && (
             <details className="mt-4 w-full max-w-lg">
               <summary className="text-xs text-[var(--muted-foreground)] cursor-pointer">
