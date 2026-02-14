@@ -1,8 +1,8 @@
 # Session Context
 
-**Last Updated:** 2026-02-13
+**Last Updated:** 2026-02-14
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 7 - Pre-Launch Tasks (contacts COMPLETE, search box perf COMPLETE, search syntax design COMPLETE — implementation pending user review, user migration remaining)
+**Current Sprint:** Week 7 - Pre-Launch Tasks (contacts COMPLETE, search box perf COMPLETE, search syntax design COMPLETE — implementation pending user review, De Geldstroom COMPLETE, user migration remaining)
 
 ---
 
@@ -74,7 +74,10 @@
 - ✅ **Brief 2 discussion** — 5 out-of-the-box concepts documented at `02-requirements/homepage-brief2-out-of-the-box.md` (De Geldstroom, Probeer het zelf, Ontdekking van de Week, Geldkaart, Het Verschil). Awaiting prioritization.
 - ✅ **2026-02-13 (Session 4):** Typography system overhaul — dual-width IBM Plex family (Sans for public pages, Condensed for data pages). Replaced Brawler heading font. Login button restyled to match WordPress (pink outline + hover wash).
 - ✅ **2026-02-13 (Session 5):** Brief 2 prototype visualizations — 5 standalone pages (/h1-/h5) built in parallel. De Geldstroom (animated Sankey), Probeer het zelf (live search), Ontdekking van de Week (data stories carousel), Geldkaart (SVG Netherlands map), Het Verschil (scroll-driven before/after). All self-contained, zero dependencies, brand palette. Middleware updated to allow public access.
-- ⏳ **Brief 2 brainstorm** — founder reviews /h1-/h5 prototypes, decides which concepts to prioritize for V1.0/V1.1
+- ✅ **2026-02-14 (Session 1):** De Geldstroom design sprint — 6-person expert team brainstorm (11 rounds) to design dynamic Sankey hero visualization for homepage. Validated all 6 module stories against real production data. Key finding: COA spending 6.6× increase (€0.56→€3.72 mld, 2018-2024). Decision: 6 selectable stories with year slider, build-time static data (no public API). Full design document: `docs/plans/2026-02-14-de-geldstroom-design.md`.
+- ✅ **2026-02-14 (Session 2):** De Geldstroom implementation — UX-030. Build-time data script (`app/scripts/generate-geldstroom-data.mjs`) queries Supabase for 6 stories × 7 years (2018-2024), outputs `geldstroom.json` (60.3 KB). Complete refactor of `/h1/page.tsx`: 6 story tabs, year selector pills, dynamic headline ("Waar ging €X miljard naartoe in [year]?"), proportional flow thickness, weighted particle animation, `prefers-reduced-motion` accessibility, ARIA labels, keyboard navigation. Ministry name normalization (I&W, J&V). Package.json updated with `pg` dep + prebuild script. Data note: COA/inkoop amounts are average staffelbedragen — attribution text deferred.
+- ✅ **2026-02-14 (Session 3):** Ontdekking van de Week — UX-031. 6-person expert team brainstorm (Data Journalist, Creative Strategist, Data Analyst, Adversarial Editor, UX Writer, Info Architect). Fact-checked 3 prototype claims (all wrong/fabricated). Mined production Supabase with 20+ SQL queries. 23 verified discoveries across 6 categories (Energy, Asylum, IT/Procurement, Regional, Culture, System-wide). Social sharing: LinkedIn + X + Bluesky. Fisher-Yates shuffle for random rotation per visit. Hardcoded JSON (Option A — editorial quality over automation). Comparison rules: same module, same years, no cross-module.
+- ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
@@ -100,20 +103,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/app/h1/page.tsx** through **h5/page.tsx** CREATED (2026-02-13)
-   Brief 2 prototype visualizations: De Geldstroom, Probeer het zelf, Ontdekking van de Week, Geldkaart, Het Verschil
+1. **app/src/app/h3/page.tsx** REWRITTEN (2026-02-14)
+   23 verified discoveries (was 3 fabricated), Fisher-Yates shuffle, LinkedIn + X + Bluesky share buttons.
 
-2. **app/src/middleware.ts** MODIFIED (2026-02-13)
-   Added h[1-5] to public route exclusions for prototype pages
+2. **app/src/app/h1/page.tsx** REWRITTEN (2026-02-14)
+   Complete refactor: static prototype → dynamic data from JSON import. 6 story tabs, year selector, proportional flows, weighted particles, accessibility.
 
-3. **app/src/app/layout.tsx** MODIFIED (2026-02-13)
-   IBM Plex Sans replaces Brawler, dual-width font system
+3. **app/scripts/generate-geldstroom-data.mjs** CREATED (2026-02-14)
+   Build-time data generator — queries Supabase for 6 stories × 7 years (2018-2024), outputs geldstroom.json.
 
-4. **app/src/components/homepage/public-homepage.tsx** CREATED (2026-02-13)
-   Full public homepage: 7 sections, IBM Plex headings, trust bar, scroll animations, contact form
+4. **app/src/data/geldstroom.json** GENERATED (2026-02-14)
+   60.3 KB — 6 stories (integraal, publiek, instrumenten, inkoop, gemeente, provincie), real government flow data.
 
-5. **app/src/app/api/v1/contact/route.ts** CREATED (2026-02-13)
-   Public demo request API with Resend email + Supabase contacts upsert
+5. **docs/plans/2026-02-14-de-geldstroom-design.md** CREATED (2026-02-14)
+   Full design document from 11-round team brainstorm — 6 stories, real data, decisions, architecture, risks (~500 lines).
 
 ---
 

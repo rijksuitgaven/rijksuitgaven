@@ -1,19 +1,17 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 
 /* ------------------------------------------------------------------ */
-/*  Data                                                               */
+/*  Data — 23 verified discoveries (production Supabase, 2026-02-14)  */
 /* ------------------------------------------------------------------ */
 
 interface Discovery {
-  /** Numeric target for count-up animation (in euros, no formatting) */
+  /** Numeric target for count-up animation */
   target: number
-  /** Pre-formatted display string — shown after count-up finishes */
-  display: string
-  /** Unit prefix, e.g. "\u20AC" */
+  /** Unit prefix, e.g. "€" */
   prefix: string
-  /** Unit suffix, e.g. "miljoen" */
+  /** Unit suffix, e.g. "miljard" */
   suffix: string
   /** One bold editorial sentence */
   insight: string
@@ -24,37 +22,238 @@ interface Discovery {
 }
 
 const discoveries: Discovery[] = [
+  // — Energy & Infrastructure —
   {
-    target: 342,
-    display: '342',
-    prefix: '\u20AC',
-    suffix: 'miljoen',
-    insight:
-      'De Politieacademie ontving \u20AC342 miljoen \u2014 meer dan 12 provincies samen.',
-    source: 'Bron: Financi\u00EBle Instrumenten, 2016\u20132024',
-    module: 'instrumenten',
-  },
-  {
-    target: 47,
-    display: '47',
-    prefix: '\u20AC',
-    suffix: 'miljoen',
-    insight:
-      'Het Rijk besteedde \u20AC47 miljoen aan wolvenbeheer \u2014 meer dan aan sommige nationale musea.',
-    source: 'Bron: Financi\u00EBle Instrumenten, 2016\u20132024',
-    module: 'instrumenten',
-  },
-  {
-    target: 2.1,
-    display: '2,1',
+    target: 13.1,
     prefix: '\u20AC',
     suffix: 'miljard',
     insight:
-      'De gemeente Rotterdam ontving meer dan 47 andere gemeenten samen.',
-    source: 'Bron: Gemeente-uitkeringen, 2016\u20132024',
+      'TenneT Holding ontving \u20AC13,1 miljard in 2024 voor het stroomnet \u2014 8\u00D7 meer dan een jaar eerder.',
+    source: 'Bron: Financi\u00EBle Instrumenten, 2024',
+    module: 'instrumenten',
+  },
+  {
+    target: 17,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      'TenneT ontving in totaal \u20AC17 miljard via financi\u00EBle instrumenten \u2014 waarvan \u20AC13 miljard alleen in 2024.',
+    source: 'Bron: Financi\u00EBle Instrumenten, 2018\u20132024',
+    module: 'instrumenten',
+  },
+  {
+    target: 8.7,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      'ProRail ontving \u20AC8,7 miljard via financi\u00EBle instrumenten \u2014 voor het beheer van het Nederlandse spoornetwerk.',
+    source: 'Bron: Financi\u00EBle Instrumenten, 2018\u20132024',
+    module: 'instrumenten',
+  },
+  {
+    target: 2.2,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      'NS Reizigers ontving \u20AC2,2 miljard via financi\u00EBle instrumenten \u2014 los van wat ProRail ontving voor het spoor.',
+    source: 'Bron: Financi\u00EBle Instrumenten, 2018\u20132024',
+    module: 'instrumenten',
+  },
+
+  // — Asylum & Migration —
+  {
+    target: 6.7,
+    prefix: '',
+    suffix: '\u00D7',
+    insight:
+      'De uitgaven via het COA stegen van \u20AC556 miljoen naar \u20AC3,7 miljard in zes jaar \u2014 een stijging van bijna 7\u00D7.',
+    source: 'Bron: Publiek (COA), 2018\u20132024',
+    module: 'publiek',
+  },
+  {
+    target: 10.6,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      'Via het COA stroomde \u20AC10,6 miljard naar 11.101 ontvangers \u2014 van zorgverleners tot beveiligingsbedrijven.',
+    source: 'Bron: Publiek (COA), 2018\u20132024',
+    module: 'publiek',
+  },
+  {
+    target: 3.7,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      'Het COA besteedde \u20AC3,7 miljard in 2024 \u2014 meer dan in 2018, 2019 en 2020 samen.',
+    source: 'Bron: Publiek (COA), 2018\u20132024',
+    module: 'publiek',
+  },
+  {
+    target: 1.1,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      'E\u00E9n bedrijf \u2014 RMA Healthcare \u2014 ontving meer dan \u20AC1 miljard van het COA.',
+    source: 'Bron: Publiek (COA), 2018\u20132024',
+    module: 'publiek',
+  },
+  {
+    target: 730,
+    prefix: '\u20AC',
+    suffix: 'miljoen',
+    insight:
+      'Beveiligingsbedrijf Trigion ontving \u20AC730 miljoen van het COA \u2014 de op \u00E9\u00E9n na grootste COA-ontvanger.',
+    source: 'Bron: Publiek (COA), 2018\u20132024',
+    module: 'publiek',
+  },
+
+  // — Government IT & Procurement —
+  {
+    target: 6.5,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      'Het Rijk besteedde \u20AC6,5 miljard aan ICT-leveranciers \u2014 van Protinus tot Capgemini.',
+    source: 'Bron: Inkoopdata, 2018\u20132024',
+    module: 'inkoop',
+  },
+  {
+    target: 2.1,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      'Bouwbedrijf Heijmans ontving \u20AC2,1 miljard aan rijksinkoop \u2014 de grootste overheidsleverancier.',
+    source: 'Bron: Inkoopdata, 2018\u20132024',
+    module: 'inkoop',
+  },
+  {
+    target: 637,
+    prefix: '\u20AC',
+    suffix: 'miljoen',
+    insight:
+      'De landsadvocaat Pels Rijcken ontving \u20AC637 miljoen aan rijksinkoop \u2014 verdeeld over 213 contracten.',
+    source: 'Bron: Inkoopdata, 2018\u20132024',
+    module: 'inkoop',
+  },
+  {
+    target: 91.5,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      'De Rijksoverheid gaf \u20AC91,5 miljard uit via inkoopcontracten \u2014 aan 191.000 leveranciers.',
+    source: 'Bron: Inkoopdata, 2018\u20132024',
+    module: 'inkoop',
+  },
+
+  // — Regional —
+  {
+    target: 3.4,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      'Noord-Brabant ontving \u20AC3,4 miljard aan provinciale subsidies \u2014 meer dan Zeeland, Drenthe, Friesland en Utrecht samen.',
+    source: 'Bron: Provinciale Subsidies, 2018\u20132024',
+    module: 'provincie',
+  },
+  {
+    target: 4.0,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      'Amsterdam ontving \u20AC4,0 miljard aan gemeente-uitkeringen \u2014 bijna tweemaal zoveel als Den Haag.',
+    source: 'Bron: Gemeente-uitkeringen, 2018\u20132024',
     module: 'gemeente',
   },
+
+  // — Culture & Education —
+  {
+    target: 813,
+    prefix: '\u20AC',
+    suffix: 'miljoen',
+    insight:
+      'De Koninklijke Bibliotheek ontving \u20AC813 miljoen \u2014 2,4\u00D7 meer dan het Rijksmuseum.',
+    source: 'Bron: Financi\u00EBle Instrumenten, 2018\u20132024',
+    module: 'instrumenten',
+  },
+  {
+    target: 50,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      '283 universiteiten en hogescholen ontvingen samen \u20AC50 miljard via financi\u00EBle instrumenten.',
+    source: 'Bron: Financi\u00EBle Instrumenten, 2018\u20132024',
+    module: 'instrumenten',
+  },
+  {
+    target: 336,
+    prefix: '\u20AC',
+    suffix: 'miljoen',
+    insight:
+      'Het Rijksmuseum ontving \u20AC336 miljoen via financi\u00EBle instrumenten \u2014 het Van Gogh Museum \u20AC98 miljoen.',
+    source: 'Bron: Financi\u00EBle Instrumenten, 2018\u20132024',
+    module: 'instrumenten',
+  },
+
+  // — System-wide —
+  {
+    target: 114,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      'De Sociale Verzekeringsbank ontving \u20AC114 miljard \u2014 het meest van alle 210.000 ontvangers van financi\u00EBle instrumenten.',
+    source: 'Bron: Financi\u00EBle Instrumenten, 2018\u20132024',
+    module: 'instrumenten',
+  },
+  {
+    target: 34,
+    prefix: '\u20AC',
+    suffix: 'miljard',
+    insight:
+      'De Politie komt voor in 4 van de 6 databronnen \u2014 en ontving in totaal \u20AC34,3 miljard.',
+    source: 'Bron: Alle bronnen, 2018\u20132024',
+    module: 'integraal',
+  },
+  {
+    target: 179,
+    prefix: '',
+    suffix: 'ontvangers',
+    insight:
+      'Slechts 179 van de 210.000 ontvangers kregen elk meer dan \u20AC1 miljard via financi\u00EBle instrumenten.',
+    source: 'Bron: Financi\u00EBle Instrumenten, 2018\u20132024',
+    module: 'instrumenten',
+  },
+  {
+    target: 26,
+    prefix: '',
+    suffix: '%',
+    insight:
+      'De 10 grootste ontvangers ontvingen 26% van alle financi\u00EBle instrumenten \u2014 \u20AC334 van \u20AC1.289 miljard.',
+    source: 'Bron: Financi\u00EBle Instrumenten, 2018\u20132024',
+    module: 'instrumenten',
+  },
+  {
+    target: 463,
+    prefix: '',
+    suffix: 'duizend',
+    insight:
+      'In onze database staan 463.000 unieke ontvangers van overheidsgeld \u2014 doorzoekbaar in zes databronnen.',
+    source: 'Bron: Alle bronnen, 2018\u20132024',
+    module: 'integraal',
+  },
 ]
+
+/* ------------------------------------------------------------------ */
+/*  Fisher-Yates shuffle                                               */
+/* ------------------------------------------------------------------ */
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
 
 /* ------------------------------------------------------------------ */
 /*  Count-up hook                                                      */
@@ -79,7 +278,6 @@ function useCountUp(
     function tick(now: number) {
       const elapsed = now - start
       const progress = Math.min(elapsed / duration, 1)
-      // Ease-out cubic
       const eased = 1 - Math.pow(1 - progress, 3)
       setValue(eased * target)
 
@@ -95,7 +293,6 @@ function useCountUp(
     }
   }, [target, duration, trigger])
 
-  // Format: integers get no decimals; fractional gets one comma-separated decimal
   if (target % 1 !== 0) {
     return value.toFixed(1).replace('.', ',')
   }
@@ -103,10 +300,10 @@ function useCountUp(
 }
 
 /* ------------------------------------------------------------------ */
-/*  LinkedIn SVG icon                                                  */
+/*  Social icons                                                       */
 /* ------------------------------------------------------------------ */
 
-function LinkedInIcon({ size = 18 }: { size?: number }) {
+function LinkedInIcon({ size = 16 }: { size?: number }) {
   return (
     <svg
       width={size}
@@ -116,6 +313,34 @@ function LinkedInIcon({ size = 18 }: { size?: number }) {
       aria-hidden="true"
     >
       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+    </svg>
+  )
+}
+
+function XIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  )
+}
+
+function BlueskyIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.785 2.627 3.6 3.476 6.158 3.135-4.406.718-5.858 3.165-3.296 5.618C5.862 21.186 9.394 22.296 12 17.678c2.606 4.618 6.138 3.508 8.514 1.322 2.562-2.453 1.11-4.9-3.296-5.618 2.558.341 5.373-.508 6.158-3.135.246-.828.624-5.789.624-6.479 0-.688-.139-1.86-.902-2.203-.659-.299-1.664-.621-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8z" />
     </svg>
   )
 }
@@ -147,6 +372,53 @@ function CalendarIcon({ size = 20 }: { size?: number }) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Share button component                                             */
+/* ------------------------------------------------------------------ */
+
+function ShareButton({
+  label,
+  icon,
+  onClick,
+}: {
+  label: string
+  icon: React.ReactNode
+  onClick: () => void
+}) {
+  return (
+    <button
+      aria-label={label}
+      style={{
+        background: 'rgba(255,255,255,0.08)',
+        border: '1px solid rgba(255,255,255,0.12)',
+        borderRadius: '8px',
+        color: 'rgba(255,255,255,0.5)',
+        padding: '8px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'color 0.2s, background 0.2s, border-color 0.2s',
+      }}
+      onMouseEnter={(e) => {
+        const el = e.currentTarget
+        el.style.color = '#ffffff'
+        el.style.background = 'rgba(255,255,255,0.12)'
+        el.style.borderColor = 'rgba(255,255,255,0.2)'
+      }}
+      onMouseLeave={(e) => {
+        const el = e.currentTarget
+        el.style.color = 'rgba(255,255,255,0.5)'
+        el.style.background = 'rgba(255,255,255,0.08)'
+        el.style.borderColor = 'rgba(255,255,255,0.12)'
+      }}
+      onClick={onClick}
+    >
+      {icon}
+    </button>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 /*  Noise texture (inline SVG data URI)                                */
 /* ------------------------------------------------------------------ */
 
@@ -168,6 +440,8 @@ function DiscoveryCard({
 }) {
   const animatedValue = useCountUp(discovery.target, 1400, active)
 
+  const shareText = `${discovery.insight}\n\nOntdek meer op rijksuitgaven.nl`
+
   return (
     <div
       style={{
@@ -179,7 +453,8 @@ function DiscoveryCard({
           : direction === 'exit'
             ? 'translateY(-12px)'
             : 'translateY(12px)',
-        transition: 'opacity 0.7s cubic-bezier(0.2,1,0.2,1), transform 0.7s cubic-bezier(0.2,1,0.2,1)',
+        transition:
+          'opacity 0.7s cubic-bezier(0.2,1,0.2,1), transform 0.7s cubic-bezier(0.2,1,0.2,1)',
         pointerEvents: active ? 'auto' : 'none',
         display: 'flex',
         flexDirection: 'column',
@@ -187,49 +462,50 @@ function DiscoveryCard({
         padding: '3rem 3.5rem',
       }}
     >
-      {/* Share button — top right */}
-      <button
-        aria-label="Deel op LinkedIn"
+      {/* Share buttons — top right */}
+      <div
         style={{
           position: 'absolute',
           top: '1.5rem',
           right: '1.5rem',
-          background: 'rgba(255,255,255,0.08)',
-          border: '1px solid rgba(255,255,255,0.12)',
-          borderRadius: '8px',
-          color: 'rgba(255,255,255,0.5)',
-          padding: '8px',
-          cursor: 'pointer',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          transition: 'color 0.2s, background 0.2s, border-color 0.2s',
-        }}
-        onMouseEnter={(e) => {
-          const el = e.currentTarget
-          el.style.color = '#ffffff'
-          el.style.background = 'rgba(255,255,255,0.12)'
-          el.style.borderColor = 'rgba(255,255,255,0.2)'
-        }}
-        onMouseLeave={(e) => {
-          const el = e.currentTarget
-          el.style.color = 'rgba(255,255,255,0.5)'
-          el.style.background = 'rgba(255,255,255,0.08)'
-          el.style.borderColor = 'rgba(255,255,255,0.12)'
-        }}
-        onClick={() => {
-          const text = encodeURIComponent(
-            `${discovery.insight}\n\nOntdek meer op rijksuitgaven.nl`,
-          )
-          window.open(
-            `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://rijksuitgaven.nl')}&summary=${text}`,
-            '_blank',
-            'noopener',
-          )
+          gap: '6px',
         }}
       >
-        <LinkedInIcon size={16} />
-      </button>
+        <ShareButton
+          label="Deel op LinkedIn"
+          icon={<LinkedInIcon />}
+          onClick={() => {
+            window.open(
+              `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://rijksuitgaven.nl')}`,
+              '_blank',
+              'noopener',
+            )
+          }}
+        />
+        <ShareButton
+          label="Deel op X"
+          icon={<XIcon />}
+          onClick={() => {
+            window.open(
+              `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}`,
+              '_blank',
+              'noopener',
+            )
+          }}
+        />
+        <ShareButton
+          label="Deel op Bluesky"
+          icon={<BlueskyIcon />}
+          onClick={() => {
+            window.open(
+              `https://bsky.app/intent/compose?text=${encodeURIComponent(shareText)}`,
+              '_blank',
+              'noopener',
+            )
+          }}
+        />
+      </div>
 
       {/* The number — hero element */}
       <div
@@ -245,7 +521,9 @@ function DiscoveryCard({
           marginBottom: '1.5rem',
         }}
       >
-        <span style={{ opacity: 0.9 }}>{discovery.prefix}</span>
+        {discovery.prefix && (
+          <span style={{ opacity: 0.9 }}>{discovery.prefix}</span>
+        )}
         {animatedValue}
         <span
           style={{
@@ -342,6 +620,9 @@ export default function OntdekkingPage() {
   const [paused, setPaused] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  // Shuffle discoveries on mount for unique order per visit
+  const shuffled = useMemo(() => shuffle(discoveries), [])
+
   const goTo = useCallback(
     (index: number) => {
       if (index === current) return
@@ -352,8 +633,8 @@ export default function OntdekkingPage() {
   )
 
   const next = useCallback(() => {
-    goTo((current + 1) % discoveries.length)
-  }, [current, goTo])
+    goTo((current + 1) % shuffled.length)
+  }, [current, goTo, shuffled.length])
 
   // Auto-rotate
   useEffect(() => {
@@ -434,40 +715,6 @@ export default function OntdekkingPage() {
           padding: '0 1.5rem 4rem',
         }}
       >
-        {/* Section header */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.6rem',
-            marginBottom: '1.25rem',
-          }}
-        >
-          <span
-            style={{
-              color: 'var(--navy-dark)',
-              opacity: 0.45,
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <CalendarIcon size={18} />
-          </span>
-          <h3
-            style={{
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              color: 'var(--navy-dark)',
-              opacity: 0.55,
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-              margin: 0,
-            }}
-          >
-            Ontdekking van de Week
-          </h3>
-        </div>
-
         {/* Card container */}
         <div
           onMouseEnter={() => setPaused(true)}
@@ -541,7 +788,7 @@ export default function OntdekkingPage() {
 
           {/* Card stack */}
           <div style={{ position: 'relative', zIndex: 3, minHeight: '380px' }}>
-            {discoveries.map((d, i) => (
+            {shuffled.map((d, i) => (
               <DiscoveryCard
                 key={i}
                 discovery={d}
@@ -553,61 +800,6 @@ export default function OntdekkingPage() {
             ))}
           </div>
 
-          {/* Dot indicators */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '1.5rem',
-              right: '1.5rem',
-              display: 'flex',
-              gap: '8px',
-              zIndex: 4,
-            }}
-          >
-            {discoveries.map((_, i) => (
-              <button
-                key={i}
-                aria-label={`Ga naar ontdekking ${i + 1}`}
-                onClick={() => goTo(i)}
-                style={{
-                  width: i === current ? '24px' : '8px',
-                  height: '8px',
-                  borderRadius: '4px',
-                  border: 'none',
-                  background:
-                    i === current
-                      ? 'var(--pink)'
-                      : 'rgba(255,255,255,0.25)',
-                  cursor: 'pointer',
-                  padding: 0,
-                  transition:
-                    'width 0.4s cubic-bezier(0.2,1,0.2,1), background 0.3s',
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Card count indicator */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            marginTop: '0.75rem',
-            paddingRight: '0.25rem',
-          }}
-        >
-          <span
-            style={{
-              fontSize: '0.75rem',
-              color: 'var(--navy-dark)',
-              opacity: 0.35,
-              fontFeatureSettings: '"tnum"',
-              fontVariantNumeric: 'tabular-nums',
-            }}
-          >
-            {current + 1} / {discoveries.length}
-          </span>
         </div>
       </section>
 

@@ -1410,6 +1410,83 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-030: De Geldstroom — Dynamic Sankey Hero
+
+**Requirement:** Replace static `/h1` prototype with dynamic Sankey flow visualization powered by real government spending data, generated at build time.
+
+**Behavior:**
+
+**6 Selectable Stories:**
+- Integraal ("Alle bronnen") — default, shows cross-module recipients
+- Publiek ("Publieke organisaties") — COA/RVO/ZonMW/NWO flows
+- Instrumenten ("Rijksbegroting") — budget chapters → recipients
+- Inkoop ("Inkoopdata") — ministries → suppliers
+- Gemeente ("Gemeenten") — top municipalities → recipients
+- Provincie ("Provincies") — provinces → recipients
+
+**Year Selector:**
+- Horizontal pills: 2016-2024 (per-story year range)
+- Active year: pink background, white text
+- Clicking year updates amounts, flow thicknesses, and headline
+
+**Dynamic Headline:**
+- "Waar ging €X mld naartoe in [year]?" — amount updates per year/story
+
+**Build-Time Data:**
+- No public API — data baked into JSON at `next build`
+- Script queries Supabase for all stories × all years
+- Output: `app/src/data/geldstroom.json` (~18KB)
+- Fallback: use previously committed JSON if DB unreachable
+
+**Visual Design:**
+- Left nodes: source categories (5-7 per story) with amounts
+- Right nodes: top 5 recipients + "Overige ontvangers" with amounts
+- Flow thickness proportional to amount
+- Particle density proportional to flow amount
+- Per-story visual scale normalization
+- Node order fixed by most recent year (2024) ranking
+
+**Data Notes:**
+- Inkoop/Publiek (COA) amounts are average staffelbedragen (midpoint estimates)
+- Inkoop ministry names normalized (I&W/I & W/I & M → canonical)
+
+**Priority:** P1 (V1.0 — homepage hero)
+
+**Status:** ⏳ In Development
+
+---
+
+### UX-031: Ontdekking van de Week — Data Stories Carousel
+
+**Requirement:** Rotating carousel of editorially curated, fact-checked data discoveries for the homepage. Each card shows a verified spending fact with source attribution and social share buttons.
+
+**Behavior:**
+- 23 verified discoveries, shuffled on each page load
+- Auto-rotation every 5 seconds, pauses on hover
+- Count-up animation on each card entrance (ease-out cubic, 1.4s)
+- Social sharing: LinkedIn, X, Bluesky — pre-filled with discovery text
+- "Ontdek meer →" CTA links to relevant module page
+- Source attribution on every card (module + year range)
+- Counter "X / 23" replaces individual dot indicators
+
+**Data Sources:**
+- All 23 discoveries verified against production Supabase (2026-02-14)
+- Covers all 6 modules: instrumenten, publiek, inkoop, gemeente, provincie, integraal
+- No fabricated numbers — every amount traceable to a single SQL query
+- Inkoop amounts are staffelbedragen (midpoint estimates)
+
+**Visual Design:**
+- Navy card, large pink hero number (€X miljard/miljoen), one-sentence insight
+- Financial Times data annotation aesthetic
+- Three social share icons (top-right): LinkedIn, X, Bluesky
+- Noise texture + grid overlay on card background
+
+**Priority:** P1 (V1.0 — homepage section)
+
+**Status:** ⏳ In Development
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload
