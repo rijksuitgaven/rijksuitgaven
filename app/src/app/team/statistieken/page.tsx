@@ -7,7 +7,8 @@ import {
   BarChart3, Search, Download, MousePointerClick, Users, AlertTriangle,
   ChevronDown, ChevronRight, Eye, SlidersHorizontal, Columns, Clock,
   ArrowUpDown, ArrowRight, Sparkles, ChevronsRight, Trash2, CheckCircle,
-  ExternalLink, Copy, Check,
+  ExternalLink, Copy, Check, TrendingUp, TrendingDown, Minus, Timer,
+  Target, LogOut, Activity,
 } from 'lucide-react'
 
 // --- Constants ---
@@ -42,6 +43,22 @@ const FIELD_LABELS: Record<string, string> = {
   sectoren: 'Sectoren',
   onderdeel: 'Onderdeel',
   source: 'Bron',
+}
+
+const EVENT_TYPE_LABELS: Record<string, string> = {
+  module_view: 'Module bekijken',
+  search: 'Zoeken',
+  row_expand: 'Rij uitklappen',
+  filter_apply: 'Filteren',
+  export: 'Exporteren',
+  column_change: 'Kolommen',
+  autocomplete_search: 'Autocomplete',
+  autocomplete_click: 'Autocomplete klik',
+  cross_module_nav: 'Cross-module',
+  sort_change: 'Sorteren',
+  page_change: 'Pagineren',
+  external_link: 'Externe link',
+  error: 'Fout',
 }
 
 const DATE_RANGES = [
@@ -114,6 +131,14 @@ interface ActorItem {
   search_count: number
   export_count: number
   module_count: number
+  // V3 enhanced fields
+  session_count: number
+  avg_session_seconds: number
+  engagement_score: number
+  avg_gap_days: number
+  gap_trend: string
+  user_name: string | null
+  user_email: string | null
 }
 
 interface ActorDetailEvent {
@@ -121,6 +146,34 @@ interface ActorDetailEvent {
   module: string | null
   properties: Record<string, unknown>
   created_at: string
+}
+
+interface SessionsSummary {
+  total_sessions: number
+  unique_actors: number
+  avg_duration_seconds: number
+  avg_events_per_session: number
+  avg_modules_per_session: number
+}
+
+interface ExitIntentItem {
+  last_event_type: string
+  session_count: number
+  percentage: number
+}
+
+interface SearchSuccess {
+  total_searches: number
+  successful_searches: number
+  success_rate: number
+}
+
+interface RetentionItem {
+  cohort_month: string
+  month_offset: number
+  active_count: number
+  cohort_size: number
+  retention_rate: number
 }
 
 interface StatsData {
@@ -135,6 +188,11 @@ interface StatsData {
   zero_results: ZeroResultItem[]
   actors: ActorItem[]
   errors: ErrorItem[]
+  // V3 analytics
+  sessions_summary: SessionsSummary | null
+  exit_intent: ExitIntentItem[]
+  search_success: SearchSuccess | null
+  retention: RetentionItem[]
 }
 
 // --- Helpers ---
@@ -159,6 +217,15 @@ function formatRelativeTime(isoDate: string): string {
   return `${Math.floor(diffDays / 30)} maanden geleden`
 }
 
+function formatDuration(seconds: number): string {
+  if (seconds < 60) return `${Math.round(seconds)}s`
+  const min = Math.floor(seconds / 60)
+  const sec = Math.round(seconds % 60)
+  if (min < 60) return sec > 0 ? `${min}m ${sec}s` : `${min} min`
+  const hr = Math.floor(min / 60)
+  return `${hr}u ${min % 60}m`
+}
+
 function getActivityColor(lastSeen: string): 'green' | 'amber' | 'gray' {
   const diffHours = (Date.now() - new Date(lastSeen).getTime()) / 3600000
   if (diffHours < 24) return 'green'
@@ -170,6 +237,17 @@ const ACTIVITY_DOT_COLORS = {
   green: 'bg-[var(--success)]',
   amber: 'bg-amber-400',
   gray: 'bg-gray-300',
+}
+
+function getEngagementLabel(score: number, actors: ActorItem[]): { label: string; color: string } {
+  // Determine percentile rank among all actors
+  const scores = actors.map(a => a.engagement_score).sort((a, b) => a - b)
+  const rank = scores.filter(s => s <= score).length / scores.length
+
+  // At risk: last seen > 7 days ago is handled separately in the UI
+  if (rank >= 0.67) return { label: 'Power', color: 'text-green-700 bg-green-50 border-green-200' }
+  if (rank >= 0.33) return { label: 'Regulier', color: 'text-[var(--navy-dark)] bg-[var(--gray-light)] border-[var(--border)]' }
+  return { label: 'Casual', color: 'text-amber-700 bg-amber-50 border-amber-200' }
 }
 
 function formatEventLine(event: ActorDetailEvent): { icon: React.ReactNode; text: string; time: string } {
@@ -349,6 +427,8 @@ export default function StatistiekenPage() {
   const externalLinks = getPulseValue(data?.pulse ?? [], 'external_link')
   const errorCount = data?.errors?.length ?? 0
   const maxViews = data?.modules.length ? Math.max(...data.modules.map(m => m.view_count)) : 1
+  const ss = data?.sessions_summary
+  const sc = data?.search_success
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[var(--gray-light)] to-white">
@@ -395,7 +475,7 @@ export default function StatistiekenPage() {
         ) : data ? (
           <>
             {/* ═══ ACT 1: PULSE ═══ */}
-            <div className={`grid grid-cols-2 ${errorCount > 0 ? 'md:grid-cols-6' : 'md:grid-cols-5'} gap-4 mb-6`}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               <PulseCard
                 icon={<Users className="w-4 h-4" />}
                 label="Actieve gebruikers"
@@ -403,10 +483,23 @@ export default function StatistiekenPage() {
                 subtext={`van ${data.total_members} leden`}
               />
               <PulseCard
+                icon={<Activity className="w-4 h-4" />}
+                label="Sessies"
+                value={ss?.total_sessions ?? 0}
+                subtext={ss ? `gem. ${formatDuration(ss.avg_duration_seconds)}` : 'geen data'}
+              />
+              <PulseCard
                 icon={<Search className="w-4 h-4" />}
                 label="Zoekopdrachten"
                 value={searches.count}
                 subtext={`${searches.actors} unieke gebruikers`}
+              />
+              <PulseCard
+                icon={<Target className="w-4 h-4" />}
+                label="Zoeksucces"
+                value={sc ? `${sc.success_rate}%` : '—'}
+                subtext={sc ? `${sc.successful_searches} van ${sc.total_searches}` : 'geen data'}
+                isString
               />
               <PulseCard
                 icon={<Download className="w-4 h-4" />}
@@ -442,72 +535,100 @@ export default function StatistiekenPage() {
 
             {/* ═══ ACT 2: INZICHTEN ═══ */}
 
-            {/* Search insights — combined table with zero results inline */}
-            <Section title="Wat zoeken gebruikers?" icon={<Search className="w-4 h-4" />}>
-              {data.searches.length === 0 && data.zero_results.length === 0 ? (
-                <EmptyState>Nog geen zoekopdrachten geregistreerd</EmptyState>
-              ) : (
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
-                      <th className="pb-2 pr-4">Zoekterm</th>
-                      <th className="pb-2 pr-4 text-right">Resultaten</th>
-                      <th className="pb-2 pr-4 text-right">Aantal</th>
-                      <th className="pb-2 pr-4 text-right">Gebruikers</th>
-                      <th className="pb-2">Module</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* Searches with results */}
-                    {data.searches.map((s, i) => (
-                      <tr key={`s-${i}`} className="border-t border-[var(--border)]">
-                        <td className="py-2 pr-4 font-medium text-[var(--navy-dark)]">{s.query}</td>
-                        <td className="py-2 pr-4 text-right text-[var(--navy-medium)]">
-                          {Number(s.avg_results).toLocaleString('nl-NL')}
-                        </td>
-                        <td className="py-2 pr-4 text-right">{s.search_count}</td>
-                        <td className="py-2 pr-4 text-right">{s.unique_actors}</td>
-                        <td className="py-2">
-                          <ModuleBadge module={s.top_module} />
-                        </td>
-                      </tr>
+            {/* Exit intent + search insights side by side */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+              {/* Exit intent — 1/3 width */}
+              <Section title="Waar stoppen sessies?" icon={<LogOut className="w-4 h-4" />}>
+                {data.exit_intent.length === 0 ? (
+                  <EmptyState>Nog geen sessiedata</EmptyState>
+                ) : (
+                  <div className="space-y-2">
+                    {data.exit_intent.map((ei, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <span className="w-28 text-sm text-[var(--navy-dark)] truncate">
+                          {EVENT_TYPE_LABELS[ei.last_event_type] || ei.last_event_type}
+                        </span>
+                        <div className="flex-1 h-5 bg-[var(--gray-light)] rounded overflow-hidden">
+                          <div
+                            className="h-full bg-[var(--navy-medium)] rounded transition-all"
+                            style={{ width: `${ei.percentage}%` }}
+                          />
+                        </div>
+                        <span className="text-sm font-semibold text-[var(--navy-dark)] w-12 text-right">
+                          {ei.percentage}%
+                        </span>
+                      </div>
                     ))}
+                  </div>
+                )}
+              </Section>
 
-                    {/* Divider + zero results */}
-                    {data.zero_results.length > 0 && (
-                      <>
-                        <tr>
-                          <td colSpan={5} className="pt-3 pb-1">
-                            <div className="flex items-center gap-2">
-                              <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                              <span className="text-xs font-semibold uppercase tracking-wider text-amber-600">
-                                Niet gevonden
-                              </span>
-                              <div className="flex-1 border-t border-amber-200" />
-                            </div>
-                          </td>
+              {/* Search insights — 2/3 width */}
+              <div className="lg:col-span-2">
+                <Section title="Wat zoeken gebruikers?" icon={<Search className="w-4 h-4" />}>
+                  {data.searches.length === 0 && data.zero_results.length === 0 ? (
+                    <EmptyState>Nog geen zoekopdrachten geregistreerd</EmptyState>
+                  ) : (
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
+                          <th className="pb-2 pr-4">Zoekterm</th>
+                          <th className="pb-2 pr-4 text-right">Resultaten</th>
+                          <th className="pb-2 pr-4 text-right">Aantal</th>
+                          <th className="pb-2 pr-4 text-right">Gebruikers</th>
+                          <th className="pb-2">Module</th>
                         </tr>
-                        {data.zero_results.map((z, i) => (
-                          <tr key={`z-${i}`} className="border-t border-amber-100 bg-amber-50/50">
-                            <td className="py-2 pr-4 font-medium text-amber-700">{z.query}</td>
-                            <td className="py-2 pr-4 text-right">
-                              <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-amber-700 bg-amber-100 rounded">
-                                0
-                              </span>
+                      </thead>
+                      <tbody>
+                        {data.searches.map((s, i) => (
+                          <tr key={`s-${i}`} className="border-t border-[var(--border)]">
+                            <td className="py-2 pr-4 font-medium text-[var(--navy-dark)]">{s.query}</td>
+                            <td className="py-2 pr-4 text-right text-[var(--navy-medium)]">
+                              {Number(s.avg_results).toLocaleString('nl-NL')}
                             </td>
-                            <td className="py-2 pr-4 text-right text-amber-600">{z.search_count}</td>
-                            <td className="py-2 pr-4 text-right text-amber-600">—</td>
+                            <td className="py-2 pr-4 text-right">{s.search_count}</td>
+                            <td className="py-2 pr-4 text-right">{s.unique_actors}</td>
                             <td className="py-2">
-                              <ModuleBadge module={z.top_module} variant="amber" />
+                              <ModuleBadge module={s.top_module} />
                             </td>
                           </tr>
                         ))}
-                      </>
-                    )}
-                  </tbody>
-                </table>
-              )}
-            </Section>
+                        {data.zero_results.length > 0 && (
+                          <>
+                            <tr>
+                              <td colSpan={5} className="pt-3 pb-1">
+                                <div className="flex items-center gap-2">
+                                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                                  <span className="text-xs font-semibold uppercase tracking-wider text-amber-600">
+                                    Niet gevonden
+                                  </span>
+                                  <div className="flex-1 border-t border-amber-200" />
+                                </div>
+                              </td>
+                            </tr>
+                            {data.zero_results.map((z, i) => (
+                              <tr key={`z-${i}`} className="border-t border-amber-100 bg-amber-50/50">
+                                <td className="py-2 pr-4 font-medium text-amber-700">{z.query}</td>
+                                <td className="py-2 pr-4 text-right">
+                                  <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-amber-700 bg-amber-100 rounded">
+                                    0
+                                  </span>
+                                </td>
+                                <td className="py-2 pr-4 text-right text-amber-600">{z.search_count}</td>
+                                <td className="py-2 pr-4 text-right text-amber-600">—</td>
+                                <td className="py-2">
+                                  <ModuleBadge module={z.top_module} variant="amber" />
+                                </td>
+                              </tr>
+                            ))}
+                          </>
+                        )}
+                      </tbody>
+                    </table>
+                  )}
+                </Section>
+              </div>
+            </div>
 
             {/* Platform usage — modules + filters + exports */}
             <Section title="Hoe wordt het platform gebruikt?" icon={<BarChart3 className="w-4 h-4" />}>
@@ -546,7 +667,6 @@ export default function StatistiekenPage() {
 
                 {/* Right: Filters, columns, exports stacked */}
                 <div className="space-y-5">
-                  {/* Filters */}
                   <div>
                     <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">
                       Meest gebruikte filters
@@ -567,8 +687,6 @@ export default function StatistiekenPage() {
                       </div>
                     )}
                   </div>
-
-                  {/* Columns */}
                   <div>
                     <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">
                       Extra kolommen
@@ -589,8 +707,6 @@ export default function StatistiekenPage() {
                       </div>
                     )}
                   </div>
-
-                  {/* Exports */}
                   <div>
                     <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">
                       Exports
@@ -617,6 +733,11 @@ export default function StatistiekenPage() {
               </div>
             </Section>
 
+            {/* Retention cohorts */}
+            {data.retention.length > 0 && (
+              <RetentionSection retention={data.retention} />
+            )}
+
             {/* ═══ ACT 3: GEBRUIKERS ═══ */}
             <Section title="Gebruikers" icon={<Users className="w-4 h-4" />}>
               {data.actors.length === 0 ? (
@@ -629,14 +750,16 @@ export default function StatistiekenPage() {
                         <th className="pb-2 w-8" />
                         <th className="pb-2 pr-4">Gebruiker</th>
                         <th className="pb-2 pr-4">Laatst actief</th>
-                        <th className="pb-2 pr-4 text-right">Acties</th>
-                        <th className="pb-2 pr-4">Populairste module</th>
+                        <th className="pb-2 pr-4 text-right">Sessies</th>
+                        <th className="pb-2 pr-4 text-right">Score</th>
+                        <th className="pb-2 pr-4">Trend</th>
+                        <th className="pb-2 pr-4">Top module</th>
                         <th className="pb-2 pr-4 text-right">Zoekopdrachten</th>
                         <th className="pb-2 text-right">Exports</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {data.actors.map((actor, i) => {
+                      {data.actors.map((actor) => {
                         const isExpanded = expandedActor === actor.actor_hash
                         const color = getActivityColor(actor.last_seen)
 
@@ -644,7 +767,7 @@ export default function StatistiekenPage() {
                           <ActorRow
                             key={actor.actor_hash}
                             actor={actor}
-                            index={i}
+                            allActors={data.actors}
                             isExpanded={isExpanded}
                             color={color}
                             onToggle={() => toggleActor(actor.actor_hash)}
@@ -671,12 +794,13 @@ export default function StatistiekenPage() {
 
 // --- Subcomponents ---
 
-function PulseCard({ icon, label, value, subtext, variant }: {
+function PulseCard({ icon, label, value, subtext, variant, isString }: {
   icon: React.ReactNode
   label: string
-  value: number
+  value: number | string
   subtext: string
   variant?: 'error'
+  isString?: boolean
 }) {
   const isError = variant === 'error'
   return (
@@ -689,7 +813,9 @@ function PulseCard({ icon, label, value, subtext, variant }: {
         {icon}
         <span className="text-xs font-medium uppercase tracking-wider">{label}</span>
       </div>
-      <div className={`text-3xl font-bold ${isError ? 'text-red-700' : 'text-[var(--navy-dark)]'}`}>{value.toLocaleString('nl-NL')}</div>
+      <div className={`text-3xl font-bold ${isError ? 'text-red-700' : 'text-[var(--navy-dark)]'}`}>
+        {isString ? value : (typeof value === 'number' ? value.toLocaleString('nl-NL') : value)}
+      </div>
       <div className={`text-xs mt-0.5 ${isError ? 'text-red-500' : 'text-[var(--muted-foreground)]'}`}>{subtext}</div>
     </div>
   )
@@ -737,6 +863,79 @@ function ModuleBadge({ module, small, variant }: {
   )
 }
 
+function RetentionSection({ retention }: { retention: RetentionItem[] }) {
+  // Build cohort grid: rows = cohort months, columns = month offsets
+  const cohorts = [...new Set(retention.map(r => r.cohort_month))].sort()
+  const maxOffset = Math.max(...retention.map(r => r.month_offset), 0)
+  const offsets = Array.from({ length: maxOffset + 1 }, (_, i) => i)
+
+  // Lookup map
+  const lookup = new Map<string, RetentionItem>()
+  for (const r of retention) {
+    lookup.set(`${r.cohort_month}-${r.month_offset}`, r)
+  }
+
+  function getRetentionColor(rate: number): string {
+    if (rate >= 80) return 'bg-green-100 text-green-800'
+    if (rate >= 60) return 'bg-green-50 text-green-700'
+    if (rate >= 40) return 'bg-amber-50 text-amber-700'
+    if (rate >= 20) return 'bg-red-50 text-red-600'
+    return 'bg-red-100 text-red-700'
+  }
+
+  return (
+    <Section title="Retentie (maandelijks)" icon={<Timer className="w-4 h-4" />}>
+      {cohorts.length === 0 ? (
+        <EmptyState>Nog geen retentiedata</EmptyState>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="text-sm">
+            <thead>
+              <tr className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
+                <th className="pb-2 pr-4 text-left">Cohort</th>
+                <th className="pb-2 pr-2 text-right">Grootte</th>
+                {offsets.map(o => (
+                  <th key={o} className="pb-2 px-2 text-center w-14">
+                    {o === 0 ? 'M0' : `+${o}`}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {cohorts.map(cohort => {
+                const size = lookup.get(`${cohort}-0`)?.cohort_size ?? 0
+                return (
+                  <tr key={cohort} className="border-t border-[var(--border)]">
+                    <td className="py-2 pr-4 font-medium text-[var(--navy-dark)] whitespace-nowrap">
+                      {cohort}
+                    </td>
+                    <td className="py-2 pr-2 text-right text-[var(--muted-foreground)]">
+                      {size}
+                    </td>
+                    {offsets.map(o => {
+                      const item = lookup.get(`${cohort}-${o}`)
+                      if (!item) {
+                        return <td key={o} className="py-2 px-2 text-center text-[var(--muted-foreground)]">—</td>
+                      }
+                      return (
+                        <td key={o} className="py-2 px-1 text-center">
+                          <span className={`inline-block w-12 px-1.5 py-0.5 rounded text-xs font-semibold ${getRetentionColor(item.retention_rate)}`}>
+                            {item.retention_rate}%
+                          </span>
+                        </td>
+                      )
+                    })}
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Section>
+  )
+}
+
 function formatErrorPrompt(err: ErrorItem): string {
   const mod = MODULE_LABELS[err.module] || err.module || 'onbekend'
   const props = err.properties || {}
@@ -753,7 +952,6 @@ function formatErrorPrompt(err: ErrorItem): string {
   if (props.path) lines.push(`Path: ${props.path}`)
   if (props.direction) lines.push(`Sort direction: ${props.direction}`)
 
-  // Include full properties as JSON for completeness
   const knownKeys = ['trigger', 'search_query', 'sort_by', 'has_filters', 'path', 'direction', 'message']
   const extra = Object.fromEntries(Object.entries(props).filter(([k]) => !knownKeys.includes(k)))
   if (Object.keys(extra).length > 0) {
@@ -846,7 +1044,6 @@ function ErrorsSection({ errors, onClearOne, onClearAll }: { errors: ErrorItem[]
 
           return (
             <div key={i} className="bg-red-50/60 border border-red-100 rounded-lg px-4 py-3">
-              {/* Row 1: error message + action buttons */}
               <div className="flex items-start justify-between gap-3 mb-2">
                 <div className="text-sm font-semibold text-red-700">
                   {err.message || 'Onbekende fout'}
@@ -873,7 +1070,6 @@ function ErrorsSection({ errors, onClearOne, onClearAll }: { errors: ErrorItem[]
                   </button>
                 </div>
               </div>
-              {/* Row 2: metadata line */}
               <div className="flex items-center flex-wrap gap-x-4 gap-y-1.5">
                 <span className="text-xs text-[var(--muted-foreground)]">{time}</span>
                 <ModuleBadge module={err.module} variant="amber" />
@@ -895,15 +1091,43 @@ function ErrorsSection({ errors, onClearOne, onClearAll }: { errors: ErrorItem[]
   )
 }
 
-function ActorRow({ actor, index, isExpanded, color, onToggle, detail, detailLoading }: {
+function TrendIndicator({ trend, gapDays }: { trend: string; gapDays: number }) {
+  if (trend === 'nieuw') {
+    return <span className="text-xs text-[var(--muted-foreground)] italic">nieuw</span>
+  }
+
+  const icons = {
+    stijgend: <TrendingUp className="w-3.5 h-3.5 text-green-600" />,
+    dalend: <TrendingDown className="w-3.5 h-3.5 text-red-500" />,
+    stabiel: <Minus className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />,
+  }
+
+  return (
+    <div className="flex items-center gap-1.5" title={`Gem. ${gapDays}d tussen sessies`}>
+      {icons[trend as keyof typeof icons] || icons.stabiel}
+      <span className="text-xs text-[var(--muted-foreground)]">
+        {gapDays > 0 ? `${gapDays}d` : ''}
+      </span>
+    </div>
+  )
+}
+
+function ActorRow({ actor, allActors, isExpanded, color, onToggle, detail, detailLoading }: {
   actor: ActorItem
-  index: number
+  allActors: ActorItem[]
   isExpanded: boolean
   color: 'green' | 'amber' | 'gray'
   onToggle: () => void
   detail: ActorDetailEvent[] | null
   detailLoading: boolean
 }) {
+  const isAtRisk = color === 'gray'
+  const engagement = isAtRisk
+    ? { label: 'Risico', color: 'text-red-700 bg-red-50 border-red-200' }
+    : getEngagementLabel(actor.engagement_score, allActors)
+
+  const displayName = actor.user_name || actor.user_email || `Gebruiker ${actor.actor_hash.slice(0, 6)}`
+
   return (
     <>
       <tr
@@ -920,8 +1144,8 @@ function ActorRow({ actor, index, isExpanded, color, onToggle, detail, detailLoa
         </td>
         <td className="py-2.5 pr-4">
           <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${ACTIVITY_DOT_COLORS[color]}`} />
-            <span className="font-medium text-[var(--navy-dark)]">Gebruiker {index + 1}</span>
+            <span className={`w-2 h-2 rounded-full shrink-0 ${ACTIVITY_DOT_COLORS[color]}`} />
+            <span className="font-medium text-[var(--navy-dark)]">{displayName}</span>
           </div>
         </td>
         <td className="py-2.5 pr-4">
@@ -931,7 +1155,15 @@ function ActorRow({ actor, index, isExpanded, color, onToggle, detail, detailLoa
           </div>
         </td>
         <td className="py-2.5 pr-4 text-right font-medium text-[var(--navy-dark)]">
-          {actor.event_count}
+          {actor.session_count}
+        </td>
+        <td className="py-2.5 pr-4 text-right">
+          <span className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-semibold ${engagement.color}`}>
+            {Math.round(actor.engagement_score)} — {engagement.label}
+          </span>
+        </td>
+        <td className="py-2.5 pr-4">
+          <TrendIndicator trend={actor.gap_trend} gapDays={actor.avg_gap_days} />
         </td>
         <td className="py-2.5 pr-4">
           {actor.top_module ? <ModuleBadge module={actor.top_module} /> : <span className="text-[var(--muted-foreground)]">—</span>}
@@ -943,7 +1175,15 @@ function ActorRow({ actor, index, isExpanded, color, onToggle, detail, detailLoa
       {/* Expanded detail */}
       {isExpanded && (
         <tr className="bg-[var(--gray-light)]/20">
-          <td colSpan={7} className="px-4 py-3">
+          <td colSpan={9} className="px-4 py-3">
+            {/* Session stats summary */}
+            {actor.session_count > 0 && (
+              <div className="flex items-center gap-6 mb-3 text-xs text-[var(--muted-foreground)]">
+                <span>Gem. sessie: <strong className="text-[var(--navy-dark)]">{formatDuration(actor.avg_session_seconds)}</strong></span>
+                <span>Modules bezocht: <strong className="text-[var(--navy-dark)]">{actor.module_count}</strong></span>
+                <span>Acties totaal: <strong className="text-[var(--navy-dark)]">{actor.event_count}</strong></span>
+              </div>
+            )}
             {detailLoading ? (
               <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] py-2">
                 <div className="w-4 h-4 border-2 border-[var(--navy-medium)] border-t-transparent rounded-full animate-spin" />
