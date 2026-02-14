@@ -91,18 +91,19 @@ interface SearchItem {
 }
 
 interface FilterItem {
+  module: string
   field: string
   filter_count: number
-  top_module: string
 }
 
 interface ColumnItem {
+  module: string
   column_name: string
   usage_count: number
-  top_module: string
 }
 
 interface ExportItem {
+  module: string
   format: string
   export_count: number
   avg_rows: number
@@ -534,7 +535,13 @@ export default function StatistiekenPage() {
                 icon={<Download className="w-4 h-4" />}
                 label="Exports"
                 value={exports.count}
-                subtext={data.exports.map(e => `${e.export_count} ${e.format.toUpperCase()}`).join(', ') || 'geen'}
+                subtext={(() => {
+                  const byFormat = new Map<string, number>()
+                  for (const e of data.exports) {
+                    byFormat.set(e.format, (byFormat.get(e.format) ?? 0) + e.export_count)
+                  }
+                  return [...byFormat.entries()].map(([f, c]) => `${c} ${f.toUpperCase()}`).join(', ') || 'geen'
+                })()}
               />
               <PulseCard
                 icon={<MousePointerClick className="w-4 h-4" />}
@@ -694,76 +701,47 @@ export default function StatistiekenPage() {
                   )}
                 </div>
 
-                {/* Right: Filters, columns, exports stacked */}
+                {/* Right: Filters, columns, exports stacked — grouped by module */}
                 <div className="space-y-5">
-                  <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">
-                      Meest gebruikte filters
-                    </h3>
-                    {data.filters.length === 0 ? (
-                      <p className="text-sm text-[var(--muted-foreground)] italic">Nog geen filters gebruikt</p>
-                    ) : (
-                      <div className="space-y-1">
-                        {data.filters.map((f, i) => (
-                          <div key={i} className="flex items-center justify-between text-sm">
-                            <span className="text-[var(--navy-dark)]">{FIELD_LABELS[f.field] || f.field}</span>
-                            <span className="flex items-center gap-2">
-                              <span className="font-medium">{f.filter_count}</span>
-                              <ModuleBadge module={f.top_module} small />
-                            </span>
-                          </div>
-                        ))}
+                  <ModuleGroupedList
+                    title="Meest gebruikte filters"
+                    items={data.filters}
+                    getModule={f => f.module}
+                    renderItem={f => (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-[var(--navy-dark)]">{FIELD_LABELS[f.field] || f.field}</span>
+                        <span className="font-medium text-[var(--navy-medium)]">{f.filter_count}×</span>
                       </div>
                     )}
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1">
-                      Extra kolommen toegevoegd
-                    </h3>
-                    <p className="text-xs text-[var(--muted-foreground)] mb-2">
-                      Kolommen die gebruikers handmatig toevoegen — overweeg als standaard
-                    </p>
-                    {data.columns.length === 0 ? (
-                      <p className="text-sm text-[var(--muted-foreground)] italic">Nog geen kolommen geselecteerd</p>
-                    ) : (
-                      <div className="space-y-1">
-                        {data.columns.map((c, i) => (
-                          <div key={i} className="flex items-center justify-between text-sm">
-                            <span className="text-[var(--navy-dark)]">
-                              <span className="text-green-600 font-semibold mr-1">+</span>
-                              {FIELD_LABELS[c.column_name] || c.column_name}
-                            </span>
-                            <span className="flex items-center gap-2">
-                              <span className="font-medium">{c.usage_count}×</span>
-                              <ModuleBadge module={c.top_module} small />
-                            </span>
-                          </div>
-                        ))}
+                    emptyText="Nog geen filters gebruikt"
+                  />
+                  <ModuleGroupedList
+                    title="Kolommen"
+                    subtitle="Kolommen die gebruikers selecteren — informeert standaardconfiguratie"
+                    items={data.columns}
+                    getModule={c => c.module}
+                    renderItem={c => (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-[var(--navy-dark)]">{FIELD_LABELS[c.column_name] || c.column_name}</span>
+                        <span className="font-medium text-[var(--navy-medium)]">{c.usage_count}×</span>
                       </div>
                     )}
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">
-                      Exports
-                    </h3>
-                    {data.exports.length === 0 ? (
-                      <p className="text-sm text-[var(--muted-foreground)] italic">Nog geen exports</p>
-                    ) : (
-                      <div className="flex gap-4">
-                        {data.exports.map((e, i) => (
-                          <div key={i} className="flex items-center gap-2">
-                            <span className="text-xs font-bold text-[var(--navy-dark)] uppercase bg-[var(--gray-light)] px-2 py-0.5 rounded">
-                              {e.format}
-                            </span>
-                            <span className="text-lg font-bold text-[var(--navy-dark)]">{e.export_count}</span>
-                            <span className="text-xs text-[var(--muted-foreground)]">
-                              gem. {e.avg_rows} rijen
-                            </span>
-                          </div>
-                        ))}
+                    emptyText="Nog geen kolommen geselecteerd"
+                  />
+                  <ModuleGroupedList
+                    title="Exports"
+                    items={data.exports}
+                    getModule={e => e.module}
+                    renderItem={e => (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-[var(--navy-dark)]">
+                          <span className="text-xs font-bold uppercase bg-[var(--gray-light)] px-1.5 py-0.5 rounded mr-2">{e.format}</span>
+                          {e.export_count}× <span className="text-[var(--muted-foreground)]">gem. {e.avg_rows} rijen</span>
+                        </span>
                       </div>
                     )}
-                  </div>
+                    emptyText="Nog geen exports"
+                  />
                 </div>
               </div>
             </Section>
@@ -896,6 +874,58 @@ function ModuleBadge({ module, small, variant }: {
     <span className={`inline-block ${small ? 'text-[10px] px-1 py-0' : 'text-xs px-1.5 py-0.5'} rounded font-medium bg-[var(--gray-light)] text-[var(--navy-medium)]`}>
       {label}
     </span>
+  )
+}
+
+function ModuleGroupedList<T>({ title, subtitle, items, getModule, renderItem, emptyText }: {
+  title: string
+  subtitle?: string
+  items: T[]
+  getModule: (item: T) => string
+  renderItem: (item: T) => React.ReactNode
+  emptyText: string
+}) {
+  if (items.length === 0) {
+    return (
+      <div>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">
+          {title}
+        </h3>
+        {subtitle && <p className="text-xs text-[var(--muted-foreground)] mb-2">{subtitle}</p>}
+        <p className="text-sm text-[var(--muted-foreground)] italic">{emptyText}</p>
+      </div>
+    )
+  }
+
+  // Group items by module
+  const grouped = new Map<string, T[]>()
+  for (const item of items) {
+    const mod = getModule(item)
+    if (!grouped.has(mod)) grouped.set(mod, [])
+    grouped.get(mod)!.push(item)
+  }
+
+  return (
+    <div>
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1">
+        {title}
+      </h3>
+      {subtitle && <p className="text-xs text-[var(--muted-foreground)] mb-2">{subtitle}</p>}
+      <div className="space-y-2.5">
+        {[...grouped.entries()].map(([mod, modItems]) => (
+          <div key={mod}>
+            <div className="text-xs font-semibold text-[var(--navy-dark)] mb-1">
+              {MODULE_LABELS[mod] || mod}
+            </div>
+            <div className="space-y-0.5 pl-3 border-l-2 border-[var(--border)]">
+              {modItems.map((item, i) => (
+                <div key={i}>{renderItem(item)}</div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
