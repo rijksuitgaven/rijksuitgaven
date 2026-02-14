@@ -51,13 +51,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { email, first_name, last_name, organization, plan, start_date, role } = body as {
+  const { email, first_name, last_name, organization, plan, start_date, end_date: end_date_override, role } = body as {
     email?: string
     first_name?: string
     last_name?: string
     organization?: string
     plan?: string
     start_date?: string
+    end_date?: string
     role?: string
   }
 
@@ -79,7 +80,9 @@ export async function POST(request: NextRequest) {
   // Calculate end_date and grace_ends_at
   const start = new Date(start_date + 'T00:00:00Z')
   let endDate: Date
-  if (plan === 'trial') {
+  if (end_date_override && /^\d{4}-\d{2}-\d{2}$/.test(end_date_override)) {
+    endDate = new Date(end_date_override + 'T00:00:00Z')
+  } else if (plan === 'trial') {
     endDate = new Date(start)
     endDate.setUTCDate(endDate.getUTCDate() + 14)
   } else if (plan === 'monthly') {

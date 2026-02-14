@@ -100,14 +100,12 @@ export async function updateSession(request: NextRequest) {
       const lastPing = request.cookies.get('_la')?.value
       const now = Date.now()
       if (!lastPing || now - Number(lastPing) > 5 * 60 * 1000) {
-        // Fire-and-forget: don't await, don't block the response
-        supabase
+        // Must await — Edge Runtime cancels pending promises after response
+        const { error: pingError } = await supabase
           .from('subscriptions')
           .update({ last_active_at: new Date().toISOString() })
           .eq('user_id', session.user.id)
-          .then(({ error }) => {
-            if (error) console.error('[middleware] last_active_at update failed:', error.message)
-          })
+        if (pingError) console.error('[middleware] last_active_at update failed:', pingError.message)
         supabaseResponse.cookies.set('_la', String(now), {
           httpOnly: true,
           sameSite: 'lax',

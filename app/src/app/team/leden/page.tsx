@@ -223,6 +223,15 @@ function AddMemberForm({ onSuccess }: { onSuccess: () => void }) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [selectedRole, setSelectedRole] = useState<string>('member')
+  const [selectedPlan, setSelectedPlan] = useState<string>('yearly')
+
+  function computeDefaultEndDate(startDate: string, plan: string): string {
+    const d = new Date(startDate + 'T00:00:00Z')
+    if (plan === 'trial') d.setUTCDate(d.getUTCDate() + 14)
+    else if (plan === 'monthly') d.setUTCMonth(d.getUTCMonth() + 1)
+    else d.setUTCFullYear(d.getUTCFullYear() + 1)
+    return d.toISOString().split('T')[0]
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -231,15 +240,18 @@ function AddMemberForm({ onSuccess }: { onSuccess: () => void }) {
 
     const form = new FormData(e.currentTarget)
     const role = form.get('role') as string
-    const body = {
+    const plan = role === 'trial' ? 'trial' : (form.get('plan') as string)
+    const body: Record<string, unknown> = {
       email: form.get('email'),
       first_name: form.get('first_name'),
       last_name: form.get('last_name'),
       organization: form.get('organization') || null,
-      plan: role === 'trial' ? 'trial' : form.get('plan'),
+      plan,
       role,
       start_date: form.get('start_date'),
     }
+    const endDate = form.get('end_date') as string
+    if (endDate) body.end_date = endDate
 
     try {
       const res = await fetch('/api/v1/team/leden', {
@@ -295,16 +307,30 @@ function AddMemberForm({ onSuccess }: { onSuccess: () => void }) {
         {selectedRole !== 'trial' && (
           <div>
             <label htmlFor="plan" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Plan *</label>
-            <select id="plan" name="plan" required className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent">
+            <select id="plan" name="plan" required value={selectedPlan} onChange={e => setSelectedPlan(e.target.value)} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent">
               <option value="yearly">Jaarlijks</option>
               <option value="monthly">Maandelijks</option>
             </select>
           </div>
         )}
-        <div>
-          <label htmlFor="start_date" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Startdatum *</label>
-          <input id="start_date" name="start_date" type="date" required defaultValue={today} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent" />
-        </div>
+        {selectedRole !== 'admin' && (
+          <>
+            <div>
+              <label htmlFor="start_date" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Startdatum *</label>
+              <input id="start_date" name="start_date" type="date" required defaultValue={today} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent" />
+            </div>
+            <div>
+              <label htmlFor="end_date" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Einddatum</label>
+              <input id="end_date" name="end_date" type="date" defaultValue={computeDefaultEndDate(today, selectedRole === 'trial' ? 'trial' : selectedPlan)} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent" />
+            </div>
+          </>
+        )}
+        {selectedRole === 'admin' && (
+          <div>
+            <label htmlFor="start_date" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Startdatum *</label>
+            <input id="start_date" name="start_date" type="date" required defaultValue={today} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent" />
+          </div>
+        )}
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
