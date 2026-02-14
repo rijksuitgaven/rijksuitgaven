@@ -283,7 +283,7 @@ export function ExpandedRow({
     return (
       <tr className="bg-[var(--gray-light)]">
         <td colSpan={contentColSpan + (collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
-          <ErrorReport message={error} variant="inline" />
+          <ErrorReport variant="inline" />
         </td>
       </tr>
     )

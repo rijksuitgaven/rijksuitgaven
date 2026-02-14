@@ -294,7 +294,7 @@ export function DetailPanel({
 
           {error && (
             <div className="flex items-center justify-center h-64 px-6">
-              <ErrorReport message={error} />
+              <ErrorReport />
             </div>
           )}
 

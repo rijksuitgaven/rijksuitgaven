@@ -58,7 +58,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       // Default error UI
       return (
         <div className="flex flex-col items-center justify-center min-h-[200px] p-6 bg-[var(--gray-light)] rounded-lg">
-          <ErrorReport message="Er is een fout opgetreden bij het laden van deze sectie." />
+          <ErrorReport />
           {process.env.NODE_ENV === 'development' && this.state.error && (
             <details className="mt-4 w-full max-w-lg">
               <summary className="text-xs text-[var(--muted-foreground)] cursor-pointer">

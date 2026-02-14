@@ -446,7 +446,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[var(--gray-light)] to-white flex items-center justify-center">
-        <ErrorReport message={error} />
+        <ErrorReport />
       </div>
     )
   }
