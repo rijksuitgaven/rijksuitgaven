@@ -117,25 +117,6 @@ function MemberActions({ member, isSelf, onChanged }: { member: Member; isSelf: 
     }
   }
 
-  async function handleDeactivate(e: React.MouseEvent) {
-    e.stopPropagation()
-    if (!confirm('Weet u zeker dat u dit lid wilt deactiveren?')) return
-    setBusy(true)
-    try {
-      const res = await fetch(`/api/v1/team/leden/${member.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cancelled_at: new Date().toISOString() }),
-      })
-      if (res.ok) onChanged()
-      else alert('Fout bij deactiveren')
-    } catch {
-      alert('Netwerkfout')
-    } finally {
-      setBusy(false)
-    }
-  }
-
   async function handleActivate(e: React.MouseEvent) {
     e.stopPropagation()
     setBusy(true)
@@ -154,16 +135,16 @@ function MemberActions({ member, isSelf, onChanged }: { member: Member; isSelf: 
     }
   }
 
-  async function handleDelete(e: React.MouseEvent) {
+  async function handleChurn(e: React.MouseEvent) {
     e.stopPropagation()
-    if (!confirm(`Weet u zeker dat u het abonnement van ${member.first_name} ${member.last_name} wilt beëindigen? De persoon wordt verplaatst naar Contacten.`)) return
+    if (!confirm(`Weet u zeker dat u het lidmaatschap van ${member.first_name} ${member.last_name} wilt opzeggen? Deze persoon wordt verplaatst naar Contacten. U kunt het lidmaatschap later opnieuw activeren.`)) return
     setBusy(true)
     try {
       const res = await fetch(`/api/v1/team/leden/${member.id}`, { method: 'DELETE' })
       if (res.ok) onChanged()
       else {
         const data = await res.json()
-        alert(data.error || 'Fout bij verwijderen')
+        alert(data.error || 'Fout bij opzeggen')
       }
     } catch {
       alert('Netwerkfout')
@@ -175,8 +156,7 @@ function MemberActions({ member, isSelf, onChanged }: { member: Member; isSelf: 
   const btnBase = 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border transition-colors disabled:opacity-50'
   const btnInvite = `${btnBase} border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100`
   const btnActivate = `${btnBase} border-green-200 text-green-700 bg-green-50 hover:bg-green-100`
-  const btnDeactivate = `${btnBase} border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100`
-  const btnDelete = `${btnBase} border-red-200 text-red-700 bg-red-50 hover:bg-red-100`
+  const btnChurn = `${btnBase} border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100`
 
   const spinner = (
     <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" strokeDasharray="28" strokeDashoffset="8" /></svg>
@@ -202,17 +182,11 @@ function MemberActions({ member, isSelf, onChanged }: { member: Member; isSelf: 
         </button>
       )}
 
-      {/* Deactivate (for active / grace, not admins) */}
-      {member.role !== 'admin' && (status === 'active' || status === 'grace') && (
-        <button onClick={handleDeactivate} disabled={busy} title="Abonnement deactiveren" className={btnDeactivate}>
-          Deactiveren
-        </button>
-      )}
-
-      {/* Delete (for aangemaakt, uitgenodigd, expired) */}
-      {(status === 'aangemaakt' || status === 'uitgenodigd' || status === 'expired') && (
-        <button onClick={handleDelete} disabled={busy} title="Lid definitief verwijderen" className={btnDelete}>
-          <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.519.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clipRule="evenodd" /></svg>
+      {/* Churn (for all non-admin members) */}
+      {member.role !== 'admin' && (
+        <button onClick={handleChurn} disabled={busy} title="Lidmaatschap opzeggen en verplaatsen naar Contacten" className={btnChurn}>
+          <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM2.046 15.253c-.058.468.172.92.57 1.175A9.953 9.953 0 0 0 8 18c1.982 0 3.83-.578 5.384-1.573.398-.254.628-.707.57-1.175a6.001 6.001 0 0 0-11.908 0ZM12.75 7.75a.75.75 0 0 0 0 1.5h5.5a.75.75 0 0 0 0-1.5h-5.5Z" /></svg>
+          Opzeggen
         </button>
       )}
     </div>

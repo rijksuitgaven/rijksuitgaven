@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
-import { Trash2 } from 'lucide-react'
 
 interface Contact {
   id: string
@@ -13,9 +12,10 @@ interface Contact {
   last_name: string | null
   organization: string | null
   phone: string | null
-  type: 'prospect' | 'churned'
+  type: 'prospect' | 'churned' | 'gearchiveerd'
   source: string | null
   notes: string | null
+  archived_at: string | null
   resend_contact_id: string | null
   created_at: string
   updated_at: string
@@ -27,6 +27,7 @@ type SortDirection = 'asc' | 'desc'
 const typeConfig: Record<Contact['type'], { label: string; className: string }> = {
   prospect: { label: 'Prospect', className: 'bg-blue-50 text-blue-700 border-blue-200' },
   churned: { label: 'Churned', className: 'bg-gray-50 text-gray-600 border-gray-200' },
+  gearchiveerd: { label: 'Gearchiveerd', className: 'bg-stone-50 text-stone-500 border-stone-200' },
 }
 
 function TypeBadge({ type }: { type: Contact['type'] }) {
@@ -267,11 +268,10 @@ function ConvertToMemberModal({ contact, onClose, onConverted }: {
   )
 }
 
-function EditContactModal({ contact, onClose, onSaved, onDeleted }: {
+function EditContactModal({ contact, onClose, onSaved }: {
   contact: Contact
   onClose: () => void
   onSaved: () => void
-  onDeleted: () => void
 }) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -318,15 +318,19 @@ function EditContactModal({ contact, onClose, onSaved, onDeleted }: {
     }
   }
 
-  async function handleDelete() {
-    if (!confirm('Weet u zeker dat u dit contact wilt verwijderen?')) return
+  async function handleArchive() {
+    if (!confirm('Weet u zeker dat u dit contact wilt archiveren?')) return
     setSubmitting(true)
     try {
-      const res = await fetch(`/api/v1/team/contacten/${contact.id}`, { method: 'DELETE' })
-      if (res.ok) onDeleted()
+      const res = await fetch(`/api/v1/team/contacten/${contact.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ archived_at: new Date().toISOString() }),
+      })
+      if (res.ok) onSaved()
       else {
         const data = await res.json()
-        setError(data.error || 'Fout bij verwijderen')
+        setError(data.error || 'Fout bij archiveren')
       }
     } catch {
       setError('Netwerkfout')
@@ -400,11 +404,32 @@ function EditContactModal({ contact, onClose, onSaved, onDeleted }: {
 
           <div className="flex items-center justify-between pt-2">
             {contact.type === 'prospect' ? (
-              <button type="button" onClick={handleDelete} disabled={submitting} className="text-sm text-red-600 hover:text-red-800">
-                Verwijderen
+              <button type="button" onClick={handleArchive} disabled={submitting} className="text-sm text-stone-500 hover:text-stone-700">
+                Archiveren
+              </button>
+            ) : contact.type === 'gearchiveerd' ? (
+              <button
+                type="button"
+                disabled={submitting}
+                onClick={async () => {
+                  setSubmitting(true)
+                  try {
+                    const res = await fetch(`/api/v1/team/contacten/${contact.id}`, {
+                      method: 'PATCH',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ archived_at: null }),
+                    })
+                    if (res.ok) onSaved()
+                    else { const d = await res.json(); setError(d.error || 'Fout') }
+                  } catch { setError('Netwerkfout') }
+                  finally { setSubmitting(false) }
+                }}
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                Dearchiveren
               </button>
             ) : (
-              <p className="text-xs text-[var(--navy-medium)]">Churned contacten kunnen niet worden verwijderd</p>
+              <span />
             )}
             <div className="flex gap-2">
               <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-[var(--border)] rounded-md hover:bg-gray-50">
@@ -530,6 +555,7 @@ export default function TeamContactenPage() {
   const counts = {
     prospect: contacts.filter(c => c.type === 'prospect').length,
     churned: contacts.filter(c => c.type === 'churned').length,
+    gearchiveerd: contacts.filter(c => c.type === 'gearchiveerd').length,
   }
 
   return (
@@ -546,6 +572,9 @@ export default function TeamContactenPage() {
           <span className="text-blue-700"><span className="font-semibold">{counts.prospect}</span> prospects</span>
           {counts.churned > 0 && (
             <span className="text-gray-600"><span className="font-semibold">{counts.churned}</span> churned</span>
+          )}
+          {counts.gearchiveerd > 0 && (
+            <span className="text-stone-500"><span className="font-semibold">{counts.gearchiveerd}</span> gearchiveerd</span>
           )}
         </div>
         <button
@@ -620,14 +649,17 @@ export default function TeamContactenPage() {
                           <button
                             onClick={(ev) => {
                               ev.stopPropagation()
-                              if (!confirm('Weet u zeker dat u dit contact wilt verwijderen?')) return
-                              fetch(`/api/v1/team/contacten/${contact.id}`, { method: 'DELETE' })
-                                .then(res => { if (res.ok) fetchContacts() })
+                              if (!confirm('Weet u zeker dat u dit contact wilt archiveren?')) return
+                              fetch(`/api/v1/team/contacten/${contact.id}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ archived_at: new Date().toISOString() }),
+                              }).then(res => { if (res.ok) fetchContacts() })
                             }}
-                            className="p-1.5 text-[var(--muted-foreground)] hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                            title="Verwijderen"
+                            className="p-1.5 text-[var(--muted-foreground)] hover:text-stone-600 hover:bg-stone-50 rounded transition-colors"
+                            title="Archiveren"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H2Z" /><path fillRule="evenodd" d="M2 7.5h16l-.811 7.71a2 2 0 0 1-1.99 1.79H4.802a2 2 0 0 1-1.99-1.79L2 7.5ZM7 11a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Z" clipRule="evenodd" /></svg>
                           </button>
                         )}
                       </div>
@@ -645,7 +677,6 @@ export default function TeamContactenPage() {
           contact={editingContact}
           onClose={() => setEditingContact(null)}
           onSaved={() => { setEditingContact(null); fetchContacts() }}
-          onDeleted={() => { setEditingContact(null); fetchContacts() }}
         />
       )}
 

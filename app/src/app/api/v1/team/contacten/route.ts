@@ -5,7 +5,8 @@
  * POST /api/v1/team/contacten — Create new person (prospect)
  *
  * Type is computed, not stored:
- *   - No subscription history → prospect
+ *   - No subscription history, not archived → prospect
+ *   - No subscription history, archived_at set → gearchiveerd
  *   - Had subscription, now expired/cancelled → churned
  */
 
@@ -26,7 +27,7 @@ export async function GET() {
   // Get all people with their subscriptions (if any)
   const { data: people, error } = await supabase
     .from('people')
-    .select('id, email, first_name, last_name, organization, phone, source, notes, resend_contact_id, created_at, updated_at, subscriptions(id, end_date, grace_ends_at, cancelled_at)')
+    .select('id, email, first_name, last_name, organization, phone, source, notes, resend_contact_id, archived_at, created_at, updated_at, subscriptions(id, end_date, grace_ends_at, cancelled_at)')
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -49,9 +50,16 @@ export async function GET() {
     return !hasActive
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }).map(({ subscriptions, ...person }: any) => {
-    // Compute type: prospect (never had subscription) or churned (had one, now expired)
+    // Compute type: churned (had subscription), gearchiveerd (archived prospect), or prospect
     const subs = subscriptions as { id: string }[]
-    const type: 'prospect' | 'churned' = subs && subs.length > 0 ? 'churned' : 'prospect'
+    let type: 'prospect' | 'churned' | 'gearchiveerd'
+    if (subs && subs.length > 0) {
+      type = 'churned'
+    } else if (person.archived_at) {
+      type = 'gearchiveerd'
+    } else {
+      type = 'prospect'
+    }
     return { ...person, type }
   })
 
