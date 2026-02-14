@@ -83,6 +83,7 @@
 - ✅ **2026-02-14 (Session 7):** Error message UX overhaul — expert panel (5 specialists). Universal "Er is iets misgegaan" message (industry standard). Fixed English error leaks from `lib/api.ts`. Shared `ErrorReport` component: "Fout melden" → "✓ Fout is gemeld" → countdown 3-2-1 → `router.back()`. Three-tier error model (silent/inline/page). Error trigger tracking: `lastTrigger` ref captures what user action caused the error, dashboard "Actie" pill shows Dutch labels.
 - ✅ **2026-02-14 (Session 8):** Comprehensive error tracking — audit found only 1 of 35 catch blocks tracked errors (97% blind). Added `track('error', ...)` to 7 critical components: expanded-row, detail-panel, filter-panel (2 catch blocks), search-bar, feedback-button, login-form (3 error paths), public-homepage (2 error paths). Dashboard updated with 7 new Dutch trigger labels. All errors now report with trigger context (row_expand, detail_panel, filter_load, autocomplete, feedback_submit, login, contact_form).
 - ✅ **2026-02-14 (Session 9):** Complete UI event tracking — exhaustive audit found ~75 untracked actions. Expert team scoped to 9 tracking points. New `external_link` event type (13th) for "Zoek op Google" clicks. Tracked: detail-panel CSV export + cross-module nav, cross-module-results links, filter-panel autocomplete selections (3 handlers), 404 page views, React render crashes (direct sendBeacon in class component), grouping counts errors. Dashboard: "Externe links" pulse card + formatEventLine + trigger labels (404, react_render) + path pill. Homepage analytics deferred to V1.1 backlog.
+- ✅ **2026-02-14 (Session 10):** Admin dashboard + leden management improvements. Copy-prompt button on error cards (format as debugging prompt). Member actions: contextual activate/deactivate/delete per status. DELETE endpoint for hard member deletion. Admins never expire (computeStatus, middleware, hidden Einddatum/deactivate). Fixed last_active_at (RLS UPDATE policy + await in Edge Runtime). Sortable "Laatst actief" column. Per-error delete in statistics. Editable end date in add form. Migration 041 executed.
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
@@ -109,20 +110,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **11 files** MODIFIED (2026-02-14 Session 9)
-   Complete UI event tracking: `external_link` type added, 9 tracking points across data-table, detail-panel, expanded-row, filter-panel, cross-module-results, not-found, error-boundary, statistieken. Dashboard: "Externe links" pulse card.
+1. **6 files** MODIFIED (2026-02-14 Session 10)
+   Admin dashboard + leden management: copy-prompt button, member actions, admin never-expire, last_active_at fix, sortable columns, per-error delete, editable end date.
 
-2. **02-requirements/backlog.md** MODIFIED (2026-02-14)
-   Added "Homepage Analytics Tracking" V1.1 backlog item (deferred from UX-032 scope).
+2. **scripts/sql/041-subscriptions-update-rls.sql** CREATED (2026-02-14)
+   RLS UPDATE policy for subscriptions (users can update own last_active_at).
 
-3. **app/src/components/error-boundary/error-report.tsx** CREATED (2026-02-14)
+3. **11 files** MODIFIED (2026-02-14 Session 9)
+   Complete UI event tracking: `external_link` type added, 9 tracking points across data-table, detail-panel, expanded-row, filter-panel, cross-module-results, not-found, error-boundary, statistieken.
+
+4. **app/src/components/error-boundary/error-report.tsx** CREATED (2026-02-14)
    Shared ErrorReport component — "Fout melden" → countdown → router.back().
 
-4. **app/src/components/module-page/module-page.tsx** MODIFIED (2026-02-14)
-   Error tracking in catch block, year sort fix (`year-2024`→`y2024`), sort_change, page_change, cross_module_nav.
-
-5. **scripts/sql/040-usage-errors-function.sql** CREATED (2026-02-14)
-   get_usage_errors() — recent error events with context for admin dashboard.
+5. **02-requirements/backlog.md** MODIFIED (2026-02-14)
+   Added "Homepage Analytics Tracking" V1.1 backlog item (deferred from UX-032 scope).
 
 ---
 
@@ -260,6 +261,11 @@ postgresql://postgres.kmdelrgtgglcrupprkqf:$SUPABASE_DB_PASSWORD@aws-1-eu-west-1
 | `scripts/sql/035-activated-at.sql` | 2026-02-12 | Supabase |
 | `scripts/sql/036-contacts.sql` | 2026-02-13 | Supabase |
 | `scripts/sql/037-last-active-at.sql` | 2026-02-13 | Supabase |
+| `scripts/sql/038-usage-events.sql` | 2026-02-14 | Supabase |
+| `scripts/sql/038b-usage-events-functions.sql` | 2026-02-14 | Supabase |
+| `scripts/sql/039-usage-dashboard-v2.sql` | 2026-02-14 | Supabase |
+| `scripts/sql/040-usage-errors-function.sql` | 2026-02-14 | Supabase |
+| `scripts/sql/041-subscriptions-update-rls.sql` | 2026-02-14 | Supabase |
 
 ### Configuration Files
 
@@ -906,7 +912,7 @@ See full sprint plan: `09-timelines/v1-sprint-plan.md`
 - 2026-01-29 - Mini sprint: Code review & security fixes (12 sessions, 66 commits)
 - 2026-01-30 - Versioning structure V1-V7, Rijksnetwerken (V6), infrastructure review
 
-**Last Session:** 2026-02-13 - **Typography overhaul (IBM Plex dual-width) + Brief 2 prototype visualizations (/h1-/h5)**
+**Last Session:** 2026-02-14 - **10 sessions: De Geldstroom, Ontdekking, Usage Statistics (UX-032), error tracking, admin dashboard + leden management**
 
 **2026-02-08 Summary:** Sessions 1-9: Docs audit, auth requirements, data validation (EUR 1.77T verified), UX-019/020/021, cascading filters, filter audit, full-stack code audit (55 fixes), deep security audit (7 fixes). Session 10: UX-022 Betalingen column + bracket filter for integraal (full-stack: SQL migration, backend, frontend). Session 11: Fixed expanded row column misalignment when searching.
 
