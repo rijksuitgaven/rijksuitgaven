@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { formatAmount } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
 import { MODULE_LABELS } from '@/lib/constants'
+import { useAnalytics } from '@/hooks/use-analytics'
 
 interface RecipientResult {
   type: 'recipient'
@@ -87,6 +88,7 @@ async function fetchFuzzySuggestions(q: string, signal?: AbortSignal): Promise<R
 
 export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regeling...', onSearch }: SearchBarProps) {
   const router = useRouter()
+  const { track } = useAnalytics()
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -107,6 +109,10 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
 
   // Track when the last autocomplete request fired (for leading-edge debounce)
   const lastFireTimeRef = useRef(0)
+
+  // Debounced autocomplete search tracking — 1.5s quiet period captures final query
+  const acTrackTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastTrackedAcQuery = useRef('')
 
   // Leading-edge + trailing debounce: first keystroke fires immediately, subsequent debounce 150ms
   useEffect(() => {
@@ -156,6 +162,23 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
           setIsOpen(recipientsData.length > 0 || keywordsData.length > 0)
         }
         setSelectedIndex(-1)
+
+        // Debounced autocomplete search tracking — captures final query intent
+        const totalCount = recipientsData.length + keywordsData.length
+        if (acTrackTimer.current) clearTimeout(acTrackTimer.current)
+        const querySnap = query
+        acTrackTimer.current = setTimeout(() => {
+          if (querySnap !== lastTrackedAcQuery.current) {
+            lastTrackedAcQuery.current = querySnap
+            track('autocomplete_search', undefined, {
+              query: querySnap,
+              result_count: totalCount,
+              recipient_count: recipientsData.length,
+              keyword_count: keywordsData.length,
+              has_suggestions: totalCount > 0,
+            })
+          }
+        }, 1500)
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') {
           return
@@ -220,15 +243,27 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
   const handleSelectRecipient = useCallback((result: RecipientResult) => {
     setQuery(result.name)
     setIsOpen(false)
+    track('autocomplete_click', 'integraal', {
+      query: query,
+      selected_value: result.name,
+      result_type: 'recipient',
+      target_module: 'integraal',
+    })
     router.push(`/integraal?q=${encodeURIComponent(result.name)}`)
-  }, [router])
+  }, [router, track, query])
 
   const handleSelectKeyword = useCallback((result: KeywordResult) => {
     setQuery(result.keyword)
     setIsOpen(false)
-    // Navigate to the specific module with the keyword search
+    track('autocomplete_click', result.module, {
+      query: query,
+      selected_value: result.keyword,
+      result_type: 'keyword',
+      target_module: result.module,
+      field: result.field,
+    })
     router.push(`/${result.module}?q=${encodeURIComponent(result.keyword)}`)
-  }, [router])
+  }, [router, track, query])
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault()

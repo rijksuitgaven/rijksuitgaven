@@ -430,11 +430,21 @@ V2.0: Full state in URL including expanded rows, pagination position, all filter
 
 **Priority:** Medium (V1.1 or V1.2)
 **Added:** 2026-01-21
-**Updated:** 2026-02-09
-**Status:** BACKLOGGED
+**Updated:** 2026-02-14
+**Status:** ✅ COMPLETED 2026-02-14 (Phase 2 implemented as UX-032)
 **Type:** Product Analytics / GDPR
 
 **Goal:** Track user behavior and usage patterns at scale (building for 500+ users, not just current 50).
+
+**What was implemented (UX-032):**
+- Server-side event logging via BFF (Phase 2 from original plan)
+- 6 event types: module_view, search, row_expand, filter_apply, export, column_change
+- Pseudonymized user tracking (SHA256 actor_hash, no PII)
+- Client-side batching hook (`use-analytics.ts`) — flush every 30s or 10 events
+- BFF endpoint (`POST /api/v1/analytics`) — fire-and-forget write to Supabase
+- Admin dashboard at `/team/statistieken` — 6 sections with date range picker
+- SQL: `038-usage-events.sql` (table) + `038b-usage-events-functions.sql` (7 RPC functions)
+- Design doc: `docs/plans/2026-02-14-usage-statistics-design.md`
 
 **GDPR Analysis (2026-02-09 expert team review):**
 
@@ -446,12 +456,12 @@ V2.0: Full state in URL including expanded rows, pagination position, all filter
 | Custom events (server-side BFF logging) | No | Log API calls in BFF, no client-side tracking needed |
 | PostHog / GA4 (cookies, user profiling) | Yes | Requires consent mechanism, overkill for now |
 
-**Recommended phased approach:**
+**Remaining phases (future):**
 
 | Phase | Trigger | Action | Cost |
 |-------|---------|--------|------|
 | 1 | Post-launch | Plausible or Umami Cloud (pageviews, traffic, top pages) | €9/month |
-| 2 | 200+ users | Server-side event logging in BFF (search terms, exports, filter usage) | €0 (Supabase table) |
+| ~~2~~ | ~~200+ users~~ | ~~Server-side event logging~~ | ✅ Done (UX-032) |
 | 3 | 500+ users | PostHog with proper consent mechanism | Free tier |
 
 **Key rules:**
@@ -459,13 +469,6 @@ V2.0: Full state in URL including expanded rows, pagination position, all filter
 - Prefer server-side event tracking over client-side scripts (no consent needed)
 - Current cookie banner ("alleen noodzakelijke cookies") stays intact through Phase 1-2
 - Phase 3 requires updating cookie banner to consent mechanism
-
-**Shortlisted tools:**
-- **Plausible** (€9/month, SaaS, easiest, ~1KB script, EU-hosted Germany)
-- **Umami** (€9/month cloud or self-host, more flexible, custom events, ~2KB script)
-- Never: Google Analytics 4, Facebook Pixel
-
-**Decision:** Parked for V1.1/V1.2. Server logs + Supabase Auth sufficient for beta. Add Plausible/Umami post-launch when traffic metrics matter.
 
 ---
 

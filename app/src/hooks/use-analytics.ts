@@ -12,6 +12,11 @@ export type AnalyticsEventType =
   | 'filter_apply'
   | 'export'
   | 'column_change'
+  | 'autocomplete_search'
+  | 'autocomplete_click'
+  | 'cross_module_nav'
+  | 'sort_change'
+  | 'page_change'
 
 interface AnalyticsEvent {
   event_type: AnalyticsEventType

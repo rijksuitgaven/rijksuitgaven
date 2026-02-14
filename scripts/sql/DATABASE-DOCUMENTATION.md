@@ -5,7 +5,7 @@
 **Region:** eu-west-1
 **Created:** 2026-01-21
 **Data Migrated:** 2026-01-23
-**Last Updated:** 2026-02-13 (contacts table, last_active_at tracking)
+**Last Updated:** 2026-02-14 (usage_events table, analytics functions)
 
 ---
 
@@ -229,6 +229,60 @@
 - Admin page: `/team/contacten` (CRUD, sortable table, type badges)
 - API: GET/POST `/api/v1/team/contacten`, PATCH/DELETE `/api/v1/team/contacten/[id]`
 - Requires: `RESEND_API_KEY` + `RESEND_AUDIENCE_ID` env vars on Railway
+
+---
+
+### 0e. usage_events (Product Analytics)
+
+**Description:** Server-side product analytics events. Pseudonymized user tracking (no PII). Used by admin dashboard at `/team/statistieken`.
+
+**Migration:** `038-usage-events.sql` (added 2026-02-14)
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (default gen_random_uuid()) |
+| event_type | VARCHAR(20) | Event type: module_view, search, row_expand, filter_apply, export, column_change |
+| actor_hash | VARCHAR(16) | Pseudonymized user ID (SHA256 first 16 chars, NOT reversible) |
+| module | VARCHAR(20) | Module name (nullable — some events are module-independent) |
+| properties | JSONB | Event-specific data (query, result_count, format, filters, etc.) |
+| created_at | TIMESTAMPTZ | Event timestamp (default NOW()) |
+
+**Indexes:**
+- `idx_usage_events_created_at` — date range queries (dashboard)
+- `idx_usage_events_event_type` — filter by event type
+- `idx_usage_events_module` — filter by module
+- `idx_usage_events_actor_hash` — unique user counts
+- `idx_usage_events_type_created` — composite: event_type + created_at
+- `idx_usage_events_properties` — GIN index on JSONB (query by properties->>'query', etc.)
+
+**RLS Policies:**
+- RLS enabled, no public SELECT policies
+- Admin reads via service_role (bypasses RLS)
+- Authenticated users can INSERT (for BFF endpoint)
+
+**Retention:** `cleanup_old_usage_events(days_to_keep INT DEFAULT 90)` — deletes events older than N days. Call manually or via cron.
+
+**RPC Functions (migration `038b-usage-events-functions.sql`):**
+
+| Function | Returns | Description |
+|----------|---------|-------------|
+| `get_usage_pulse(since_date)` | total_events, unique_actors, module_views, searches, exports | Top-line metrics |
+| `get_usage_modules(since_date, max_results)` | module, view_count, unique_actors | Module popularity |
+| `get_usage_searches(since_date, max_results)` | query, search_count, avg_results, top_module | Top search terms |
+| `get_usage_filters(since_date, max_results)` | filter_field, usage_count, unique_actors, top_module | Most-used filters |
+| `get_usage_columns(since_date, max_results)` | column_name, usage_count, unique_actors, top_module | Column customization usage |
+| `get_usage_exports(since_date)` | module, export_count, unique_actors, total_rows | Export activity |
+| `get_usage_zero_results(since_date, max_results)` | query, search_count, top_module | Zero-result searches (most actionable) |
+| `get_usage_actors(since_date, max_results)` | actor_hash, last_seen, event_count, top_module, search_count, export_count, module_count | Per-user activity summary (migration 039) |
+| `get_usage_actor_detail(target_actor, since_date)` | event_type, module, properties, created_at | Single user's event timeline, max 50 (migration 039) |
+
+All functions: `LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public`
+
+**Usage:**
+- Client: `useAnalytics()` hook batches events, flushes to `POST /api/v1/analytics`
+- BFF: Validates events, hashes user_id → actor_hash, fire-and-forget write
+- Dashboard: `/team/statistieken` calls `supabase.rpc()` for all 7 functions in parallel
+- Env var: `ANALYTICS_HASH_SECRET` on Railway frontend
 
 ---
 
@@ -902,6 +956,9 @@ VACUUM ANALYZE universal_search;
 | `035-activated-at.sql` | Add activated_at column to subscriptions + backfill | Once (done 2026-02-12) |
 | `036-contacts.sql` | Create contacts table (CRM) + RLS + trigger | Once (done 2026-02-13) |
 | `037-last-active-at.sql` | Add last_active_at to subscriptions + backfill | Once (done 2026-02-13) |
+| `038-usage-events.sql` | Create usage_events table + indexes + RLS + retention fn | Once (done 2026-02-14) |
+| `038b-usage-events-functions.sql` | 7 SQL functions for analytics dashboard | Once (done 2026-02-14) |
+| `039-usage-dashboard-v2.sql` | Dashboard V2: updated get_usage_searches (avg_results), new get_usage_actors + get_usage_actor_detail | Once (done 2026-02-14) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---

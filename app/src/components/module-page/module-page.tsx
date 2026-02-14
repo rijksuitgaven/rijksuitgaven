@@ -116,6 +116,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const searchParams = useSearchParams()
   const { track } = useAnalytics()
   const hasTrackedView = useRef(false)
+  const searchTrackTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastTrackedSearch = useRef('')
 
   const [data, setData] = useState<ModuleDataResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -191,7 +193,20 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     setSortBy('random')
     setUserHasSorted(false)
     setPage(1)
+    // Clear search tracking state on module switch
+    lastTrackedSearch.current = ''
+    if (searchTrackTimer.current) {
+      clearTimeout(searchTrackTimer.current)
+      searchTrackTimer.current = null
+    }
   }, [moduleId])
+
+  // Cleanup search track timer on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTrackTimer.current) clearTimeout(searchTrackTimer.current)
+    }
+  }, [])
 
   // Update URL when filters change
   useEffect(() => {
@@ -284,6 +299,31 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             has_filters: !isDefaultView,
           })
         }
+
+        // Debounced search tracking — 2s quiet period captures final intent, not keystrokes
+        // Fixes: tracks only final query, uses real result_count from response
+        if (filters.search && filters.search.trim()) {
+          if (searchTrackTimer.current) clearTimeout(searchTrackTimer.current)
+          const querySnap = filters.search
+          const countSnap = response.pagination.totalRows
+          searchTrackTimer.current = setTimeout(() => {
+            if (querySnap !== lastTrackedSearch.current) {
+              lastTrackedSearch.current = querySnap
+              track('search', moduleId, {
+                query: querySnap,
+                result_count: countSnap,
+                search_type: 'module_filter',
+              })
+            }
+          }, 2000)
+        } else if (!filters.search) {
+          // Clear tracking state when search is cleared
+          lastTrackedSearch.current = ''
+          if (searchTrackTimer.current) {
+            clearTimeout(searchTrackTimer.current)
+            searchTrackTimer.current = null
+          }
+        }
       } catch (err) {
         // Ignore abort errors - they're expected when deps change
         if (err instanceof Error && err.name === 'AbortError') {
@@ -310,16 +350,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const handleFilterChange = useCallback((newFilters: FilterValues) => {
     const prev = prevFiltersRef.current
 
-    // Track search if search term changed and is non-empty
-    if (newFilters.search && newFilters.search !== prev.search) {
-      track('search', moduleId, {
-        query: newFilters.search,
-        result_count: data?.pagination.totalRows ?? 0,
-        autocomplete_used: false,
-      })
-    }
-
-    // Track filter changes (multiselect filters)
+    // Track filter changes (multiselect filters only — search tracked after data loads)
     const nonFilterKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag']
     for (const [key, value] of Object.entries(newFilters)) {
       if (nonFilterKeys.includes(key)) continue
@@ -329,7 +360,6 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           track('filter_apply', moduleId, {
             field: key,
             values: value,
-            result_count: data?.pagination.totalRows ?? 0,
           })
         }
       }
@@ -338,18 +368,22 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     prevFiltersRef.current = newFilters
     setFilters(newFilters)
     setPage(1)
-  }, [track, moduleId, data?.pagination.totalRows])
+  }, [track, moduleId])
 
   const handleSortChange = useCallback((column: string, direction: 'asc' | 'desc') => {
     setSortBy(column)
     setSortOrder(direction)
     setUserHasSorted(true)  // User explicitly sorted, don't reset to random
     setPage(1)
-  }, [])
+    track('sort_change', moduleId, { column, direction })
+  }, [track, moduleId])
 
   const handlePageChange = useCallback((newPage: number) => {
     setPage(newPage)
-  }, [])
+    if (newPage > 1) {
+      track('page_change', moduleId, { page: newPage, per_page: perPage })
+    }
+  }, [track, moduleId, perPage])
 
   const handlePerPageChange = useCallback((newPerPage: number) => {
     setPerPage(newPerPage)
@@ -364,8 +398,13 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   }, [track, moduleId, filters.search])
 
   const handleNavigateToModule = useCallback((targetModule: string, recipient: string) => {
+    track('cross_module_nav', moduleId, {
+      target_module: targetModule,
+      recipient,
+      origin: 'expanded_row',
+    })
     router.push(`/${targetModule}?q=${encodeURIComponent(recipient)}`)
-  }, [router])
+  }, [router, track, moduleId])
 
   // Handle click on extra column value - apply filter (clear start) + auto-expand filter panel (UX-020)
   const handleFilterLinkClick = useCallback((field: string, value: string) => {

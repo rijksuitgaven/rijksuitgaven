@@ -22,7 +22,8 @@ app/src/
 │   │   ├── page.tsx              # Admin dashboard (subscription overview)
 │   │   ├── leden/page.tsx        # Member management (admin only)
 │   │   ├── feedback/page.tsx     # Feedback inbox (admin only)
-│   │   └── contacten/page.tsx    # Contacts management (admin only) — UX-028
+│   │   ├── contacten/page.tsx    # Contacts management (admin only) — UX-028
+│   │   └── statistieken/page.tsx # Usage statistics dashboard (admin only) — UX-032
 │   ├── verlopen/page.tsx         # Expired subscription page
 │   ├── instrumenten/page.tsx     # Module page
 │   ├── apparaat/page.tsx         # Module page
@@ -101,7 +102,8 @@ app/src/
 ├── hooks/
 │   ├── use-auth.ts               # useAuth() - client-side session hook
 │   ├── use-subscription.ts       # useSubscription() - client-side subscription status hook
-│   └── use-scroll-reveal.ts      # IntersectionObserver hook for scroll animations
+│   ├── use-scroll-reveal.ts      # IntersectionObserver hook for scroll animations
+│   └── use-analytics.ts          # useAnalytics() - client-side event batching hook (UX-032)
 ├── middleware.ts                 # Route protection + subscription check
 └── types/
     └── api.ts                    # TypeScript interfaces
@@ -743,6 +745,45 @@ return <UserContent user={user} />
 
 ---
 
+### useAnalytics() (`hooks/use-analytics.ts`) — UX-032
+
+Client-side analytics event batching hook with pseudonymized tracking.
+
+**Returns:**
+```typescript
+{
+  track: (eventType: AnalyticsEventType, module?: string, properties?: Record<string, unknown>) => void
+}
+```
+
+**Event Types (11):**
+- Core (module-page): `module_view`, `search`, `row_expand`, `filter_apply`, `export`, `column_change`, `sort_change`, `page_change`, `cross_module_nav`
+- Search bar: `autocomplete_search`, `autocomplete_click`
+
+**Batching Behavior:**
+- Events queue in module-level array (shared across all hook instances)
+- Flush triggers: every 30 seconds, at 10 events, or on `visibilitychange`
+- Uses `navigator.sendBeacon` for reliable delivery on page unload
+- Falls back to `fetch` if sendBeacon unavailable
+
+**Usage:**
+```tsx
+const { track } = useAnalytics()
+
+// Track module view
+track('module_view', 'instrumenten', { result_count: 500 })
+
+// Track search
+track('search', 'integraal', { query: 'prorail', result_count: 12 })
+
+// Track export
+track('export', 'inkoop', { format: 'csv', row_count: 250 })
+```
+
+**Privacy:** No PII stored. User ID hashed server-side to `actor_hash` (SHA256, first 16 chars). Anonymous users tracked as `anon_000000000000`.
+
+---
+
 ### useSubscription() (`hooks/use-subscription.ts`)
 
 Client-side subscription status hook.
@@ -786,6 +827,7 @@ if (status === 'expired') redirect('/verlopen')
 | `/team` | Protected (Admin) | Admin dashboard (subscription overview) |
 | `/team/leden` | Protected (Admin) | Member management (CRUD operations) |
 | `/team/feedback` | Protected (Admin) | Feedback inbox (status workflow, categories) |
+| `/team/statistieken` | Protected (Admin) | Usage statistics dashboard (UX-032) |
 | `/verlopen` | Public | Expired subscription page |
 | `/instrumenten` | Protected | Financiële Instrumenten module |
 | `/apparaat` | Protected | Apparaatsuitgaven module |
@@ -821,6 +863,8 @@ All frontend API calls are proxied through Next.js BFF routes:
 | `/api/v1/me/activate` | POST | Set activated_at on first login | Yes |
 | `/api/v1/feedback` | POST | Submit user feedback (with screenshot) | Yes |
 | `/api/v1/contact` | POST | Demo request form (stores in contacts + sends email) | **No** (public) |
+| `/api/v1/analytics` | POST | Batched analytics event ingestion (UX-032) | Yes |
+| `/api/v1/team/statistieken` | GET | Usage statistics dashboard data (admin only) | Yes (Admin) |
 | `/api/v1/team/contacten` | GET/POST | List/create contacts (admin only) | Yes (Admin) |
 | `/api/v1/team/contacten/[id]` | PATCH/DELETE | Update/delete contact (admin only) | Yes (Admin) |
 
@@ -869,6 +913,7 @@ npm run build
 | `NEXT_PUBLIC_TYPESENSE_HOST` | `typesense-production-35ae.up.railway.app` | Typesense server (unused - all access via BFF) |
 | `TYPESENSE_API_KEY` | (required) | Typesense search API key (server-side only) |
 | `BFF_SECRET` | (required) | Shared secret for BFF→backend auth (X-BFF-Secret header) |
+| `ANALYTICS_HASH_SECRET` | (required) | Secret for pseudonymizing user IDs in analytics (UX-032) |
 
 **Note:** No `NEXT_PUBLIC_` prefix for sensitive URLs/keys - they stay server-side only. Exception: Supabase URL and anon key are designed to be public per Supabase architecture.
 
@@ -980,3 +1025,5 @@ npm run build
 | 2026-02-09 | UX-023: GroupingSelect dropdown with counts, BFF grouping-counts route, updated ExpandedRow |
 | 2026-02-11 | WS-3: Auth pages, hooks, admin routes, subscription components, profile dropdown (UX-026) |
 | 2026-02-13 | Typography: IBM Plex Sans dual-width system (replaced Brawler). Added /h1-/h5 prototypes, 404 page (UX-029), AppShell, contacten route |
+| 2026-02-14 | UX-032: Usage statistics — analytics hook, BFF endpoint, admin dashboard, env var |
+| 2026-02-14 | UX-032 V2: Dashboard redesign (3-act structure, per-user drill-down, combined search table), 5 new event types (autocomplete_search/click, sort_change, page_change, cross_module_nav), debounced search tracking fix, migration 039 |

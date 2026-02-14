@@ -77,6 +77,8 @@
 - ✅ **2026-02-14 (Session 1):** De Geldstroom design sprint — 6-person expert team brainstorm (11 rounds) to design dynamic Sankey hero visualization for homepage. Validated all 6 module stories against real production data. Key finding: COA spending 6.6× increase (€0.56→€3.72 mld, 2018-2024). Decision: 6 selectable stories with year slider, build-time static data (no public API). Full design document: `docs/plans/2026-02-14-de-geldstroom-design.md`.
 - ✅ **2026-02-14 (Session 2):** De Geldstroom implementation — UX-030. Build-time data script (`app/scripts/generate-geldstroom-data.mjs`) queries Supabase for 6 stories × 7 years (2018-2024), outputs `geldstroom.json` (60.3 KB). Complete refactor of `/h1/page.tsx`: 6 story tabs, year selector pills, dynamic headline ("Waar ging €X miljard naartoe in [year]?"), proportional flow thickness, weighted particle animation, `prefers-reduced-motion` accessibility, ARIA labels, keyboard navigation. Ministry name normalization (I&W, J&V). Package.json updated with `pg` dep + prebuild script. Data note: COA/inkoop amounts are average staffelbedragen — attribution text deferred.
 - ✅ **2026-02-14 (Session 3):** Ontdekking van de Week — UX-031. 6-person expert team brainstorm (Data Journalist, Creative Strategist, Data Analyst, Adversarial Editor, UX Writer, Info Architect). Fact-checked 3 prototype claims (all wrong/fabricated). Mined production Supabase with 20+ SQL queries. 23 verified discoveries across 6 categories (Energy, Asylum, IT/Procurement, Regional, Culture, System-wide). Social sharing: LinkedIn + X + Bluesky. Fisher-Yates shuffle for random rotation per visit. Hardcoded JSON (Option A — editorial quality over automation). Comparison rules: same module, same years, no cross-module.
+- ✅ **2026-02-14 (Session 4):** Usage Statistics — UX-032. 6-person expert team (Analytics Lead, Data Engineer, Privacy/GDPR, Dashboard UX, Backend Architect, Adversarial Reviewer). Server-side product analytics with pseudonymized user tracking (SHA256 actor_hash, no PII). 6 event types: module_view, search, row_expand, filter_apply, export, column_change. Client-side batching hook (30s/10 events/sendBeacon). BFF endpoint `POST /api/v1/analytics`. Admin dashboard at `/team/statistieken` with 6 sections (pulse cards, module chart, top searches, filters/columns, exports, zero-results). 7 SQL functions via `supabase.rpc()`. 90-day retention. Migrations 038+038b executed on production. `ANALYTICS_HASH_SECRET` env var set on Railway.
+- ✅ **2026-02-14 (Session 5):** UX-032 V2 — Dashboard redesign + 5 new event types. 4 bug fixes (keystroke tracking → 2s debounce, false zero-results, missing search context, no per-user view). Dashboard rewritten as 3-act structure (Pulse → Inzichten → Gebruikers) with per-user expandable event timelines. Migration 039 (get_usage_actors, get_usage_actor_detail, updated get_usage_searches with avg_results). 5 new events: autocomplete_search, autocomplete_click (search-bar.tsx), cross_module_nav, sort_change, page_change (module-page.tsx). Total: 11 event types. Stale test data cleaned.
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
@@ -103,20 +105,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/app/h3/page.tsx** REWRITTEN (2026-02-14)
-   23 verified discoveries (was 3 fabricated), Fisher-Yates shuffle, LinkedIn + X + Bluesky share buttons.
+1. **app/src/app/team/statistieken/page.tsx** REWRITTEN (2026-02-14)
+   Dashboard V2: 3-act structure (Pulse → Inzichten → Gebruikers), per-user expandable rows, combined search table with amber zero-results.
 
-2. **app/src/app/h1/page.tsx** REWRITTEN (2026-02-14)
-   Complete refactor: static prototype → dynamic data from JSON import. 6 story tabs, year selector, proportional flows, weighted particles, accessibility.
+2. **app/src/components/search-bar/search-bar.tsx** MODIFIED (2026-02-14)
+   Added autocomplete_search (1.5s debounce) and autocomplete_click tracking.
 
-3. **app/scripts/generate-geldstroom-data.mjs** CREATED (2026-02-14)
-   Build-time data generator — queries Supabase for 6 stories × 7 years (2018-2024), outputs geldstroom.json.
+3. **app/src/components/module-page/module-page.tsx** MODIFIED (2026-02-14)
+   Debounced search tracking (2s), sort_change, page_change, cross_module_nav events. 11 total event types.
 
-4. **app/src/data/geldstroom.json** GENERATED (2026-02-14)
-   60.3 KB — 6 stories (integraal, publiek, instrumenten, inkoop, gemeente, provincie), real government flow data.
+4. **app/src/hooks/use-analytics.ts** MODIFIED (2026-02-14)
+   Extended AnalyticsEventType union: 6 → 11 event types.
 
-5. **docs/plans/2026-02-14-de-geldstroom-design.md** CREATED (2026-02-14)
-   Full design document from 11-round team brainstorm — 6 stories, real data, decisions, architecture, risks (~500 lines).
+5. **scripts/sql/039-usage-dashboard-v2.sql** CREATED (2026-02-14)
+   Dashboard V2 SQL: get_usage_actors, get_usage_actor_detail, updated get_usage_searches (avg_results).
 
 ---
 
