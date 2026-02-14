@@ -611,7 +611,7 @@ export default function TeamContactenPage() {
                             ev.stopPropagation()
                             setConvertingContact(contact)
                           }}
-                          className="px-2 py-1 text-xs font-medium text-[var(--pink)] border border-[var(--pink)]/30 rounded hover:bg-[var(--pink)]/5 transition-colors"
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors"
                           title="Omzetten naar lid"
                         >
                           Maak lid

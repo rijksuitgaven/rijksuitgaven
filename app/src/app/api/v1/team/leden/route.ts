@@ -24,6 +24,7 @@ export async function GET() {
   const { data, error } = await supabase
     .from('subscriptions')
     .select('id, user_id, person_id, plan, role, start_date, end_date, grace_ends_at, cancelled_at, invited_at, activated_at, last_active_at, notes, created_at, people!inner(email, first_name, last_name, organization)')
+    .is('deleted_at', null)
     .order('end_date', { ascending: true })
 
   if (error) {

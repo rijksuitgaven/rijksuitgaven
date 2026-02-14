@@ -156,7 +156,7 @@ function MemberActions({ member, isSelf, onChanged }: { member: Member; isSelf: 
 
   async function handleDelete(e: React.MouseEvent) {
     e.stopPropagation()
-    if (!confirm(`Weet u zeker dat u ${member.first_name} ${member.last_name} definitief wilt verwijderen? Dit kan niet ongedaan worden.`)) return
+    if (!confirm(`Weet u zeker dat u het abonnement van ${member.first_name} ${member.last_name} wilt beëindigen? De persoon wordt verplaatst naar Contacten.`)) return
     setBusy(true)
     try {
       const res = await fetch(`/api/v1/team/leden/${member.id}`, { method: 'DELETE' })

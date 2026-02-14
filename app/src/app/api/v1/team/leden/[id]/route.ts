@@ -189,24 +189,16 @@ export async function DELETE(
     return NextResponse.json({ error: 'U kunt uzelf niet verwijderen' }, { status: 400 })
   }
 
-  // Delete subscription only — person record preserved in people table
-  const { error: deleteSubError } = await adminClient
+  // Soft-delete: set deleted_at + cancelled_at so person shows as "churned" on contacten
+  const now = new Date().toISOString()
+  const { error: softDeleteError } = await adminClient
     .from('subscriptions')
-    .delete()
+    .update({ deleted_at: now, cancelled_at: now })
     .eq('id', id)
 
-  if (deleteSubError) {
-    console.error('[Admin] Delete subscription error:', deleteSubError)
-    return NextResponse.json({ error: 'Fout bij verwijderen abonnement' }, { status: 500 })
-  }
-
-  // Delete auth user (subscription is gone, auth user no longer needed)
-  if (sub.user_id) {
-    const { error: deleteUserError } = await adminClient.auth.admin.deleteUser(sub.user_id)
-    if (deleteUserError) {
-      console.error('[Admin] Delete auth user error:', deleteUserError)
-      // Non-fatal — subscription already deleted
-    }
+  if (softDeleteError) {
+    console.error('[Admin] Soft-delete subscription error:', softDeleteError)
+    return NextResponse.json({ error: 'Fout bij verwijderen lid' }, { status: 500 })
   }
 
   return NextResponse.json({ ok: true })
