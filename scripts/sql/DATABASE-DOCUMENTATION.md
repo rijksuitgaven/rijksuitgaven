@@ -269,9 +269,9 @@
 | `get_usage_pulse(since_date)` | total_events, unique_actors, module_views, searches, exports | Top-line metrics |
 | `get_usage_modules(since_date, max_results)` | module, view_count, unique_actors | Module popularity |
 | `get_usage_searches(since_date, max_results)` | query, search_count, avg_results, top_module | Top search terms |
-| `get_usage_filters(since_date, max_results)` | filter_field, usage_count, unique_actors, top_module | Most-used filters |
-| `get_usage_columns(since_date, max_results)` | column_name, usage_count, unique_actors, top_module | Column customization usage |
-| `get_usage_exports(since_date)` | module, export_count, unique_actors, total_rows | Export activity |
+| `get_usage_filters(since_date, max_results)` | module, field, filter_count | Most-used filters grouped by module (migration 043) |
+| `get_usage_columns(since_date, max_results)` | module, column_name, usage_count | Column selections grouped by module (migration 043) |
+| `get_usage_exports(since_date)` | module, format, export_count, avg_rows, unique_actors | Export activity grouped by module (migration 043) |
 | `get_usage_zero_results(since_date, max_results)` | query, search_count, top_module | Zero-result searches (most actionable) |
 | `get_usage_actors(since_date, max_results)` | actor_hash, last_seen, event_count, top_module, search_count, export_count, module_count | Per-user activity summary (migration 039) |
 | `get_usage_actor_detail(target_actor, since_date)` | event_type, module, properties, created_at | Single user's event timeline, max 50 (migration 039) |
@@ -279,7 +279,7 @@
 | `get_usage_sessions_summary(since_date)` | total_sessions, unique_actors, avg_duration_seconds, avg_events_per_session, avg_modules_per_session | Session metrics (30-min gap boundary, migration 042) |
 | `get_usage_exit_intent(since_date, max_results)` | last_event_type, session_count, percentage | Last action before session ends (migration 042) |
 | `get_usage_search_success(since_date)` | total_searches, successful_searches, success_rate | Search→action success proxy (migration 042) |
-| `get_usage_retention(since_date)` | cohort_month, month_offset, active_count, cohort_size, retention_rate | Monthly retention cohort grid (migration 042) |
+| `get_usage_retention(since_date)` | cohort_week, week_offset, active_count, cohort_size, retention_rate | Weekly retention cohort grid (migration 042, changed to weekly in 044) |
 
 `get_usage_actors` enhanced (migration 042): now returns session_count, avg_session_seconds, engagement_score, avg_gap_days, gap_trend, external_link_count.
 
@@ -969,6 +969,8 @@ VACUUM ANALYZE universal_search;
 | `040-usage-errors-function.sql` | Error tracking: get_usage_errors() — recent error events with context for admin dashboard | Once (done 2026-02-14) |
 | `041-subscriptions-update-rls.sql` | RLS UPDATE policy for subscriptions (last_active_at) | Once (done 2026-02-14) |
 | `042-advanced-analytics.sql` | Advanced analytics V3: sessions summary, exit intent, search success, retention cohorts, enhanced actors (engagement score, gap trend, external_link_count) | Once (done 2026-02-14) |
+| `043-module-grouped-analytics.sql` | Rewrote get_usage_filters, get_usage_columns, get_usage_exports to GROUP BY module (was flat aggregation) | Once (done 2026-02-14) |
+| `044-weekly-retention.sql` | Rewrote get_usage_retention: monthly → weekly cohorts for early-stage visibility | Once (done 2026-02-14) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---
