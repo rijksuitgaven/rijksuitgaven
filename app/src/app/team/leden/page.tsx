@@ -238,7 +238,8 @@ function AddMemberForm({ onSuccess }: { onSuccess: () => void }) {
     setSubmitting(true)
     setError(null)
 
-    const form = new FormData(e.currentTarget)
+    const formEl = e.currentTarget
+    const form = new FormData(formEl)
     const role = form.get('role') as string
     const plan = role === 'trial' ? 'trial' : (form.get('plan') as string)
     const body: Record<string, unknown> = {
@@ -264,7 +265,7 @@ function AddMemberForm({ onSuccess }: { onSuccess: () => void }) {
         setError(data.error || 'Onbekende fout')
         return
       }
-      e.currentTarget.reset()
+      formEl.reset()
       onSuccess()
     } catch {
       setError('Netwerkfout')
