@@ -313,7 +313,17 @@ export default function StatistiekenPage() {
     setExpandedActor(prev => prev === hash ? null : hash)
   }, [])
 
-  const clearErrors = useCallback(() => {
+  const clearOneError = useCallback((createdAt: string) => {
+    fetch(`/api/v1/team/statistieken?created_at=${encodeURIComponent(createdAt)}`, { method: 'DELETE' })
+      .then(res => {
+        if (res.ok && data) {
+          setData({ ...data, errors: data.errors.filter(e => e.created_at !== createdAt) })
+        }
+      })
+      .catch(() => {})
+  }, [data])
+
+  const clearAllErrors = useCallback(() => {
     fetch(`/api/v1/team/statistieken`, { method: 'DELETE' })
       .then(res => {
         if (res.ok && data) {
@@ -428,7 +438,7 @@ export default function StatistiekenPage() {
             </div>
 
             {/* ═══ ERRORS SECTION ═══ */}
-            <ErrorsSection errors={data.errors} onClear={clearErrors} />
+            <ErrorsSection errors={data.errors} onClearOne={clearOneError} onClearAll={clearAllErrors} />
 
             {/* ═══ ACT 2: INZICHTEN ═══ */}
 
@@ -754,7 +764,7 @@ function formatErrorPrompt(err: ErrorItem): string {
   return lines.join('\n')
 }
 
-function ErrorsSection({ errors, onClear }: { errors: ErrorItem[]; onClear: () => void }) {
+function ErrorsSection({ errors, onClearOne, onClearAll }: { errors: ErrorItem[]; onClearOne: (createdAt: string) => void; onClearAll: () => void }) {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 
   const copyPrompt = useCallback((err: ErrorItem, index: number) => {
@@ -786,13 +796,15 @@ function ErrorsSection({ errors, onClear }: { errors: ErrorItem[]; onClear: () =
             Fouten ({errors.length})
           </h2>
         </div>
-        <button
-          onClick={onClear}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors border border-red-200"
-        >
-          <Trash2 className="w-3 h-3" />
-          Wissen
-        </button>
+        {errors.length > 1 && (
+          <button
+            onClick={onClearAll}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--muted-foreground)] hover:text-red-600 bg-white hover:bg-red-50 rounded-md transition-colors border border-[var(--border)] hover:border-red-200"
+          >
+            <Trash2 className="w-3 h-3" />
+            Wis alles
+          </button>
+        )}
       </div>
       <div className="space-y-2">
         {errors.map((err, i) => {
@@ -834,23 +846,32 @@ function ErrorsSection({ errors, onClear }: { errors: ErrorItem[]; onClear: () =
 
           return (
             <div key={i} className="bg-red-50/60 border border-red-100 rounded-lg px-4 py-3">
-              {/* Row 1: error message + copy button */}
+              {/* Row 1: error message + action buttons */}
               <div className="flex items-start justify-between gap-3 mb-2">
                 <div className="text-sm font-semibold text-red-700">
                   {err.message || 'Onbekende fout'}
                 </div>
-                <button
-                  onClick={() => copyPrompt(err, i)}
-                  className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all border ${
-                    isCopied
-                      ? 'text-green-700 bg-green-50 border-green-200'
-                      : 'text-[var(--navy-medium)] bg-white/80 border-red-200 hover:bg-white hover:border-[var(--navy-medium)]'
-                  }`}
-                  title="Kopieer als prompt"
-                >
-                  {isCopied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                  {isCopied ? 'Gekopieerd' : 'Kopieer prompt'}
-                </button>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    onClick={() => copyPrompt(err, i)}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all border ${
+                      isCopied
+                        ? 'text-green-700 bg-green-50 border-green-200'
+                        : 'text-[var(--navy-medium)] bg-white/80 border-red-200 hover:bg-white hover:border-[var(--navy-medium)]'
+                    }`}
+                    title="Kopieer als prompt"
+                  >
+                    {isCopied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                    {isCopied ? 'Gekopieerd' : 'Kopieer prompt'}
+                  </button>
+                  <button
+                    onClick={() => onClearOne(err.created_at)}
+                    className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-red-500 bg-white/80 border border-red-200 rounded-md hover:bg-red-50 hover:text-red-700 transition-colors"
+                    title="Verwijder deze fout"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
               </div>
               {/* Row 2: metadata line */}
               <div className="flex items-center flex-wrap gap-x-4 gap-y-1.5">

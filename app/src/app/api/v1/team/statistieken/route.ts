@@ -106,14 +106,23 @@ export async function GET(request: NextRequest) {
   })
 }
 
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
   if (!(await isAdmin())) return forbiddenResponse()
 
   const supabase = createAdminClient()
-  const { error } = await supabase
+  const { searchParams } = new URL(request.url)
+  const createdAt = searchParams.get('created_at')
+
+  let query = supabase
     .from('usage_events')
     .delete()
     .eq('event_type', 'error')
+
+  if (createdAt) {
+    query = query.eq('created_at', createdAt)
+  }
+
+  const { error } = await query
 
   if (error) {
     console.error('[Statistics] Clear errors failed:', error.message)
