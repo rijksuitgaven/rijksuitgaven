@@ -142,11 +142,9 @@ function AddContactForm({ onSuccess }: { onSuccess: () => void }) {
           <label htmlFor="source" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Bron</label>
           <select id="source" name="source" defaultValue="admin" className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent">
             <option value="admin">Admin</option>
-            <option value="website">Website</option>
-            <option value="demo_aanvraag">Demo aanvraag</option>
+            <option value="homepage">Homepage</option>
             <option value="event">Event</option>
             <option value="referral">Referral</option>
-            <option value="import">Import</option>
           </select>
         </div>
       </div>
@@ -391,13 +389,10 @@ function EditContactModal({ contact, onClose, onSaved }: {
             <label htmlFor="edit_source" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Bron</label>
             <select id="edit_source" name="source" defaultValue={contact.source ?? ''} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]">
               <option value="">—</option>
-              <option value="website">Website</option>
-              <option value="demo_aanvraag">Demo aanvraag</option>
+              <option value="admin">Admin</option>
+              <option value="homepage">Homepage</option>
               <option value="event">Event</option>
               <option value="referral">Referral</option>
-              <option value="import">Import</option>
-              <option value="admin">Admin</option>
-              <option value="subscription">Subscription</option>
             </select>
           </div>
           <div>
