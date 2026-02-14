@@ -116,6 +116,12 @@ export function useAnalytics() {
 
       eventQueue.push(event)
 
+      // Error events flush immediately — high priority, low frequency
+      if (eventType === 'error') {
+        flushQueue()
+        return
+      }
+
       // Auto-flush when batch reaches threshold
       if (eventQueue.length >= MAX_BATCH_SIZE) {
         flushQueue()

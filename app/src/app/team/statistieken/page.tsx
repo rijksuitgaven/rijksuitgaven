@@ -40,6 +40,7 @@ const FIELD_LABELS: Record<string, string> = {
   trefwoorden: 'Trefwoorden',
   sectoren: 'Sectoren',
   onderdeel: 'Onderdeel',
+  source: 'Bron',
 }
 
 const DATE_RANGES = [
@@ -96,6 +97,14 @@ interface ZeroResultItem {
   top_module: string
 }
 
+interface ErrorItem {
+  module: string
+  message: string
+  properties: Record<string, unknown>
+  actor_hash: string
+  created_at: string
+}
+
 interface ActorItem {
   actor_hash: string
   last_seen: string
@@ -124,6 +133,7 @@ interface StatsData {
   exports: ExportItem[]
   zero_results: ZeroResultItem[]
   actors: ActorItem[]
+  errors: ErrorItem[]
 }
 
 // --- Helpers ---
@@ -309,6 +319,7 @@ export default function StatistiekenPage() {
   const exports = getPulseValue(data?.pulse ?? [], 'export')
   const expands = getPulseValue(data?.pulse ?? [], 'row_expand')
   const moduleViews = getPulseValue(data?.pulse ?? [], 'module_view')
+  const errorCount = data?.errors?.length ?? 0
   const maxViews = data?.modules.length ? Math.max(...data.modules.map(m => m.view_count)) : 1
 
   return (
@@ -356,7 +367,7 @@ export default function StatistiekenPage() {
         ) : data ? (
           <>
             {/* ═══ ACT 1: PULSE ═══ */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className={`grid grid-cols-2 ${errorCount > 0 ? 'md:grid-cols-5' : 'md:grid-cols-4'} gap-4 mb-6`}>
               <PulseCard
                 icon={<Users className="w-4 h-4" />}
                 label="Actieve gebruikers"
@@ -381,7 +392,19 @@ export default function StatistiekenPage() {
                 value={expands.count}
                 subtext={`${expands.actors} unieke gebruikers`}
               />
+              {errorCount > 0 && (
+                <PulseCard
+                  icon={<AlertTriangle className="w-4 h-4" />}
+                  label="Fouten"
+                  value={errorCount}
+                  subtext={`${new Set(data.errors.map(e => e.module)).size} modules`}
+                  variant="error"
+                />
+              )}
             </div>
+
+            {/* ═══ ERRORS SECTION ═══ */}
+            <ErrorsSection errors={data.errors} />
 
             {/* ═══ ACT 2: INZICHTEN ═══ */}
 
@@ -614,20 +637,26 @@ export default function StatistiekenPage() {
 
 // --- Subcomponents ---
 
-function PulseCard({ icon, label, value, subtext }: {
+function PulseCard({ icon, label, value, subtext, variant }: {
   icon: React.ReactNode
   label: string
   value: number
   subtext: string
+  variant?: 'error'
 }) {
+  const isError = variant === 'error'
   return (
-    <div className="bg-white rounded-lg border border-[var(--border)] p-4">
-      <div className="flex items-center gap-2 text-[var(--muted-foreground)] mb-1">
+    <div className={`rounded-lg border p-4 ${
+      isError
+        ? 'bg-red-50 border-red-200'
+        : 'bg-white border-[var(--border)]'
+    }`}>
+      <div className={`flex items-center gap-2 mb-1 ${isError ? 'text-red-500' : 'text-[var(--muted-foreground)]'}`}>
         {icon}
         <span className="text-xs font-medium uppercase tracking-wider">{label}</span>
       </div>
-      <div className="text-3xl font-bold text-[var(--navy-dark)]">{value.toLocaleString('nl-NL')}</div>
-      <div className="text-xs text-[var(--muted-foreground)] mt-0.5">{subtext}</div>
+      <div className={`text-3xl font-bold ${isError ? 'text-red-700' : 'text-[var(--navy-dark)]'}`}>{value.toLocaleString('nl-NL')}</div>
+      <div className={`text-xs mt-0.5 ${isError ? 'text-red-500' : 'text-[var(--muted-foreground)]'}`}>{subtext}</div>
     </div>
   )
 }
@@ -671,6 +700,68 @@ function ModuleBadge({ module, small, variant }: {
     <span className={`inline-block ${small ? 'text-[10px] px-1 py-0' : 'text-xs px-1.5 py-0.5'} rounded font-medium bg-[var(--gray-light)] text-[var(--navy-medium)]`}>
       {label}
     </span>
+  )
+}
+
+function ErrorsSection({ errors }: { errors: ErrorItem[] }) {
+  if (errors.length === 0) {
+    return (
+      <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-green-600"><AlertTriangle className="w-4 h-4" /></span>
+          <h2 className="text-sm font-semibold text-[var(--navy-dark)] uppercase tracking-wider">Fouten</h2>
+        </div>
+        <div className="flex items-center gap-2 py-3 text-sm text-green-700">
+          <span className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xs font-bold">✓</span>
+          Geen fouten geregistreerd
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="bg-white rounded-lg border border-red-200 p-5 mb-4">
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-red-500"><AlertTriangle className="w-4 h-4" /></span>
+        <h2 className="text-sm font-semibold text-red-700 uppercase tracking-wider">
+          Fouten ({errors.length})
+        </h2>
+      </div>
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-left text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
+            <th className="pb-2 pr-4">Tijdstip</th>
+            <th className="pb-2 pr-4">Module</th>
+            <th className="pb-2 pr-4">Foutmelding</th>
+            <th className="pb-2">Context</th>
+          </tr>
+        </thead>
+        <tbody>
+          {errors.map((err, i) => {
+            const time = new Date(err.created_at).toLocaleString('nl-NL', {
+              day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
+            })
+            const context: string[] = []
+            if (err.properties?.search_query) context.push(`zoek: "${err.properties.search_query}"`)
+            if (err.properties?.sort_by) context.push(`sort: ${err.properties.sort_by}`)
+            if (err.properties?.has_filters) context.push('filters actief')
+
+            return (
+              <tr key={i} className="border-t border-red-100">
+                <td className="py-2 pr-4 text-[var(--muted-foreground)] whitespace-nowrap">{time}</td>
+                <td className="py-2 pr-4">
+                  <ModuleBadge module={err.module} variant="amber" />
+                </td>
+                <td className="py-2 pr-4 text-red-700 font-medium">{err.message || 'Onbekende fout'}</td>
+                <td className="py-2 text-[var(--muted-foreground)] text-xs">
+                  {context.length > 0 ? context.join(' · ') : '—'}
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

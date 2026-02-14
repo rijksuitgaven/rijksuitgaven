@@ -61,6 +61,7 @@ export async function GET(request: NextRequest) {
     exportResult,
     zeroResult,
     actorResult,
+    errorResult,
     memberCountResult,
   ] = await Promise.all([
     supabase.rpc('get_usage_pulse', { since_date: sinceISO }),
@@ -71,6 +72,7 @@ export async function GET(request: NextRequest) {
     supabase.rpc('get_usage_exports', { since_date: sinceISO }),
     supabase.rpc('get_usage_zero_results', { since_date: sinceISO, max_results: 10 }),
     supabase.rpc('get_usage_actors', { since_date: sinceISO, max_results: 30 }),
+    supabase.rpc('get_usage_errors', { since_date: sinceISO, max_results: 20 }),
     supabase.from('subscriptions').select('id', { count: 'exact', head: true }),
   ])
 
@@ -85,6 +87,9 @@ export async function GET(request: NextRequest) {
   if (actorResult.error) {
     console.error('[Statistics] Actor query error (non-blocking):', actorResult.error.message)
   }
+  if (errorResult.error) {
+    console.error('[Statistics] Error query error (non-blocking):', errorResult.error.message)
+  }
 
   return NextResponse.json({
     days,
@@ -97,5 +102,6 @@ export async function GET(request: NextRequest) {
     exports: exportResult.data ?? [],
     zero_results: zeroResult.data ?? [],
     actors: actorResult.data ?? [],
+    errors: errorResult.data ?? [],
   })
 }
