@@ -98,9 +98,9 @@ function AddContactForm({ onSuccess }: { onSuccess: () => void }) {
         setError(data.error || 'Onbekende fout')
         return
       }
-      e.currentTarget.reset()
       onSuccess()
-    } catch {
+    } catch (err) {
+      console.error('[AddContact] Error:', err)
       setError('Netwerkfout')
     } finally {
       setSubmitting(false)
