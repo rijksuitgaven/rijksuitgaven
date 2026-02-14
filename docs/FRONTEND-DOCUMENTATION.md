@@ -1028,3 +1028,4 @@ npm run build
 | 2026-02-14 | UX-032: Usage statistics — analytics hook, BFF endpoint, admin dashboard, env var |
 | 2026-02-14 | UX-032 V2: Dashboard redesign (3-act structure, per-user drill-down, combined search table), 5 new event types (autocomplete_search/click, sort_change, page_change, cross_module_nav), debounced search tracking fix, migration 039 |
 | 2026-02-14 | UX-032 V2 final: Error event type (12th), immediate error flush, BFF whitelist fix (6→12 types), year sort fix, errors section card redesign, DELETE endpoint for clearing errors, migration 040 |
+| 2026-02-14 | Error message UX: universal "Er is iets misgegaan", shared ErrorReport component, "Fout melden" → countdown → router.back(), no English leaks |
