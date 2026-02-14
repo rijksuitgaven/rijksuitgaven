@@ -228,6 +228,7 @@ RETURNS TABLE(
   top_module TEXT,
   search_count BIGINT,
   export_count BIGINT,
+  external_link_count BIGINT,
   module_count BIGINT,
   session_count BIGINT,
   avg_session_seconds NUMERIC,
@@ -334,6 +335,7 @@ AS $$
       ) AS top_module,
       COUNT(*) FILTER (WHERE e.event_type = 'search')::BIGINT AS search_count,
       COUNT(*) FILTER (WHERE e.event_type = 'export')::BIGINT AS export_count,
+      COUNT(*) FILTER (WHERE e.event_type = 'external_link')::BIGINT AS external_link_count,
       COUNT(DISTINCT e.module) FILTER (WHERE e.module IS NOT NULL)::BIGINT AS module_count
     FROM usage_events e
     WHERE e.created_at >= since_date
@@ -347,6 +349,7 @@ AS $$
     ab.top_module,
     ab.search_count,
     ab.export_count,
+    ab.external_link_count,
     ab.module_count,
     COALESCE(s.session_count, 0) AS session_count,
     COALESCE(s.avg_session_seconds, 0) AS avg_session_seconds,

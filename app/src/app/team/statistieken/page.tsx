@@ -130,6 +130,7 @@ interface ActorItem {
   top_module: string | null
   search_count: number
   export_count: number
+  external_link_count: number
   module_count: number
   // V3 enhanced fields
   session_count: number
@@ -351,6 +352,8 @@ export default function StatistiekenPage() {
   const [expandedActor, setExpandedActor] = useState<string | null>(null)
   const [actorDetail, setActorDetail] = useState<ActorDetailEvent[] | null>(null)
   const [actorDetailLoading, setActorDetailLoading] = useState(false)
+  const [sortField, setSortField] = useState<string>('engagement_score')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
 
   // Fetch dashboard data
   useEffect(() => {
@@ -420,6 +423,11 @@ export default function StatistiekenPage() {
     )
   }
 
+  const handleSort = useCallback((field: string) => {
+    setSortDir(prev => sortField === field ? (prev === 'asc' ? 'desc' : 'asc') : 'desc')
+    setSortField(field)
+  }, [sortField])
+
   const searches = getPulseValue(data?.pulse ?? [], 'search')
   const exports = getPulseValue(data?.pulse ?? [], 'export')
   const expands = getPulseValue(data?.pulse ?? [], 'row_expand')
@@ -429,6 +437,27 @@ export default function StatistiekenPage() {
   const maxViews = data?.modules.length ? Math.max(...data.modules.map(m => m.view_count)) : 1
   const ss = data?.sessions_summary
   const sc = data?.search_success
+
+  // Sort actors
+  const sortedActors = [...(data?.actors ?? [])].sort((a, b) => {
+    const dir = sortDir === 'asc' ? 1 : -1
+    switch (sortField) {
+      case 'user_name': {
+        const na = a.user_name || a.user_email || a.actor_hash
+        const nb = b.user_name || b.user_email || b.actor_hash
+        return dir * na.localeCompare(nb)
+      }
+      case 'last_seen': return dir * (new Date(a.last_seen).getTime() - new Date(b.last_seen).getTime())
+      case 'session_count': return dir * (a.session_count - b.session_count)
+      case 'engagement_score': return dir * (a.engagement_score - b.engagement_score)
+      case 'avg_gap_days': return dir * (a.avg_gap_days - b.avg_gap_days)
+      case 'top_module': return dir * ((a.top_module ?? '').localeCompare(b.top_module ?? ''))
+      case 'search_count': return dir * (a.search_count - b.search_count)
+      case 'export_count': return dir * (a.export_count - b.export_count)
+      case 'external_link_count': return dir * (a.external_link_count - b.external_link_count)
+      default: return dir * (a.engagement_score - b.engagement_score)
+    }
+  })
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[var(--gray-light)] to-white">
@@ -535,34 +564,8 @@ export default function StatistiekenPage() {
 
             {/* ═══ ACT 2: INZICHTEN ═══ */}
 
-            {/* Exit intent + search insights side by side */}
+            {/* Search insights + exit intent side by side */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-              {/* Exit intent — 1/3 width */}
-              <Section title="Waar stoppen sessies?" icon={<LogOut className="w-4 h-4" />}>
-                {data.exit_intent.length === 0 ? (
-                  <EmptyState>Nog geen sessiedata</EmptyState>
-                ) : (
-                  <div className="space-y-2">
-                    {data.exit_intent.map((ei, i) => (
-                      <div key={i} className="flex items-center gap-3">
-                        <span className="w-28 text-sm text-[var(--navy-dark)] truncate">
-                          {EVENT_TYPE_LABELS[ei.last_event_type] || ei.last_event_type}
-                        </span>
-                        <div className="flex-1 h-5 bg-[var(--gray-light)] rounded overflow-hidden">
-                          <div
-                            className="h-full bg-[var(--navy-medium)] rounded transition-all"
-                            style={{ width: `${ei.percentage}%` }}
-                          />
-                        </div>
-                        <span className="text-sm font-semibold text-[var(--navy-dark)] w-12 text-right">
-                          {ei.percentage}%
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </Section>
-
               {/* Search insights — 2/3 width */}
               <div className="lg:col-span-2">
                 <Section title="Wat zoeken gebruikers?" icon={<Search className="w-4 h-4" />}>
@@ -628,6 +631,32 @@ export default function StatistiekenPage() {
                   )}
                 </Section>
               </div>
+
+              {/* Exit intent — 1/3 width */}
+              <Section title="Waar stoppen sessies?" icon={<LogOut className="w-4 h-4" />}>
+                {data.exit_intent.length === 0 ? (
+                  <EmptyState>Nog geen sessiedata</EmptyState>
+                ) : (
+                  <div className="space-y-2">
+                    {data.exit_intent.map((ei, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <span className="w-28 text-sm text-[var(--navy-dark)] truncate">
+                          {EVENT_TYPE_LABELS[ei.last_event_type] || ei.last_event_type}
+                        </span>
+                        <div className="flex-1 h-5 bg-[var(--gray-light)] rounded overflow-hidden">
+                          <div
+                            className="h-full bg-[var(--navy-medium)] rounded transition-all"
+                            style={{ width: `${ei.percentage}%` }}
+                          />
+                        </div>
+                        <span className="text-sm font-semibold text-[var(--navy-dark)] w-12 text-right">
+                          {ei.percentage}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Section>
             </div>
 
             {/* Platform usage — modules + filters + exports */}
@@ -688,18 +717,24 @@ export default function StatistiekenPage() {
                     )}
                   </div>
                   <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">
-                      Extra kolommen
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1">
+                      Extra kolommen toegevoegd
                     </h3>
+                    <p className="text-xs text-[var(--muted-foreground)] mb-2">
+                      Kolommen die gebruikers handmatig toevoegen — overweeg als standaard
+                    </p>
                     {data.columns.length === 0 ? (
                       <p className="text-sm text-[var(--muted-foreground)] italic">Nog geen kolommen geselecteerd</p>
                     ) : (
                       <div className="space-y-1">
                         {data.columns.map((c, i) => (
                           <div key={i} className="flex items-center justify-between text-sm">
-                            <span className="text-[var(--navy-dark)]">{FIELD_LABELS[c.column_name] || c.column_name}</span>
+                            <span className="text-[var(--navy-dark)]">
+                              <span className="text-green-600 font-semibold mr-1">+</span>
+                              {FIELD_LABELS[c.column_name] || c.column_name}
+                            </span>
                             <span className="flex items-center gap-2">
-                              <span className="font-medium">{c.usage_count}</span>
+                              <span className="font-medium">{c.usage_count}×</span>
                               <ModuleBadge module={c.top_module} small />
                             </span>
                           </div>
@@ -748,18 +783,19 @@ export default function StatistiekenPage() {
                     <thead>
                       <tr className="text-left text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
                         <th className="pb-2 w-8" />
-                        <th className="pb-2 pr-4">Gebruiker</th>
-                        <th className="pb-2 pr-4">Laatst actief</th>
-                        <th className="pb-2 pr-4 text-right">Sessies</th>
-                        <th className="pb-2 pr-4 text-right">Score</th>
-                        <th className="pb-2 pr-4">Trend</th>
-                        <th className="pb-2 pr-4">Top module</th>
-                        <th className="pb-2 pr-4 text-right">Zoekopdrachten</th>
-                        <th className="pb-2 text-right">Exports</th>
+                        <SortHeader field="user_name" label="Gebruiker" current={sortField} dir={sortDir} onSort={handleSort} />
+                        <SortHeader field="last_seen" label="Laatst actief" current={sortField} dir={sortDir} onSort={handleSort} />
+                        <SortHeader field="session_count" label="Sessies" current={sortField} dir={sortDir} onSort={handleSort} align="right" />
+                        <SortHeader field="engagement_score" label="Score" current={sortField} dir={sortDir} onSort={handleSort} align="right" />
+                        <SortHeader field="avg_gap_days" label="Trend" current={sortField} dir={sortDir} onSort={handleSort} />
+                        <SortHeader field="top_module" label="Top module" current={sortField} dir={sortDir} onSort={handleSort} />
+                        <SortHeader field="search_count" label="Zoeken" current={sortField} dir={sortDir} onSort={handleSort} align="right" />
+                        <SortHeader field="external_link_count" label="Google" current={sortField} dir={sortDir} onSort={handleSort} align="right" />
+                        <SortHeader field="export_count" label="Exports" current={sortField} dir={sortDir} onSort={handleSort} align="right" />
                       </tr>
                     </thead>
                     <tbody>
-                      {data.actors.map((actor) => {
+                      {sortedActors.map((actor) => {
                         const isExpanded = expandedActor === actor.actor_hash
                         const color = getActivityColor(actor.last_seen)
 
@@ -1091,6 +1127,32 @@ function ErrorsSection({ errors, onClearOne, onClearAll }: { errors: ErrorItem[]
   )
 }
 
+function SortHeader({ field, label, current, dir, onSort, align }: {
+  field: string
+  label: string
+  current: string
+  dir: 'asc' | 'desc'
+  onSort: (field: string) => void
+  align?: 'right'
+}) {
+  const isActive = current === field
+  return (
+    <th
+      className={`pb-2 pr-4 cursor-pointer select-none hover:text-[var(--navy-dark)] transition-colors ${
+        align === 'right' ? 'text-right' : ''
+      } ${isActive ? 'text-[var(--navy-dark)]' : ''}`}
+      onClick={(e) => { e.stopPropagation(); onSort(field) }}
+    >
+      <span className="inline-flex items-center gap-1">
+        {label}
+        {isActive && (
+          <ArrowUpDown className="w-3 h-3" style={{ transform: dir === 'asc' ? 'scaleY(-1)' : undefined }} />
+        )}
+      </span>
+    </th>
+  )
+}
+
 function TrendIndicator({ trend, gapDays }: { trend: string; gapDays: number }) {
   if (trend === 'nieuw') {
     return <span className="text-xs text-[var(--muted-foreground)] italic">nieuw</span>
@@ -1158,7 +1220,10 @@ function ActorRow({ actor, allActors, isExpanded, color, onToggle, detail, detai
           {actor.session_count}
         </td>
         <td className="py-2.5 pr-4 text-right">
-          <span className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-semibold ${engagement.color}`}>
+          <span
+            className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-semibold cursor-help ${engagement.color}`}
+            title={`Score ${Math.round(actor.engagement_score)} — gewogen som van acties:\n• Export, cross-module = 3 punten\n• Zoeken, filteren, externe link = 2 punten\n• Bekijken, uitklappen, sorteren = 1 punt\n\n${engagement.label}: ${engagement.label === 'Power' ? 'top 33% van alle gebruikers' : engagement.label === 'Regulier' ? 'middelste 33%' : engagement.label === 'Casual' ? 'onderste 33%' : 'niet actief in >7 dagen'}`}
+          >
             {Math.round(actor.engagement_score)} — {engagement.label}
           </span>
         </td>
@@ -1169,13 +1234,14 @@ function ActorRow({ actor, allActors, isExpanded, color, onToggle, detail, detai
           {actor.top_module ? <ModuleBadge module={actor.top_module} /> : <span className="text-[var(--muted-foreground)]">—</span>}
         </td>
         <td className="py-2.5 pr-4 text-right">{actor.search_count}</td>
+        <td className="py-2.5 pr-4 text-right">{actor.external_link_count}</td>
         <td className="py-2.5 text-right">{actor.export_count}</td>
       </tr>
 
       {/* Expanded detail */}
       {isExpanded && (
         <tr className="bg-[var(--gray-light)]/20">
-          <td colSpan={9} className="px-4 py-3">
+          <td colSpan={10} className="px-4 py-3">
             {/* Session stats summary */}
             {actor.session_count > 0 && (
               <div className="flex items-center gap-6 mb-3 text-xs text-[var(--muted-foreground)]">
