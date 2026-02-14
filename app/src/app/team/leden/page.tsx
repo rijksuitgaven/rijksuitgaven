@@ -429,7 +429,7 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
             <label htmlFor="edit_organization" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Organisatie</label>
             <input id="edit_organization" name="organization" defaultValue={member.organization ?? ''} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]" />
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className={`grid ${member.role === 'admin' ? 'grid-cols-2' : 'grid-cols-3'} gap-4`}>
             <div>
               <label htmlFor="edit_role" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Rol</label>
               <select id="edit_role" name="role" defaultValue={member.role} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]">
@@ -446,10 +446,12 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
                 <option value="trial">Trial</option>
               </select>
             </div>
-            <div>
-              <label htmlFor="edit_end_date" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Einddatum</label>
-              <input id="edit_end_date" name="end_date" type="date" defaultValue={member.end_date} required className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]" />
-            </div>
+            {member.role !== 'admin' && (
+              <div>
+                <label htmlFor="edit_end_date" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Einddatum</label>
+                <input id="edit_end_date" name="end_date" type="date" defaultValue={member.end_date} required className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]" />
+              </div>
+            )}
           </div>
           <div>
             <label htmlFor="edit_notes" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Notities</label>
