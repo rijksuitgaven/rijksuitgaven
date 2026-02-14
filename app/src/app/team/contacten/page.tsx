@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
+import { Trash2 } from 'lucide-react'
 
 interface Contact {
   id: string
@@ -473,12 +474,13 @@ export default function TeamContactenPage() {
                 <SortableHeader label="Type" field="type" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
                 <SortableHeader label="Bron" field="source" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
                 <SortableHeader label="Aangemaakt" field="created_at" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+                <th className="px-4 py-3 w-10" />
               </tr>
             </thead>
             <tbody>
               {sortedContacts.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-[var(--navy-medium)]">
+                  <td colSpan={7} className="px-4 py-8 text-center text-[var(--navy-medium)]">
                     Nog geen contacten. Voeg het eerste contact toe.
                   </td>
                 </tr>
@@ -500,6 +502,20 @@ export default function TeamContactenPage() {
                     <td className="px-4 py-3"><TypeBadge type={contact.type} /></td>
                     <td className="px-4 py-3 text-[var(--navy-medium)]">{contact.source || '—'}</td>
                     <td className="px-4 py-3 text-[var(--navy-medium)]">{formatDate(contact.created_at)}</td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={(ev) => {
+                          ev.stopPropagation()
+                          if (!confirm('Weet u zeker dat u dit contact wilt verwijderen?')) return
+                          fetch(`/api/v1/team/contacten/${contact.id}`, { method: 'DELETE' })
+                            .then(res => { if (res.ok) fetchContacts() })
+                        }}
+                        className="p-1.5 text-[var(--muted-foreground)] hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                        title="Verwijderen"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
