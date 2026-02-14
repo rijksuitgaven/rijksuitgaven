@@ -86,7 +86,8 @@
 - ✅ **2026-02-14 (Session 10):** Admin dashboard + leden management improvements. Copy-prompt button on error cards (format as debugging prompt). Member actions: contextual activate/deactivate/delete per status. DELETE endpoint for hard member deletion. Admins never expire (computeStatus, middleware, hidden Einddatum/deactivate). Fixed last_active_at (RLS UPDATE policy + await in Edge Runtime). Sortable "Laatst actief" column. Per-error delete in statistics. Editable end date in add form. Migration 041 executed.
 - ✅ **2026-02-14 (Session 11):** UX-032 V3 Advanced Analytics — 5-person expert brainstorm, 6 Tier 1 metrics: sessions (30-min gap), exit intent, search success rate, retention cohorts (monthly grid), engagement score (weighted + percentile labels), login gap/frequency trend. Actor de-anonymization (SHA256 hash matching → real names). Migration 042 executed (5 SQL functions). Sortable actor table (9 columns), engagement tooltip, external link column, extra kolommen clarity. Bug fixes: add member/contact "Netwerkfout" (e.currentTarget null after async), contacten inline delete button, error alert on team dashboard.
 - ✅ **2026-02-14 (Session 12):** React hooks order fix — `handleSort` useCallback placed after conditional early returns crashed statistieken page ("Er is iets misgegaan"). Moved before early returns.
-- ✅ **2026-02-14 (Session 13):** Dashboard module-grouped redesign — expert team (5 experts). Filters/columns/exports now GROUP BY module with module headers. Migration 043 (3 SQL functions rewritten). "Extra kolommen" → "Kolommen" with new subtitle. Weekly retention cohorts (migration 044, was monthly). Engagement tooltip: fixed positioning to escape overflow clip. EngagementBadge component.
+- ✅ **2026-02-14 (Session 13):** Dashboard module-grouped redesign — expert team (5 experts). Filters/columns/exports now GROUP BY module with module headers. Migration 043 (3 SQL functions rewritten). "Extra kolommen" → "Kolommen" with new subtitle. Weekly retention cohorts (migration 044, was monthly). Engagement tooltip: fixed positioning to escape overflow clip. EngagementBadge component. Welcome email redesign: reframed "uitnodiging" → "welkom + activatie" for paying customers. Custom Resend template with createUser() + generateLink() (bypasses Supabase default). Backlog item: Contact-to-Subscriber conversion flow.
+- ✅ **2026-02-14 (Session 14):** Activation email branding alignment — matched magic link template design. Light blue background (#E1EAF2), centered logo image (logo.png 220px), white card layout, centered text, system fonts, 480px width. Updated Supabase invite-user.html fallback template. Both emails now visually identical.
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
@@ -113,26 +114,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **2 files + 2 SQL migrations** (2026-02-14 Session 13)
+1. **2 files** MODIFIED (2026-02-14 Session 14)
+   Activation email branding aligned with magic link template: logo, light blue background, centered card.
+
+2. **invite/route.ts + invite-user.html** MODIFIED (2026-02-14 Session 13 cont.)
+   Welcome email rewrite: activation framing, custom Resend template, three user scenarios.
+
+3. **2 files + 2 SQL migrations** (2026-02-14 Session 13)
    Module-grouped filters/columns/exports, weekly retention, engagement tooltip fix.
 
-2. **statistieken/page.tsx** MODIFIED (2026-02-14 Session 12)
+4. **statistieken/page.tsx** MODIFIED (2026-02-14 Session 12)
    React hooks order fix: moved `handleSort` useCallback before conditional early returns.
 
-3. **5 files** MODIFIED (2026-02-14 Session 11)
+5. **5 files** MODIFIED (2026-02-14 Session 11)
    UX-032 V3: advanced analytics (sessions, engagement, retention, de-anonymization), bug fixes (Netwerkfout), contacten delete button, error alert on dashboard.
-
-2. **scripts/sql/042-advanced-analytics.sql** CREATED (2026-02-14)
-   5 SQL functions: sessions summary, exit intent, search success, retention cohorts, enhanced actors with engagement + gap trend.
-
-3. **6 files** MODIFIED (2026-02-14 Session 10)
-   Admin dashboard + leden management: copy-prompt button, member actions, admin never-expire, last_active_at fix, sortable columns, per-error delete, editable end date.
-
-4. **scripts/sql/041-subscriptions-update-rls.sql** CREATED (2026-02-14)
-   RLS UPDATE policy for subscriptions (users can update own last_active_at).
-
-5. **11 files** MODIFIED (2026-02-14 Session 9)
-   Complete UI event tracking: `external_link` type added, 9 tracking points across data-table, detail-panel, expanded-row, filter-panel, cross-module-results, not-found, error-boundary, statistieken.
 
 ---
 
