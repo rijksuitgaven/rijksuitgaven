@@ -17,6 +17,7 @@ export type AnalyticsEventType =
   | 'cross_module_nav'
   | 'sort_change'
   | 'page_change'
+  | 'error'
 
 interface AnalyticsEvent {
   event_type: AnalyticsEventType

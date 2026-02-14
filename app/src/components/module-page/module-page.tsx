@@ -329,7 +329,14 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
         if (err instanceof Error && err.name === 'AbortError') {
           return
         }
-        setError(err instanceof Error ? err.message : 'Er ging iets mis')
+        const errorMsg = err instanceof Error ? err.message : 'Er ging iets mis'
+        setError(errorMsg)
+        track('error', moduleId, {
+          message: errorMsg,
+          search_query: filters.search || undefined,
+          sort_by: sortBy,
+          has_filters: !isDefaultView,
+        })
       } finally {
         if (!abortController.signal.aborted) {
           setIsLoading(false)

@@ -235,6 +235,12 @@ function formatEventLine(event: ActorDetailEvent): { icon: React.ReactNode; text
         text: `Pagina ${props.page} in ${mod}`,
         time: timestamp,
       }
+    case 'error':
+      return {
+        icon: <AlertTriangle className="w-3.5 h-3.5 text-[var(--error)]" />,
+        text: `Fout in ${mod}: ${props.message}`,
+        time: timestamp,
+      }
     default:
       return { icon: null, text: event.event_type, time: timestamp }
   }
