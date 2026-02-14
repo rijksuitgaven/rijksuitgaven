@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
 
@@ -75,17 +76,15 @@ function formatDateTime(dateStr: string) {
   })
 }
 
-function InviteButton({ member, onInvited }: { member: Member; onInvited: () => void }) {
-  const [sending, setSending] = useState(false)
+function MemberActions({ member, isSelf, onChanged }: { member: Member; isSelf: boolean; onChanged: () => void }) {
+  const [busy, setBusy] = useState(false)
   const status = computeStatus(member)
 
-  if (status !== 'aangemaakt' && status !== 'uitgenodigd') return null
-
-  const isResend = status === 'uitgenodigd'
+  if (isSelf) return null
 
   async function handleInvite(e: React.MouseEvent) {
     e.stopPropagation()
-    setSending(true)
+    setBusy(true)
     try {
       const res = await fetch(`/api/v1/team/leden/${member.id}/invite`, { method: 'POST' })
       const data = await res.json()
@@ -93,28 +92,113 @@ function InviteButton({ member, onInvited }: { member: Member; onInvited: () => 
         alert(data.error || 'Fout bij versturen uitnodiging')
         return
       }
-      onInvited()
+      onChanged()
     } catch {
       alert('Netwerkfout')
     } finally {
-      setSending(false)
+      setBusy(false)
     }
   }
 
+  async function handleDeactivate(e: React.MouseEvent) {
+    e.stopPropagation()
+    if (!confirm('Weet u zeker dat u dit lid wilt deactiveren?')) return
+    setBusy(true)
+    try {
+      const res = await fetch(`/api/v1/team/leden/${member.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cancelled_at: new Date().toISOString() }),
+      })
+      if (res.ok) onChanged()
+      else alert('Fout bij deactiveren')
+    } catch {
+      alert('Netwerkfout')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function handleActivate(e: React.MouseEvent) {
+    e.stopPropagation()
+    setBusy(true)
+    try {
+      const res = await fetch(`/api/v1/team/leden/${member.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cancelled_at: null }),
+      })
+      if (res.ok) onChanged()
+      else alert('Fout bij activeren')
+    } catch {
+      alert('Netwerkfout')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function handleDelete(e: React.MouseEvent) {
+    e.stopPropagation()
+    if (!confirm(`Weet u zeker dat u ${member.first_name} ${member.last_name} definitief wilt verwijderen? Dit kan niet ongedaan worden.`)) return
+    setBusy(true)
+    try {
+      const res = await fetch(`/api/v1/team/leden/${member.id}`, { method: 'DELETE' })
+      if (res.ok) onChanged()
+      else {
+        const data = await res.json()
+        alert(data.error || 'Fout bij verwijderen')
+      }
+    } catch {
+      alert('Netwerkfout')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const btnBase = 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border transition-colors disabled:opacity-50'
+  const btnInvite = `${btnBase} border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100`
+  const btnActivate = `${btnBase} border-green-200 text-green-700 bg-green-50 hover:bg-green-100`
+  const btnDeactivate = `${btnBase} border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100`
+  const btnDelete = `${btnBase} border-red-200 text-red-700 bg-red-50 hover:bg-red-100`
+
+  const spinner = (
+    <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" strokeDasharray="28" strokeDashoffset="8" /></svg>
+  )
+  const mailIcon = (
+    <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z" /><path d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z" /></svg>
+  )
+
   return (
-    <button
-      onClick={handleInvite}
-      disabled={sending}
-      title={isResend ? 'Uitnodiging opnieuw versturen' : 'Uitnodiging versturen'}
-      className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors disabled:opacity-50"
-    >
-      {sending ? (
-        <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" strokeDasharray="28" strokeDashoffset="8" /></svg>
-      ) : (
-        <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z" /><path d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z" /></svg>
+    <div className="flex items-center gap-1.5">
+      {/* Invite / Resend */}
+      {(status === 'aangemaakt' || status === 'uitgenodigd') && (
+        <button onClick={handleInvite} disabled={busy} title={status === 'uitgenodigd' ? 'Uitnodiging opnieuw versturen' : 'Uitnodiging versturen'} className={btnInvite}>
+          {busy ? spinner : mailIcon}
+          {status === 'uitgenodigd' ? 'Opnieuw' : 'Uitnodigen'}
+        </button>
       )}
-      {isResend ? 'Opnieuw' : 'Uitnodigen'}
-    </button>
+
+      {/* Activate (for expired) */}
+      {status === 'expired' && (
+        <button onClick={handleActivate} disabled={busy} title="Abonnement heractiveren" className={btnActivate}>
+          Activeren
+        </button>
+      )}
+
+      {/* Deactivate (for active / grace) */}
+      {(status === 'active' || status === 'grace') && (
+        <button onClick={handleDeactivate} disabled={busy} title="Abonnement deactiveren" className={btnDeactivate}>
+          Deactiveren
+        </button>
+      )}
+
+      {/* Delete (for aangemaakt, uitgenodigd, expired) */}
+      {(status === 'aangemaakt' || status === 'uitgenodigd' || status === 'expired') && (
+        <button onClick={handleDelete} disabled={busy} title="Lid definitief verwijderen" className={btnDelete}>
+          <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.519.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clipRule="evenodd" /></svg>
+        </button>
+      )}
+    </div>
   )
 }
 
@@ -402,11 +486,18 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
 
 export default function TeamLedenPage() {
   const { role, loading: subLoading } = useSubscription()
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [members, setMembers] = useState<Member[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [editingMember, setEditingMember] = useState<Member | null>(null)
+
+  useEffect(() => {
+    createClient().auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) setCurrentUserId(session.user.id)
+    })
+  }, [])
 
   const fetchMembers = useCallback(async () => {
     try {
@@ -543,7 +634,7 @@ export default function TeamLedenPage() {
                       <td className="px-4 py-3"><StatusBadge status={status} /></td>
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{formatDate(member.end_date)}</td>
                       <td className="px-4 py-3">
-                        <InviteButton member={member} onInvited={fetchMembers} />
+                        <MemberActions member={member} isSelf={currentUserId === member.user_id} onChanged={fetchMembers} />
                       </td>
                     </tr>
                   )

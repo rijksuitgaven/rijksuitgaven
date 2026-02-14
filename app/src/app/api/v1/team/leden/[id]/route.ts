@@ -2,7 +2,7 @@
  * Admin API: Update/Delete individual member
  *
  * PATCH  /api/v1/team/leden/[id] — Update subscription fields
- * DELETE /api/v1/team/leden/[id] — Cancel subscription (set cancelled_at)
+ * DELETE /api/v1/team/leden/[id] — Hard delete subscription + auth user
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -102,4 +102,59 @@ export async function PATCH(
   }
 
   return NextResponse.json({ member: data })
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  if (!(await isAdmin())) return forbiddenResponse()
+
+  const { id } = await params
+
+  const origin = request.headers.get('origin')
+  const host = request.headers.get('host')
+  if (origin && host && !origin.includes(host)) {
+    return NextResponse.json({ error: 'Ongeldige origin' }, { status: 403 })
+  }
+
+  const adminClient = createAdminClient()
+
+  // Look up the subscription to get user_id
+  const { data: sub, error: lookupError } = await adminClient
+    .from('subscriptions')
+    .select('user_id')
+    .eq('id', id)
+    .single()
+
+  if (lookupError || !sub) {
+    return NextResponse.json({ error: 'Lid niet gevonden' }, { status: 404 })
+  }
+
+  // Prevent self-deletion
+  const supabase = await (await import('@/lib/supabase/server')).createClient()
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session?.user?.id === sub.user_id) {
+    return NextResponse.json({ error: 'U kunt uzelf niet verwijderen' }, { status: 400 })
+  }
+
+  // Delete subscription row (CASCADE will handle FK, but be explicit)
+  const { error: deleteSubError } = await adminClient
+    .from('subscriptions')
+    .delete()
+    .eq('id', id)
+
+  if (deleteSubError) {
+    console.error('[Admin] Delete subscription error:', deleteSubError)
+    return NextResponse.json({ error: 'Fout bij verwijderen abonnement' }, { status: 500 })
+  }
+
+  // Delete auth user
+  const { error: deleteUserError } = await adminClient.auth.admin.deleteUser(sub.user_id)
+  if (deleteUserError) {
+    console.error('[Admin] Delete auth user error:', deleteUserError)
+    // Subscription already deleted — log but don't fail
+  }
+
+  return NextResponse.json({ ok: true })
 }
