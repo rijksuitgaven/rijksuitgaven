@@ -925,6 +925,32 @@ When admin adds a new member via `/team/leden`, `admin.createUser()` creates the
 
 ---
 
+### Contact-to-Subscriber Flow (Admin Module)
+
+**Priority:** Medium (V1.1)
+**Added:** 2026-02-14
+**Status:** ⏳ Backlog
+**Type:** Feature / Admin UX
+
+**Problem:**
+Contacts (`/team/contacten`) and members (`/team/leden`) are disconnected systems. When an admin changes a contact's type from "prospect" to "subscriber", nothing happens on the membership side. The admin must then manually go to `/team/leden`, create a new member with the same email, assign a plan, and optionally send an invite — duplicated effort with risk of typos.
+
+**Solution:**
+When changing a contact to "subscriber" in `/team/contacten`, trigger a conversion flow:
+1. Modal appears with pre-filled email/name from the contact record
+2. Admin selects: plan (monthly/yearly/trial), role (member/trial), end date
+3. On confirm: create subscription row, update contact type to "subscriber", optionally send invite
+4. If subscription already exists for that email, show warning and link to `/team/leden`
+
+**Scope:**
+- Conversion modal in contacten edit flow
+- API: `POST /api/v1/team/contacten/[id]/convert` — creates subscription + updates contact type
+- Reverse flow (subscriber → churned): when deactivating a member in leden, auto-update contact type to "churned" if contact row exists
+
+**Estimated effort:** 3-4 hours
+
+---
+
 ### Row Selector for Bulk Actions (Admin Module)
 
 **Priority:** Low (V1.1+)
