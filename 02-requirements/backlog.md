@@ -197,6 +197,26 @@ The backend FastAPI service is directly accessible on the internet at its Railwa
 
 ---
 
+### Module Navigation Bar Overflow (Pre-Launch)
+
+**Priority:** High (Pre-Launch)
+**Added:** 2026-02-14
+**Status:** ⏳ TODO (V1.0 — before launch)
+**Type:** UI / Typography
+
+**Problem:**
+After switching from IBM Plex Sans Condensed to IBM Plex Sans (wider) for the module navigation bar, the menu items no longer fit on a single line. "Apparaatskosten" is truncated/cut off on the right edge. The navigation bar with all module tabs (Ontvangers, Zoek in alle, Financiele instrumenten, Provinciale subsidieregisters, Gemeentelijke subsidieregisters, Inkoopuitgaven, Publiek, Kosten, Apparaatskosten) overflows horizontally.
+
+**Possible Solutions:**
+- Shorten module labels for the nav bar (e.g., "Instrumenten" instead of "Financiele instrumenten")
+- Use Condensed font specifically for the nav bar
+- Make the nav bar horizontally scrollable
+- Responsive breakpoint: collapse to dropdown on smaller widths
+
+**Decision:** TBD
+
+---
+
 ### xlsx Package Replacement (V1.1)
 
 **Priority:** Medium (V1.1)
