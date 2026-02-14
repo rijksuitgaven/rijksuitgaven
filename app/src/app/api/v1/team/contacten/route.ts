@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
       last_name: last_name || null,
       organization: organization || null,
       phone: phone || null,
-      source: source || 'admin',
+      source: source || null,
       notes: notes || null,
     })
     .select()

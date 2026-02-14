@@ -126,6 +126,13 @@ export async function POST(
     authUserId = authUser.user.id
   }
 
+  // Clear user_id on any old soft-deleted subscriptions to avoid unique constraint
+  await supabase
+    .from('subscriptions')
+    .update({ user_id: null })
+    .eq('person_id', personId)
+    .not('deleted_at', 'is', null)
+
   // Create subscription
   const { data: sub, error: subError } = await supabase
     .from('subscriptions')
