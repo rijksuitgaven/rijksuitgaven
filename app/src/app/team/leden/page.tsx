@@ -668,7 +668,7 @@ export default function TeamLedenPage() {
                       <td className="px-4 py-3 text-[var(--navy-medium)]" title={member.last_active_at ? formatDateTime(member.last_active_at) : undefined}>
                         {formatRelativeTime(member.last_active_at)}
                       </td>
-                      <td className="px-4 py-3 text-[var(--navy-medium)]">{formatDate(member.end_date)}</td>
+                      <td className="px-4 py-3 text-[var(--navy-medium)]">{member.role === 'admin' ? '—' : formatDate(member.end_date)}</td>
                       <td className="px-4 py-3">
                         <MemberActions member={member} isSelf={currentUserId === member.user_id} onChanged={fetchMembers} />
                       </td>
