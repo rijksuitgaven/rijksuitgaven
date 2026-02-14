@@ -265,9 +265,9 @@ function AddMemberForm({ onSuccess }: { onSuccess: () => void }) {
         setError(data.error || 'Onbekende fout')
         return
       }
-      formEl.reset()
       onSuccess()
-    } catch {
+    } catch (err) {
+      console.error('[AddMember] Error:', err)
       setError('Netwerkfout')
     } finally {
       setSubmitting(false)
