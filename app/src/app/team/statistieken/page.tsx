@@ -6,7 +6,7 @@ import { TeamNav } from '@/components/team-nav'
 import {
   BarChart3, Search, Download, MousePointerClick, Users, AlertTriangle,
   ChevronDown, ChevronRight, Eye, SlidersHorizontal, Columns, Clock,
-  ArrowUpDown, ArrowRight, Sparkles, ChevronsRight,
+  ArrowUpDown, ArrowRight, Sparkles, ChevronsRight, Trash2, CheckCircle,
 } from 'lucide-react'
 
 // --- Constants ---
@@ -306,6 +306,16 @@ export default function StatistiekenPage() {
     setExpandedActor(prev => prev === hash ? null : hash)
   }, [])
 
+  const clearErrors = useCallback(() => {
+    fetch(`/api/v1/team/statistieken`, { method: 'DELETE' })
+      .then(res => {
+        if (res.ok && data) {
+          setData({ ...data, errors: [] })
+        }
+      })
+      .catch(() => {})
+  }, [data])
+
   if (subLoading) return null
   if (role !== 'admin') {
     return (
@@ -404,7 +414,7 @@ export default function StatistiekenPage() {
             </div>
 
             {/* ═══ ERRORS SECTION ═══ */}
-            <ErrorsSection errors={data.errors} />
+            <ErrorsSection errors={data.errors} onClear={clearErrors} />
 
             {/* ═══ ACT 2: INZICHTEN ═══ */}
 
@@ -703,12 +713,12 @@ function ModuleBadge({ module, small, variant }: {
   )
 }
 
-function ErrorsSection({ errors }: { errors: ErrorItem[] }) {
+function ErrorsSection({ errors, onClear }: { errors: ErrorItem[]; onClear: () => void }) {
   if (errors.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-green-600"><AlertTriangle className="w-4 h-4" /></span>
+          <span className="text-green-600"><CheckCircle className="w-4 h-4" /></span>
           <h2 className="text-sm font-semibold text-[var(--navy-dark)] uppercase tracking-wider">Fouten</h2>
         </div>
         <div className="flex items-center gap-2 py-3 text-sm text-green-700">
@@ -721,19 +731,28 @@ function ErrorsSection({ errors }: { errors: ErrorItem[] }) {
 
   return (
     <div className="bg-white rounded-lg border border-red-200 p-5 mb-4">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-red-500"><AlertTriangle className="w-4 h-4" /></span>
-        <h2 className="text-sm font-semibold text-red-700 uppercase tracking-wider">
-          Fouten ({errors.length})
-        </h2>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <span className="text-red-500"><AlertTriangle className="w-4 h-4" /></span>
+          <h2 className="text-sm font-semibold text-red-700 uppercase tracking-wider">
+            Fouten ({errors.length})
+          </h2>
+        </div>
+        <button
+          onClick={onClear}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors border border-red-200"
+        >
+          <Trash2 className="w-3 h-3" />
+          Wissen
+        </button>
       </div>
       <table className="w-full text-sm">
         <thead>
           <tr className="text-left text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
-            <th className="pb-2 pr-4">Tijdstip</th>
-            <th className="pb-2 pr-4">Module</th>
-            <th className="pb-2 pr-4">Foutmelding</th>
-            <th className="pb-2">Context</th>
+            <th className="pb-2 pr-4 w-32">Tijdstip</th>
+            <th className="pb-2 pr-4 w-28">Module</th>
+            <th className="pb-2 pr-4">Context</th>
+            <th className="pb-2 w-64">Foutmelding</th>
           </tr>
         </thead>
         <tbody>
@@ -741,21 +760,38 @@ function ErrorsSection({ errors }: { errors: ErrorItem[] }) {
             const time = new Date(err.created_at).toLocaleString('nl-NL', {
               day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
             })
-            const context: string[] = []
-            if (err.properties?.search_query) context.push(`zoek: "${err.properties.search_query}"`)
-            if (err.properties?.sort_by) context.push(`sort: ${err.properties.sort_by}`)
-            if (err.properties?.has_filters) context.push('filters actief')
+            const contextParts: { label: string; value: string }[] = []
+            if (err.properties?.search_query) contextParts.push({ label: 'Zoekterm', value: String(err.properties.search_query) })
+            if (err.properties?.sort_by) {
+              const sortCol = String(err.properties.sort_by)
+              const sortLabel = sortCol.startsWith('y') && sortCol.length === 5
+                ? sortCol.slice(1)
+                : FIELD_LABELS[sortCol] || sortCol
+              contextParts.push({ label: 'Sortering', value: sortLabel })
+            }
+            if (err.properties?.has_filters) contextParts.push({ label: 'Filters', value: 'actief' })
 
             return (
               <tr key={i} className="border-t border-red-100">
-                <td className="py-2 pr-4 text-[var(--muted-foreground)] whitespace-nowrap">{time}</td>
-                <td className="py-2 pr-4">
+                <td className="py-2.5 pr-4 text-[var(--muted-foreground)] whitespace-nowrap">{time}</td>
+                <td className="py-2.5 pr-4">
                   <ModuleBadge module={err.module} variant="amber" />
                 </td>
-                <td className="py-2 pr-4 text-red-700 font-medium">{err.message || 'Onbekende fout'}</td>
-                <td className="py-2 text-[var(--muted-foreground)] text-xs">
-                  {context.length > 0 ? context.join(' · ') : '—'}
+                <td className="py-2.5 pr-4">
+                  {contextParts.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {contextParts.map((cp, j) => (
+                        <span key={j} className="inline-flex items-center gap-1 text-xs">
+                          <span className="font-semibold text-[var(--navy-dark)]">{cp.label}:</span>
+                          <span className="text-[var(--navy-medium)]">{cp.value}</span>
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-[var(--muted-foreground)] text-xs">—</span>
+                  )}
                 </td>
+                <td className="py-2.5 text-red-700 font-medium text-sm">{err.message || 'Onbekende fout'}</td>
               </tr>
             )
           })}

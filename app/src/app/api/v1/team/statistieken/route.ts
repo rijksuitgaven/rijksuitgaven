@@ -105,3 +105,20 @@ export async function GET(request: NextRequest) {
     errors: errorResult.data ?? [],
   })
 }
+
+export async function DELETE() {
+  if (!(await isAdmin())) return forbiddenResponse()
+
+  const supabase = createAdminClient()
+  const { error } = await supabase
+    .from('usage_events')
+    .delete()
+    .eq('event_type', 'error')
+
+  if (error) {
+    console.error('[Statistics] Clear errors failed:', error.message)
+    return NextResponse.json({ error: 'Fout bij wissen' }, { status: 500 })
+  }
+
+  return NextResponse.json({ cleared: true })
+}
