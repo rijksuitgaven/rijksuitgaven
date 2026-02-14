@@ -414,6 +414,11 @@ export default function StatistiekenPage() {
       .catch(() => {})
   }, [data])
 
+  const handleSort = useCallback((field: string) => {
+    setSortDir(prev => sortField === field ? (prev === 'asc' ? 'desc' : 'asc') : 'desc')
+    setSortField(field)
+  }, [sortField])
+
   if (subLoading) return null
   if (role !== 'admin') {
     return (
@@ -422,11 +427,6 @@ export default function StatistiekenPage() {
       </div>
     )
   }
-
-  const handleSort = useCallback((field: string) => {
-    setSortDir(prev => sortField === field ? (prev === 'asc' ? 'desc' : 'asc') : 'desc')
-    setSortField(field)
-  }, [sortField])
 
   const searches = getPulseValue(data?.pulse ?? [], 'search')
   const exports = getPulseValue(data?.pulse ?? [], 'export')
