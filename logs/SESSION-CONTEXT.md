@@ -85,6 +85,7 @@
 - ✅ **2026-02-14 (Session 9):** Complete UI event tracking — exhaustive audit found ~75 untracked actions. Expert team scoped to 9 tracking points. New `external_link` event type (13th) for "Zoek op Google" clicks. Tracked: detail-panel CSV export + cross-module nav, cross-module-results links, filter-panel autocomplete selections (3 handlers), 404 page views, React render crashes (direct sendBeacon in class component), grouping counts errors. Dashboard: "Externe links" pulse card + formatEventLine + trigger labels (404, react_render) + path pill. Homepage analytics deferred to V1.1 backlog.
 - ✅ **2026-02-14 (Session 10):** Admin dashboard + leden management improvements. Copy-prompt button on error cards (format as debugging prompt). Member actions: contextual activate/deactivate/delete per status. DELETE endpoint for hard member deletion. Admins never expire (computeStatus, middleware, hidden Einddatum/deactivate). Fixed last_active_at (RLS UPDATE policy + await in Edge Runtime). Sortable "Laatst actief" column. Per-error delete in statistics. Editable end date in add form. Migration 041 executed.
 - ✅ **2026-02-14 (Session 11):** UX-032 V3 Advanced Analytics — 5-person expert brainstorm, 6 Tier 1 metrics: sessions (30-min gap), exit intent, search success rate, retention cohorts (monthly grid), engagement score (weighted + percentile labels), login gap/frequency trend. Actor de-anonymization (SHA256 hash matching → real names). Migration 042 executed (5 SQL functions). Sortable actor table (9 columns), engagement tooltip, external link column, extra kolommen clarity. Bug fixes: add member/contact "Netwerkfout" (e.currentTarget null after async), contacten inline delete button, error alert on team dashboard.
+- ✅ **2026-02-14 (Session 12):** React hooks order fix — `handleSort` useCallback placed after conditional early returns crashed statistieken page ("Er is iets misgegaan"). Moved before early returns.
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
@@ -111,7 +112,10 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **5 files** MODIFIED (2026-02-14 Session 11)
+1. **statistieken/page.tsx** MODIFIED (2026-02-14 Session 12)
+   React hooks order fix: moved `handleSort` useCallback before conditional early returns.
+
+2. **5 files** MODIFIED (2026-02-14 Session 11)
    UX-032 V3: advanced analytics (sessions, engagement, retention, de-anonymization), bug fixes (Netwerkfout), contacten delete button, error alert on dashboard.
 
 2. **scripts/sql/042-advanced-analytics.sql** CREATED (2026-02-14)
