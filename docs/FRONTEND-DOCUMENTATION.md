@@ -1,6 +1,6 @@
 # Frontend Documentation
 
-**Last Updated:** 2026-02-13
+**Last Updated:** 2026-02-14
 **Stack:** Next.js 16.1.4 + TypeScript + Tailwind CSS + TanStack Table
 
 ---
@@ -58,6 +58,7 @@ app/src/
 │   │   └── index.ts
 │   ├── error-boundary/           # React error boundary wrapper
 │   │   ├── error-boundary.tsx
+│   │   ├── error-report.tsx        # Shared error display (UX overhaul)
 │   │   └── index.ts
 │   ├── mobile-banner/            # Mobile message banner (UX-003)
 │   │   ├── mobile-banner.tsx
@@ -598,13 +599,12 @@ interface SubscriptionBannerProps {
 
 ### ErrorBoundary (`components/error-boundary/error-boundary.tsx`)
 
-React error boundary for graceful error handling.
+React error boundary for graceful error handling. Uses `ErrorReport` component for consistent error UX.
 
 **Features:**
 - Catches JavaScript errors in child components
-- Displays user-friendly error message
-- "Probeer opnieuw" (Try again) button resets error state
-- Logs errors to console (production: would send to error tracking)
+- Displays universal "Er is iets misgegaan" message via ErrorReport
+- Dev-only: shows error details in collapsed section
 
 **Usage:**
 ```tsx
@@ -613,12 +613,36 @@ React error boundary for graceful error handling.
 </ErrorBoundary>
 ```
 
-**Props:**
-```typescript
-interface ErrorBoundaryProps {
-  children: React.ReactNode
-  fallback?: React.ReactNode  // Optional custom fallback UI
-}
+### ErrorReport (`components/error-boundary/error-report.tsx`)
+
+Shared error display component — universal "Er is iets misgegaan" message with auto-logged error confirmation.
+
+**Features:**
+- Universal message: "Er is iets misgegaan" (no per-component messages)
+- "Fout melden" button → "✓ Fout is gemeld" (1s) → "↩ Terug in 3/2/1..." → `router.back()`
+- Three-phase state machine: idle → confirmed → countdown
+- Two variants: `page` (centered card with AlertTriangle) and `inline` (compact for table rows)
+- Errors auto-logged to analytics — no manual feedback needed
+
+**Error tracking across components (8 total):**
+| Component | Trigger | What it catches |
+|-----------|---------|-----------------|
+| module-page | page_load, sort_change, filter_apply, search, page_change | Data fetch failures |
+| expanded-row | row_expand | Detail fetch failure |
+| detail-panel | detail_panel | Side panel fetch |
+| filter-panel | filter_load, autocomplete | Filter dropdown + search |
+| search-bar | autocomplete | Hub search failure |
+| feedback-button | feedback_submit | Feedback submit |
+| login-form | login | Rate limit, OTP, network |
+| public-homepage | contact_form | Contact form submit |
+
+**Usage:**
+```tsx
+// Page-level (centered card):
+<ErrorReport />
+
+// Inline (compact, for table rows):
+<ErrorReport variant="inline" />
 ```
 
 ---
@@ -1029,3 +1053,5 @@ npm run build
 | 2026-02-14 | UX-032 V2: Dashboard redesign (3-act structure, per-user drill-down, combined search table), 5 new event types (autocomplete_search/click, sort_change, page_change, cross_module_nav), debounced search tracking fix, migration 039 |
 | 2026-02-14 | UX-032 V2 final: Error event type (12th), immediate error flush, BFF whitelist fix (6→12 types), year sort fix, errors section card redesign, DELETE endpoint for clearing errors, migration 040 |
 | 2026-02-14 | Error message UX: universal "Er is iets misgegaan", shared ErrorReport component, "Fout melden" → countdown → router.back(), no English leaks |
+| 2026-02-14 | Error trigger tracking: `lastTrigger` ref in module-page, "Actie" pill in dashboard |
+| 2026-02-14 | Comprehensive error tracking: 7 components instrumented (expanded-row, detail-panel, filter-panel, search-bar, feedback-button, login-form, public-homepage). 7 new trigger labels in dashboard |

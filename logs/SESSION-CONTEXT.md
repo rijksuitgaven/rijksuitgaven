@@ -80,7 +80,8 @@
 - ✅ **2026-02-14 (Session 4):** Usage Statistics — UX-032. 6-person expert team (Analytics Lead, Data Engineer, Privacy/GDPR, Dashboard UX, Backend Architect, Adversarial Reviewer). Server-side product analytics with pseudonymized user tracking (SHA256 actor_hash, no PII). 6 event types: module_view, search, row_expand, filter_apply, export, column_change. Client-side batching hook (30s/10 events/sendBeacon). BFF endpoint `POST /api/v1/analytics`. Admin dashboard at `/team/statistieken` with 6 sections (pulse cards, module chart, top searches, filters/columns, exports, zero-results). 7 SQL functions via `supabase.rpc()`. 90-day retention. Migrations 038+038b executed on production. `ANALYTICS_HASH_SECRET` env var set on Railway.
 - ✅ **2026-02-14 (Session 5):** UX-032 V2 — Dashboard redesign + 5 new event types. 4 bug fixes (keystroke tracking → 2s debounce, false zero-results, missing search context, no per-user view). Dashboard rewritten as 3-act structure (Pulse → Inzichten → Gebruikers) with per-user expandable event timelines. Migration 039 (get_usage_actors, get_usage_actor_detail, updated get_usage_searches with avg_results). 5 new events: autocomplete_search, autocomplete_click (search-bar.tsx), cross_module_nav, sort_change, page_change (module-page.tsx). Total: 11 event types. Stale test data cleaned.
 - ✅ **2026-02-14 (Session 6):** UX-032 COMPLETE — Error tracking + errors section redesign. Added `error` as 12th event type with immediate flush. Fixed BFF VALID_EVENT_TYPES whitelist (6→12 types — sendBeacon silently swallowed 400 rejections). Fixed year column sort crash (`year-2024`→`y2024` transform). Migration 040 (get_usage_errors). Errors section redesigned from sparse table to stacked cards (/frontend-design review). DELETE endpoint for clearing errors. **UX-032 marked complete (post-V1.0).**
-- ✅ **2026-02-14 (Session 7):** Error message UX overhaul — expert panel (5 specialists). Universal "Er is iets misgegaan" message (industry standard). Fixed English error leaks from `lib/api.ts`. Shared `ErrorReport` component: "Fout melden" → "✓ Fout is gemeld" → countdown 3-2-1 → `router.back()`. Three-tier error model (silent/inline/page).
+- ✅ **2026-02-14 (Session 7):** Error message UX overhaul — expert panel (5 specialists). Universal "Er is iets misgegaan" message (industry standard). Fixed English error leaks from `lib/api.ts`. Shared `ErrorReport` component: "Fout melden" → "✓ Fout is gemeld" → countdown 3-2-1 → `router.back()`. Three-tier error model (silent/inline/page). Error trigger tracking: `lastTrigger` ref captures what user action caused the error, dashboard "Actie" pill shows Dutch labels.
+- ✅ **2026-02-14 (Session 8):** Comprehensive error tracking — audit found only 1 of 35 catch blocks tracked errors (97% blind). Added `track('error', ...)` to 7 critical components: expanded-row, detail-panel, filter-panel (2 catch blocks), search-bar, feedback-button, login-form (3 error paths), public-homepage (2 error paths). Dashboard updated with 7 new Dutch trigger labels. All errors now report with trigger context (row_expand, detail_panel, filter_load, autocomplete, feedback_submit, login, contact_form).
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
@@ -107,14 +108,14 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **app/src/app/team/statistieken/page.tsx** REWRITTEN (2026-02-14)
-   Dashboard V2 + errors section card redesign. 3-act structure (Pulse → Inzichten → Gebruikers), error cards with context pills, clear button.
+1. **7 components** MODIFIED (2026-02-14)
+   Comprehensive error tracking: expanded-row, detail-panel, filter-panel, search-bar, feedback-button, login-form, public-homepage — all now report errors to analytics with trigger context.
 
-2. **app/src/app/api/v1/analytics/route.ts** FIXED (2026-02-14)
-   VALID_EVENT_TYPES whitelist expanded 6 → 12 types. Critical fix — sendBeacon silently swallowed 400 rejections.
+2. **app/src/app/team/statistieken/page.tsx** MODIFIED (2026-02-14)
+   Dashboard V2 + errors section card redesign + 7 new trigger labels for comprehensive error tracking.
 
-3. **app/src/hooks/use-analytics.ts** MODIFIED (2026-02-14)
-   Extended AnalyticsEventType union: 6 → 12 event types. Immediate flush for error events.
+3. **app/src/components/error-boundary/error-report.tsx** CREATED (2026-02-14)
+   Shared ErrorReport component — "Fout melden" → countdown → router.back().
 
 4. **app/src/components/module-page/module-page.tsx** MODIFIED (2026-02-14)
    Error tracking in catch block, year sort fix (`year-2024`→`y2024`), sort_change, page_change, cross_module_nav.
