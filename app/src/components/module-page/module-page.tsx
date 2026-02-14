@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo, Suspense } from 'react'
+import { useState, useEffect, useCallback, useMemo, Suspense, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { DataTable, ExpandedRow } from '@/components/data-table'
 import { FilterPanel, type FilterValues } from '@/components/filter-panel'
@@ -8,6 +8,7 @@ import { CrossModuleResults } from '@/components/cross-module-results'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { fetchModuleData } from '@/lib/api'
 import { getStoredColumns, getDefaultColumns } from '@/components/column-selector'
+import { useAnalytics } from '@/hooks/use-analytics'
 import type { ModuleDataResponse, RecipientRow } from '@/types/api'
 
 // Module configuration
@@ -113,6 +114,8 @@ function ModulePageSkeleton({ config }: { config: ModuleConfig }) {
 function ModulePageContent({ moduleId, config }: { moduleId: string; config: ModuleConfig }) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { track } = useAnalytics()
+  const hasTrackedView = useRef(false)
 
   const [data, setData] = useState<ModuleDataResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -271,6 +274,16 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
         const response = await fetchModuleData(moduleId, params, abortController.signal)
         setData(response)
+
+        // Track module_view on first load only (not on filter/sort/page changes)
+        if (!hasTrackedView.current) {
+          hasTrackedView.current = true
+          track('module_view', moduleId, {
+            search_query: filters.search || undefined,
+            result_count: response.pagination.totalRows,
+            has_filters: !isDefaultView,
+          })
+        }
       } catch (err) {
         // Ignore abort errors - they're expected when deps change
         if (err instanceof Error && err.name === 'AbortError') {
@@ -291,10 +304,41 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     }
   }, [moduleId, page, perPage, sortBy, sortOrder, filters, isDefaultView, userHasSorted, effectiveColumns, isHydrated])
 
+  // Track search and filter changes
+  const prevFiltersRef = useRef<FilterValues>(filters)
+
   const handleFilterChange = useCallback((newFilters: FilterValues) => {
+    const prev = prevFiltersRef.current
+
+    // Track search if search term changed and is non-empty
+    if (newFilters.search && newFilters.search !== prev.search) {
+      track('search', moduleId, {
+        query: newFilters.search,
+        result_count: data?.pagination.totalRows ?? 0,
+        autocomplete_used: false,
+      })
+    }
+
+    // Track filter changes (multiselect filters)
+    const nonFilterKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag']
+    for (const [key, value] of Object.entries(newFilters)) {
+      if (nonFilterKeys.includes(key)) continue
+      if (Array.isArray(value) && value.length > 0) {
+        const prevValue = prev[key]
+        if (!Array.isArray(prevValue) || JSON.stringify(prevValue) !== JSON.stringify(value)) {
+          track('filter_apply', moduleId, {
+            field: key,
+            values: value,
+            result_count: data?.pagination.totalRows ?? 0,
+          })
+        }
+      }
+    }
+
+    prevFiltersRef.current = newFilters
     setFilters(newFilters)
     setPage(1)
-  }, [])
+  }, [track, moduleId, data?.pagination.totalRows])
 
   const handleSortChange = useCallback((column: string, direction: 'asc' | 'desc') => {
     setSortBy(column)
@@ -312,10 +356,12 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     setPage(1)
   }, [])
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleRowExpand = useCallback((_primaryValue: string) => {
-    // Placeholder for future analytics or prefetch
-  }, [])
+  const handleRowExpand = useCallback((primaryValue: string) => {
+    track('row_expand', moduleId, {
+      recipient: primaryValue,
+      search_query: filters.search || undefined,
+    })
+  }, [track, moduleId, filters.search])
 
   const handleNavigateToModule = useCallback((targetModule: string, recipient: string) => {
     router.push(`/${targetModule}?q=${encodeURIComponent(recipient)}`)
@@ -417,7 +463,18 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             renderExpandedRow={renderExpandedRow}
             moduleId={moduleId}
             selectedColumns={effectiveColumns}
-            onColumnsChange={setSelectedColumns}
+            onColumnsChange={(cols) => {
+              setSelectedColumns(cols)
+              track('column_change', moduleId, { columns: cols })
+            }}
+            onExport={(format, rowCount) => {
+              track('export', moduleId, {
+                format,
+                row_count: rowCount,
+                search_query: filters.search || undefined,
+                has_filters: !isDefaultView,
+              })
+            }}
             hasActiveFilters={activeFilterColumns.length > 0}
             searchQuery={filters.search}
             totals={data?.totals}

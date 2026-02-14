@@ -66,6 +66,7 @@ interface DataTableProps {
   onColumnsChange?: (columns: string[]) => void  // Callback for column selection changes
   searchQuery?: string  // Current search query (for Match column display)
   hasActiveFilters?: boolean  // True when multiselect filters are active (UX-006)
+  onExport?: (format: 'csv' | 'xls', rowCount: number) => void  // Analytics callback (UX-032)
   totals?: TotalsData | null  // Aggregated totals for all search results (not just current page)
 }
 
@@ -338,6 +339,7 @@ export function DataTable({
   onColumnsChange,
   searchQuery,
   hasActiveFilters = false,
+  onExport,
   totals,
 }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -405,6 +407,8 @@ export function DataTable({
       const timestamp = new Date().toISOString().split('T')[0]
       const filename = `rijksuitgaven-${moduleId}-${timestamp}.csv`
       downloadCSV(csvContent, filename)
+      const exportCount = Math.min(data.length, MAX_EXPORT_ROWS)
+      onExport?.('csv', exportCount)
     } finally {
       setIsExportingCSV(false)
     }
@@ -419,6 +423,8 @@ export function DataTable({
       const timestamp = new Date().toISOString().split('T')[0]
       const filename = `rijksuitgaven-${moduleId}-${timestamp}.xlsx`
       downloadXLS(data, availableYears, primaryColumnName, filename, selectedColumns, moduleId)
+      const exportCount = Math.min(data.length, MAX_EXPORT_ROWS)
+      onExport?.('xls', exportCount)
     } finally {
       setIsExportingXLS(false)
     }

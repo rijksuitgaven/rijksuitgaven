@@ -20,6 +20,7 @@ export function TeamNav() {
     { href: '/team/leden', label: 'Leden', exact: false },
     { href: '/team/contacten', label: 'Contacten', exact: false },
     { href: '/team/feedback', label: 'Feedback', exact: false, count: newCount },
+    { href: '/team/statistieken', label: 'Statistieken', exact: false },
   ]
 
   return (

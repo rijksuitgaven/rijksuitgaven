@@ -1487,6 +1487,46 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-032: Usage Statistics — Internal Product Analytics
+
+**Requirement:** Server-side usage analytics with pseudonymized user tracking. All events captured in the BFF layer, displayed on an admin dashboard at `/team/statistieken`.
+
+**Events Tracked:**
+- `module_view` — which modules are popular, with unique user counts
+- `search` — what users search for, result counts, zero-result queries
+- `row_expand` — which recipients users drill into
+- `filter_apply` — which filters are used, per module
+- `export` — CSV/XLS downloads, row counts, search context
+- `column_change` — which extra columns users select
+
+**Privacy:**
+- Pseudonymized `actor_hash` (SHA256 of user_id + secret, first 16 chars)
+- No PII stored in events table (no email, name, IP, user agent)
+- Server-side BFF logging = legitimate interest, no consent needed
+- 90-day auto-retention, weekly cleanup
+
+**Dashboard Sections:**
+1. Pulse cards (active users, searches, exports, row expands)
+2. Module popularity (bar chart, sorted by views)
+3. Top search terms (with unique user counts)
+4. Filter & column usage (side-by-side tables)
+5. Export breakdown (CSV/XLS, avg rows)
+6. Zero-result searches (most actionable metric)
+
+**Architecture:**
+- Client-side batching (30s or 10 events, sendBeacon on unload)
+- Single BFF endpoint: `POST /api/v1/analytics`
+- Async write to `usage_events` Supabase table (fire-and-forget)
+- Admin-only dashboard via service_role client
+
+**Design Document:** `docs/plans/2026-02-14-usage-statistics-design.md`
+
+**Priority:** P1 (V1.0 — pre-launch)
+
+**Status:** ⏳ In Development
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload
