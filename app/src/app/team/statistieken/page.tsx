@@ -171,8 +171,8 @@ interface SearchSuccess {
 }
 
 interface RetentionItem {
-  cohort_month: string
-  month_offset: number
+  cohort_week: string
+  week_offset: number
   active_count: number
   cohort_size: number
   retention_rate: number
@@ -930,15 +930,15 @@ function ModuleGroupedList<T>({ title, subtitle, items, getModule, renderItem, e
 }
 
 function RetentionSection({ retention }: { retention: RetentionItem[] }) {
-  // Build cohort grid: rows = cohort months, columns = month offsets
-  const cohorts = [...new Set(retention.map(r => r.cohort_month))].sort()
-  const maxOffset = Math.max(...retention.map(r => r.month_offset), 0)
+  // Build cohort grid: rows = cohort weeks, columns = week offsets
+  const cohorts = [...new Set(retention.map(r => r.cohort_week))].sort()
+  const maxOffset = Math.max(...retention.map(r => r.week_offset), 0)
   const offsets = Array.from({ length: maxOffset + 1 }, (_, i) => i)
 
   // Lookup map
   const lookup = new Map<string, RetentionItem>()
   for (const r of retention) {
-    lookup.set(`${r.cohort_month}-${r.month_offset}`, r)
+    lookup.set(`${r.cohort_week}-${r.week_offset}`, r)
   }
 
   function getRetentionColor(rate: number): string {
@@ -950,7 +950,7 @@ function RetentionSection({ retention }: { retention: RetentionItem[] }) {
   }
 
   return (
-    <Section title="Retentie (maandelijks)" icon={<Timer className="w-4 h-4" />}>
+    <Section title="Retentie (wekelijks)" icon={<Timer className="w-4 h-4" />}>
       {cohorts.length === 0 ? (
         <EmptyState>Nog geen retentiedata</EmptyState>
       ) : (
@@ -958,11 +958,11 @@ function RetentionSection({ retention }: { retention: RetentionItem[] }) {
           <table className="text-sm">
             <thead>
               <tr className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
-                <th className="pb-2 pr-4 text-left">Cohort</th>
-                <th className="pb-2 pr-2 text-right">Grootte</th>
+                <th className="pb-2 pr-4 text-left">Week</th>
+                <th className="pb-2 pr-2 text-right">Gebruikers</th>
                 {offsets.map(o => (
                   <th key={o} className="pb-2 px-2 text-center w-14">
-                    {o === 0 ? 'M0' : `+${o}`}
+                    {o === 0 ? 'W0' : `+${o}`}
                   </th>
                 ))}
               </tr>
