@@ -20,74 +20,93 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY
 
 function buildActivationEmail(firstName: string, email: string, actionLink: string): string {
   return `
-<!DOCTYPE html>
-<html lang="nl">
+<html>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="light" />
-  <meta name="supported-color-schemes" content="light" />
   <title>Welkom bij Rijksuitgaven</title>
 </head>
-<body style="margin:0;padding:0;background-color:#f4f6f9;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f9;">
+<body style="margin: 0; padding: 0; background-color: #E1EAF2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #E1EAF2;">
     <tr>
-      <td align="center" style="padding:32px 16px;">
-        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width: 480px; width: 100%;">
 
-          <!-- Header -->
+          <!-- Logo -->
           <tr>
-            <td style="background-color:#0E3261;padding:24px 32px;border-radius:8px 8px 0 0;">
-              <span style="color:#ffffff;font-size:18px;font-weight:700;letter-spacing:0.5px;">RIJKSUITGAVEN.NL</span>
+            <td align="center" style="padding-bottom: 32px;">
+              <img src="https://beta.rijksuitgaven.nl/logo.png" alt="Rijksuitgaven" width="220" style="display: block; width: 220px; height: auto;" />
             </td>
           </tr>
 
-          <!-- Body -->
+          <!-- Card -->
           <tr>
-            <td style="background-color:#ffffff;padding:32px 32px 24px 32px;">
-              <p style="margin:0 0 20px;font-size:16px;line-height:1.6;color:#1a1a1a;">
-                Beste ${firstName},
-              </p>
-              <p style="margin:0 0 20px;font-size:16px;line-height:1.6;color:#1a1a1a;">
-                Welkom bij Rijksuitgaven, het meest complete platform voor overheidsuitgaven in Nederland.
-              </p>
-              <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:#1a1a1a;">
-                Klik op onderstaande knop om uw account te activeren en direct aan de slag te gaan:
-              </p>
+            <td style="background-color: #ffffff; border-radius: 8px; padding: 40px 36px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
 
-              <!-- CTA Button -->
-              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+                <!-- Heading -->
                 <tr>
-                  <td style="border-radius:6px;background-color:#E62D75;">
-                    <a href="${actionLink}" target="_blank" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:6px;">Account activeren</a>
+                  <td style="font-size: 22px; font-weight: 700; color: #0E3261; text-align: center; padding-bottom: 16px;">
+                    Welkom bij Rijksuitgaven
                   </td>
                 </tr>
+
+                <!-- Body -->
+                <tr>
+                  <td style="font-size: 15px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 8px;">
+                    Beste ${firstName},
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-size: 15px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 28px;">
+                    Klik hieronder om uw account te activeren en direct aan de slag te gaan.
+                  </td>
+                </tr>
+
+                <!-- CTA Button -->
+                <tr>
+                  <td align="center" style="padding-bottom: 12px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="background-color: #E62D75; border-radius: 6px;">
+                          <a href="${actionLink}" target="_blank" style="display: inline-block; padding: 14px 48px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 6px;">
+                            Account activeren
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Expiry notice -->
+                <tr>
+                  <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 28px;">
+                    Deze link is een uur geldig.
+                  </td>
+                </tr>
+
+                <!-- Divider -->
+                <tr>
+                  <td style="padding-bottom: 20px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr><td style="border-top: 1px solid #eeeeee;"></td></tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Renewal instructions -->
+                <tr>
+                  <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center;">
+                    Link verlopen? Ga naar <a href="https://rijksuitgaven.nl" style="color: #436FA3; text-decoration: none;">rijksuitgaven.nl</a>, klik op <strong>Inloggen</strong> en vraag een nieuwe link aan met uw e-mailadres (${email}).
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-top: 8px;">
+                    Vragen? Neem contact op met <a href="mailto:contact@rijksuitgaven.nl" style="color: #436FA3; text-decoration: none;">ons supportteam</a>.
+                  </td>
+                </tr>
+
               </table>
-
-              <!-- Expiry note -->
-              <p style="margin:0 0 4px;font-size:14px;line-height:1.5;color:#666666;">
-                Deze link is 1 uur geldig.
-              </p>
-              <p style="margin:0 0 20px;font-size:14px;line-height:1.5;color:#666666;">
-                Verlopen? Ga naar <a href="https://rijksuitgaven.nl" style="color:#436FA3;text-decoration:underline;">rijksuitgaven.nl</a>, klik op <strong>Inloggen</strong> en vraag een nieuwe link aan met dit e-mailadres (${email}).
-              </p>
-
-              <!-- Sign-off -->
-              <p style="margin:0;font-size:16px;line-height:1.6;color:#1a1a1a;">
-                Met vriendelijke groet,<br/>Team Rijksuitgaven
-              </p>
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="background-color:#0E3261;padding:20px 32px;border-radius:0 0 8px 8px;">
-              <p style="margin:0 0 4px;font-size:13px;color:#8DBADC;">
-                <a href="https://rijksuitgaven.nl" style="color:#8DBADC;text-decoration:none;">rijksuitgaven.nl</a>
-              </p>
-              <p style="margin:0;font-size:13px;color:#8DBADC;">
-                Vragen? <a href="mailto:contact@rijksuitgaven.nl" style="color:#8DBADC;text-decoration:underline;">contact@rijksuitgaven.nl</a>
-              </p>
             </td>
           </tr>
 
