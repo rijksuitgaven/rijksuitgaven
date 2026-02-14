@@ -717,13 +717,10 @@ function ErrorsSection({ errors, onClear }: { errors: ErrorItem[]; onClear: () =
   if (errors.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2">
           <span className="text-green-600"><CheckCircle className="w-4 h-4" /></span>
           <h2 className="text-sm font-semibold text-[var(--navy-dark)] uppercase tracking-wider">Fouten</h2>
-        </div>
-        <div className="flex items-center gap-2 py-3 text-sm text-green-700">
-          <span className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xs font-bold">✓</span>
-          Geen fouten geregistreerd
+          <span className="text-sm text-green-700 ml-2">— geen fouten geregistreerd</span>
         </div>
       </div>
     )
@@ -746,57 +743,46 @@ function ErrorsSection({ errors, onClear }: { errors: ErrorItem[]; onClear: () =
           Wissen
         </button>
       </div>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="text-left text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
-            <th className="pb-2 pr-4 w-32">Tijdstip</th>
-            <th className="pb-2 pr-4 w-28">Module</th>
-            <th className="pb-2 pr-4">Context</th>
-            <th className="pb-2 w-64">Foutmelding</th>
-          </tr>
-        </thead>
-        <tbody>
-          {errors.map((err, i) => {
-            const time = new Date(err.created_at).toLocaleString('nl-NL', {
-              day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
-            })
-            const contextParts: { label: string; value: string }[] = []
-            if (err.properties?.search_query) contextParts.push({ label: 'Zoekterm', value: String(err.properties.search_query) })
-            if (err.properties?.sort_by) {
-              const sortCol = String(err.properties.sort_by)
-              const sortLabel = sortCol.startsWith('y') && sortCol.length === 5
-                ? sortCol.slice(1)
-                : FIELD_LABELS[sortCol] || sortCol
-              contextParts.push({ label: 'Sortering', value: sortLabel })
-            }
-            if (err.properties?.has_filters) contextParts.push({ label: 'Filters', value: 'actief' })
+      <div className="space-y-2">
+        {errors.map((err, i) => {
+          const time = new Date(err.created_at).toLocaleString('nl-NL', {
+            day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
+          })
+          const contextPills: { label: string; value: string }[] = []
+          if (err.properties?.search_query) contextPills.push({ label: 'Zoekterm', value: String(err.properties.search_query) })
+          if (err.properties?.sort_by) {
+            const sortCol = String(err.properties.sort_by)
+            const sortLabel = sortCol.startsWith('y') && sortCol.length === 5
+              ? sortCol.slice(1)
+              : FIELD_LABELS[sortCol] || sortCol
+            contextPills.push({ label: 'Sortering', value: sortLabel })
+          }
+          if (err.properties?.has_filters) contextPills.push({ label: 'Filters', value: 'actief' })
 
-            return (
-              <tr key={i} className="border-t border-red-100">
-                <td className="py-2.5 pr-4 text-[var(--muted-foreground)] whitespace-nowrap">{time}</td>
-                <td className="py-2.5 pr-4">
-                  <ModuleBadge module={err.module} variant="amber" />
-                </td>
-                <td className="py-2.5 pr-4">
-                  {contextParts.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {contextParts.map((cp, j) => (
-                        <span key={j} className="inline-flex items-center gap-1 text-xs">
-                          <span className="font-semibold text-[var(--navy-dark)]">{cp.label}:</span>
-                          <span className="text-[var(--navy-medium)]">{cp.value}</span>
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="text-[var(--muted-foreground)] text-xs">—</span>
-                  )}
-                </td>
-                <td className="py-2.5 text-red-700 font-medium text-sm">{err.message || 'Onbekende fout'}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+          return (
+            <div key={i} className="bg-red-50/60 border border-red-100 rounded-lg px-4 py-3">
+              {/* Row 1: error message — the headline */}
+              <div className="text-sm font-semibold text-red-700 mb-2">
+                {err.message || 'Onbekende fout'}
+              </div>
+              {/* Row 2: metadata line */}
+              <div className="flex items-center flex-wrap gap-x-4 gap-y-1.5">
+                <span className="text-xs text-[var(--muted-foreground)]">{time}</span>
+                <ModuleBadge module={err.module} variant="amber" />
+                {contextPills.map((cp, j) => (
+                  <span
+                    key={j}
+                    className="inline-flex items-center gap-1 text-xs bg-white/80 border border-red-200 rounded px-2 py-0.5"
+                  >
+                    <span className="font-semibold text-[var(--navy-dark)]">{cp.label}</span>
+                    <span className="text-[var(--navy-medium)]">{cp.value}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
