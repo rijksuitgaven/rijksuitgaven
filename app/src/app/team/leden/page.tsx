@@ -29,6 +29,8 @@ interface Member {
 type MemberStatus = 'aangemaakt' | 'uitgenodigd' | 'active' | 'grace' | 'expired'
 
 function computeStatus(member: Member): MemberStatus {
+  // Admins never expire
+  if (member.role === 'admin') return 'active'
   // If never invited → Aangemaakt
   if (!member.invited_at) return 'aangemaakt'
   // If invited but never logged in → Uitgenodigd
@@ -74,6 +76,21 @@ function formatDateTime(dateStr: string) {
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+function formatRelativeTime(dateStr: string | null): string {
+  if (!dateStr) return '—'
+  const diffMs = Date.now() - new Date(dateStr).getTime()
+  const diffMin = Math.floor(diffMs / 60000)
+  const diffHr = Math.floor(diffMs / 3600000)
+  const diffDays = Math.floor(diffMs / 86400000)
+  if (diffMin < 5) return 'Nu'
+  if (diffMin < 60) return `${diffMin} min geleden`
+  if (diffHr < 24) return `${diffHr} uur geleden`
+  if (diffDays === 1) return 'Gisteren'
+  if (diffDays < 7) return `${diffDays} dagen geleden`
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weken geleden`
+  return formatDate(dateStr.split('T')[0])
 }
 
 function MemberActions({ member, isSelf, onChanged }: { member: Member; isSelf: boolean; onChanged: () => void }) {
@@ -359,35 +376,6 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
     }
   }
 
-  async function handleCancel() {
-    if (!confirm('Weet u zeker dat u dit abonnement wilt deactiveren?')) return
-    setSubmitting(true)
-    try {
-      const res = await fetch(`/api/v1/team/leden/${member.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cancelled_at: new Date().toISOString() }),
-      })
-      if (res.ok) onSaved()
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  async function handleReactivate() {
-    setSubmitting(true)
-    try {
-      const res = await fetch(`/api/v1/team/leden/${member.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cancelled_at: null }),
-      })
-      if (res.ok) onSaved()
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 space-y-4" onClick={e => e.stopPropagation()}>
@@ -457,18 +445,7 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <div className="flex items-center justify-between pt-2">
-            <div>
-              {member.cancelled_at ? (
-                <button type="button" onClick={handleReactivate} disabled={submitting} className="text-sm text-green-600 hover:text-green-800">
-                  Heractiveren
-                </button>
-              ) : (
-                <button type="button" onClick={handleCancel} disabled={submitting} className="text-sm text-red-600 hover:text-red-800">
-                  Deactiveren
-                </button>
-              )}
-            </div>
+          <div className="flex items-center justify-end pt-2">
             <div className="flex gap-2">
               <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-[var(--border)] rounded-md hover:bg-gray-50">
                 Annuleren
@@ -492,6 +469,8 @@ export default function TeamLedenPage() {
   const [error, setError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [editingMember, setEditingMember] = useState<Member | null>(null)
+  const [sortBy, setSortBy] = useState<'last_active_at' | 'end_date' | null>(null)
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
 
   useEffect(() => {
     createClient().auth.getSession().then(({ data: { session } }) => {
@@ -542,6 +521,23 @@ export default function TeamLedenPage() {
       </main>
     )
   }
+
+  function toggleSort(col: 'last_active_at' | 'end_date') {
+    if (sortBy === col) {
+      setSortDir(prev => prev === 'desc' ? 'asc' : 'desc')
+    } else {
+      setSortBy(col)
+      setSortDir('desc')
+    }
+  }
+
+  const sortedMembers = [...members].sort((a, b) => {
+    if (!sortBy) return 0
+    const aVal = a[sortBy] ?? ''
+    const bVal = b[sortBy] ?? ''
+    const cmp = aVal < bVal ? -1 : aVal > bVal ? 1 : 0
+    return sortDir === 'desc' ? -cmp : cmp
+  })
 
   const counts = {
     active: members.filter(m => computeStatus(m) === 'active').length,
@@ -603,19 +599,30 @@ export default function TeamLedenPage() {
                 <th className="text-left px-4 py-3 font-medium text-[var(--navy-medium)]">E-mail</th>
                 <th className="text-left px-4 py-3 font-medium text-[var(--navy-medium)]">Plan</th>
                 <th className="text-left px-4 py-3 font-medium text-[var(--navy-medium)]">Status</th>
-                <th className="text-left px-4 py-3 font-medium text-[var(--navy-medium)]">Einddatum</th>
+                <th
+                  className="text-left px-4 py-3 font-medium text-[var(--navy-medium)] cursor-pointer select-none hover:text-[var(--navy-dark)]"
+                  onClick={() => toggleSort('last_active_at')}
+                >
+                  Laatst actief {sortBy === 'last_active_at' ? (sortDir === 'desc' ? '↓' : '↑') : ''}
+                </th>
+                <th
+                  className="text-left px-4 py-3 font-medium text-[var(--navy-medium)] cursor-pointer select-none hover:text-[var(--navy-dark)]"
+                  onClick={() => toggleSort('end_date')}
+                >
+                  Einddatum {sortBy === 'end_date' ? (sortDir === 'desc' ? '↓' : '↑') : ''}
+                </th>
                 <th className="px-4 py-3"><span className="sr-only">Acties</span></th>
               </tr>
             </thead>
             <tbody>
-              {members.length === 0 ? (
+              {sortedMembers.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-[var(--navy-medium)]">
+                  <td colSpan={8} className="px-4 py-8 text-center text-[var(--navy-medium)]">
                     Nog geen leden. Voeg het eerste lid toe.
                   </td>
                 </tr>
               ) : (
-                members.map(member => {
+                sortedMembers.map(member => {
                   const status = computeStatus(member)
                   return (
                     <tr
@@ -632,6 +639,9 @@ export default function TeamLedenPage() {
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{member.email}</td>
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{member.plan === 'yearly' ? 'Jaar' : member.plan === 'trial' ? 'Proef' : 'Maand'}</td>
                       <td className="px-4 py-3"><StatusBadge status={status} /></td>
+                      <td className="px-4 py-3 text-[var(--navy-medium)]" title={member.last_active_at ? formatDateTime(member.last_active_at) : undefined}>
+                        {formatRelativeTime(member.last_active_at)}
+                      </td>
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{formatDate(member.end_date)}</td>
                       <td className="px-4 py-3">
                         <MemberActions member={member} isSelf={currentUserId === member.user_id} onChanged={fetchMembers} />

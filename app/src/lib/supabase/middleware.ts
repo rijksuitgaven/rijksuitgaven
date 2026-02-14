@@ -75,14 +75,15 @@ export async function updateSession(request: NextRequest) {
   if (!skipSubscriptionCheck) {
     const { data: sub } = await supabase
       .from('subscriptions')
-      .select('end_date, grace_ends_at, cancelled_at')
+      .select('end_date, grace_ends_at, cancelled_at, role')
       .eq('user_id', session.user.id)
       .single()
 
     if (sub) {
       const today = new Date().toISOString().split('T')[0]
+      // Admins never expire
       // CRITICAL: cancelled_at takes precedence - even if grace_ends_at is in the future
-      const isExpired = !!sub.cancelled_at || today > sub.grace_ends_at
+      const isExpired = sub.role !== 'admin' && (!!sub.cancelled_at || today > sub.grace_ends_at)
 
       if (isExpired) {
         const forwardedHost = request.headers.get('x-forwarded-host')
@@ -104,7 +105,9 @@ export async function updateSession(request: NextRequest) {
           .from('subscriptions')
           .update({ last_active_at: new Date().toISOString() })
           .eq('user_id', session.user.id)
-          .then(() => {})
+          .then(({ error }) => {
+            if (error) console.error('[middleware] last_active_at update failed:', error.message)
+          })
         supabaseResponse.cookies.set('_la', String(now), {
           httpOnly: true,
           sameSite: 'lax',
