@@ -756,6 +756,13 @@ function ErrorsSection({ errors, onClear }: { errors: ErrorItem[]; onClear: () =
               filter_apply: 'Filteren',
               search: 'Zoeken',
               page_change: 'Pagineren',
+              row_expand: 'Rij openen',
+              detail_panel: 'Detailpaneel',
+              filter_load: 'Filter laden',
+              autocomplete: 'Autocomplete',
+              feedback_submit: 'Feedback',
+              login: 'Inloggen',
+              contact_form: 'Contactformulier',
             }
             contextPills.push({ label: 'Actie', value: triggerLabels[String(err.properties.trigger)] || String(err.properties.trigger) })
           }

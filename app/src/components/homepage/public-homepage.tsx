@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, type ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useAnalytics } from '@/hooks/use-analytics'
 
 // ============================================================================
 // Scroll Reveal — Intersection Observer, fires once per element
@@ -795,6 +796,7 @@ function SubscriptionSection() {
 // ============================================================================
 
 function ContactSection() {
+  const { track } = useAnalytics()
   const [formState, setFormState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -821,9 +823,11 @@ function ContactSection() {
         form.reset()
       } else {
         setFormState('error')
+        track('error', undefined, { message: `Contact form HTTP ${res.status}`, trigger: 'contact_form' })
       }
-    } catch {
+    } catch (err) {
       setFormState('error')
+      track('error', undefined, { message: err instanceof Error ? err.message : 'Contact form network error', trigger: 'contact_form' })
     }
   }
 

@@ -9,6 +9,7 @@ import { API_BASE_URL } from '@/lib/api-config'
 import { MODULE_LABELS, FIELD_LABELS } from '@/lib/constants'
 import { fetchCascadingFilterOptions, type FilterOption } from '@/lib/api'
 import { StaffelPopover } from '@/components/staffel-popover/staffel-popover'
+import { useAnalytics } from '@/hooks/use-analytics'
 
 // =============================================================================
 // Types
@@ -227,6 +228,7 @@ function formatCount(count: number): string {
 }
 
 function MultiSelect({ module, field, label, value, onChange, isCascading = false, cascadingOptions }: MultiSelectProps) {
+  const { track } = useAnalytics()
   const [isOpen, setIsOpen] = useState(false)
   const [options, setOptions] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState('')
@@ -281,6 +283,7 @@ function MultiSelect({ module, field, label, value, onChange, isCascading = fals
           return
         }
         setError('Filteropties niet beschikbaar')
+        track('error', module, { message: err instanceof Error ? err.message : 'Filter options load failed', trigger: 'filter_load', field })
       } finally {
         if (!abortController.signal.aborted) {
           setIsLoading(false)
@@ -598,6 +601,7 @@ export function FilterPanel({
   autoExpandTrigger = 0,
 }: FilterPanelProps) {
   const router = useRouter()
+  const { track } = useAnalytics()
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   // Track if user has typed in search (vs pre-filled from URL)
@@ -821,6 +825,7 @@ export function FilterPanel({
         setFieldMatches([])
         setOtherModulesResults([])
         setNoResultsQuery(null)
+        track('error', module, { message: error instanceof Error ? error.message : 'Autocomplete search failed', trigger: 'autocomplete' })
       } finally {
         if (!abortController.signal.aborted) {
           setIsSearching(false)

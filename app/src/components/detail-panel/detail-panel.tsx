@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { X, ExternalLink, Download, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
 import { ErrorReport } from '@/components/error-boundary'
 import { cn } from '@/lib/utils'
+import { useAnalytics } from '@/hooks/use-analytics'
 import { formatAmount } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
 import { MODULE_LABELS, FIELD_LABELS } from '@/lib/constants'
@@ -85,6 +86,7 @@ export function DetailPanel({
   onNavigateToModule,
 }: DetailPanelProps) {
   const router = useRouter()
+  const { track } = useAnalytics()
   const [data, setData] = useState<DetailData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -167,6 +169,7 @@ export function DetailPanel({
         }
         console.error('[DetailPanel]', error instanceof Error ? error.message : error)
         setError('Gegevens konden niet worden geladen')
+        track('error', moduleId, { message: error instanceof Error ? error.message : String(error), trigger: 'detail_panel' })
       } finally {
         if (!abortController.signal.aborted) {
           setIsLoading(false)

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, Fragment } from 'react'
 import { Check, ChevronDown, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { ErrorReport } from '@/components/error-boundary'
 import { cn } from '@/lib/utils'
+import { useAnalytics } from '@/hooks/use-analytics'
 import { formatAmount, getAmountFontClass } from '@/lib/format'
 import { API_BASE_URL } from '@/lib/api-config'
 import type { RecipientRow } from '@/types/api'
@@ -177,6 +178,7 @@ export function ExpandedRow({
   isSearching = false,
   onFilterLinkClick,
 }: ExpandedRowProps) {
+  const { track } = useAnalytics()
   const [grouping, setGrouping] = useState(GROUPABLE_FIELDS[module]?.[0]?.value ?? 'regeling')
   const [details, setDetails] = useState<DetailRow[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -250,6 +252,7 @@ export function ExpandedRow({
         }
         console.error('[ExpandedRow]', err instanceof Error ? err.message : err)
         setError('Details konden niet worden geladen')
+        track('error', module, { message: err instanceof Error ? err.message : String(err), trigger: 'row_expand' })
       } finally {
         if (!abortController.signal.aborted) {
           setIsLoading(false)

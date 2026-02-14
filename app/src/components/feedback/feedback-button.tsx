@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { MessageSquare, X, Crosshair, Send, Loader2, Check, RefreshCw } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
+import { useAnalytics } from '@/hooks/use-analytics'
 
 type FeedbackState = 'idle' | 'form' | 'marking' | 'capturing' | 'sending' | 'success'
 
@@ -51,6 +52,7 @@ function getElementLabel(el: Element): string {
 
 export function FeedbackButton() {
   const { isLoggedIn, userEmail } = useAuth()
+  const { track } = useAnalytics()
   const [state, setState] = useState<FeedbackState>('idle')
   const [category, setCategory] = useState<'suggestie' | 'bug' | 'vraag'>('suggestie')
   const [message, setMessage] = useState('')
@@ -257,6 +259,7 @@ export function FeedbackButton() {
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Verzenden mislukt')
       setState('form')
+      track('error', undefined, { message: err instanceof Error ? err.message : 'Feedback submit failed', trigger: 'feedback_submit' })
     }
   }, [message, category, marked])
 

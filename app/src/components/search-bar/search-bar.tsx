@@ -190,6 +190,7 @@ export function SearchBar({ className, placeholder = 'Zoek op ontvanger, regelin
           setRecipients([])
           setKeywords([])
           setNoResultsQuery(null)
+          track('error', undefined, { message: error instanceof Error ? error.message : 'Hub search failed', trigger: 'autocomplete' })
         }
       } finally {
         if (!abortController.signal.aborted) {

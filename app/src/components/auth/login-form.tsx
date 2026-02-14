@@ -3,11 +3,13 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useAnalytics } from '@/hooks/use-analytics'
 
 type FormState = 'idle' | 'loading' | 'success' | 'error'
 
 export function LoginForm() {
   const searchParams = useSearchParams()
+  const { track } = useAnalytics()
   const [email, setEmail] = useState('')
   const [state, setState] = useState<FormState>('idle')
   const [errorMessage, setErrorMessage] = useState('')
@@ -57,6 +59,7 @@ export function LoginForm() {
         if (error.message?.includes('rate') || error.status === 429) {
           setErrorMessage('Te veel pogingen. Probeer het over een paar minuten opnieuw.')
           setState('error')
+          track('error', undefined, { message: 'Rate limited', trigger: 'login' })
           return
         }
         // User not found (shouldCreateUser: false) — show success anyway
@@ -75,6 +78,7 @@ export function LoginForm() {
         // Genuine error
         setErrorMessage('Er ging iets mis. Probeer het later opnieuw.')
         setState('error')
+        track('error', undefined, { message: error.message || 'OTP sign-in failed', trigger: 'login' })
         return
       }
 
@@ -90,9 +94,10 @@ export function LoginForm() {
           return prev - 1
         })
       }, 1000)
-    } catch {
+    } catch (err) {
       setErrorMessage('Er ging iets mis. Controleer uw internetverbinding en probeer het opnieuw.')
       setState('error')
+      track('error', undefined, { message: err instanceof Error ? err.message : 'Network error during login', trigger: 'login' })
     }
   }, [email, cooldown])
 
