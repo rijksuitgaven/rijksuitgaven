@@ -756,8 +756,8 @@ Client-side analytics event batching hook with pseudonymized tracking.
 }
 ```
 
-**Event Types (11):**
-- Core (module-page): `module_view`, `search`, `row_expand`, `filter_apply`, `export`, `column_change`, `sort_change`, `page_change`, `cross_module_nav`
+**Event Types (12):**
+- Core (module-page): `module_view`, `search`, `row_expand`, `filter_apply`, `export`, `column_change`, `sort_change`, `page_change`, `cross_module_nav`, `error`
 - Search bar: `autocomplete_search`, `autocomplete_click`
 
 **Batching Behavior:**
@@ -1027,3 +1027,4 @@ npm run build
 | 2026-02-13 | Typography: IBM Plex Sans dual-width system (replaced Brawler). Added /h1-/h5 prototypes, 404 page (UX-029), AppShell, contacten route |
 | 2026-02-14 | UX-032: Usage statistics — analytics hook, BFF endpoint, admin dashboard, env var |
 | 2026-02-14 | UX-032 V2: Dashboard redesign (3-act structure, per-user drill-down, combined search table), 5 new event types (autocomplete_search/click, sort_change, page_change, cross_module_nav), debounced search tracking fix, migration 039 |
+| 2026-02-14 | UX-032 V2 final: Error event type (12th), immediate error flush, BFF whitelist fix (6→12 types), year sort fix, errors section card redesign, DELETE endpoint for clearing errors, migration 040 |

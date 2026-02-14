@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-02-13
+**Last Updated:** 2026-02-14
 
 Items logged for future versions, not in V1.0 scope.
 
@@ -476,16 +476,20 @@ V2.0: Full state in URL including expanded rows, pagination position, all filter
 
 **Priority:** Low
 **Added:** 2026-01-21
+**Completed:** 2026-02-14
+**Status:** ✅ COMPLETED (integrated into UX-032)
 
-Add error tracking to catch and debug production issues.
+**Problem:** Need to catch and debug production client-side errors.
 
-**Options to evaluate:**
-- Sentry (industry standard)
-- Railway built-in logging
-- Supabase logs
-- Custom error boundary + logging
+**Solution Implemented (as part of UX-032):**
+- `error` event type tracked in `use-analytics.ts` (12th event type)
+- Captures: error message, search query, sort column, active filters, module
+- Immediate flush (bypasses 30s batch timer)
+- Admin dashboard errors section: stacked cards with context pills
+- `DELETE /api/v1/team/statistieken` — clear all error events
+- SQL: `get_usage_errors()` function (migration 040)
 
-**Decision:** Not required for V1.0 launch. Add post-launch based on need.
+**Note:** This is client-side error tracking only. Server-side monitoring (Sentry, Railway logs) remains a separate consideration for post-launch if needed.
 
 ---
 

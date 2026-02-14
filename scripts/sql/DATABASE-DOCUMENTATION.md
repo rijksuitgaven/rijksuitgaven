@@ -275,6 +275,7 @@
 | `get_usage_zero_results(since_date, max_results)` | query, search_count, top_module | Zero-result searches (most actionable) |
 | `get_usage_actors(since_date, max_results)` | actor_hash, last_seen, event_count, top_module, search_count, export_count, module_count | Per-user activity summary (migration 039) |
 | `get_usage_actor_detail(target_actor, since_date)` | event_type, module, properties, created_at | Single user's event timeline, max 50 (migration 039) |
+| `get_usage_errors(since_date, max_results)` | module, message, properties, actor_hash, created_at | Recent error events with context (migration 040) |
 
 All functions: `LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public`
 
@@ -959,6 +960,7 @@ VACUUM ANALYZE universal_search;
 | `038-usage-events.sql` | Create usage_events table + indexes + RLS + retention fn | Once (done 2026-02-14) |
 | `038b-usage-events-functions.sql` | 7 SQL functions for analytics dashboard | Once (done 2026-02-14) |
 | `039-usage-dashboard-v2.sql` | Dashboard V2: updated get_usage_searches (avg_results), new get_usage_actors + get_usage_actor_detail | Once (done 2026-02-14) |
+| `040-usage-errors-function.sql` | Error tracking: get_usage_errors() — recent error events with context for admin dashboard | Once (done 2026-02-14) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---
