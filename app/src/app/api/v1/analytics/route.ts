@@ -21,6 +21,12 @@ const VALID_EVENT_TYPES = [
   'filter_apply',
   'export',
   'column_change',
+  'autocomplete_search',
+  'autocomplete_click',
+  'cross_module_nav',
+  'sort_change',
+  'page_change',
+  'error',
 ] as const
 
 const VALID_MODULES = [
