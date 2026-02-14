@@ -276,6 +276,12 @@
 | `get_usage_actors(since_date, max_results)` | actor_hash, last_seen, event_count, top_module, search_count, export_count, module_count | Per-user activity summary (migration 039) |
 | `get_usage_actor_detail(target_actor, since_date)` | event_type, module, properties, created_at | Single user's event timeline, max 50 (migration 039) |
 | `get_usage_errors(since_date, max_results)` | module, message, properties, actor_hash, created_at | Recent error events with context (migration 040) |
+| `get_usage_sessions_summary(since_date)` | total_sessions, unique_actors, avg_duration_seconds, avg_events_per_session, avg_modules_per_session | Session metrics (30-min gap boundary, migration 042) |
+| `get_usage_exit_intent(since_date, max_results)` | last_event_type, session_count, percentage | Last action before session ends (migration 042) |
+| `get_usage_search_success(since_date)` | total_searches, successful_searches, success_rate | Search→action success proxy (migration 042) |
+| `get_usage_retention(since_date)` | cohort_month, month_offset, active_count, cohort_size, retention_rate | Monthly retention cohort grid (migration 042) |
+
+`get_usage_actors` enhanced (migration 042): now returns session_count, avg_session_seconds, engagement_score, avg_gap_days, gap_trend, external_link_count.
 
 All functions: `LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public`
 
@@ -961,6 +967,8 @@ VACUUM ANALYZE universal_search;
 | `038b-usage-events-functions.sql` | 7 SQL functions for analytics dashboard | Once (done 2026-02-14) |
 | `039-usage-dashboard-v2.sql` | Dashboard V2: updated get_usage_searches (avg_results), new get_usage_actors + get_usage_actor_detail | Once (done 2026-02-14) |
 | `040-usage-errors-function.sql` | Error tracking: get_usage_errors() — recent error events with context for admin dashboard | Once (done 2026-02-14) |
+| `041-subscriptions-update-rls.sql` | RLS UPDATE policy for subscriptions (last_active_at) | Once (done 2026-02-14) |
+| `042-advanced-analytics.sql` | Advanced analytics V3: sessions summary, exit intent, search success, retention cohorts, enhanced actors (engagement score, gap trend, external_link_count) | Once (done 2026-02-14) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---

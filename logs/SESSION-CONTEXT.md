@@ -84,6 +84,7 @@
 - ✅ **2026-02-14 (Session 8):** Comprehensive error tracking — audit found only 1 of 35 catch blocks tracked errors (97% blind). Added `track('error', ...)` to 7 critical components: expanded-row, detail-panel, filter-panel (2 catch blocks), search-bar, feedback-button, login-form (3 error paths), public-homepage (2 error paths). Dashboard updated with 7 new Dutch trigger labels. All errors now report with trigger context (row_expand, detail_panel, filter_load, autocomplete, feedback_submit, login, contact_form).
 - ✅ **2026-02-14 (Session 9):** Complete UI event tracking — exhaustive audit found ~75 untracked actions. Expert team scoped to 9 tracking points. New `external_link` event type (13th) for "Zoek op Google" clicks. Tracked: detail-panel CSV export + cross-module nav, cross-module-results links, filter-panel autocomplete selections (3 handlers), 404 page views, React render crashes (direct sendBeacon in class component), grouping counts errors. Dashboard: "Externe links" pulse card + formatEventLine + trigger labels (404, react_render) + path pill. Homepage analytics deferred to V1.1 backlog.
 - ✅ **2026-02-14 (Session 10):** Admin dashboard + leden management improvements. Copy-prompt button on error cards (format as debugging prompt). Member actions: contextual activate/deactivate/delete per status. DELETE endpoint for hard member deletion. Admins never expire (computeStatus, middleware, hidden Einddatum/deactivate). Fixed last_active_at (RLS UPDATE policy + await in Edge Runtime). Sortable "Laatst actief" column. Per-error delete in statistics. Editable end date in add form. Migration 041 executed.
+- ✅ **2026-02-14 (Session 11):** UX-032 V3 Advanced Analytics — 5-person expert brainstorm, 6 Tier 1 metrics: sessions (30-min gap), exit intent, search success rate, retention cohorts (monthly grid), engagement score (weighted + percentile labels), login gap/frequency trend. Actor de-anonymization (SHA256 hash matching → real names). Migration 042 executed (5 SQL functions). Sortable actor table (9 columns), engagement tooltip, external link column, extra kolommen clarity. Bug fixes: add member/contact "Netwerkfout" (e.currentTarget null after async), contacten inline delete button, error alert on team dashboard.
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
@@ -110,20 +111,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **6 files** MODIFIED (2026-02-14 Session 10)
+1. **5 files** MODIFIED (2026-02-14 Session 11)
+   UX-032 V3: advanced analytics (sessions, engagement, retention, de-anonymization), bug fixes (Netwerkfout), contacten delete button, error alert on dashboard.
+
+2. **scripts/sql/042-advanced-analytics.sql** CREATED (2026-02-14)
+   5 SQL functions: sessions summary, exit intent, search success, retention cohorts, enhanced actors with engagement + gap trend.
+
+3. **6 files** MODIFIED (2026-02-14 Session 10)
    Admin dashboard + leden management: copy-prompt button, member actions, admin never-expire, last_active_at fix, sortable columns, per-error delete, editable end date.
 
-2. **scripts/sql/041-subscriptions-update-rls.sql** CREATED (2026-02-14)
+4. **scripts/sql/041-subscriptions-update-rls.sql** CREATED (2026-02-14)
    RLS UPDATE policy for subscriptions (users can update own last_active_at).
 
-3. **11 files** MODIFIED (2026-02-14 Session 9)
+5. **11 files** MODIFIED (2026-02-14 Session 9)
    Complete UI event tracking: `external_link` type added, 9 tracking points across data-table, detail-panel, expanded-row, filter-panel, cross-module-results, not-found, error-boundary, statistieken.
-
-4. **app/src/components/error-boundary/error-report.tsx** CREATED (2026-02-14)
-   Shared ErrorReport component — "Fout melden" → countdown → router.back().
-
-5. **02-requirements/backlog.md** MODIFIED (2026-02-14)
-   Added "Homepage Analytics Tracking" V1.1 backlog item (deferred from UX-032 scope).
 
 ---
 
