@@ -200,11 +200,13 @@
 | source | TEXT | How person was acquired (website, admin, demo_aanvraag, import) |
 | notes | TEXT | Admin notes |
 | resend_contact_id | TEXT | Resend Audience contact ID (for sync) |
+| archived_at | TIMESTAMPTZ | When prospect was archived (NULL = active, set = gearchiveerd) |
 | created_at | TIMESTAMPTZ | Row creation time (default NOW()) |
 | updated_at | TIMESTAMPTZ | Last update time (auto-updated by trigger) |
 
 **Computed type (not stored):**
-- `prospect` — no subscription rows
+- `prospect` — no subscription rows, not archived
+- `gearchiveerd` — no subscription rows, `archived_at` set (non-destructive archive)
 - `churned` — has subscription row(s), all cancelled/expired/deleted
 - `member` — has active subscription (shown on `/team/leden`, not `/team/contacten`)
 
@@ -227,7 +229,7 @@
 - Contacten page: `/team/contacten` — people without active subscription (prospect/churned)
 - Leden page: `/team/leden` — people with active subscription (via subscriptions JOIN)
 - "Maak lid" conversion: `POST /api/v1/team/contacten/[id]/convert`
-- API: GET/POST `/api/v1/team/contacten`, PATCH/DELETE `/api/v1/team/contacten/[id]`
+- API: GET/POST `/api/v1/team/contacten`, PATCH `/api/v1/team/contacten/[id]` (no DELETE — use archived_at for prospects)
 
 **Subscriptions soft-delete (migration 046):**
 - `deleted_at` column on `subscriptions` — admin "delete" sets `deleted_at + cancelled_at` instead of hard-deleting
@@ -978,6 +980,7 @@ VACUUM ANALYZE universal_search;
 | `044-weekly-retention.sql` | Rewrote get_usage_retention: monthly → weekly cohorts for early-stage visibility | Once (done 2026-02-14) |
 | `045-people-table.sql` | Create unified `people` table, populate from contacts + subscriptions, add `person_id` FK to subscriptions, RLS policies | Once (done 2026-02-14) |
 | `046-subscription-soft-delete.sql` | Add `deleted_at` to subscriptions for soft-delete, make `user_id` nullable, partial index | Once (done 2026-02-14) |
+| `047-people-archived-at.sql` | Add `archived_at` column to people — non-destructive prospect archival | Once (done 2026-02-14) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---

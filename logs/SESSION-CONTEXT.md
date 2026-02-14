@@ -90,6 +90,7 @@
 - ✅ **2026-02-14 (Session 14):** Activation email branding alignment — matched magic link template design. Light blue background (#E1EAF2), centered logo image (logo.png 220px), white card layout, centered text, system fonts, 480px width. Updated Supabase invite-user.html fallback template. Both emails now visually identical.
 - ✅ **2026-02-14 (Session 15):** CRM optimization — unified `people` table as single identity anchor. Migration 045 (people table + person_id FK on subscriptions). 8 API routes rewritten to read from people via FK JOINs. New "Maak lid" conversion endpoint. Frontend updated (contacten page, use-subscription hook, dashboard). Phase 2 code switch complete. Commit `118fec1`.
 - ✅ **2026-02-14 (Session 16):** Soft-delete fix — hard-deleting subscription destroyed history → members showed as "Prospect" not "Churned". Migration 046 adds `deleted_at` column, DELETE now sets `deleted_at + cancelled_at`. Fixed existing data. Commits `a334026`, `3514459`.
+- ✅ **2026-02-14 (Session 17):** CRM lifecycle redesign — no delete anywhere, always keep history. Leden: "Opzeggen" replaces delete+deactivate. Contacten: "Archiveren" replaces delete, "Gearchiveerd" type added. Migration 047 (archived_at). Removed DELETE endpoint from contacten API. Fixed re-activation bug (user_id unique constraint). All columns sortable with chevron icons. Source defaults to "Admin". Commits `a6ebe7f`, `824ceca`, `07e70fc`, `c45664c`.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -117,20 +118,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **13 files + 2 SQL migrations** (2026-02-14 Session 15+16)
+1. **5 files + 1 SQL migration** (2026-02-14 Session 17)
+   CRM lifecycle redesign: "Opzeggen" replaces delete on Leden, "Archiveren" on Contacten, gearchiveerd type, re-activation fix, sortable columns, source default.
+
+2. **13 files + 2 SQL migrations** (2026-02-14 Session 15+16)
    CRM Phase 2: unified `people` table, 8 API routes rewritten, "Maak lid" endpoint, soft-delete subscriptions, fixed prospect→churned computation.
 
-2. **2 files** MODIFIED (2026-02-14 Session 14)
+3. **2 files** MODIFIED (2026-02-14 Session 14)
    Activation email branding aligned with magic link template: logo, light blue background, centered card.
 
-3. **invite/route.ts + invite-user.html** MODIFIED (2026-02-14 Session 13 cont.)
+4. **invite/route.ts + invite-user.html** MODIFIED (2026-02-14 Session 13 cont.)
    Welcome email rewrite: activation framing, custom Resend template, three user scenarios.
 
-4. **2 files + 2 SQL migrations** (2026-02-14 Session 13)
+5. **2 files + 2 SQL migrations** (2026-02-14 Session 13)
    Module-grouped filters/columns/exports, weekly retention, engagement tooltip fix.
-
-5. **statistieken/page.tsx** MODIFIED (2026-02-14 Session 12)
-   React hooks order fix: moved `handleSort` useCallback before conditional early returns.
 
 ---
 
