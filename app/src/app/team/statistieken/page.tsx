@@ -749,6 +749,16 @@ function ErrorsSection({ errors, onClear }: { errors: ErrorItem[]; onClear: () =
             day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
           })
           const contextPills: { label: string; value: string }[] = []
+          if (err.properties?.trigger) {
+            const triggerLabels: Record<string, string> = {
+              page_load: 'Pagina laden',
+              sort_change: 'Sorteren',
+              filter_apply: 'Filteren',
+              search: 'Zoeken',
+              page_change: 'Pagineren',
+            }
+            contextPills.push({ label: 'Actie', value: triggerLabels[String(err.properties.trigger)] || String(err.properties.trigger) })
+          }
           if (err.properties?.search_query) contextPills.push({ label: 'Zoekterm', value: String(err.properties.search_query) })
           if (err.properties?.sort_by) {
             const sortCol = String(err.properties.sort_by)

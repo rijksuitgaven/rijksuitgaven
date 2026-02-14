@@ -118,6 +118,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const hasTrackedView = useRef(false)
   const searchTrackTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastTrackedSearch = useRef('')
+  const lastTrigger = useRef<string>('page_load')
 
   const [data, setData] = useState<ModuleDataResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -334,10 +335,12 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
         setError('De gegevens konden niet worden geladen')
         track('error', moduleId, {
           message: internalMsg,
+          trigger: lastTrigger.current,
           search_query: filters.search || undefined,
           sort_by: sortBy,
           has_filters: !isDefaultView,
         })
+        lastTrigger.current = 'page_load' // Reset for next fetch
       } finally {
         if (!abortController.signal.aborted) {
           setIsLoading(false)
@@ -374,6 +377,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     }
 
     prevFiltersRef.current = newFilters
+    // Detect if search changed vs filter changed
+    lastTrigger.current = newFilters.search !== prev.search ? 'search' : 'filter_apply'
     setFilters(newFilters)
     setPage(1)
   }, [track, moduleId])
@@ -381,6 +386,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const handleSortChange = useCallback((column: string, direction: 'asc' | 'desc') => {
     // Transform data-table column IDs (year-2024) → backend format (y2024)
     const backendColumn = column.startsWith('year-') ? `y${column.slice(5)}` : column
+    lastTrigger.current = 'sort_change'
     setSortBy(backendColumn)
     setSortOrder(direction)
     setUserHasSorted(true)  // User explicitly sorted, don't reset to random
@@ -389,6 +395,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   }, [track, moduleId])
 
   const handlePageChange = useCallback((newPage: number) => {
+    lastTrigger.current = 'page_change'
     setPage(newPage)
     if (newPage > 1) {
       track('page_change', moduleId, { page: newPage, per_page: perPage })
@@ -396,6 +403,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   }, [track, moduleId, perPage])
 
   const handlePerPageChange = useCallback((newPerPage: number) => {
+    lastTrigger.current = 'page_change'
     setPerPage(newPerPage)
     setPage(1)
   }, [])
@@ -419,6 +427,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   // Handle click on extra column value - apply filter (clear start) + auto-expand filter panel (UX-020)
   const handleFilterLinkClick = useCallback((field: string, value: string) => {
     // Clear all filters and apply only the clicked filter
+    lastTrigger.current = 'filter_apply'
     setFilters({
       search: '',
       jaar: null,
