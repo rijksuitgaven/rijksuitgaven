@@ -183,40 +183,38 @@
 
 ---
 
-### 0d. contacts (Contact Management / CRM)
+### 0d. people (Unified Identity Anchor / CRM)
 
-**Description:** Lightweight CRM for email campaign management. Tracks prospects, subscribers, and churned contacts. Syncs to Resend Audience for broadcasts. Managed via `/team/contacten` admin page.
+**Description:** Single identity table for all persons in the system. Replaces the old dual `contacts`/`subscriptions` identity model. Every person (prospect, member, churned) has exactly one `people` row. Subscription data lives in `subscriptions` (linked via `person_id` FK). Type is computed, not stored: no subscription = prospect, expired/cancelled subscription = churned, active subscription = member (shown on Leden page).
 
-**Migration:** `036-contacts.sql` (added 2026-02-13)
+**Migration:** `045-people-table.sql` (created 2026-02-14, executed on production)
 
 | Column | Type | Description |
 |--------|------|-------------|
 | id | UUID | Primary key (default gen_random_uuid()) |
-| email | TEXT | Contact email (NOT NULL, UNIQUE) |
+| email | TEXT | Person's email (NOT NULL, UNIQUE) |
 | first_name | TEXT | First name |
 | last_name | TEXT | Last name |
 | organization | TEXT | Organization name |
-| type | TEXT | 'prospect', 'subscriber', or 'churned' (default: 'prospect') |
-| source | TEXT | How contact was acquired (website, event, referral, import) |
+| phone | TEXT | Phone number |
+| source | TEXT | How person was acquired (website, admin, demo_aanvraag, import) |
 | notes | TEXT | Admin notes |
 | resend_contact_id | TEXT | Resend Audience contact ID (for sync) |
-| subscription_id | UUID | Foreign key to subscriptions (ON DELETE SET NULL) |
 | created_at | TIMESTAMPTZ | Row creation time (default NOW()) |
 | updated_at | TIMESTAMPTZ | Last update time (auto-updated by trigger) |
 
-**Semi-automatic type transitions:**
-- Linking `subscription_id` auto-sets type to 'subscriber'
-- Manual override always available
+**Computed type (not stored):**
+- `prospect` — no subscription rows
+- `churned` — has subscription row(s), all cancelled/expired/deleted
+- `member` — has active subscription (shown on `/team/leden`, not `/team/contacten`)
 
 **RLS Policies:**
-- Row Level Security enabled (service role bypasses)
+- Admin: full CRUD access
+- Users: can read own person row via subscription FK link
 
 **Indexes:**
-- `contacts_email_key` (UNIQUE) — prevent duplicate contacts
-- `idx_contacts_type` — fast filtering by type
-- `idx_contacts_subscription_id` — fast subscription lookup
-
-**Trigger:** `contacts_updated_at` — auto-updates `updated_at` on every row change
+- `people_email_key` (UNIQUE) — prevent duplicate people
+- Trigger: `people_updated_at` — auto-updates `updated_at`
 
 **Resend Audience Sync:**
 - On create: syncs to Resend Audience, stores `resend_contact_id`
@@ -226,9 +224,16 @@
 - Helper: `app/api/_lib/resend-audience.ts`
 
 **Usage:**
-- Admin page: `/team/contacten` (CRUD, sortable table, type badges)
+- Contacten page: `/team/contacten` — people without active subscription (prospect/churned)
+- Leden page: `/team/leden` — people with active subscription (via subscriptions JOIN)
+- "Maak lid" conversion: `POST /api/v1/team/contacten/[id]/convert`
 - API: GET/POST `/api/v1/team/contacten`, PATCH/DELETE `/api/v1/team/contacten/[id]`
-- Requires: `RESEND_API_KEY` + `RESEND_AUDIENCE_ID` env vars on Railway
+
+**Subscriptions soft-delete (migration 046):**
+- `deleted_at` column on `subscriptions` — admin "delete" sets `deleted_at + cancelled_at` instead of hard-deleting
+- Leden GET filters `WHERE deleted_at IS NULL`
+- Contacten type computation sees preserved subscription row → correctly shows "churned"
+- `user_id` nullable — auth user may not exist for soft-deleted subscriptions
 
 ---
 
@@ -971,6 +976,8 @@ VACUUM ANALYZE universal_search;
 | `042-advanced-analytics.sql` | Advanced analytics V3: sessions summary, exit intent, search success, retention cohorts, enhanced actors (engagement score, gap trend, external_link_count) | Once (done 2026-02-14) |
 | `043-module-grouped-analytics.sql` | Rewrote get_usage_filters, get_usage_columns, get_usage_exports to GROUP BY module (was flat aggregation) | Once (done 2026-02-14) |
 | `044-weekly-retention.sql` | Rewrote get_usage_retention: monthly → weekly cohorts for early-stage visibility | Once (done 2026-02-14) |
+| `045-people-table.sql` | Create unified `people` table, populate from contacts + subscriptions, add `person_id` FK to subscriptions, RLS policies | Once (done 2026-02-14) |
+| `046-subscription-soft-delete.sql` | Add `deleted_at` to subscriptions for soft-delete, make `user_id` nullable, partial index | Once (done 2026-02-14) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---

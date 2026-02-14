@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-02-14
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 7 - Pre-Launch Tasks (contacts COMPLETE, search box perf COMPLETE, search syntax design COMPLETE — implementation pending user review, De Geldstroom COMPLETE, user migration remaining)
+**Current Sprint:** Week 7 - Pre-Launch Tasks (CRM Phase 2 COMPLETE, search box perf COMPLETE, search syntax design COMPLETE — implementation pending user review, De Geldstroom COMPLETE, user migration remaining)
 
 ---
 
@@ -88,6 +88,9 @@
 - ✅ **2026-02-14 (Session 12):** React hooks order fix — `handleSort` useCallback placed after conditional early returns crashed statistieken page ("Er is iets misgegaan"). Moved before early returns.
 - ✅ **2026-02-14 (Session 13):** Dashboard module-grouped redesign — expert team (5 experts). Filters/columns/exports now GROUP BY module with module headers. Migration 043 (3 SQL functions rewritten). "Extra kolommen" → "Kolommen" with new subtitle. Weekly retention cohorts (migration 044, was monthly). Engagement tooltip: fixed positioning to escape overflow clip. EngagementBadge component. Welcome email redesign: reframed "uitnodiging" → "welkom + activatie" for paying customers. Custom Resend template with createUser() + generateLink() (bypasses Supabase default). Backlog item: Contact-to-Subscriber conversion flow.
 - ✅ **2026-02-14 (Session 14):** Activation email branding alignment — matched magic link template design. Light blue background (#E1EAF2), centered logo image (logo.png 220px), white card layout, centered text, system fonts, 480px width. Updated Supabase invite-user.html fallback template. Both emails now visually identical.
+- ✅ **2026-02-14 (Session 15):** CRM optimization — unified `people` table as single identity anchor. Migration 045 (people table + person_id FK on subscriptions). 8 API routes rewritten to read from people via FK JOINs. New "Maak lid" conversion endpoint. Frontend updated (contacten page, use-subscription hook, dashboard). Phase 2 code switch complete. Commit `118fec1`.
+- ✅ **2026-02-14 (Session 16):** Soft-delete fix — hard-deleting subscription destroyed history → members showed as "Prospect" not "Churned". Migration 046 adds `deleted_at` column, DELETE now sets `deleted_at + cancelled_at`. Fixed existing data. Commits `a334026`, `3514459`.
+- ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
@@ -114,20 +117,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **2 files** MODIFIED (2026-02-14 Session 14)
+1. **13 files + 2 SQL migrations** (2026-02-14 Session 15+16)
+   CRM Phase 2: unified `people` table, 8 API routes rewritten, "Maak lid" endpoint, soft-delete subscriptions, fixed prospect→churned computation.
+
+2. **2 files** MODIFIED (2026-02-14 Session 14)
    Activation email branding aligned with magic link template: logo, light blue background, centered card.
 
-2. **invite/route.ts + invite-user.html** MODIFIED (2026-02-14 Session 13 cont.)
+3. **invite/route.ts + invite-user.html** MODIFIED (2026-02-14 Session 13 cont.)
    Welcome email rewrite: activation framing, custom Resend template, three user scenarios.
 
-3. **2 files + 2 SQL migrations** (2026-02-14 Session 13)
+4. **2 files + 2 SQL migrations** (2026-02-14 Session 13)
    Module-grouped filters/columns/exports, weekly retention, engagement tooltip fix.
 
-4. **statistieken/page.tsx** MODIFIED (2026-02-14 Session 12)
+5. **statistieken/page.tsx** MODIFIED (2026-02-14 Session 12)
    React hooks order fix: moved `handleSort` useCallback before conditional early returns.
-
-5. **5 files** MODIFIED (2026-02-14 Session 11)
-   UX-032 V3: advanced analytics (sessions, engagement, retention, de-anonymization), bug fixes (Netwerkfout), contacten delete button, error alert on dashboard.
 
 ---
 
