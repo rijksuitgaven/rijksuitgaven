@@ -202,8 +202,8 @@ function MemberActions({ member, isSelf, onChanged }: { member: Member; isSelf: 
         </button>
       )}
 
-      {/* Deactivate (for active / grace) */}
-      {(status === 'active' || status === 'grace') && (
+      {/* Deactivate (for active / grace, not admins) */}
+      {member.role !== 'admin' && (status === 'active' || status === 'grace') && (
         <button onClick={handleDeactivate} disabled={busy} title="Abonnement deactiveren" className={btnDeactivate}>
           Deactiveren
         </button>
