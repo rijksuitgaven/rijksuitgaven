@@ -140,8 +140,7 @@ function AddContactForm({ onSuccess }: { onSuccess: () => void }) {
         </div>
         <div>
           <label htmlFor="source" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Bron</label>
-          <select id="source" name="source" defaultValue="" className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent">
-            <option value="">—</option>
+          <select id="source" name="source" defaultValue="admin" className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent">
             <option value="admin">Admin</option>
             <option value="website">Website</option>
             <option value="demo_aanvraag">Demo aanvraag</option>
