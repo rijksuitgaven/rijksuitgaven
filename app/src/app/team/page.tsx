@@ -18,14 +18,14 @@ interface Member {
   cancelled_at: string | null
   invited_at: string | null
   activated_at: string | null
-  last_sign_in_at: string | null
+  last_active_at: string | null
 }
 
 type MemberStatus = 'aangemaakt' | 'uitgenodigd' | 'active' | 'grace' | 'expired'
 
 function computeStatus(member: Member): MemberStatus {
   if (!member.invited_at) return 'aangemaakt'
-  if (!member.last_sign_in_at) return 'uitgenodigd'
+  if (!member.last_active_at) return 'uitgenodigd'
   if (member.cancelled_at) return 'expired'
   const today = new Date().toISOString().split('T')[0]
   if (today <= member.end_date) return 'active'

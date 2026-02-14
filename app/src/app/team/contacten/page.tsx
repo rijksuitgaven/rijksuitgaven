@@ -12,11 +12,11 @@ interface Contact {
   first_name: string | null
   last_name: string | null
   organization: string | null
-  type: 'prospect' | 'subscriber' | 'churned'
+  phone: string | null
+  type: 'prospect' | 'churned'
   source: string | null
   notes: string | null
   resend_contact_id: string | null
-  subscription_id: string | null
   created_at: string
   updated_at: string
 }
@@ -26,7 +26,6 @@ type SortDirection = 'asc' | 'desc'
 
 const typeConfig: Record<Contact['type'], { label: string; className: string }> = {
   prospect: { label: 'Prospect', className: 'bg-blue-50 text-blue-700 border-blue-200' },
-  subscriber: { label: 'Subscriber', className: 'bg-green-50 text-green-700 border-green-200' },
   churned: { label: 'Churned', className: 'bg-gray-50 text-gray-600 border-gray-200' },
 }
 
@@ -83,7 +82,7 @@ function AddContactForm({ onSuccess }: { onSuccess: () => void }) {
       first_name: form.get('first_name') || null,
       last_name: form.get('last_name') || null,
       organization: form.get('organization') || null,
-      type: form.get('type'),
+      phone: form.get('phone') || null,
       source: form.get('source') || null,
       notes: form.get('notes') || null,
     }
@@ -130,18 +129,15 @@ function AddContactForm({ onSuccess }: { onSuccess: () => void }) {
           <input id="last_name" name="last_name" type="text" className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent" />
         </div>
         <div>
-          <label htmlFor="type" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Type</label>
-          <select id="type" name="type" defaultValue="prospect" className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent">
-            <option value="prospect">Prospect</option>
-            <option value="subscriber">Subscriber</option>
-            <option value="churned">Churned</option>
-          </select>
+          <label htmlFor="phone" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Telefoon</label>
+          <input id="phone" name="phone" type="tel" className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent" />
         </div>
         <div>
           <label htmlFor="source" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Bron</label>
           <select id="source" name="source" defaultValue="" className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent">
             <option value="">—</option>
             <option value="website">Website</option>
+            <option value="demo_aanvraag">Demo aanvraag</option>
             <option value="event">Event</option>
             <option value="referral">Referral</option>
             <option value="import">Import</option>
@@ -164,6 +160,110 @@ function AddContactForm({ onSuccess }: { onSuccess: () => void }) {
         {submitting ? 'Bezig...' : 'Contact toevoegen'}
       </button>
     </form>
+  )
+}
+
+function ConvertToMemberModal({ contact, onClose, onConverted }: {
+  contact: Contact
+  onClose: () => void
+  onConverted: () => void
+}) {
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedPlan, setSelectedPlan] = useState<string>('yearly')
+
+  useEffect(() => {
+    function handleEsc(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
+  }, [onClose])
+
+  const today = new Date().toISOString().split('T')[0]
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setSubmitting(true)
+    setError(null)
+
+    const form = new FormData(e.currentTarget)
+    const body = {
+      plan: form.get('plan'),
+      start_date: form.get('start_date'),
+      role: form.get('role') || 'member',
+    }
+
+    try {
+      const res = await fetch(`/api/v1/team/contacten/${contact.id}/convert`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || 'Onbekende fout')
+        return
+      }
+      onConverted()
+    } catch {
+      setError('Netwerkfout')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 space-y-4" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-[var(--navy-dark)]">Maak lid</h2>
+          <button onClick={onClose} className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)]" aria-label="Sluiten">
+            <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg>
+          </button>
+        </div>
+
+        <p className="text-sm text-[var(--navy-medium)]">
+          {getContactName(contact)} ({contact.email}) omzetten naar lid
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="convert_plan" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Plan *</label>
+              <select id="convert_plan" name="plan" required value={selectedPlan} onChange={e => setSelectedPlan(e.target.value)} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]">
+                <option value="yearly">Jaarlijks</option>
+                <option value="monthly">Maandelijks</option>
+                <option value="trial">Trial (14 dagen)</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="convert_role" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Rol</label>
+              <select id="convert_role" name="role" defaultValue="member" className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]">
+                <option value="member">Member</option>
+                <option value="trial">Trial</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label htmlFor="convert_start_date" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Startdatum *</label>
+            <input id="convert_start_date" name="start_date" type="date" required defaultValue={today} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]" />
+          </div>
+
+          {error && <p className="text-sm text-red-600">{error}</p>}
+
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-[var(--border)] rounded-md hover:bg-gray-50">
+              Annuleren
+            </button>
+            <button type="submit" disabled={submitting} className="px-4 py-2 bg-[var(--pink)] text-white rounded-md text-sm font-medium hover:opacity-90 disabled:opacity-50">
+              {submitting ? 'Bezig...' : 'Omzetten naar lid'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   )
 }
 
@@ -194,7 +294,7 @@ function EditContactModal({ contact, onClose, onSaved, onDeleted }: {
       first_name: form.get('first_name') || null,
       last_name: form.get('last_name') || null,
       organization: form.get('organization') || null,
-      type: form.get('type'),
+      phone: form.get('phone') || null,
       source: form.get('source') || null,
       notes: form.get('notes') || null,
     }
@@ -245,15 +345,15 @@ function EditContactModal({ contact, onClose, onSaved, onDeleted }: {
           </button>
         </div>
 
-        <p className="text-sm text-[var(--navy-medium)]">{contact.email}</p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-[var(--navy-medium)]">{contact.email}</p>
+          <TypeBadge type={contact.type} />
+        </div>
 
         <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-[var(--navy-medium)]">
           <span>Aangemaakt: <span className="font-medium">{formatDate(contact.created_at)}</span></span>
           {contact.resend_contact_id && (
             <span className="text-green-600">✓ Resend gesynchroniseerd</span>
-          )}
-          {contact.subscription_id && (
-            <span className="text-blue-600">Gekoppeld aan abonnement</span>
           )}
         </div>
 
@@ -268,29 +368,28 @@ function EditContactModal({ contact, onClose, onSaved, onDeleted }: {
               <input id="edit_last_name" name="last_name" defaultValue={contact.last_name ?? ''} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]" />
             </div>
           </div>
-          <div>
-            <label htmlFor="edit_organization" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Organisatie</label>
-            <input id="edit_organization" name="organization" defaultValue={contact.organization ?? ''} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]" />
-          </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="edit_type" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Type</label>
-              <select id="edit_type" name="type" defaultValue={contact.type} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]">
-                <option value="prospect">Prospect</option>
-                <option value="subscriber">Subscriber</option>
-                <option value="churned">Churned</option>
-              </select>
+              <label htmlFor="edit_organization" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Organisatie</label>
+              <input id="edit_organization" name="organization" defaultValue={contact.organization ?? ''} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]" />
             </div>
             <div>
-              <label htmlFor="edit_source" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Bron</label>
-              <select id="edit_source" name="source" defaultValue={contact.source ?? ''} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]">
-                <option value="">—</option>
-                <option value="website">Website</option>
-                <option value="event">Event</option>
-                <option value="referral">Referral</option>
-                <option value="import">Import</option>
-              </select>
+              <label htmlFor="edit_phone" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Telefoon</label>
+              <input id="edit_phone" name="phone" type="tel" defaultValue={contact.phone ?? ''} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]" />
             </div>
+          </div>
+          <div>
+            <label htmlFor="edit_source" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Bron</label>
+            <select id="edit_source" name="source" defaultValue={contact.source ?? ''} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]">
+              <option value="">—</option>
+              <option value="website">Website</option>
+              <option value="demo_aanvraag">Demo aanvraag</option>
+              <option value="event">Event</option>
+              <option value="referral">Referral</option>
+              <option value="import">Import</option>
+              <option value="admin">Admin</option>
+              <option value="subscription">Subscription</option>
+            </select>
           </div>
           <div>
             <label htmlFor="edit_notes" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Notities</label>
@@ -300,9 +399,13 @@ function EditContactModal({ contact, onClose, onSaved, onDeleted }: {
           {error && <p className="text-sm text-red-600">{error}</p>}
 
           <div className="flex items-center justify-between pt-2">
-            <button type="button" onClick={handleDelete} disabled={submitting} className="text-sm text-red-600 hover:text-red-800">
-              Verwijderen
-            </button>
+            {contact.type === 'prospect' ? (
+              <button type="button" onClick={handleDelete} disabled={submitting} className="text-sm text-red-600 hover:text-red-800">
+                Verwijderen
+              </button>
+            ) : (
+              <p className="text-xs text-[var(--navy-medium)]">Churned contacten kunnen niet worden verwijderd</p>
+            )}
             <div className="flex gap-2">
               <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-[var(--border)] rounded-md hover:bg-gray-50">
                 Annuleren
@@ -330,6 +433,7 @@ export default function TeamContactenPage() {
   const [error, setError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [editingContact, setEditingContact] = useState<Contact | null>(null)
+  const [convertingContact, setConvertingContact] = useState<Contact | null>(null)
   const [sortField, setSortField] = useState<SortField>('created_at')
   const [sortDir, setSortDir] = useState<SortDirection>('desc')
 
@@ -425,7 +529,6 @@ export default function TeamContactenPage() {
 
   const counts = {
     prospect: contacts.filter(c => c.type === 'prospect').length,
-    subscriber: contacts.filter(c => c.type === 'subscriber').length,
     churned: contacts.filter(c => c.type === 'churned').length,
   }
 
@@ -441,7 +544,6 @@ export default function TeamContactenPage() {
         <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
           <span className="text-[var(--navy-dark)]"><span className="font-semibold">{contacts.length}</span> totaal</span>
           <span className="text-blue-700"><span className="font-semibold">{counts.prospect}</span> prospects</span>
-          <span className="text-green-700"><span className="font-semibold">{counts.subscriber}</span> subscribers</span>
           {counts.churned > 0 && (
             <span className="text-gray-600"><span className="font-semibold">{counts.churned}</span> churned</span>
           )}
@@ -474,7 +576,7 @@ export default function TeamContactenPage() {
                 <SortableHeader label="Type" field="type" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
                 <SortableHeader label="Bron" field="source" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
                 <SortableHeader label="Aangemaakt" field="created_at" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
-                <th className="px-4 py-3 w-10" />
+                <th className="px-4 py-3 w-24" />
               </tr>
             </thead>
             <tbody>
@@ -503,18 +605,32 @@ export default function TeamContactenPage() {
                     <td className="px-4 py-3 text-[var(--navy-medium)]">{contact.source || '—'}</td>
                     <td className="px-4 py-3 text-[var(--navy-medium)]">{formatDate(contact.created_at)}</td>
                     <td className="px-4 py-3">
-                      <button
-                        onClick={(ev) => {
-                          ev.stopPropagation()
-                          if (!confirm('Weet u zeker dat u dit contact wilt verwijderen?')) return
-                          fetch(`/api/v1/team/contacten/${contact.id}`, { method: 'DELETE' })
-                            .then(res => { if (res.ok) fetchContacts() })
-                        }}
-                        className="p-1.5 text-[var(--muted-foreground)] hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                        title="Verwijderen"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={(ev) => {
+                            ev.stopPropagation()
+                            setConvertingContact(contact)
+                          }}
+                          className="px-2 py-1 text-xs font-medium text-[var(--pink)] border border-[var(--pink)]/30 rounded hover:bg-[var(--pink)]/5 transition-colors"
+                          title="Omzetten naar lid"
+                        >
+                          Maak lid
+                        </button>
+                        {contact.type === 'prospect' && (
+                          <button
+                            onClick={(ev) => {
+                              ev.stopPropagation()
+                              if (!confirm('Weet u zeker dat u dit contact wilt verwijderen?')) return
+                              fetch(`/api/v1/team/contacten/${contact.id}`, { method: 'DELETE' })
+                                .then(res => { if (res.ok) fetchContacts() })
+                            }}
+                            className="p-1.5 text-[var(--muted-foreground)] hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                            title="Verwijderen"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -530,6 +646,14 @@ export default function TeamContactenPage() {
           onClose={() => setEditingContact(null)}
           onSaved={() => { setEditingContact(null); fetchContacts() }}
           onDeleted={() => { setEditingContact(null); fetchContacts() }}
+        />
+      )}
+
+      {convertingContact && (
+        <ConvertToMemberModal
+          contact={convertingContact}
+          onClose={() => setConvertingContact(null)}
+          onConverted={() => { setConvertingContact(null); fetchContacts() }}
         />
       )}
     </main>

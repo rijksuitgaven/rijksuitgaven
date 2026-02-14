@@ -39,7 +39,7 @@ export function useSubscription(): SubscriptionState {
 
       const { data, error } = await supabase
         .from('subscriptions')
-        .select('plan, end_date, grace_ends_at, cancelled_at, first_name, last_name, organization, role')
+        .select('plan, end_date, grace_ends_at, cancelled_at, role, people!inner(first_name, last_name, organization)')
         .eq('user_id', session.user.id)
         .single()
 
@@ -48,14 +48,17 @@ export function useSubscription(): SubscriptionState {
         return
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const person = (data as any).people as { first_name: string | null; last_name: string | null; organization: string | null }
+
       setState({
         status: computeStatus(data.end_date, data.grace_ends_at, data.cancelled_at),
         plan: data.plan as 'monthly' | 'yearly',
         endDate: data.end_date,
         graceEndsAt: data.grace_ends_at,
-        firstName: data.first_name,
-        lastName: data.last_name,
-        organization: data.organization,
+        firstName: person.first_name ?? undefined,
+        lastName: person.last_name ?? undefined,
+        organization: person.organization ?? undefined,
         role: data.role as 'member' | 'admin',
         loading: false,
       })

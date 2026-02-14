@@ -95,8 +95,8 @@ export async function GET(request: NextRequest) {
     supabase.rpc('get_usage_exit_intent', { since_date: sinceISO, max_results: 10 }),
     supabase.rpc('get_usage_search_success', { since_date: sinceISO }),
     supabase.rpc('get_usage_retention', { since_date: sinceISO }),
-    // Fetch all subscriptions for de-anonymization
-    supabase.from('subscriptions').select('user_id, name, email'),
+    // Fetch all subscriptions with person data for de-anonymization
+    supabase.from('subscriptions').select('user_id, people!inner(first_name, last_name, email)'),
   ])
 
   // Check for errors (core queries block, new queries don't)
@@ -132,7 +132,12 @@ export async function GET(request: NextRequest) {
     for (const sub of subscriptionsResult.data) {
       if (sub.user_id) {
         const hash = hashUserId(sub.user_id)
-        hashToUser.set(hash, { name: sub.name || '', email: sub.email || '' })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const p = (sub as any).people as { first_name: string | null; last_name: string | null; email: string }
+        hashToUser.set(hash, {
+          name: [p.first_name, p.last_name].filter(Boolean).join(' '),
+          email: p.email || '',
+        })
       }
     }
   }

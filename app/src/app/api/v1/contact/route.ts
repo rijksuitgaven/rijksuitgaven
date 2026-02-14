@@ -1,7 +1,7 @@
 /**
  * Public API: Demo Request Form
  *
- * POST /api/v1/contact — Store demo request in contacts table + send email notification
+ * POST /api/v1/contact — Store demo request in people table + send email notification
  * No auth required (public form on homepage)
  */
 
@@ -46,15 +46,15 @@ export async function POST(request: Request) {
   const supabase = createAdminClient()
 
   const { data: existing } = await supabase
-    .from('contacts')
+    .from('people')
     .select('id')
     .eq('email', safeEmail)
     .single()
 
   if (existing) {
-    // Update existing contact with latest info
+    // Update existing person with latest info
     await supabase
-      .from('contacts')
+      .from('people')
       .update({
         first_name: safeFirstName,
         last_name: safeLastName,
@@ -63,15 +63,14 @@ export async function POST(request: Request) {
       })
       .eq('id', existing.id)
   } else {
-    // Insert new contact
+    // Insert new person
     const { error: insertError } = await supabase
-      .from('contacts')
+      .from('people')
       .insert({
         email: safeEmail,
         first_name: safeFirstName,
         last_name: safeLastName,
         phone: safePhone,
-        type: 'prospect',
         source: 'demo_aanvraag',
       })
 

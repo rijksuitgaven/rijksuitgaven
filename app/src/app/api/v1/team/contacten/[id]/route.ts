@@ -1,14 +1,17 @@
 /**
- * Admin API: Update/Delete individual contact
+ * Admin API: Update/Delete individual contact (person without active subscription)
  *
- * PATCH  /api/v1/team/contacten/[id] — Update contact fields (+ Resend sync)
- * DELETE /api/v1/team/contacten/[id] — Delete contact (+ remove from Resend)
+ * PATCH  /api/v1/team/contacten/[id] — Update person fields (+ Resend sync)
+ * DELETE /api/v1/team/contacten/[id] — Delete person (only if no subscription history)
+ *
+ * Type is computed, not editable. ON DELETE RESTRICT on subscriptions.person_id
+ * prevents deletion of people with subscription history.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { isAdmin } from '@/app/api/_lib/admin'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
-import { syncContactToResend } from '@/app/api/_lib/resend-audience'
+import { syncPersonToResend } from '@/app/api/_lib/resend-audience'
 
 function forbiddenResponse() {
   return NextResponse.json({ error: 'Geen toegang' }, { status: 403 })
@@ -39,7 +42,8 @@ export async function PATCH(
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const allowedFields = ['first_name', 'last_name', 'organization', 'type', 'source', 'notes', 'subscription_id'] as const
+  // Person fields only (type is computed, not editable)
+  const allowedFields = ['first_name', 'last_name', 'organization', 'phone', 'source', 'notes'] as const
   const updates: Record<string, unknown> = {}
 
   for (const field of allowedFields) {
@@ -52,25 +56,16 @@ export async function PATCH(
     return NextResponse.json({ error: 'Geen velden om bij te werken' }, { status: 400 })
   }
 
-  if ('type' in updates && !['prospect', 'subscriber', 'churned'].includes(updates.type as string)) {
-    return NextResponse.json({ error: 'Type moet "prospect", "subscriber" of "churned" zijn' }, { status: 400 })
-  }
-
-  // Semi-automatic: linking a subscription auto-sets type to subscriber
-  if ('subscription_id' in updates && updates.subscription_id) {
-    updates.type = 'subscriber'
-  }
-
   const supabase = createAdminClient()
   const { data, error } = await supabase
-    .from('contacts')
+    .from('people')
     .update(updates)
     .eq('id', id)
     .select()
     .single()
 
   if (error) {
-    console.error('[Admin] Update contact error:', error)
+    console.error('[Admin] Update person error:', error)
     return NextResponse.json({ error: 'Fout bij bijwerken contact' }, { status: 500 })
   }
 
@@ -79,7 +74,7 @@ export async function PATCH(
   }
 
   // Sync to Resend Audience (fire-and-forget)
-  syncContactToResend('update', data).catch(err => {
+  syncPersonToResend('update', data).catch(err => {
     console.error('[Resend] Sync error on update:', err)
   })
 
@@ -95,30 +90,43 @@ export async function DELETE(
   const { id } = await params
   const supabase = createAdminClient()
 
-  // Get contact first for Resend cleanup
-  const { data: contact } = await supabase
-    .from('contacts')
+  // Get person for Resend cleanup
+  const { data: person } = await supabase
+    .from('people')
     .select('id, resend_contact_id')
     .eq('id', id)
     .single()
 
-  if (!contact) {
+  if (!person) {
     return NextResponse.json({ error: 'Contact niet gevonden' }, { status: 404 })
   }
 
+  // Check for subscription history — only prospects (no subscriptions ever) can be deleted
+  const { data: subs } = await supabase
+    .from('subscriptions')
+    .select('id')
+    .eq('person_id', id)
+    .limit(1)
+
+  if (subs && subs.length > 0) {
+    return NextResponse.json({
+      error: 'Dit contact heeft abonnementsgeschiedenis en kan niet worden verwijderd'
+    }, { status: 409 })
+  }
+
   const { error } = await supabase
-    .from('contacts')
+    .from('people')
     .delete()
     .eq('id', id)
 
   if (error) {
-    console.error('[Admin] Delete contact error:', error)
+    console.error('[Admin] Delete person error:', error)
     return NextResponse.json({ error: 'Fout bij verwijderen contact' }, { status: 500 })
   }
 
   // Remove from Resend Audience (fire-and-forget)
-  if (contact.resend_contact_id) {
-    syncContactToResend('delete', contact).catch(err => {
+  if (person.resend_contact_id) {
+    syncPersonToResend('delete', person).catch(err => {
       console.error('[Resend] Sync error on delete:', err)
     })
   }

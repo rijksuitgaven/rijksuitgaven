@@ -1,8 +1,11 @@
 /**
  * Admin API: Update/Delete individual member
  *
- * PATCH  /api/v1/team/leden/[id] — Update subscription fields
- * DELETE /api/v1/team/leden/[id] — Hard delete subscription + auth user
+ * PATCH  /api/v1/team/leden/[id] — Update person + subscription fields
+ * DELETE /api/v1/team/leden/[id] — Delete subscription (person preserved in people table)
+ *
+ * Person fields (first_name, last_name, organization) are updated on `people`.
+ * Subscription fields (plan, dates, role, notes) are updated on `subscriptions`.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -12,6 +15,9 @@ import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 function forbiddenResponse() {
   return NextResponse.json({ error: 'Geen toegang' }, { status: 403 })
 }
+
+const PERSON_FIELDS = new Set(['first_name', 'last_name', 'organization'])
+const SUBSCRIPTION_FIELDS = new Set(['plan', 'start_date', 'end_date', 'grace_ends_at', 'notes', 'role', 'cancelled_at'])
 
 export async function PATCH(
   request: NextRequest,
@@ -44,28 +50,30 @@ export async function PATCH(
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  // Only allow specific fields to be updated
-  const allowedFields = ['first_name', 'last_name', 'organization', 'plan', 'start_date', 'end_date', 'grace_ends_at', 'notes', 'role', 'cancelled_at'] as const
-  const updates: Record<string, unknown> = {}
+  // Split updates into person fields and subscription fields
+  const personUpdates: Record<string, unknown> = {}
+  const subUpdates: Record<string, unknown> = {}
 
-  for (const field of allowedFields) {
-    if (field in body) {
-      updates[field] = body[field]
+  for (const [key, value] of Object.entries(body)) {
+    if (PERSON_FIELDS.has(key)) {
+      personUpdates[key] = value
+    } else if (SUBSCRIPTION_FIELDS.has(key)) {
+      subUpdates[key] = value
     }
   }
 
-  if (Object.keys(updates).length === 0) {
+  if (Object.keys(personUpdates).length === 0 && Object.keys(subUpdates).length === 0) {
     return NextResponse.json({ error: 'Geen velden om bij te werken' }, { status: 400 })
   }
 
   // Validate plan if provided
-  if ('plan' in updates && !['monthly', 'yearly', 'trial'].includes(updates.plan as string)) {
+  if ('plan' in subUpdates && !['monthly', 'yearly', 'trial'].includes(subUpdates.plan as string)) {
     return NextResponse.json({ error: 'Plan moet "monthly", "yearly" of "trial" zijn' }, { status: 400 })
   }
 
   // Validate role if provided
-  if ('role' in updates) {
-    if (!['member', 'trial', 'admin'].includes(updates.role as string)) {
+  if ('role' in subUpdates) {
+    if (!['member', 'trial', 'admin'].includes(subUpdates.role as string)) {
       return NextResponse.json({ error: 'Role moet "member", "trial" of "admin" zijn' }, { status: 400 })
     }
 
@@ -78,30 +86,73 @@ export async function PATCH(
         .eq('id', id)
         .single()
 
-      if (targetSub?.user_id === currentUserId && targetSub.role === 'admin' && updates.role === 'member') {
-        return NextResponse.json({ error: 'Je kunt jezelf niet degraderen naar member' }, { status: 400 })
+      if (targetSub?.user_id === currentUserId && targetSub.role === 'admin' && subUpdates.role === 'member') {
+        return NextResponse.json({ error: 'U kunt uzelf niet degraderen naar member' }, { status: 400 })
       }
     }
   }
 
   const adminSupabase = createAdminClient()
-  const { data, error } = await adminSupabase
+
+  // Get subscription to find person_id
+  const { data: sub, error: subLookupError } = await adminSupabase
     .from('subscriptions')
-    .update(updates)
+    .select('id, person_id')
     .eq('id', id)
-    .select()
     .single()
 
-  if (error) {
-    console.error('[Admin] Update member error:', error)
-    return NextResponse.json({ error: 'Fout bij bijwerken lid' }, { status: 500 })
-  }
-
-  if (!data) {
+  if (subLookupError || !sub) {
     return NextResponse.json({ error: 'Lid niet gevonden' }, { status: 404 })
   }
 
-  return NextResponse.json({ member: data })
+  // Update person fields if any
+  if (Object.keys(personUpdates).length > 0) {
+    const { error: personError } = await adminSupabase
+      .from('people')
+      .update(personUpdates)
+      .eq('id', sub.person_id)
+
+    if (personError) {
+      console.error('[Admin] Update person error:', personError)
+      return NextResponse.json({ error: 'Fout bij bijwerken persoonsgegevens' }, { status: 500 })
+    }
+  }
+
+  // Update subscription fields if any
+  if (Object.keys(subUpdates).length > 0) {
+    const { error: subError } = await adminSupabase
+      .from('subscriptions')
+      .update(subUpdates)
+      .eq('id', id)
+
+    if (subError) {
+      console.error('[Admin] Update subscription error:', subError)
+      return NextResponse.json({ error: 'Fout bij bijwerken abonnement' }, { status: 500 })
+    }
+  }
+
+  // Fetch updated member with person data for response
+  const { data: updated, error: fetchError } = await adminSupabase
+    .from('subscriptions')
+    .select('id, user_id, person_id, plan, role, start_date, end_date, grace_ends_at, cancelled_at, invited_at, activated_at, last_active_at, notes, created_at, people!inner(email, first_name, last_name, organization)')
+    .eq('id', id)
+    .single()
+
+  if (fetchError || !updated) {
+    return NextResponse.json({ error: 'Fout bij ophalen bijgewerkt lid' }, { status: 500 })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { people, ...subData } = updated as any
+  return NextResponse.json({
+    member: {
+      ...subData,
+      email: people.email,
+      first_name: people.first_name,
+      last_name: people.last_name,
+      organization: people.organization,
+    }
+  })
 }
 
 export async function DELETE(
@@ -138,7 +189,7 @@ export async function DELETE(
     return NextResponse.json({ error: 'U kunt uzelf niet verwijderen' }, { status: 400 })
   }
 
-  // Delete subscription row (CASCADE will handle FK, but be explicit)
+  // Delete subscription only — person record preserved in people table
   const { error: deleteSubError } = await adminClient
     .from('subscriptions')
     .delete()
@@ -149,11 +200,13 @@ export async function DELETE(
     return NextResponse.json({ error: 'Fout bij verwijderen abonnement' }, { status: 500 })
   }
 
-  // Delete auth user
-  const { error: deleteUserError } = await adminClient.auth.admin.deleteUser(sub.user_id)
-  if (deleteUserError) {
-    console.error('[Admin] Delete auth user error:', deleteUserError)
-    // Subscription already deleted — log but don't fail
+  // Delete auth user (subscription is gone, auth user no longer needed)
+  if (sub.user_id) {
+    const { error: deleteUserError } = await adminClient.auth.admin.deleteUser(sub.user_id)
+    if (deleteUserError) {
+      console.error('[Admin] Delete auth user error:', deleteUserError)
+      // Non-fatal — subscription already deleted
+    }
   }
 
   return NextResponse.json({ ok: true })

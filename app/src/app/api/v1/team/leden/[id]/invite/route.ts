@@ -129,16 +129,20 @@ export async function POST(
   const { id } = await params
   const supabase = createAdminClient()
 
-  // Get the subscription to find the email and user_id
+  // Get the subscription with person data via FK JOIN
   const { data: sub, error: subError } = await supabase
     .from('subscriptions')
-    .select('email, user_id, first_name')
+    .select('user_id, people!inner(email, first_name)')
     .eq('id', id)
     .single()
 
   if (subError || !sub) {
     return NextResponse.json({ error: 'Lid niet gevonden' }, { status: 404 })
   }
+
+  // Extract person fields from JOIN
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const person = (sub as any).people as { email: string; first_name: string }
 
   if (!RESEND_API_KEY) {
     console.error('[Admin] No RESEND_API_KEY configured')
@@ -147,8 +151,8 @@ export async function POST(
 
   // Check if user already exists in auth
   let needsCreate = false
-  if (sub.user_id) {
-    const { data: { user } } = await supabase.auth.admin.getUserById(sub.user_id)
+  if ((sub as { user_id: string | null }).user_id) {
+    const { data: { user } } = await supabase.auth.admin.getUserById((sub as { user_id: string }).user_id)
 
     if (user?.last_sign_in_at) {
       // Already active — just set invited_at, no email needed
@@ -165,7 +169,7 @@ export async function POST(
   // Create user in auth if needed (without Supabase's default invite email)
   if (needsCreate) {
     const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
-      email: sub.email,
+      email: person.email,
       email_confirm: true,
     })
 
@@ -187,7 +191,7 @@ export async function POST(
   // Generate magic link for the user
   const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
     type: 'magiclink',
-    email: sub.email,
+    email: person.email,
   })
 
   if (linkError || !linkData?.properties?.action_link) {
@@ -199,9 +203,9 @@ export async function POST(
   const resend = new Resend(RESEND_API_KEY)
   const { error: sendError } = await resend.emails.send({
     from: 'Rijksuitgaven <noreply@rijksuitgaven.nl>',
-    to: sub.email,
+    to: person.email,
     subject: 'Welkom bij Rijksuitgaven — activeer uw account',
-    html: buildActivationEmail(sub.first_name, sub.email, linkData.properties.action_link),
+    html: buildActivationEmail(person.first_name, person.email, linkData.properties.action_link),
   })
 
   if (sendError) {
