@@ -7,7 +7,7 @@ import {
   BarChart3, Search, Download, MousePointerClick, Users, AlertTriangle,
   ChevronDown, ChevronRight, Eye, SlidersHorizontal, Columns, Clock,
   ArrowUpDown, ArrowRight, Sparkles, ChevronsRight, Trash2, CheckCircle,
-  ExternalLink,
+  ExternalLink, Copy, Check,
 } from 'lucide-react'
 
 // --- Constants ---
@@ -727,7 +727,44 @@ function ModuleBadge({ module, small, variant }: {
   )
 }
 
+function formatErrorPrompt(err: ErrorItem): string {
+  const mod = MODULE_LABELS[err.module] || err.module || 'onbekend'
+  const props = err.properties || {}
+  const lines: string[] = [
+    `Fix this frontend error in rijksuitgaven:`,
+    ``,
+    `Error: "${err.message || 'Onbekende fout'}"`,
+    `Module: ${mod}`,
+  ]
+  if (props.trigger) lines.push(`Trigger: ${props.trigger}`)
+  if (props.search_query) lines.push(`Search query: "${props.search_query}"`)
+  if (props.sort_by) lines.push(`Sort column: ${props.sort_by}`)
+  if (props.has_filters) lines.push(`Active filters: yes`)
+  if (props.path) lines.push(`Path: ${props.path}`)
+  if (props.direction) lines.push(`Sort direction: ${props.direction}`)
+
+  // Include full properties as JSON for completeness
+  const knownKeys = ['trigger', 'search_query', 'sort_by', 'has_filters', 'path', 'direction', 'message']
+  const extra = Object.fromEntries(Object.entries(props).filter(([k]) => !knownKeys.includes(k)))
+  if (Object.keys(extra).length > 0) {
+    lines.push(`Extra context: ${JSON.stringify(extra)}`)
+  }
+
+  lines.push(``, `Trace the root cause in the relevant component and fix it.`)
+  return lines.join('\n')
+}
+
 function ErrorsSection({ errors, onClear }: { errors: ErrorItem[]; onClear: () => void }) {
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
+
+  const copyPrompt = useCallback((err: ErrorItem, index: number) => {
+    const prompt = formatErrorPrompt(err)
+    navigator.clipboard.writeText(prompt).then(() => {
+      setCopiedIndex(index)
+      setTimeout(() => setCopiedIndex(null), 2000)
+    })
+  }, [])
+
   if (errors.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
@@ -793,11 +830,27 @@ function ErrorsSection({ errors, onClear }: { errors: ErrorItem[]; onClear: () =
           if (err.properties?.has_filters) contextPills.push({ label: 'Filters', value: 'actief' })
           if (err.properties?.path) contextPills.push({ label: 'Pad', value: String(err.properties.path) })
 
+          const isCopied = copiedIndex === i
+
           return (
             <div key={i} className="bg-red-50/60 border border-red-100 rounded-lg px-4 py-3">
-              {/* Row 1: error message — the headline */}
-              <div className="text-sm font-semibold text-red-700 mb-2">
-                {err.message || 'Onbekende fout'}
+              {/* Row 1: error message + copy button */}
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <div className="text-sm font-semibold text-red-700">
+                  {err.message || 'Onbekende fout'}
+                </div>
+                <button
+                  onClick={() => copyPrompt(err, i)}
+                  className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all border ${
+                    isCopied
+                      ? 'text-green-700 bg-green-50 border-green-200'
+                      : 'text-[var(--navy-medium)] bg-white/80 border-red-200 hover:bg-white hover:border-[var(--navy-medium)]'
+                  }`}
+                  title="Kopieer als prompt"
+                >
+                  {isCopied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                  {isCopied ? 'Gekopieerd' : 'Kopieer prompt'}
+                </button>
               </div>
               {/* Row 2: metadata line */}
               <div className="flex items-center flex-wrap gap-x-4 gap-y-1.5">
