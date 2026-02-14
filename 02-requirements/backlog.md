@@ -472,6 +472,28 @@ V2.0: Full state in URL including expanded rows, pagination position, all filter
 
 ---
 
+### Homepage Analytics Tracking (V1.1)
+
+**Priority:** Low (V1.1)
+**Added:** 2026-02-14
+**Status:** BACKLOGGED
+**Type:** Analytics / UX-032
+
+**Problem:**
+Homepage user interactions (CTA clicks, contact form submissions, section scroll engagement, subscription plan clicks) are not tracked. This data would help understand conversion funnel performance.
+
+**Scope (deferred from UX-032 implementation):**
+- Hero CTA button clicks
+- Subscription plan clicks (Maandelijks/Jaarlijks)
+- B2G "Plan een demo" button click
+- Contact form submission success
+- ScrollReveal section visibility (which sections users scroll to)
+- Login flow interactions (magic link request, callback)
+
+**Decision:** Excluded from initial UX-032 implementation to keep scope focused on in-app usage. Implement in V1.1 when conversion analytics become a priority.
+
+---
+
 ### Error Tracking / Monitoring
 
 **Priority:** Low

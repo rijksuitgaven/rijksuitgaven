@@ -15,6 +15,7 @@ import {
 import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet, ExternalLink, Info, Search, MousePointerClick, AlertTriangle, SlidersHorizontal, Columns3 } from 'lucide-react'
 import * as XLSX from 'xlsx'
 import { cn } from '@/lib/utils'
+import { useAnalytics } from '@/hooks/use-analytics'
 import { StaffelPopover } from '@/components/staffel-popover/staffel-popover'
 import {
   formatAmount,
@@ -342,6 +343,7 @@ export function DataTable({
   onExport,
   totals,
 }: DataTableProps) {
+  const { track } = useAnalytics()
   const [sorting, setSorting] = useState<SortingState>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [yearsExpanded, setYearsExpanded] = useState(false)
@@ -499,7 +501,10 @@ export function DataTable({
                   target="_blank"
                   rel="noopener noreferrer"
                   data-tooltip-center="Zoek op Google"
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    track('external_link', moduleId, { recipient: row.original.primary_value, origin: 'data_table' })
+                  }}
                   className="flex-shrink-0 text-[var(--navy-medium)] hover:text-[var(--pink)] transition-colors"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />

@@ -1,4 +1,19 @@
+'use client'
+
 import Link from 'next/link'
+import { useEffect } from 'react'
+import { useAnalytics } from '@/hooks/use-analytics'
+
+function Track404() {
+  const { track } = useAnalytics()
+  useEffect(() => {
+    track('error', undefined, {
+      trigger: '404',
+      path: window.location.pathname,
+    })
+  }, [track])
+  return null
+}
 
 export default function NotFound() {
   return (
@@ -9,6 +24,7 @@ export default function NotFound() {
         fontFamily: 'var(--font-body), sans-serif',
       }}
     >
+      <Track404 />
       <div className="text-center max-w-md">
         <p
           className="text-[8rem] leading-none font-bold mb-2"

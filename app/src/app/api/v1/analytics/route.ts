@@ -27,6 +27,7 @@ const VALID_EVENT_TYPES = [
   'sort_change',
   'page_change',
   'error',
+  'external_link',
 ] as const
 
 const VALID_MODULES = [

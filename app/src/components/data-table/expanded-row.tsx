@@ -217,8 +217,9 @@ export function ExpandedRow({
         if (!abortController.signal.aborted) {
           setGroupingCounts(data)
         }
-      } catch {
-        // Silently fail — counts are a nice-to-have enhancement
+      } catch (err) {
+        // Track error but don't break UX — counts are a nice-to-have enhancement
+        track('error', module, { message: err instanceof Error ? err.message : 'Grouping counts fetch failed', trigger: 'row_expand' })
       }
     }
 

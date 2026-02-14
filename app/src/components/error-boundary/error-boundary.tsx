@@ -40,6 +40,24 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     console.error('[ErrorBoundary] Caught error:', error)
     console.error('[ErrorBoundary] Component stack:', errorInfo.componentStack)
 
+    // Track via analytics (direct sendBeacon — class components can't use hooks)
+    try {
+      const payload = {
+        events: [{
+          event_type: 'error',
+          properties: {
+            message: error.message,
+            trigger: 'react_render',
+          },
+          timestamp: new Date().toISOString(),
+        }],
+      }
+      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' })
+      navigator.sendBeacon('/api/v1/analytics', blob)
+    } catch {
+      // Silently ignore — analytics should never make error recovery worse
+    }
+
     // Call optional error handler
     this.props.onError?.(error, errorInfo)
   }

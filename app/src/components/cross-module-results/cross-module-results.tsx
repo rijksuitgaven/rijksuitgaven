@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { useAnalytics } from '@/hooks/use-analytics'
 import { API_BASE_URL } from '@/lib/api-config'
 import { MODULE_LABELS, ALL_MODULES } from '@/lib/constants'
 
@@ -18,6 +19,7 @@ interface CrossModuleResultsProps {
 }
 
 export function CrossModuleResults({ searchQuery, currentModule, className }: CrossModuleResultsProps) {
+  const { track } = useAnalytics()
   const [moduleCounts, setModuleCounts] = useState<ModuleCount[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
@@ -99,6 +101,7 @@ export function CrossModuleResults({ searchQuery, currentModule, className }: Cr
         <span key={item.module}>
           <Link
             href={`/${item.module}?q=${encodeURIComponent(searchQuery)}`}
+            onClick={() => track('cross_module_nav', currentModule, { target_module: item.module, recipient: searchQuery, origin: 'cross_module_results' })}
             className="text-[var(--navy-medium)] hover:text-[var(--pink)] hover:underline transition-colors"
           >
             {MODULE_LABELS[item.module] || item.module}{' '}

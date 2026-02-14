@@ -18,6 +18,7 @@ export type AnalyticsEventType =
   | 'sort_change'
   | 'page_change'
   | 'error'
+  | 'external_link'
 
 interface AnalyticsEvent {
   event_type: AnalyticsEventType

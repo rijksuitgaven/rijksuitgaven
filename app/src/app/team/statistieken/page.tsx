@@ -7,6 +7,7 @@ import {
   BarChart3, Search, Download, MousePointerClick, Users, AlertTriangle,
   ChevronDown, ChevronRight, Eye, SlidersHorizontal, Columns, Clock,
   ArrowUpDown, ArrowRight, Sparkles, ChevronsRight, Trash2, CheckCircle,
+  ExternalLink,
 } from 'lucide-react'
 
 // --- Constants ---
@@ -245,6 +246,12 @@ function formatEventLine(event: ActorDetailEvent): { icon: React.ReactNode; text
         text: `Pagina ${props.page} in ${mod}`,
         time: timestamp,
       }
+    case 'external_link':
+      return {
+        icon: <ExternalLink className="w-3.5 h-3.5 text-[var(--navy-medium)]" />,
+        text: `Zoek op Google: "${props.recipient}" vanuit ${props.origin === 'detail_panel' ? 'detailpaneel' : mod}`,
+        time: timestamp,
+      }
     case 'error':
       return {
         icon: <AlertTriangle className="w-3.5 h-3.5 text-[var(--error)]" />,
@@ -329,6 +336,7 @@ export default function StatistiekenPage() {
   const exports = getPulseValue(data?.pulse ?? [], 'export')
   const expands = getPulseValue(data?.pulse ?? [], 'row_expand')
   const moduleViews = getPulseValue(data?.pulse ?? [], 'module_view')
+  const externalLinks = getPulseValue(data?.pulse ?? [], 'external_link')
   const errorCount = data?.errors?.length ?? 0
   const maxViews = data?.modules.length ? Math.max(...data.modules.map(m => m.view_count)) : 1
 
@@ -377,7 +385,7 @@ export default function StatistiekenPage() {
         ) : data ? (
           <>
             {/* ═══ ACT 1: PULSE ═══ */}
-            <div className={`grid grid-cols-2 ${errorCount > 0 ? 'md:grid-cols-5' : 'md:grid-cols-4'} gap-4 mb-6`}>
+            <div className={`grid grid-cols-2 ${errorCount > 0 ? 'md:grid-cols-6' : 'md:grid-cols-5'} gap-4 mb-6`}>
               <PulseCard
                 icon={<Users className="w-4 h-4" />}
                 label="Actieve gebruikers"
@@ -401,6 +409,12 @@ export default function StatistiekenPage() {
                 label="Rij-uitklappingen"
                 value={expands.count}
                 subtext={`${expands.actors} unieke gebruikers`}
+              />
+              <PulseCard
+                icon={<ExternalLink className="w-4 h-4" />}
+                label="Externe links"
+                value={externalLinks.count}
+                subtext={`${externalLinks.actors} unieke gebruikers`}
               />
               {errorCount > 0 && (
                 <PulseCard
@@ -763,6 +777,8 @@ function ErrorsSection({ errors, onClear }: { errors: ErrorItem[]; onClear: () =
               feedback_submit: 'Feedback',
               login: 'Inloggen',
               contact_form: 'Contactformulier',
+              '404': 'Pagina niet gevonden',
+              react_render: 'React render crash',
             }
             contextPills.push({ label: 'Actie', value: triggerLabels[String(err.properties.trigger)] || String(err.properties.trigger) })
           }
@@ -775,6 +791,7 @@ function ErrorsSection({ errors, onClear }: { errors: ErrorItem[]; onClear: () =
             contextPills.push({ label: 'Sortering', value: sortLabel })
           }
           if (err.properties?.has_filters) contextPills.push({ label: 'Filters', value: 'actief' })
+          if (err.properties?.path) contextPills.push({ label: 'Pad', value: String(err.properties.path) })
 
           return (
             <div key={i} className="bg-red-50/60 border border-red-100 rounded-lg px-4 py-3">

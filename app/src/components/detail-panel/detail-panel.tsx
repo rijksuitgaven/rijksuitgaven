@@ -205,6 +205,8 @@ export function DetailPanel({
   const handleExport = useCallback(() => {
     if (!data) return
 
+    track('export', moduleId, { format: 'csv', row_count: data.years.length, origin: 'detail_panel' })
+
     const headers = ['Jaar', 'Bedrag']
     const rows = data.years.map(y => [y.year.toString(), y.amount.toFixed(2)])
     rows.push(['Totaal', data.total.toFixed(2)])
@@ -236,12 +238,13 @@ export function DetailPanel({
 
   // Handle module navigation
   const handleModuleClick = useCallback((module: string) => {
+    track('cross_module_nav', moduleId, { target_module: module, recipient: recipientName, origin: 'detail_panel' })
     if (onNavigateToModule) {
       onNavigateToModule(module, recipientName)
     } else {
       router.push(`/${module}?q=${encodeURIComponent(recipientName)}`)
     }
-  }, [router, recipientName, onNavigateToModule])
+  }, [router, recipientName, onNavigateToModule, track, moduleId])
 
   if (!isOpen) return null
 
@@ -314,6 +317,7 @@ export function DetailPanel({
                   href={googleSearchUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => track('external_link', moduleId, { recipient: recipientName, origin: 'detail_panel' })}
                   className="inline-flex items-center gap-1 text-sm text-[var(--navy-medium)] hover:text-[var(--navy-dark)] mt-1"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
