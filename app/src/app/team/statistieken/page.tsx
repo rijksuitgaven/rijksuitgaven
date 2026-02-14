@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import { TeamNav } from '@/components/team-nav'
 import {
@@ -877,6 +877,56 @@ function ModuleBadge({ module, small, variant }: {
   )
 }
 
+function EngagementBadge({ score, label, color }: { score: number; label: string; color: string }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null)
+
+  const show = useCallback(() => {
+    if (!ref.current) return
+    const rect = ref.current.getBoundingClientRect()
+    setPos({
+      top: rect.top - 8,
+      left: rect.left + rect.width / 2,
+    })
+  }, [])
+
+  const hide = useCallback(() => setPos(null), [])
+
+  return (
+    <>
+      <span
+        ref={ref}
+        className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-semibold cursor-help ${color}`}
+        onMouseEnter={show}
+        onMouseLeave={hide}
+        onClick={(e) => { e.stopPropagation(); setPos(prev => prev ? null : undefined as never); show() }}
+      >
+        {Math.round(score)} — {label}
+      </span>
+      {pos && (
+        <div
+          className="fixed z-[9999] w-56 p-3 bg-[var(--navy-dark)] text-white text-xs rounded-lg shadow-xl"
+          style={{ top: pos.top, left: pos.left, transform: 'translate(-50%, -100%)' }}
+          onMouseEnter={show}
+          onMouseLeave={hide}
+        >
+          <p className="font-semibold mb-1.5">Score {Math.round(score)}</p>
+          <p className="text-white/70 mb-1">Gewogen som van acties:</p>
+          <ul className="space-y-0.5 text-white/90 mb-2">
+            <li>Export, cross-module = 3 pt</li>
+            <li>Zoeken, filteren, ext. link = 2 pt</li>
+            <li>Bekijken, uitklappen, sorteren = 1 pt</li>
+          </ul>
+          <p className="text-white/70 border-t border-white/20 pt-1.5">
+            {label}: {label === 'Power' ? 'top 33%' : label === 'Regulier' ? 'middelste 33%' : label === 'Casual' ? 'onderste 33%' : 'niet actief >7d'}
+          </p>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-[var(--navy-dark)]" />
+        </div>
+      )}
+    </>
+  )
+}
+
 function ModuleGroupedList<T>({ title, subtitle, items, getModule, renderItem, emptyText }: {
   title: string
   subtitle?: string
@@ -1250,26 +1300,7 @@ function ActorRow({ actor, allActors, isExpanded, color, onToggle, detail, detai
           {actor.session_count}
         </td>
         <td className="py-2.5 pr-4 text-right">
-          <span className="relative group/score inline-flex">
-            <span
-              className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-semibold cursor-help ${engagement.color}`}
-            >
-              {Math.round(actor.engagement_score)} — {engagement.label}
-            </span>
-            <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-[var(--navy-dark)] text-white text-xs rounded-lg shadow-lg opacity-0 pointer-events-none group-hover/score:opacity-100 group-hover/score:pointer-events-auto transition-opacity z-50">
-              <p className="font-semibold mb-1.5">Score {Math.round(actor.engagement_score)}</p>
-              <p className="text-white/70 mb-1">Gewogen som van acties:</p>
-              <ul className="space-y-0.5 text-white/90 mb-2">
-                <li>Export, cross-module = 3 pt</li>
-                <li>Zoeken, filteren, ext. link = 2 pt</li>
-                <li>Bekijken, uitklappen, sorteren = 1 pt</li>
-              </ul>
-              <p className="text-white/70 border-t border-white/20 pt-1.5">
-                {engagement.label}: {engagement.label === 'Power' ? 'top 33%' : engagement.label === 'Regulier' ? 'middelste 33%' : engagement.label === 'Casual' ? 'onderste 33%' : 'niet actief >7d'}
-              </p>
-              <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-[var(--navy-dark)]" />
-            </div>
-          </span>
+          <EngagementBadge score={actor.engagement_score} label={engagement.label} color={engagement.color} />
         </td>
         <td className="py-2.5 pr-4">
           <TrendIndicator trend={actor.gap_trend} gapDays={actor.avg_gap_days} />
