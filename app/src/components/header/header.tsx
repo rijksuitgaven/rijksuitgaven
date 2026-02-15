@@ -80,10 +80,11 @@ export function Header() {
         </div>
       </div>
 
-      {/* Navigation Bar */}
+      {/* Navigation Bar — Condensed font for space-constrained horizontal nav */}
       <nav
         ref={navRef}
         className="bg-white border-b border-[var(--border)]"
+        style={{ fontFamily: 'var(--font-condensed)' }}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-stretch overflow-x-auto scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
@@ -103,7 +104,7 @@ export function Header() {
                       onClick={(e) => handleHardNav(e, `/${module.id}`)}
                       data-active={isActive}
                       className={cn(
-                        'group relative flex items-center gap-1 px-3 py-5 text-sm font-medium transition-colors whitespace-nowrap',
+                        'group relative flex items-center gap-1 px-2.5 py-5 text-sm font-medium transition-colors whitespace-nowrap',
                         isActive
                           ? 'text-[var(--navy-dark)]'
                           : 'text-[var(--navy-medium)] hover:text-[var(--navy-dark)]'
@@ -117,7 +118,7 @@ export function Header() {
                       {module.name}
                       {/* Hover preview indicator */}
                       <span className={cn(
-                        'absolute bottom-0 left-3 right-3 h-[3px] transition-all',
+                        'absolute bottom-0 left-2.5 right-2.5 h-[3px] transition-all',
                         isActive
                           ? 'bg-[var(--pink)]'
                           : 'bg-[var(--pink)]/0 group-hover:bg-[var(--pink)]/30'
@@ -143,7 +144,7 @@ export function Header() {
                       onClick={(e) => handleHardNav(e, `/${module.id}`)}
                       data-active={isActive}
                       className={cn(
-                        'group relative flex items-center px-3 py-5 text-sm font-medium transition-colors whitespace-nowrap',
+                        'group relative flex items-center px-2.5 py-5 text-sm font-medium transition-colors whitespace-nowrap',
                         isActive
                           ? 'text-[var(--navy-dark)]'
                           : 'text-[var(--navy-medium)] hover:text-[var(--navy-dark)]'
@@ -152,7 +153,7 @@ export function Header() {
                       {module.name}
                       {/* Hover preview indicator */}
                       <span className={cn(
-                        'absolute bottom-0 left-3 right-3 h-[3px] transition-all',
+                        'absolute bottom-0 left-2.5 right-2.5 h-[3px] transition-all',
                         isActive
                           ? 'bg-[var(--pink)]'
                           : 'bg-[var(--pink)]/0 group-hover:bg-[var(--pink)]/30'
