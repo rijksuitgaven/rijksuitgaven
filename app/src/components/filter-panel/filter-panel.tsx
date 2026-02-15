@@ -959,6 +959,7 @@ export function FilterPanel({
     skipDebounceRef.current = true // Explicit action — apply filter immediately
     setLocalFilters((prev) => ({ ...prev, search: result.name }))
     setIsDropdownOpen(false)
+    inputRef.current?.blur()
   }, [track, module])
 
   const handleSelectOtherModule = useCallback((name: string, targetModule: string) => {
