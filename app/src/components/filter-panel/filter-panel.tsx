@@ -587,6 +587,7 @@ interface FilterPanelProps {
   onFilterChange: (filters: FilterValues) => void
   isLoading?: boolean
   autoExpandTrigger?: number
+  onAutocompleteSelect?: () => void
 }
 
 /**
@@ -599,6 +600,7 @@ export function FilterPanel({
   onFilterChange,
   isLoading = false,
   autoExpandTrigger = 0,
+  onAutocompleteSelect,
 }: FilterPanelProps) {
   const router = useRouter()
   const { track } = useAnalytics()
@@ -956,18 +958,20 @@ export function FilterPanel({
     // Set search to recipient name and close dropdown
     // Stays on current module, filters the table
     track('autocomplete_click', module, { result_type: 'recipient', selected_value: result.name, target_module: module })
+    onAutocompleteSelect?.() // Cancel pending search tracking — autocomplete_click covers it
     hasUserTypedRef.current = false // Prevent autocomplete effect from reopening dropdown
     skipDebounceRef.current = true // Explicit action — apply filter immediately
     setLocalFilters((prev) => ({ ...prev, search: result.name }))
     setIsDropdownOpen(false)
     inputRef.current?.blur()
-  }, [track, module])
+  }, [track, module, onAutocompleteSelect])
 
   const handleSelectOtherModule = useCallback((name: string, targetModule: string) => {
     // Navigate to different module with search applied
     track('autocomplete_click', module, { result_type: 'recipient', selected_value: name, target_module: targetModule })
+    onAutocompleteSelect?.() // Cancel pending search tracking — autocomplete_click covers it
     router.push(`/${targetModule}?q=${encodeURIComponent(name)}`)
-  }, [router, track, module])
+  }, [router, track, module, onAutocompleteSelect])
 
   const handleClearSearch = useCallback(() => {
     setLocalFilters((prev) => ({ ...prev, search: '' }))
@@ -982,6 +986,7 @@ export function FilterPanel({
     // Apply as a filter instead of a text search
     // This shows all recipients with this regeling/artikel/etc.
     track('autocomplete_click', module, { result_type: 'field_match', selected_value: result.value, field: result.field })
+    onAutocompleteSelect?.() // Cancel pending search tracking — autocomplete_click covers it
     skipDebounceRef.current = true // Explicit action — apply filter immediately
     setLocalFilters((prev) => ({
       ...prev,
@@ -992,7 +997,7 @@ export function FilterPanel({
     setFieldMatches([])
     setOtherModulesResults([])
     setIsDropdownOpen(false)
-  }, [track, module])
+  }, [track, module, onAutocompleteSelect])
 
   // =============================================================================
   // Keyboard navigation

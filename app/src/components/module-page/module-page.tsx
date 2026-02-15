@@ -120,6 +120,18 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const lastTrackedSearch = useRef('')
   const pendingSearchRef = useRef<{ query: string; count: number; module: string } | null>(null)
   const lastTrigger = useRef<string>('page_load')
+  const skipNextSearchTrack = useRef(false)
+
+  // Cancel pending search tracking when user selects from autocomplete
+  // (autocomplete_click already covers the event — avoid duplicate tracking)
+  const handleAutocompleteSelect = useCallback(() => {
+    if (searchTrackTimer.current) {
+      clearTimeout(searchTrackTimer.current)
+      searchTrackTimer.current = null
+    }
+    pendingSearchRef.current = null
+    skipNextSearchTrack.current = true // Skip the data-load search track that follows
+  }, [])
 
   const [data, setData] = useState<ModuleDataResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -318,9 +330,13 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           })
         }
 
-        // Debounced search tracking — 1s quiet period filters keystrokes
+        // Debounced search tracking — 2s quiet period filters keystrokes + autocomplete browsing
         // Pending search is flushed on unmount/module-switch so events aren't lost on navigation
-        if (filters.search && filters.search.trim()) {
+        // Skip if this search came from an autocomplete selection (already tracked as autocomplete_click)
+        if (skipNextSearchTrack.current) {
+          skipNextSearchTrack.current = false
+          lastTrackedSearch.current = filters.search || ''
+        } else if (filters.search && filters.search.trim()) {
           pendingSearchRef.current = { query: filters.search, count: response.pagination.totalRows, module: moduleId }
           if (searchTrackTimer.current) clearTimeout(searchTrackTimer.current)
           searchTrackTimer.current = setTimeout(() => {
@@ -334,7 +350,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
               })
               pendingSearchRef.current = null
             }
-          }, 1000)
+          }, 2000)
         } else if (!filters.search) {
           // Clear tracking state when search is cleared
           lastTrackedSearch.current = ''
@@ -498,6 +514,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             onFilterChange={handleFilterChange}
             isLoading={isLoading}
             autoExpandTrigger={filterExpandTrigger}
+            onAutocompleteSelect={handleAutocompleteSelect}
           />
 
           {data && (
