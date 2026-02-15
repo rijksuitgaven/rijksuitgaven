@@ -578,9 +578,6 @@ export default function TeamLedenPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8" style={{ fontFamily: 'var(--font-condensed), sans-serif' }}>
-      <h1 className="text-2xl font-bold text-[var(--navy-dark)] mb-4">
-        Team
-      </h1>
       <TeamNav />
 
       {/* Inline stats + Nieuw lid button */}
