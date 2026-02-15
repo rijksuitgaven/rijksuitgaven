@@ -102,6 +102,7 @@
 - ✅ **2026-02-15 (Session 13):** Error dashboard false positives — 9 errors all transient network noise (NavigationError/Failed to fetch from rapid module switching). Expanded AbortError guard in module-page.tsx catch block. Cleared from production DB.
 - ✅ **2026-02-15 (Session 14):** Usage events reset — truncated 55 test events. Clean slate for production.
 - ✅ **2026-02-15 (Session 15):** Module nav bar overflow fix — expert panel (5 specialists) approved condensed font on nav bar only. `var(--font-condensed)` on `<nav>`, padding px-3→px-2.5. Full labels preserved, scroll fallback kept.
+- ✅ **2026-02-15 (Session 16):** Search tracking — intermediate keystrokes tracked during autocomplete browsing. Added `onAutocompleteSelect` callback (filter-panel → module-page) to cancel pending timer. Debounce 1s→2s. `skipNextSearchTrack` ref prevents duplicate tracking after autocomplete selection.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -129,20 +130,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **2 files** (2026-02-15 Sessions 13-15)
+1. **2 files** (2026-02-15 Session 16)
+   Search tracking fix: `onAutocompleteSelect` callback cancels pending search timer on autocomplete selection, debounce 1s→2s, `skipNextSearchTrack` ref.
+
+2. **3 files** (2026-02-15 Sessions 13-15)
    Error noise suppression (module-page.tsx: NetworkError/Failed to fetch guard). Module nav bar overflow fix (header.tsx: condensed font + tighter padding). Usage events truncated.
 
-2. **23 files + 4 migrations** (2026-02-15 Sessions 6-12)
-   Statistics dashboard debugging: security fixes (middleware + BFF auth), analytics resilience (fetch-first, endpoint rename, debounce+flush), member count filters, search success criteria, NaN fix, "Team" heading removed, autocomplete dropdown fix. 12 commits.
+3. **23 files + 4 migrations** (2026-02-15 Sessions 6-12)
+   Statistics dashboard debugging: security fixes (middleware + BFF auth), analytics resilience (fetch-first, endpoint rename, debounce+flush), member count filters, search success criteria, NaN fix, "Team" heading removed, autocomplete dropdown fix.
 
-3. **11 files + 1 created** (2026-02-15 Sessions 1-5)
+4. **11 files + 1 created** (2026-02-15 Sessions 1-5)
    Email system overhaul: all transactional emails now via Resend on own domain (no Supabase URLs). UX-033 Fouten as separate tab. Invite "Opnieuw" bug fixed (last_active_at check). Dual callback flow (PKCE + token_hash).
 
-4. **5 files + 1 SQL migration** (2026-02-14 Session 17)
+5. **5 files + 1 SQL migration** (2026-02-14 Session 17)
    CRM lifecycle redesign: "Opzeggen" replaces delete on Leden, "Archiveren" on Contacten, gearchiveerd type, re-activation fix, sortable columns, source default.
-
-5. **13 files + 2 SQL migrations** (2026-02-14 Session 15+16)
-   CRM Phase 2: unified `people` table, 8 API routes rewritten, "Maak lid" endpoint, soft-delete subscriptions, fixed prospect→churned computation.
 
 ---
 

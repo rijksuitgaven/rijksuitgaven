@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-02-14
+**Last Updated:** 2026-02-15
 
 Items logged for future versions, not in V1.0 scope.
 
