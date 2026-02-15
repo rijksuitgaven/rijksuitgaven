@@ -96,6 +96,8 @@
 - ✅ **2026-02-15 (Session 3):** Invite "Opnieuw" bug — `last_sign_in_at` from auth set on failed PKCE exchanges, making invite route skip email. Fixed: check `last_active_at` from subscription instead.
 - ✅ **2026-02-15 (Session 4):** Invite links own domain — Supabase verify URL replaced with `token_hash` + `verifyOtp()` on own domain. Callback page now handles dual flow (PKCE code + token_hash).
 - ✅ **2026-02-15 (Session 5):** Magic link login own domain — new `POST /api/v1/auth/magic-link` using `generateLink` + Resend. All transactional emails now bypass Supabase completely. Rate limit, enumeration prevention, branded templates.
+- ✅ **2026-02-15 (Sessions 6-8):** Statistics dashboard debugging — 3 rounds of fixes. Member count wrong (cancelled_at + deleted_at filters). sendBeacon blocked by Mullvad/uBlock (fetch-first + text/plain + endpoint rename analytics→events). Security: middleware denies no-subscription, BFF auth checks subscription. Login flash fixed (isLoading flag). Unlinked subscriptions linked. Migrations 048+049. 10 commits.
+- ✅ **2026-02-15 (Sessions 9-11):** Statistics dashboard round 2 — null% fix, search tracking debounce (1s + flush-on-unmount), NaN in Resultaten (avg_results column restored), autocomplete_click added to search success criteria, "Team" heading removed from 5 pages. Migrations 050+051. Zoeksucces now 85.7%.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -123,20 +125,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **11 files + 1 created** (2026-02-15 Sessions 1-5)
+1. **23 files + 4 migrations** (2026-02-15 Sessions 6-11)
+   Statistics dashboard debugging: security fixes (middleware + BFF auth), analytics resilience (fetch-first, endpoint rename, debounce+flush), member count filters, search success criteria, NaN fix, "Team" heading removed. 10 commits.
+
+2. **11 files + 1 created** (2026-02-15 Sessions 1-5)
    Email system overhaul: all transactional emails now via Resend on own domain (no Supabase URLs). UX-033 Fouten as separate tab. Invite "Opnieuw" bug fixed (last_active_at check). Dual callback flow (PKCE + token_hash).
 
-2. **5 files + 1 SQL migration** (2026-02-14 Session 17)
+3. **5 files + 1 SQL migration** (2026-02-14 Session 17)
    CRM lifecycle redesign: "Opzeggen" replaces delete on Leden, "Archiveren" on Contacten, gearchiveerd type, re-activation fix, sortable columns, source default.
 
-3. **13 files + 2 SQL migrations** (2026-02-14 Session 15+16)
+4. **13 files + 2 SQL migrations** (2026-02-14 Session 15+16)
    CRM Phase 2: unified `people` table, 8 API routes rewritten, "Maak lid" endpoint, soft-delete subscriptions, fixed prospect→churned computation.
 
-4. **2 files** MODIFIED (2026-02-14 Session 14)
+5. **2 files** MODIFIED (2026-02-14 Session 14)
    Activation email branding aligned with magic link template: logo, light blue background, centered card.
-
-5. **invite/route.ts + invite-user.html** MODIFIED (2026-02-14 Session 13 cont.)
-   Welcome email rewrite: activation framing, custom Resend template, three user scenarios.
 
 ---
 
