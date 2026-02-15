@@ -134,7 +134,7 @@ export async function POST(
   // Get the subscription with person data via FK JOIN
   const { data: sub, error: subError } = await supabase
     .from('subscriptions')
-    .select('user_id, people!inner(email, first_name)')
+    .select('user_id, last_active_at, people!inner(email, first_name)')
     .eq('id', id)
     .single()
 
@@ -152,12 +152,12 @@ export async function POST(
   }
 
   // Check if user already exists in auth
+  // Use subscription's last_active_at (not auth's last_sign_in_at) to determine
+  // if user is truly active — last_sign_in_at can be set by a failed PKCE exchange
   let needsCreate = false
   if ((sub as { user_id: string | null }).user_id) {
-    const { data: { user } } = await supabase.auth.admin.getUserById((sub as { user_id: string }).user_id)
-
-    if (user?.last_sign_in_at) {
-      // Already active — just set invited_at, no email needed
+    if ((sub as { last_active_at: string | null }).last_active_at) {
+      // User has actually used the app — just set invited_at, no email needed
       await supabase
         .from('subscriptions')
         .update({ invited_at: new Date().toISOString() })
