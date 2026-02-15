@@ -112,8 +112,15 @@ export async function POST(
 
   if (authError) {
     if (authError.message?.includes('already been registered')) {
-      const { data: { users } } = await supabase.auth.admin.listUsers()
-      const existingUser = users?.find(u => u.email === person.email)
+      // Find existing auth user by iterating pages (no getUserByEmail in Supabase)
+      let existingUser = null
+      let page = 1
+      while (!existingUser) {
+        const { data: { users } } = await supabase.auth.admin.listUsers({ page, perPage: 50 })
+        if (!users || users.length === 0) break
+        existingUser = users.find(u => u.email === person.email) ?? null
+        page++
+      }
       if (!existingUser) {
         return NextResponse.json({ error: 'Gebruiker bestaat al maar kon niet gevonden worden' }, { status: 409 })
       }

@@ -18,7 +18,9 @@ import { Resend } from 'resend'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 
-function buildActivationEmail(firstName: string, email: string, actionLink: string): string {
+function buildActivationEmail(firstName: string, email: string, actionLink: string, siteUrl: string): string {
+  // Extract display hostname (e.g., "beta.rijksuitgaven.nl") from full origin URL
+  const displayHost = siteUrl.replace(/^https?:\/\//, '')
   return `
 <html>
 <head>
@@ -35,7 +37,7 @@ function buildActivationEmail(firstName: string, email: string, actionLink: stri
           <!-- Logo -->
           <tr>
             <td align="center" style="padding-bottom: 32px;">
-              <img src="https://beta.rijksuitgaven.nl/logo.png" alt="Rijksuitgaven" width="220" style="display: block; width: 220px; height: auto;" />
+              <img src="${siteUrl}/logo.png" alt="Rijksuitgaven" width="220" style="display: block; width: 220px; height: auto;" />
             </td>
           </tr>
 
@@ -97,7 +99,7 @@ function buildActivationEmail(firstName: string, email: string, actionLink: stri
                 <!-- Renewal instructions -->
                 <tr>
                   <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center;">
-                    Link verlopen? Ga naar <a href="https://rijksuitgaven.nl" style="color: #436FA3; text-decoration: none;">rijksuitgaven.nl</a>, klik op <strong>Inloggen</strong> en vraag een nieuwe link aan met uw e-mailadres (${email}).
+                    Link verlopen? Ga naar <a href="${siteUrl}" style="color: #436FA3; text-decoration: none;">${displayHost}</a>, klik op <strong>Inloggen</strong> en vraag een nieuwe link aan met uw e-mailadres (${email}).
                   </td>
                 </tr>
                 <tr>
@@ -119,7 +121,7 @@ function buildActivationEmail(firstName: string, email: string, actionLink: stri
 }
 
 export async function POST(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   if (!(await isAdmin())) {
@@ -188,10 +190,20 @@ export async function POST(
     }
   }
 
+  // Derive site origin from request headers (Railway reverse proxy sets x-forwarded-*)
+  const forwardedHost = request.headers.get('x-forwarded-host')
+  const forwardedProto = request.headers.get('x-forwarded-proto') ?? 'https'
+  const origin = forwardedHost
+    ? `${forwardedProto}://${forwardedHost}`
+    : request.nextUrl.origin
+
   // Generate magic link for the user
   const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
     type: 'magiclink',
     email: person.email,
+    options: {
+      redirectTo: `${origin}/auth/callback`,
+    },
   })
 
   if (linkError || !linkData?.properties?.action_link) {
@@ -205,7 +217,7 @@ export async function POST(
     from: 'Rijksuitgaven <noreply@rijksuitgaven.nl>',
     to: person.email,
     subject: 'Welkom bij Rijksuitgaven — activeer uw account',
-    html: buildActivationEmail(person.first_name, person.email, linkData.properties.action_link),
+    html: buildActivationEmail(person.first_name, person.email, linkData.properties.action_link, origin),
   })
 
   if (sendError) {
