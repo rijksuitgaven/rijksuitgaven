@@ -506,7 +506,7 @@ export default function StatistiekenPage() {
               <PulseCard
                 icon={<Target className="w-4 h-4" />}
                 label="Zoeksucces"
-                value={sc ? `${sc.success_rate}%` : '—'}
+                value={sc && sc.success_rate != null ? `${sc.success_rate}%` : '—'}
                 subtext={sc ? `${sc.successful_searches} van ${sc.total_searches}` : 'geen data'}
                 isString
               />

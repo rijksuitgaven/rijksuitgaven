@@ -116,7 +116,6 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const searchParams = useSearchParams()
   const { track } = useAnalytics()
   const hasTrackedView = useRef(false)
-  const searchTrackTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastTrackedSearch = useRef('')
   const lastTrigger = useRef<string>('page_load')
 
@@ -196,18 +195,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     setPage(1)
     // Clear search tracking state on module switch
     lastTrackedSearch.current = ''
-    if (searchTrackTimer.current) {
-      clearTimeout(searchTrackTimer.current)
-      searchTrackTimer.current = null
-    }
   }, [moduleId])
-
-  // Cleanup search track timer on unmount
-  useEffect(() => {
-    return () => {
-      if (searchTrackTimer.current) clearTimeout(searchTrackTimer.current)
-    }
-  }, [])
 
   // Update URL when filters change
   useEffect(() => {
@@ -301,29 +289,20 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           })
         }
 
-        // Debounced search tracking — 2s quiet period captures final intent, not keystrokes
-        // Fixes: tracks only final query, uses real result_count from response
+        // Search tracking — fire immediately with deduplication (no setTimeout delay)
+        // Previous 2s debounce caused events to be lost when user navigated before timer fired
         if (filters.search && filters.search.trim()) {
-          if (searchTrackTimer.current) clearTimeout(searchTrackTimer.current)
-          const querySnap = filters.search
-          const countSnap = response.pagination.totalRows
-          searchTrackTimer.current = setTimeout(() => {
-            if (querySnap !== lastTrackedSearch.current) {
-              lastTrackedSearch.current = querySnap
-              track('search', moduleId, {
-                query: querySnap,
-                result_count: countSnap,
-                search_type: 'module_filter',
-              })
-            }
-          }, 2000)
+          if (filters.search !== lastTrackedSearch.current) {
+            lastTrackedSearch.current = filters.search
+            track('search', moduleId, {
+              query: filters.search,
+              result_count: response.pagination.totalRows,
+              search_type: 'module_filter',
+            })
+          }
         } else if (!filters.search) {
           // Clear tracking state when search is cleared
           lastTrackedSearch.current = ''
-          if (searchTrackTimer.current) {
-            clearTimeout(searchTrackTimer.current)
-            searchTrackTimer.current = null
-          }
         }
       } catch (err) {
         // Ignore abort errors - they're expected when deps change

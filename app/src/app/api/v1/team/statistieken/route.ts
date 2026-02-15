@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
     supabase.rpc('get_usage_zero_results', { since_date: sinceISO, max_results: 10 }),
     supabase.rpc('get_usage_actors', { since_date: sinceISO, max_results: 30 }),
     supabase.rpc('get_usage_errors', { since_date: sinceISO, max_results: 20 }),
-    supabase.from('subscriptions').select('id', { count: 'exact', head: true }).is('cancelled_at', null),
+    supabase.from('subscriptions').select('id', { count: 'exact', head: true }).is('cancelled_at', null).is('deleted_at', null),
     // New V3 analytics
     supabase.rpc('get_usage_sessions_summary', { since_date: sinceISO }),
     supabase.rpc('get_usage_exit_intent', { since_date: sinceISO, max_results: 10 }),
