@@ -8,7 +8,13 @@ import { FeedbackButton } from '@/components/feedback'
 import { MobileBanner } from '@/components/mobile-banner'
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const { isLoggedIn } = useAuth()
+  const { isLoggedIn, isLoading } = useAuth()
+
+  // While auth state is loading, render nothing for the header area
+  // to prevent flash between PublicHeader and Header
+  if (isLoading) {
+    return <>{children}</>
+  }
 
   return (
     <>

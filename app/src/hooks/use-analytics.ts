@@ -37,6 +37,10 @@ let eventQueue: AnalyticsEvent[] = []
 let flushTimer: ReturnType<typeof setInterval> | null = null
 let hookCount = 0
 
+/**
+ * Send events via fetch (primary method).
+ * Works in all browsers, includes credentials, proper error handling.
+ */
 function sendViaFetch(batch: AnalyticsEvent[]) {
   fetch(ENDPOINT, {
     method: 'POST',
@@ -49,30 +53,41 @@ function sendViaFetch(batch: AnalyticsEvent[]) {
   })
 }
 
+/**
+ * Send events via sendBeacon (page unload fallback).
+ * Uses text/plain Content-Type to bypass privacy browser blocking
+ * (uBlock Origin blocks application/json sendBeacon as tracking).
+ */
+function sendViaBeacon(batch: AnalyticsEvent[]): boolean {
+  if (typeof navigator === 'undefined' || !navigator.sendBeacon) return false
+  const blob = new Blob([JSON.stringify({ events: batch })], { type: 'text/plain' })
+  return navigator.sendBeacon(ENDPOINT, blob)
+}
+
+/**
+ * Regular flush: use fetch (reliable, includes credentials).
+ */
 function flushQueue() {
   if (eventQueue.length === 0) return
-
   const batch = eventQueue.splice(0, MAX_EVENTS_PER_FLUSH)
+  sendViaFetch(batch)
+}
 
-  // Use sendBeacon if available (works during page unload)
-  // Check return value — privacy browsers may block sendBeacon silently
-  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-    const blob = new Blob([JSON.stringify({ events: batch })], {
-      type: 'application/json',
-    })
-    const queued = navigator.sendBeacon(ENDPOINT, blob)
-    if (!queued) {
-      // sendBeacon rejected (privacy browser, quota exceeded, etc.) — fall back to fetch
-      sendViaFetch(batch)
-    }
-  } else {
+/**
+ * Page unload flush: try sendBeacon first (survives page close),
+ * fall back to fetch with keepalive.
+ */
+function flushOnUnload() {
+  if (eventQueue.length === 0) return
+  const batch = eventQueue.splice(0, MAX_EVENTS_PER_FLUSH)
+  if (!sendViaBeacon(batch)) {
     sendViaFetch(batch)
   }
 }
 
 function handleVisibilityChange() {
   if (document.visibilityState === 'hidden') {
-    flushQueue()
+    flushOnUnload()
   }
 }
 
@@ -80,9 +95,9 @@ function handleVisibilityChange() {
  * Hook for tracking usage analytics events (UX-032)
  *
  * Events are batched client-side and flushed:
- * - Every 30 seconds
- * - When batch reaches 10 events
- * - When user navigates away (visibilitychange)
+ * - Every 30 seconds (via fetch)
+ * - When batch reaches 10 events (via fetch)
+ * - When user navigates away (via sendBeacon, falls back to fetch)
  *
  * Zero performance impact — events queue in memory, never block interaction.
  */
@@ -105,7 +120,7 @@ export function useAnalytics() {
 
       // Cleanup on last hook unmount
       if (hookCount === 0) {
-        flushQueue() // Flush remaining events
+        flushOnUnload() // Flush remaining events (page closing)
         if (flushTimer) {
           clearInterval(flushTimer)
           flushTimer = null

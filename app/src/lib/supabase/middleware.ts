@@ -112,10 +112,18 @@ export async function updateSession(request: NextRequest) {
           maxAge: 300,
         })
       }
+    } else {
+      // No subscription row for this user — deny access.
+      // All legitimate users have a subscription created by admin via /team/leden.
+      const forwardedHost = request.headers.get('x-forwarded-host')
+      const forwardedProto = request.headers.get('x-forwarded-proto') ?? 'https'
+      if (forwardedHost) {
+        return NextResponse.redirect(new URL('/verlopen', `${forwardedProto}://${forwardedHost}`))
+      }
+      const url = request.nextUrl.clone()
+      url.pathname = '/verlopen'
+      return NextResponse.redirect(url)
     }
-    // No subscription row = allow access (new users before subscription is created,
-    // or admin setting up the system). Access control tightened once subscriptions
-    // are populated for all users.
   }
 
   // IMPORTANT: Return supabaseResponse, NOT a fresh NextResponse.next().

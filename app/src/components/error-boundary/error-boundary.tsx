@@ -52,8 +52,16 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           timestamp: new Date().toISOString(),
         }],
       }
-      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' })
-      navigator.sendBeacon('/api/v1/events', blob)
+      const blob = new Blob([JSON.stringify(payload)], { type: 'text/plain' })
+      if (!navigator.sendBeacon('/api/v1/events', blob)) {
+        fetch('/api/v1/events', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          keepalive: true,
+          credentials: 'same-origin',
+        }).catch(() => {})
+      }
     } catch {
       // Silently ignore — analytics should never make error recovery worse
     }

@@ -22,7 +22,7 @@ function ChevronIcon({ className }: { className?: string }) {
 }
 
 export function AuthButton() {
-  const { userEmail } = useAuth()
+  const { userEmail, isLoading } = useAuth()
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -44,6 +44,8 @@ export function AuthButton() {
       document.removeEventListener('keydown', handleEscape)
     }
   }, [open])
+
+  if (isLoading) return null
 
   if (!userEmail) {
     return (
