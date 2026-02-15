@@ -1,7 +1,7 @@
 /**
  * Analytics Event Ingestion (UX-032)
  *
- * POST /api/v1/analytics — Receive batched events from client
+ * POST /api/v1/events — Receive batched events from client
  *
  * - Validates event structure (max 20 per batch)
  * - Extracts user_id from session, hashes to actor_hash

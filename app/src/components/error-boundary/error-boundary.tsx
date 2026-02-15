@@ -53,7 +53,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         }],
       }
       const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' })
-      navigator.sendBeacon('/api/v1/analytics', blob)
+      navigator.sendBeacon('/api/v1/events', blob)
     } catch {
       // Silently ignore — analytics should never make error recovery worse
     }

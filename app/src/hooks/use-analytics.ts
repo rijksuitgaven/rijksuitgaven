@@ -30,7 +30,7 @@ interface AnalyticsEvent {
 const FLUSH_INTERVAL_MS = 30_000 // 30 seconds
 const MAX_BATCH_SIZE = 10
 const MAX_EVENTS_PER_FLUSH = 20
-const ENDPOINT = '/api/v1/analytics'
+const ENDPOINT = '/api/v1/events'
 
 // Module-level queue shared across all hook instances
 let eventQueue: AnalyticsEvent[] = []
