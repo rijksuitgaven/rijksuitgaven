@@ -345,9 +345,17 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           }
         }
       } catch (err) {
-        // Ignore abort errors - they're expected when deps change
-        if (err instanceof Error && err.name === 'AbortError') {
-          return
+        // Ignore abort errors and transient network errors from navigation/cancelled requests
+        if (err instanceof Error) {
+          const msg = err.message
+          if (
+            err.name === 'AbortError' ||
+            msg.includes('NetworkError') ||
+            msg === 'Failed to fetch' ||
+            msg.endsWith('data: ') // "Failed to fetch X data: " with empty error
+          ) {
+            return
+          }
         }
         const internalMsg = err instanceof Error ? err.message : String(err)
         console.error('[Module]', internalMsg)
