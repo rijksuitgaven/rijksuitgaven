@@ -181,6 +181,20 @@ export async function POST(
         console.error('[Admin] Create user error:', createError)
         return NextResponse.json({ error: 'Fout bij aanmaken account' }, { status: 500 })
       }
+      // User already exists — look up their auth ID and link to subscription
+      let existingUserId: string | null = null
+      for (let page = 1; !existingUserId; page++) {
+        const { data: { users: batch } } = await supabase.auth.admin.listUsers({ page, perPage: 50 })
+        if (batch.length === 0) break
+        const match = batch.find(u => u.email === person.email)
+        if (match) existingUserId = match.id
+      }
+      if (existingUserId) {
+        await supabase
+          .from('subscriptions')
+          .update({ user_id: existingUserId })
+          .eq('id', id)
+      }
     } else if (newUser?.user) {
       // Link the new auth user to the subscription
       await supabase

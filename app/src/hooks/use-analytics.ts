@@ -37,27 +37,36 @@ let eventQueue: AnalyticsEvent[] = []
 let flushTimer: ReturnType<typeof setInterval> | null = null
 let hookCount = 0
 
+function sendViaFetch(batch: AnalyticsEvent[]) {
+  fetch(ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ events: batch }),
+    keepalive: true,
+    credentials: 'same-origin',
+  }).catch(() => {
+    // Silently ignore — analytics should never interrupt user experience
+  })
+}
+
 function flushQueue() {
   if (eventQueue.length === 0) return
 
   const batch = eventQueue.splice(0, MAX_EVENTS_PER_FLUSH)
 
   // Use sendBeacon if available (works during page unload)
+  // Check return value — privacy browsers may block sendBeacon silently
   if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
     const blob = new Blob([JSON.stringify({ events: batch })], {
       type: 'application/json',
     })
-    navigator.sendBeacon(ENDPOINT, blob)
+    const queued = navigator.sendBeacon(ENDPOINT, blob)
+    if (!queued) {
+      // sendBeacon rejected (privacy browser, quota exceeded, etc.) — fall back to fetch
+      sendViaFetch(batch)
+    }
   } else {
-    // Fallback to fetch (fire-and-forget)
-    fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ events: batch }),
-      keepalive: true,
-    }).catch(() => {
-      // Silently ignore — analytics should never interrupt user experience
-    })
+    sendViaFetch(batch)
   }
 }
 
