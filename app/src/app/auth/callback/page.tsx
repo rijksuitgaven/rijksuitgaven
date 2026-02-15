@@ -1,7 +1,13 @@
 'use client'
 
 /**
- * Auth Callback — Fully client-side PKCE code exchange.
+ * Auth Callback — Fully client-side auth exchange.
+ *
+ * Handles two flows:
+ * A) PKCE code exchange (regular magic link login via signInWithOtp)
+ *    → /auth/callback?code=xxx
+ * B) Token hash verification (admin invite via generateLink)
+ *    → /auth/callback?token_hash=xxx&type=magiclink
  *
  * WHY client-side?
  * Server-side approaches (Route Handlers, Server Components) add Set-Cookie
@@ -9,13 +15,6 @@
  * headers intermittently clear auth cookies. By doing the exchange entirely
  * on the client, the browser Supabase client manages cookies directly in the
  * cookie jar — no server-side Set-Cookie interference.
- *
- * Flow:
- * 1. User clicks magic link → Supabase redirects to /auth/callback?code=xxx
- * 2. This page reads code from URL
- * 3. Browser Supabase client exchanges code + code-verifier (from cookie) for session
- * 4. Browser client stores auth tokens directly in cookies
- * 5. window.location.replace('/') navigates to homepage with cookies intact
  */
 
 import { Suspense, useEffect, useRef } from 'react'
@@ -32,12 +31,32 @@ function CallbackHandler() {
     exchangeAttempted.current = true
 
     const code = searchParams.get('code')
+    const tokenHash = searchParams.get('token_hash')
+    const type = searchParams.get('type')
+    const supabase = createClient()
+
+    // Flow B: Token hash from admin invite (generateLink)
+    if (tokenHash && type) {
+      supabase.auth.verifyOtp({
+        token_hash: tokenHash,
+        type: type as 'magiclink',
+      }).then(({ error }) => {
+        if (error) {
+          window.location.replace('/login?error=invalid_link')
+          return
+        }
+        fetch('/api/v1/me/activate', { method: 'POST' }).catch(() => {})
+        window.location.replace('/')
+      })
+      return
+    }
+
+    // Flow A: PKCE code exchange (regular magic link)
     if (!code) {
       window.location.replace('/login?error=no_code')
       return
     }
 
-    const supabase = createClient()
     supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
       if (error) {
         if (

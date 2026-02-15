@@ -206,10 +206,14 @@ export async function POST(
     },
   })
 
-  if (linkError || !linkData?.properties?.action_link) {
+  if (linkError || !linkData?.properties?.hashed_token) {
     console.error('[Admin] generateLink error:', linkError)
     return NextResponse.json({ error: 'Fout bij aanmaken activatielink' }, { status: 500 })
   }
+
+  // Build activation link on our own domain (not Supabase's verify URL)
+  // This avoids the scary supabase.co URL and uses verifyOtp() client-side
+  const activationLink = `${origin}/auth/callback?token_hash=${encodeURIComponent(linkData.properties.hashed_token)}&type=magiclink`
 
   // Send branded activation email via Resend
   const resend = new Resend(RESEND_API_KEY)
@@ -217,7 +221,7 @@ export async function POST(
     from: 'Rijksuitgaven <noreply@rijksuitgaven.nl>',
     to: person.email,
     subject: 'Welkom bij Rijksuitgaven — activeer uw account',
-    html: buildActivationEmail(person.first_name, person.email, linkData.properties.action_link, origin),
+    html: buildActivationEmail(person.first_name, person.email, activationLink, origin),
   })
 
   if (sendError) {
