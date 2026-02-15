@@ -956,6 +956,7 @@ export function FilterPanel({
     // Set search to recipient name and close dropdown
     // Stays on current module, filters the table
     track('autocomplete_click', module, { result_type: 'recipient', selected_value: result.name, target_module: module })
+    hasUserTypedRef.current = false // Prevent autocomplete effect from reopening dropdown
     skipDebounceRef.current = true // Explicit action — apply filter immediately
     setLocalFilters((prev) => ({ ...prev, search: result.name }))
     setIsDropdownOpen(false)
