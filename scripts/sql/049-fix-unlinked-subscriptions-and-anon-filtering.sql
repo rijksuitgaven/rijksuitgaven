@@ -7,12 +7,17 @@
 -- get_usage_actors, get_usage_sessions_summary, get_usage_retention, etc.)
 
 -- Part 1: Link unlinked subscriptions via people.email → auth.users.email
+-- Skip user_ids already linked to another subscription (unique constraint)
 UPDATE subscriptions s
 SET user_id = au.id
 FROM people p, auth.users au
 WHERE s.person_id = p.id
   AND s.user_id IS NULL
-  AND p.email = au.email;
+  AND p.email = au.email
+  AND NOT EXISTS (
+    SELECT 1 FROM subscriptions s2
+    WHERE s2.user_id = au.id AND s2.id != s.id
+  );
 
 -- Part 2: Consistent anon filtering in pulse + modules + searches + exports
 CREATE OR REPLACE FUNCTION get_usage_pulse(since_date TIMESTAMPTZ)
