@@ -1,10 +1,8 @@
 -- Migration 049: Fix unlinked subscriptions + consistent anon filtering
 --
 -- Part 1: Link subscriptions with NULL user_id to their auth users
--- (caused by invite flow "already registered" bug — user_id was never set)
---
--- Part 2: Exclude anon_000000000000 from get_usage_pulse (consistency with
--- get_usage_actors, get_usage_sessions_summary, get_usage_retention, etc.)
+-- Part 2: Clean start — truncate usage_events (test data from broken tracking)
+-- Part 3: DROP + CREATE all pulse/module/search/export functions with anon filtering
 
 -- Part 1: Link unlinked subscriptions via people.email → auth.users.email
 -- Skip user_ids already linked to another subscription (unique constraint)
@@ -19,8 +17,16 @@ WHERE s.person_id = p.id
     WHERE s2.user_id = au.id AND s2.id != s.id
   );
 
--- Part 2: Consistent anon filtering in pulse + modules + searches + exports
-CREATE OR REPLACE FUNCTION get_usage_pulse(since_date TIMESTAMPTZ)
+-- Part 2: Fresh start — clear all usage events (test data with broken tracking)
+TRUNCATE usage_events;
+
+-- Part 3: DROP + CREATE functions with consistent anon filtering
+DROP FUNCTION IF EXISTS get_usage_pulse(TIMESTAMPTZ);
+DROP FUNCTION IF EXISTS get_usage_modules(TIMESTAMPTZ);
+DROP FUNCTION IF EXISTS get_usage_searches(TIMESTAMPTZ, INT);
+DROP FUNCTION IF EXISTS get_usage_exports(TIMESTAMPTZ);
+
+CREATE FUNCTION get_usage_pulse(since_date TIMESTAMPTZ)
 RETURNS TABLE(event_type VARCHAR, event_count BIGINT, unique_actors BIGINT)
 LANGUAGE sql STABLE
 SECURITY DEFINER
@@ -37,7 +43,7 @@ AS $$
   ORDER BY event_count DESC;
 $$;
 
-CREATE OR REPLACE FUNCTION get_usage_modules(since_date TIMESTAMPTZ)
+CREATE FUNCTION get_usage_modules(since_date TIMESTAMPTZ)
 RETURNS TABLE(module VARCHAR, view_count BIGINT, unique_actors BIGINT)
 LANGUAGE sql STABLE
 SECURITY DEFINER
@@ -56,7 +62,7 @@ AS $$
   ORDER BY view_count DESC;
 $$;
 
-CREATE OR REPLACE FUNCTION get_usage_searches(since_date TIMESTAMPTZ, max_results INT DEFAULT 15)
+CREATE FUNCTION get_usage_searches(since_date TIMESTAMPTZ, max_results INT DEFAULT 15)
 RETURNS TABLE(query TEXT, search_count BIGINT, unique_actors BIGINT, top_module VARCHAR)
 LANGUAGE sql STABLE
 SECURITY DEFINER
@@ -79,7 +85,7 @@ AS $$
   LIMIT max_results;
 $$;
 
-CREATE OR REPLACE FUNCTION get_usage_exports(since_date TIMESTAMPTZ)
+CREATE FUNCTION get_usage_exports(since_date TIMESTAMPTZ)
 RETURNS TABLE(format TEXT, export_count BIGINT, avg_rows NUMERIC, unique_actors BIGINT)
 LANGUAGE sql STABLE
 SECURITY DEFINER
