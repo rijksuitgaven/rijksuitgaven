@@ -6,8 +6,8 @@ import { TeamNav } from '@/components/team-nav'
 import {
   BarChart3, Search, Download, MousePointerClick, Users, AlertTriangle,
   ChevronDown, ChevronRight, Eye, SlidersHorizontal, Columns, Clock,
-  ArrowUpDown, ArrowRight, Sparkles, ChevronsRight, Trash2, CheckCircle,
-  ExternalLink, Copy, Check, TrendingUp, TrendingDown, Minus, Timer,
+  ArrowUpDown, ArrowRight, Sparkles, ChevronsRight,
+  ExternalLink, TrendingUp, TrendingDown, Minus, Timer,
   Target, LogOut, Activity,
 } from 'lucide-react'
 
@@ -395,26 +395,6 @@ export default function StatistiekenPage() {
     setExpandedActor(prev => prev === hash ? null : hash)
   }, [])
 
-  const clearOneError = useCallback((createdAt: string) => {
-    fetch(`/api/v1/team/statistieken?created_at=${encodeURIComponent(createdAt)}`, { method: 'DELETE' })
-      .then(res => {
-        if (res.ok && data) {
-          setData({ ...data, errors: data.errors.filter(e => e.created_at !== createdAt) })
-        }
-      })
-      .catch(() => {})
-  }, [data])
-
-  const clearAllErrors = useCallback(() => {
-    fetch(`/api/v1/team/statistieken`, { method: 'DELETE' })
-      .then(res => {
-        if (res.ok && data) {
-          setData({ ...data, errors: [] })
-        }
-      })
-      .catch(() => {})
-  }, [data])
-
   const handleSort = useCallback((field: string) => {
     setSortDir(prev => sortField === field ? (prev === 'asc' ? 'desc' : 'asc') : 'desc')
     setSortField(field)
@@ -434,7 +414,6 @@ export default function StatistiekenPage() {
   const expands = getPulseValue(data?.pulse ?? [], 'row_expand')
   const moduleViews = getPulseValue(data?.pulse ?? [], 'module_view')
   const externalLinks = getPulseValue(data?.pulse ?? [], 'external_link')
-  const errorCount = data?.errors?.length ?? 0
   const maxViews = data?.modules.length ? Math.max(...data.modules.map(m => m.view_count)) : 1
   const ss = data?.sessions_summary
   const sc = data?.search_success
@@ -555,19 +534,7 @@ export default function StatistiekenPage() {
                 value={externalLinks.count}
                 subtext={`${externalLinks.actors} unieke gebruikers`}
               />
-              {errorCount > 0 && (
-                <PulseCard
-                  icon={<AlertTriangle className="w-4 h-4" />}
-                  label="Fouten"
-                  value={errorCount}
-                  subtext={`${new Set(data.errors.map(e => e.module)).size} modules`}
-                  variant="error"
-                />
-              )}
-            </div>
-
-            {/* ═══ ERRORS SECTION ═══ */}
-            <ErrorsSection errors={data.errors} onClearOne={clearOneError} onClearAll={clearAllErrors} />
+              </div>
 
             {/* ═══ ACT 2: INZICHTEN ═══ */}
 
@@ -1049,161 +1016,6 @@ function RetentionSection({ retention }: { retention: RetentionItem[] }) {
         </div>
       )}
     </Section>
-  )
-}
-
-function formatErrorPrompt(err: ErrorItem): string {
-  const mod = MODULE_LABELS[err.module] || err.module || 'onbekend'
-  const props = err.properties || {}
-  const lines: string[] = [
-    `Fix this frontend error in rijksuitgaven:`,
-    ``,
-    `Error: "${err.message || 'Onbekende fout'}"`,
-    `Module: ${mod}`,
-  ]
-  if (props.trigger) lines.push(`Trigger: ${props.trigger}`)
-  if (props.search_query) lines.push(`Search query: "${props.search_query}"`)
-  if (props.sort_by) lines.push(`Sort column: ${props.sort_by}`)
-  if (props.has_filters) lines.push(`Active filters: yes`)
-  if (props.path) lines.push(`Path: ${props.path}`)
-  if (props.direction) lines.push(`Sort direction: ${props.direction}`)
-
-  const knownKeys = ['trigger', 'search_query', 'sort_by', 'has_filters', 'path', 'direction', 'message']
-  const extra = Object.fromEntries(Object.entries(props).filter(([k]) => !knownKeys.includes(k)))
-  if (Object.keys(extra).length > 0) {
-    lines.push(`Extra context: ${JSON.stringify(extra)}`)
-  }
-
-  lines.push(``, `Trace the root cause in the relevant component and fix it.`)
-  return lines.join('\n')
-}
-
-function ErrorsSection({ errors, onClearOne, onClearAll }: { errors: ErrorItem[]; onClearOne: (createdAt: string) => void; onClearAll: () => void }) {
-  const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
-
-  const copyPrompt = useCallback((err: ErrorItem, index: number) => {
-    const prompt = formatErrorPrompt(err)
-    navigator.clipboard.writeText(prompt).then(() => {
-      setCopiedIndex(index)
-      setTimeout(() => setCopiedIndex(null), 2000)
-    })
-  }, [])
-
-  if (errors.length === 0) {
-    return (
-      <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
-        <div className="flex items-center gap-2">
-          <span className="text-green-600"><CheckCircle className="w-4 h-4" /></span>
-          <h2 className="text-sm font-semibold text-[var(--navy-dark)] uppercase tracking-wider">Fouten</h2>
-          <span className="text-sm text-green-700 ml-2">— geen fouten geregistreerd</span>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="bg-white rounded-lg border border-red-200 p-5 mb-4">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <span className="text-red-500"><AlertTriangle className="w-4 h-4" /></span>
-          <h2 className="text-sm font-semibold text-red-700 uppercase tracking-wider">
-            Fouten ({errors.length})
-          </h2>
-        </div>
-        {errors.length > 1 && (
-          <button
-            onClick={onClearAll}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--muted-foreground)] hover:text-red-600 bg-white hover:bg-red-50 rounded-md transition-colors border border-[var(--border)] hover:border-red-200"
-          >
-            <Trash2 className="w-3 h-3" />
-            Wis alles
-          </button>
-        )}
-      </div>
-      <div className="space-y-2">
-        {errors.map((err, i) => {
-          const time = new Date(err.created_at).toLocaleString('nl-NL', {
-            day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
-          })
-          const contextPills: { label: string; value: string }[] = []
-          if (err.properties?.trigger) {
-            const triggerLabels: Record<string, string> = {
-              page_load: 'Pagina laden',
-              sort_change: 'Sorteren',
-              filter_apply: 'Filteren',
-              search: 'Zoeken',
-              page_change: 'Pagineren',
-              row_expand: 'Rij openen',
-              detail_panel: 'Detailpaneel',
-              filter_load: 'Filter laden',
-              autocomplete: 'Autocomplete',
-              feedback_submit: 'Feedback',
-              login: 'Inloggen',
-              contact_form: 'Contactformulier',
-              '404': 'Pagina niet gevonden',
-              react_render: 'React render crash',
-            }
-            contextPills.push({ label: 'Actie', value: triggerLabels[String(err.properties.trigger)] || String(err.properties.trigger) })
-          }
-          if (err.properties?.search_query) contextPills.push({ label: 'Zoekterm', value: String(err.properties.search_query) })
-          if (err.properties?.sort_by) {
-            const sortCol = String(err.properties.sort_by)
-            const sortLabel = sortCol.startsWith('y') && sortCol.length === 5
-              ? sortCol.slice(1)
-              : FIELD_LABELS[sortCol] || sortCol
-            contextPills.push({ label: 'Sortering', value: sortLabel })
-          }
-          if (err.properties?.has_filters) contextPills.push({ label: 'Filters', value: 'actief' })
-          if (err.properties?.path) contextPills.push({ label: 'Pad', value: String(err.properties.path) })
-
-          const isCopied = copiedIndex === i
-
-          return (
-            <div key={i} className="bg-red-50/60 border border-red-100 rounded-lg px-4 py-3">
-              <div className="flex items-start justify-between gap-3 mb-2">
-                <div className="text-sm font-semibold text-red-700">
-                  {err.message || 'Onbekende fout'}
-                </div>
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <button
-                    onClick={() => copyPrompt(err, i)}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all border ${
-                      isCopied
-                        ? 'text-green-700 bg-green-50 border-green-200'
-                        : 'text-[var(--navy-medium)] bg-white/80 border-red-200 hover:bg-white hover:border-[var(--navy-medium)]'
-                    }`}
-                    title="Kopieer als prompt"
-                  >
-                    {isCopied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                    {isCopied ? 'Gekopieerd' : 'Kopieer prompt'}
-                  </button>
-                  <button
-                    onClick={() => onClearOne(err.created_at)}
-                    className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-red-500 bg-white/80 border border-red-200 rounded-md hover:bg-red-50 hover:text-red-700 transition-colors"
-                    title="Verwijder deze fout"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-              <div className="flex items-center flex-wrap gap-x-4 gap-y-1.5">
-                <span className="text-xs text-[var(--muted-foreground)]">{time}</span>
-                <ModuleBadge module={err.module} variant="amber" />
-                {contextPills.map((cp, j) => (
-                  <span
-                    key={j}
-                    className="inline-flex items-center gap-1 text-xs bg-white/80 border border-red-200 rounded px-2 py-0.5"
-                  >
-                    <span className="font-semibold text-[var(--navy-dark)]">{cp.label}</span>
-                    <span className="text-[var(--navy-medium)]">{cp.value}</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          )
-        })}
-      </div>
-    </div>
   )
 }
 

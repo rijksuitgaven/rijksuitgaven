@@ -125,7 +125,56 @@ export async function POST(request: NextRequest) {
           console.error('[Analytics] Insert error:', error.message)
         }
       })
+
+    // Send email notification for error events (fire-and-forget)
+    const errorEvents = validEvents.filter(e => e.event_type === 'error')
+    if (errorEvents.length > 0 && process.env.RESEND_API_KEY) {
+      sendErrorEmail(errorEvents).catch(err => {
+        console.error('[Analytics] Error email failed:', err)
+      })
+    }
   }
 
   return response
+}
+
+const MODULE_LABELS: Record<string, string> = {
+  instrumenten: 'Instrumenten',
+  apparaat: 'Apparaat',
+  inkoop: 'Inkoop',
+  provincie: 'Provincie',
+  gemeente: 'Gemeente',
+  publiek: 'Publiek',
+  integraal: 'Integraal',
+}
+
+async function sendErrorEmail(errorEvents: { module: string | null; properties: Record<string, unknown>; created_at: string }[]) {
+  const { Resend } = await import('resend')
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  const lines = errorEvents.map(e => {
+    const mod = MODULE_LABELS[e.module ?? ''] || e.module || 'onbekend'
+    const msg = String(e.properties?.message || 'Onbekende fout')
+    const trigger = e.properties?.trigger ? ` (${e.properties.trigger})` : ''
+    const path = e.properties?.path ? ` — ${e.properties.path}` : ''
+    return `• [${mod}] ${msg}${trigger}${path}`
+  })
+
+  const subject = errorEvents.length === 1
+    ? `Fout: ${String(errorEvents[0].properties?.message || 'Onbekende fout').slice(0, 60)}`
+    : `${errorEvents.length} fouten geregistreerd`
+
+  await resend.emails.send({
+    from: 'Rijksuitgaven.nl <noreply@rijksuitgaven.nl>',
+    to: 'contact@rijksuitgaven.nl',
+    subject,
+    text: [
+      `Er ${errorEvents.length === 1 ? 'is een fout' : `zijn ${errorEvents.length} fouten`} geregistreerd op rijksuitgaven.nl:`,
+      '',
+      ...lines,
+      '',
+      'Bekijk alle fouten:',
+      'https://rijksuitgaven.nl/team/fouten',
+    ].join('\n'),
+  })
 }

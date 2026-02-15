@@ -1522,6 +1522,28 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-033: Fouten als eigen sectie
+
+**Requirement:** Move error tracking out of Statistieken into its own dedicated `/team/fouten` page with a tab in TeamNav.
+
+**Behavior:**
+- New "Fouten" tab at the end of TeamNav (after Statistieken)
+- Red badge with error count, only visible when count > 0
+- Page shows error cards with context pills, date range picker, clear individual/all buttons
+- Dashboard error alert links to `/team/fouten` instead of `/team/statistieken`
+- ErrorsSection and error PulseCard removed from Statistieken page
+
+**Rationale:**
+- Errors are operational items needing attention, not usage statistics
+- Separate tab makes error monitoring more visible and accessible
+- Consistent with Feedback having its own tab and badge
+
+**Priority:** P1 (V1.0 — pre-launch)
+
+**Status:** ⏳ In Development
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload

@@ -7,20 +7,27 @@ import { useEffect, useState } from 'react'
 export function TeamNav() {
   const pathname = usePathname()
   const [newCount, setNewCount] = useState(0)
+  const [errorCount, setErrorCount] = useState(0)
 
   useEffect(() => {
     fetch('/api/v1/team/feedback?count_only=true')
       .then(res => res.json())
       .then(data => setNewCount(data.new_count || 0))
       .catch(() => {})
+
+    fetch('/api/v1/team/statistieken?days=7')
+      .then(res => res.json())
+      .then(data => setErrorCount(data.errors?.length || 0))
+      .catch(() => {})
   }, [])
 
-  const tabs = [
+  const tabs: { href: string; label: string; exact: boolean; count?: number; countVariant?: 'pink' | 'red' }[] = [
     { href: '/team', label: 'Dashboard', exact: true },
     { href: '/team/leden', label: 'Leden', exact: false },
     { href: '/team/contacten', label: 'Contacten', exact: false },
-    { href: '/team/feedback', label: 'Feedback', exact: false, count: newCount },
+    { href: '/team/feedback', label: 'Feedback', exact: false, count: newCount, countVariant: 'pink' },
     { href: '/team/statistieken', label: 'Statistieken', exact: false },
+    { href: '/team/fouten', label: 'Fouten', exact: false, count: errorCount, countVariant: 'red' },
   ]
 
   return (
@@ -29,6 +36,7 @@ export function TeamNav() {
         const isActive = tab.exact
           ? pathname === tab.href
           : pathname.startsWith(tab.href)
+        const badgeBg = tab.countVariant === 'red' ? 'bg-red-500' : 'bg-[var(--pink)]'
         return (
           <Link
             key={tab.href}
@@ -41,7 +49,7 @@ export function TeamNav() {
           >
             {tab.label}
             {tab.count !== undefined && tab.count > 0 && (
-              <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] px-1 py-0.5 text-xs font-bold rounded-full bg-[var(--pink)] text-white">
+              <span className={`ml-1.5 inline-flex items-center justify-center min-w-[18px] px-1 py-0.5 text-xs font-bold rounded-full ${badgeBg} text-white`}>
                 {tab.count}
               </span>
             )}

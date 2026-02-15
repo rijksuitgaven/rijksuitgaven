@@ -118,7 +118,7 @@ export default function TeamDashboardPage() {
       <div className="space-y-6">
         {/* Errors alert */}
         {errors.length > 0 && (
-          <Link href="/team/statistieken" className="block">
+          <Link href="/team/fouten" className="block">
             <div className="bg-red-50 border border-red-200 rounded-lg px-5 py-4 hover:bg-red-100/60 transition-colors">
               <div className="flex items-center gap-2.5">
                 <AlertTriangle className="w-5 h-5 text-red-500 shrink-0" />
@@ -128,7 +128,7 @@ export default function TeamDashboardPage() {
                   </p>
                   <p className="text-xs text-red-600 mt-0.5">
                     {[...new Set(errors.map(e => e.module))].filter(Boolean).join(', ') || 'Diverse modules'}
-                    {' — '}bekijk in Statistieken
+                    {' — '}bekijk in Fouten
                   </p>
                 </div>
               </div>
