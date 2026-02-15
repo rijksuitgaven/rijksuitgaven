@@ -116,7 +116,9 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const searchParams = useSearchParams()
   const { track } = useAnalytics()
   const hasTrackedView = useRef(false)
+  const searchTrackTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastTrackedSearch = useRef('')
+  const pendingSearchRef = useRef<{ query: string; count: number; module: string } | null>(null)
   const lastTrigger = useRef<string>('page_load')
 
   const [data, setData] = useState<ModuleDataResponse | null>(null)
@@ -193,9 +195,36 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     setSortBy('random')
     setUserHasSorted(false)
     setPage(1)
-    // Clear search tracking state on module switch
+    // Flush pending search from previous module before clearing
+    if (pendingSearchRef.current && pendingSearchRef.current.query !== lastTrackedSearch.current) {
+      track('search', pendingSearchRef.current.module, {
+        query: pendingSearchRef.current.query,
+        result_count: pendingSearchRef.current.count,
+        search_type: 'module_filter',
+      })
+    }
+    pendingSearchRef.current = null
+    if (searchTrackTimer.current) {
+      clearTimeout(searchTrackTimer.current)
+      searchTrackTimer.current = null
+    }
     lastTrackedSearch.current = ''
-  }, [moduleId])
+  }, [moduleId, track])
+
+  // Flush pending search on unmount (navigation away)
+  useEffect(() => {
+    return () => {
+      if (searchTrackTimer.current) clearTimeout(searchTrackTimer.current)
+      const pending = pendingSearchRef.current
+      if (pending && pending.query !== lastTrackedSearch.current) {
+        track('search', pending.module, {
+          query: pending.query,
+          result_count: pending.count,
+          search_type: 'module_filter',
+        })
+      }
+    }
+  }, [track])
 
   // Update URL when filters change
   useEffect(() => {
@@ -289,20 +318,31 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           })
         }
 
-        // Search tracking — fire immediately with deduplication (no setTimeout delay)
-        // Previous 2s debounce caused events to be lost when user navigated before timer fired
+        // Debounced search tracking — 1s quiet period filters keystrokes
+        // Pending search is flushed on unmount/module-switch so events aren't lost on navigation
         if (filters.search && filters.search.trim()) {
-          if (filters.search !== lastTrackedSearch.current) {
-            lastTrackedSearch.current = filters.search
-            track('search', moduleId, {
-              query: filters.search,
-              result_count: response.pagination.totalRows,
-              search_type: 'module_filter',
-            })
-          }
+          pendingSearchRef.current = { query: filters.search, count: response.pagination.totalRows, module: moduleId }
+          if (searchTrackTimer.current) clearTimeout(searchTrackTimer.current)
+          searchTrackTimer.current = setTimeout(() => {
+            const pending = pendingSearchRef.current
+            if (pending && pending.query !== lastTrackedSearch.current) {
+              lastTrackedSearch.current = pending.query
+              track('search', moduleId, {
+                query: pending.query,
+                result_count: pending.count,
+                search_type: 'module_filter',
+              })
+              pendingSearchRef.current = null
+            }
+          }, 1000)
         } else if (!filters.search) {
           // Clear tracking state when search is cleared
           lastTrackedSearch.current = ''
+          pendingSearchRef.current = null
+          if (searchTrackTimer.current) {
+            clearTimeout(searchTrackTimer.current)
+            searchTrackTimer.current = null
+          }
         }
       } catch (err) {
         // Ignore abort errors - they're expected when deps change

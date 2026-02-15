@@ -561,7 +561,7 @@ export default function StatistiekenPage() {
                           <tr key={`s-${i}`} className="border-t border-[var(--border)]">
                             <td className="py-2 pr-4 font-medium text-[var(--navy-dark)]">{s.query}</td>
                             <td className="py-2 pr-4 text-right text-[var(--navy-medium)]">
-                              {Number(s.avg_results).toLocaleString('nl-NL')}
+                              {s.avg_results != null ? Number(s.avg_results).toLocaleString('nl-NL') : '—'}
                             </td>
                             <td className="py-2 pr-4 text-right">{s.search_count}</td>
                             <td className="py-2 pr-4 text-right">{s.unique_actors}</td>
