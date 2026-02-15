@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { useAnalytics } from '@/hooks/use-analytics'
 
 type FormState = 'idle' | 'loading' | 'success' | 'error'
@@ -46,45 +45,21 @@ export function LoginForm() {
     setErrorMessage('')
 
     try {
-      const supabase = createClient()
-      const { error } = await supabase.auth.signInWithOtp({
-        email: trimmed,
-        options: {
-          shouldCreateUser: false,
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+      const res = await fetch('/api/v1/auth/magic-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: trimmed }),
       })
 
-      if (error) {
-        // Rate limiting — show actual error
-        if (error.message?.includes('rate') || error.status === 429) {
-          setErrorMessage('Te veel pogingen. Probeer het over een paar minuten opnieuw.')
-          setState('error')
-          track('error', undefined, { message: 'Rate limited', trigger: 'login' })
-          return
-        }
-        // User not found (shouldCreateUser: false) — show success anyway
-        // to prevent email enumeration attacks
-        if (error.message?.includes('Signups not allowed') || error.message?.includes('user not found') || error.status === 422) {
-          setState('success')
-          setCooldown(60)
-          const interval = setInterval(() => {
-            setCooldown(prev => {
-              if (prev <= 1) { clearInterval(interval); return 0 }
-              return prev - 1
-            })
-          }, 1000)
-          return
-        }
-        // Genuine error
-        setErrorMessage('Er ging iets mis. Probeer het later opnieuw.')
+      if (res.status === 429) {
+        setErrorMessage('Te veel pogingen. Probeer het over een paar minuten opnieuw.')
         setState('error')
-        track('error', undefined, { message: error.message || 'OTP sign-in failed', trigger: 'login' })
+        track('error', undefined, { message: 'Rate limited', trigger: 'login' })
         return
       }
 
+      // Always show success (server returns 200 even for non-existent users)
       setState('success')
-      // Start 60s cooldown
       setCooldown(60)
       const interval = setInterval(() => {
         setCooldown(prev => {
