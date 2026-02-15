@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-14
+**Last Updated:** 2026-02-15
 **Project Phase:** V1.0 Development
 **Current Sprint:** Week 7 - Pre-Launch Tasks (CRM Phase 2 COMPLETE, search box perf COMPLETE, search syntax design COMPLETE — implementation pending user review, De Geldstroom COMPLETE, user migration remaining)
 
@@ -91,6 +91,11 @@
 - ✅ **2026-02-14 (Session 15):** CRM optimization — unified `people` table as single identity anchor. Migration 045 (people table + person_id FK on subscriptions). 8 API routes rewritten to read from people via FK JOINs. New "Maak lid" conversion endpoint. Frontend updated (contacten page, use-subscription hook, dashboard). Phase 2 code switch complete. Commit `118fec1`.
 - ✅ **2026-02-14 (Session 16):** Soft-delete fix — hard-deleting subscription destroyed history → members showed as "Prospect" not "Churned". Migration 046 adds `deleted_at` column, DELETE now sets `deleted_at + cancelled_at`. Fixed existing data. Commits `a334026`, `3514459`.
 - ✅ **2026-02-14 (Session 17):** CRM lifecycle redesign — no delete anywhere, always keep history. Leden: "Opzeggen" replaces delete+deactivate. Contacten: "Archiveren" replaces delete, "Gearchiveerd" type added. Migration 047 (archived_at). Removed DELETE endpoint from contacten API. Fixed re-activation bug (user_id unique constraint). All columns sortable with chevron icons. Source defaults to "Admin". Commits `a6ebe7f`, `824ceca`, `07e70fc`, `c45664c`.
+- ✅ **2026-02-15 (Session 1):** Invite email bug fixes — architecture review of 3 entry points. Fixed `generateLink` missing `redirectTo`, hardcoded URLs in email templates (logo + renewal link), `listUsers()` fetching all auth users (paginated with perPage: 50). Updated Supabase dashboard templates.
+- ✅ **2026-02-15 (Session 2):** UX-033 Fouten as separate tab — dedicated `/team/fouten` page, TeamNav tab with red badge, error email notifications via Resend when error events received. Cleaned up Statistieken page.
+- ✅ **2026-02-15 (Session 3):** Invite "Opnieuw" bug — `last_sign_in_at` from auth set on failed PKCE exchanges, making invite route skip email. Fixed: check `last_active_at` from subscription instead.
+- ✅ **2026-02-15 (Session 4):** Invite links own domain — Supabase verify URL replaced with `token_hash` + `verifyOtp()` on own domain. Callback page now handles dual flow (PKCE code + token_hash).
+- ✅ **2026-02-15 (Session 5):** Magic link login own domain — new `POST /api/v1/auth/magic-link` using `generateLink` + Resend. All transactional emails now bypass Supabase completely. Rate limit, enumeration prevention, branded templates.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -118,20 +123,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **5 files + 1 SQL migration** (2026-02-14 Session 17)
+1. **11 files + 1 created** (2026-02-15 Sessions 1-5)
+   Email system overhaul: all transactional emails now via Resend on own domain (no Supabase URLs). UX-033 Fouten as separate tab. Invite "Opnieuw" bug fixed (last_active_at check). Dual callback flow (PKCE + token_hash).
+
+2. **5 files + 1 SQL migration** (2026-02-14 Session 17)
    CRM lifecycle redesign: "Opzeggen" replaces delete on Leden, "Archiveren" on Contacten, gearchiveerd type, re-activation fix, sortable columns, source default.
 
-2. **13 files + 2 SQL migrations** (2026-02-14 Session 15+16)
+3. **13 files + 2 SQL migrations** (2026-02-14 Session 15+16)
    CRM Phase 2: unified `people` table, 8 API routes rewritten, "Maak lid" endpoint, soft-delete subscriptions, fixed prospect→churned computation.
 
-3. **2 files** MODIFIED (2026-02-14 Session 14)
+4. **2 files** MODIFIED (2026-02-14 Session 14)
    Activation email branding aligned with magic link template: logo, light blue background, centered card.
 
-4. **invite/route.ts + invite-user.html** MODIFIED (2026-02-14 Session 13 cont.)
+5. **invite/route.ts + invite-user.html** MODIFIED (2026-02-14 Session 13 cont.)
    Welcome email rewrite: activation framing, custom Resend template, three user scenarios.
-
-5. **2 files + 2 SQL migrations** (2026-02-14 Session 13)
-   Module-grouped filters/columns/exports, weekly retention, engagement tooltip fix.
 
 ---
 

@@ -1540,7 +1540,7 @@ Search "bedrijvenbeleid" shows:
 
 **Priority:** P1 (V1.0 — pre-launch)
 
-**Status:** ⏳ In Development
+**Status:** ✅ Implemented 2026-02-15
 
 ---
 
