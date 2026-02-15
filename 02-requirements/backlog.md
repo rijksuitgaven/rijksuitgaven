@@ -201,19 +201,17 @@ The backend FastAPI service is directly accessible on the internet at its Railwa
 
 **Priority:** High (Pre-Launch)
 **Added:** 2026-02-14
-**Status:** ⏳ TODO (V1.0 — before launch)
+**Completed:** 2026-02-15
+**Status:** ✅ COMPLETED
 **Type:** UI / Typography
 
 **Problem:**
-After switching from IBM Plex Sans Condensed to IBM Plex Sans (wider) for the module navigation bar, the menu items no longer fit on a single line. "Apparaatskosten" is truncated/cut off on the right edge. The navigation bar with all module tabs (Ontvangers, Zoek in alle, Financiele instrumenten, Provinciale subsidieregisters, Gemeentelijke subsidieregisters, Inkoopuitgaven, Publiek, Kosten, Apparaatskosten) overflows horizontally.
+After switching from IBM Plex Sans Condensed to IBM Plex Sans (wider) for the module navigation bar, the menu items no longer fit on a single line. "Apparaatskosten" is truncated/cut off on the right edge.
 
-**Possible Solutions:**
-- Shorten module labels for the nav bar (e.g., "Instrumenten" instead of "Financiele instrumenten")
-- Use Condensed font specifically for the nav bar
-- Make the nav bar horizontally scrollable
-- Responsive breakpoint: collapse to dropdown on smaller widths
+**Solution Implemented:**
+Expert panel review (Creative Strategist, Brand Designer, Frontend UI, UX Researcher, QA Lead) chose Option 1: apply `var(--font-condensed)` (IBM Plex Sans Condensed) to the `<nav>` element only. Same typeface family, ~15% narrower, purpose-built for space-constrained UI. Also tightened padding `px-3` → `px-2.5`. Full module labels preserved. Scroll fallback (`overflow-x-auto`) kept as safety net. Category badges inherit condensed from nav parent.
 
-**Decision:** TBD
+**Commit:** `1d220f4`
 
 ---
 
