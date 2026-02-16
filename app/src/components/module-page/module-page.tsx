@@ -124,6 +124,9 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const lastSearchResult = useRef<{ query: string; count: number; searchId: string; timestamp: number } | null>(null)
   const visibilityPauseStart = useRef<number | null>(null)
   const pausedDuration = useRef(0)
+  // Refs to avoid stale closures in handleSearchCommit
+  const dataRef = useRef<ModuleDataResponse | null>(null)
+  const filtersRef = useRef<FilterValues>({ search: '', jaar: null, minBedrag: null, maxBedrag: null })
 
   // Generate unique search ID
   const generateSearchId = useCallback(() => {
@@ -146,6 +149,29 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     pausedDuration.current = 0
   }, [track, moduleId])
 
+  // Track a committed search event (shared by immediate and deferred paths)
+  const trackSearchCommit = useCallback((query: string, commitType: 'enter' | 'autocomplete', resultCount: number, typedText?: string) => {
+    const searchId = generateSearchId()
+    activeSearchId.current = searchId
+    searchStartTime.current = Date.now()
+    pausedDuration.current = 0
+
+    const props: Record<string, unknown> = {
+      search_id: searchId,
+      query,
+      result_count: resultCount,
+      commit_type: commitType,
+    }
+    if (typedText) props.autocomplete_typed = typedText
+    // Retry chain: link to previous zero-result search within 60s
+    if (lastSearchResult.current && lastSearchResult.current.count === 0) {
+      const elapsed = Date.now() - lastSearchResult.current.timestamp
+      if (elapsed < 60_000) props.prev_search_id = lastSearchResult.current.searchId
+    }
+    track('search', moduleId, props)
+    lastSearchResult.current = { query, count: resultCount, searchId, timestamp: Date.now() }
+  }, [generateSearchId, track, moduleId])
+
   // Pending search commit — set by filter-panel callbacks, consumed after data loads (when result_count is known)
   const pendingSearchCommit = useRef<{
     query: string
@@ -153,11 +179,24 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     typedText?: string // what user actually typed (autocomplete only)
   } | null>(null)
 
-  // Signal a committed search from filter-panel (result count not yet known — deferred to data load)
+  // Signal a committed search from filter-panel
+  // If data is already loaded for this query, track immediately (Enter after debounce loaded data)
+  // Otherwise, store as pending for consumption after data loads
   const handleSearchCommit = useCallback((query: string, commitType: 'enter' | 'autocomplete', typedText?: string) => {
     endCurrentSearch('new_search')
+
+    // Check if data is already loaded for this exact query (Enter pressed after debounce loaded data)
+    const currentData = dataRef.current
+    const currentSearch = filtersRef.current.search
+    if (currentData && currentSearch === query) {
+      trackSearchCommit(query, commitType, currentData.pagination.totalRows, typedText)
+      pendingSearchCommit.current = null
+      return
+    }
+
+    // Data not ready yet — store for deferred consumption after data loads
     pendingSearchCommit.current = { query, commitType, typedText }
-  }, [endCurrentSearch])
+  }, [endCurrentSearch, trackSearchCommit])
 
   // Pause duration tracking when tab is hidden
   useEffect(() => {
@@ -240,6 +279,10 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const effectiveColumns = useMemo(() => {
     return activeFilterColumns.length > 0 ? activeFilterColumns : selectedColumns
   }, [activeFilterColumns, selectedColumns])
+
+  // Keep refs in sync for handleSearchCommit (avoids stale closures)
+  dataRef.current = data
+  filtersRef.current = filters
 
   // Reset state when switching modules (UX-002: randomize on module switch)
   // Note: selectedColumns is handled in the hydration useEffect above
@@ -351,44 +394,13 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
         }
 
         // Committed search tracking (UX-034): consume pending commit now that result_count is known
+        // (deferred path — for when Enter/autocomplete fires BEFORE data loads)
         if (pendingSearchCommit.current) {
           const commit = pendingSearchCommit.current
           pendingSearchCommit.current = null
-
           // Only track if the loaded data matches the committed query
-          // (prevents stale tracking if user cleared search before data loaded)
           if (filters.search === commit.query) {
-            const searchId = generateSearchId()
-            activeSearchId.current = searchId
-            searchStartTime.current = Date.now()
-            pausedDuration.current = 0
-
-            const props: Record<string, unknown> = {
-              search_id: searchId,
-              query: commit.query,
-              result_count: response.pagination.totalRows,
-              commit_type: commit.commitType,
-            }
-
-            if (commit.typedText) {
-              props.autocomplete_typed = commit.typedText
-            }
-
-            // Retry chain: link to previous zero-result search within 60s
-            if (lastSearchResult.current && lastSearchResult.current.count === 0) {
-              const elapsed = Date.now() - lastSearchResult.current.timestamp
-              if (elapsed < 60_000) {
-                props.prev_search_id = lastSearchResult.current.searchId
-              }
-            }
-
-            track('search', moduleId, props)
-            lastSearchResult.current = {
-              query: commit.query,
-              count: response.pagination.totalRows,
-              searchId,
-              timestamp: Date.now(),
-            }
+            trackSearchCommit(commit.query, commit.commitType, response.pagination.totalRows, commit.typedText)
           }
         }
 

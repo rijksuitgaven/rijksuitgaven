@@ -593,6 +593,32 @@ export default function StatistiekenPage() {
               )}
             </Section>
 
+            {/* Errors — shows WHAT went wrong (referenced by "Fout" in exit intent) */}
+            {data.errors.length > 0 && (
+              <Section title="Fouten" icon={<AlertTriangle className="w-4 h-4" />}>
+                <div className="space-y-2">
+                  {data.errors.map((err, i) => (
+                    <div key={i} className="flex items-start gap-3 py-2 px-3 rounded-lg bg-red-50/60 border border-red-100">
+                      <AlertTriangle className="w-3.5 h-3.5 text-red-500 mt-0.5 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-red-700 break-words">{err.message}</p>
+                        <div className="flex items-center gap-3 mt-1 text-xs text-red-500">
+                          {err.module && <ModuleBadge module={err.module} small variant="amber" />}
+                          {err.properties?.search_query != null && (
+                            <span>Zoekterm: &ldquo;{String(err.properties.search_query)}&rdquo;</span>
+                          )}
+                          {err.properties?.trigger != null && (
+                            <span>Trigger: {String(err.properties.trigger)}</span>
+                          )}
+                          <span>{formatRelativeTime(err.created_at)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            )}
+
             {/* Platform usage — modules + filters + exports */}
             <Section title="Hoe wordt het platform gebruikt?" icon={<BarChart3 className="w-4 h-4" />}>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
