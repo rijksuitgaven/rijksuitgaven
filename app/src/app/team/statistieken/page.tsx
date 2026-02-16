@@ -457,7 +457,6 @@ export default function StatistiekenPage() {
   const expands = getPulseValue(data?.pulse ?? [], 'row_expand')
   const moduleViews = getPulseValue(data?.pulse ?? [], 'module_view')
   const externalLinks = getPulseValue(data?.pulse ?? [], 'external_link')
-  const maxViews = data?.modules.length ? Math.max(...data.modules.map(m => m.view_count)) : 1
   const ss = data?.sessions_summary
   const sc = data?.search_success
 
@@ -681,98 +680,14 @@ export default function StatistiekenPage() {
               </Section>
             )}
 
-            {/* Platform usage — modules + filters + exports */}
-            <Section title="Hoe wordt het platform gebruikt?" icon={<BarChart3 className="w-4 h-4" />}>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left: Module popularity */}
-                <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-3">
-                    Modules
-                  </h3>
-                  {data.modules.length === 0 ? (
-                    <EmptyState>Nog geen moduleweergaven</EmptyState>
-                  ) : (
-                    <div className="space-y-2">
-                      {data.modules.map(m => (
-                        <div key={m.module} className="flex items-center gap-3">
-                          <span className="w-24 text-sm text-[var(--navy-dark)] font-medium truncate">
-                            {MODULE_LABELS[m.module] || m.module}
-                          </span>
-                          <div className="flex-1 h-5 bg-[var(--gray-light)] rounded overflow-hidden">
-                            <div
-                              className="h-full bg-[var(--navy-medium)] rounded transition-all"
-                              style={{ width: `${(m.view_count / maxViews) * 100}%` }}
-                            />
-                          </div>
-                          <span className="text-sm font-semibold text-[var(--navy-dark)] w-8 text-right">
-                            {m.view_count}
-                          </span>
-                          <span className="text-xs text-[var(--muted-foreground)] w-24">
-                            ({m.unique_actors} gebruiker{m.unique_actors !== 1 ? 's' : ''})
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Right: Filters, columns, exports stacked — grouped by module */}
-                <div className="space-y-5">
-                  <ModuleGroupedList
-                    title="Panelfilters"
-                    subtitle="Filters geselecteerd via het filterpaneel"
-                    items={data.filters.filter(f => f.origin !== 'expanded_row')}
-                    getModule={f => f.module}
-                    renderItem={f => (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-[var(--navy-dark)]">{FIELD_LABELS[f.field] || f.field}</span>
-                        <span className="font-medium text-[var(--navy-medium)]">{f.filter_count}×</span>
-                      </div>
-                    )}
-                    emptyText="Nog geen panelfilters gebruikt"
-                  />
-                  <ModuleGroupedList
-                    title="Drilldown vanuit rij"
-                    subtitle="Klikken op waarden in de uitgeklapte rij"
-                    items={data.filters.filter(f => f.origin === 'expanded_row')}
-                    getModule={f => f.module}
-                    renderItem={f => (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-[var(--navy-dark)]">{FIELD_LABELS[f.field] || f.field}</span>
-                        <span className="font-medium text-[var(--navy-medium)]">{f.filter_count}×</span>
-                      </div>
-                    )}
-                    emptyText="Nog geen drilldown-acties"
-                  />
-                  <ModuleGroupedList
-                    title="Kolommen"
-                    subtitle="Kolommen die gebruikers selecteren — informeert standaardconfiguratie"
-                    items={data.columns}
-                    getModule={c => c.module}
-                    renderItem={c => (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-[var(--navy-dark)]">{FIELD_LABELS[c.column_name] || c.column_name}</span>
-                        <span className="font-medium text-[var(--navy-medium)]">{c.usage_count}×</span>
-                      </div>
-                    )}
-                    emptyText="Nog geen kolommen geselecteerd"
-                  />
-                  <ModuleGroupedList
-                    title="Exports"
-                    items={data.exports}
-                    getModule={e => e.module}
-                    renderItem={e => (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-[var(--navy-dark)]">
-                          <span className="text-xs font-bold uppercase bg-[var(--gray-light)] px-1.5 py-0.5 rounded mr-2">{e.format}</span>
-                          {e.export_count}× <span className="text-[var(--muted-foreground)]">gem. {e.avg_rows} rijen</span>
-                        </span>
-                      </div>
-                    )}
-                    emptyText="Nog geen exports"
-                  />
-                </div>
-              </div>
+            {/* Platform usage — activity per module */}
+            <Section title="Activiteit per module" icon={<BarChart3 className="w-4 h-4" />}>
+              <ModuleActivitySection
+                modules={data.modules}
+                filters={data.filters}
+                columns={data.columns}
+                exports={data.exports}
+              />
             </Section>
 
             {/* Retention cohorts */}
@@ -1284,54 +1199,104 @@ function EngagementBadge({ score, label, color }: { score: number; label: string
   )
 }
 
-function ModuleGroupedList<T>({ title, subtitle, items, getModule, renderItem, emptyText }: {
-  title: string
-  subtitle?: string
-  items: T[]
-  getModule: (item: T) => string
-  renderItem: (item: T) => React.ReactNode
-  emptyText: string
+function ModuleActivitySection({ modules, filters, columns, exports }: {
+  modules: ModuleItem[]
+  filters: FilterItem[]
+  columns: ColumnItem[]
+  exports: ExportItem[]
 }) {
-  if (items.length === 0) {
-    return (
-      <div>
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">
-          {title}
-        </h3>
-        {subtitle && <p className="text-xs text-[var(--muted-foreground)] mb-2">{subtitle}</p>}
-        <p className="text-sm text-[var(--muted-foreground)] italic">{emptyText}</p>
-      </div>
-    )
+  // Build merged activity map per module
+  const moduleMap = new Map<string, {
+    views: number
+    actors: number
+    panelFilters: FilterItem[]
+    drilldownFilters: FilterItem[]
+    cols: ColumnItem[]
+    exps: ExportItem[]
+  }>()
+
+  for (const m of modules) {
+    moduleMap.set(m.module, {
+      views: m.view_count,
+      actors: m.unique_actors,
+      panelFilters: [],
+      drilldownFilters: [],
+      cols: [],
+      exps: [],
+    })
   }
 
-  // Group items by module
-  const grouped = new Map<string, T[]>()
-  for (const item of items) {
-    const mod = getModule(item)
-    if (!grouped.has(mod)) grouped.set(mod, [])
-    grouped.get(mod)!.push(item)
+  for (const f of filters) {
+    const mod = moduleMap.get(f.module)
+    if (!mod) continue
+    if (f.origin === 'expanded_row') mod.drilldownFilters.push(f)
+    else mod.panelFilters.push(f)
+  }
+
+  for (const c of columns) {
+    const mod = moduleMap.get(c.module)
+    if (mod) mod.cols.push(c)
+  }
+
+  for (const e of exports) {
+    const mod = moduleMap.get(e.module)
+    if (mod) mod.exps.push(e)
+  }
+
+  const entries = [...moduleMap.entries()]
+
+  if (entries.length === 0) {
+    return <EmptyState>Nog geen moduleactiviteit</EmptyState>
   }
 
   return (
-    <div>
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1">
-        {title}
-      </h3>
-      {subtitle && <p className="text-xs text-[var(--muted-foreground)] mb-2">{subtitle}</p>}
-      <div className="space-y-2.5">
-        {[...grouped.entries()].map(([mod, modItems]) => (
-          <div key={mod}>
-            <div className="text-xs font-semibold text-[var(--navy-dark)] mb-1">
-              {MODULE_LABELS[mod] || mod}
+    <div className="space-y-3">
+      {entries.map(([mod, activity]) => {
+        const filterParts = [
+          ...activity.panelFilters.map(f => `${FIELD_LABELS[f.field] || f.field} ${f.filter_count}×`),
+          ...activity.drilldownFilters.map(f => `${FIELD_LABELS[f.field] || f.field} ${f.filter_count}× (drilldown)`),
+        ]
+        const colParts = activity.cols.map(c => `${FIELD_LABELS[c.column_name] || c.column_name} ${c.usage_count}×`)
+        const expParts = activity.exps.map(e => `${e.format.toUpperCase()} ${e.export_count}× (gem. ${e.avg_rows} rijen)`)
+
+        return (
+          <div key={mod} className="bg-[var(--gray-light)]/40 rounded-lg relative overflow-hidden px-4 py-3 border border-[var(--border)]/50">
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-[var(--navy-dark)] rounded-l-lg" />
+
+            {/* Header: module name + views */}
+            <div className="flex items-baseline justify-between mb-1.5">
+              <h3 className="text-sm font-semibold text-[var(--navy-dark)]">
+                {MODULE_LABELS[mod] || mod}
+              </h3>
+              <span className="text-sm text-[var(--muted-foreground)]">
+                <strong className="text-[var(--navy-dark)]" style={{ fontVariantNumeric: 'tabular-nums' }}>{activity.views}</strong> weergaven · {activity.actors} gebruiker{activity.actors !== 1 ? 's' : ''}
+              </span>
             </div>
-            <div className="space-y-0.5 pl-3 border-l-2 border-[var(--border)]">
-              {modItems.map((item, i) => (
-                <div key={i}>{renderItem(item)}</div>
-              ))}
+
+            {/* Details: filters, columns, exports */}
+            <div className="flex flex-wrap gap-x-5 gap-y-0.5 text-xs">
+              <span className="text-[var(--muted-foreground)]">
+                <strong className="text-[var(--navy-medium)] font-semibold">Filters</strong>{' '}
+                {filterParts.length > 0
+                  ? <span className="text-[var(--navy-dark)]">{filterParts.join(' · ')}</span>
+                  : '—'}
+              </span>
+              <span className="text-[var(--muted-foreground)]">
+                <strong className="text-[var(--navy-medium)] font-semibold">Kolommen</strong>{' '}
+                {colParts.length > 0
+                  ? <span className="text-[var(--navy-dark)]">{colParts.join(' · ')}</span>
+                  : '—'}
+              </span>
+              <span className="text-[var(--muted-foreground)]">
+                <strong className="text-[var(--navy-medium)] font-semibold">Exports</strong>{' '}
+                {expParts.length > 0
+                  ? <span className="text-[var(--navy-dark)]">{expParts.join(' · ')}</span>
+                  : '—'}
+              </span>
             </div>
           </div>
-        ))}
-      </div>
+        )
+      })}
     </div>
   )
 }
