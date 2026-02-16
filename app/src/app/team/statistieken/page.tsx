@@ -1099,110 +1099,118 @@ function ModuleActivitySection({ modules, filters, columns, exports, searches, z
     return a[0].localeCompare(b[0])
   })
 
+  const activeEntries = entries.filter(([, a]) => a.views > 0 || a.searches.length > 0 || a.zeroResults.length > 0)
+  const inactiveEntries = entries.filter(([, a]) => a.views === 0 && a.searches.length === 0 && a.zeroResults.length === 0)
+
   return (
     <div className="space-y-3">
-      {entries.map(([mod, a]) => {
-        const hasSearches = a.searches.length > 0
-        const hasZeroResults = a.zeroResults.length > 0
-        const isActive = a.views > 0 || hasSearches || hasZeroResults
+      {activeEntries.map(([mod, a]) => (
+        <div key={mod} className="rounded-lg relative overflow-hidden pl-5 pr-4 py-4 bg-white shadow-sm shadow-black/[0.04] border border-[var(--border)]/40">
+          <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg bg-[var(--navy-dark)]" />
 
-        return (
-          <div key={mod} className={`rounded-lg relative overflow-hidden px-4 py-3 ${
-            isActive
-              ? 'bg-white shadow-sm shadow-black/[0.04] border border-[var(--border)]/40'
-              : 'bg-[var(--gray-light)]/30 border border-[var(--border)]/20'
-          }`}>
-            <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-lg ${
-              isActive ? 'bg-[var(--navy-dark)]' : 'bg-[var(--border)]'
-            }`} />
-
-            {/* Header */}
-            <div className="flex items-baseline justify-between mb-1.5">
-              <h3 className={`text-sm font-semibold ${isActive ? 'text-[var(--navy-dark)]' : 'text-[var(--muted-foreground)]'}`}>
-                {MODULE_LABELS[mod] || mod}
-              </h3>
-              <span className="text-sm text-[var(--muted-foreground)]">
-                {a.views > 0 ? (
-                  <>
-                    <strong className="text-[var(--navy-dark)]" style={{ fontVariantNumeric: 'tabular-nums' }}>{a.views}</strong> weergaven · {a.actors} gebruiker{a.actors !== 1 ? 's' : ''}
-                  </>
-                ) : (
-                  <span className="italic text-xs">Niet bezocht</span>
-                )}
-              </span>
-            </div>
-
-            {/* Searches (if any) */}
-            {hasSearches && (
-              <div className="mb-2">
-                <div className="space-y-0.5">
-                  {a.searches.map((s, i) => (
-                    <div key={i} className="flex items-center gap-2 text-xs">
-                      <Search className="w-3 h-3 text-[var(--navy-medium)] shrink-0" />
-                      <span className="font-medium text-[var(--navy-dark)] truncate min-w-0" style={{ flex: '1 1 0' }}>{s.query}</span>
-                      <span className="text-[var(--navy-medium)] shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                        {s.avg_results != null ? Number(s.avg_results).toLocaleString('nl-NL') : '—'} res
-                      </span>
-                      <CommitTypePill enter={s.enter_count} auto={s.autocomplete_count} />
-                      <span className="text-[var(--muted-foreground)] shrink-0 w-8 text-right">
-                        {s.avg_duration != null && s.avg_duration > 0 ? formatDuration(s.avg_duration) : '—'}
-                      </span>
-                      <EngagementPill rate={s.engagement_rate} />
-                      <span className="text-[var(--muted-foreground)] shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                        {s.search_count}× <span className="text-[10px]">({s.unique_actors})</span>
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Zero results (if any) */}
-            {hasZeroResults && (
-              <div className="mb-2 flex flex-wrap gap-1.5">
-                <AlertTriangle className="w-3 h-3 text-amber-500 mt-0.5 shrink-0" />
-                {a.zeroResults.map((z, i) => (
-                  <span key={i} className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded bg-amber-50 border border-amber-100 text-amber-700">
-                    {z.query} {z.search_count}×
-                    {z.retry_count > 0 && <span className="text-amber-500">→ {z.retry_count} herpoging</span>}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Activity details — separated lines */}
-            <div className="flex flex-wrap gap-x-5 gap-y-0.5 text-xs">
-              <ActivityDetail label="Filters" items={a.panelFilters} render={f => `${FIELD_LABELS[f.field] || f.field} ${f.filter_count}×`} />
-              <ActivityDetail label="Drilldown" items={a.drilldownFilters} render={f => `${FIELD_LABELS[f.field] || f.field} ${f.filter_count}×`} />
-              <ActivityDetail label="Kolommen" items={a.cols} render={c => `${FIELD_LABELS[c.column_name] || c.column_name} ${c.usage_count}×`} />
-              <span className="text-[var(--muted-foreground)]">
-                <strong className="text-[var(--navy-medium)] font-semibold">Google</strong>{' '}
-                {a.googleClicks > 0 ? <span className="text-[var(--navy-dark)]">{a.googleClicks}×</span> : '—'}
-              </span>
-              <span className="text-[var(--muted-foreground)]">
-                <strong className="text-[var(--navy-medium)] font-semibold">Uitklappen</strong>{' '}
-                {a.rowExpands > 0 ? <span className="text-[var(--navy-dark)]">{a.rowExpands}×</span> : '—'}
-              </span>
-              <ActivityDetail label="Exports" items={a.exps} render={e => `${e.format.toUpperCase()} ${e.export_count}×`} />
-            </div>
+          {/* Header */}
+          <div className="flex items-baseline justify-between mb-2">
+            <h3 className="text-sm font-semibold text-[var(--navy-dark)]">
+              {MODULE_LABELS[mod] || mod}
+            </h3>
+            <span className="text-sm text-[var(--muted-foreground)]">
+              <strong className="text-[var(--navy-dark)]" style={{ fontVariantNumeric: 'tabular-nums' }}>{a.views}</strong> weergaven · {a.actors} gebruiker{a.actors !== 1 ? 's' : ''}
+            </span>
           </div>
-        )
-      })}
+
+          {/* Searches */}
+          {a.searches.length > 0 && (
+            <div className="mb-2.5">
+              {a.searches.map((s, i) => (
+                <div key={i} className={`flex items-center gap-2 text-xs py-1 px-2 -mx-2 rounded ${i % 2 === 0 ? 'bg-[var(--gray-light)]/30' : ''}`}>
+                  <Search className="w-3 h-3 text-[var(--navy-medium)] shrink-0" />
+                  <span className="font-medium text-[var(--navy-dark)] truncate min-w-0" style={{ flex: '1 1 0' }}>&ldquo;{s.query}&rdquo;</span>
+                  <span className="text-[var(--navy-medium)] shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {s.avg_results != null ? Number(s.avg_results).toLocaleString('nl-NL') : '—'} res
+                  </span>
+                  <CommitTypePill enter={s.enter_count} auto={s.autocomplete_count} />
+                  <span className="text-[var(--muted-foreground)] shrink-0 w-8 text-right">
+                    {s.avg_duration != null && s.avg_duration > 0 ? formatDuration(s.avg_duration) : '—'}
+                  </span>
+                  <EngagementPill rate={s.engagement_rate} />
+                  <span className="text-[var(--muted-foreground)] shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {s.search_count}× <span className="text-[10px]">({s.unique_actors})</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Zero results */}
+          {a.zeroResults.length > 0 && (
+            <div className="mb-2.5 flex flex-wrap items-center gap-1.5">
+              <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0" />
+              {a.zeroResults.map((z, i) => (
+                <span key={i} className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded bg-amber-50 border border-amber-100 text-amber-700">
+                  {z.query} {z.search_count}×
+                  {z.retry_count > 0 && <span className="text-amber-500">→ {z.retry_count} herpoging</span>}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Activity chips — only show non-zero metrics */}
+          <div className="flex flex-wrap gap-1.5">
+            {a.panelFilters.length > 0 && (
+              <ActivityChip icon={<SlidersHorizontal className="w-3 h-3" />} items={a.panelFilters.map(f => `${FIELD_LABELS[f.field] || f.field} ${f.filter_count}×`)} />
+            )}
+            {a.drilldownFilters.length > 0 && (
+              <ActivityChip icon={<ChevronDown className="w-3 h-3" />} label="Drilldown" items={a.drilldownFilters.map(f => `${FIELD_LABELS[f.field] || f.field} ${f.filter_count}×`)} />
+            )}
+            {a.cols.length > 0 && (
+              <ActivityChip icon={<Columns className="w-3 h-3" />} items={a.cols.map(c => `${FIELD_LABELS[c.column_name] || c.column_name} ${c.usage_count}×`)} />
+            )}
+            {a.googleClicks > 0 && (
+              <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-[var(--gray-light)]/50 text-[var(--navy-dark)]">
+                <ExternalLink className="w-3 h-3 text-[var(--navy-medium)]" />
+                Google {a.googleClicks}×
+              </span>
+            )}
+            {a.rowExpands > 0 && (
+              <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-[var(--gray-light)]/50 text-[var(--navy-dark)]">
+                <MousePointerClick className="w-3 h-3 text-[var(--navy-medium)]" />
+                {a.rowExpands}× uitgeklapt
+              </span>
+            )}
+            {a.exps.length > 0 && (
+              <ActivityChip icon={<Download className="w-3 h-3" />} items={a.exps.map(e => `${e.format.toUpperCase()} ${e.export_count}×`)} />
+            )}
+          </div>
+        </div>
+      ))}
+
+      {/* Inactive modules — collapsed into one row */}
+      {inactiveEntries.length > 0 && (
+        <div className="flex items-center gap-2 px-1 pt-1">
+          <span className="text-xs text-[var(--muted-foreground)] italic shrink-0">Niet bezocht:</span>
+          <div className="flex flex-wrap gap-1.5">
+            {inactiveEntries.map(([mod]) => (
+              <span key={mod} className="text-xs px-2 py-0.5 rounded bg-[var(--gray-light)]/60 text-[var(--muted-foreground)] border border-[var(--border)]/20">
+                {MODULE_LABELS[mod] || mod}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
-function ActivityDetail<T>({ label, items, render }: {
-  label: string
-  items: T[]
-  render: (item: T) => string
+function ActivityChip({ icon, label, items }: {
+  icon: React.ReactNode
+  label?: string
+  items: string[]
 }) {
   return (
-    <span className="text-[var(--muted-foreground)]">
-      <strong className="text-[var(--navy-medium)] font-semibold">{label}</strong>{' '}
-      {items.length > 0
-        ? <span className="text-[var(--navy-dark)]">{items.map(render).join(' · ')}</span>
-        : '—'}
+    <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-[var(--gray-light)]/50 text-[var(--navy-dark)]">
+      <span className="text-[var(--navy-medium)]">{icon}</span>
+      {label && <span className="font-medium">{label}</span>}
+      {items.join(' · ')}
     </span>
   )
 }
