@@ -104,6 +104,7 @@
 - ✅ **2026-02-15 (Session 15):** Module nav bar overflow fix — expert panel (5 specialists) approved condensed font on nav bar only. `var(--font-condensed)` on `<nav>`, padding px-3→px-2.5. Full labels preserved, scroll fallback kept.
 - ✅ **2026-02-15 (Session 16):** Search tracking — intermediate keystrokes tracked during autocomplete browsing. Added `onAutocompleteSelect` callback (filter-panel → module-page) to cancel pending timer. Debounce 1s→2s. `skipNextSearchTrack` ref prevents duplicate tracking after autocomplete selection.
 - ✅ **2026-02-16 (Session 1):** UX-034 Committed search tracking — complete rewrite of search analytics. Killed debounce-based tracking, replaced with committed action tracking (Enter/autocomplete only). New search_end event (14th type) with duration + exit_action. search_id links engagement events to originating search. Retry chains (prev_search_id). Deferred result counting (track after data loads). Dashboard redesign: SearchSection with KPIs, enriched table (Via/Duur/Engagement columns), zero results with retry badges, engagement breakdown chart. Migration 052 (truncate + 4 functions). 6 files modified.
+- ✅ **2026-02-16 (Session 2):** Statistics dashboard visual redesign — 8 commits, multiple expert team consultations. Dark navy hero cards + DeltaBadge dark variant. Feature Adoption horizontal bars (sorted by adoption %, filters added). Merged secondary metrics into Adoption. Module-centric activity cards with collapsed inactive modules. Removed Zoekgedrag KPIs (redundant). Search as horizontal bars per module (proportional to result count, fixed-width aligned columns). Activity chips replaced with compact engagement row ("1× gefilterd (Regeling) · 6× uitgeklapt"). Migrations 053-055. Removed 6 components.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -131,23 +132,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **6 files + 1 migration** (2026-02-16 Session 1)
+1. **1 file (8 commits) + 3 migrations** (2026-02-16 Session 2)
+   Statistics dashboard visual redesign: dark hero cards, Feature Adoption with filters, module-centric cards, search horizontal bars (result-proportional, aligned columns), compact engagement row. Removed 6 components. Migrations 053-055.
+
+2. **6 files + 1 migration** (2026-02-16 Session 1)
    UX-034: Committed search tracking. Killed debounce, track Enter/autocomplete only. search_id linking, search_end event, retry chains, deferred result counting. Dashboard SearchSection redesign with KPIs + engagement.
 
-2. **2 files** (2026-02-15 Session 16)
+3. **2 files** (2026-02-15 Session 16)
    Search tracking fix: `onAutocompleteSelect` callback cancels pending search timer on autocomplete selection, debounce 1s→2s, `skipNextSearchTrack` ref.
 
-3. **3 files** (2026-02-15 Sessions 13-15)
-   Error noise suppression (module-page.tsx: NetworkError/Failed to fetch guard). Module nav bar overflow fix (header.tsx: condensed font + tighter padding). Usage events truncated.
-
-3. **23 files + 4 migrations** (2026-02-15 Sessions 6-12)
+4. **23 files + 4 migrations** (2026-02-15 Sessions 6-12)
    Statistics dashboard debugging: security fixes (middleware + BFF auth), analytics resilience (fetch-first, endpoint rename, debounce+flush), member count filters, search success criteria, NaN fix, "Team" heading removed, autocomplete dropdown fix.
 
-4. **11 files + 1 created** (2026-02-15 Sessions 1-5)
+5. **11 files + 1 created** (2026-02-15 Sessions 1-5)
    Email system overhaul: all transactional emails now via Resend on own domain (no Supabase URLs). UX-033 Fouten as separate tab. Invite "Opnieuw" bug fixed (last_active_at check). Dual callback flow (PKCE + token_hash).
-
-5. **5 files + 1 SQL migration** (2026-02-14 Session 17)
-   CRM lifecycle redesign: "Opzeggen" replaces delete on Leden, "Archiveren" on Contacten, gearchiveerd type, re-activation fix, sortable columns, source default.
 
 ---
 
