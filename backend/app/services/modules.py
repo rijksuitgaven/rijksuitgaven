@@ -123,7 +123,7 @@ async def _typesense_search(collection: str, params: dict) -> dict:
     url = f"{settings.typesense_protocol}://{settings.typesense_host}:{settings.typesense_port}/collections/{collection}/documents/search"
 
     try:
-        client = _get_http_client()
+        client = await _get_http_client()
         response = await client.get(
             url,
             params=params,

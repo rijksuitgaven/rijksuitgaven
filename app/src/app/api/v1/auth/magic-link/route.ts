@@ -22,6 +22,7 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY
 // Simple in-memory rate limit: email → last request timestamp
 const rateLimitMap = new Map<string, number>()
 const RATE_LIMIT_MS = 60_000
+const MAX_RATE_LIMIT_ENTRIES = 10_000
 
 // Periodic cleanup every 5 minutes to prevent memory growth
 setInterval(() => {
@@ -158,6 +159,10 @@ export async function POST(request: NextRequest) {
   // Rate limit: 1 request per email per 60s
   const lastRequest = rateLimitMap.get(email)
   if (lastRequest && Date.now() - lastRequest < RATE_LIMIT_MS) {
+    return NextResponse.json({ error: 'rate_limited' }, { status: 429 })
+  }
+  // Cap Map size to prevent memory exhaustion from unique-email flood
+  if (rateLimitMap.size >= MAX_RATE_LIMIT_ENTRIES) {
     return NextResponse.json({ error: 'rate_limited' }, { status: 429 })
   }
   rateLimitMap.set(email, Date.now())

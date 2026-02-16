@@ -112,14 +112,14 @@ export async function proxyToBackend(
         )
       }
 
-      // Guard against oversized responses (5MB cap)
-      const contentLength = response.headers.get('content-length')
-      if (contentLength && parseInt(contentLength, 10) > MAX_RESPONSE_BYTES) {
-        console.error(`[BFF] Response too large: ${contentLength} bytes`)
+      // Guard against oversized responses (5MB cap) — read actual bytes, not Content-Length
+      const text = await response.text()
+      if (text.length > MAX_RESPONSE_BYTES) {
+        console.error(`[BFF] Response too large: ${text.length} bytes`)
         return NextResponse.json({ error: 'Response too large' }, { status: 502 })
       }
 
-      const data = await response.json()
+      const data = JSON.parse(text)
       const nextResponse = NextResponse.json(data)
       nextResponse.headers.set('Cache-Control', 'private, no-cache')
       return nextResponse

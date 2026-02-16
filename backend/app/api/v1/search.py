@@ -95,7 +95,7 @@ async def typesense_search(collection: str, params: dict) -> dict:
     url = get_typesense_url(f"/collections/{collection}/documents/search")
 
     try:
-        client = _get_http_client()
+        client = await _get_http_client()
         response = await client.get(
             url,
             params=params,

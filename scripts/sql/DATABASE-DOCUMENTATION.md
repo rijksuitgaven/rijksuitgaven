@@ -993,6 +993,7 @@ VACUUM ANALYZE universal_search;
 | `053-filter-origin.sql` | Rewrite get_usage_filters with origin column (filter_panel vs expanded_row) | Once (done 2026-02-16) |
 | `054-pulse-period-comparison.sql` | get_usage_pulse_period(period_start, period_end) — bounded pulse for delta comparison | Once (done 2026-02-16) |
 | `055-module-events.sql` | get_usage_module_events(since_date) — event counts grouped by module + event_type | Once (done 2026-02-16) |
+| `056-subscription-unique-person.sql` | Unique partial index on subscriptions(person_id) WHERE cancelled_at IS NULL AND deleted_at IS NULL — prevents duplicate active subscriptions (race condition fix) | Once (done 2026-02-16) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---

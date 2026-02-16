@@ -216,6 +216,10 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (subError) {
+    // Unique partial index prevents duplicate active subscriptions (race condition guard)
+    if (subError.code === '23505') {
+      return NextResponse.json({ error: 'Deze persoon heeft al een actief abonnement' }, { status: 409 })
+    }
     console.error('[Admin] Create subscription error:', subError)
     return NextResponse.json({ error: 'Fout bij aanmaken abonnement' }, { status: 500 })
   }
