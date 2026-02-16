@@ -1061,33 +1061,56 @@ function ModuleActivitySection({ modules, filters, columns, exports, searches, z
             </div>
           )}
 
-          {/* Activity chips — only show non-zero metrics */}
-          <div className="flex flex-wrap gap-1.5">
-            {a.panelFilters.length > 0 && (
-              <ActivityChip icon={<SlidersHorizontal className="w-3 h-3" />} items={a.panelFilters.map(f => `${FIELD_LABELS[f.field] || f.field} ${f.filter_count}×`)} />
-            )}
-            {a.drilldownFilters.length > 0 && (
-              <ActivityChip icon={<ChevronDown className="w-3 h-3" />} label="Drilldown" items={a.drilldownFilters.map(f => `${FIELD_LABELS[f.field] || f.field} ${f.filter_count}×`)} />
-            )}
-            {a.cols.length > 0 && (
-              <ActivityChip icon={<Columns className="w-3 h-3" />} items={a.cols.map(c => `${FIELD_LABELS[c.column_name] || c.column_name} ${c.usage_count}×`)} />
-            )}
-            {a.googleClicks > 0 && (
-              <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-[var(--gray-light)]/50 text-[var(--navy-dark)]">
-                <ExternalLink className="w-3 h-3 text-[var(--navy-medium)]" />
-                Google {a.googleClicks}×
-              </span>
-            )}
-            {a.rowExpands > 0 && (
-              <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-[var(--gray-light)]/50 text-[var(--navy-dark)]">
-                <MousePointerClick className="w-3 h-3 text-[var(--navy-medium)]" />
-                {a.rowExpands}× uitgeklapt
-              </span>
-            )}
-            {a.exps.length > 0 && (
-              <ActivityChip icon={<Download className="w-3 h-3" />} items={a.exps.map(e => `${e.format.toUpperCase()} ${e.export_count}×`)} />
-            )}
-          </div>
+          {/* Engagement row — compact single line with separator dots */}
+          {(() => {
+            const totalFilters = a.panelFilters.reduce((s, f) => s + f.filter_count, 0)
+            const filterField = a.panelFilters.length === 1 ? (FIELD_LABELS[a.panelFilters[0].field] || a.panelFilters[0].field) : null
+            const totalDrilldowns = a.drilldownFilters.reduce((s, f) => s + f.filter_count, 0)
+            const drilldownField = a.drilldownFilters.length === 1 ? (FIELD_LABELS[a.drilldownFilters[0].field] || a.drilldownFilters[0].field) : null
+            const totalCols = a.cols.reduce((s, c) => s + c.usage_count, 0)
+            const colField = a.cols.length === 1 ? (FIELD_LABELS[a.cols[0].column_name] || a.cols[0].column_name) : null
+            const totalExports = a.exps.reduce((s, e) => s + e.export_count, 0)
+            const exportFormat = a.exps.length === 1 ? a.exps[0].format.toUpperCase() : null
+
+            const entries: { icon: React.ReactNode; text: string }[] = []
+            if (totalFilters > 0) entries.push({
+              icon: <SlidersHorizontal className="w-3 h-3" />,
+              text: `${totalFilters}× gefilterd${filterField ? ` (${filterField})` : ''}`,
+            })
+            if (totalDrilldowns > 0) entries.push({
+              icon: <ChevronDown className="w-3 h-3" />,
+              text: `${totalDrilldowns}× drilldown${drilldownField ? ` (${drilldownField})` : ''}`,
+            })
+            if (a.rowExpands > 0) entries.push({
+              icon: <MousePointerClick className="w-3 h-3" />,
+              text: `${a.rowExpands}× uitgeklapt`,
+            })
+            if (totalCols > 0) entries.push({
+              icon: <Columns className="w-3 h-3" />,
+              text: `${totalCols}× kolom${totalCols > 1 ? 'men' : ''} gewijzigd${colField ? ` (${colField})` : ''}`,
+            })
+            if (a.googleClicks > 0) entries.push({
+              icon: <ExternalLink className="w-3 h-3" />,
+              text: `${a.googleClicks}× Google`,
+            })
+            if (totalExports > 0) entries.push({
+              icon: <Download className="w-3 h-3" />,
+              text: `${totalExports}× export${exportFormat ? ` (${exportFormat})` : ''}`,
+            })
+
+            if (entries.length === 0) return null
+            return (
+              <div className="flex items-center gap-0 text-xs text-[var(--navy-medium)] border-t border-[var(--border)]/30 pt-2.5 mt-1">
+                {entries.map((e, i) => (
+                  <span key={i} className="inline-flex items-center gap-1">
+                    {i > 0 && <span className="text-[var(--border)] mx-2">·</span>}
+                    <span className="text-[var(--navy-medium)]/60">{e.icon}</span>
+                    <span>{e.text}</span>
+                  </span>
+                ))}
+              </div>
+            )
+          })()}
         </div>
       ))}
 
@@ -1108,19 +1131,6 @@ function ModuleActivitySection({ modules, filters, columns, exports, searches, z
   )
 }
 
-function ActivityChip({ icon, label, items }: {
-  icon: React.ReactNode
-  label?: string
-  items: string[]
-}) {
-  return (
-    <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-[var(--gray-light)]/50 text-[var(--navy-dark)]">
-      <span className="text-[var(--navy-medium)]">{icon}</span>
-      {label && <span className="font-medium">{label}</span>}
-      {items.join(' · ')}
-    </span>
-  )
-}
 
 function RetentionSection({ retention }: { retention: RetentionItem[] }) {
   // Build cohort grid: rows = cohort weeks, columns = week offsets
