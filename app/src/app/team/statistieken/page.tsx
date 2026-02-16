@@ -1029,16 +1029,16 @@ function ModuleActivitySection({ modules, filters, columns, exports, searches, z
                           }}
                         />
                       </div>
-                      <span className="text-xs font-bold text-[var(--navy-dark)] w-6 text-right shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                        {s.search_count}×
+                      <span className="text-xs font-bold text-[var(--navy-dark)] shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                        {s.search_count}× gezocht
                       </span>
                       <span className={`text-[10px] px-1.5 py-0.5 rounded shrink-0 ${
                         hasResults ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
                       }`}>
-                        {s.avg_results != null ? `${Number(s.avg_results).toLocaleString('nl-NL')} res` : '0 res'}
+                        {s.avg_results != null ? `${Number(s.avg_results).toLocaleString('nl-NL')} resultaten` : '0 resultaten'}
                       </span>
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--gray-light)] text-[var(--navy-medium)] shrink-0">
-                        {s.autocomplete_count > 0 ? '▾ auto' : '↵ enter'}
+                        {s.autocomplete_count > 0 ? 'via autocomplete' : 'via enter'}
                       </span>
                     </div>
                   )
