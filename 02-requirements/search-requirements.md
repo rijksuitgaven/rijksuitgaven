@@ -1544,6 +1544,35 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-034: Committed Search Tracking + Dashboard Redesign
+
+**Requirement:** Replace debounce-based search tracking with committed action tracking. Only Enter press and autocomplete clicks generate search events. New dashboard section shows three layers: Resultaat, Engagement, Geen resultaat.
+
+**Behavior:**
+- **Tracking changes:**
+  - Search events fire only on explicit user actions: Enter press (commit_type='enter') or autocomplete click (commit_type='autocomplete')
+  - Each search gets a unique search_id; all engagement events carry this ID
+  - New `search_end` event tracks duration (with visibility pause handling, 5min cap) and exit action
+  - Retry chains: `prev_search_id` links a new search to a previous zero-result search within 60 seconds
+  - Deferred result counting: search commit is signaled from filter-panel, tracking fires after data loads (when result_count is known)
+  - No more debounce timer — typing noise completely eliminated
+- **Dashboard changes:**
+  - SearchSection component with 4 mini KPIs (searches, success rate, avg duration, engagement rate)
+  - Enriched search table: Zoekterm, Resultaten, Via (Enter/Auto pills), Duur, Engagement %, Aantal, Module
+  - Zero results section with retry count badges ("2 herpogingen")
+  - Engagement breakdown chart (what users do after finding results)
+
+**Rationale:**
+- Old debounce-based tracking produced false data (typos, partial words, browsing pauses appearing as real searches)
+- Committed actions reflect actual user intent
+- Three-layer model (Resultaat → Engagement → Geen resultaat) gives actionable insights
+
+**Priority:** P1 (V1.0 — pre-launch data quality)
+
+**Status:** ✅ Implemented 2026-02-16
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload

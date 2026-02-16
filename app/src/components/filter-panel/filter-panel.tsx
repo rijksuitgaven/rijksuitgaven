@@ -587,7 +587,8 @@ interface FilterPanelProps {
   onFilterChange: (filters: FilterValues) => void
   isLoading?: boolean
   autoExpandTrigger?: number
-  onAutocompleteSelect?: () => void
+  /** UX-034: Signal a committed search action (Enter or autocomplete click) */
+  onSearchCommit?: (query: string, commitType: 'enter' | 'autocomplete', typedText?: string) => void
 }
 
 /**
@@ -600,7 +601,7 @@ export function FilterPanel({
   onFilterChange,
   isLoading = false,
   autoExpandTrigger = 0,
-  onAutocompleteSelect,
+  onSearchCommit,
 }: FilterPanelProps) {
   const router = useRouter()
   const { track } = useAnalytics()
@@ -958,20 +959,20 @@ export function FilterPanel({
     // Set search to recipient name and close dropdown
     // Stays on current module, filters the table
     track('autocomplete_click', module, { result_type: 'recipient', selected_value: result.name, target_module: module })
-    onAutocompleteSelect?.() // Cancel pending search tracking — autocomplete_click covers it
+    onSearchCommit?.(result.name, 'autocomplete', localFilters.search) // UX-034: committed search via autocomplete
     hasUserTypedRef.current = false // Prevent autocomplete effect from reopening dropdown
     skipDebounceRef.current = true // Explicit action — apply filter immediately
     setLocalFilters((prev) => ({ ...prev, search: result.name }))
     setIsDropdownOpen(false)
     inputRef.current?.blur()
-  }, [track, module, onAutocompleteSelect])
+  }, [track, module, onSearchCommit, localFilters.search])
 
   const handleSelectOtherModule = useCallback((name: string, targetModule: string) => {
     // Navigate to different module with search applied
+    // No onSearchCommit here — navigation, not a search commit on this module
     track('autocomplete_click', module, { result_type: 'recipient', selected_value: name, target_module: targetModule })
-    onAutocompleteSelect?.() // Cancel pending search tracking — autocomplete_click covers it
     router.push(`/${targetModule}?q=${encodeURIComponent(name)}`)
-  }, [router, track, module, onAutocompleteSelect])
+  }, [router, track, module])
 
   const handleClearSearch = useCallback(() => {
     setLocalFilters((prev) => ({ ...prev, search: '' }))
@@ -985,8 +986,8 @@ export function FilterPanel({
   const handleSelectFieldMatch = useCallback((result: FieldMatchResult) => {
     // Apply as a filter instead of a text search
     // This shows all recipients with this regeling/artikel/etc.
+    // No onSearchCommit — this is a filter application, not a text search commit
     track('autocomplete_click', module, { result_type: 'field_match', selected_value: result.value, field: result.field })
-    onAutocompleteSelect?.() // Cancel pending search tracking — autocomplete_click covers it
     skipDebounceRef.current = true // Explicit action — apply filter immediately
     setLocalFilters((prev) => ({
       ...prev,
@@ -997,7 +998,7 @@ export function FilterPanel({
     setFieldMatches([])
     setOtherModulesResults([])
     setIsDropdownOpen(false)
-  }, [track, module, onAutocompleteSelect])
+  }, [track, module])
 
   // =============================================================================
   // Keyboard navigation
@@ -1036,6 +1037,10 @@ export function FilterPanel({
           }
         } else {
           // No item selected - just close dropdown and apply search immediately
+          // UX-034: track as committed Enter search
+          if (localFilters.search.trim()) {
+            onSearchCommit?.(localFilters.search, 'enter')
+          }
           skipDebounceRef.current = true
           setIsDropdownOpen(false)
           inputRef.current?.blur()
@@ -1046,7 +1051,7 @@ export function FilterPanel({
         setSelectedIndex(-1)
         break
     }
-  }, [isDropdownOpen, totalResults, selectedIndex, currentModuleResults, fieldMatches, otherModulesResults, handleSelectCurrentModule, handleSelectFieldMatch, handleSelectOtherModule])
+  }, [isDropdownOpen, totalResults, selectedIndex, currentModuleResults, fieldMatches, otherModulesResults, handleSelectCurrentModule, handleSelectFieldMatch, handleSelectOtherModule, localFilters.search, onSearchCommit])
 
   // Close dropdown on click outside
   useEffect(() => {

@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-02-15
+**Last Updated:** 2026-02-16
 
 Items logged for future versions, not in V1.0 scope.
 
@@ -487,6 +487,35 @@ V2.0: Full state in URL including expanded rows, pagination position, all filter
 - Prefer server-side event tracking over client-side scripts (no consent needed)
 - Current cookie banner ("alleen noodzakelijke cookies") stays intact through Phase 1-2
 - Phase 3 requires updating cookie banner to consent mechanism
+
+---
+
+### Committed Search Tracking — UX-034 (COMPLETED)
+
+**Priority:** High (V1.0)
+**Added:** 2026-02-16
+**Completed:** 2026-02-16
+**Status:** ✅ COMPLETED
+**Type:** Analytics / UX
+**Related:** Refines UX-032 (Usage Statistics)
+
+**Problem:**
+Search analytics tracked typing noise via 2-second debounce timer. Dashboard showed typos and partial words as real searches (e.g., "Gemeente Deventtr" and "Gmeente" instead of "Gemeente Deventer"). This made the "Wat zoeken gebruikers?" section unreliable.
+
+**Solution Implemented — Three-layer search analytics model:**
+1. **Committed search tracking** — Only Enter press and autocomplete clicks generate search events. Debounce timer killed entirely.
+2. **search_id linking** — Every committed search gets a unique ID. All engagement events (row_expand, export, cross_module_nav, etc.) carry this search_id.
+3. **search_end event** — New 14th event type. Tracks duration (with visibility pause handling) and exit action (new_search, module_switch, page_leave, search_clear).
+4. **Retry chains** — `prev_search_id` links a new search to a previous zero-result search within 60 seconds.
+5. **Deferred result counting** — Search commit signaled from filter-panel, but tracking fires only after data loads (when result_count is known).
+
+**Dashboard redesign:**
+- New `SearchSection` component with 4 KPI cards (searches, success rate, avg duration, engagement rate)
+- Enriched search table: Zoekterm, Resultaten, Via (Enter/Auto pills), Duur, Engagement %, Aantal, Module
+- Zero results section with retry count badges
+- Engagement breakdown bar chart
+
+**Migration:** `052-search-tracking-v2.sql` (truncates old events, replaces 3 RPC functions, adds 1 new)
 
 ---
 

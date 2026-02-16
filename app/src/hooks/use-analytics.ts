@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef } from 'react'
 export type AnalyticsEventType =
   | 'module_view'
   | 'search'
+  | 'search_end'
   | 'row_expand'
   | 'filter_apply'
   | 'export'

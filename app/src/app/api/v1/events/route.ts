@@ -17,6 +17,7 @@ import { createHash } from 'crypto'
 const VALID_EVENT_TYPES = [
   'module_view',
   'search',
+  'search_end',
   'row_expand',
   'filter_apply',
   'export',

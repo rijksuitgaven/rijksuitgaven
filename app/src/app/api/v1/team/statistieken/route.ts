@@ -78,6 +78,7 @@ export async function GET(request: NextRequest) {
     exitIntentResult,
     searchSuccessResult,
     retentionResult,
+    searchEngagementResult,
     subscriptionsResult,
   ] = await Promise.all([
     supabase.rpc('get_usage_pulse', { since_date: sinceISO }),
@@ -95,6 +96,8 @@ export async function GET(request: NextRequest) {
     supabase.rpc('get_usage_exit_intent', { since_date: sinceISO, max_results: 10 }),
     supabase.rpc('get_usage_search_success', { since_date: sinceISO }),
     supabase.rpc('get_usage_retention', { since_date: sinceISO }),
+    // UX-034: search engagement breakdown
+    supabase.rpc('get_usage_search_engagement', { since_date: sinceISO }),
     // Fetch all subscriptions with person data for de-anonymization
     supabase.from('subscriptions').select('user_id, people!inner(first_name, last_name, email)'),
   ])
@@ -124,6 +127,9 @@ export async function GET(request: NextRequest) {
   }
   if (retentionResult.error) {
     console.error('[Statistics] Retention query error (non-blocking):', retentionResult.error.message)
+  }
+  if (searchEngagementResult.error) {
+    console.error('[Statistics] Search engagement query error (non-blocking):', searchEngagementResult.error.message)
   }
 
   // De-anonymize actors: hash each subscription user_id and match to actor_hash
@@ -172,6 +178,7 @@ export async function GET(request: NextRequest) {
     exit_intent: exitIntentResult.data ?? [],
     search_success: searchSuccess,
     retention: retentionResult.data ?? [],
+    search_engagement: searchEngagementResult.data ?? [],
   })
 }
 

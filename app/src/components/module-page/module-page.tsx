@@ -116,21 +116,61 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const searchParams = useSearchParams()
   const { track } = useAnalytics()
   const hasTrackedView = useRef(false)
-  const searchTrackTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const lastTrackedSearch = useRef('')
-  const pendingSearchRef = useRef<{ query: string; count: number; module: string } | null>(null)
   const lastTrigger = useRef<string>('page_load')
-  const skipNextSearchTrack = useRef(false)
 
-  // Cancel pending search tracking when user selects from autocomplete
-  // (autocomplete_click already covers the event — avoid duplicate tracking)
-  const handleAutocompleteSelect = useCallback(() => {
-    if (searchTrackTimer.current) {
-      clearTimeout(searchTrackTimer.current)
-      searchTrackTimer.current = null
+  // Committed search tracking (UX-034) — tracks only explicit user actions (Enter / autocomplete click)
+  const activeSearchId = useRef<string | null>(null)
+  const searchStartTime = useRef<number | null>(null)
+  const lastSearchResult = useRef<{ query: string; count: number; searchId: string; timestamp: number } | null>(null)
+  const visibilityPauseStart = useRef<number | null>(null)
+  const pausedDuration = useRef(0)
+
+  // Generate unique search ID
+  const generateSearchId = useCallback(() => {
+    return `s_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
+  }, [])
+
+  // End the current search session and track search_end
+  const endCurrentSearch = useCallback((exitAction: string) => {
+    if (!activeSearchId.current || !searchStartTime.current) return
+    const now = Date.now()
+    const rawDuration = (now - searchStartTime.current) / 1000
+    const duration = Math.min(rawDuration - pausedDuration.current / 1000, 300) // Cap at 5 minutes
+    track('search_end', moduleId, {
+      search_id: activeSearchId.current,
+      duration_seconds: Math.round(duration),
+      exit_action: exitAction,
+    })
+    activeSearchId.current = null
+    searchStartTime.current = null
+    pausedDuration.current = 0
+  }, [track, moduleId])
+
+  // Pending search commit — set by filter-panel callbacks, consumed after data loads (when result_count is known)
+  const pendingSearchCommit = useRef<{
+    query: string
+    commitType: 'enter' | 'autocomplete'
+    typedText?: string // what user actually typed (autocomplete only)
+  } | null>(null)
+
+  // Signal a committed search from filter-panel (result count not yet known — deferred to data load)
+  const handleSearchCommit = useCallback((query: string, commitType: 'enter' | 'autocomplete', typedText?: string) => {
+    endCurrentSearch('new_search')
+    pendingSearchCommit.current = { query, commitType, typedText }
+  }, [endCurrentSearch])
+
+  // Pause duration tracking when tab is hidden
+  useEffect(() => {
+    function handleVisChange() {
+      if (document.visibilityState === 'hidden') {
+        visibilityPauseStart.current = Date.now()
+      } else if (visibilityPauseStart.current) {
+        pausedDuration.current += Date.now() - visibilityPauseStart.current
+        visibilityPauseStart.current = null
+      }
     }
-    pendingSearchRef.current = null
-    skipNextSearchTrack.current = true // Skip the data-load search track that follows
+    document.addEventListener('visibilitychange', handleVisChange)
+    return () => document.removeEventListener('visibilitychange', handleVisChange)
   }, [])
 
   const [data, setData] = useState<ModuleDataResponse | null>(null)
@@ -207,36 +247,16 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     setSortBy('random')
     setUserHasSorted(false)
     setPage(1)
-    // Flush pending search from previous module before clearing
-    if (pendingSearchRef.current && pendingSearchRef.current.query !== lastTrackedSearch.current) {
-      track('search', pendingSearchRef.current.module, {
-        query: pendingSearchRef.current.query,
-        result_count: pendingSearchRef.current.count,
-        search_type: 'module_filter',
-      })
-    }
-    pendingSearchRef.current = null
-    if (searchTrackTimer.current) {
-      clearTimeout(searchTrackTimer.current)
-      searchTrackTimer.current = null
-    }
-    lastTrackedSearch.current = ''
-  }, [moduleId, track])
+    // End current search session on module switch
+    endCurrentSearch('module_switch')
+  }, [moduleId, endCurrentSearch])
 
-  // Flush pending search on unmount (navigation away)
+  // End search on unmount (navigation away)
   useEffect(() => {
     return () => {
-      if (searchTrackTimer.current) clearTimeout(searchTrackTimer.current)
-      const pending = pendingSearchRef.current
-      if (pending && pending.query !== lastTrackedSearch.current) {
-        track('search', pending.module, {
-          query: pending.query,
-          result_count: pending.count,
-          search_type: 'module_filter',
-        })
-      }
+      endCurrentSearch('page_leave')
     }
-  }, [track])
+  }, [endCurrentSearch])
 
   // Update URL when filters change
   useEffect(() => {
@@ -330,35 +350,51 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           })
         }
 
-        // Debounced search tracking — 2s quiet period filters keystrokes + autocomplete browsing
-        // Pending search is flushed on unmount/module-switch so events aren't lost on navigation
-        // Skip if this search came from an autocomplete selection (already tracked as autocomplete_click)
-        if (skipNextSearchTrack.current) {
-          skipNextSearchTrack.current = false
-          lastTrackedSearch.current = filters.search || ''
-        } else if (filters.search && filters.search.trim()) {
-          pendingSearchRef.current = { query: filters.search, count: response.pagination.totalRows, module: moduleId }
-          if (searchTrackTimer.current) clearTimeout(searchTrackTimer.current)
-          searchTrackTimer.current = setTimeout(() => {
-            const pending = pendingSearchRef.current
-            if (pending && pending.query !== lastTrackedSearch.current) {
-              lastTrackedSearch.current = pending.query
-              track('search', moduleId, {
-                query: pending.query,
-                result_count: pending.count,
-                search_type: 'module_filter',
-              })
-              pendingSearchRef.current = null
+        // Committed search tracking (UX-034): consume pending commit now that result_count is known
+        if (pendingSearchCommit.current) {
+          const commit = pendingSearchCommit.current
+          pendingSearchCommit.current = null
+
+          // Only track if the loaded data matches the committed query
+          // (prevents stale tracking if user cleared search before data loaded)
+          if (filters.search === commit.query) {
+            const searchId = generateSearchId()
+            activeSearchId.current = searchId
+            searchStartTime.current = Date.now()
+            pausedDuration.current = 0
+
+            const props: Record<string, unknown> = {
+              search_id: searchId,
+              query: commit.query,
+              result_count: response.pagination.totalRows,
+              commit_type: commit.commitType,
             }
-          }, 2000)
-        } else if (!filters.search) {
-          // Clear tracking state when search is cleared
-          lastTrackedSearch.current = ''
-          pendingSearchRef.current = null
-          if (searchTrackTimer.current) {
-            clearTimeout(searchTrackTimer.current)
-            searchTrackTimer.current = null
+
+            if (commit.typedText) {
+              props.autocomplete_typed = commit.typedText
+            }
+
+            // Retry chain: link to previous zero-result search within 60s
+            if (lastSearchResult.current && lastSearchResult.current.count === 0) {
+              const elapsed = Date.now() - lastSearchResult.current.timestamp
+              if (elapsed < 60_000) {
+                props.prev_search_id = lastSearchResult.current.searchId
+              }
+            }
+
+            track('search', moduleId, props)
+            lastSearchResult.current = {
+              query: commit.query,
+              count: response.pagination.totalRows,
+              searchId,
+              timestamp: Date.now(),
+            }
           }
+        }
+
+        // When search is cleared, end the current search session
+        if (!filters.search && activeSearchId.current) {
+          endCurrentSearch('search_clear')
         }
       } catch (err) {
         // Ignore abort errors and transient network errors from navigation/cancelled requests
@@ -434,14 +470,14 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     setSortOrder(direction)
     setUserHasSorted(true)  // User explicitly sorted, don't reset to random
     setPage(1)
-    track('sort_change', moduleId, { column: backendColumn, direction })
+    track('sort_change', moduleId, { column: backendColumn, direction, search_id: activeSearchId.current || undefined })
   }, [track, moduleId])
 
   const handlePageChange = useCallback((newPage: number) => {
     lastTrigger.current = 'page_change'
     setPage(newPage)
     if (newPage > 1) {
-      track('page_change', moduleId, { page: newPage, per_page: perPage })
+      track('page_change', moduleId, { page: newPage, per_page: perPage, search_id: activeSearchId.current || undefined })
     }
   }, [track, moduleId, perPage])
 
@@ -455,6 +491,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     track('row_expand', moduleId, {
       recipient: primaryValue,
       search_query: filters.search || undefined,
+      search_id: activeSearchId.current || undefined,
     })
   }, [track, moduleId, filters.search])
 
@@ -463,6 +500,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
       target_module: targetModule,
       recipient,
       origin: 'expanded_row',
+      search_id: activeSearchId.current || undefined,
     })
     router.push(`/${targetModule}?q=${encodeURIComponent(recipient)}`)
   }, [router, track, moduleId])
@@ -514,7 +552,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             onFilterChange={handleFilterChange}
             isLoading={isLoading}
             autoExpandTrigger={filterExpandTrigger}
-            onAutocompleteSelect={handleAutocompleteSelect}
+            onSearchCommit={handleSearchCommit}
           />
 
           {data && (
@@ -558,7 +596,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             selectedColumns={effectiveColumns}
             onColumnsChange={(cols) => {
               setSelectedColumns(cols)
-              track('column_change', moduleId, { columns: cols })
+              track('column_change', moduleId, { columns: cols, search_id: activeSearchId.current || undefined })
             }}
             onExport={(format, rowCount) => {
               track('export', moduleId, {
@@ -566,6 +604,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
                 row_count: rowCount,
                 search_query: filters.search || undefined,
                 has_filters: !isDefaultView,
+                search_id: activeSearchId.current || undefined,
               })
             }}
             hasActiveFilters={activeFilterColumns.length > 0}

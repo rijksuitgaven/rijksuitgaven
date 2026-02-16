@@ -275,17 +275,18 @@
 |----------|---------|-------------|
 | `get_usage_pulse(since_date)` | total_events, unique_actors, module_views, searches, exports | Top-line metrics |
 | `get_usage_modules(since_date, max_results)` | module, view_count, unique_actors | Module popularity |
-| `get_usage_searches(since_date, max_results)` | query, search_count, avg_results, top_module | Top search terms |
+| `get_usage_searches(since_date, max_results)` | query, search_count, unique_actors, avg_results, top_module, enter_count, autocomplete_count, avg_duration, engagement_rate | Top search terms with commit type breakdown, duration, engagement (migration 052) |
 | `get_usage_filters(since_date, max_results)` | module, field, filter_count | Most-used filters grouped by module (migration 043) |
 | `get_usage_columns(since_date, max_results)` | module, column_name, usage_count | Column selections grouped by module (migration 043) |
 | `get_usage_exports(since_date)` | module, format, export_count, avg_rows, unique_actors | Export activity grouped by module (migration 043) |
-| `get_usage_zero_results(since_date, max_results)` | query, search_count, top_module | Zero-result searches (most actionable) |
+| `get_usage_zero_results(since_date, max_results)` | query, search_count, top_module, retry_count | Zero-result searches with retry detection (migration 052) |
 | `get_usage_actors(since_date, max_results)` | actor_hash, last_seen, event_count, top_module, search_count, export_count, module_count | Per-user activity summary (migration 039) |
 | `get_usage_actor_detail(target_actor, since_date)` | event_type, module, properties, created_at | Single user's event timeline, max 50 (migration 039) |
 | `get_usage_errors(since_date, max_results)` | module, message, properties, actor_hash, created_at | Recent error events with context (migration 040) |
 | `get_usage_sessions_summary(since_date)` | total_sessions, unique_actors, avg_duration_seconds, avg_events_per_session, avg_modules_per_session | Session metrics (30-min gap boundary, migration 042) |
 | `get_usage_exit_intent(since_date, max_results)` | last_event_type, session_count, percentage | Last action before session ends (migration 042) |
-| `get_usage_search_success(since_date)` | total_searches, successful_searches, success_rate | Search→action success proxy (migration 042) |
+| `get_usage_search_success(since_date)` | total_searches, successful_searches, success_rate | Search success via search_id linking (migration 052, replaces session-based approach) |
+| `get_usage_search_engagement(since_date)` | action_type, action_count, unique_searches | Post-search engagement breakdown by action type (migration 052) |
 | `get_usage_retention(since_date)` | cohort_week, week_offset, active_count, cohort_size, retention_rate | Weekly retention cohort grid (migration 042, changed to weekly in 044) |
 
 `get_usage_actors` enhanced (migration 042): now returns session_count, avg_session_seconds, engagement_score, avg_gap_days, gap_trend, external_link_count.
@@ -293,10 +294,11 @@
 All functions: `LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public`
 
 **Usage:**
-- Client: `useAnalytics()` hook batches events, flushes to `POST /api/v1/analytics`
-- BFF: Validates events, hashes user_id → actor_hash, fire-and-forget write
-- Dashboard: `/team/statistieken` calls `supabase.rpc()` for all 7 functions in parallel
+- Client: `useAnalytics()` hook batches events, flushes to `POST /api/v1/events`
+- BFF: Validates events (14 types), hashes user_id → actor_hash, fire-and-forget write
+- Dashboard: `/team/statistieken` calls `supabase.rpc()` for all functions in parallel
 - Env var: `ANALYTICS_HASH_SECRET` on Railway frontend
+- **UX-034 (migration 052):** Committed search tracking. Old data truncated. 4 functions replaced/added. Event types: 14 (added `search_end`). New properties on `search`: `search_id`, `commit_type`, `autocomplete_typed`, `prev_search_id`.
 
 ---
 
@@ -981,6 +983,11 @@ VACUUM ANALYZE universal_search;
 | `045-people-table.sql` | Create unified `people` table, populate from contacts + subscriptions, add `person_id` FK to subscriptions, RLS policies | Once (done 2026-02-14) |
 | `046-subscription-soft-delete.sql` | Add `deleted_at` to subscriptions for soft-delete, make `user_id` nullable, partial index | Once (done 2026-02-14) |
 | `047-people-archived-at.sql` | Add `archived_at` column to people — non-destructive prospect archival | Once (done 2026-02-14) |
+| `048-fix-retention-date-filter.sql` | Remove first_week >= since_date filter from retention function | Once (done 2026-02-15) |
+| `049-fix-unlinked-subscriptions-and-anon-filtering.sql` | Link unlinked subscriptions, truncate events, recreate 4 functions with anon filtering | Once (done 2026-02-15) |
+| `050-fix-searches-avg-results.sql` | Add avg_results column back to get_usage_searches | Once (done 2026-02-15) |
+| `051-search-success-include-autocomplete.sql` | Add autocomplete_click to search success criteria | Once (done 2026-02-15) |
+| `052-search-tracking-v2.sql` | UX-034: Truncate + replace 3 functions (searches, zero_results, search_success) + add get_usage_search_engagement. Committed search model with search_id, duration, retry chains | Once (done 2026-02-16) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---

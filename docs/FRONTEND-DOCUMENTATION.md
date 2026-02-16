@@ -358,6 +358,7 @@ Reusable template for all module pages.
 - Sort state management
 - Error state with retry button
 - Loading skeleton
+- Committed search tracking (UX-034): `pendingSearchCommit` ref consumed after data loads, `activeSearchId` carried by all engagement events, `endCurrentSearch` fires `search_end` with duration + exit action, visibility pause handling
 
 **Module Configurations:**
 
@@ -780,16 +781,33 @@ Client-side analytics event batching hook with pseudonymized tracking.
 }
 ```
 
-**Event Types (13):**
-- Core (module-page): `module_view`, `search`, `row_expand`, `filter_apply`, `export`, `column_change`, `sort_change`, `page_change`, `cross_module_nav`, `error`
+**Event Types (14):**
+- Core (module-page): `module_view`, `search`, `search_end`, `row_expand`, `filter_apply`, `export`, `column_change`, `sort_change`, `page_change`, `cross_module_nav`, `error`
 - Search bar: `autocomplete_search`, `autocomplete_click`
 - External: `external_link` (Google search clicks in data-table + detail-panel)
+
+**Committed Search Tracking (UX-034):**
+
+Search events only fire on explicit user actions — never on debounce timers. Two commit types:
+- **Enter press** — user presses Enter in search field (commit_type='enter')
+- **Autocomplete click** — user clicks a current-module result (commit_type='autocomplete')
+
+Each committed search generates a unique `search_id` (format: `s_{timestamp}_{random}`). This ID is carried by all subsequent engagement events (`row_expand`, `export`, `cross_module_nav`, `external_link`, `filter_apply`, `sort_change`, `page_change`, `column_change`) until the search session ends.
+
+**search_end event** tracks:
+- `duration_seconds` — time from search commit to session end (visibility pause aware, capped at 5 minutes)
+- `exit_action` — what ended the session: `new_search`, `module_switch`, `page_leave`, `search_clear`
+
+**Retry chains:** When a search follows a zero-result search within 60 seconds, `prev_search_id` links them.
+
+**Deferred result counting:** The search commit is signaled from filter-panel via `onSearchCommit`, but the `search` event is only tracked after data loads (when `result_count` is known). The `pendingSearchCommit` ref in module-page holds the intent until consumption.
 
 **Batching Behavior:**
 - Events queue in module-level array (shared across all hook instances)
 - Flush triggers: every 30 seconds, at 10 events, or on `visibilitychange`
-- Uses `navigator.sendBeacon` for reliable delivery on page unload
-- Falls back to `fetch` if sendBeacon unavailable
+- Primary: `fetch` with `keepalive` (reliable, includes credentials)
+- Page unload: `sendBeacon` with `text/plain` Content-Type (survives page close, avoids privacy browser blocking)
+- Falls back to `fetch` if sendBeacon fails
 
 **Usage:**
 ```tsx
@@ -798,11 +816,14 @@ const { track } = useAnalytics()
 // Track module view
 track('module_view', 'instrumenten', { result_count: 500 })
 
-// Track search
-track('search', 'integraal', { query: 'prorail', result_count: 12 })
+// Track search (called by module-page after data loads, not manually)
+track('search', 'integraal', { search_id: 's_123_ab', query: 'prorail', result_count: 12, commit_type: 'enter' })
 
-// Track export
-track('export', 'inkoop', { format: 'csv', row_count: 250 })
+// Track search end
+track('search_end', 'integraal', { search_id: 's_123_ab', duration_seconds: 45, exit_action: 'new_search' })
+
+// Track engagement with search_id
+track('row_expand', 'integraal', { recipient: 'ProRail', search_id: 's_123_ab' })
 ```
 
 **Privacy:** No PII stored. User ID hashed server-side to `actor_hash` (SHA256, first 16 chars). Anonymous users tracked as `anon_000000000000`.
@@ -852,7 +873,7 @@ if (status === 'expired') redirect('/verlopen')
 | `/team` | Protected (Admin) | Admin dashboard (subscription overview) |
 | `/team/leden` | Protected (Admin) | Member management (CRUD operations) |
 | `/team/feedback` | Protected (Admin) | Feedback inbox (status workflow, categories) |
-| `/team/statistieken` | Protected (Admin) | Usage statistics dashboard (UX-032) |
+| `/team/statistieken` | Protected (Admin) | Usage statistics dashboard (UX-032, search redesign UX-034) |
 | `/verlopen` | Public | Expired subscription page |
 | `/instrumenten` | Protected | Financiële Instrumenten module |
 | `/apparaat` | Protected | Apparaatsuitgaven module |
@@ -1058,3 +1079,4 @@ npm run build
 | 2026-02-14 | Comprehensive error tracking: 7 components instrumented (expanded-row, detail-panel, filter-panel, search-bar, feedback, login, homepage) |
 | 2026-02-14 | Complete UI event tracking: 9 tracking points, `external_link` event type (13th), 404/react_render error tracking, autocomplete selections, detail-panel export/nav |
 | 2026-02-14 | Comprehensive error tracking: 7 components instrumented (expanded-row, detail-panel, filter-panel, search-bar, feedback-button, login-form, public-homepage). 7 new trigger labels in dashboard |
+| 2026-02-16 | UX-034: Committed search tracking. Killed debounce, track Enter/autocomplete only. `search_end` (14th event type) with duration + exit_action. `search_id` links engagement to originating search. Retry chains via `prev_search_id`. Deferred result counting. Dashboard SearchSection redesign: 4 KPIs, enriched table (Via/Duur/Engagement), zero results with retry badges, engagement breakdown. Migration 052 |

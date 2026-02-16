@@ -103,6 +103,7 @@
 - ✅ **2026-02-15 (Session 14):** Usage events reset — truncated 55 test events. Clean slate for production.
 - ✅ **2026-02-15 (Session 15):** Module nav bar overflow fix — expert panel (5 specialists) approved condensed font on nav bar only. `var(--font-condensed)` on `<nav>`, padding px-3→px-2.5. Full labels preserved, scroll fallback kept.
 - ✅ **2026-02-15 (Session 16):** Search tracking — intermediate keystrokes tracked during autocomplete browsing. Added `onAutocompleteSelect` callback (filter-panel → module-page) to cancel pending timer. Debounce 1s→2s. `skipNextSearchTrack` ref prevents duplicate tracking after autocomplete selection.
+- ✅ **2026-02-16 (Session 1):** UX-034 Committed search tracking — complete rewrite of search analytics. Killed debounce-based tracking, replaced with committed action tracking (Enter/autocomplete only). New search_end event (14th type) with duration + exit_action. search_id links engagement events to originating search. Retry chains (prev_search_id). Deferred result counting (track after data loads). Dashboard redesign: SearchSection with KPIs, enriched table (Via/Duur/Engagement columns), zero results with retry badges, engagement breakdown chart. Migration 052 (truncate + 4 functions). 6 files modified.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -130,10 +131,13 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **2 files** (2026-02-15 Session 16)
+1. **6 files + 1 migration** (2026-02-16 Session 1)
+   UX-034: Committed search tracking. Killed debounce, track Enter/autocomplete only. search_id linking, search_end event, retry chains, deferred result counting. Dashboard SearchSection redesign with KPIs + engagement.
+
+2. **2 files** (2026-02-15 Session 16)
    Search tracking fix: `onAutocompleteSelect` callback cancels pending search timer on autocomplete selection, debounce 1s→2s, `skipNextSearchTrack` ref.
 
-2. **3 files** (2026-02-15 Sessions 13-15)
+3. **3 files** (2026-02-15 Sessions 13-15)
    Error noise suppression (module-page.tsx: NetworkError/Failed to fetch guard). Module nav bar overflow fix (header.tsx: condensed font + tighter padding). Usage events truncated.
 
 3. **23 files + 4 migrations** (2026-02-15 Sessions 6-12)
