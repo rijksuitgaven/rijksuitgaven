@@ -1007,18 +1007,19 @@ function ModuleActivitySection({ modules, filters, columns, exports, searches, z
             </span>
           </div>
 
-          {/* Searches — horizontal bars */}
+          {/* Searches — horizontal bars proportional to result count */}
           {a.searches.length > 0 && (() => {
-            const maxCount = Math.max(...a.searches.map(s => s.search_count), 1)
+            const maxResults = Math.max(...a.searches.map(s => Number(s.avg_results) || 0), 1)
             return (
-              <div className="mb-2.5 space-y-1.5">
+              <div className="mb-2.5 space-y-1">
                 {a.searches.map((s, i) => {
-                  const barWidth = Math.max((s.search_count / maxCount) * 100, 4)
-                  const hasResults = s.avg_results != null && Number(s.avg_results) > 0
+                  const results = Number(s.avg_results) || 0
+                  const barWidth = Math.max((results / maxResults) * 100, 3)
+                  const hasResults = results > 0
                   return (
-                    <div key={i} className="flex items-center gap-2.5">
-                      <span className="text-xs font-medium text-[var(--navy-dark)] truncate min-w-0 w-40 shrink-0">&ldquo;{s.query}&rdquo;</span>
-                      <div className="flex-1 h-5 bg-[var(--gray-light)]/40 rounded overflow-hidden">
+                    <div key={i} className="flex items-center gap-2 group">
+                      <span className="text-xs font-medium text-[var(--navy-dark)] truncate min-w-0 w-36 shrink-0">&ldquo;{s.query}&rdquo;</span>
+                      <div className="w-28 shrink-0 h-4 bg-[var(--gray-light)]/40 rounded overflow-hidden">
                         <div
                           className="h-full rounded"
                           style={{
@@ -1029,16 +1030,18 @@ function ModuleActivitySection({ modules, filters, columns, exports, searches, z
                           }}
                         />
                       </div>
-                      <span className="text-xs font-bold text-[var(--navy-dark)] shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                        {s.search_count}× gezocht
+                      <span className="text-[11px] text-[var(--navy-dark)] shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                        <span className="font-semibold">{results.toLocaleString('nl-NL')}</span>
+                        <span className="text-[var(--navy-medium)]"> res</span>
+                        <span className="text-[var(--navy-medium)]/50 mx-1">·</span>
+                        <span className="text-[var(--navy-medium)]">{s.search_count}×</span>
                       </span>
                       <span className={`text-[10px] px-1.5 py-0.5 rounded shrink-0 ${
-                        hasResults ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+                        s.autocomplete_count > 0
+                          ? 'bg-[var(--navy-dark)]/5 text-[var(--navy-medium)]'
+                          : 'bg-[var(--gray-light)]/60 text-[var(--muted-foreground)]'
                       }`}>
-                        {s.avg_results != null ? `${Number(s.avg_results).toLocaleString('nl-NL')} resultaten` : '0 resultaten'}
-                      </span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--gray-light)] text-[var(--navy-medium)] shrink-0">
-                        {s.autocomplete_count > 0 ? 'via autocomplete' : 'via enter'}
+                        {s.autocomplete_count > 0 ? 'autocomplete' : 'enter'}
                       </span>
                     </div>
                   )
