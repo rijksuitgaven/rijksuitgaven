@@ -8,7 +8,7 @@ import {
   ChevronDown, ChevronRight, Eye, SlidersHorizontal, Columns, Clock,
   ArrowUpDown, ArrowRight, Sparkles, ChevronsRight,
   ExternalLink, TrendingUp, TrendingDown, Minus, Timer,
-  Target, LogOut, Activity,
+  Target, Activity,
 } from 'lucide-react'
 
 // --- Constants ---
@@ -269,14 +269,20 @@ function getDelta(current: number, previous: number): { pct: number; direction: 
   return { pct: Math.abs(pct), direction: pct > 0 ? 'up' : pct < 0 ? 'down' : 'flat' }
 }
 
-function DeltaBadge({ current, previous }: { current: number; previous: number }) {
+function DeltaBadge({ current, previous, dark }: { current: number; previous: number; dark?: boolean }) {
   const { pct, direction } = getDelta(current, previous)
-  if (direction === 'flat' && pct === 0) return <span className="text-xs text-[var(--muted-foreground)]">—</span>
-  const styles = {
+  if (direction === 'flat' && pct === 0) return <span className={`text-xs ${dark ? 'text-white/40' : 'text-[var(--muted-foreground)]'}`}>—</span>
+  const lightStyles = {
     up: 'text-emerald-700 bg-emerald-50/80 border-emerald-200/60',
     down: 'text-[#E62D75] bg-pink-50/60 border-pink-200/60',
     flat: 'text-[var(--muted-foreground)] bg-[var(--gray-light)] border-[var(--border)]',
   }
+  const darkStyles = {
+    up: 'text-emerald-300 bg-emerald-500/20 border-emerald-400/30',
+    down: 'text-pink-300 bg-pink-500/20 border-pink-400/30',
+    flat: 'text-white/50 bg-white/10 border-white/20',
+  }
+  const styles = dark ? darkStyles : lightStyles
   const arrows = { up: '↑', down: '↓', flat: '—' }
   return (
     <span className={`inline-flex items-center gap-0.5 text-xs font-semibold px-1.5 py-0.5 rounded-full border ${styles[direction]}`}>
@@ -464,6 +470,7 @@ export default function StatistiekenPage() {
   const expands = getPulseValue(data?.pulse ?? [], 'row_expand')
   const moduleViews = getPulseValue(data?.pulse ?? [], 'module_view')
   const externalLinks = getPulseValue(data?.pulse ?? [], 'external_link')
+  const filtersApplied = getPulseValue(data?.pulse ?? [], 'filter_apply')
   const ss = data?.sessions_summary
   const sc = data?.search_success
 
@@ -497,14 +504,14 @@ export default function StatistiekenPage() {
   })
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--gray-light)] to-white">
+    <div className="min-h-screen bg-[#F7F8FA]">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8" style={{ fontFamily: 'var(--font-condensed), sans-serif' }}>
         <TeamNav />
 
         {/* Header + date range */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-xl font-semibold text-[var(--navy-dark)]">Gebruiksstatistieken</h1>
-          <div className="flex gap-1 bg-white rounded-lg border border-[var(--border)] p-1">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-2xl font-bold text-[var(--navy-dark)] tracking-tight">Gebruiksstatistieken</h1>
+          <div className="flex gap-1 bg-white rounded-lg shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 p-1">
             {DATE_RANGES.map(range => (
               <button
                 key={range.value}
@@ -525,30 +532,30 @@ export default function StatistiekenPage() {
           <div className="space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[1, 2].map(i => (
-                <div key={i} className="bg-white rounded-xl border border-[var(--border)] p-5 animate-pulse relative overflow-hidden">
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-[var(--gray-light)] rounded-l-xl" />
-                  <div className="h-3 bg-[var(--gray-light)] rounded w-28 mb-3" />
-                  <div className="h-10 bg-[var(--gray-light)] rounded w-20 mb-1.5" />
-                  <div className="h-3 bg-[var(--gray-light)] rounded w-24" />
+                <div key={i} className="bg-[var(--navy-dark)] rounded-xl p-5 animate-pulse overflow-hidden shadow-lg shadow-[var(--navy-dark)]/20">
+                  <div className="h-3 bg-white/10 rounded w-28 mb-3" />
+                  <div className="h-10 bg-white/10 rounded w-20 mb-1.5" />
+                  <div className="h-3 bg-white/10 rounded w-24" />
                 </div>
               ))}
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[1, 2, 3, 4].map(i => (
-                <div key={i} className="bg-white rounded-lg border border-[var(--border)] px-3.5 py-3 animate-pulse">
+                <div key={i} className="bg-white rounded-lg shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 px-3.5 py-3 animate-pulse">
                   <div className="h-3 bg-[var(--gray-light)] rounded w-20 mb-1" />
                   <div className="h-6 bg-[var(--gray-light)] rounded w-12" />
                 </div>
               ))}
             </div>
-            <div className="bg-white rounded-lg border border-[var(--border)] p-5 animate-pulse">
+            <div className="bg-white rounded-xl shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 p-5 animate-pulse">
               <div className="h-4 bg-[var(--gray-light)] rounded w-36 mb-5" />
-              <div className="flex gap-6">
+              <div className="space-y-3">
                 {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="flex-1">
-                    <div className="h-3 bg-[var(--gray-light)] rounded w-16 mb-1" />
-                    <div className="h-5 bg-[var(--gray-light)] rounded w-10 mb-1.5" />
-                    <div className="h-2 bg-[var(--gray-light)] rounded-full" style={{ width: `${100 - i * 20}%` }} />
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-28 h-4 bg-[var(--gray-light)] rounded" />
+                    <div className="flex-1 h-6 bg-[var(--gray-light)]/60 rounded" />
+                    <div className="w-10 h-4 bg-[var(--gray-light)] rounded" />
+                    <div className="w-10 h-4 bg-[var(--gray-light)] rounded" />
                   </div>
                 ))}
               </div>
@@ -565,7 +572,7 @@ export default function StatistiekenPage() {
                 label="Actieve gebruikers"
                 value={moduleViews.actors}
                 subtext={`van ${data.total_members} leden`}
-                delta={<DeltaBadge current={moduleViews.actors} previous={prevModuleViews.actors} />}
+                delta={<DeltaBadge current={moduleViews.actors} previous={prevModuleViews.actors} dark />}
                 hero
               />
               <PulseCard
@@ -619,6 +626,7 @@ export default function StatistiekenPage() {
             <AdoptionFunnel
               views={moduleViews.count}
               searches={searches.count}
+              filters={filtersApplied.count}
               expands={expands.count}
               exportCount={exports.count}
             />
@@ -633,33 +641,7 @@ export default function StatistiekenPage() {
               searchActors={searches.actors}
             />
 
-            {/* Exit intent */}
-            <Section title="Waar stoppen sessies?" icon={<LogOut className="w-4 h-4" />}>
-              {data.exit_intent.length === 0 ? (
-                <EmptyState>Nog geen sessiedata</EmptyState>
-              ) : (
-                <div className="space-y-2">
-                  {data.exit_intent.map((ei, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <span className="w-28 text-sm text-[var(--navy-dark)] truncate">
-                        {EVENT_TYPE_LABELS[ei.last_event_type] || ei.last_event_type}
-                      </span>
-                      <div className="flex-1 h-5 bg-[var(--gray-light)] rounded overflow-hidden">
-                        <div
-                          className="h-full bg-[var(--navy-medium)] rounded transition-all"
-                          style={{ width: `${ei.percentage}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-semibold text-[var(--navy-dark)] w-12 text-right">
-                        {ei.percentage}%
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Section>
-
-            {/* Errors — shows WHAT went wrong (referenced by "Fout" in exit intent) */}
+            {/* Errors */}
             {data.errors.length > 0 && (
               <Section title="Fouten" icon={<AlertTriangle className="w-4 h-4" />}>
                 <div className="space-y-2">
@@ -749,7 +731,7 @@ export default function StatistiekenPage() {
             </Section>
           </>
         ) : (
-          <div className="bg-white rounded-lg border border-[var(--border)] p-8 text-center text-[var(--muted-foreground)]">
+          <div className="bg-white rounded-xl shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 p-8 text-center text-[var(--muted-foreground)]">
             Fout bij ophalen statistieken
           </div>
         )}
@@ -774,7 +756,7 @@ function SearchSection({ searches, searchSuccess, searchCount, searchActors }: {
     : 0
 
   return (
-    <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
+    <div className="bg-white rounded-xl shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 p-5 mb-4">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-[var(--navy-medium)]"><Search className="w-4 h-4" /></span>
         <h2 className="text-sm font-semibold text-[var(--navy-dark)] uppercase tracking-wider">Zoekgedrag</h2>
@@ -820,7 +802,7 @@ function SearchKPI({ label, value, sub, isString }: {
   isString?: boolean
 }) {
   return (
-    <div className="rounded-lg border border-[var(--border)] bg-[var(--gray-light)]/30 px-3 py-2.5">
+    <div className="rounded-lg border border-[var(--border)]/40 bg-[var(--gray-light)]/30 px-3 py-2.5">
       <div className="text-xs text-[var(--muted-foreground)] font-medium uppercase tracking-wider mb-0.5">{label}</div>
       <div className="text-xl font-bold text-[var(--navy-dark)]">
         {isString ? value : (typeof value === 'number' ? value.toLocaleString('nl-NL') : value)}
@@ -864,70 +846,66 @@ function EngagementPill({ rate }: { rate: number | null }) {
 
 // --- Subcomponents ---
 
-function AdoptionFunnel({ views, searches, expands, exportCount }: {
+function AdoptionFunnel({ views, searches, filters, expands, exportCount }: {
   views: number
   searches: number
+  filters: number
   expands: number
   exportCount: number
 }) {
-  const steps = [
-    { label: 'Bekeken', value: views, icon: Eye },
+  const features = [
     { label: 'Gezocht', value: searches, icon: Search },
+    { label: 'Gefilterd', value: filters, icon: SlidersHorizontal },
     { label: 'Uitgeklapt', value: expands, icon: MousePointerClick },
     { label: 'Geëxporteerd', value: exportCount, icon: Download },
-  ]
-  const maxValue = Math.max(views, 1)
+  ].sort((a, b) => b.value - a.value)
 
   return (
-    <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
-      <div className="flex items-center gap-2 mb-5">
-        <span className="text-[var(--navy-medium)]"><TrendingUp className="w-4 h-4" /></span>
-        <h2 className="text-sm font-semibold text-[var(--navy-dark)] uppercase tracking-wider">Feature Adoption</h2>
+    <div className="bg-white rounded-xl shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 p-5 mb-4">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2">
+          <span className="text-[var(--navy-medium)]"><Target className="w-4 h-4" /></span>
+          <h2 className="text-sm font-semibold text-[var(--navy-dark)] uppercase tracking-wider">Feature Adoption</h2>
+        </div>
+        {views > 0 && (
+          <span className="text-xs text-[var(--muted-foreground)]">
+            van <strong className="text-[var(--navy-dark)]" style={{ fontVariantNumeric: 'tabular-nums' }}>{views.toLocaleString('nl-NL')}</strong> weergaven
+          </span>
+        )}
       </div>
       {views === 0 ? (
         <EmptyState>Nog geen activiteit in deze periode</EmptyState>
       ) : (
-        <div className="flex items-end">
-          {steps.map((step, i) => {
-            const prevStep = i > 0 ? steps[i - 1] : null
-            const conversion = prevStep && prevStep.value > 0
-              ? Math.round((step.value / prevStep.value) * 100)
-              : null
-            const pct = Math.max((step.value / maxValue) * 100, 3)
-            const Icon = step.icon
-
+        <div className="space-y-3">
+          {features.map((feat, i) => {
+            const pct = Math.round((feat.value / views) * 100)
+            const barWidth = Math.max((feat.value / views) * 100, 1)
+            const Icon = feat.icon
             return (
-              <div key={i} className="flex items-end flex-1 min-w-0">
-                {conversion !== null && (
-                  <div className="flex flex-col items-center justify-end px-1.5 pb-2 shrink-0">
-                    <span className={`text-[11px] font-bold leading-none ${
-                      conversion >= 50 ? 'text-emerald-600' :
-                      conversion >= 25 ? 'text-amber-600' : 'text-[#E62D75]'
-                    }`}>
-                      {conversion}%
-                    </span>
-                    <ArrowRight className="w-3 h-3 text-[var(--border)] mt-0.5" />
+              <div key={i}>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 w-28 shrink-0">
+                    <Icon className="w-3.5 h-3.5 text-[var(--navy-medium)]" />
+                    <span className="text-sm font-medium text-[var(--navy-dark)]">{feat.label}</span>
                   </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1 mb-1">
-                    <Icon className="w-3 h-3 text-[var(--navy-medium)] shrink-0" />
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] truncate">
-                      {step.label}
-                    </span>
-                  </div>
-                  <div className="text-lg font-bold text-[var(--navy-dark)] mb-1.5" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                    {step.value.toLocaleString('nl-NL')}
-                  </div>
-                  <div className="h-2 bg-[var(--gray-light)] rounded-full overflow-hidden">
+                  <div className="flex-1 h-6 bg-[var(--gray-light)]/60 rounded overflow-hidden">
                     <div
-                      className="h-full rounded-full"
+                      className="h-full rounded"
                       style={{
-                        width: `${pct}%`,
+                        width: `${barWidth}%`,
+                        opacity: feat.value === 0 ? 0.15 : 1,
                         background: 'linear-gradient(90deg, var(--navy-dark), var(--navy-medium))',
                       }}
                     />
                   </div>
+                  <span className="text-sm font-bold text-[var(--navy-dark)] w-10 text-right" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {feat.value.toLocaleString('nl-NL')}
+                  </span>
+                  <span className={`text-sm font-bold w-10 text-right ${
+                    pct >= 50 ? 'text-emerald-600' : pct >= 20 ? 'text-[var(--navy-dark)]' : pct > 0 ? 'text-amber-600' : 'text-[var(--muted-foreground)]'
+                  }`} style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {pct}%
+                  </span>
                 </div>
               </div>
             )
@@ -951,25 +929,27 @@ function PulseCard({ icon, label, value, subtext, delta, hero, isString }: {
 
   if (hero) {
     return (
-      <div className="bg-white rounded-xl border border-[var(--border)] p-5 relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-[var(--navy-dark)] rounded-l-xl" />
-        <div className="flex items-center gap-2 mb-3 text-[var(--navy-medium)]">
-          {icon}
-          <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
+      <div className="bg-[var(--navy-dark)] rounded-xl p-5 relative overflow-hidden shadow-lg shadow-[var(--navy-dark)]/20">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] to-transparent pointer-events-none" />
+        <div className="relative">
+          <div className="flex items-center gap-2 mb-3 text-white/60">
+            {icon}
+            <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
+          </div>
+          <div className="flex items-baseline gap-3">
+            <span className="text-4xl font-bold text-white" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {formatted}
+            </span>
+            {delta}
+          </div>
+          <div className="text-xs text-white/50 mt-1.5">{subtext}</div>
         </div>
-        <div className="flex items-baseline gap-3">
-          <span className="text-4xl font-bold text-[var(--navy-dark)]" style={{ fontVariantNumeric: 'tabular-nums' }}>
-            {formatted}
-          </span>
-          {delta}
-        </div>
-        <div className="text-xs text-[var(--muted-foreground)] mt-1.5">{subtext}</div>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-lg border border-[var(--border)] px-3.5 py-3">
+    <div className="bg-white rounded-lg shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 px-3.5 py-3">
       <div className="flex items-center gap-1.5 mb-1 text-[var(--muted-foreground)]">
         {icon}
         <span className="text-[11px] font-semibold uppercase tracking-wider">{label}</span>
@@ -991,7 +971,7 @@ function Section({ title, icon, children }: {
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
+    <div className="bg-white rounded-xl shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 p-5 mb-4">
       <div className="flex items-center gap-2 mb-4">
         {icon && <span className="text-[var(--navy-medium)]">{icon}</span>}
         <h2 className="text-sm font-semibold text-[var(--navy-dark)] uppercase tracking-wider">{title}</h2>
@@ -1157,10 +1137,10 @@ function ModuleActivitySection({ modules, filters, columns, exports, searches, z
         const isActive = a.views > 0 || hasSearches || hasZeroResults
 
         return (
-          <div key={mod} className={`rounded-lg relative overflow-hidden px-4 py-3 border ${
+          <div key={mod} className={`rounded-lg relative overflow-hidden px-4 py-3 ${
             isActive
-              ? 'bg-[var(--gray-light)]/40 border-[var(--border)]/50'
-              : 'bg-white/60 border-[var(--border)]/30'
+              ? 'bg-white shadow-sm shadow-black/[0.04] border border-[var(--border)]/40'
+              : 'bg-[var(--gray-light)]/30 border border-[var(--border)]/20'
           }`}>
             <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-lg ${
               isActive ? 'bg-[var(--navy-dark)]' : 'bg-[var(--border)]'
