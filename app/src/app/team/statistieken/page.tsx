@@ -1017,7 +1017,7 @@ function ModuleActivitySection({ modules, filters, columns, exports, searches, z
                   const barWidth = Math.max((results / maxResults) * 100, 3)
                   const hasResults = results > 0
                   return (
-                    <div key={i} className="flex items-center gap-2 group">
+                    <div key={i} className="flex items-center gap-2">
                       <span className="text-xs font-medium text-[var(--navy-dark)] truncate min-w-0 w-36 shrink-0">&ldquo;{s.query}&rdquo;</span>
                       <div className="w-28 shrink-0 h-4 bg-[var(--gray-light)]/40 rounded overflow-hidden">
                         <div
@@ -1030,18 +1030,16 @@ function ModuleActivitySection({ modules, filters, columns, exports, searches, z
                           }}
                         />
                       </div>
-                      <span className="text-[11px] text-[var(--navy-dark)] shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                        <span className="font-semibold">{results.toLocaleString('nl-NL')}</span>
-                        <span className="text-[var(--navy-medium)]"> res</span>
-                        <span className="text-[var(--navy-medium)]/50 mx-1">·</span>
-                        <span className="text-[var(--navy-medium)]">{s.search_count}×</span>
+                      <span className="text-xs font-bold text-[var(--navy-dark)] w-20 shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                        {s.search_count}× gezocht
                       </span>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded shrink-0 ${
-                        s.autocomplete_count > 0
-                          ? 'bg-[var(--navy-dark)]/5 text-[var(--navy-medium)]'
-                          : 'bg-[var(--gray-light)]/60 text-[var(--muted-foreground)]'
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded w-24 shrink-0 text-center ${
+                        hasResults ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
                       }`}>
-                        {s.autocomplete_count > 0 ? 'autocomplete' : 'enter'}
+                        {results > 0 ? `${results.toLocaleString('nl-NL')} resultaten` : '0 resultaten'}
+                      </span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded w-24 shrink-0 text-center bg-[var(--gray-light)] text-[var(--navy-medium)]">
+                        {s.autocomplete_count > 0 ? 'via autocomplete' : 'via enter'}
                       </span>
                     </div>
                   )
