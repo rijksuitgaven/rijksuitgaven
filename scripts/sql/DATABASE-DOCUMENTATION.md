@@ -5,7 +5,7 @@
 **Region:** eu-west-1
 **Created:** 2026-01-21
 **Data Migrated:** 2026-01-23
-**Last Updated:** 2026-02-14 (usage_events table, analytics functions)
+**Last Updated:** 2026-02-16 (migrations 053-055: filter origin, pulse comparison, module events)
 
 ---
 
@@ -276,7 +276,7 @@
 | `get_usage_pulse(since_date)` | total_events, unique_actors, module_views, searches, exports | Top-line metrics |
 | `get_usage_modules(since_date, max_results)` | module, view_count, unique_actors | Module popularity |
 | `get_usage_searches(since_date, max_results)` | query, search_count, unique_actors, avg_results, top_module, enter_count, autocomplete_count, avg_duration, engagement_rate | Top search terms with commit type breakdown, duration, engagement (migration 052) |
-| `get_usage_filters(since_date, max_results)` | module, field, filter_count | Most-used filters grouped by module (migration 043) |
+| `get_usage_filters(since_date, max_results)` | module, field, filter_count, origin | Most-used filters grouped by module with origin (filter_panel/expanded_row) (migrations 043, 053) |
 | `get_usage_columns(since_date, max_results)` | module, column_name, usage_count | Column selections grouped by module (migration 043) |
 | `get_usage_exports(since_date)` | module, format, export_count, avg_rows, unique_actors | Export activity grouped by module (migration 043) |
 | `get_usage_zero_results(since_date, max_results)` | query, search_count, top_module, retry_count | Zero-result searches with retry detection (migration 052) |
@@ -288,6 +288,8 @@
 | `get_usage_search_success(since_date)` | total_searches, successful_searches, success_rate | Search success via search_id linking (migration 052, replaces session-based approach) |
 | `get_usage_search_engagement(since_date)` | action_type, action_count, unique_searches | Post-search engagement breakdown by action type (migration 052) |
 | `get_usage_retention(since_date)` | cohort_week, week_offset, active_count, cohort_size, retention_rate | Weekly retention cohort grid (migration 042, changed to weekly in 044) |
+| `get_usage_pulse_period(period_start, period_end)` | event_type, event_count, unique_actors | Bounded pulse for period-over-period delta comparison (migration 054) |
+| `get_usage_module_events(since_date)` | module, event_type, event_count | Event counts grouped by module + event_type for module-centric dashboard (migration 055) |
 
 `get_usage_actors` enhanced (migration 042): now returns session_count, avg_session_seconds, engagement_score, avg_gap_days, gap_trend, external_link_count.
 
@@ -988,6 +990,9 @@ VACUUM ANALYZE universal_search;
 | `050-fix-searches-avg-results.sql` | Add avg_results column back to get_usage_searches | Once (done 2026-02-15) |
 | `051-search-success-include-autocomplete.sql` | Add autocomplete_click to search success criteria | Once (done 2026-02-15) |
 | `052-search-tracking-v2.sql` | UX-034: Truncate + replace 3 functions (searches, zero_results, search_success) + add get_usage_search_engagement. Committed search model with search_id, duration, retry chains | Once (done 2026-02-16) |
+| `053-filter-origin.sql` | Rewrite get_usage_filters with origin column (filter_panel vs expanded_row) | Once (done 2026-02-16) |
+| `054-pulse-period-comparison.sql` | get_usage_pulse_period(period_start, period_end) — bounded pulse for delta comparison | Once (done 2026-02-16) |
+| `055-module-events.sql` | get_usage_module_events(since_date) — event counts grouped by module + event_type | Once (done 2026-02-16) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---

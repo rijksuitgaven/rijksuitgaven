@@ -874,6 +874,8 @@ if (status === 'expired') redirect('/verlopen')
 | `/team/leden` | Protected (Admin) | Member management (CRUD operations) |
 | `/team/feedback` | Protected (Admin) | Feedback inbox (status workflow, categories) |
 | `/team/statistieken` | Protected (Admin) | Usage statistics dashboard (UX-032, search redesign UX-034) |
+| `/team/fouten` | Protected (Admin) | Error tracking dashboard (UX-033, separate from statistieken) |
+| `/team/contacten` | Protected (Admin) | CRM contacts management (UX-028) |
 | `/verlopen` | Public | Expired subscription page |
 | `/instrumenten` | Protected | Financiële Instrumenten module |
 | `/apparaat` | Protected | Apparaatsuitgaven module |
