@@ -40,6 +40,13 @@ export async function GET(request: NextRequest) {
   since.setDate(since.getDate() - days)
   const sinceISO = since.toISOString()
 
+  // Previous period for delta comparison (e.g., days 14-7 when viewing last 7 days)
+  const prevEnd = new Date(since)
+  const prevStart = new Date(since)
+  prevStart.setDate(prevStart.getDate() - days)
+  const prevStartISO = prevStart.toISOString()
+  const prevEndISO = prevEnd.toISOString()
+
   const supabase = createAdminClient()
 
   // Actor detail mode: return events for a specific actor
@@ -80,6 +87,7 @@ export async function GET(request: NextRequest) {
     retentionResult,
     searchEngagementResult,
     subscriptionsResult,
+    pulsePrevResult,
   ] = await Promise.all([
     supabase.rpc('get_usage_pulse', { since_date: sinceISO }),
     supabase.rpc('get_usage_modules', { since_date: sinceISO }),
@@ -100,6 +108,8 @@ export async function GET(request: NextRequest) {
     supabase.rpc('get_usage_search_engagement', { since_date: sinceISO }),
     // Fetch all subscriptions with person data for de-anonymization
     supabase.from('subscriptions').select('user_id, people!inner(first_name, last_name, email)'),
+    // Period-over-period comparison for delta indicators
+    supabase.rpc('get_usage_pulse_period', { period_start: prevStartISO, period_end: prevEndISO }),
   ])
 
   // Check for errors (core queries block, new queries don't)
@@ -130,6 +140,9 @@ export async function GET(request: NextRequest) {
   }
   if (searchEngagementResult.error) {
     console.error('[Statistics] Search engagement query error (non-blocking):', searchEngagementResult.error.message)
+  }
+  if (pulsePrevResult.error) {
+    console.error('[Statistics] Pulse comparison query error (non-blocking):', pulsePrevResult.error.message)
   }
 
   // De-anonymize actors: hash each subscription user_id and match to actor_hash
@@ -179,6 +192,7 @@ export async function GET(request: NextRequest) {
     search_success: searchSuccess,
     retention: retentionResult.data ?? [],
     search_engagement: searchEngagementResult.data ?? [],
+    pulse_previous: pulsePrevResult.data ?? [],
   })
 }
 

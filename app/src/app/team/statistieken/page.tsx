@@ -209,6 +209,7 @@ interface StatsData {
   search_success: SearchSuccess | null
   retention: RetentionItem[]
   search_engagement: SearchEngagementItem[]
+  pulse_previous: PulseItem[]
 }
 
 // --- Helpers ---
@@ -253,6 +254,28 @@ const ACTIVITY_DOT_COLORS = {
   green: 'bg-[var(--success)]',
   amber: 'bg-amber-400',
   gray: 'bg-gray-300',
+}
+
+function getDelta(current: number, previous: number): { pct: number; direction: 'up' | 'down' | 'flat' } {
+  if (previous === 0) return { pct: current > 0 ? 100 : 0, direction: current > 0 ? 'up' : 'flat' }
+  const pct = Math.round(((current - previous) / previous) * 100)
+  return { pct: Math.abs(pct), direction: pct > 0 ? 'up' : pct < 0 ? 'down' : 'flat' }
+}
+
+function DeltaBadge({ current, previous }: { current: number; previous: number }) {
+  const { pct, direction } = getDelta(current, previous)
+  if (direction === 'flat' && pct === 0) return <span className="text-xs text-[var(--muted-foreground)]">—</span>
+  const styles = {
+    up: 'text-emerald-700 bg-emerald-50/80 border-emerald-200/60',
+    down: 'text-[#E62D75] bg-pink-50/60 border-pink-200/60',
+    flat: 'text-[var(--muted-foreground)] bg-[var(--gray-light)] border-[var(--border)]',
+  }
+  const arrows = { up: '↑', down: '↓', flat: '—' }
+  return (
+    <span className={`inline-flex items-center gap-0.5 text-xs font-semibold px-1.5 py-0.5 rounded-full border ${styles[direction]}`}>
+      {arrows[direction]} {pct}%
+    </span>
+  )
 }
 
 function getEngagementLabel(score: number, actors: ActorItem[]): { label: string; color: string } {
@@ -438,6 +461,14 @@ export default function StatistiekenPage() {
   const ss = data?.sessions_summary
   const sc = data?.search_success
 
+  // Previous period for deltas
+  const prev = data?.pulse_previous ?? []
+  const prevSearches = getPulseValue(prev, 'search')
+  const prevExports = getPulseValue(prev, 'export')
+  const prevExpands = getPulseValue(prev, 'row_expand')
+  const prevModuleViews = getPulseValue(prev, 'module_view')
+  const prevExternalLinks = getPulseValue(prev, 'external_link')
+
   // Sort actors
   const sortedActors = [...(data?.actors ?? [])].sort((a, b) => {
     const dir = sortDir === 'asc' ? 1 : -1
@@ -485,53 +516,72 @@ export default function StatistiekenPage() {
         </div>
 
         {loading ? (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="bg-white rounded-lg border border-[var(--border)] p-4 animate-pulse">
-                  <div className="h-4 bg-[var(--gray-light)] rounded w-24 mb-2" />
-                  <div className="h-8 bg-[var(--gray-light)] rounded w-16" />
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[1, 2].map(i => (
+                <div key={i} className="bg-white rounded-xl border border-[var(--border)] p-5 animate-pulse relative overflow-hidden">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-[var(--gray-light)] rounded-l-xl" />
+                  <div className="h-3 bg-[var(--gray-light)] rounded w-28 mb-3" />
+                  <div className="h-10 bg-[var(--gray-light)] rounded w-20 mb-1.5" />
+                  <div className="h-3 bg-[var(--gray-light)] rounded w-24" />
                 </div>
               ))}
             </div>
-            <div className="bg-white rounded-lg border border-[var(--border)] p-6 animate-pulse">
-              <div className="h-5 bg-[var(--gray-light)] rounded w-48 mb-4" />
-              <div className="space-y-3">
-                {[1, 2, 3].map(i => <div key={i} className="h-4 bg-[var(--gray-light)] rounded" />)}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="bg-white rounded-lg border border-[var(--border)] px-3.5 py-3 animate-pulse">
+                  <div className="h-3 bg-[var(--gray-light)] rounded w-20 mb-1" />
+                  <div className="h-6 bg-[var(--gray-light)] rounded w-12" />
+                </div>
+              ))}
+            </div>
+            <div className="bg-white rounded-lg border border-[var(--border)] p-5 animate-pulse">
+              <div className="h-4 bg-[var(--gray-light)] rounded w-36 mb-5" />
+              <div className="flex gap-6">
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="flex-1">
+                    <div className="h-3 bg-[var(--gray-light)] rounded w-16 mb-1" />
+                    <div className="h-5 bg-[var(--gray-light)] rounded w-10 mb-1.5" />
+                    <div className="h-2 bg-[var(--gray-light)] rounded-full" style={{ width: `${100 - i * 20}%` }} />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         ) : data ? (
           <>
             {/* ═══ ACT 1: PULSE ═══ */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+
+            {/* Tier 1: Hero metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
               <PulseCard
-                icon={<Users className="w-4 h-4" />}
+                icon={<Users className="w-5 h-5" />}
                 label="Actieve gebruikers"
                 value={moduleViews.actors}
                 subtext={`van ${data.total_members} leden`}
+                delta={<DeltaBadge current={moduleViews.actors} previous={prevModuleViews.actors} />}
+                hero
               />
               <PulseCard
-                icon={<Activity className="w-4 h-4" />}
+                icon={<Activity className="w-5 h-5" />}
                 label="Sessies"
                 value={ss?.total_sessions ?? 0}
-                subtext={ss ? `gem. ${formatDuration(ss.avg_duration_seconds)}` : 'geen data'}
+                subtext={ss ? `gem. ${formatDuration(ss.avg_duration_seconds)} · ${ss.avg_events_per_session ?? 0} acties/sessie` : 'geen data'}
+                hero
               />
+            </div>
+
+            {/* Tier 2: Secondary metrics */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
               <PulseCard
-                icon={<Search className="w-4 h-4" />}
+                icon={<Search className="w-3.5 h-3.5" />}
                 label="Zoekopdrachten"
                 value={searches.count}
-                subtext={`${searches.actors} unieke gebruikers`}
+                subtext={`${searches.actors} gebruiker${searches.actors !== 1 ? 's' : ''}`}
+                delta={<DeltaBadge current={searches.count} previous={prevSearches.count} />}
               />
               <PulseCard
-                icon={<Target className="w-4 h-4" />}
-                label="Zoeksucces"
-                value={sc && sc.success_rate != null ? `${sc.success_rate}%` : '—'}
-                subtext={sc ? `${sc.successful_searches} van ${sc.total_searches}` : 'geen data'}
-                isString
-              />
-              <PulseCard
-                icon={<Download className="w-4 h-4" />}
+                icon={<Download className="w-3.5 h-3.5" />}
                 label="Exports"
                 value={exports.count}
                 subtext={(() => {
@@ -541,20 +591,31 @@ export default function StatistiekenPage() {
                   }
                   return [...byFormat.entries()].map(([f, c]) => `${c} ${f.toUpperCase()}`).join(', ') || 'geen'
                 })()}
+                delta={<DeltaBadge current={exports.count} previous={prevExports.count} />}
               />
               <PulseCard
-                icon={<MousePointerClick className="w-4 h-4" />}
+                icon={<MousePointerClick className="w-3.5 h-3.5" />}
                 label="Rij-uitklappingen"
                 value={expands.count}
-                subtext={`${expands.actors} unieke gebruikers`}
+                subtext={`${expands.actors} gebruiker${expands.actors !== 1 ? 's' : ''}`}
+                delta={<DeltaBadge current={expands.count} previous={prevExpands.count} />}
               />
               <PulseCard
-                icon={<ExternalLink className="w-4 h-4" />}
+                icon={<ExternalLink className="w-3.5 h-3.5" />}
                 label="Externe links"
                 value={externalLinks.count}
-                subtext={`${externalLinks.actors} unieke gebruikers`}
+                subtext={`${externalLinks.actors} gebruiker${externalLinks.actors !== 1 ? 's' : ''}`}
+                delta={<DeltaBadge current={externalLinks.count} previous={prevExternalLinks.count} />}
               />
-              </div>
+            </div>
+
+            {/* Feature Adoption Funnel */}
+            <AdoptionFunnel
+              views={moduleViews.count}
+              searches={searches.count}
+              expands={expands.count}
+              exportCount={exports.count}
+            />
 
             {/* ═══ ACT 2: INZICHTEN ═══ */}
 
@@ -1010,29 +1071,123 @@ function EngagementPill({ rate }: { rate: number | null }) {
 
 // --- Subcomponents ---
 
-function PulseCard({ icon, label, value, subtext, variant, isString }: {
+function AdoptionFunnel({ views, searches, expands, exportCount }: {
+  views: number
+  searches: number
+  expands: number
+  exportCount: number
+}) {
+  const steps = [
+    { label: 'Bekeken', value: views, icon: Eye },
+    { label: 'Gezocht', value: searches, icon: Search },
+    { label: 'Uitgeklapt', value: expands, icon: MousePointerClick },
+    { label: 'Geëxporteerd', value: exportCount, icon: Download },
+  ]
+  const maxValue = Math.max(views, 1)
+
+  return (
+    <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
+      <div className="flex items-center gap-2 mb-5">
+        <span className="text-[var(--navy-medium)]"><TrendingUp className="w-4 h-4" /></span>
+        <h2 className="text-sm font-semibold text-[var(--navy-dark)] uppercase tracking-wider">Feature Adoption</h2>
+      </div>
+      {views === 0 ? (
+        <EmptyState>Nog geen activiteit in deze periode</EmptyState>
+      ) : (
+        <div className="flex items-end">
+          {steps.map((step, i) => {
+            const prevStep = i > 0 ? steps[i - 1] : null
+            const conversion = prevStep && prevStep.value > 0
+              ? Math.round((step.value / prevStep.value) * 100)
+              : null
+            const pct = Math.max((step.value / maxValue) * 100, 3)
+            const Icon = step.icon
+
+            return (
+              <div key={i} className="flex items-end flex-1 min-w-0">
+                {conversion !== null && (
+                  <div className="flex flex-col items-center justify-end px-1.5 pb-2 shrink-0">
+                    <span className={`text-[11px] font-bold leading-none ${
+                      conversion >= 50 ? 'text-emerald-600' :
+                      conversion >= 25 ? 'text-amber-600' : 'text-[#E62D75]'
+                    }`}>
+                      {conversion}%
+                    </span>
+                    <ArrowRight className="w-3 h-3 text-[var(--border)] mt-0.5" />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1 mb-1">
+                    <Icon className="w-3 h-3 text-[var(--navy-medium)] shrink-0" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] truncate">
+                      {step.label}
+                    </span>
+                  </div>
+                  <div className="text-lg font-bold text-[var(--navy-dark)] mb-1.5" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {step.value.toLocaleString('nl-NL')}
+                  </div>
+                  <div className="h-2 bg-[var(--gray-light)] rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${pct}%`,
+                        background: 'linear-gradient(90deg, var(--navy-dark), var(--navy-medium))',
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function PulseCard({ icon, label, value, subtext, delta, hero, isString }: {
   icon: React.ReactNode
   label: string
   value: number | string
   subtext: string
-  variant?: 'error'
+  delta?: React.ReactNode
+  hero?: boolean
   isString?: boolean
 }) {
-  const isError = variant === 'error'
+  const formatted = isString ? value : (typeof value === 'number' ? value.toLocaleString('nl-NL') : value)
+
+  if (hero) {
+    return (
+      <div className="bg-white rounded-xl border border-[var(--border)] p-5 relative overflow-hidden">
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-[var(--navy-dark)] rounded-l-xl" />
+        <div className="flex items-center gap-2 mb-3 text-[var(--navy-medium)]">
+          {icon}
+          <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
+        </div>
+        <div className="flex items-baseline gap-3">
+          <span className="text-4xl font-bold text-[var(--navy-dark)]" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            {formatted}
+          </span>
+          {delta}
+        </div>
+        <div className="text-xs text-[var(--muted-foreground)] mt-1.5">{subtext}</div>
+      </div>
+    )
+  }
+
   return (
-    <div className={`rounded-lg border p-4 ${
-      isError
-        ? 'bg-red-50 border-red-200'
-        : 'bg-white border-[var(--border)]'
-    }`}>
-      <div className={`flex items-center gap-2 mb-1 ${isError ? 'text-red-500' : 'text-[var(--muted-foreground)]'}`}>
+    <div className="bg-white rounded-lg border border-[var(--border)] px-3.5 py-3">
+      <div className="flex items-center gap-1.5 mb-1 text-[var(--muted-foreground)]">
         {icon}
-        <span className="text-xs font-medium uppercase tracking-wider">{label}</span>
+        <span className="text-[11px] font-semibold uppercase tracking-wider">{label}</span>
       </div>
-      <div className={`text-3xl font-bold ${isError ? 'text-red-700' : 'text-[var(--navy-dark)]'}`}>
-        {isString ? value : (typeof value === 'number' ? value.toLocaleString('nl-NL') : value)}
+      <div className="flex items-baseline gap-2">
+        <span className="text-xl font-bold text-[var(--navy-dark)]" style={{ fontVariantNumeric: 'tabular-nums' }}>
+          {formatted}
+        </span>
+        {delta}
       </div>
-      <div className={`text-xs mt-0.5 ${isError ? 'text-red-500' : 'text-[var(--muted-foreground)]'}`}>{subtext}</div>
+      <div className="text-[11px] text-[var(--muted-foreground)] mt-0.5">{subtext}</div>
     </div>
   )
 }
