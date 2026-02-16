@@ -14,6 +14,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from app.config import get_settings
 from app.api.v1 import router as api_v1_router
 from app.services.database import close_pool, get_pool
+from app.services.http_client import close_http_client
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -44,9 +45,10 @@ async def lifespan(app: FastAPI):
     logger.info("Database pool ready")
     yield
     # Shutdown
-    logger.info("Application shutting down, closing database pool")
+    logger.info("Application shutting down, closing connections")
+    await close_http_client()
     await close_pool()
-    logger.info("Database pool closed")
+    logger.info("All connections closed")
 
 
 app = FastAPI(

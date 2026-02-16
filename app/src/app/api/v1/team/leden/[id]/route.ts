@@ -30,7 +30,7 @@ export async function PATCH(
   // Verify origin matches expected domain (basic CSRF protection)
   const origin = request.headers.get('origin')
   const host = request.headers.get('host')
-  if (origin && host && !origin.includes(host)) {
+  if (origin && host && new URL(origin).host !== host) {
     return NextResponse.json({ error: 'Ongeldige origin' }, { status: 403 })
   }
 
@@ -165,7 +165,7 @@ export async function DELETE(
 
   const origin = request.headers.get('origin')
   const host = request.headers.get('host')
-  if (origin && host && !origin.includes(host)) {
+  if (origin && host && new URL(origin).host !== host) {
     return NextResponse.json({ error: 'Ongeldige origin' }, { status: 403 })
   }
 

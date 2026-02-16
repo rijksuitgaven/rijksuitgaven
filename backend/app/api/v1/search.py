@@ -82,13 +82,7 @@ def get_typesense_url(path: str) -> str:
     return f"{settings.typesense_protocol}://{settings.typesense_host}:{settings.typesense_port}{path}"
 
 
-_http_client: httpx.AsyncClient | None = None
-
-def _get_http_client() -> httpx.AsyncClient:
-    global _http_client
-    if _http_client is None:
-        _http_client = httpx.AsyncClient(timeout=5.0)
-    return _http_client
+from app.services.http_client import get_http_client as _get_http_client
 
 
 async def typesense_search(collection: str, params: dict) -> dict:

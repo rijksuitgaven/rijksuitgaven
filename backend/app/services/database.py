@@ -58,7 +58,7 @@ async def close_pool():
 async def get_connection():
     """Get a database connection from the pool."""
     pool = await get_pool()
-    async with pool.acquire() as connection:
+    async with pool.acquire(timeout=10) as connection:
         yield connection
 
 

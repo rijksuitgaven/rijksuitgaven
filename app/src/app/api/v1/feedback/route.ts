@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   // CSRF check
   const origin = request.headers.get('origin')
   const host = request.headers.get('host')
-  if (origin && host && !origin.includes(host)) {
+  if (origin && host && new URL(origin).host !== host) {
     return NextResponse.json({ error: 'Ongeldige origin' }, { status: 403 })
   }
 

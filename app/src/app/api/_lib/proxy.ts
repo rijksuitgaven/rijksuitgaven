@@ -14,6 +14,7 @@ export const BFF_SECRET = process.env.BFF_SECRET || ''
 // Security limits
 const MAX_OFFSET = 10000
 const MAX_LIMIT = 500  // Matches dropdown options (25/100/150/250/500)
+const MAX_RESPONSE_BYTES = 5_000_000  // 5MB response size cap
 
 interface ProxyOptions {
   /** Apply security sanitization (offset/limit caps) */
@@ -109,6 +110,13 @@ export async function proxyToBackend(
           { error: 'Request failed' },
           { status: response.status >= 500 ? 502 : response.status }
         )
+      }
+
+      // Guard against oversized responses (5MB cap)
+      const contentLength = response.headers.get('content-length')
+      if (contentLength && parseInt(contentLength, 10) > MAX_RESPONSE_BYTES) {
+        console.error(`[BFF] Response too large: ${contentLength} bytes`)
+        return NextResponse.json({ error: 'Response too large' }, { status: 502 })
       }
 
       const data = await response.json()

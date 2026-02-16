@@ -43,6 +43,9 @@ const VALID_MODULES = [
 
 const MAX_BATCH_SIZE = 20
 const HASH_SECRET = process.env.ANALYTICS_HASH_SECRET || 'rijksuitgaven-analytics-default-secret'
+if (!process.env.ANALYTICS_HASH_SECRET && process.env.NODE_ENV === 'production') {
+  console.warn('[Analytics] ANALYTICS_HASH_SECRET not set — using default. Actor hashes are NOT secure.')
+}
 
 interface IncomingEvent {
   event_type: string

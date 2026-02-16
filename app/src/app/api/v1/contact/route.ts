@@ -52,14 +52,20 @@ export async function POST(request: Request) {
     .single()
 
   if (existing) {
-    // Update existing person with latest info
+    // Append repeat inquiry note (preserve history)
+    const { data: person } = await supabase
+      .from('people')
+      .select('notes')
+      .eq('id', existing.id)
+      .single()
+    const prevNotes = person?.notes ? `${person.notes}\n` : ''
     await supabase
       .from('people')
       .update({
         first_name: safeFirstName,
         last_name: safeLastName,
         phone: safePhone,
-        notes: `Herhaalde demo aanvraag op ${new Date().toISOString().slice(0, 10)}`,
+        notes: `${prevNotes}Herhaalde demo aanvraag op ${new Date().toISOString().slice(0, 10)}`,
       })
       .eq('id', existing.id)
   } else {

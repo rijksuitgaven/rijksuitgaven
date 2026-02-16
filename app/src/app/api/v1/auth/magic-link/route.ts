@@ -23,6 +23,23 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY
 const rateLimitMap = new Map<string, number>()
 const RATE_LIMIT_MS = 60_000
 
+// Periodic cleanup every 5 minutes to prevent memory growth
+setInterval(() => {
+  const cutoff = Date.now() - RATE_LIMIT_MS
+  for (const [key, ts] of rateLimitMap) {
+    if (ts < cutoff) rateLimitMap.delete(key)
+  }
+}, 5 * 60_000).unref()
+
+// Allowed domains for magic link origin (prevents x-forwarded-host injection)
+const ALLOWED_HOSTS = new Set([
+  'rijksuitgaven.nl',
+  'www.rijksuitgaven.nl',
+  'beta.rijksuitgaven.nl',
+  'localhost:3000',
+  'localhost:3001',
+])
+
 function buildMagicLinkEmail(actionLink: string, siteUrl: string): string {
   const displayHost = siteUrl.replace(/^https?:\/\//, '')
   return `
@@ -145,13 +162,7 @@ export async function POST(request: NextRequest) {
   }
   rateLimitMap.set(email, Date.now())
 
-  // Clean up old entries periodically (prevent memory leak)
-  if (rateLimitMap.size > 1000) {
-    const cutoff = Date.now() - RATE_LIMIT_MS
-    for (const [key, ts] of rateLimitMap) {
-      if (ts < cutoff) rateLimitMap.delete(key)
-    }
-  }
+  // Cleanup handled by periodic setInterval above
 
   if (!RESEND_API_KEY || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     console.error('[MagicLink] Missing RESEND_API_KEY or SUPABASE_SERVICE_ROLE_KEY')
@@ -171,10 +182,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true })
   }
 
-  // Build link on our own domain
+  // Build link on our own domain (validate x-forwarded-host against whitelist)
   const forwardedHost = request.headers.get('x-forwarded-host')
   const forwardedProto = request.headers.get('x-forwarded-proto') ?? 'https'
-  const origin = forwardedHost
+  const origin = forwardedHost && ALLOWED_HOSTS.has(forwardedHost)
     ? `${forwardedProto}://${forwardedHost}`
     : request.nextUrl.origin
 

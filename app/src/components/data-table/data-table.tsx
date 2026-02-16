@@ -82,12 +82,10 @@ function generateCSV(
   selectedColumns: string[] = [],
   moduleId: string = ''
 ): string {
-  // Get column labels for selected extra columns
+  // Get column labels for selected extra columns (O(1) via Map)
   const moduleColumns = MODULE_COLUMNS[moduleId] || []
-  const extraColumnLabels = selectedColumns.map(colKey => {
-    const config = moduleColumns.find(c => c.value === colKey)
-    return config?.label || colKey
-  })
+  const columnMap = new Map(moduleColumns.map(c => [c.value, c.label]))
+  const extraColumnLabels = selectedColumns.map(colKey => columnMap.get(colKey) || colKey)
 
   // Header row: Primary, Extra Columns, Years, Totaal
   const headers = [primaryColumnName, ...extraColumnLabels, ...availableYears.map(String), 'Totaal']
@@ -103,18 +101,15 @@ function generateCSV(
     return `"${escaped}"`
   }
 
-  // Data rows
+  // Data rows (O(1) year lookup via Map)
   const dataRows = data.slice(0, MAX_EXPORT_ROWS).map(row => {
-    // Extra column values
     const extraValues = selectedColumns.map(colKey => {
       const value = row.extraColumns?.[colKey] || ''
       return sanitizeCell(value)
     })
 
-    const yearAmounts = availableYears.map(year => {
-      const amount = row.years.find(y => y.year === year)?.amount ?? 0
-      return amount.toFixed(2)
-    })
+    const yearMap = createYearMap(row.years)
+    const yearAmounts = availableYears.map(year => (yearMap.get(year) ?? 0).toFixed(2))
     return [sanitizeCell(row.primary_value), ...extraValues, ...yearAmounts, row.total.toFixed(2)].join(';')
   })
 
@@ -162,23 +157,19 @@ function downloadXLS(
   selectedColumns: string[] = [],
   moduleId: string = ''
 ) {
-  // Get column labels for selected extra columns
+  // Get column labels for selected extra columns (O(1) via Map)
   const moduleColumns = MODULE_COLUMNS[moduleId] || []
-  const extraColumnLabels = selectedColumns.map(colKey => {
-    const config = moduleColumns.find(c => c.value === colKey)
-    return config?.label || colKey
-  })
+  const columnMap = new Map(moduleColumns.map(c => [c.value, c.label]))
+  const extraColumnLabels = selectedColumns.map(colKey => columnMap.get(colKey) || colKey)
 
   // Build worksheet data: Primary, Extra Columns, Years, Totaal
   const headers = [primaryColumnName, ...extraColumnLabels, ...availableYears.map(String), 'Totaal']
 
   const rows = data.slice(0, MAX_EXPORT_ROWS).map(row => {
-    // Extra column values - sanitize to prevent formula injection
     const extraValues = selectedColumns.map(colKey => sanitizeXlsCell(row.extraColumns?.[colKey] || ''))
 
-    const yearAmounts = availableYears.map(year => {
-      return row.years.find(y => y.year === year)?.amount ?? 0
-    })
+    const yearMap = createYearMap(row.years)
+    const yearAmounts = availableYears.map(year => yearMap.get(year) ?? 0)
     return [sanitizeXlsCell(row.primary_value), ...extraValues, ...yearAmounts, row.total]
   })
 

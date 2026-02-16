@@ -17,6 +17,9 @@ import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 import { createHash } from 'crypto'
 
 const HASH_SECRET = process.env.ANALYTICS_HASH_SECRET || 'rijksuitgaven-analytics-default-secret'
+if (!process.env.ANALYTICS_HASH_SECRET && process.env.NODE_ENV === 'production') {
+  console.warn('[Statistics] ANALYTICS_HASH_SECRET not set — using default. Actor de-anonymization may be inconsistent.')
+}
 
 function forbiddenResponse() {
   return NextResponse.json({ error: 'Geen toegang' }, { status: 403 })
@@ -69,7 +72,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ events: data ?? [] })
   }
 
-  // Dashboard mode: run all queries in parallel
+  // Dashboard mode: run all queries in parallel (25s timeout to avoid Railway 30s proxy kill)
+  const QUERY_TIMEOUT_MS = 25_000
+  const withTimeout = <T>(promise: Promise<T>, label: string): Promise<T> =>
+    Promise.race([
+      promise,
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error(`Query timeout: ${label}`)), QUERY_TIMEOUT_MS)
+      ),
+    ])
+
   const [
     pulseResult,
     moduleResult,
@@ -89,7 +101,7 @@ export async function GET(request: NextRequest) {
     subscriptionsResult,
     pulsePrevResult,
     moduleEventsResult,
-  ] = await Promise.all([
+  ] = await withTimeout(Promise.all([
     supabase.rpc('get_usage_pulse', { since_date: sinceISO }),
     supabase.rpc('get_usage_modules', { since_date: sinceISO }),
     supabase.rpc('get_usage_searches', { since_date: sinceISO, max_results: 15 }),
@@ -113,7 +125,7 @@ export async function GET(request: NextRequest) {
     supabase.rpc('get_usage_pulse_period', { period_start: prevStartISO, period_end: prevEndISO }),
     // Per-module event counts for module-centric dashboard
     supabase.rpc('get_usage_module_events', { since_date: sinceISO }),
-  ])
+  ]), 'dashboard queries')
 
   // Check for errors (core queries block, new queries don't)
   const coreResults = [pulseResult, moduleResult, searchResult, filterResult, columnResult, exportResult, zeroResult]

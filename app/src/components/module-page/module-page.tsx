@@ -122,8 +122,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const activeSearchId = useRef<string | null>(null)
   const searchStartTime = useRef<number | null>(null)
   const lastSearchResult = useRef<{ query: string; count: number; searchId: string; timestamp: number } | null>(null)
-  const visibilityPauseStart = useRef<number | null>(null)
-  const pausedDuration = useRef(0)
+  const visibilityPauseStart = useRef<number | null>(null) // ms (Date.now())
+  const pausedDuration = useRef(0) // ms — accumulated hidden time
   // Refs to avoid stale closures in handleSearchCommit
   const dataRef = useRef<ModuleDataResponse | null>(null)
   const filtersRef = useRef<FilterValues>({ search: '', jaar: null, minBedrag: null, maxBedrag: null })
@@ -138,7 +138,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     if (!activeSearchId.current || !searchStartTime.current) return
     const now = Date.now()
     const rawDuration = (now - searchStartTime.current) / 1000
-    const duration = Math.min(rawDuration - pausedDuration.current / 1000, 300) // Cap at 5 minutes
+    const duration = Math.min(rawDuration - pausedDuration.current / 1000, 300) // seconds - ms/1000 = seconds; cap at 5 min
     track('search_end', moduleId, {
       search_id: activeSearchId.current,
       duration_seconds: Math.round(duration),

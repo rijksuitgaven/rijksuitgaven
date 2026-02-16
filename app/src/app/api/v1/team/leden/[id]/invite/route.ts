@@ -13,6 +13,14 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { isAdmin } from '@/app/api/_lib/admin'
+
+const ALLOWED_HOSTS = new Set([
+  'rijksuitgaven.nl',
+  'www.rijksuitgaven.nl',
+  'beta.rijksuitgaven.nl',
+  'localhost:3000',
+  'localhost:3001',
+])
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 import { Resend } from 'resend'
 
@@ -204,10 +212,10 @@ export async function POST(
     }
   }
 
-  // Derive site origin from request headers (Railway reverse proxy sets x-forwarded-*)
+  // Derive site origin from request headers (validate against whitelist)
   const forwardedHost = request.headers.get('x-forwarded-host')
   const forwardedProto = request.headers.get('x-forwarded-proto') ?? 'https'
-  const origin = forwardedHost
+  const origin = forwardedHost && ALLOWED_HOSTS.has(forwardedHost)
     ? `${forwardedProto}://${forwardedHost}`
     : request.nextUrl.origin
 

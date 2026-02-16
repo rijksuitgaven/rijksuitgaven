@@ -105,13 +105,7 @@ async def _inject_availability(
 # Typesense Client Helper (for fast autocomplete)
 # =============================================================================
 
-_http_client: httpx.AsyncClient | None = None
-
-def _get_http_client() -> httpx.AsyncClient:
-    global _http_client
-    if _http_client is None:
-        _http_client = httpx.AsyncClient(timeout=5.0)
-    return _http_client
+from app.services.http_client import get_http_client as _get_http_client
 
 
 async def _typesense_search(collection: str, params: dict) -> dict:
@@ -1027,7 +1021,7 @@ async def _get_from_aggregated_view(
                 }
     except Exception as e:
         # Log error without exposing SQL query or params (security)
-        logger.error(f"Query failed for {module}: {type(e).__name__}: {e}")
+        logger.error(f"Query failed for {module}: {type(e).__name__}: {e}", exc_info=True)
         raise
 
     # Use Typesense highlight info for "Gevonden in" column (fast!)
@@ -1318,7 +1312,7 @@ async def _get_from_source_table(
                     "totaal": int(r.get("sum_totaal", 0) or 0),
                 }
     except Exception as e:
-        logger.error(f"Query failed in _get_from_source_table for {config.get('table', 'unknown')}: {e}")
+        logger.error(f"Query failed in _get_from_source_table for {config.get('table', 'unknown')}: {e}", exc_info=True)
         raise
 
     # Transform rows
