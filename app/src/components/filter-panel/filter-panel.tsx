@@ -821,8 +821,16 @@ export function FilterPanel({
         }
         setSelectedIndex(-1)
       } catch (error) {
-        if (error instanceof Error && error.name === 'AbortError') {
-          return
+        // Ignore abort errors and transient network errors (rapid typing, navigation, connectivity)
+        if (error instanceof Error) {
+          const msg = error.message
+          if (
+            error.name === 'AbortError' ||
+            msg.includes('NetworkError') ||
+            msg === 'Failed to fetch'
+          ) {
+            return
+          }
         }
         setCurrentModuleResults([])
         setFieldMatches([])
