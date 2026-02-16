@@ -99,6 +99,7 @@ interface FilterItem {
   module: string
   field: string
   filter_count: number
+  origin: string
 }
 
 interface ColumnItem {
@@ -657,8 +658,9 @@ export default function StatistiekenPage() {
                 {/* Right: Filters, columns, exports stacked — grouped by module */}
                 <div className="space-y-5">
                   <ModuleGroupedList
-                    title="Meest gebruikte filters"
-                    items={data.filters}
+                    title="Panelfilters"
+                    subtitle="Filters geselecteerd via het filterpaneel"
+                    items={data.filters.filter(f => f.origin !== 'expanded_row')}
                     getModule={f => f.module}
                     renderItem={f => (
                       <div className="flex items-center justify-between text-sm">
@@ -666,7 +668,20 @@ export default function StatistiekenPage() {
                         <span className="font-medium text-[var(--navy-medium)]">{f.filter_count}×</span>
                       </div>
                     )}
-                    emptyText="Nog geen filters gebruikt"
+                    emptyText="Nog geen panelfilters gebruikt"
+                  />
+                  <ModuleGroupedList
+                    title="Drilldown vanuit rij"
+                    subtitle="Klikken op waarden in de uitgeklapte rij"
+                    items={data.filters.filter(f => f.origin === 'expanded_row')}
+                    getModule={f => f.module}
+                    renderItem={f => (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-[var(--navy-dark)]">{FIELD_LABELS[f.field] || f.field}</span>
+                        <span className="font-medium text-[var(--navy-medium)]">{f.filter_count}×</span>
+                      </div>
+                    )}
+                    emptyText="Nog geen drilldown-acties"
                   />
                   <ModuleGroupedList
                     title="Kolommen"

@@ -448,9 +448,12 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
   // Track search and filter changes
   const prevFiltersRef = useRef<FilterValues>(filters)
+  const filterOriginRef = useRef<'filter_panel' | 'expanded_row'>('filter_panel')
 
   const handleFilterChange = useCallback((newFilters: FilterValues) => {
     const prev = prevFiltersRef.current
+    const origin = filterOriginRef.current
+    filterOriginRef.current = 'filter_panel' // Reset after consumption
 
     // Track filter changes (multiselect filters only — search tracked after data loads)
     const nonFilterKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag']
@@ -462,6 +465,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           track('filter_apply', moduleId, {
             field: key,
             values: value,
+            origin,
           })
         }
       }
@@ -519,7 +523,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
   // Handle click on extra column value - apply filter (clear start) + auto-expand filter panel (UX-020)
   const handleFilterLinkClick = useCallback((field: string, value: string) => {
-    // Clear all filters and apply only the clicked filter
+    // Mark origin so handleFilterChange tracks it as expanded_row
+    filterOriginRef.current = 'expanded_row'
     lastTrigger.current = 'filter_apply'
     setFilters({
       search: '',
