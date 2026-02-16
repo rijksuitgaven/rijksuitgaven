@@ -481,6 +481,7 @@ export default function StatistiekenPage() {
   const prevExpands = getPulseValue(prev, 'row_expand')
   const prevModuleViews = getPulseValue(prev, 'module_view')
   const prevExternalLinks = getPulseValue(prev, 'external_link')
+  const prevFilters = getPulseValue(prev, 'filter_apply')
 
   // Sort actors
   const sortedActors = [...(data?.actors ?? [])].sort((a, b) => {
@@ -539,23 +540,17 @@ export default function StatistiekenPage() {
                 </div>
               ))}
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="bg-white rounded-lg shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 px-3.5 py-3 animate-pulse">
-                  <div className="h-3 bg-[var(--gray-light)] rounded w-20 mb-1" />
-                  <div className="h-6 bg-[var(--gray-light)] rounded w-12" />
-                </div>
-              ))}
-            </div>
             <div className="bg-white rounded-xl shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 p-5 animate-pulse">
               <div className="h-4 bg-[var(--gray-light)] rounded w-36 mb-5" />
-              <div className="space-y-3">
-                {[1, 2, 3, 4].map(i => (
+              <div className="space-y-2.5">
+                {[1, 2, 3, 4, 5].map(i => (
                   <div key={i} className="flex items-center gap-3">
                     <div className="w-28 h-4 bg-[var(--gray-light)] rounded" />
                     <div className="flex-1 h-6 bg-[var(--gray-light)]/60 rounded" />
                     <div className="w-10 h-4 bg-[var(--gray-light)] rounded" />
                     <div className="w-10 h-4 bg-[var(--gray-light)] rounded" />
+                    <div className="w-12 h-4 bg-[var(--gray-light)] rounded" />
+                    <div className="w-14 h-3 bg-[var(--gray-light)] rounded" />
                   </div>
                 ))}
               </div>
@@ -584,51 +579,16 @@ export default function StatistiekenPage() {
               />
             </div>
 
-            {/* Tier 2: Secondary metrics */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-              <PulseCard
-                icon={<Search className="w-3.5 h-3.5" />}
-                label="Zoekopdrachten"
-                value={searches.count}
-                subtext={`${searches.actors} gebruiker${searches.actors !== 1 ? 's' : ''}`}
-                delta={<DeltaBadge current={searches.count} previous={prevSearches.count} />}
-              />
-              <PulseCard
-                icon={<Download className="w-3.5 h-3.5" />}
-                label="Exports"
-                value={exports.count}
-                subtext={(() => {
-                  const byFormat = new Map<string, number>()
-                  for (const e of data.exports) {
-                    byFormat.set(e.format, (byFormat.get(e.format) ?? 0) + e.export_count)
-                  }
-                  return [...byFormat.entries()].map(([f, c]) => `${c} ${f.toUpperCase()}`).join(', ') || 'geen'
-                })()}
-                delta={<DeltaBadge current={exports.count} previous={prevExports.count} />}
-              />
-              <PulseCard
-                icon={<MousePointerClick className="w-3.5 h-3.5" />}
-                label="Rij-uitklappingen"
-                value={expands.count}
-                subtext={`${expands.actors} gebruiker${expands.actors !== 1 ? 's' : ''}`}
-                delta={<DeltaBadge current={expands.count} previous={prevExpands.count} />}
-              />
-              <PulseCard
-                icon={<ExternalLink className="w-3.5 h-3.5" />}
-                label="Externe links"
-                value={externalLinks.count}
-                subtext={`${externalLinks.actors} gebruiker${externalLinks.actors !== 1 ? 's' : ''}`}
-                delta={<DeltaBadge current={externalLinks.count} previous={prevExternalLinks.count} />}
-              />
-            </div>
-
-            {/* Feature Adoption Funnel */}
+            {/* Feature Adoption */}
             <AdoptionFunnel
               views={moduleViews.count}
-              searches={searches.count}
-              filters={filtersApplied.count}
-              expands={expands.count}
-              exportCount={exports.count}
+              features={[
+                { label: 'Gezocht', value: searches.count, actors: searches.actors, previous: prevSearches.count, icon: 'search' },
+                { label: 'Gefilterd', value: filtersApplied.count, actors: filtersApplied.actors, previous: prevFilters.count, icon: 'filter' },
+                { label: 'Uitgeklapt', value: expands.count, actors: expands.actors, previous: prevExpands.count, icon: 'expand' },
+                { label: 'Geëxporteerd', value: exports.count, actors: exports.actors, previous: prevExports.count, icon: 'export' },
+                { label: 'Externe links', value: externalLinks.count, actors: externalLinks.actors, previous: prevExternalLinks.count, icon: 'external' },
+              ]}
             />
 
             {/* ═══ ACT 2: INZICHTEN ═══ */}
@@ -846,19 +806,27 @@ function EngagementPill({ rate }: { rate: number | null }) {
 
 // --- Subcomponents ---
 
-function AdoptionFunnel({ views, searches, filters, expands, exportCount }: {
+interface AdoptionFeature {
+  label: string
+  value: number
+  actors: number
+  previous: number
+  icon: 'search' | 'filter' | 'expand' | 'export' | 'external'
+}
+
+const ADOPTION_ICONS: Record<string, typeof Search> = {
+  search: Search,
+  filter: SlidersHorizontal,
+  expand: MousePointerClick,
+  export: Download,
+  external: ExternalLink,
+}
+
+function AdoptionFunnel({ views, features }: {
   views: number
-  searches: number
-  filters: number
-  expands: number
-  exportCount: number
+  features: AdoptionFeature[]
 }) {
-  const features = [
-    { label: 'Gezocht', value: searches, icon: Search },
-    { label: 'Gefilterd', value: filters, icon: SlidersHorizontal },
-    { label: 'Uitgeklapt', value: expands, icon: MousePointerClick },
-    { label: 'Geëxporteerd', value: exportCount, icon: Download },
-  ].sort((a, b) => b.value - a.value)
+  const sorted = [...features].sort((a, b) => b.value - a.value)
 
   return (
     <div className="bg-white rounded-xl shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 p-5 mb-4">
@@ -876,37 +844,39 @@ function AdoptionFunnel({ views, searches, filters, expands, exportCount }: {
       {views === 0 ? (
         <EmptyState>Nog geen activiteit in deze periode</EmptyState>
       ) : (
-        <div className="space-y-3">
-          {features.map((feat, i) => {
+        <div className="space-y-2.5">
+          {sorted.map((feat, i) => {
             const pct = Math.round((feat.value / views) * 100)
             const barWidth = Math.max((feat.value / views) * 100, 1)
-            const Icon = feat.icon
+            const Icon = ADOPTION_ICONS[feat.icon]
             return (
-              <div key={i}>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 w-28 shrink-0">
-                    <Icon className="w-3.5 h-3.5 text-[var(--navy-medium)]" />
-                    <span className="text-sm font-medium text-[var(--navy-dark)]">{feat.label}</span>
-                  </div>
-                  <div className="flex-1 h-6 bg-[var(--gray-light)]/60 rounded overflow-hidden">
-                    <div
-                      className="h-full rounded"
-                      style={{
-                        width: `${barWidth}%`,
-                        opacity: feat.value === 0 ? 0.15 : 1,
-                        background: 'linear-gradient(90deg, var(--navy-dark), var(--navy-medium))',
-                      }}
-                    />
-                  </div>
-                  <span className="text-sm font-bold text-[var(--navy-dark)] w-10 text-right" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                    {feat.value.toLocaleString('nl-NL')}
-                  </span>
-                  <span className={`text-sm font-bold w-10 text-right ${
-                    pct >= 50 ? 'text-emerald-600' : pct >= 20 ? 'text-[var(--navy-dark)]' : pct > 0 ? 'text-amber-600' : 'text-[var(--muted-foreground)]'
-                  }`} style={{ fontVariantNumeric: 'tabular-nums' }}>
-                    {pct}%
-                  </span>
+              <div key={i} className="flex items-center gap-3">
+                <div className="flex items-center gap-2 w-28 shrink-0">
+                  <Icon className="w-3.5 h-3.5 text-[var(--navy-medium)]" />
+                  <span className="text-sm font-medium text-[var(--navy-dark)]">{feat.label}</span>
                 </div>
+                <div className="flex-1 h-6 bg-[var(--gray-light)]/60 rounded overflow-hidden">
+                  <div
+                    className="h-full rounded"
+                    style={{
+                      width: `${barWidth}%`,
+                      opacity: feat.value === 0 ? 0.15 : 1,
+                      background: 'linear-gradient(90deg, var(--navy-dark), var(--navy-medium))',
+                    }}
+                  />
+                </div>
+                <span className="text-sm font-bold text-[var(--navy-dark)] w-10 text-right" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                  {feat.value.toLocaleString('nl-NL')}
+                </span>
+                <span className={`text-sm font-bold w-10 text-right ${
+                  pct >= 50 ? 'text-emerald-600' : pct >= 20 ? 'text-[var(--navy-dark)]' : pct > 0 ? 'text-amber-600' : 'text-[var(--muted-foreground)]'
+                }`} style={{ fontVariantNumeric: 'tabular-nums' }}>
+                  {pct}%
+                </span>
+                <DeltaBadge current={feat.value} previous={feat.previous} />
+                <span className="text-[11px] text-[var(--muted-foreground)] w-14 text-right shrink-0">
+                  {feat.actors} gebr.
+                </span>
               </div>
             )
           })}
