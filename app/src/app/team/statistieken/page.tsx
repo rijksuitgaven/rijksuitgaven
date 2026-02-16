@@ -129,6 +129,12 @@ interface SearchEngagementItem {
   unique_searches: number
 }
 
+interface ModuleEventItem {
+  module: string
+  event_type: string
+  event_count: number
+}
+
 interface ErrorItem {
   module: string
   message: string
@@ -210,6 +216,7 @@ interface StatsData {
   retention: RetentionItem[]
   search_engagement: SearchEngagementItem[]
   pulse_previous: PulseItem[]
+  module_events: ModuleEventItem[]
 }
 
 // --- Helpers ---
@@ -618,12 +625,10 @@ export default function StatistiekenPage() {
 
             {/* ═══ ACT 2: INZICHTEN ═══ */}
 
-            {/* ── Search Analytics (UX-034) ── */}
+            {/* ── Search KPIs (global context) ── */}
             <SearchSection
               searches={data.searches}
-              zeroResults={data.zero_results}
               searchSuccess={data.search_success}
-              searchEngagement={data.search_engagement ?? []}
               searchCount={searches.count}
               searchActors={searches.actors}
             />
@@ -687,6 +692,9 @@ export default function StatistiekenPage() {
                 filters={data.filters}
                 columns={data.columns}
                 exports={data.exports}
+                searches={data.searches}
+                zeroResults={data.zero_results}
+                moduleEvents={data.module_events ?? []}
               />
             </Section>
 
@@ -752,26 +760,12 @@ export default function StatistiekenPage() {
 
 // --- Search Section (UX-034) ---
 
-const ENGAGEMENT_LABELS: Record<string, { label: string; icon: typeof Search }> = {
-  row_expand: { label: 'Uitklappen', icon: ChevronDown },
-  export: { label: 'Export', icon: Download },
-  cross_module_nav: { label: 'Cross-module', icon: ChevronsRight },
-  external_link: { label: 'Google zoeken', icon: ExternalLink },
-  filter_apply: { label: 'Filteren', icon: SlidersHorizontal },
-  sort_change: { label: 'Sorteren', icon: ArrowUpDown },
-  page_change: { label: 'Pagineren', icon: ChevronsRight },
-}
-
-function SearchSection({ searches, zeroResults, searchSuccess, searchEngagement, searchCount, searchActors }: {
+function SearchSection({ searches, searchSuccess, searchCount, searchActors }: {
   searches: SearchItem[]
-  zeroResults: ZeroResultItem[]
   searchSuccess: SearchSuccess | null
-  searchEngagement: SearchEngagementItem[]
   searchCount: number
   searchActors: number
 }) {
-  // Calculate totals from engagement data
-  const totalEngagement = searchEngagement.reduce((sum, e) => sum + e.action_count, 0)
   const avgDuration = searches.length > 0
     ? Math.round(searches.reduce((sum, s) => sum + (s.avg_duration ?? 0), 0) / searches.filter(s => s.avg_duration != null).length) || 0
     : 0
@@ -786,150 +780,34 @@ function SearchSection({ searches, zeroResults, searchSuccess, searchEngagement,
         <h2 className="text-sm font-semibold text-[var(--navy-dark)] uppercase tracking-wider">Zoekgedrag</h2>
       </div>
 
-      {searches.length === 0 && zeroResults.length === 0 ? (
+      {searchCount === 0 ? (
         <EmptyState>Nog geen zoekopdrachten geregistreerd</EmptyState>
       ) : (
-        <>
-          {/* Layer 1: Search KPIs */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <SearchKPI
-              label="Zoekopdrachten"
-              value={searchCount}
-              sub={`${searchActors} gebruiker${searchActors !== 1 ? 's' : ''}`}
-            />
-            <SearchKPI
-              label="Zoeksucces"
-              value={searchSuccess?.success_rate != null ? `${searchSuccess.success_rate}%` : '—'}
-              sub={searchSuccess ? `${searchSuccess.successful_searches} van ${searchSuccess.total_searches}` : 'geen data'}
-              isString
-            />
-            <SearchKPI
-              label="Gem. duur op resultaat"
-              value={avgDuration > 0 ? formatDuration(avgDuration) : '—'}
-              sub="tijd tot volgende actie"
-              isString
-            />
-            <SearchKPI
-              label="Engagement"
-              value={avgEngagement > 0 ? `${avgEngagement}%` : '—'}
-              sub={totalEngagement > 0 ? `${totalEngagement} vervolgacties` : 'geen data'}
-              isString
-            />
-          </div>
-
-          {/* Layer 2: Search results table */}
-          <div className="mb-4">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2 flex items-center gap-1.5">
-              <Target className="w-3 h-3" /> Resultaat — zoekopdrachten met resultaten
-            </h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
-                    <th className="pb-2 pr-3">Zoekterm</th>
-                    <th className="pb-2 pr-3 text-right">Resultaten</th>
-                    <th className="pb-2 pr-3 text-center" title="Enter / Autocomplete">Via</th>
-                    <th className="pb-2 pr-3 text-right">Duur</th>
-                    <th className="pb-2 pr-3 text-right">Engagement</th>
-                    <th className="pb-2 pr-3 text-right">Aantal</th>
-                    <th className="pb-2">Module</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {searches.map((s, i) => (
-                    <tr key={`s-${i}`} className="border-t border-[var(--border)]">
-                      <td className="py-2 pr-3 font-medium text-[var(--navy-dark)]">{s.query}</td>
-                      <td className="py-2 pr-3 text-right text-[var(--navy-medium)]">
-                        {s.avg_results != null ? Number(s.avg_results).toLocaleString('nl-NL') : '—'}
-                      </td>
-                      <td className="py-2 pr-3 text-center">
-                        <CommitTypePill enter={s.enter_count} auto={s.autocomplete_count} />
-                      </td>
-                      <td className="py-2 pr-3 text-right text-[var(--muted-foreground)]">
-                        {s.avg_duration != null && s.avg_duration > 0 ? formatDuration(s.avg_duration) : '—'}
-                      </td>
-                      <td className="py-2 pr-3 text-right">
-                        <EngagementPill rate={s.engagement_rate} />
-                      </td>
-                      <td className="py-2 pr-3 text-right">
-                        <span className="font-medium">{s.search_count}</span>
-                        <span className="text-[var(--muted-foreground)] ml-1 text-xs">({s.unique_actors})</span>
-                      </td>
-                      <td className="py-2">
-                        <ModuleBadge module={s.top_module} />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Layer 3: Zero results + Engagement side by side */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Zero results */}
-            <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-600 mb-2 flex items-center gap-1.5">
-                <AlertTriangle className="w-3 h-3" /> Geen resultaat
-              </h3>
-              {zeroResults.length === 0 ? (
-                <p className="text-sm text-[var(--muted-foreground)] italic">Geen mislukte zoekopdrachten</p>
-              ) : (
-                <div className="space-y-1">
-                  {zeroResults.map((z, i) => (
-                    <div key={i} className="flex items-center gap-2 py-1.5 px-2 rounded bg-amber-50/60 border border-amber-100">
-                      <span className="flex-1 font-medium text-sm text-amber-700 truncate">{z.query}</span>
-                      <span className="text-xs text-amber-600">{z.search_count}×</span>
-                      {z.retry_count > 0 && (
-                        <span className="text-xs px-1.5 py-0.5 rounded bg-amber-100 text-amber-700" title="Gecorrigeerd na fout">
-                          {z.retry_count} herpoging{z.retry_count !== 1 ? 'en' : ''}
-                        </span>
-                      )}
-                      <ModuleBadge module={z.top_module} small variant="amber" />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Engagement breakdown */}
-            <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2 flex items-center gap-1.5">
-                <MousePointerClick className="w-3 h-3" /> Engagement — wat doen gebruikers na zoeken?
-              </h3>
-              {searchEngagement.length === 0 ? (
-                <p className="text-sm text-[var(--muted-foreground)] italic">Nog geen engagement na zoeken</p>
-              ) : (
-                <div className="space-y-1.5">
-                  {searchEngagement.map((e, i) => {
-                    const config = ENGAGEMENT_LABELS[e.action_type]
-                    const label = config?.label || EVENT_TYPE_LABELS[e.action_type] || e.action_type
-                    const Icon = config?.icon || MousePointerClick
-                    const maxCount = searchEngagement[0]?.action_count || 1
-                    return (
-                      <div key={i} className="flex items-center gap-2">
-                        <Icon className="w-3 h-3 text-[var(--navy-medium)] shrink-0" />
-                        <span className="w-24 text-sm text-[var(--navy-dark)] truncate">{label}</span>
-                        <div className="flex-1 h-4 bg-[var(--gray-light)] rounded overflow-hidden">
-                          <div
-                            className="h-full bg-[var(--navy-medium)]/60 rounded transition-all"
-                            style={{ width: `${(e.action_count / maxCount) * 100}%` }}
-                          />
-                        </div>
-                        <span className="text-sm font-semibold text-[var(--navy-dark)] w-10 text-right">
-                          {e.action_count}
-                        </span>
-                        <span className="text-xs text-[var(--muted-foreground)] w-20">
-                          {e.unique_searches} zoek.
-                        </span>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        </>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <SearchKPI
+            label="Zoekopdrachten"
+            value={searchCount}
+            sub={`${searchActors} gebruiker${searchActors !== 1 ? 's' : ''}`}
+          />
+          <SearchKPI
+            label="Zoeksucces"
+            value={searchSuccess?.success_rate != null ? `${searchSuccess.success_rate}%` : '—'}
+            sub={searchSuccess ? `${searchSuccess.successful_searches} van ${searchSuccess.total_searches}` : 'geen data'}
+            isString
+          />
+          <SearchKPI
+            label="Gem. duur op resultaat"
+            value={avgDuration > 0 ? formatDuration(avgDuration) : '—'}
+            sub="tijd tot volgende actie"
+            isString
+          />
+          <SearchKPI
+            label="Engagement"
+            value={avgEngagement > 0 ? `${avgEngagement}%` : '—'}
+            sub="gem. vervolgacties"
+            isString
+          />
+        </div>
       )}
     </div>
   )
@@ -1199,105 +1077,183 @@ function EngagementBadge({ score, label, color }: { score: number; label: string
   )
 }
 
-function ModuleActivitySection({ modules, filters, columns, exports }: {
+function ModuleActivitySection({ modules, filters, columns, exports, searches, zeroResults, moduleEvents }: {
   modules: ModuleItem[]
   filters: FilterItem[]
   columns: ColumnItem[]
   exports: ExportItem[]
+  searches: SearchItem[]
+  zeroResults: ZeroResultItem[]
+  moduleEvents: ModuleEventItem[]
 }) {
-  // Build merged activity map per module
-  const moduleMap = new Map<string, {
-    views: number
-    actors: number
-    panelFilters: FilterItem[]
-    drilldownFilters: FilterItem[]
-    cols: ColumnItem[]
-    exps: ExportItem[]
-  }>()
+  // All 7 modules, always shown
+  const allModuleKeys = Object.keys(MODULE_LABELS)
 
-  for (const m of modules) {
-    moduleMap.set(m.module, {
-      views: m.view_count,
-      actors: m.unique_actors,
-      panelFilters: [],
-      drilldownFilters: [],
-      cols: [],
-      exps: [],
+  // Build comprehensive activity map per module
+  type ModActivity = {
+    views: number; actors: number
+    searches: SearchItem[]; zeroResults: ZeroResultItem[]
+    panelFilters: FilterItem[]; drilldownFilters: FilterItem[]
+    cols: ColumnItem[]; exps: ExportItem[]
+    googleClicks: number; rowExpands: number
+  }
+
+  const moduleMap = new Map<string, ModActivity>()
+
+  for (const mod of allModuleKeys) {
+    moduleMap.set(mod, {
+      views: 0, actors: 0,
+      searches: [], zeroResults: [],
+      panelFilters: [], drilldownFilters: [],
+      cols: [], exps: [],
+      googleClicks: 0, rowExpands: 0,
     })
   }
 
+  for (const m of modules) {
+    const entry = moduleMap.get(m.module)
+    if (entry) { entry.views = m.view_count; entry.actors = m.unique_actors }
+  }
+  for (const s of searches) {
+    const entry = moduleMap.get(s.top_module)
+    if (entry) entry.searches.push(s)
+  }
+  for (const z of zeroResults) {
+    const entry = moduleMap.get(z.top_module)
+    if (entry) entry.zeroResults.push(z)
+  }
   for (const f of filters) {
-    const mod = moduleMap.get(f.module)
-    if (!mod) continue
-    if (f.origin === 'expanded_row') mod.drilldownFilters.push(f)
-    else mod.panelFilters.push(f)
+    const entry = moduleMap.get(f.module)
+    if (!entry) continue
+    if (f.origin === 'expanded_row') entry.drilldownFilters.push(f)
+    else entry.panelFilters.push(f)
   }
-
   for (const c of columns) {
-    const mod = moduleMap.get(c.module)
-    if (mod) mod.cols.push(c)
+    const entry = moduleMap.get(c.module)
+    if (entry) entry.cols.push(c)
   }
-
   for (const e of exports) {
-    const mod = moduleMap.get(e.module)
-    if (mod) mod.exps.push(e)
+    const entry = moduleMap.get(e.module)
+    if (entry) entry.exps.push(e)
+  }
+  for (const me of moduleEvents) {
+    const entry = moduleMap.get(me.module)
+    if (!entry) continue
+    if (me.event_type === 'external_link') entry.googleClicks = me.event_count
+    if (me.event_type === 'row_expand') entry.rowExpands = me.event_count
   }
 
-  const entries = [...moduleMap.entries()]
-
-  if (entries.length === 0) {
-    return <EmptyState>Nog geen moduleactiviteit</EmptyState>
-  }
+  // Sort: active modules first (by views desc), then inactive alphabetically
+  const entries = [...moduleMap.entries()].sort((a, b) => {
+    if (b[1].views !== a[1].views) return b[1].views - a[1].views
+    return a[0].localeCompare(b[0])
+  })
 
   return (
     <div className="space-y-3">
-      {entries.map(([mod, activity]) => {
-        const filterParts = [
-          ...activity.panelFilters.map(f => `${FIELD_LABELS[f.field] || f.field} ${f.filter_count}×`),
-          ...activity.drilldownFilters.map(f => `${FIELD_LABELS[f.field] || f.field} ${f.filter_count}× (drilldown)`),
-        ]
-        const colParts = activity.cols.map(c => `${FIELD_LABELS[c.column_name] || c.column_name} ${c.usage_count}×`)
-        const expParts = activity.exps.map(e => `${e.format.toUpperCase()} ${e.export_count}× (gem. ${e.avg_rows} rijen)`)
+      {entries.map(([mod, a]) => {
+        const hasSearches = a.searches.length > 0
+        const hasZeroResults = a.zeroResults.length > 0
+        const isActive = a.views > 0 || hasSearches || hasZeroResults
 
         return (
-          <div key={mod} className="bg-[var(--gray-light)]/40 rounded-lg relative overflow-hidden px-4 py-3 border border-[var(--border)]/50">
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-[var(--navy-dark)] rounded-l-lg" />
+          <div key={mod} className={`rounded-lg relative overflow-hidden px-4 py-3 border ${
+            isActive
+              ? 'bg-[var(--gray-light)]/40 border-[var(--border)]/50'
+              : 'bg-white/60 border-[var(--border)]/30'
+          }`}>
+            <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-lg ${
+              isActive ? 'bg-[var(--navy-dark)]' : 'bg-[var(--border)]'
+            }`} />
 
-            {/* Header: module name + views */}
+            {/* Header */}
             <div className="flex items-baseline justify-between mb-1.5">
-              <h3 className="text-sm font-semibold text-[var(--navy-dark)]">
+              <h3 className={`text-sm font-semibold ${isActive ? 'text-[var(--navy-dark)]' : 'text-[var(--muted-foreground)]'}`}>
                 {MODULE_LABELS[mod] || mod}
               </h3>
               <span className="text-sm text-[var(--muted-foreground)]">
-                <strong className="text-[var(--navy-dark)]" style={{ fontVariantNumeric: 'tabular-nums' }}>{activity.views}</strong> weergaven · {activity.actors} gebruiker{activity.actors !== 1 ? 's' : ''}
+                {a.views > 0 ? (
+                  <>
+                    <strong className="text-[var(--navy-dark)]" style={{ fontVariantNumeric: 'tabular-nums' }}>{a.views}</strong> weergaven · {a.actors} gebruiker{a.actors !== 1 ? 's' : ''}
+                  </>
+                ) : (
+                  <span className="italic text-xs">Niet bezocht</span>
+                )}
               </span>
             </div>
 
-            {/* Details: filters, columns, exports */}
+            {/* Searches (if any) */}
+            {hasSearches && (
+              <div className="mb-2">
+                <div className="space-y-0.5">
+                  {a.searches.map((s, i) => (
+                    <div key={i} className="flex items-center gap-2 text-xs">
+                      <Search className="w-3 h-3 text-[var(--navy-medium)] shrink-0" />
+                      <span className="font-medium text-[var(--navy-dark)] truncate min-w-0" style={{ flex: '1 1 0' }}>{s.query}</span>
+                      <span className="text-[var(--navy-medium)] shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                        {s.avg_results != null ? Number(s.avg_results).toLocaleString('nl-NL') : '—'} res
+                      </span>
+                      <CommitTypePill enter={s.enter_count} auto={s.autocomplete_count} />
+                      <span className="text-[var(--muted-foreground)] shrink-0 w-8 text-right">
+                        {s.avg_duration != null && s.avg_duration > 0 ? formatDuration(s.avg_duration) : '—'}
+                      </span>
+                      <EngagementPill rate={s.engagement_rate} />
+                      <span className="text-[var(--muted-foreground)] shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                        {s.search_count}× <span className="text-[10px]">({s.unique_actors})</span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Zero results (if any) */}
+            {hasZeroResults && (
+              <div className="mb-2 flex flex-wrap gap-1.5">
+                <AlertTriangle className="w-3 h-3 text-amber-500 mt-0.5 shrink-0" />
+                {a.zeroResults.map((z, i) => (
+                  <span key={i} className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded bg-amber-50 border border-amber-100 text-amber-700">
+                    {z.query} {z.search_count}×
+                    {z.retry_count > 0 && <span className="text-amber-500">→ {z.retry_count} herpoging</span>}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Activity details — separated lines */}
             <div className="flex flex-wrap gap-x-5 gap-y-0.5 text-xs">
+              <ActivityDetail label="Filters" items={a.panelFilters} render={f => `${FIELD_LABELS[f.field] || f.field} ${f.filter_count}×`} />
+              <ActivityDetail label="Drilldown" items={a.drilldownFilters} render={f => `${FIELD_LABELS[f.field] || f.field} ${f.filter_count}×`} />
+              <ActivityDetail label="Kolommen" items={a.cols} render={c => `${FIELD_LABELS[c.column_name] || c.column_name} ${c.usage_count}×`} />
               <span className="text-[var(--muted-foreground)]">
-                <strong className="text-[var(--navy-medium)] font-semibold">Filters</strong>{' '}
-                {filterParts.length > 0
-                  ? <span className="text-[var(--navy-dark)]">{filterParts.join(' · ')}</span>
-                  : '—'}
+                <strong className="text-[var(--navy-medium)] font-semibold">Google</strong>{' '}
+                {a.googleClicks > 0 ? <span className="text-[var(--navy-dark)]">{a.googleClicks}×</span> : '—'}
               </span>
               <span className="text-[var(--muted-foreground)]">
-                <strong className="text-[var(--navy-medium)] font-semibold">Kolommen</strong>{' '}
-                {colParts.length > 0
-                  ? <span className="text-[var(--navy-dark)]">{colParts.join(' · ')}</span>
-                  : '—'}
+                <strong className="text-[var(--navy-medium)] font-semibold">Uitklappen</strong>{' '}
+                {a.rowExpands > 0 ? <span className="text-[var(--navy-dark)]">{a.rowExpands}×</span> : '—'}
               </span>
-              <span className="text-[var(--muted-foreground)]">
-                <strong className="text-[var(--navy-medium)] font-semibold">Exports</strong>{' '}
-                {expParts.length > 0
-                  ? <span className="text-[var(--navy-dark)]">{expParts.join(' · ')}</span>
-                  : '—'}
-              </span>
+              <ActivityDetail label="Exports" items={a.exps} render={e => `${e.format.toUpperCase()} ${e.export_count}×`} />
             </div>
           </div>
         )
       })}
     </div>
+  )
+}
+
+function ActivityDetail<T>({ label, items, render }: {
+  label: string
+  items: T[]
+  render: (item: T) => string
+}) {
+  return (
+    <span className="text-[var(--muted-foreground)]">
+      <strong className="text-[var(--navy-medium)] font-semibold">{label}</strong>{' '}
+      {items.length > 0
+        ? <span className="text-[var(--navy-dark)]">{items.map(render).join(' · ')}</span>
+        : '—'}
+    </span>
   )
 }
 

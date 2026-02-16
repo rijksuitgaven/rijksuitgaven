@@ -88,6 +88,7 @@ export async function GET(request: NextRequest) {
     searchEngagementResult,
     subscriptionsResult,
     pulsePrevResult,
+    moduleEventsResult,
   ] = await Promise.all([
     supabase.rpc('get_usage_pulse', { since_date: sinceISO }),
     supabase.rpc('get_usage_modules', { since_date: sinceISO }),
@@ -110,6 +111,8 @@ export async function GET(request: NextRequest) {
     supabase.from('subscriptions').select('user_id, people!inner(first_name, last_name, email)'),
     // Period-over-period comparison for delta indicators
     supabase.rpc('get_usage_pulse_period', { period_start: prevStartISO, period_end: prevEndISO }),
+    // Per-module event counts for module-centric dashboard
+    supabase.rpc('get_usage_module_events', { since_date: sinceISO }),
   ])
 
   // Check for errors (core queries block, new queries don't)
@@ -143,6 +146,9 @@ export async function GET(request: NextRequest) {
   }
   if (pulsePrevResult.error) {
     console.error('[Statistics] Pulse comparison query error (non-blocking):', pulsePrevResult.error.message)
+  }
+  if (moduleEventsResult.error) {
+    console.error('[Statistics] Module events query error (non-blocking):', moduleEventsResult.error.message)
   }
 
   // De-anonymize actors: hash each subscription user_id and match to actor_hash
@@ -193,6 +199,7 @@ export async function GET(request: NextRequest) {
     retention: retentionResult.data ?? [],
     search_engagement: searchEngagementResult.data ?? [],
     pulse_previous: pulsePrevResult.data ?? [],
+    module_events: moduleEventsResult.data ?? [],
   })
 }
 
