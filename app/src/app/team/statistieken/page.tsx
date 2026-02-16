@@ -593,14 +593,6 @@ export default function StatistiekenPage() {
 
             {/* ═══ ACT 2: INZICHTEN ═══ */}
 
-            {/* ── Search KPIs (global context) ── */}
-            <SearchSection
-              searches={data.searches}
-              searchSuccess={data.search_success}
-              searchCount={searches.count}
-              searchActors={searches.actors}
-            />
-
             {/* Errors */}
             {data.errors.length > 0 && (
               <Section title="Fouten" icon={<AlertTriangle className="w-4 h-4" />}>
@@ -700,109 +692,6 @@ export default function StatistiekenPage() {
   )
 }
 
-// --- Search Section (UX-034) ---
-
-function SearchSection({ searches, searchSuccess, searchCount, searchActors }: {
-  searches: SearchItem[]
-  searchSuccess: SearchSuccess | null
-  searchCount: number
-  searchActors: number
-}) {
-  const avgDuration = searches.length > 0
-    ? Math.round(searches.reduce((sum, s) => sum + (s.avg_duration ?? 0), 0) / searches.filter(s => s.avg_duration != null).length) || 0
-    : 0
-  const avgEngagement = searches.length > 0
-    ? Math.round(searches.reduce((sum, s) => sum + (s.engagement_rate ?? 0), 0) / searches.filter(s => s.engagement_rate != null).length * 10) / 10 || 0
-    : 0
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 p-5 mb-4">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-[var(--navy-medium)]"><Search className="w-4 h-4" /></span>
-        <h2 className="text-sm font-semibold text-[var(--navy-dark)] uppercase tracking-wider">Zoekgedrag</h2>
-      </div>
-
-      {searchCount === 0 ? (
-        <EmptyState>Nog geen zoekopdrachten geregistreerd</EmptyState>
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <SearchKPI
-            label="Zoekopdrachten"
-            value={searchCount}
-            sub={`${searchActors} gebruiker${searchActors !== 1 ? 's' : ''}`}
-          />
-          <SearchKPI
-            label="Zoeksucces"
-            value={searchSuccess?.success_rate != null ? `${searchSuccess.success_rate}%` : '—'}
-            sub={searchSuccess ? `${searchSuccess.successful_searches} van ${searchSuccess.total_searches}` : 'geen data'}
-            isString
-          />
-          <SearchKPI
-            label="Gem. duur op resultaat"
-            value={avgDuration > 0 ? formatDuration(avgDuration) : '—'}
-            sub="tijd tot volgende actie"
-            isString
-          />
-          <SearchKPI
-            label="Engagement"
-            value={avgEngagement > 0 ? `${avgEngagement}%` : '—'}
-            sub="gem. vervolgacties"
-            isString
-          />
-        </div>
-      )}
-    </div>
-  )
-}
-
-function SearchKPI({ label, value, sub, isString }: {
-  label: string
-  value: number | string
-  sub: string
-  isString?: boolean
-}) {
-  return (
-    <div className="rounded-lg border border-[var(--border)]/40 bg-[var(--gray-light)]/30 px-3 py-2.5">
-      <div className="text-xs text-[var(--muted-foreground)] font-medium uppercase tracking-wider mb-0.5">{label}</div>
-      <div className="text-xl font-bold text-[var(--navy-dark)]">
-        {isString ? value : (typeof value === 'number' ? value.toLocaleString('nl-NL') : value)}
-      </div>
-      <div className="text-xs text-[var(--muted-foreground)]">{sub}</div>
-    </div>
-  )
-}
-
-function CommitTypePill({ enter, auto }: { enter: number; auto: number }) {
-  if (enter === 0 && auto === 0) return <span className="text-[var(--muted-foreground)]">—</span>
-  return (
-    <div className="flex items-center justify-center gap-1">
-      {enter > 0 && (
-        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--gray-light)] text-[var(--navy-medium)] font-medium" title="Enter">
-          ↵ {enter}
-        </span>
-      )}
-      {auto > 0 && (
-        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--blue-light)]/20 text-[var(--navy-medium)] font-medium" title="Autocomplete">
-          ▾ {auto}
-        </span>
-      )}
-    </div>
-  )
-}
-
-function EngagementPill({ rate }: { rate: number | null }) {
-  if (rate == null) return <span className="text-[var(--muted-foreground)]">—</span>
-  const color = rate >= 60
-    ? 'text-green-700 bg-green-50'
-    : rate >= 30
-      ? 'text-[var(--navy-dark)] bg-[var(--gray-light)]'
-      : 'text-amber-700 bg-amber-50'
-  return (
-    <span className={`text-xs px-1.5 py-0.5 rounded font-semibold ${color}`}>
-      {rate}%
-    </span>
-  )
-}
 
 // --- Subcomponents ---
 
@@ -1118,28 +1007,45 @@ function ModuleActivitySection({ modules, filters, columns, exports, searches, z
             </span>
           </div>
 
-          {/* Searches */}
-          {a.searches.length > 0 && (
-            <div className="mb-2.5">
-              {a.searches.map((s, i) => (
-                <div key={i} className={`flex items-center gap-2 text-xs py-1 px-2 -mx-2 rounded ${i % 2 === 0 ? 'bg-[var(--gray-light)]/30' : ''}`}>
-                  <Search className="w-3 h-3 text-[var(--navy-medium)] shrink-0" />
-                  <span className="font-medium text-[var(--navy-dark)] truncate min-w-0" style={{ flex: '1 1 0' }}>&ldquo;{s.query}&rdquo;</span>
-                  <span className="text-[var(--navy-medium)] shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                    {s.avg_results != null ? Number(s.avg_results).toLocaleString('nl-NL') : '—'} res
-                  </span>
-                  <CommitTypePill enter={s.enter_count} auto={s.autocomplete_count} />
-                  <span className="text-[var(--muted-foreground)] shrink-0 w-8 text-right">
-                    {s.avg_duration != null && s.avg_duration > 0 ? formatDuration(s.avg_duration) : '—'}
-                  </span>
-                  <EngagementPill rate={s.engagement_rate} />
-                  <span className="text-[var(--muted-foreground)] shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                    {s.search_count}× <span className="text-[10px]">({s.unique_actors})</span>
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
+          {/* Searches — horizontal bars */}
+          {a.searches.length > 0 && (() => {
+            const maxCount = Math.max(...a.searches.map(s => s.search_count), 1)
+            return (
+              <div className="mb-2.5 space-y-1.5">
+                {a.searches.map((s, i) => {
+                  const barWidth = Math.max((s.search_count / maxCount) * 100, 4)
+                  const hasResults = s.avg_results != null && Number(s.avg_results) > 0
+                  return (
+                    <div key={i} className="flex items-center gap-2.5">
+                      <span className="text-xs font-medium text-[var(--navy-dark)] truncate min-w-0 w-40 shrink-0">&ldquo;{s.query}&rdquo;</span>
+                      <div className="flex-1 h-5 bg-[var(--gray-light)]/40 rounded overflow-hidden">
+                        <div
+                          className="h-full rounded"
+                          style={{
+                            width: `${barWidth}%`,
+                            background: hasResults
+                              ? 'linear-gradient(90deg, var(--navy-dark), var(--navy-medium))'
+                              : 'linear-gradient(90deg, #D97706, #F59E0B)',
+                          }}
+                        />
+                      </div>
+                      <span className="text-xs font-bold text-[var(--navy-dark)] w-6 text-right shrink-0" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                        {s.search_count}×
+                      </span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded shrink-0 ${
+                        hasResults ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+                      }`}>
+                        {s.avg_results != null ? `${Number(s.avg_results).toLocaleString('nl-NL')} res` : '0 res'}
+                      </span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--gray-light)] text-[var(--navy-medium)] shrink-0">
+                        {s.autocomplete_count > 0 ? '▾ auto' : '↵ enter'}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })()}
 
           {/* Zero results */}
           {a.zeroResults.length > 0 && (
