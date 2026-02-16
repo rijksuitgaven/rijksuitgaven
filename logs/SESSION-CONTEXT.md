@@ -106,6 +106,7 @@
 - ✅ **2026-02-16 (Session 1):** UX-034 Committed search tracking — complete rewrite of search analytics. Killed debounce-based tracking, replaced with committed action tracking (Enter/autocomplete only). New search_end event (14th type) with duration + exit_action. search_id links engagement events to originating search. Retry chains (prev_search_id). Deferred result counting (track after data loads). Dashboard redesign: SearchSection with KPIs, enriched table (Via/Duur/Engagement columns), zero results with retry badges, engagement breakdown chart. Migration 052 (truncate + 4 functions). 6 files modified.
 - ✅ **2026-02-16 (Session 2):** Statistics dashboard visual redesign — 8 commits, multiple expert team consultations. Dark navy hero cards + DeltaBadge dark variant. Feature Adoption horizontal bars (sorted by adoption %, filters added). Merged secondary metrics into Adoption. Module-centric activity cards with collapsed inactive modules. Removed Zoekgedrag KPIs (redundant). Search as horizontal bars per module (proportional to result count, fixed-width aligned columns). Activity chips replaced with compact engagement row ("1× gefilterd (Regeling) · 6× uitgeklapt"). Migrations 053-055. Removed 6 components.
 - ✅ **2026-02-16 (Session 3):** Comprehensive code audit — 5-person expert team with adversarial review. Eliminated 5 false positives. Implemented 12 verified fixes: CSRF origin hardening (5 routes), 25s query timeout, export O(1) optimization, connection pool timeout, centralized httpx client, ALLOWED_HOSTS origin whitelist, hash secret warning, 5MB response cap, exc_info logging, unit comments, rate limit cleanup, contact notes append. Also: removed Fouten from statistieken (dedicated page), network error suppression in autocomplete. 18 files changed, 1 new.
+- ✅ **2026-02-16 (Session 4):** Concurrency & stress-testing audit — 5-person expert team (Concurrency Architect, Pen Tester, Frontend Resilience, DB Safety, Adversarial). Verified production DB: `subscriptions.person_id` had NO unique constraint → duplicate active subscriptions possible. Fixed: unique partial index `idx_subscriptions_active_person` (migration 056), 23505 error handling in leden + convert routes, asyncio.Lock on http_client.py (async def + all callers), rate limiter Map size cap (10K), BFF response body size check (actual bytes not Content-Length). 4 false positives eliminated. 9 files changed.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -133,20 +134,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **18 files + 1 created** (2026-02-16 Session 3)
-   Comprehensive code audit: 12 fixes — CSRF origin hardening (5 routes), query timeout, export optimization, connection pool safety, centralized httpx client, origin whitelisting, response cap, logging, rate limit cleanup, contact notes append. Network error suppression. Fouten section removed from statistieken.
+1. **8 files + 1 migration** (2026-02-16 Session 4)
+   Concurrency audit: unique partial index on subscriptions(person_id) prevents duplicate active subscriptions. 23505 error handling in leden + convert routes. asyncio.Lock on http_client.py. Rate limiter Map size cap. BFF response body size check.
 
-2. **1 file (8 commits) + 3 migrations** (2026-02-16 Session 2)
+2. **18 files + 1 created** (2026-02-16 Session 3)
+   Comprehensive code audit: 12 fixes — CSRF origin hardening (5 routes), query timeout, export optimization, connection pool safety, centralized httpx client, origin whitelisting, response cap, logging, rate limit cleanup, contact notes append.
+
+3. **1 file (8 commits) + 3 migrations** (2026-02-16 Session 2)
    Statistics dashboard visual redesign: dark hero cards, Feature Adoption with filters, module-centric cards, search horizontal bars (result-proportional, aligned columns), compact engagement row. Removed 6 components. Migrations 053-055.
 
-3. **6 files + 1 migration** (2026-02-16 Session 1)
+4. **6 files + 1 migration** (2026-02-16 Session 1)
    UX-034: Committed search tracking. Killed debounce, track Enter/autocomplete only. search_id linking, search_end event, retry chains, deferred result counting. Dashboard SearchSection redesign with KPIs + engagement.
 
-4. **23 files + 4 migrations** (2026-02-15 Sessions 6-12)
+5. **23 files + 4 migrations** (2026-02-15 Sessions 6-12)
    Statistics dashboard debugging: security fixes (middleware + BFF auth), analytics resilience (fetch-first, endpoint rename, debounce+flush), member count filters, search success criteria, NaN fix, "Team" heading removed, autocomplete dropdown fix.
-
-5. **11 files + 1 created** (2026-02-15 Sessions 1-5)
-   Email system overhaul: all transactional emails now via Resend on own domain (no Supabase URLs). UX-033 Fouten as separate tab. Invite "Opnieuw" bug fixed (last_active_at check). Dual callback flow (PKCE + token_hash).
 
 ---
 
