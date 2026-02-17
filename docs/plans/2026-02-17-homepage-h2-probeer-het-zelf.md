@@ -65,8 +65,8 @@ Same visual treatment as H3 (Ontdekking van de Week):
 
 ### 6. Footer (inside dark card, below table)
 
-- Left: "Bron: data.overheid.nl" — 12px, white text at 0.35 opacity, condensed font
-- Right: "Bekijk alle jaren →" — 14px, 600 weight, white text, turns pink on hover, arrow slides right 4px
+- Left: "Bronnen: Rijksoverheid & medeoverheden" — 12px, white text at 0.35 opacity, condensed font
+- Right: "Bekijk alle jaren en data →" — 14px, 600 weight, white text, turns pink on hover, arrow slides right 4px
 
 ---
 
@@ -310,7 +310,7 @@ Three indicators (centered row):
 | Search type | API with 200ms debounce | Feels instant, full coverage |
 | Year range | 2018–2024 | Fits on screen without horizontal scroll |
 | Mobile columns | 3 (Ontvanger, 2024, Totaal) | Only useful columns fit |
-| CTA text | "Bekijk alle jaren →" | Single focus on what's gated |
+| CTA text | "Bekijk alle jaren en data →" | Covers gated years + broader data sources |
 | Amounts | Absolute euros (no x€1.000) | Matches current product |
 | Trust bar | 3 items (no "6 databronnen") | Cleaner, databronnen not a USP |
 | Anti-scraping | Progressive rate limit + query cost + fingerprint | Makes bulk scraping impractical without hurting real users |

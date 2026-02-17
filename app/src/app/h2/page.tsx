@@ -381,7 +381,7 @@ export default function ProbeerHetZelfPage() {
               animation: 'h2FadeUp 0.7s ease-out 0.35s forwards',
             }}
           >
-            Een professioneel abonnement geeft u toegang tot alle jaren en 6 databronnen
+            Overheidsuitgaven op één plek — doorzoekbaar in seconden
           </p>
         </div>
       </section>
@@ -857,7 +857,7 @@ export default function ProbeerHetZelfPage() {
                   fontFamily: 'var(--font-condensed, "IBM Plex Sans Condensed", sans-serif)',
                 }}
               >
-                Bron: data.overheid.nl
+                Bronnen: Rijksoverheid & medeoverheden
               </span>
               <a
                 href="/login"
@@ -873,7 +873,7 @@ export default function ProbeerHetZelfPage() {
                   transition: 'color 0.2s ease',
                 }}
               >
-                <span>Bekijk alle jaren</span>
+                <span>Bekijk alle jaren en data</span>
                 <span className="h2-cta-arrow" style={{ transition: 'transform 0.2s ease' }}>
                   &rarr;
                 </span>
@@ -903,7 +903,7 @@ export default function ProbeerHetZelfPage() {
             gap: '8px 32px',
           }}
         >
-          <TrustItem value="463.731" label="ontvangers" />
+          <TrustItem value="450.000+" label="ontvangers" />
           <TrustSeparator />
           <TrustItem value="9 jaar" label="data" />
           <TrustSeparator />
