@@ -77,7 +77,7 @@ class BFFSecretMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         if settings.bff_secret:
             # Allow health checks and root without secret
-            if request.url.path not in ("/", "/health", "/api/v1/health"):
+            if request.url.path not in ("/", "/health", "/api/v1/health", "/api/v1/public/search"):
                 provided = request.headers.get("X-BFF-Secret", "")
                 if provided != settings.bff_secret:
                     return JSONResponse(
