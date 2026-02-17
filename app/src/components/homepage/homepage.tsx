@@ -375,7 +375,7 @@ function ContactForm() {
 // H6 Page — "De Geintegreerde Homepage"
 // ============================================================================
 
-export default function H6Page() {
+export default function Homepage() {
   // === H2 Search State ===
   const [query, setQuery] = useState('')
   const [isFocused, setIsFocused] = useState(false)
