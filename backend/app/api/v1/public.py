@@ -6,12 +6,11 @@ Returns only ontvanger, y2024, totaal (minimal exposure).
 No BFF secret required — this is a public endpoint.
 """
 import logging
-import re
 
 from fastapi import APIRouter, Query, HTTPException
 
 from app.config import get_settings
-from app.services.modules import _typesense_search, is_word_boundary_match
+from app.services.modules import _typesense_search
 from app.services.database import get_pool
 
 logger = logging.getLogger(__name__)
@@ -49,11 +48,8 @@ async def public_search(
     keys = []
     for hit in data.get("hits", []):
         doc = hit.get("document", {})
-        name = doc.get("name")
         doc_id = doc.get("id")
-        if not name or not doc_id:
-            continue
-        if not is_word_boundary_match(search, name):
+        if not doc_id:
             continue
         keys.append(doc_id)
         if len(keys) >= limit:
