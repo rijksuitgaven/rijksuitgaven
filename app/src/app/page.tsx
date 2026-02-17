@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-auth'
-import { PublicHomepage } from '@/components/homepage'
+import H6Page from '@/app/h6/page'
 
 // =============================================================================
 // Post-Login Module Hub (UX-027)
@@ -129,5 +129,5 @@ export default function Home() {
     return <div className="min-h-screen bg-white" />
   }
 
-  return isLoggedIn ? <ModuleHub /> : <PublicHomepage />
+  return isLoggedIn ? <ModuleHub /> : <H6Page />
 }
