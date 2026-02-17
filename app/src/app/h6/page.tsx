@@ -218,23 +218,23 @@ function DiscoveryCard({ discovery, active, direction }: { discovery: Discovery;
   const shareText = `${discovery.insight}\n\nOntdek meer op rijksuitgaven.nl`
 
   return (
-    <div style={{ position: 'absolute', inset: 0, opacity: active ? 1 : 0, transform: active ? 'translateY(0)' : direction === 'exit' ? 'translateY(-12px)' : 'translateY(12px)', transition: 'opacity 0.7s cubic-bezier(0.2,1,0.2,1), transform 0.7s cubic-bezier(0.2,1,0.2,1)', pointerEvents: active ? 'auto' : 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '3rem 3.5rem' }}>
-      <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', display: 'flex', gap: 6 }}>
+    <div style={{ position: 'absolute', inset: 0, opacity: active ? 1 : 0, transform: active ? 'translateY(0)' : direction === 'exit' ? 'translateY(-12px)' : 'translateY(12px)', transition: 'opacity 0.7s cubic-bezier(0.2,1,0.2,1), transform 0.7s cubic-bezier(0.2,1,0.2,1)', pointerEvents: active ? 'auto' : 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '2rem 2.5rem' }}>
+      <div style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', gap: 6 }}>
         <ShareButton label="Deel op LinkedIn" icon={<LinkedInIcon />} onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://rijksuitgaven.nl')}`, '_blank', 'noopener')} />
         <ShareButton label="Deel op X" icon={<XIcon />} onClick={() => window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener')} />
         <ShareButton label="Deel op Bluesky" icon={<BlueskyIcon />} onClick={() => window.open(`https://bsky.app/intent/compose?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener')} />
       </div>
-      <div style={{ fontFamily: 'var(--font-body)', fontFeatureSettings: '"tnum"', fontVariantNumeric: 'tabular-nums', fontSize: 'clamp(3.5rem, 8vw, 6rem)', fontWeight: 700, lineHeight: 1, color: 'var(--pink)', letterSpacing: '-0.02em', marginBottom: '1.5rem' }}>
+      <div style={{ fontFamily: 'var(--font-body)', fontFeatureSettings: '"tnum"', fontVariantNumeric: 'tabular-nums', fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 700, lineHeight: 1, color: 'var(--pink)', letterSpacing: '-0.02em', marginBottom: '1rem' }}>
         {discovery.prefix && <span style={{ opacity: 0.9 }}>{discovery.prefix}</span>}
         {animatedValue}
-        <span style={{ fontSize: 'clamp(1.25rem, 3vw, 2rem)', fontWeight: 500, marginLeft: '0.4em', opacity: 0.85, letterSpacing: '0' }}>{discovery.suffix}</span>
+        <span style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', fontWeight: 500, marginLeft: '0.4em', opacity: 0.85, letterSpacing: '0' }}>{discovery.suffix}</span>
       </div>
-      <p style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(1.05rem, 2vw, 1.35rem)', fontWeight: 400, lineHeight: 1.55, color: '#ffffff', maxWidth: 580, marginBottom: '2rem' }}>{discovery.insight}</p>
+      <p style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(1.05rem, 2vw, 1.35rem)', fontWeight: 400, lineHeight: 1.55, color: '#ffffff', maxWidth: 580, marginBottom: '1.25rem' }}>{discovery.insight}</p>
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '1.5rem' }}>
-        <a href={`/${discovery.module}`} style={{ fontFamily: 'var(--font-body)', fontSize: '0.925rem', fontWeight: 600, color: '#fff', background: 'var(--pink)', padding: '0.65rem 1.5rem', borderRadius: 6, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.4em', transition: 'background 0.2s', whiteSpace: 'nowrap' }}
+        <a href={`/${discovery.module}`} style={{ fontFamily: 'var(--font-body)', fontSize: '0.925rem', fontWeight: 600, color: '#fff', background: 'var(--pink)', padding: '0.65rem 1.5rem', borderRadius: 8, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.4em', transition: 'background 0.2s', whiteSpace: 'nowrap' }}
           onMouseEnter={e => (e.currentTarget.style.background = 'var(--pink-hover)')}
           onMouseLeave={e => (e.currentTarget.style.background = 'var(--pink)')}>
-          Ontdek meer <span aria-hidden="true">&rarr;</span>
+          Ontdek meer <span aria-hidden="true" style={{ transition: 'transform 0.2s', display: 'inline-block' }}>&rarr;</span>
         </a>
         <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', fontWeight: 400 }}>{discovery.source}</span>
       </div>
@@ -270,105 +270,103 @@ function ContactForm() {
   }
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '14px 16px', fontSize: 15, fontFamily: 'inherit',
-    color: 'var(--navy-dark)', background: '#ffffff', border: 'none', borderRadius: 8,
-    outline: 'none',
+    width: '100%', padding: '13px 16px', fontSize: 15, fontFamily: 'inherit',
+    color: 'var(--navy-dark)', background: '#ffffff', border: '1px solid #D4DAE3',
+    borderRadius: 8, outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s',
   }
 
   return (
-    <section id="aanmelden" style={{ background: 'var(--pink)', padding: 'clamp(48px, 6vw, 80px) 24px' }}>
-      <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <div className="h6-contact-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(40px, 5vw, 64px)', alignItems: 'start' }}>
-          {/* Left: copy */}
-          <ScrollReveal>
+    <section id="aanmelden" style={{ background: '#f8f9fb', padding: '56px 24px 64px', borderTop: '1px solid #E8ECF1' }}>
+      <ScrollReveal>
+        <div style={{ maxWidth: 1080, margin: '0 auto' }}>
+          <div className="h6-contact-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(32px, 5vw, 64px)', alignItems: 'start' }}>
+            {/* Left: copy */}
             <div>
+              <p style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pink)', marginBottom: 12 }}>
+                Contact
+              </p>
               <h2 style={{
-                fontSize: 'clamp(26px, 4vw, 36px)',
+                fontSize: 'clamp(26px, 3.5vw, 36px)',
                 fontWeight: 700,
                 lineHeight: 1.2,
-                color: '#ffffff',
+                color: 'var(--navy-dark)',
                 fontFamily: 'var(--font-heading)',
                 margin: 0,
               }}>
                 Neem contact op
               </h2>
               <p style={{
-                marginTop: 20,
-                fontSize: 'clamp(16px, 2vw, 18px)',
+                marginTop: 16,
+                fontSize: 'clamp(16px, 1.8vw, 18px)',
                 lineHeight: 1.6,
-                color: 'rgba(255,255,255,0.9)',
+                color: 'var(--navy-dark)',
+                opacity: 0.7,
               }}>
                 Benieuwd wat Rijksuitgaven voor u kan betekenen? Laat uw gegevens achter en wij nemen binnen &eacute;&eacute;n werkdag contact met u op.
               </p>
-              <p style={{ marginTop: 16, fontSize: 'clamp(16px, 2vw, 18px)', lineHeight: 1.6, color: 'rgba(255,255,255,0.9)' }}>
+              <p style={{ marginTop: 14, fontSize: 'clamp(16px, 1.8vw, 18px)', lineHeight: 1.6, color: 'var(--navy-dark)', opacity: 0.7 }}>
                 Direct bellen?{' '}
-                <a href="tel:0850806960" style={{ color: '#ffffff', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: 4 }}>
+                <a href="tel:0850806960" style={{ color: 'var(--navy-dark)', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: 4 }}>
                   085-0806960
                 </a>
               </p>
             </div>
-          </ScrollReveal>
 
-          {/* Right: form */}
-          <ScrollReveal>
+            {/* Right: form */}
             <div>
               {formState === 'sent' ? (
-                <div style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', borderRadius: 12, padding: 32, textAlign: 'center' }}>
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="1.5" style={{ margin: '0 auto 12px' }}>
+                <div style={{ background: '#ffffff', borderRadius: 12, padding: 32, textAlign: 'center', border: '1px solid #E8ECF1' }}>
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--pink)" strokeWidth="1.5" style={{ margin: '0 auto 12px' }}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <p style={{ fontSize: 18, fontWeight: 700, color: '#ffffff' }}>Bedankt voor uw aanvraag!</p>
-                  <p style={{ marginTop: 8, fontSize: 15, color: 'rgba(255,255,255,0.85)' }}>Wij nemen zo snel mogelijk contact met u op.</p>
+                  <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--navy-dark)' }}>Bedankt voor uw aanvraag!</p>
+                  <p style={{ marginTop: 8, fontSize: 16, color: 'var(--navy-medium)' }}>Wij nemen zo snel mogelijk contact met u op.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <label htmlFor="h6-firstName" className="sr-only">Voornaam</label>
-                  <input id="h6-firstName" name="firstName" type="text" required placeholder="Voornaam *" style={inputStyle} />
+                  <input id="h6-firstName" name="firstName" type="text" required placeholder="Voornaam *" className="h6-contact-input" style={inputStyle} />
 
                   <label htmlFor="h6-lastName" className="sr-only">Achternaam</label>
-                  <input id="h6-lastName" name="lastName" type="text" required placeholder="Achternaam *" style={inputStyle} />
+                  <input id="h6-lastName" name="lastName" type="text" required placeholder="Achternaam *" className="h6-contact-input" style={inputStyle} />
 
                   <label htmlFor="h6-email" className="sr-only">Zakelijk e-mail</label>
-                  <input id="h6-email" name="email" type="email" required placeholder="Uw zakelijke e-mail *" style={inputStyle} />
+                  <input id="h6-email" name="email" type="email" required placeholder="Uw zakelijke e-mail *" className="h6-contact-input" style={inputStyle} />
 
                   <label htmlFor="h6-phone" className="sr-only">Telefoonnummer</label>
-                  <input id="h6-phone" name="phone" type="tel" placeholder="Op welk nummer kunnen wij u het beste bereiken?" style={inputStyle} />
+                  <input id="h6-phone" name="phone" type="tel" placeholder="Telefoonnummer (optioneel)" className="h6-contact-input" style={inputStyle} />
 
                   <label htmlFor="h6-gdpr" style={{ display: 'flex', alignItems: 'flex-start', gap: 10, paddingTop: 4, cursor: 'pointer' }}>
-                    <input id="h6-gdpr" name="gdpr" type="checkbox" required style={{ marginTop: 4, width: 16, height: 16, accentColor: 'var(--navy-dark)' }} />
-                    <span style={{ fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.85)' }}>
+                    <input id="h6-gdpr" name="gdpr" type="checkbox" required style={{ marginTop: 4, width: 16, height: 16, accentColor: 'var(--pink)' }} />
+                    <span style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--navy-medium)' }}>
                       Ik ga akkoord met het{' '}
-                      <a href="/privacybeleid" style={{ color: '#ffffff', textDecoration: 'underline', textUnderlineOffset: 2 }}>privacy beleid</a>{' '}
+                      <a href="/privacybeleid" style={{ color: 'var(--navy-dark)', textDecoration: 'underline', textUnderlineOffset: 2 }}>privacy beleid</a>{' '}
                       en de voorwaarden.
                     </span>
                   </label>
 
                   <button type="submit" disabled={formState === 'sending'} className="h6-contact-submit" style={{
-                    width: '100%', padding: '14px 20px', marginTop: 4,
+                    width: '100%', padding: '13px 20px', marginTop: 4,
                     fontSize: 16, fontWeight: 700, fontFamily: 'inherit',
-                    color: 'var(--navy-dark)', background: '#ffffff', border: 'none', borderRadius: 8,
+                    color: '#ffffff', background: 'var(--pink)', border: 'none', borderRadius: 8,
                     cursor: 'pointer', transition: 'background 0.2s, transform 0.15s',
-                    boxShadow: '0 2px 8px rgba(14,50,97,0.08)',
                     opacity: formState === 'sending' ? 0.5 : 1,
                   }}>
-                    {formState === 'sending' ? 'Verzenden...' : 'Neem contact met mij op'}
+                    {formState === 'sending' ? 'Verzenden...' : 'Verstuur'}
                   </button>
 
-                  <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', textAlign: 'center', marginTop: 4 }}>
-                    Wij reageren binnen 1 werkdag.
-                  </p>
 
                   {formState === 'error' && (
-                    <p style={{ fontSize: 14, color: '#ffffff', fontWeight: 500 }}>
+                    <p style={{ fontSize: 15, color: 'var(--pink)', fontWeight: 500 }}>
                       Er ging iets mis. Probeer het later opnieuw of bel ons op 085-0806960.
                     </p>
                   )}
                 </form>
               )}
             </div>
-          </ScrollReveal>
+          </div>
         </div>
-      </div>
+      </ScrollReveal>
     </section>
   )
 }
@@ -477,7 +475,7 @@ export default function H6Page() {
           {/* Value Props — Editorial Data Markers */}
           <ScrollReveal>
             <div className="h6-value-props" style={{
-              marginTop: 56,
+              marginTop: 48,
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
               gap: 32,
@@ -502,11 +500,11 @@ export default function H6Page() {
                     {prop.title}
                   </p>
                   <p style={{
-                    fontSize: 15,
+                    fontSize: 16,
                     fontWeight: 400,
                     lineHeight: 1.6,
                     color: 'var(--navy-dark)',
-                    opacity: 0.6,
+                    opacity: 0.7,
                     margin: '8px 0 0',
                   }}>
                     {prop.desc}
@@ -524,7 +522,7 @@ export default function H6Page() {
       <section style={{ background: '#ffffff', padding: '0 24px 56px' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', textAlign: 'center' }}>
           <ScrollReveal>
-            <p style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--pink)', marginBottom: 12 }}>Probeer het zelf</p>
+            <p style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pink)', marginBottom: 12 }}>Probeer het zelf</p>
           </ScrollReveal>
         </div>
 
@@ -605,7 +603,7 @@ export default function H6Page() {
 
               {/* Footer */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, padding: '0 4px' }}>
-                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-condensed)' }}>Bronnen: Rijksoverheid &amp; medeoverheden</span>
+                <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-condensed)' }}>Bronnen: Rijksoverheid &amp; medeoverheden</span>
                 <a href="/login" className="h6-cta-link" style={{ fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.75)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6, transition: 'color 0.2s' }}>
                   <span>Bekijk alle jaren en data</span>
                   <span className="h6-cta-arrow" style={{ transition: 'transform 0.2s' }}>&rarr;</span>
@@ -619,7 +617,7 @@ export default function H6Page() {
       {/* ================================================================ */}
       {/* SECTION 3 — TRUST BAR (3 items)                                 */}
       {/* ================================================================ */}
-      <section style={{ background: '#ffffff', paddingBottom: 8 }}>
+      <section style={{ background: '#ffffff', padding: '0 0 40px' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 24px' }}>
           <ScrollReveal className="scroll-reveal-scale">
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px 56px', padding: '24px 0 28px', borderTop: '1px solid var(--gray-light, #E1EAF2)', borderBottom: '1px solid var(--gray-light, #E1EAF2)' }}>
@@ -644,7 +642,7 @@ export default function H6Page() {
       <section style={{ background: '#f8f9fb', padding: '56px 24px 64px' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
           <ScrollReveal>
-            <p style={{ textAlign: 'center', fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pink)', marginBottom: 36 }}>
+            <p style={{ textAlign: 'center', fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pink)', marginBottom: 24 }}>
               Gebouwd voor
             </p>
           </ScrollReveal>
@@ -669,19 +667,21 @@ export default function H6Page() {
                   <div style={{
                     position: 'relative',
                     background: 'var(--navy-medium, #436FA3)',
-                    padding: '18px 20px 20px',
+                    padding: '20px 20px 20px',
                     overflow: 'hidden',
                   }}>
+                    {/* Pink top accent */}
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'var(--pink, #E62D75)', zIndex: 3 }} />
                     {/* Subtle noise overlay */}
                     <div style={{ position: 'absolute', inset: 0, backgroundImage: noiseDataUri, backgroundRepeat: 'repeat', opacity: 1, pointerEvents: 'none', mixBlendMode: 'overlay' }} />
 
                     <div style={{ position: 'relative', zIndex: 2 }}>
-                      <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.12em', margin: 0 }}>
+                      <p style={{ fontSize: 14, fontWeight: 700, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0, lineHeight: 1.2 }}>
                         {s.audience}
                       </p>
 
                       <div style={{
-                        marginTop: 12,
+                        marginTop: 14,
                         display: 'flex',
                         alignItems: 'center',
                         gap: 8,
@@ -702,9 +702,9 @@ export default function H6Page() {
                   {/* Bottom: White — result */}
                   <div style={{
                     background: '#ffffff',
-                    padding: '16px 20px 18px',
+                    padding: '18px 20px 20px',
                   }}>
-                    <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--navy-dark)', lineHeight: 1.45, margin: 0 }}>
+                    <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--navy-dark)', lineHeight: 1.45, margin: 0 }}>
                       <span style={{ color: 'var(--pink)', marginRight: 6 }}>&rarr;</span>{s.result}
                     </p>
                   </div>
@@ -724,7 +724,7 @@ export default function H6Page() {
             <p style={{ textAlign: 'center', fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pink)', marginBottom: 12 }}>
               Onze abonnementen
             </p>
-            <h2 style={{ textAlign: 'center', fontSize: 'clamp(26px, 4vw, 38px)', fontWeight: 700, lineHeight: 1.15, color: 'var(--navy-dark)', margin: '0 0 48px', fontFamily: 'var(--font-heading)' }}>
+            <h2 style={{ textAlign: 'center', fontSize: 'clamp(26px, 3.5vw, 36px)', fontWeight: 700, lineHeight: 1.15, color: 'var(--navy-dark)', margin: '0 0 40px', fontFamily: 'var(--font-heading)' }}>
               Kies het plan dat bij u past
             </h2>
           </ScrollReveal>
@@ -735,7 +735,7 @@ export default function H6Page() {
               <div className="h6-pricing-card" style={{
                 borderRadius: 12,
                 overflow: 'hidden',
-                boxShadow: '0 2px 16px rgba(14,50,97,0.1), 0 1px 3px rgba(14,50,97,0.06)',
+                boxShadow: '0 2px 12px rgba(14,50,97,0.08), 0 1px 3px rgba(14,50,97,0.06)',
                 transition: 'transform 0.25s cubic-bezier(0.2,1,0.2,1), box-shadow 0.25s',
               }}>
                 <div style={{
@@ -748,10 +748,10 @@ export default function H6Page() {
                   <div style={{ position: 'relative', zIndex: 2 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                       <h3 style={{ fontSize: 20, fontWeight: 700, color: '#ffffff', margin: 0, fontFamily: 'var(--font-heading)' }}>Professioneel</h3>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--pink)', background: 'rgba(255,255,255,0.95)', padding: '2px 8px', borderRadius: 20, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Populair</span>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--pink)', background: 'rgba(255,255,255,0.95)', padding: '2px 8px', borderRadius: 20, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Populair</span>
                     </div>
-                    <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', margin: 0, lineHeight: 1.5 }}>
-                      Volledige toegang tot het complete platform.
+                    <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.9)', margin: 0, lineHeight: 1.5 }}>
+                      Alle data, alle inzichten.
                     </p>
                   </div>
                 </div>
@@ -762,25 +762,25 @@ export default function H6Page() {
                       { title: '9 begrotingsjaren naast elkaar', desc: 'Vergelijk trends van 2016 tot 2024' },
                       { title: 'Alle overheidsuitgaven, \u00e9\u00e9n platform', desc: 'Van rijkssubsidies tot gemeentelijke uitkeringen' },
                       { title: 'Alle details per ontvanger', desc: 'Uitklapbaar, met alle regelingen en bedragen' },
-                      { title: 'Exporteer naar Excel en CSV', desc: 'Tot 500 rijen per download' },
+                      { title: 'Exporteer naar Excel en CSV', desc: 'Download resultaten met \u00e9\u00e9n klik' },
                       { title: 'Onbeperkt zoeken en ontdekken', desc: 'Geen limiet op zoekopdrachten' },
                     ].map((f) => (
                       <li key={f.title} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                        <span style={{ color: 'var(--pink)', fontSize: 15, lineHeight: 1.4, flexShrink: 0 }}>&#x2713;</span>
+                        <span style={{ color: 'var(--pink)', fontSize: 16, lineHeight: 1.4, flexShrink: 0 }}>&#x2713;</span>
                         <div>
-                          <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--navy-dark)', margin: 0, lineHeight: 1.4 }}>{f.title}</p>
-                          <p style={{ fontSize: 12, color: 'var(--navy-medium)', margin: '2px 0 0', lineHeight: 1.45 }}>{f.desc}</p>
+                          <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--navy-dark)', margin: 0, lineHeight: 1.4 }}>{f.title}</p>
+                          <p style={{ fontSize: 14, color: 'var(--navy-medium)', margin: '2px 0 0', lineHeight: 1.45 }}>{f.desc}</p>
                         </div>
                       </li>
                     ))}
                   </ul>
-                  <a href="#aanmelden" className="h6-pricing-cta-primary" style={{
-                    display: 'block', textAlign: 'center', padding: '13px 20px',
-                    background: 'var(--pink)', color: '#ffffff', fontSize: 14, fontWeight: 700,
-                    fontFamily: 'inherit', borderRadius: 8, textDecoration: 'none',
-                    transition: 'background 0.2s, transform 0.15s',
+                  <a href="#aanmelden" className="h6-pricing-cta" style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                    fontSize: 15, fontWeight: 600, color: 'var(--navy-dark)',
+                    textDecoration: 'none', paddingTop: 8,
+                    transition: 'color 0.2s',
                   }}>
-                    Boek een demo
+                    Neem contact op <span className="h6-pricing-arrow" style={{ transition: 'transform 0.2s' }}>&rarr;</span>
                   </a>
                 </div>
               </div>
@@ -791,7 +791,7 @@ export default function H6Page() {
               <div className="h6-pricing-card" style={{
                 borderRadius: 12,
                 overflow: 'hidden',
-                boxShadow: '0 2px 16px rgba(14,50,97,0.1), 0 1px 3px rgba(14,50,97,0.06)',
+                boxShadow: '0 2px 12px rgba(14,50,97,0.08), 0 1px 3px rgba(14,50,97,0.06)',
                 transition: 'transform 0.25s cubic-bezier(0.2,1,0.2,1), box-shadow 0.25s',
               }}>
                 <div style={{
@@ -803,8 +803,8 @@ export default function H6Page() {
                   <div style={{ position: 'absolute', inset: 0, backgroundImage: noiseDataUri, backgroundRepeat: 'repeat', opacity: 1, pointerEvents: 'none', mixBlendMode: 'overlay' }} />
                   <div style={{ position: 'relative', zIndex: 2 }}>
                     <h3 style={{ fontSize: 20, fontWeight: 700, color: '#ffffff', margin: '0 0 6px', fontFamily: 'var(--font-heading)' }}>Op maat</h3>
-                    <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', margin: 0, lineHeight: 1.5 }}>
-                      Voor organisaties met specifieke data- en analysewensen.
+                    <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.9)', margin: 0, lineHeight: 1.5 }}>
+                      Uw wensen, onze expertise.
                     </p>
                   </div>
                 </div>
@@ -817,19 +817,18 @@ export default function H6Page() {
                       'Trainingen en exclusieve sessies voor uw team',
                     ].map((item) => (
                       <li key={item} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                        <span style={{ color: 'var(--pink)', fontSize: 15, lineHeight: 1.4, flexShrink: 0 }}>&#x2713;</span>
-                        <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--navy-dark)', margin: 0, lineHeight: 1.4 }}>{item}</p>
+                        <span style={{ color: 'var(--pink)', fontSize: 16, lineHeight: 1.4, flexShrink: 0 }}>&#x2713;</span>
+                        <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--navy-dark)', margin: 0, lineHeight: 1.4 }}>{item}</p>
                       </li>
                     ))}
                   </ul>
-                  <a href="#aanmelden" className="h6-pricing-cta-secondary" style={{
-                    display: 'block', textAlign: 'center', padding: '13px 20px',
-                    background: 'transparent', color: 'var(--navy-dark)', fontSize: 14, fontWeight: 700,
-                    fontFamily: 'inherit', borderRadius: 8, textDecoration: 'none',
-                    border: '2px solid var(--navy-dark)',
-                    transition: 'background 0.2s, color 0.2s, transform 0.15s',
+                  <a href="#aanmelden" className="h6-pricing-cta" style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                    fontSize: 15, fontWeight: 600, color: 'var(--navy-dark)',
+                    textDecoration: 'none', paddingTop: 8,
+                    transition: 'color 0.2s',
                   }}>
-                    Neem contact op
+                    Neem contact op <span className="h6-pricing-arrow" style={{ transition: 'transform 0.2s' }}>&rarr;</span>
                   </a>
                 </div>
               </div>
@@ -840,7 +839,7 @@ export default function H6Page() {
               <div className="h6-pricing-card" style={{
                 borderRadius: 12,
                 overflow: 'hidden',
-                boxShadow: '0 2px 16px rgba(14,50,97,0.1), 0 1px 3px rgba(14,50,97,0.06)',
+                boxShadow: '0 2px 12px rgba(14,50,97,0.08), 0 1px 3px rgba(14,50,97,0.06)',
                 transition: 'transform 0.25s cubic-bezier(0.2,1,0.2,1), box-shadow 0.25s',
               }}>
                 <div style={{
@@ -853,8 +852,8 @@ export default function H6Page() {
                   <div style={{ position: 'absolute', left: 0, top: '10%', bottom: '10%', width: 3, background: 'linear-gradient(to bottom, transparent, var(--pink, #E62D75), transparent)', opacity: 0.5, borderRadius: 2, zIndex: 2 }} />
                   <div style={{ position: 'relative', zIndex: 2 }}>
                     <h3 style={{ fontSize: 20, fontWeight: 700, color: '#ffffff', margin: '0 0 6px', fontFamily: 'var(--font-heading)' }}>Voor Overheden</h3>
-                    <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', margin: 0, lineHeight: 1.5 }}>
-                      Uw gemeente, volledig aangesloten.
+                    <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.9)', margin: 0, lineHeight: 1.5 }}>
+                      Transparantie voor uw hele gemeente.
                     </p>
                   </div>
                 </div>
@@ -867,21 +866,21 @@ export default function H6Page() {
                       { title: 'Persoonlijke begeleiding', desc: 'Onboarding, training en doorlopende ondersteuning' },
                     ].map((f) => (
                       <li key={f.title} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                        <span style={{ color: 'var(--pink)', fontSize: 15, lineHeight: 1.4, flexShrink: 0 }}>&#x2713;</span>
+                        <span style={{ color: 'var(--pink)', fontSize: 16, lineHeight: 1.4, flexShrink: 0 }}>&#x2713;</span>
                         <div>
-                          <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--navy-dark)', margin: 0, lineHeight: 1.4 }}>{f.title}</p>
-                          <p style={{ fontSize: 12, color: 'var(--navy-medium)', margin: '2px 0 0', lineHeight: 1.45 }}>{f.desc}</p>
+                          <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--navy-dark)', margin: 0, lineHeight: 1.4 }}>{f.title}</p>
+                          <p style={{ fontSize: 14, color: 'var(--navy-medium)', margin: '2px 0 0', lineHeight: 1.45 }}>{f.desc}</p>
                         </div>
                       </li>
                     ))}
                   </ul>
-                  <a href="#aanmelden" className="h6-pricing-cta-b2g" style={{
-                    display: 'block', textAlign: 'center', padding: '13px 20px',
-                    background: 'var(--navy-dark)', color: '#ffffff', fontSize: 14, fontWeight: 700,
-                    fontFamily: 'inherit', borderRadius: 8, textDecoration: 'none',
-                    transition: 'background 0.2s, transform 0.15s',
+                  <a href="#aanmelden" className="h6-pricing-cta" style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                    fontSize: 15, fontWeight: 600, color: 'var(--navy-dark)',
+                    textDecoration: 'none', paddingTop: 8,
+                    transition: 'color 0.2s',
                   }}>
-                    Neem contact op
+                    Neem contact op <span className="h6-pricing-arrow" style={{ transition: 'transform 0.2s' }}>&rarr;</span>
                   </a>
                 </div>
               </div>
@@ -893,16 +892,16 @@ export default function H6Page() {
       {/* ================================================================ */}
       {/* SECTION 6 — ONTDEKKING: Re-engagement before contact             */}
       {/* ================================================================ */}
-      <section style={{ background: '#ffffff', padding: '48px 24px 64px' }}>
-        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+      <section style={{ background: '#ffffff', padding: '40px 24px 64px' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
           <ScrollReveal>
             <div
               onMouseEnter={() => setPaused(true)}
               onMouseLeave={() => setPaused(false)}
-              style={{ position: 'relative', background: 'var(--navy-dark)', borderRadius: 16, minHeight: 380, overflow: 'hidden', boxShadow: '0 4px 24px rgba(14,50,97,0.18), 0 1px 3px rgba(14,50,97,0.08)' }}
+              style={{ position: 'relative', background: 'var(--navy-dark)', borderRadius: 16, minHeight: 280, overflow: 'hidden', boxShadow: '0 4px 24px rgba(14,50,97,0.18), 0 1px 3px rgba(14,50,97,0.08)' }}
             >
               <NavyOverlays />
-              <div style={{ position: 'relative', zIndex: 3, minHeight: 380 }}>
+              <div style={{ position: 'relative', zIndex: 3, minHeight: 280 }}>
                 {shuffled.map((d, i) => (
                   <DiscoveryCard key={i} discovery={d} active={i === current} direction={i === previous ? 'exit' : i === current ? 'enter' : 'idle'} />
                 ))}
@@ -935,7 +934,7 @@ export default function H6Page() {
         .h6-table-row:hover td { background: #F8FAFD !important; }
         .h6-cta-link:hover { color: var(--pink, #E62D75) !important; }
         .h6-cta-link:hover .h6-cta-arrow { transform: translateX(4px); }
-        input::placeholder { color: var(--navy-medium, #436FA3); opacity: 0.55; }
+        input::placeholder { color: var(--navy-medium, #436FA3); opacity: 0.6; }
         .h6-table-scroll::-webkit-scrollbar { height: 6px; }
         .h6-table-scroll::-webkit-scrollbar-track { background: #F0F2F5; border-radius: 3px; }
         .h6-table-scroll::-webkit-scrollbar-thumb { background: #C4CDD8; border-radius: 3px; }
@@ -951,31 +950,29 @@ export default function H6Page() {
         }
         .h6-split-card:hover {
           transform: translateY(-3px);
-          box-shadow: 0 8px 32px rgba(14,50,97,0.18), 0 2px 8px rgba(14,50,97,0.1);
+          box-shadow: 0 8px 32px rgba(14,50,97,0.16), 0 2px 8px rgba(14,50,97,0.1);
         }
         .h6-pricing-card:hover {
           transform: translateY(-3px);
           box-shadow: 0 8px 32px rgba(14,50,97,0.16), 0 2px 8px rgba(14,50,97,0.1);
         }
-        .h6-pricing-cta-primary:hover {
+        .h6-pricing-cta:hover {
+          color: var(--pink) !important;
+        }
+        .h6-pricing-cta:hover .h6-pricing-arrow {
+          transform: translateX(4px);
+        }
+        .h6-contact-submit:hover {
           background: #c8245f !important;
           transform: translateY(-1px);
         }
-        .h6-pricing-cta-secondary:hover {
-          background: var(--navy-dark) !important;
-          color: #ffffff !important;
-          transform: translateY(-1px);
+        .h6-contact-input:focus {
+          border-color: var(--pink) !important;
+          box-shadow: 0 0 0 3px rgba(230,45,117,0.1);
         }
-        .h6-pricing-cta-b2g:hover {
-          background: #1a4a8a !important;
-          transform: translateY(-1px);
-        }
-        .h6-contact-submit:hover {
-          background: #f8f9fb !important;
-          transform: translateY(-1px);
-        }
-        .h6-contact-grid input:focus {
-          box-shadow: 0 0 0 2px rgba(255,255,255,0.5);
+        .h6-contact-input::placeholder {
+          color: var(--navy-dark) !important;
+          opacity: 0.45 !important;
         }
         @media (max-width: 768px) {
           .h6-pricing-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
