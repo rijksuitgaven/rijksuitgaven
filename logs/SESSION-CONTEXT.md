@@ -107,9 +107,10 @@
 - ✅ **2026-02-16 (Session 2):** Statistics dashboard visual redesign — 8 commits, multiple expert team consultations. Dark navy hero cards + DeltaBadge dark variant. Feature Adoption horizontal bars (sorted by adoption %, filters added). Merged secondary metrics into Adoption. Module-centric activity cards with collapsed inactive modules. Removed Zoekgedrag KPIs (redundant). Search as horizontal bars per module (proportional to result count, fixed-width aligned columns). Activity chips replaced with compact engagement row ("1× gefilterd (Regeling) · 6× uitgeklapt"). Migrations 053-055. Removed 6 components.
 - ✅ **2026-02-16 (Session 3):** Comprehensive code audit — 5-person expert team with adversarial review. Eliminated 5 false positives. Implemented 12 verified fixes: CSRF origin hardening (5 routes), 25s query timeout, export O(1) optimization, connection pool timeout, centralized httpx client, ALLOWED_HOSTS origin whitelist, hash secret warning, 5MB response cap, exc_info logging, unit comments, rate limit cleanup, contact notes append. Also: removed Fouten from statistieken (dedicated page), network error suppression in autocomplete. 18 files changed, 1 new.
 - ✅ **2026-02-16 (Session 4):** Concurrency & stress-testing audit — 5-person expert team (Concurrency Architect, Pen Tester, Frontend Resilience, DB Safety, Adversarial). Verified production DB: `subscriptions.person_id` had NO unique constraint → duplicate active subscriptions possible. Fixed: unique partial index `idx_subscriptions_active_person` (migration 056), 23505 error handling in leden + convert routes, asyncio.Lock on http_client.py (async def + all callers), rate limiter Map size cap (10K), BFF response body size check (actual bytes not Content-Length). 4 false positives eliminated. 9 files changed.
-- ✅ **2026-02-17:** Homepage H2 Phase 2 — live search against 463k recipients deployed. New public API endpoint (backend + BFF with token bucket rate limiter). Fixed type-ahead: removed word-boundary filter that blocked prefix queries like "deve"→Deventer. 56 curated default rows, loading skeletons, rate limit/empty states. 2 commits, verified on production.
+- ✅ **2026-02-17 (Sessions 1-3):** Homepage H2 Phase 2 — live search against 463k recipients deployed. New public API endpoint (backend + BFF with token bucket rate limiter). Fixed type-ahead: removed word-boundary filter that blocked prefix queries like "deve"→Deventer. Copy polish: subheadline, source attribution, trust bar, CTA.
+- ✅ **2026-02-17 (Sessions 4-7):** H6 integrated homepage prototype — merges H2+H3 into single page with 7 sections. Contact section redesigned (light layout). Full harmony audit (13 fixes). Gebouwd voor upgraded (pink accents, bold titles). Typography audit (22 fixes, industry minimums). Pricing copy rewritten (benefit-focused). Discovery carousel compacted (~160px savings). H7 design doc created.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
-- ⏳ **Homepage integration** — embed De Geldstroom + Ontdekking widget in redesigned `public-homepage.tsx`
+- ⏳ **Homepage mobile** — H6 responsive testing and mobile breakpoints
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
 - ⏳ **V1 Feature Close Review** — check backlog and sprints
@@ -135,8 +136,8 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **6 files changed** (2026-02-17)
-   Homepage H2 Phase 2: live search against 463k recipients. Public API (backend + BFF with token bucket rate limiter). Type-ahead fix (removed word-boundary filter). 56 curated default rows, loading skeletons, rate limit/empty states. Verified on production.
+1. **H6 design polish** (2026-02-17, Sessions 4-7)
+   H6 integrated homepage: contact section light redesign, harmony audit (13 fixes), gebouwd voor upgrade, typography audit (22 fixes to industry minimums), pricing copy rewrite (benefit-focused), discovery carousel compact (280px, 900px width). 8 commits total today.
 
 2. **8 files + 1 migration** (2026-02-16 Session 4)
    Concurrency audit: unique partial index on subscriptions(person_id) prevents duplicate active subscriptions. 23505 error handling in leden + convert routes. asyncio.Lock on http_client.py. Rate limiter Map size cap. BFF response body size check.
