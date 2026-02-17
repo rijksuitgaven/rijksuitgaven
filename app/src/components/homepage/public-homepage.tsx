@@ -10,7 +10,7 @@ import { useAnalytics } from '@/hooks/use-analytics'
 // Stripe-inspired: opacity 0→1 + translateY(24px→0), 700ms, spring easing
 // ============================================================================
 
-function ScrollReveal({
+export function ScrollReveal({
   children,
   className = '',
   as: Tag = 'div',
@@ -113,7 +113,7 @@ export function PublicHeader() {
 // SPACING: pt-20 pb-16 (generous top, tighter to value props)
 // ============================================================================
 
-function HeroSection() {
+export function HeroSection() {
   return (
     <section className="bg-white pt-16 md:pt-20 pb-12 md:pb-16">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
@@ -215,7 +215,7 @@ function ValueProp({ icon, title, description }: { icon: string; title: string; 
 // Trust Bar — data metrics that establish credibility instantly
 // ============================================================================
 
-function TrustBar() {
+export function TrustBar() {
   return (
     <section className="bg-white pb-2 md:pb-4">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
@@ -250,7 +250,7 @@ function TrustBar() {
 // TRANSITION: bg switches to #f8f9fb (subtle off-white)
 // ============================================================================
 
-function B2GSection() {
+export function B2GSection() {
   return (
     <section id="b2g" className="bg-[#f8f9fb] pt-16 md:pt-24 pb-16 md:pb-20">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
@@ -394,7 +394,7 @@ const audiences = [
   },
 ]
 
-function AudienceSection() {
+export function AudienceSection() {
   const [active, setActive] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const tabsRef = useRef<HTMLDivElement>(null)
@@ -505,7 +505,7 @@ function AudienceSection() {
 // TRANSITION: gradient from white to #f0f3f8
 // ============================================================================
 
-function FeaturesSection() {
+export function FeaturesSection() {
   return (
     <section id="features" className="bg-gradient-to-b from-[#f8f9fb] from-[30%] to-[#eef2f7] pt-16 md:pt-20 pb-16 md:pb-24">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
@@ -664,7 +664,7 @@ function FeatureCard({ title, description, images }: { title: string; descriptio
 // TRANSITION: gradient from #eef2f7 to white
 // ============================================================================
 
-function SubscriptionSection() {
+export function SubscriptionSection() {
   return (
     <section className="bg-gradient-to-b from-[#eef2f7] to-white pt-12 md:pt-16 pb-16 md:pb-24">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
@@ -795,7 +795,7 @@ function SubscriptionSection() {
 // SPACING: py-20 (spacious, final section, inviting)
 // ============================================================================
 
-function ContactSection() {
+export function ContactSection() {
   const { track } = useAnalytics()
   const [formState, setFormState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 

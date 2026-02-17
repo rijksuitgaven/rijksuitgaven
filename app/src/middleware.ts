@@ -31,9 +31,9 @@ export const config = {
      * - api/ (BFF handles own auth with getSession())
      * - auth/ (callback, logout)
      * - login (public)
-     * - h1-h5 (prototype pages)
+     * - h1-h9 (prototype pages)
      * - Static assets (.svg, .png, .jpg, .jpeg, .gif, .webp)
      */
-    '/((?!_next/static|_next/image|favicon.ico|icon.svg|api/|auth/|login|h[1-5]|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|icon.svg|api/|auth/|login|h[1-9]|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
