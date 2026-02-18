@@ -91,6 +91,9 @@ export function Footer() {
                     <Link href="/support" className={linkClass}>Ondersteuning</Link>
                   </li>
                   <li>
+                    <Link href="/datasets" className={linkClass}>Datasets</Link>
+                  </li>
+                  <li>
                     <span className={inactiveClass}>Word partner</span>
                   </li>
 
