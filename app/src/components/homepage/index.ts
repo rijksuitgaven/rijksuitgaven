@@ -1,1 +1,1 @@
-export { PublicHomepage, PublicHeader } from './public-homepage'
+export { PublicHomepage, PublicHeader, ScrollReveal } from './public-homepage'

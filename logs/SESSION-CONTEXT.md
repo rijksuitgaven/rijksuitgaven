@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-02-18
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE)
+**Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE, footer COMPLETE, about page COMPLETE)
 
 ---
 
