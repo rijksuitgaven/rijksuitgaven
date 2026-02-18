@@ -88,6 +88,9 @@ export function Footer() {
                     <Link href="/over" className={linkClass}>Over Rijksuitgaven</Link>
                   </li>
                   <li>
+                    <Link href="/support" className={linkClass}>Ondersteuning</Link>
+                  </li>
+                  <li>
                     <span className={inactiveClass}>Word partner</span>
                   </li>
 
