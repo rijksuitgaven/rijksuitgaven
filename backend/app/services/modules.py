@@ -1434,9 +1434,10 @@ async def get_row_details(
     result = []
     for row in rows:
         years_dict = {year: int(row.get(f"y{year}", 0) or 0) for year in YEARS}
+        raw_gv = row["group_value"]
         result.append({
             "group_by": group_field,
-            "group_value": row["group_value"],
+            "group_value": str(raw_gv) if raw_gv is not None else None,
             "years": years_dict,
             "totaal": int(row["totaal"] or 0),
             "row_count": row["row_count"],
