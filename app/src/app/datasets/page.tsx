@@ -12,43 +12,24 @@ interface DataAvailability {
   year_to: number
 }
 
-// Source links for provinces (official subsidieregisters)
-const PROVINCE_SOURCES: Record<string, string> = {
-  'Drenthe': 'https://www.provincie.drenthe.nl/loket/subsidieloket/subsidieregister/',
-  'Friesland': 'https://www.fryslan.frl/subsidies',
-  'Gelderland': 'https://www.gelderland.nl/subsidies/subsidieregister-verleende-subsidies',
-  'Limburg': 'https://www.limburg.nl/loket/subsidies/subsidieregister/',
-  'Noord-Brabant': 'https://www.brabant.nl/loket/informatie-subsidie-aanvragen/openbaar-subsidie-bijdrageregister/subsidies-verleend-provincie/',
-  'Noord-Holland': 'https://www.noord-holland.nl/Loket/Subsidies/Subsidieregister_en_kennisgeving_staatssteun',
-  'Overijssel': 'https://regelen.overijssel.nl/Algemene_informatie/Informatie_over_subsidies/Openbaar_Subsidieregister',
-  'Utrecht': 'https://www.provincie-utrecht.nl/loket/subsidies/verleende-subsidies',
-  'Zeeland': 'https://www.zeeland.nl/subsidie-aanvragen/subsidieregister-provincie-zeeland',
-}
-
 // Section configuration — order matches UX-035 spec
 const MODULE_SECTIONS: SectionConfig[] = [
   {
     module: 'instrumenten',
     title: 'Financiële Instrumenten',
     description: 'Subsidies, bijdragen en bekostigingen uit de rijksbegroting.',
-    sourceLabel: 'data.overheid.nl',
-    sourceUrl: 'https://data.overheid.nl/',
     type: 'simple',
   },
   {
     module: 'apparaat',
     title: 'Apparaatsuitgaven',
     description: 'Personeel- en materieelkosten van de rijksoverheid.',
-    sourceLabel: 'data.overheid.nl',
-    sourceUrl: 'https://data.overheid.nl/',
     type: 'simple',
   },
   {
     module: 'inkoop',
     title: 'Inkoopuitgaven',
     description: 'Goederen en diensten ingekocht door de rijksoverheid.',
-    sourceLabel: 'data.overheid.nl',
-    sourceUrl: 'https://data.overheid.nl/',
     type: 'simple',
   },
   {
@@ -57,7 +38,6 @@ const MODULE_SECTIONS: SectionConfig[] = [
     description: 'Subsidieregisters gepubliceerd door provincies.',
     type: 'matrix',
     entityLabel: 'Provincie',
-    sources: PROVINCE_SOURCES,
   },
   {
     module: 'gemeente',
@@ -80,10 +60,7 @@ interface SectionConfig {
   title: string
   description: string
   type: 'simple' | 'matrix'
-  sourceLabel?: string
-  sourceUrl?: string
   entityLabel?: string
-  sources?: Record<string, string>
 }
 
 const thStyle = 'px-3 py-2 text-left font-semibold text-[var(--navy-dark)] border-b border-[var(--border)] text-sm'
@@ -161,17 +138,7 @@ export default function DatasetsPage() {
                       {section.description}
                     </p>
                     <p className="text-[var(--muted-foreground)] text-sm">
-                      Data van {moduleData.year_from} t/m{' '}
-                      {moduleData.year_to}, afkomstig van{' '}
-                      <a
-                        href={section.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[var(--navy-medium)] hover:underline"
-                      >
-                        {section.sourceLabel}
-                      </a>
-                      .
+                      Data van {moduleData.year_from} t/m {moduleData.year_to}.
                     </p>
                   </section>
                 )
@@ -180,7 +147,6 @@ export default function DatasetsPage() {
               // Matrix type
               const entities = getEntityData(section.module)
               if (entities.length === 0) return null
-              const hasSources = !!section.sources
 
               return (
                 <section key={section.module}>
@@ -203,9 +169,6 @@ export default function DatasetsPage() {
                               {year}
                             </th>
                           ))}
-                          {hasSources && (
-                            <th className={thStyle}>Bron</th>
-                          )}
                         </tr>
                       </thead>
                       <tbody>
@@ -222,26 +185,6 @@ export default function DatasetsPage() {
                                 ) : null}
                               </td>
                             ))}
-                            {hasSources && (
-                              <td className={tdStyle}>
-                                {section.sources?.[
-                                  entity.entity_name ?? ''
-                                ] ? (
-                                  <a
-                                    href={
-                                      section.sources[
-                                        entity.entity_name ?? ''
-                                      ]
-                                    }
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-[var(--navy-medium)] hover:underline text-sm"
-                                  >
-                                    Bron
-                                  </a>
-                                ) : null}
-                              </td>
-                            )}
                           </tr>
                         ))}
                       </tbody>
