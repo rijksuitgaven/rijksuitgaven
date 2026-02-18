@@ -68,13 +68,13 @@ const tdStyle = 'px-3 py-2 border-b border-[var(--border)] text-sm'
 const yearThStyle = 'px-2 py-2 text-center font-semibold text-[var(--navy-dark)] border-b border-[var(--border)] text-sm w-[52px]'
 const yearTdStyle = 'px-2 py-2 text-center border-b border-[var(--border)] text-sm'
 
-export default function DatasetsPage() {
+export default function DataoverzichtPage() {
   const [data, setData] = useState<DataAvailability[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch('/api/v1/datasets')
+    fetch('/api/v1/dataoverzicht')
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch')
         return res.json()
@@ -106,7 +106,7 @@ export default function DatasetsPage() {
             className="text-2xl font-bold text-[var(--navy-dark)]"
             style={{ fontFamily: 'var(--font-heading), sans-serif' }}
           >
-            Datasets
+            Dataoverzicht
           </h1>
           <p className="text-[var(--muted-foreground)] mt-2 text-base">
             Rijksuitgaven maakt gebruik van officiële overheidsdata. Onderstaand

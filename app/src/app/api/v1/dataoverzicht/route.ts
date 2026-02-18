@@ -1,8 +1,8 @@
 /**
- * GET /api/v1/datasets
+ * GET /api/v1/dataoverzicht
  *
  * Returns data availability per module/entity/year range.
- * Used by the /datasets page to render availability matrices.
+ * Used by the /dataoverzicht page to render availability matrices.
  */
 
 import { NextResponse } from 'next/server'
