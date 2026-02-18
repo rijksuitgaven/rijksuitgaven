@@ -1,7 +1,7 @@
 # V1.0 Sprint Plan
 
 **Created:** 2026-01-20
-**Duration:** 9 weeks (was 8, added UX/UI sprint)
+**Duration:** 11 weeks (was 9; added 2-week V0.9 beta before V1.0 launch)
 **Working Mode:** Solo founder + AI (few hours daily)
 **Start Date:** 2026-01-21
 
@@ -580,79 +580,160 @@ Additional UI/UX work completed after mini sprint was marked complete:
 
 ---
 
-## Week 9: Launch
+## Week 9: V0.9 — Private Beta Launch
 
-**Goal:** Go live with V1.0
+**Goal:** 10 beta testers using beta.rijksuitgaven.nl for real-world testing
 **Status:** PLANNED (starts 2026-02-24)
 
-### Day 1-2: Final Testing & QA
-
-| Test | Details | Status |
-|------|---------|--------|
-| Functional | All features work end-to-end | Pending |
-| Performance | Search <25ms, page load <1s | Pending |
-| Mobile | Test on phone/tablet | Pending |
-| Auth flow | Magic Link complete flow | Pending |
-| Membership | Subscription lifecycle (active/grace/expired) | Pending |
-| Admin features | /team and /team/leden functionality | Pending |
-| Edge cases | Empty results, long text, special characters | Pending |
-| Load testing | 50 concurrent users simulation | Pending |
-
-### Day 3-4: Security & Infrastructure Final Check
+### V0.9 Preparation (Day 1-2)
 
 | Task | Details | Status |
 |------|---------|--------|
-| Security audit | RLS policies, no data leaks | Pending |
-| Rate limiting | Backend rate limiting enabled | Pending |
-| Error logging | Railway logs verified | Completed |
-| Backups | Supabase daily backups confirmed | Pending |
-| Monitoring | Railway + Supabase dashboards | Completed |
+| Select 10 beta testers | From WordPress user base — mix of journalists, researchers, policy staff | Pending |
+| Import testers to Supabase | Add via /team/leden with appropriate plans | Pending |
+| Send invite emails | Magic link invitations via /team/leden invite button | Pending |
+| Briefing email | What to test, how to use feedback button, known limitations, desktop-optimized | Pending |
+| Smoke test | Login → search → expand → export flow verified on production | Pending |
+
+### V0.9 Monitoring (Day 3-7)
+
+| Task | Details | Status |
+|------|---------|--------|
+| Monitor usage statistics | Check /team/statistieken daily for adoption + errors | Pending |
+| Monitor feedback inbox | Check /team/feedback for bug reports | Pending |
+| Triage issues | Critical (fix immediately) vs. minor (fix before V1.0) | Pending |
+
+### Mobile Test — All Public Pages (Day 3-5)
+
+| Page | Details | Status |
+|------|---------|--------|
+| Homepage | Hero, live search, features, pricing, contact form | Pending |
+| `/login` | Login form, magic link flow | Pending |
+| `/privacybeleid` | Article readability, tables scrollable | Pending |
+| `/voorwaarden` | Article readability, definition table | Pending |
+| `/verlopen` | Expired subscription page | Pending |
+| 404 page | Error page layout | Pending |
+| Cookie banner | Dismissal, layout | Pending |
+
+**V0.9 explicitly skips:**
+- DNS switch (stay on beta.rijksuitgaven.nl)
+- Rate limiting (10 known users, no public traffic)
+- SEO optimization (not publicly discoverable)
+- Email campaign (no marketing yet)
+- Full WordPress migration (only 10 of ~50)
+
+**Week 9 Deliverables:**
+- [ ] 10 beta testers active on beta.rijksuitgaven.nl
+- [ ] Briefing email sent
+- [ ] All public pages mobile-tested and fixed
+- [ ] Monitoring active (statistieken + feedback)
+
+---
+
+## Weeks 10-11: V0.9 Beta Period (2 weeks)
+
+**Goal:** Collect feedback, fix issues, prepare for public launch
+**Status:** PLANNED
+
+### Week 10: Feedback Collection
+
+| Task | Details | Status |
+|------|---------|--------|
+| Daily monitoring | Usage stats, errors, feedback inbox | Pending |
+| Bug fixes | Fix critical/high issues as they come in | Pending |
+| UX improvements | Address usability feedback from testers | Pending |
+| Check-in with testers | Mid-beta: email asking for specific feedback | Pending |
+
+### Week 11: V1.0 Preparation
+
+| Task | Details | Status |
+|------|---------|--------|
+| Incorporate beta feedback | All critical fixes deployed | Pending |
+| Remaining WordPress users | Import ~40 remaining users | Pending |
+| Rate limiting (Cloudflare) | Free tier DNS proxy in front of Railway | Pending |
+| SEO optimization | OG image, twitter cards, per-page metadata | Pending |
+| Homepage mobile | Verify V0.9 fixes hold, test logged-in pages | Pending |
 | DNS TTL | Lower to 300s for quick cutover | Pending |
-
-### Day 5: Beta Testing
-
-| Task | Details | Status |
-|------|---------|--------|
-| Beta invite | 3-5 testers on beta.rijksuitgaven.nl | Pending |
-| Collect feedback | Critical issues only | Pending |
-| Fix blockers | Resolve any launch-blocking issues | Pending |
-| Final smoke test | Login → search → export flow | Pending |
-
-### Day 6: Launch Preparation
-
-| Task | Details | Status |
-|------|---------|--------|
-| Draft announcement email | "Welcome to new platform" | Pending |
-| Verify all 50 users | Check subscriptions table | Pending |
 | Rollback plan | Document DNS rollback steps | Pending |
-| Launch checklist | Final go/no-go review | Pending |
+| Email campaign | Draft announcement email via Resend Broadcasts | Pending |
 
-### Day 7: Go Live
+---
+
+## Week 11 (end): V1.0 — Public Launch
+
+**Goal:** DNS switch, full user base, publicly discoverable
+**Status:** PLANNED (target: ~2026-03-09)
+
+### Launch Day
 
 | Task | Details | Status |
 |------|---------|--------|
 | DNS switch | `rijksuitgaven.nl` CNAME → Railway | Pending |
 | Verify HTTPS | SSL certificate working | Pending |
-| Smoke test | Login, search, one module end-to-end | Pending |
-| Send announcement | Email 50 users with Magic Link instructions | Pending |
-| Monitor actively | Watch Railway + Supabase for issues | Pending |
+| Update metadataBase | Change from beta.rijksuitgaven.nl to rijksuitgaven.nl | Pending |
+| Smoke test | Login → search → export on new domain | Pending |
+| Send announcement | Email all users with new URL + Magic Link instructions | Pending |
+| Monitor actively | Watch Railway + Supabase + Fouten dashboard | Pending |
 
-### Post-Launch (Week 10+)
+### Post-Launch (Week 12+)
 
 | Task | Details | Timeline |
 |------|---------|----------|
 | Monitor stability | Watch for bugs, performance issues | Days 1-7 |
 | User feedback | Collect and prioritize issues | Days 1-14 |
-| WordPress shutdown | Decommission old system | Week 11 |
-| V1.1 planning | Plan next iteration | Week 10 |
+| WordPress shutdown | Decommission old system after 1 week | Week 13 |
+| V1.1 planning | Plan next iteration | Week 12 |
 
-**Week 9 Deliverables:**
-- [ ] All tests passing
-- [ ] Performance targets met (search <25ms, page <1s)
-- [ ] 50 users migrated and notified
+**V1.0 Launch Deliverables:**
+- [ ] All beta feedback addressed
+- [ ] All ~50 users migrated and notified
+- [ ] Rate limiting active (Cloudflare)
+- [ ] SEO optimized (OG, twitter cards, metadata)
 - [ ] V1.0 LIVE on rijksuitgaven.nl
 - [ ] Monitoring active
 - [ ] Rollback plan ready
+
+---
+
+## V0.9 Readiness Checklist
+
+**ALREADY COMPLETE — ready for beta testers:**
+
+### Feature Completeness
+- [x] All 7 modules functional (instrumenten, apparaat, inkoop, provincie, gemeente, publiek, integraal)
+- [x] Search <25ms (Typesense verified)
+- [x] Autocomplete working
+- [x] Cascading filters on all modules
+- [x] CSV/XLS export (500 rows)
+- [x] Magic Link authentication
+- [x] Membership management (/team, /team/leden)
+- [x] Profile dropdown (UX-026)
+- [x] Feedback button (UX-025)
+- [x] Contacts table + admin UI (/team/contacten)
+- [x] Usage statistics dashboard (/team/statistieken)
+- [x] Error monitoring (/team/fouten)
+
+### Marketing & Legal Pages
+- [x] Homepage live (H6 with live search)
+- [x] /privacybeleid (11 articles, AVG compliant)
+- [x] /voorwaarden (16 articles, B2B SaaS)
+- [x] /contact (integrated in homepage)
+- [x] 404 page (branded)
+
+### Technical Readiness
+- [x] Security headers (CSP, HSTS) configured
+- [x] Security audit passed (2 rounds: code + concurrency)
+- [x] RLS policies verified
+- [x] Error monitoring active
+- [x] Lighthouse >90 all categories
+- [x] WCAG AA accessibility verified
+- [x] Cross-browser tested (Chrome, Firefox, Safari, Edge)
+
+### Still needed for V0.9
+- [ ] Mobile test + fixes for all public pages (homepage, login, privacy, terms, verlopen, 404)
+- [ ] 10 beta testers imported to Supabase
+- [ ] Invite emails sent
+- [ ] Briefing email sent
 
 ---
 
@@ -660,56 +741,33 @@ Additional UI/UX work completed after mini sprint was marked complete:
 
 **MUST BE COMPLETE BEFORE DNS SWITCH:**
 
+### From V0.9 Beta
+- [ ] All critical beta feedback addressed
+- [ ] No unresolved errors in /team/fouten
+
 ### User Migration
-- [ ] All 50 WordPress users migrated to Supabase
+- [ ] All ~50 WordPress users migrated to Supabase
 - [ ] Subscription plans assigned (monthly/yearly)
 - [ ] Admin roles configured
-- [ ] Invite emails sent to all users
 
-### Feature Completeness
-- [ ] All 7 modules functional (instrumenten, apparaat, inkoop, provincie, gemeente, publiek, integraal)
-- [ ] Search <25ms (Typesense verified)
-- [ ] Autocomplete working
-- [ ] Cascading filters on all modules
-- [ ] CSV export (500 rows)
-- [ ] Magic Link authentication
-- [ ] Membership management (/team, /team/leden)
-- [ ] Profile dropdown (UX-026)
-- [ ] Feedback button (UX-025)
-- [ ] Exact phrase search + wildcard syntax
-- [ ] Contacts table + admin UI (`/team/contacten`)
-- [ ] Resend Broadcasts (contacts synced, campaign template, test send verified)
+### Infrastructure
+- [ ] Rate limiting enabled (Cloudflare free tier)
+- [ ] DNS switch (rijksuitgaven.nl → Railway)
+- [ ] HTTPS verified on new domain
+- [ ] metadataBase updated
+- [ ] DNS rollback plan documented
+- [ ] Old WordPress kept running for 1 week
 
-### Marketing Pages
-- [ ] Homepage live
-- [ ] /about page
-- [ ] /pricing page
-- [ ] /privacy page (includes subscription data)
-- [ ] /terms page
-- [ ] /contact page
-- [ ] 404 page
+### SEO & Marketing
+- [ ] OG image, twitter cards, per-page metadata
+- [ ] Announcement email drafted and sent
+- [ ] Homepage mobile responsiveness verified
 
-### Technical Readiness
-- [ ] Rate limiting enabled on backend
-- [ ] Security headers (CSP, HSTS) configured
-- [ ] RLS policies verified
-- [ ] Error monitoring active
-- [ ] Backup strategy verified
-- [ ] Performance tested (load testing)
-- [ ] DNS TTL lowered (300s)
-- [ ] Rollback plan documented
-
-### Communication
-- [ ] Announcement email drafted
-- [ ] Support email ready (contact@rijksuitgaven.nl)
-- [ ] Known issues documented
-
-### Monitoring & Rollback
+### Monitoring
 - [ ] Railway dashboard accessible
 - [ ] Supabase dashboard accessible
 - [ ] Typesense dashboard accessible
-- [ ] Rollback DNS steps documented
-- [ ] Old WordPress kept running for 1 week
+- [ ] Fouten dashboard monitored
 
 ---
 

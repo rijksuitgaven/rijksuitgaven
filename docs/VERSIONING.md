@@ -43,7 +43,7 @@
 
 ### V1.0 - Search MVP (Current)
 
-**Status:** In development (~90% complete, Week 7 in progress)
+**Status:** In development (~95% complete, V0.9 private beta Week 9, V1.0 public launch Week 11)
 
 **Features:**
 - Fast keyword search (<100ms via Typesense)
