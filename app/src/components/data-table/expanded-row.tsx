@@ -50,6 +50,9 @@ const GROUPABLE_FIELDS: Record<string, { value: string; label: string }[]> = {
     { value: 'regeling', label: 'Regeling' },
     { value: 'sectoren', label: 'Sectoren' },
     { value: 'trefwoorden', label: 'Trefwoorden' },
+    { value: 'regio', label: 'Regio' },
+    { value: 'staffel', label: 'Staffel' },
+    { value: 'onderdeel', label: 'Onderdeel' },
   ],
   integraal: [
     { value: 'module', label: 'Module' },
