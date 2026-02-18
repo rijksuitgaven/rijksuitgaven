@@ -112,31 +112,31 @@ export default function SupportPage() {
 
                   <div>
                     <h3 className="font-semibold text-[var(--navy-dark)]">Provinciale subsidieregisters</h3>
-                    <p className="text-[var(--muted-foreground)] text-sm mt-0.5">2018&ndash;2024</p>
                     <p className="mt-1">
-                      Subsidieregisters van Drenthe, Friesland, Gelderland, Limburg, Noord-Brabant,
-                      Noord-Holland, Overijssel, Utrecht, Zeeland en Zuid-Holland.
+                      Subsidieregisters van 10 provincies.
                       Filteren op provincie en omschrijving.
+                      Zie <a href="/dataoverzicht" className="text-[var(--navy-medium)] hover:underline">Dataoverzicht</a> voor
+                      het volledige overzicht per provincie en jaar.
                     </p>
                   </div>
 
                   <div>
                     <h3 className="font-semibold text-[var(--navy-dark)]">Gemeentelijke subsidieregisters</h3>
-                    <p className="text-[var(--muted-foreground)] text-sm mt-0.5">2018&ndash;2024</p>
                     <p className="mt-1">
-                      Subsidieregisters van Almere, Amersfoort, Amsterdam, Breda, Den Haag,
-                      Groningen, Haarlem, Tilburg en Utrecht.
+                      Subsidieregisters van 12 gemeenten.
                       Filteren op gemeente en omschrijving.
+                      Zie <a href="/dataoverzicht" className="text-[var(--navy-medium)] hover:underline">Dataoverzicht</a> voor
+                      het volledige overzicht per gemeente en jaar.
                     </p>
                   </div>
 
                   <div>
                     <h3 className="font-semibold text-[var(--navy-dark)]">Publieke uitvoeringsorganisaties en kennisinstellingen</h3>
-                    <p className="text-[var(--muted-foreground)] text-sm mt-0.5">2018&ndash;2024</p>
                     <p className="mt-1">
-                      Uitgaven van RVO, ZonMW, NWO en COA.
-                      Bevat subsidies en bijdragen verstrekt door publieke uitvoeringsorganisaties.
+                      Uitgaven van 4 publieke uitvoeringsorganisaties.
                       Filteren op organisatie.
+                      Zie <a href="/dataoverzicht" className="text-[var(--navy-medium)] hover:underline">Dataoverzicht</a> voor
+                      het volledige overzicht per organisatie en jaar.
                     </p>
                   </div>
 

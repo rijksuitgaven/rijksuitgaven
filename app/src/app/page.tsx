@@ -37,7 +37,7 @@ const ontvangers = [
   {
     name: 'gemeente',
     display: 'Gemeentelijke subsidieregisters',
-    description: 'Subsidieregisters van Almere, Amersfoort, Amsterdam, Breda, Den Haag, Groningen, Haarlem, Tilburg en Utrecht.',
+    description: 'Subsidieregisters van Almere, Amersfoort, Amsterdam, Arnhem, Barendrecht, Breda, De Ronde Venen, Den Haag, Groningen, Haarlem, Tilburg en Utrecht.',
     stat: '€13 mld · 2018–2024',
   },
   {

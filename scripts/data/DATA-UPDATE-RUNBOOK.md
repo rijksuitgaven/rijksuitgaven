@@ -399,7 +399,23 @@ Stop and restart the backend server.
 
 ---
 
-## Step 8: Verify Everything Works
+## Step 8: Update Module Hub Entity Lists (IF new entity added)
+
+If you added a **new gemeente, province, or publiek entity** (not just new year data for existing entities):
+
+1. Update `app/src/app/page.tsx` — the `ontvangers` array has hardcoded entity name lists in `description` fields
+2. The `/dataoverzicht` page is dynamic (auto-reflects new entities)
+3. The `/support` page uses counts + links to dataoverzicht (auto-correct)
+
+```typescript
+// Example: adding Rotterdam to gemeente
+// In app/src/app/page.tsx, find the gemeente entry and add to the description:
+description: 'Subsidieregisters van Almere, Amersfoort, Amsterdam, Arnhem, Barendrecht, Breda, De Ronde Venen, Den Haag, Groningen, Haarlem, Rotterdam, Tilburg en Utrecht.',
+```
+
+---
+
+## Step 9: Verify Everything Works
 
 ### 8.1 Test API Endpoints
 
