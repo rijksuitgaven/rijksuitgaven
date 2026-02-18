@@ -273,7 +273,7 @@ export function ExpandedRow({
   if (isLoading) {
     return (
       <tr className="bg-[var(--gray-light)]">
-        <td colSpan={contentColSpan + (collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
+        <td colSpan={contentColSpan + (!yearsExpanded && collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
           <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]" role="status" aria-live="polite">
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
             <span>Laden...</span>
@@ -287,7 +287,7 @@ export function ExpandedRow({
   if (error) {
     return (
       <tr className="bg-[var(--gray-light)]">
-        <td colSpan={contentColSpan + (collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
+        <td colSpan={contentColSpan + (!yearsExpanded && collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
           <ErrorReport variant="inline" />
         </td>
       </tr>
@@ -298,7 +298,7 @@ export function ExpandedRow({
   if (details.length === 0) {
     return (
       <tr className="bg-[var(--gray-light)]">
-        <td colSpan={contentColSpan + (collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
+        <td colSpan={contentColSpan + (!yearsExpanded && collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
           <div className="text-sm text-[var(--muted-foreground)]">Geen details beschikbaar</div>
         </td>
       </tr>
@@ -338,22 +338,21 @@ export function ExpandedRow({
             </button>
           </td>
         )}
-        {/* Collapse button when expanded */}
-        {yearsExpanded && collapsedYears.length > 0 && (
-          <td className="px-3 py-2 text-right border-b border-[var(--border)]">
-            <button
-              onClick={() => setYearsExpanded(false)}
-              className="flex items-center gap-1 text-sm font-semibold text-[var(--navy-dark)] hover:text-[var(--navy-medium)] transition-colors"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
-            </button>
-          </td>
-        )}
         {/* Year headers */}
-        {visibleYears.map((year) => (
+        {visibleYears.map((year, yearArrayIndex) => (
           <td key={year} className="px-3 py-2 text-right text-sm font-semibold text-[var(--navy-dark)] border-b border-[var(--border)]">
-            {year}
+            {yearsExpanded && yearArrayIndex === 0 && collapsedYears.length > 0 ? (
+              <button
+                onClick={() => setYearsExpanded(false)}
+                className="flex items-center gap-0.5 text-sm font-semibold text-[var(--navy-dark)] hover:text-[var(--navy-medium)] transition-colors ml-auto"
+                aria-label={`Jaren ${COLLAPSED_YEARS_START} tot ${COLLAPSED_YEARS_END} inklappen`}
+              >
+                <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
+                {year}
+              </button>
+            ) : (
+              year
+            )}
           </td>
         ))}
         {/* Total header */}
@@ -434,10 +433,6 @@ export function ExpandedRow({
                 </td>
               )
             })()}
-            {/* Empty cell for collapse button column when expanded */}
-            {yearsExpanded && collapsedYears.length > 0 && (
-              <td className="px-3 py-2.5 border-b border-[var(--border)]" />
-            )}
             {/* Year cells */}
             {visibleYears.map((year) => {
               // Check availability from parent row

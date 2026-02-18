@@ -645,35 +645,31 @@ export function DataTable({
         ),
         size: 95,
       })
-    } else if (yearsExpanded && collapsedYears.length > 0) {
-      // Show collapse header: "< 2016-20" that collapses on click
-      cols.push({
-        id: 'collapse-years-header',
-        header: () => (
-          <button
-            onClick={() => setYearsExpanded(false)}
-            className="flex items-center gap-1 text-sm font-semibold text-white hover:text-white/80 transition-colors"
-            aria-label={`Jaren ${COLLAPSED_YEARS_START} tot ${COLLAPSED_YEARS_END} inklappen`}
-            title="Klik om jaren in te klappen"
-          >
-            <ChevronLeft className="h-3 w-3" aria-hidden="true" />
-            {COLLAPSED_YEARS_START}-{String(COLLAPSED_YEARS_END).slice(-2)}
-          </button>
-        ),
-        cell: () => null,
-        size: 80,
-      })
     }
 
     // Individual year columns
-    visibleYears.forEach((year) => {
+    visibleYears.forEach((year, yearArrayIndex) => {
       const yearIndex = availableYears.indexOf(year)
       const previousYear = yearIndex > 0 ? availableYears[yearIndex - 1] : null
+      const isFirstCollapsible = yearsExpanded && yearArrayIndex === 0 && collapsedYears.length > 0
 
       cols.push({
         id: `year-${year}`,
         accessorFn: (row) => row.years.find((y) => y.year === year)?.amount ?? 0,
-        header: ({ column }) => (
+        header: ({ column }) => isFirstCollapsible ? (
+          <div className="flex items-center gap-0.5 justify-end">
+            <button
+              onClick={(e) => { e.stopPropagation(); setYearsExpanded(false) }}
+              className="text-white/70 hover:text-white transition-colors"
+              aria-label={`Jaren ${COLLAPSED_YEARS_START} tot ${COLLAPSED_YEARS_END} inklappen`}
+            >
+              <ChevronLeft className="h-3 w-3" aria-hidden="true" />
+            </button>
+            <SortableHeader column={column} onSortChange={onSortChange}>
+              {year}
+            </SortableHeader>
+          </div>
+        ) : (
           <SortableHeader column={column} onSortChange={onSortChange}>
             {year}
           </SortableHeader>
@@ -875,7 +871,7 @@ export function DataTable({
                         isYearOrTotal ? 'text-right' : 'text-left',
                         isSticky && 'sticky left-0 bg-[var(--navy-dark)] z-10',
                         headerIndex === 1 && `sticky bg-[var(--navy-dark)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]`,
-                        isTotaal && 'bg-[var(--navy-medium)]',
+                        isTotaal && 'sticky right-0 bg-[var(--navy-medium)] z-10 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.3)]',
                         isFirst && 'rounded-l-lg',
                         isLast && 'rounded-r-lg'
                       )}
@@ -944,7 +940,7 @@ export function DataTable({
                             isSticky && 'sticky left-0 bg-white group-hover:bg-[var(--gray-light)] z-10',
                             cellIndex === 1 && 'sticky bg-white group-hover:bg-[var(--gray-light)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
                             isExpanded && isSticky && 'bg-[var(--gray-light)]',
-                            isTotaal && 'bg-[var(--totaal-bg)] font-semibold'
+                            isTotaal && 'sticky right-0 bg-[var(--totaal-bg)] font-semibold z-10 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]'
                           )}
                           style={{
                             width: cell.column.getSize(),
@@ -995,9 +991,6 @@ export function DataTable({
                     )}
                   </td>
                 )}
-                {yearsExpanded && collapsedYears.length > 0 && (
-                  <td className="px-3 py-2 border-b border-[var(--border)]"></td>
-                )}
                 {/* Individual year columns */}
                 {(yearsExpanded ? availableYears : availableYears.filter(y => y > 2020)).map((year) => (
                   <td key={`total-${year}`} className="px-3 py-2 text-right tabular-nums text-xs border-b border-[var(--border)]">
@@ -1009,7 +1002,7 @@ export function DataTable({
                   </td>
                 ))}
                 {/* Grand total */}
-                <td className="px-3 py-2 text-right tabular-nums text-xs border-b border-[var(--border)] bg-[var(--navy-medium)]">
+                <td className="px-3 py-2 text-right tabular-nums text-xs border-b border-[var(--border)] bg-[var(--navy-medium)] sticky right-0 z-10 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.3)]">
                   {formatAmount(totals.totaal)}
                 </td>
               </tr>
