@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-02-18
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE, footer COMPLETE, about page COMPLETE, support page COMPLETE)
+**Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE, footer COMPLETE, about page COMPLETE, support page COMPLETE, data availability audit COMPLETE)
 
 ---
 
@@ -111,6 +111,7 @@
 - ✅ **2026-02-17 (Sessions 4-7):** H6 integrated homepage prototype — merges H2+H3 into single page with 7 sections. Contact section redesigned (light layout). Full harmony audit (13 fixes). Gebouwd voor upgraded (pink accents, bold titles). Typography audit (22 fixes, industry minimums). Pricing copy rewritten (benefit-focused). Discovery carousel compacted (~160px savings). H7 design doc created.
 - ✅ **2026-02-18 (Session 1):** Lighthouse audit + QA + legal day. Lighthouse CLI: Performance 93, Accessibility 100, Best Practices 100, SEO 100 (all >90 target). WCAG AA color contrast fix (`--pink` #E62D75→#D4286B, 4.87:1 ratio). Homepage `<main>` landmark. robots.txt middleware fix (SEO 92→100). Cross-browser CSS: removed will-change memory leak, .scrollbar-hide class, Firefox scrollbar styling. Welcome email rewrite: "activeren"→"inloggen", desktop note added. Supabase email templates aligned. Privacy policy complete rewrite: 4-expert legal team, 11 articles, Het Maven Collectief KvK, pseudonymized analytics disclosure, EU processor categories, AP complaint right, specific retention periods, accurate cookie table. Algemene Voorwaarden complete rewrite: 4-expert legal team, 16 articles, B2B scope, magic link auth, pro-rata refund, full data disclaimer, sui generis databankrecht, 500-row export limit, manual invoicing Het Maven Collectief. Footer + homepage voorwaarden links. V1.1 note: data export/retention for V2+ user content. Backlog: SEO optimization added, Interactive Search Demo + Homepage→production confirmed done, Terms of service done. 7 commits.
 - ✅ **2026-02-18 (Session 2):** Footer rework + About page visual redesign + FAQ evaluation + Support page. Footer: 3 visual tiers (active/inactive/headers), removed dead links, activated Over Rijksuitgaven. About page: homepage-matching design (ScrollReveal, stat strip with pink left borders, audience cards, pink CTA band). FAQ: evaluated WordPress content (12 Qs), 7 already covered by /over, deferred to beta feedback. Support page: `/support` post-login with 5 accordion sections (Aan de slag, Modules, Exporteren, Filteren, Uw account), text-only, fresh content. Footer "Ondersteuning" link (logged-in only). 6 commits.
+- ✅ **2026-02-18 (Session 3):** Data availability audit + UX-035 requirement. Verified all 6 source tables against `data_availability` — found 20 incorrect year ranges. Executed corrections on production (migration 057). Key fixes: inkoop 2017 start, Utrecht gemeente 2023 start, Friesland 2020-2023 only, Gelderland back to 2016. UX-035 Datasets Page requirement documented (dynamic availability matrix from DB). Data Update Runbook enhanced with per-entity year_to guidance + verification queries. 2 commits.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ⏳ **Homepage mobile** — H6 responsive testing and mobile breakpoints
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -141,7 +142,10 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **Content + support pages** (2026-02-18, Session 2)
+1. **Data availability audit** (2026-02-18, Session 3)
+   Verified all 6 source tables — 20 corrections executed on production. UX-035 Datasets Page requirement documented. Runbook enhanced with per-entity year_to guidance. 2 commits.
+
+2. **Content + support pages** (2026-02-18, Session 2)
    Footer rework (3 visual tiers). About page visual redesign (stat strip, audience cards, ScrollReveal). FAQ deferred (7/12 already covered). Support page: 5 accordion sections, post-login, text-only. 6 commits.
 
 2. **QA + Legal day** (2026-02-18, Session 1)
@@ -152,9 +156,6 @@
 
 4. **8 files + 1 migration** (2026-02-16 Session 4)
    Concurrency audit: unique partial index on subscriptions(person_id) prevents duplicate active subscriptions. 23505 error handling in leden + convert routes. asyncio.Lock on http_client.py. Rate limiter Map size cap. BFF response body size check.
-
-5. **18 files + 1 created** (2026-02-16 Session 3)
-   Comprehensive code audit: 12 fixes — CSRF origin hardening (5 routes), query timeout, export optimization, connection pool safety, centralized httpx client, origin whitelisting, response cap, logging, rate limit cleanup, contact notes append.
 
 ---
 
