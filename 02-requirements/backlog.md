@@ -1,6 +1,6 @@
 # Product Backlog
 
-**Last Updated:** 2026-02-16
+**Last Updated:** 2026-02-18
 
 Items logged for future versions, not in V1.0 scope.
 
@@ -868,30 +868,30 @@ When switching between filter dropdowns (e.g., Regeling → Artikel), the new dr
 
 ---
 
-### Mobile Responsiveness Audit
+### Mobile Responsiveness Audit (COMPLETED)
 
-**Priority:** Low (Post-V1.0)
+**Priority:** High (V1.0)
 **Added:** 2026-02-03
-**Updated:** 2026-02-05
+**Updated:** 2026-02-18
+**Completed:** 2026-02-18
 **Type:** UX / Testing
+**Status:** ✅ COMPLETED
 
-**Status:** BACKLOGGED - Deferred to post-V1.0 (mobile message banner is V1.0 solution)
+**Audit Results:**
+4 parallel audit agents reviewed all public-facing pages at 375px viewport — 25 issues found across CRITICAL/HIGH/MEDIUM/LOW severity.
 
-**Task:**
-Comprehensive mobile UX testing and fixes based on user feedback.
+**18 fixes across 10 files:**
+- Header nav: scroll fade indicators (left/right gradient overlays)
+- Auth button: 4 touch target fixes (min-h/w-[44px])
+- Footer: social icon negative margin technique, link spacing
+- Mobile banner: `relative` class fix
+- Over page: responsive grid (grid-cols-1 sm:grid-cols-3)
+- 404 page: responsive text size (text-[5rem] sm:text-[8rem])
+- Verlopen/Login: touch target compliance (py-3 + min-h-[44px])
+- Cookie banner: mobile padding (px-4 sm:px-6)
+- Homepage: card/discovery mobile padding, share button touch targets
 
-**Areas to test:**
-- Touch targets (min 44×44px)
-- Table horizontal scroll on mobile
-- Sticky columns behavior
-- Filter panel (bottom sheet)
-- Search autocomplete dropdown
-- Expanded row content
-- Header menu navigation
-
-**V1.0 Solution:** Mobile message banner (UX-003) informs users the app works best on larger screens. Non-blocking - users can continue.
-
-**Decision (2026-02-05):** Mobile banner is sufficient for V1.0 launch. Full audit deferred to post-launch based on beta feedback.
+**Commit:** `2606c57`
 
 ---
 

@@ -1,6 +1,6 @@
 # Frontend Documentation
 
-**Last Updated:** 2026-02-14
+**Last Updated:** 2026-02-18
 **Stack:** Next.js 16.1.4 + TypeScript + Tailwind CSS + TanStack Table
 
 ---
@@ -23,8 +23,13 @@ app/src/
 │   │   ├── leden/page.tsx        # Member management (admin only)
 │   │   ├── feedback/page.tsx     # Feedback inbox (admin only)
 │   │   ├── contacten/page.tsx    # Contacts management (admin only) — UX-028
-│   │   └── statistieken/page.tsx # Usage statistics dashboard (admin only) — UX-032
+│   │   ├── statistieken/page.tsx # Usage statistics dashboard (admin only) — UX-032
+│   │   └── fouten/page.tsx      # Error monitoring (admin only) — UX-033
 │   ├── verlopen/page.tsx         # Expired subscription page
+│   ├── voorwaarden/page.tsx     # Terms of service (16 articles, B2B SaaS)
+│   ├── over/page.tsx            # About page (mission, audiences, sources)
+│   ├── support/page.tsx         # Post-login support (5 accordion sections)
+│   ├── dataoverzicht/page.tsx   # Data availability matrix (UX-035)
 │   ├── instrumenten/page.tsx     # Module page
 │   ├── apparaat/page.tsx         # Module page
 │   ├── inkoop/page.tsx           # Module page

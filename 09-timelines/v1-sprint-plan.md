@@ -559,7 +559,7 @@ Additional UI/UX work completed after mini sprint was marked complete:
 | Footer updates | Ensure all links correct | ✅ Completed |
 | Favicon | Brand icon | ✅ Completed (exists) |
 | Cross-browser test | Chrome, Firefox, Safari, Edge | ✅ Completed (2026-02-18, CSS audit) |
-| Mobile responsiveness | Test on real devices | Pending (homepage) |
+| Mobile responsiveness | Test on real devices | ✅ Completed (2026-02-18, 4 audit agents, 18 fixes) |
 
 ### Day 7: Performance & Accessibility
 
@@ -730,7 +730,7 @@ Additional UI/UX work completed after mini sprint was marked complete:
 - [x] Cross-browser tested (Chrome, Firefox, Safari, Edge)
 
 ### Still needed for V0.9
-- [ ] Mobile test + fixes for all public pages (homepage, login, privacy, terms, verlopen, 404)
+- [x] Mobile test + fixes for all public pages (homepage, login, privacy, terms, verlopen, 404) — 2026-02-18
 - [ ] 10 beta testers imported to Supabase
 - [ ] Invite emails sent
 - [ ] Briefing email sent
@@ -761,7 +761,7 @@ Additional UI/UX work completed after mini sprint was marked complete:
 ### SEO & Marketing
 - [ ] OG image, twitter cards, per-page metadata
 - [ ] Announcement email drafted and sent
-- [ ] Homepage mobile responsiveness verified
+- [x] Homepage mobile responsiveness verified (2026-02-18)
 
 ### Monitoring
 - [ ] Railway dashboard accessible
@@ -823,8 +823,8 @@ After V1.0 is stable:
 
 ---
 
-**Document Version:** 1.4
-**Last Updated:** 2026-02-11
+**Document Version:** 1.5
+**Last Updated:** 2026-02-18
 
 ---
 
@@ -843,7 +843,7 @@ After V1.0 is stable:
 | **Week 8** | **2026-02-17–25** | **IN PROGRESS** | Homepage live, privacy policy, Lighthouse >90, cross-browser |
 | Week 9 | 2026-02-26–04 | PLANNED | Final testing, launch |
 
-**V1.0 Progress:** ~93% complete | **Next: Terms of service, user migration, rate limiting, DNS switch**
+**V1.0 Progress:** ~95% complete | **Next: User migration, rate limiting, SEO, DNS switch**
 
 ---
 
