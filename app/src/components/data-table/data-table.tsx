@@ -411,14 +411,6 @@ export function DataTable({
     }
   }, [])
 
-  // Dynamic Totaal shadow — prominent when content hidden, subtle when scrolled to end
-  const totaalShadow = canScrollRight
-    ? 'shadow-[-16px_0_20px_-4px_rgba(14,50,97,0.25)]'
-    : 'shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.15)]'
-  const totaalShadowLight = canScrollRight
-    ? 'shadow-[-16px_0_20px_-4px_rgba(14,50,97,0.1)]'
-    : ''
-
   // CSV Export handler
   const handleExportCSV = () => {
     if (data.length === 0) return
@@ -880,8 +872,9 @@ export function DataTable({
       </div>
 
       {/* Table container with horizontal scroll for expanded years */}
-      <div ref={scrollContainerRef} className="overflow-x-auto">
-        <table className="w-full border-collapse table-fixed">
+      <div className="relative">
+        <div ref={scrollContainerRef} className="overflow-x-auto">
+          <table className="w-full border-collapse table-fixed">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="bg-[var(--navy-dark)]">
@@ -900,7 +893,7 @@ export function DataTable({
                         isYearOrTotal ? 'text-right' : 'text-left',
                         isSticky && 'sticky left-0 bg-[var(--navy-dark)] z-10',
                         headerIndex === 1 && `sticky bg-[var(--navy-dark)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]`,
-                        isTotaal && `sticky right-0 bg-[var(--navy-medium)] z-10 border-l border-white/20 ${totaalShadow}`,
+                        isTotaal && 'sticky right-0 bg-[var(--navy-medium)] z-10 border-l border-white/20',
                         isFirst && 'rounded-l-lg',
                         isLast && 'rounded-r-lg'
                       )}
@@ -969,7 +962,7 @@ export function DataTable({
                             isSticky && 'sticky left-0 bg-white group-hover:bg-[var(--gray-light)] z-10',
                             cellIndex === 1 && 'sticky bg-white group-hover:bg-[var(--gray-light)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
                             isExpanded && isSticky && 'bg-[var(--gray-light)]',
-                            isTotaal && `sticky right-0 bg-[var(--totaal-bg)] font-semibold z-10 border-l border-[var(--border)] ${totaalShadowLight}`
+                            isTotaal && 'sticky right-0 bg-[var(--totaal-bg)] font-semibold z-10 border-l border-[var(--border)]'
                           )}
                           style={{
                             width: cell.column.getSize(),
@@ -1031,13 +1024,27 @@ export function DataTable({
                   </td>
                 ))}
                 {/* Grand total */}
-                <td className={`px-3 py-2 text-right tabular-nums text-xs border-b border-[var(--border)] bg-[var(--navy-medium)] sticky right-0 z-10 border-l border-l-white/20 ${totaalShadow}`}>
+                <td className="px-3 py-2 text-right tabular-nums text-xs border-b border-[var(--border)] bg-[var(--navy-medium)] sticky right-0 z-10 border-l border-l-white/20">
                   {formatAmount(totals.totaal)}
                 </td>
               </tr>
             </tfoot>
           )}
-        </table>
+          </table>
+        </div>
+
+        {/* Scroll indicator — gradient fade before sticky Totaal column */}
+        <div
+          className={cn(
+            'absolute top-0 bottom-0 w-12 pointer-events-none transition-opacity duration-200',
+            canScrollRight ? 'opacity-100' : 'opacity-0'
+          )}
+          style={{
+            right: 110, // Totaal column width
+            background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.85))',
+          }}
+          aria-hidden="true"
+        />
       </div>
 
       {/* Footer */}
