@@ -87,7 +87,7 @@ export function Header() {
         style={{ fontFamily: 'var(--font-condensed)' }}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-stretch overflow-x-auto scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+          <div className="flex items-stretch overflow-x-auto scrollbar-hide">
 
             {/* Ontvangers Section */}
             <div className="flex items-stretch">

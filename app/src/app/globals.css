@@ -224,7 +224,6 @@
   transform: translateY(24px);
   transition: opacity 0.7s cubic-bezier(0.2, 1, 0.2, 1),
               transform 0.7s cubic-bezier(0.2, 1, 0.2, 1);
-  will-change: opacity, transform;
 }
 
 .scroll-reveal.visible {
@@ -238,12 +237,20 @@
   transform: scale(0.96);
   transition: opacity 0.6s cubic-bezier(0.2, 1, 0.2, 1),
               transform 0.6s cubic-bezier(0.2, 1, 0.2, 1);
-  will-change: opacity, transform;
 }
 
 .scroll-reveal-scale.visible {
   opacity: 1;
   transform: scale(1);
+}
+
+/* Cross-browser scrollbar hiding */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* Stagger children — each child delays 100ms after the previous */

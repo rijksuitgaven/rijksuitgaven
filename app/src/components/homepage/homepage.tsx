@@ -935,6 +935,7 @@ export default function Homepage() {
         .h6-cta-link:hover { color: var(--pink, #E62D75) !important; }
         .h6-cta-link:hover .h6-cta-arrow { transform: translateX(4px); }
         input::placeholder { color: var(--navy-medium, #436FA3); opacity: 0.6; }
+        .h6-table-scroll { scrollbar-width: thin; scrollbar-color: #C4CDD8 #F0F2F5; }
         .h6-table-scroll::-webkit-scrollbar { height: 6px; }
         .h6-table-scroll::-webkit-scrollbar-track { background: #F0F2F5; border-radius: 3px; }
         .h6-table-scroll::-webkit-scrollbar-thumb { background: #C4CDD8; border-radius: 3px; }
