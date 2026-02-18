@@ -115,6 +115,7 @@
 - ✅ **2026-02-18 (Session 4):** UX-035 Dataoverzicht page built and deployed. `/dataoverzicht` (renamed from `/datasets`). BFF route `GET /api/v1/dataoverzicht` (auth-gated Supabase query). Page renders 6 sections: 3 simple (year range text) + 3 matrix (entity × year checkmarks). Footer "Dataoverzicht" link added (logged-in only). Source links removed per user feedback. Entity list drift fix: module hub updated (added 3 missing gemeenten), support page switched to counts + link to dataoverzicht (zero maintenance), runbook Step 8 added. 6 commits.
 - ✅ **2026-02-18 (Session 5):** Data table UX improvements. 4-expert team (Data Table UX Lead, Interaction Designer, Frontend Performance Engineer, Adversarial Strategist). Deleted ghost `collapse-years-header` column (empty cells when years expanded). Collapse chevron moved to first year (2016) header. Totaal column sticky right-0 with left-facing shadow (header, body, footer). Same fixes in expanded-row.tsx (ghost cell removed, colSpan adjusted). 1 commit.
 - ✅ **2026-02-18 (Session 6):** Horizontal scroll indicator — 4 iterations. box-shadow on sticky elements CLIPPED by overflow boundary (CSS spec limitation). White gradient created ugly wash on navy header + visible blank gaps on white body. Final: dark navy-tinted gradient `rgba(14,50,97,0.22)` overlay OUTSIDE overflow container, 40px wide, with ResizeObserver scroll tracking + opacity transition. Key learning: never use box-shadow on sticky elements inside overflow:auto. 8 commits.
+- ✅ **2026-02-18 (Session 7):** "+N meer" context-aware grouping + inkoop staffel bug fix. Clicking "+N meer" now pre-selects matching column as expanded row grouping (expandGroupingRef → initialGrouping prop). Added missing publiek groupable fields (regio, staffel, onderdeel). Fixed inkoop staffel 500 error: Pydantic v2 rejects int→str on DetailRow.group_value; belt-and-suspenders fix with SQL `::text` cast + Python `str()`. Deploy learning: Railway "Redeploy" restarts same build, new code needs new deployment. 5 commits.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ⏳ **Homepage mobile** — H6 responsive testing and mobile breakpoints
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -145,20 +146,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **Data availability audit** (2026-02-18, Session 3)
-   Verified all 6 source tables — 20 corrections executed on production. UX-035 Datasets Page requirement documented. Runbook enhanced with per-entity year_to guidance. 2 commits.
+1. **"+N meer" grouping + staffel bug fix** (2026-02-18, Session 7)
+   Context-aware expanded row grouping from "+N meer" clicks. Inkoop staffel 500 fix (Pydantic v2 int→str rejection, SQL `::text` cast). Added publiek groupable fields. 5 commits.
 
-2. **Content + support pages** (2026-02-18, Session 2)
-   Footer rework (3 visual tiers). About page visual redesign (stat strip, audience cards, ScrollReveal). FAQ deferred (7/12 already covered). Support page: 5 accordion sections, post-login, text-only. 6 commits.
+2. **Scroll indicator + data table UX** (2026-02-18, Sessions 5-6)
+   Ghost column removal, sticky Totaal, collapse chevron. Dark navy gradient scroll indicator (4 iterations). 9 commits.
 
-2. **QA + Legal day** (2026-02-18, Session 1)
-   Lighthouse all >90 (P93 A100 BP100 SEO100). WCAG AA color fix. Cross-browser CSS. Welcome email rewrite. Privacy policy rewrite (11 articles, AVG compliant). Algemene Voorwaarden rewrite (16 articles, B2B SaaS). 7 commits.
+3. **UX-035 Dataoverzicht + entity sync** (2026-02-18, Session 4)
+   Dynamic data availability matrix page. Entity list drift fix (module hub, support page, runbook). 6 commits.
 
-3. **H6 design polish** (2026-02-17, Sessions 4-7)
-   H6 integrated homepage: contact section light redesign, harmony audit (13 fixes), gebouwd voor upgrade, typography audit (22 fixes to industry minimums), pricing copy rewrite (benefit-focused), discovery carousel compact (280px, 900px width). 8 commits total today.
+4. **Data availability audit** (2026-02-18, Session 3)
+   Verified all 6 source tables — 20 corrections executed on production. UX-035 requirement. Runbook enhanced. 2 commits.
 
-4. **8 files + 1 migration** (2026-02-16 Session 4)
-   Concurrency audit: unique partial index on subscriptions(person_id) prevents duplicate active subscriptions. 23505 error handling in leden + convert routes. asyncio.Lock on http_client.py. Rate limiter Map size cap. BFF response body size check.
+5. **QA + Legal + Content** (2026-02-18, Sessions 1-2)
+   Lighthouse all >90. WCAG AA. Privacy + Terms rewrites. Footer rework. About page. Support page. 13 commits.
 
 ---
 
