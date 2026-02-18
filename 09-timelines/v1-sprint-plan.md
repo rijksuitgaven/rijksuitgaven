@@ -549,7 +549,7 @@ Additional UI/UX work completed after mini sprint was marked complete:
 | `/contact` | Contact form (Resend) | ✅ Completed (integrated in homepage) |
 | `/pricing` | Pricing details, FAQ | ✅ Completed (integrated in homepage) |
 | `/privacybeleid` | Privacy policy (11 articles, AVG compliant) | ✅ Completed (2026-02-18) |
-| `/voorwaarden` | Terms of service | Pending |
+| `/voorwaarden` | Terms of service (16 articles, B2B SaaS) | ✅ Completed (2026-02-18) |
 
 ### Day 5-6: SEO & Final Polish
 
@@ -572,7 +572,7 @@ Additional UI/UX work completed after mini sprint was marked complete:
 
 **Week 8 Deliverables:**
 - [x] Homepage live (2026-02-17, H6 at `/` for logged-out users)
-- [ ] All legal pages (privacy ✅, terms pending)
+- [x] All legal pages (privacy ✅ 2026-02-18, terms ✅ 2026-02-18)
 - [x] Contact form working (integrated in homepage)
 - [ ] SEO optimized (backlogged)
 - [x] Lighthouse score >90 (P93, A100, BP100, SEO100)
