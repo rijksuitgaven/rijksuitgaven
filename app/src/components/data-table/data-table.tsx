@@ -1042,7 +1042,7 @@ export function DataTable({
           style={{
             right: 110, // Totaal column width
             width: 40,
-            background: 'linear-gradient(to left, rgba(14, 50, 97, 0.18), transparent)',
+            background: 'linear-gradient(to left, rgba(14, 50, 97, 0.22), transparent)',
           }}
           aria-hidden="true"
         />
