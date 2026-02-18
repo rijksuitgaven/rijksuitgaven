@@ -126,11 +126,6 @@ export function Footer() {
                       Privacybeleid
                     </Link>
                   </li>
-                  <li>
-                    <Link href="/login" className={linkClass}>
-                      Inloggen
-                    </Link>
-                  </li>
                 </ul>
               </>
             )}
