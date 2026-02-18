@@ -351,6 +351,10 @@ export function DataTable({
   const [showInfoPulse, setShowInfoPulse] = useState(false)
   const infoRef = useRef<HTMLDivElement>(null)
 
+  // Scroll state for Totaal column shadow indicator
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+
   // Show pulse animation on first visit (UX-019)
   useEffect(() => {
     const hasSeen = localStorage.getItem('rijksuitgaven-info-seen')
@@ -389,6 +393,31 @@ export function DataTable({
       document.removeEventListener('keydown', handleEscape)
     }
   }, [isInfoOpen])
+
+  // Track horizontal scroll state for Totaal column indicator
+  useEffect(() => {
+    const el = scrollContainerRef.current
+    if (!el) return
+    const check = () => {
+      setCanScrollRight(el.scrollWidth - el.scrollLeft - el.clientWidth > 2)
+    }
+    check()
+    el.addEventListener('scroll', check, { passive: true })
+    const ro = new ResizeObserver(check)
+    ro.observe(el)
+    return () => {
+      el.removeEventListener('scroll', check)
+      ro.disconnect()
+    }
+  }, [])
+
+  // Dynamic Totaal shadow — prominent when content hidden, subtle when scrolled to end
+  const totaalShadow = canScrollRight
+    ? 'shadow-[-16px_0_20px_-4px_rgba(14,50,97,0.25)]'
+    : 'shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.15)]'
+  const totaalShadowLight = canScrollRight
+    ? 'shadow-[-16px_0_20px_-4px_rgba(14,50,97,0.1)]'
+    : ''
 
   // CSV Export handler
   const handleExportCSV = () => {
@@ -851,7 +880,7 @@ export function DataTable({
       </div>
 
       {/* Table container with horizontal scroll for expanded years */}
-      <div className="overflow-x-auto">
+      <div ref={scrollContainerRef} className="overflow-x-auto">
         <table className="w-full border-collapse table-fixed">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -871,7 +900,7 @@ export function DataTable({
                         isYearOrTotal ? 'text-right' : 'text-left',
                         isSticky && 'sticky left-0 bg-[var(--navy-dark)] z-10',
                         headerIndex === 1 && `sticky bg-[var(--navy-dark)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]`,
-                        isTotaal && 'sticky right-0 bg-[var(--navy-medium)] z-10 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.3)]',
+                        isTotaal && `sticky right-0 bg-[var(--navy-medium)] z-10 border-l border-white/20 ${totaalShadow}`,
                         isFirst && 'rounded-l-lg',
                         isLast && 'rounded-r-lg'
                       )}
@@ -940,7 +969,7 @@ export function DataTable({
                             isSticky && 'sticky left-0 bg-white group-hover:bg-[var(--gray-light)] z-10',
                             cellIndex === 1 && 'sticky bg-white group-hover:bg-[var(--gray-light)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
                             isExpanded && isSticky && 'bg-[var(--gray-light)]',
-                            isTotaal && 'sticky right-0 bg-[var(--totaal-bg)] font-semibold z-10 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]'
+                            isTotaal && `sticky right-0 bg-[var(--totaal-bg)] font-semibold z-10 border-l border-[var(--border)] ${totaalShadowLight}`
                           )}
                           style={{
                             width: cell.column.getSize(),
@@ -1002,7 +1031,7 @@ export function DataTable({
                   </td>
                 ))}
                 {/* Grand total */}
-                <td className="px-3 py-2 text-right tabular-nums text-xs border-b border-[var(--border)] bg-[var(--navy-medium)] sticky right-0 z-10 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.3)]">
+                <td className={`px-3 py-2 text-right tabular-nums text-xs border-b border-[var(--border)] bg-[var(--navy-medium)] sticky right-0 z-10 border-l border-l-white/20 ${totaalShadow}`}>
                   {formatAmount(totals.totaal)}
                 </td>
               </tr>
