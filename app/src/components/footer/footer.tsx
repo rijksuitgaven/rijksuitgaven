@@ -30,6 +30,9 @@ function LinkedInIcon({ className }: { className?: string }) {
 
 import { useAuth } from '@/hooks/use-auth'
 
+const linkClass = 'text-white/70 hover:text-white hover:underline underline-offset-4 decoration-white/40 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded'
+const inactiveClass = 'text-white/35 cursor-default select-none'
+
 export function Footer() {
   const { isLoggedIn } = useAuth()
   const currentYear = new Date().getFullYear()
@@ -52,90 +55,79 @@ export function Footer() {
             </Link>
           </div>
 
-          {/* Column 2: Links - different for logged in vs not */}
+          {/* Column 2: Links */}
           <div>
             {isLoggedIn ? (
               <>
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/60 mb-4">
-                  Support
-                </h3>
-                <ul className="space-y-2">
-                  <li>
-                    <Link href="/veelgestelde-vragen" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
-                      Veelgestelde vragen
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/contact" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
-                      Contact opnemen
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/feedback" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
-                      Feedback geven
-                    </Link>
-                  </li>
-                </ul>
-
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/60 mt-6 mb-4">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40 mb-4">
                   Juridisch
                 </h3>
-                <ul className="space-y-2">
+                <ul className="space-y-2.5">
                   <li>
-                    <Link href="/voorwaarden" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
+                    <Link href="/voorwaarden" className={linkClass}>
                       Algemene voorwaarden
                     </Link>
                   </li>
                   <li>
-                    <Link href="/privacybeleid" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
-                      Privacy beleid
+                    <Link href="/privacybeleid" className={linkClass}>
+                      Privacybeleid
                     </Link>
                   </li>
                   <li>
-                    <Link href="/privacybeleid#cookies" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
+                    <Link href="/privacybeleid#cookies" className={linkClass}>
                       Cookiebeleid
                     </Link>
+                  </li>
+                </ul>
+
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40 mt-6 mb-4">
+                  Rijksuitgaven
+                </h3>
+                <ul className="space-y-2.5">
+                  <li>
+                    <span className={inactiveClass}>Over Rijksuitgaven</span>
+                  </li>
+                  <li>
+                    <span className={inactiveClass}>Word partner</span>
+                  </li>
+                  <li>
+                    <span className={inactiveClass}>Vacatures</span>
                   </li>
                 </ul>
               </>
             ) : (
               <>
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/60 mb-4">
-                  Ontdek Rijksuitgaven
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40 mb-4">
+                  Rijksuitgaven
                 </h3>
-                <ul className="space-y-2">
+                <ul className="space-y-2.5">
                   <li>
-                    <Link href="/over" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
-                      Over ons
+                    <span className={inactiveClass}>Over Rijksuitgaven</span>
+                  </li>
+                  <li>
+                    <span className={inactiveClass}>Word partner</span>
+                  </li>
+                  <li>
+                    <span className={inactiveClass}>Vacatures</span>
+                  </li>
+                </ul>
+
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40 mt-6 mb-4">
+                  Juridisch
+                </h3>
+                <ul className="space-y-2.5">
+                  <li>
+                    <Link href="/voorwaarden" className={linkClass}>
+                      Algemene voorwaarden
                     </Link>
                   </li>
                   <li>
-                    <Link href="/veelgestelde-vragen" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
-                      Veelgestelde vragen
+                    <Link href="/privacybeleid" className={linkClass}>
+                      Privacybeleid
                     </Link>
                   </li>
                   <li>
-                    <Link href="/vacatures" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
-                      Vacatures
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/abonnementen" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
-                      Abonnementen
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/voorwaarden" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
-                      Voorwaarden
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/privacybeleid" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
-                      Privacy beleid
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/login" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
+                    <Link href="/login" className={linkClass}>
                       Inloggen
                     </Link>
                   </li>
@@ -146,7 +138,7 @@ export function Footer() {
 
           {/* Column 3: Social & Contact */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white/60 mb-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40 mb-4">
               Volg ons
             </h3>
             <div className="flex items-center gap-4 mb-6">
@@ -154,7 +146,7 @@ export function Footer() {
                 href="https://x.com/rijksuitgaven"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded"
+                className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded"
                 aria-label="Volg ons op X (Twitter)"
               >
                 <XIcon className="h-6 w-6" />
@@ -163,7 +155,7 @@ export function Footer() {
                 href="https://rijksuitgaven.bsky.social/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded"
+                className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded"
                 aria-label="Volg ons op Bluesky"
               >
                 <BlueskyIcon className="h-6 w-6" />
@@ -172,30 +164,24 @@ export function Footer() {
                 href="https://www.linkedin.com/company/rijksuitgaven/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded"
+                className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded"
                 aria-label="Volg ons op LinkedIn"
               >
                 <LinkedInIcon className="h-6 w-6" />
               </a>
             </div>
 
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white/60 mb-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40 mb-4">
               Contact
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-2.5">
               <li>
-                <a
-                  href="tel:0850806960"
-                  className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded"
-                >
+                <a href="tel:0850806960" className={linkClass}>
                   085-0806960
                 </a>
               </li>
               <li>
-                <a
-                  href="mailto:contact@rijksuitgaven.nl"
-                  className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded"
-                >
+                <a href="mailto:contact@rijksuitgaven.nl" className={linkClass}>
                   contact@rijksuitgaven.nl
                 </a>
               </li>
@@ -207,7 +193,7 @@ export function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-white/10">
         <div className="max-w-[1080px] mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center justify-center text-sm text-white/60">
+          <div className="flex items-center justify-center text-sm text-white/40">
             <p suppressHydrationWarning>&copy; {currentYear} Rijksuitgaven &ndash; Alle rechten voorbehouden.</p>
           </div>
         </div>
