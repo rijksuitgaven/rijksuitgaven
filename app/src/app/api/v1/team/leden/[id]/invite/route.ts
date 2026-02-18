@@ -1,7 +1,7 @@
 /**
- * Admin API: Send welcome/activation email to a member
+ * Admin API: Send welcome email with login link to a member
  *
- * POST /api/v1/team/leden/[id]/invite — Send (or resend) activation link
+ * POST /api/v1/team/leden/[id]/invite — Send (or resend) login link
  *
  * Handles three scenarios:
  * 1. User not in auth.users → create user + generate link + send via Resend
@@ -26,7 +26,7 @@ import { Resend } from 'resend'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 
-function buildActivationEmail(firstName: string, email: string, actionLink: string, siteUrl: string): string {
+function buildWelcomeEmail(firstName: string, email: string, actionLink: string, siteUrl: string): string {
   // Extract display hostname (e.g., "beta.rijksuitgaven.nl") from full origin URL
   const displayHost = siteUrl.replace(/^https?:\/\//, '')
   return `
@@ -69,7 +69,7 @@ function buildActivationEmail(firstName: string, email: string, actionLink: stri
                 </tr>
                 <tr>
                   <td style="font-size: 15px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 28px;">
-                    Klik hieronder om uw account te activeren en direct aan de slag te gaan.
+                    Klik hieronder om direct in te loggen en aan de slag te gaan.
                   </td>
                 </tr>
 
@@ -78,9 +78,9 @@ function buildActivationEmail(firstName: string, email: string, actionLink: stri
                   <td align="center" style="padding-bottom: 12px;">
                     <table role="presentation" cellpadding="0" cellspacing="0">
                       <tr>
-                        <td style="background-color: #E62D75; border-radius: 6px;">
+                        <td style="background-color: #D4286B; border-radius: 6px;">
                           <a href="${actionLink}" target="_blank" style="display: inline-block; padding: 14px 48px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 6px;">
-                            Account activeren
+                            Inloggen
                           </a>
                         </td>
                       </tr>
@@ -92,6 +92,11 @@ function buildActivationEmail(firstName: string, email: string, actionLink: stri
                 <tr>
                   <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 28px;">
                     Deze link is een uur geldig.
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 28px;">
+                    Rijksuitgaven is geoptimaliseerd voor desktop en laptop.
                   </td>
                 </tr>
 
@@ -230,20 +235,20 @@ export async function POST(
 
   if (linkError || !linkData?.properties?.hashed_token) {
     console.error('[Admin] generateLink error:', linkError)
-    return NextResponse.json({ error: 'Fout bij aanmaken activatielink' }, { status: 500 })
+    return NextResponse.json({ error: 'Fout bij aanmaken inloglink' }, { status: 500 })
   }
 
-  // Build activation link on our own domain (not Supabase's verify URL)
+  // Build login link on our own domain (not Supabase's verify URL)
   // This avoids the scary supabase.co URL and uses verifyOtp() client-side
   const activationLink = `${origin}/auth/callback?token_hash=${encodeURIComponent(linkData.properties.hashed_token)}&type=magiclink`
 
-  // Send branded activation email via Resend
+  // Send branded welcome email via Resend
   const resend = new Resend(RESEND_API_KEY)
   const { error: sendError } = await resend.emails.send({
     from: 'Rijksuitgaven <noreply@rijksuitgaven.nl>',
     to: person.email,
-    subject: 'Welkom bij Rijksuitgaven — activeer uw account',
-    html: buildActivationEmail(person.first_name, person.email, activationLink, origin),
+    subject: 'Welkom bij Rijksuitgaven — log direct in',
+    html: buildWelcomeEmail(person.first_name, person.email, activationLink, origin),
   })
 
   if (sendError) {
