@@ -1617,7 +1617,7 @@ The current `data_availability` table has incorrect year ranges inherited from i
 
 **Priority:** P2 (V1.0 — nice to have for launch, not blocking)
 
-**Status:** ⏳ Pending (data fixes required first)
+**Status:** ✅ Implemented 2026-02-18
 
 ---
 
