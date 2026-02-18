@@ -53,7 +53,8 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/login') ||
     request.nextUrl.pathname.startsWith('/auth') ||
     request.nextUrl.pathname === '/privacybeleid' ||
-    request.nextUrl.pathname === '/voorwaarden'
+    request.nextUrl.pathname === '/voorwaarden' ||
+    request.nextUrl.pathname === '/over'
 
   if (!session && !isPublicPath) {
     const forwardedHost = request.headers.get('x-forwarded-host')

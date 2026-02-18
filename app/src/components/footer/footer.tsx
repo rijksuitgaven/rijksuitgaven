@@ -85,7 +85,7 @@ export function Footer() {
                 </h3>
                 <ul className="space-y-2.5">
                   <li>
-                    <span className={inactiveClass}>Over Rijksuitgaven</span>
+                    <Link href="/over" className={linkClass}>Over Rijksuitgaven</Link>
                   </li>
                   <li>
                     <span className={inactiveClass}>Word partner</span>
@@ -102,7 +102,7 @@ export function Footer() {
                 </h3>
                 <ul className="space-y-2.5">
                   <li>
-                    <span className={inactiveClass}>Over Rijksuitgaven</span>
+                    <Link href="/over" className={linkClass}>Over Rijksuitgaven</Link>
                   </li>
                   <li>
                     <span className={inactiveClass}>Word partner</span>
