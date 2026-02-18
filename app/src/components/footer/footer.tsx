@@ -90,6 +90,7 @@ export function Footer() {
                   <li>
                     <span className={inactiveClass}>Word partner</span>
                   </li>
+
                   <li>
                     <span className={inactiveClass}>Vacatures</span>
                   </li>
@@ -107,6 +108,7 @@ export function Footer() {
                   <li>
                     <span className={inactiveClass}>Word partner</span>
                   </li>
+
                   <li>
                     <span className={inactiveClass}>Vacatures</span>
                   </li>
