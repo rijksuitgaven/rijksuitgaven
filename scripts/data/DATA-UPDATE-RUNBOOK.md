@@ -1,7 +1,7 @@
 # Data Update Runbook
 
 **Purpose:** Step-by-step guide for updating data in Rijksuitgaven.nl
-**Last Updated:** 2026-02-07
+**Last Updated:** 2026-02-18
 **Frequency:** Monthly (government data updates)
 
 ---
@@ -225,6 +225,43 @@ VALUES ('gemeente', 'gemeente', 'Eindhoven', 2018, 2025);
 UPDATE data_availability SET year_from = 2016, updated_at = NOW()
 WHERE module = 'publiek' AND entity_type = 'source' AND entity_name = 'COA';
 ```
+
+### ⚠️ Per-Entity year_to Updates (Common Scenario)
+
+**When loading new year data for entity-level modules (provincie, gemeente, publiek), you often load data for SOME entities but not all.** For example, Friesland 2024 data may arrive while other provinces already have 2024.
+
+**CRITICAL:** Only update `year_to` for entities that actually received new data. Do NOT bulk-update all entities.
+
+```sql
+-- ✅ CORRECT: Update only the entity that received new data
+UPDATE data_availability SET year_to = 2024, updated_at = NOW()
+WHERE module = 'provincie' AND entity_name = 'Friesland';
+
+-- ❌ WRONG: Bulk-updating all provincies when only Friesland got new data
+UPDATE data_availability SET year_to = 2024, updated_at = NOW()
+WHERE module = 'provincie' AND entity_type = 'provincie';
+```
+
+**Verification query — run BEFORE updating to confirm which entities actually have data for the new year:**
+
+```sql
+-- Check which provincies have data for a specific year
+SELECT provincie, COUNT(*) AS rows, ROUND(SUM(bedrag)::numeric, 0) AS total
+FROM provincie WHERE jaar = 2024
+GROUP BY provincie ORDER BY provincie;
+
+-- Check which gemeentes have data for a specific year
+SELECT gemeente, COUNT(*) AS rows, ROUND(SUM(bedrag)::numeric, 0) AS total
+FROM gemeente WHERE jaar = 2024
+GROUP BY gemeente ORDER BY gemeente;
+
+-- Check which publiek sources have data for a specific year
+SELECT source, COUNT(*) AS rows, ROUND(SUM(bedrag)::numeric, 0) AS total
+FROM publiek WHERE jaar = 2024
+GROUP BY source ORDER BY source;
+```
+
+**Only update `year_to` for entities that appear in the query results with rows > 0 and total > 0.**
 
 ### Verify data_availability
 
@@ -502,6 +539,7 @@ Use this checklist for each data update:
 
 | Date | Changes |
 |------|---------|
+| 2026-02-18 | Added per-entity year_to guidance: verify before bulk-updating, only update entities with actual data, verification queries |
 | 2026-02-07 | Added Step 4 (data_availability), Step 7 (cache clear), Python fallback for views, Typesense key guidance, troubleshooting for common issues |
 | 2026-02-01 | Updated Typesense sync with mandatory audit, correct document counts |
 | 2026-01-26 | Initial version |

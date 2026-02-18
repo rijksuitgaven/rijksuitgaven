@@ -1573,6 +1573,54 @@ Search "bedrijvenbeleid" shows:
 
 ---
 
+### UX-035: Datasets Page — Dynamic Data Availability Matrix
+
+**Requirement:** Create a `/datasets` page that dynamically renders data availability per module, entity, and year. Replaces the static WordPress datasets page (which was manually maintained and had stale/incorrect year ranges).
+
+**Behavior:**
+- **Page:** `/datasets` (post-login, behind auth middleware)
+- **Data source:** `data_availability` table (migration 022) — already tracks `module`, `entity_type`, `entity_name`, `year_from`, `year_to`
+- **Sections:**
+  1. **Financiële Instrumenten** — single row (module-level, data.overheid.nl)
+  2. **Apparaatsuitgaven** — single row (module-level, data.overheid.nl)
+  3. **Inkoopuitgaven** — single row (module-level, data.overheid.nl)
+  4. **Provinciale subsidieregisters** — matrix: 12 provinces × years, with source links
+  5. **Gemeentelijke subsidieregisters** — matrix: municipalities × years
+  6. **Publieke uitvoeringsorganisaties** — matrix: RVO, ZonMW, NWO, COA × years
+- **Rendering:** Checkmarks (✔) for years within `year_from`–`year_to` range, empty cells outside range
+- **Source links:** Hardcoded in frontend config (official government URLs, rarely change)
+- **Dynamic:** When `data_availability` rows are updated (new year added, entity added), the page reflects it automatically
+- **Architecture:** BFF route (`GET /api/v1/datasets`) queries Supabase `data_availability`, groups by module/entity_type, returns JSON. Frontend renders tables.
+
+**Pre-requisite: Data Availability Fixes**
+The current `data_availability` table has incorrect year ranges inherited from initial bulk insert (migration 022 used broad defaults). Must be corrected before building the page:
+
+| Entity | DB has | WordPress shows | Fix needed |
+|--------|--------|-----------------|------------|
+| Utrecht (gemeente) | 2016-2024 | 2023-2024 | year_from → 2023 (zeros for 2016-2022) |
+| Amersfoort (gemeente) | 2020-2024 | 2018-2024 | Verify actual data |
+| Friesland (provincie) | 2016-2024 | 2020-2024 | Verify actual data |
+| Gelderland (provincie) | 2019-2024 | 2018-2024 | Verify actual data |
+| Utrecht (provincie) | 2017-2024 | 2022-2024 | Verify actual data |
+| Zuid-Holland (provincie) | 2016-2024 | 2021-2024 | Verify actual data |
+| Flevoland (provincie) | missing | missing | Not in platform (no data) |
+| Groningen (provincie) | missing | missing | Not in platform (no data) |
+| Inkoop (module) | 2016-2024 | not shown | Verify — actual range may be 2017-2023 |
+
+**Action:** Run verification queries against actual source tables to determine correct year_from/year_to per entity, then UPDATE the `data_availability` table before building the page.
+
+**Rationale:**
+- WordPress page was manually maintained → always out of date
+- Dynamic page auto-reflects new data loads (e.g., adding 2025 data)
+- Transparency: users see exactly which entities have which years
+- Source links provide attribution to original government sources
+
+**Priority:** P2 (V1.0 — nice to have for launch, not blocking)
+
+**Status:** ⏳ Pending (data fixes required first)
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload
