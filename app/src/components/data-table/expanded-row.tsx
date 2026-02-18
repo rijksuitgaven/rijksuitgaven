@@ -164,6 +164,7 @@ interface ExpandedRowProps {
   extraColumnsCount?: number
   isSearching?: boolean
   onFilterLinkClick?: (field: string, value: string) => void
+  initialGrouping?: string  // Pre-select grouping when opened via "+N meer" click
 }
 
 /**
@@ -177,9 +178,15 @@ export function ExpandedRow({
   extraColumnsCount = 0,
   isSearching = false,
   onFilterLinkClick,
+  initialGrouping,
 }: ExpandedRowProps) {
   const { track } = useAnalytics()
-  const [grouping, setGrouping] = useState(GROUPABLE_FIELDS[module]?.[0]?.value ?? 'regeling')
+  const defaultGrouping = GROUPABLE_FIELDS[module]?.[0]?.value ?? 'regeling'
+  // Use initialGrouping from "+N meer" click if it's a valid groupable field for this module
+  const resolvedInitial = initialGrouping && GROUPABLE_FIELDS[module]?.some(f => f.value === initialGrouping)
+    ? initialGrouping
+    : defaultGrouping
+  const [grouping, setGrouping] = useState(resolvedInitial)
   const [details, setDetails] = useState<DetailRow[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

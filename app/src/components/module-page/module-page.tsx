@@ -539,7 +539,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
   const isSearching = Boolean(filters.search && filters.search.trim().length > 0)
 
-  const renderExpandedRow = useCallback((row: RecipientRow) => (
+  const renderExpandedRow = useCallback((row: RecipientRow, initialGrouping?: string) => (
     <ExpandedRow
       row={row}
       module={moduleId}
@@ -547,6 +547,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
       extraColumnsCount={effectiveColumns.length}
       isSearching={isSearching}
       onFilterLinkClick={handleFilterLinkClick}
+      initialGrouping={initialGrouping}
     />
   ), [moduleId, data?.availableYears, effectiveColumns.length, isSearching, handleFilterLinkClick])
 

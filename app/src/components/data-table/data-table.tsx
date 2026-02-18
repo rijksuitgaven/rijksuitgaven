@@ -61,7 +61,7 @@ interface DataTableProps {
   onSortChange?: (column: string, direction: 'asc' | 'desc') => void
   onRowExpand?: (primaryValue: string) => void
   onFilterLinkClick?: (field: string, value: string) => void // Click on extra column value to filter
-  renderExpandedRow?: (row: RecipientRow) => React.ReactNode
+  renderExpandedRow?: (row: RecipientRow, initialGrouping?: string) => React.ReactNode
   moduleId?: string // For export filename
   selectedColumns?: string[]  // Selected extra columns (UX-005)
   onColumnsChange?: (columns: string[]) => void  // Callback for column selection changes
@@ -337,6 +337,7 @@ export function DataTable({
   const { track } = useAnalytics()
   const [sorting, setSorting] = useState<SortingState>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
+  const expandGroupingRef = useRef<Record<string, string>>({})
   const [yearsExpanded, setYearsExpanded] = useState(false)
 
   // Reset expanded state when data changes (e.g., after filter applied)
@@ -464,6 +465,7 @@ export function DataTable({
         cell: ({ row }) => (
           <button
             onClick={() => {
+              delete expandGroupingRef.current[row.original.primary_value]
               row.toggleExpanded()
               if (!row.getIsExpanded() && onRowExpand) {
                 onRowExpand(row.original.primary_value)
@@ -499,6 +501,7 @@ export function DataTable({
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => {
+                    delete expandGroupingRef.current[row.original.primary_value]
                     row.toggleExpanded()
                     if (!row.getIsExpanded() && onRowExpand) {
                       onRowExpand(row.original.primary_value)
@@ -621,6 +624,7 @@ export function DataTable({
                   {hasMore && (
                     <button
                       onClick={() => {
+                        expandGroupingRef.current[row.original.primary_value] = colKey
                         row.toggleExpanded()
                         if (!row.getIsExpanded() && onRowExpand) {
                           onRowExpand(row.original.primary_value)
@@ -975,7 +979,7 @@ export function DataTable({
                     })}
                   </tr>
                   {/* Expanded row content - renders directly as <tr> elements */}
-                  {row.getIsExpanded() && renderExpandedRow && renderExpandedRow(row.original)}
+                  {row.getIsExpanded() && renderExpandedRow && renderExpandedRow(row.original, expandGroupingRef.current[row.original.primary_value])}
                 </Fragment>
               ))
             )}
