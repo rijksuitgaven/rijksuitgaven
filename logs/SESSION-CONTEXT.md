@@ -1,8 +1,8 @@
 # Session Context
 
-**Last Updated:** 2026-02-17
+**Last Updated:** 2026-02-18
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 7 - Pre-Launch Tasks (CRM Phase 2 COMPLETE, search box perf COMPLETE, search syntax design COMPLETE — implementation pending user review, De Geldstroom COMPLETE, user migration remaining)
+**Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse audit COMPLETE, cross-browser CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE)
 
 ---
 
@@ -109,11 +109,15 @@
 - ✅ **2026-02-16 (Session 4):** Concurrency & stress-testing audit — 5-person expert team (Concurrency Architect, Pen Tester, Frontend Resilience, DB Safety, Adversarial). Verified production DB: `subscriptions.person_id` had NO unique constraint → duplicate active subscriptions possible. Fixed: unique partial index `idx_subscriptions_active_person` (migration 056), 23505 error handling in leden + convert routes, asyncio.Lock on http_client.py (async def + all callers), rate limiter Map size cap (10K), BFF response body size check (actual bytes not Content-Length). 4 false positives eliminated. 9 files changed.
 - ✅ **2026-02-17 (Sessions 1-3):** Homepage H2 Phase 2 — live search against 463k recipients deployed. New public API endpoint (backend + BFF with token bucket rate limiter). Fixed type-ahead: removed word-boundary filter that blocked prefix queries like "deve"→Deventer. Copy polish: subheadline, source attribution, trust bar, CTA.
 - ✅ **2026-02-17 (Sessions 4-7):** H6 integrated homepage prototype — merges H2+H3 into single page with 7 sections. Contact section redesigned (light layout). Full harmony audit (13 fixes). Gebouwd voor upgraded (pink accents, bold titles). Typography audit (22 fixes, industry minimums). Pricing copy rewritten (benefit-focused). Discovery carousel compacted (~160px savings). H7 design doc created.
+- ✅ **2026-02-18 (Session 1):** Lighthouse audit + QA day. Lighthouse CLI: Performance 93, Accessibility 100, Best Practices 100, SEO 100 (all >90 target). WCAG AA color contrast fix (`--pink` #E62D75→#D4286B, 4.87:1 ratio). Homepage `<main>` landmark. robots.txt middleware fix (SEO 92→100). Cross-browser CSS: removed will-change memory leak, .scrollbar-hide class, Firefox scrollbar styling. Welcome email rewrite: "activeren"→"inloggen", desktop note added. Supabase email templates aligned. Privacy policy complete rewrite: 4-expert legal team, 11 articles, Het Maven Collectief KvK, pseudonymized analytics disclosure, EU processor categories, AP complaint right, specific retention periods, accurate cookie table. Backlog: SEO optimization added, Interactive Search Demo + Homepage→production confirmed done. 5 commits.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ⏳ **Homepage mobile** — H6 responsive testing and mobile breakpoints
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
 - ⏳ **User migration** — ~50 WordPress users to import to Supabase
-- ⏳ **V1 Feature Close Review** — check backlog and sprints
+- ⏳ **Terms of service** — /voorwaarden page needed before launch
+- ⏳ **Rate limiting** — Cloudflare free tier in front of Railway
+- ⏳ **SEO optimization** — OG image, twitter cards, per-page metadata, structured data
+- ⏳ **DNS switch** — rijksuitgaven.nl → Railway, update metadataBase, rollback plan
 
 ### Active Tasks
 | Task | Status | Notes |

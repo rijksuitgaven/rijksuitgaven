@@ -1215,7 +1215,8 @@ contacts (
 
 **Priority:** High (V1.0 — work on soon)
 **Added:** 2026-02-12
-**Status:** ⏳ Backlog
+**Completed:** 2026-02-17
+**Status:** ✅ COMPLETED
 **Type:** Feature / Conversion
 **Source:** Homepage audit — creative team Brief 2, item 6
 
@@ -1311,5 +1312,44 @@ Audience-specific landing variants using query params or UTM paths:
 3. Do we need analytics per variant first? (See Analytics backlog item)
 
 **Estimated effort:** 6-8 hours per variant (copy + conditional rendering + testing)
+
+---
+
+### SEO Optimization (Pre-Launch)
+
+**Priority:** High (Pre-Launch)
+**Added:** 2026-02-18
+**Status:** ⏳ TODO (V1.0 — before launch)
+**Type:** SEO / Marketing
+
+**Problem:**
+Lighthouse SEO score is 100 after basic fixes, but several SEO best practices are still missing. These matter for search engine visibility and social sharing (LinkedIn, X) when promoting the platform.
+
+**Current state:**
+- Title: "Rijksuitgaven.nl"
+- Description: "Snel inzicht in rijksuitgaven voor krachtige analyses"
+- OpenGraph: title + description + type + locale
+- `robots.txt`: basic allow/disallow
+- `html lang="nl"`: set
+- `metadataBase`: `https://beta.rijksuitgaven.nl` (needs updating at launch)
+
+**Missing:**
+1. **Twitter/X card metadata** — no `twitter:card`, `twitter:title`, `twitter:description`
+2. **OG image** — no `og:image` for social sharing previews (LinkedIn, X, Slack)
+3. **Per-page metadata** — module pages, login, privacy, team pages all use default title/description
+4. **Structured data (JSON-LD)** — no Organization, WebSite, or SoftwareApplication schema
+5. **Sitemap.xml** — route exists but may not generate meaningful content
+6. **Canonical URLs** — not explicitly set
+7. **metadataBase** — update from `beta.rijksuitgaven.nl` to `rijksuitgaven.nl` at DNS switch
+
+**Implementation priority:**
+1. OG image (highest impact for social sharing)
+2. Twitter card metadata
+3. Per-page titles/descriptions
+4. Structured data
+5. Sitemap content
+6. Canonical URLs
+
+**Estimated effort:** 2-3 hours
 
 ---
