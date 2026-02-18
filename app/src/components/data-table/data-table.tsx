@@ -351,9 +351,13 @@ export function DataTable({
   const [showInfoPulse, setShowInfoPulse] = useState(false)
   const infoRef = useRef<HTMLDivElement>(null)
 
-  // Scroll state for Totaal column shadow indicator
+  // Scroll state for horizontal scroll indicator
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const theadRef = useRef<HTMLTableSectionElement>(null)
+  const tfootRef = useRef<HTMLTableSectionElement>(null)
   const [canScrollRight, setCanScrollRight] = useState(false)
+  const [gradientTop, setGradientTop] = useState(0)
+  const [gradientBottom, setGradientBottom] = useState(0)
 
   // Show pulse animation on first visit (UX-019)
   useEffect(() => {
@@ -394,19 +398,21 @@ export function DataTable({
     }
   }, [isInfoOpen])
 
-  // Track horizontal scroll state for Totaal column indicator
+  // Track horizontal scroll state + measure header/footer for gradient positioning
   useEffect(() => {
     const el = scrollContainerRef.current
     if (!el) return
-    const check = () => {
+    const measure = () => {
       setCanScrollRight(el.scrollWidth - el.scrollLeft - el.clientWidth > 2)
+      setGradientTop(theadRef.current?.offsetHeight ?? 0)
+      setGradientBottom(tfootRef.current?.offsetHeight ?? 0)
     }
-    check()
-    el.addEventListener('scroll', check, { passive: true })
-    const ro = new ResizeObserver(check)
+    measure()
+    el.addEventListener('scroll', measure, { passive: true })
+    const ro = new ResizeObserver(measure)
     ro.observe(el)
     return () => {
-      el.removeEventListener('scroll', check)
+      el.removeEventListener('scroll', measure)
       ro.disconnect()
     }
   }, [])
@@ -875,7 +881,7 @@ export function DataTable({
       <div className="relative">
         <div ref={scrollContainerRef} className="overflow-x-auto">
           <table className="w-full border-collapse table-fixed">
-          <thead>
+          <thead ref={theadRef}>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="bg-[var(--navy-dark)]">
                 {headerGroup.headers.map((header, headerIndex) => {
@@ -895,7 +901,7 @@ export function DataTable({
                         headerIndex === 1 && `sticky bg-[var(--navy-dark)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]`,
                         isTotaal && 'sticky right-0 bg-[var(--navy-medium)] z-10 border-l border-white/20',
                         isFirst && 'rounded-l-lg',
-                        isLast && 'rounded-r-lg'
+                        isLast && !isTotaal && 'rounded-r-lg'
                       )}
                       style={{
                         width: header.getSize(),
@@ -982,7 +988,7 @@ export function DataTable({
           </tbody>
           {/* Totals row - only shown when searching/filtering */}
           {totals && (
-            <tfoot>
+            <tfoot ref={tfootRef}>
               <tr className="bg-[var(--navy-dark)] text-white font-semibold text-sm">
                 {/* Expand column placeholder */}
                 <td className="px-2 py-2 border-b border-[var(--border)]"></td>
@@ -1033,15 +1039,18 @@ export function DataTable({
           </table>
         </div>
 
-        {/* Scroll indicator — gradient fade before sticky Totaal column */}
+        {/* Scroll indicator — gradient fade before sticky Totaal (body area only) */}
         <div
           className={cn(
-            'absolute top-0 bottom-0 w-12 pointer-events-none transition-opacity duration-200',
+            'absolute pointer-events-none transition-opacity duration-200',
             canScrollRight ? 'opacity-100' : 'opacity-0'
           )}
           style={{
             right: 110, // Totaal column width
-            background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.85))',
+            top: gradientTop,
+            bottom: gradientBottom,
+            width: 32,
+            background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.8))',
           }}
           aria-hidden="true"
         />
