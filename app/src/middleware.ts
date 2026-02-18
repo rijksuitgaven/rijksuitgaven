@@ -32,8 +32,9 @@ export const config = {
      * - auth/ (callback, logout)
      * - login (public)
      * - h1-h9 (prototype pages)
+     * - robots.txt, sitemap.xml (SEO)
      * - Static assets (.svg, .png, .jpg, .jpeg, .gif, .webp)
      */
-    '/((?!_next/static|_next/image|favicon.ico|icon.svg|api/|auth/|login|h[1-9]|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|icon.svg|api/|auth/|login|h[1-9]|robots\\.txt|sitemap\\.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

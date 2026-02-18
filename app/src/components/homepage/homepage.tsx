@@ -436,7 +436,7 @@ export default function Homepage() {
   }, [previous])
 
   return (
-    <div style={{ fontFamily: 'var(--font-body, "IBM Plex Sans", sans-serif)' }}>
+    <main style={{ fontFamily: 'var(--font-body, "IBM Plex Sans", sans-serif)' }}>
       {/* ================================================================ */}
       {/* SECTION 1 — HERO: Headline + Value Props                        */}
       {/* ================================================================ */}
@@ -979,6 +979,6 @@ export default function Homepage() {
           .h6-contact-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
-    </div>
+    </main>
   )
 }
