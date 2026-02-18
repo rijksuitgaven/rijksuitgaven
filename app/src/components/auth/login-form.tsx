@@ -96,7 +96,7 @@ export function LoginForm() {
           autoComplete="email"
           autoFocus
           disabled={state === 'loading'}
-          className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm
+          className="w-full px-3 py-3 border border-[var(--border)] rounded-md text-sm min-h-[44px]
                      focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent
                      disabled:opacity-50 disabled:cursor-not-allowed"
         />
@@ -120,7 +120,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={state === 'loading' || cooldown > 0}
-        className="w-full py-2.5 px-4 bg-[var(--pink)] text-white text-sm font-semibold rounded-md
+        className="w-full py-3 px-4 bg-[var(--pink)] text-white text-sm font-semibold rounded-md min-h-[44px]
                    hover:opacity-90 transition-opacity
                    disabled:opacity-50 disabled:cursor-not-allowed"
       >

@@ -50,13 +50,13 @@ export default function VerlopenPage() {
         <div className="space-y-3 pt-2">
           <a
             href="mailto:contact@rijksuitgaven.nl"
-            className="block w-full px-4 py-2.5 bg-[var(--pink)] text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
+            className="block w-full px-4 py-3 bg-[var(--pink)] text-white rounded-lg font-medium hover:opacity-90 transition-opacity min-h-[44px]"
           >
             contact@rijksuitgaven.nl
           </a>
           <a
             href="tel:0850806960"
-            className="block w-full px-4 py-2.5 text-[var(--navy-dark)] border border-[var(--border)] rounded-lg font-medium hover:bg-gray-50 transition-colors"
+            className="block w-full px-4 py-3 text-[var(--navy-dark)] border border-[var(--border)] rounded-lg font-medium hover:bg-gray-50 transition-colors min-h-[44px]"
           >
             085-0806960
           </a>
@@ -70,7 +70,7 @@ export default function VerlopenPage() {
 
         <button
           onClick={handleLogout}
-          className="text-sm text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+          className="text-sm text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors min-h-[44px] px-4"
         >
           Uitloggen
         </button>

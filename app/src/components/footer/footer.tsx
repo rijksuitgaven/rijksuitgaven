@@ -30,7 +30,7 @@ function LinkedInIcon({ className }: { className?: string }) {
 
 import { useAuth } from '@/hooks/use-auth'
 
-const linkClass = 'text-white/70 hover:text-white hover:underline underline-offset-4 decoration-white/40 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded'
+const linkClass = 'text-white/70 hover:text-white hover:underline underline-offset-4 decoration-white/40 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded inline-block py-1'
 const inactiveClass = 'text-white/35 cursor-default select-none'
 
 export function Footer() {
@@ -144,12 +144,12 @@ export function Footer() {
             <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40 mb-4">
               Volg ons
             </h3>
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-6 mb-6">
               <a
                 href="https://x.com/rijksuitgaven"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded"
+                className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded p-2 -m-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Volg ons op X (Twitter)"
               >
                 <XIcon className="h-6 w-6" />
@@ -158,7 +158,7 @@ export function Footer() {
                 href="https://rijksuitgaven.bsky.social/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded"
+                className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded p-2 -m-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Volg ons op Bluesky"
               >
                 <BlueskyIcon className="h-6 w-6" />
@@ -167,7 +167,7 @@ export function Footer() {
                 href="https://www.linkedin.com/company/rijksuitgaven/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded"
+                className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded p-2 -m-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Volg ons op LinkedIn"
               >
                 <LinkedInIcon className="h-6 w-6" />

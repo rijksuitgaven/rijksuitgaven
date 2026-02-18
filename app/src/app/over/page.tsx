@@ -41,7 +41,7 @@ export default function OverPage() {
       <section className="bg-white pb-6 md:pb-10">
         <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
           <ScrollReveal>
-            <div className="grid grid-cols-3 gap-6 md:gap-12">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-12">
               <div className="border-l-[3px] border-l-[var(--pink)] pl-4 md:pl-5">
                 <p className="text-[22px] md:text-[28px] font-bold leading-[1.1] text-[var(--navy-dark)] tracking-tight" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
                   &euro;1.700+ mld

@@ -70,7 +70,7 @@ export function MobileBanner() {
       aria-labelledby="mobile-banner-title"
     >
       <div
-        className="w-full bg-[var(--navy-dark)] text-white px-6 py-6 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.2)] animate-slide-up"
+        className="relative w-full bg-[var(--navy-dark)] text-white px-6 py-6 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.2)] animate-slide-up"
       >
         {/* Close button */}
         <button

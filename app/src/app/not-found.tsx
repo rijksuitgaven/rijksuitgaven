@@ -27,7 +27,7 @@ export default function NotFound() {
       <Track404 />
       <div className="text-center max-w-md">
         <p
-          className="text-[8rem] leading-none font-bold mb-2"
+          className="text-[5rem] sm:text-[8rem] leading-none font-bold mb-2"
           style={{
             color: 'var(--pink)',
             fontFeatureSettings: '"tnum"',

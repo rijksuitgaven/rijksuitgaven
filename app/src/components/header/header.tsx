@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect, useCallback } from 'react'
+import { useRef, useEffect, useCallback, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
@@ -33,7 +33,10 @@ const KOSTEN_MODULES = [
 export function Header() {
   const pathname = usePathname()
   const navRef = useRef<HTMLElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const handleHardNav = useHardNavigation()
+  const [showRightFade, setShowRightFade] = useState(false)
+  const [showLeftFade, setShowLeftFade] = useState(false)
 
   // Scroll active tab into view on mobile
   useEffect(() => {
@@ -44,6 +47,25 @@ export function Header() {
       }
     }
   }, [pathname])
+
+  // Track scroll position for fade indicators
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    function updateFades() {
+      if (!el) return
+      const { scrollLeft, scrollWidth, clientWidth } = el
+      setShowLeftFade(scrollLeft > 8)
+      setShowRightFade(scrollLeft + clientWidth < scrollWidth - 8)
+    }
+    updateFades()
+    el.addEventListener('scroll', updateFades, { passive: true })
+    window.addEventListener('resize', updateFades)
+    return () => {
+      el.removeEventListener('scroll', updateFades)
+      window.removeEventListener('resize', updateFades)
+    }
+  }, [])
 
   return (
     <header className="sticky top-0 z-40 bg-white">
@@ -83,11 +105,11 @@ export function Header() {
       {/* Navigation Bar — Condensed font for space-constrained horizontal nav */}
       <nav
         ref={navRef}
-        className="bg-white border-b border-[var(--border)]"
+        className="bg-white border-b border-[var(--border)] relative"
         style={{ fontFamily: 'var(--font-condensed)' }}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-stretch overflow-x-auto scrollbar-hide">
+          <div ref={scrollRef} className="flex items-stretch overflow-x-auto scrollbar-hide">
 
             {/* Ontvangers Section */}
             <div className="flex items-stretch">
@@ -165,6 +187,19 @@ export function Header() {
             </div>
           </div>
         </div>
+        {/* Scroll fade indicators */}
+        {showLeftFade && (
+          <div
+            className="absolute left-0 top-0 bottom-0 w-8 pointer-events-none z-10"
+            style={{ background: 'linear-gradient(to right, rgba(255,255,255,0.95), transparent)' }}
+          />
+        )}
+        {showRightFade && (
+          <div
+            className="absolute right-0 top-0 bottom-0 w-8 pointer-events-none z-10"
+            style={{ background: 'linear-gradient(to left, rgba(255,255,255,0.95), transparent)' }}
+          />
+        )}
       </nav>
     </header>
   )

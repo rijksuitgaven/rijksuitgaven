@@ -187,7 +187,7 @@ function BlueskyIcon({ size = 16 }: { size?: number }) {
 function ShareButton({ label, icon, onClick }: { label: string; icon: React.ReactNode; onClick: () => void }) {
   return (
     <button aria-label={label} onClick={onClick}
-      style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, color: 'rgba(255,255,255,0.5)', padding: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.2s, background 0.2s' }}
+      style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, color: 'rgba(255,255,255,0.5)', padding: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.2s, background 0.2s', minWidth: 44, minHeight: 44 }}
       onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.12)' }}
       onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
     >{icon}</button>
@@ -218,7 +218,7 @@ function DiscoveryCard({ discovery, active, direction }: { discovery: Discovery;
   const shareText = `${discovery.insight}\n\nOntdek meer op rijksuitgaven.nl`
 
   return (
-    <div style={{ position: 'absolute', inset: 0, opacity: active ? 1 : 0, transform: active ? 'translateY(0)' : direction === 'exit' ? 'translateY(-12px)' : 'translateY(12px)', transition: 'opacity 0.7s cubic-bezier(0.2,1,0.2,1), transform 0.7s cubic-bezier(0.2,1,0.2,1)', pointerEvents: active ? 'auto' : 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '2rem 2.5rem' }}>
+    <div className="h6-discovery-card" style={{ position: 'absolute', inset: 0, opacity: active ? 1 : 0, transform: active ? 'translateY(0)' : direction === 'exit' ? 'translateY(-12px)' : 'translateY(12px)', transition: 'opacity 0.7s cubic-bezier(0.2,1,0.2,1), transform 0.7s cubic-bezier(0.2,1,0.2,1)', pointerEvents: active ? 'auto' : 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '2rem 2.5rem' }}>
       <div style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', gap: 6 }}>
         <ShareButton label="Deel op LinkedIn" icon={<LinkedInIcon />} onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://rijksuitgaven.nl')}`, '_blank', 'noopener')} />
         <ShareButton label="Deel op X" icon={<XIcon />} onClick={() => window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener')} />
@@ -530,7 +530,7 @@ export default function Homepage() {
         <ScrollReveal>
           <div style={{ maxWidth: 1100, margin: '32px auto 0', position: 'relative', background: 'var(--navy-dark)', borderRadius: 16, overflow: 'hidden', boxShadow: '0 4px 24px rgba(14,50,97,0.18), 0 1px 3px rgba(14,50,97,0.08)' }}>
             <NavyOverlays />
-            <div style={{ position: 'relative', zIndex: 3, padding: '32px 32px 28px' }}>
+            <div className="h6-card-inner" style={{ position: 'relative', zIndex: 3, padding: '32px 32px 28px' }}>
               {/* Search */}
               <div style={{ maxWidth: 600, margin: '0 auto' }}>
                 <div style={{ position: 'relative' }}>
@@ -602,7 +602,7 @@ export default function Homepage() {
               </div>
 
               {/* Footer */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, padding: '0 4px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, padding: '0 4px', gap: 8 }}>
                 <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-condensed)' }}>Bronnen: Rijksoverheid &amp; medeoverheden</span>
                 <a href="/login" className="h6-cta-link" style={{ fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.75)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6, transition: 'color 0.2s' }}>
                   <span>Bekijk alle jaren en data</span>
@@ -944,6 +944,8 @@ export default function Homepage() {
           table { min-width: 0 !important; }
           .h6-value-props { grid-template-columns: 1fr !important; gap: 24px !important; }
           .h6-scenarios { grid-template-columns: 1fr !important; }
+          .h6-card-inner { padding: 20px 16px 20px !important; }
+          .h6-discovery-card { padding: 1.5rem 1.25rem !important; }
         }
         @media (min-width: 769px) and (max-width: 1024px) {
           .h6-scenarios { grid-template-columns: repeat(2, 1fr) !important; }

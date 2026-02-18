@@ -51,7 +51,7 @@ export function AuthButton() {
     return (
       <Link
         href="/login"
-        className="text-sm font-medium text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+        className="text-sm font-medium text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
       >
         Inloggen
       </Link>
@@ -69,7 +69,7 @@ export function AuthButton() {
     <div ref={menuRef} className="relative">
       <button
         onClick={() => setOpen(prev => !prev)}
-        className="flex items-center gap-1 p-1.5 rounded-lg text-[var(--navy-medium)] hover:bg-[var(--gray-light)] transition-colors"
+        className="flex items-center gap-1 p-2.5 rounded-lg text-[var(--navy-medium)] hover:bg-[var(--gray-light)] transition-colors min-h-[44px] min-w-[44px]"
         aria-expanded={open}
         aria-haspopup="true"
         aria-label="Accountmenu"
@@ -88,7 +88,7 @@ export function AuthButton() {
           <Link
             href="/profiel"
             onClick={() => setOpen(false)}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--navy-dark)] hover:bg-[var(--gray-light)] transition-colors"
+            className="flex items-center gap-2 px-3 py-3 text-sm text-[var(--navy-dark)] hover:bg-[var(--gray-light)] transition-colors min-h-[44px]"
           >
             Mijn profiel
           </Link>
@@ -97,7 +97,7 @@ export function AuthButton() {
 
           <button
             onClick={handleLogout}
-            className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+            className="w-full text-left flex items-center gap-2 px-3 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors min-h-[44px]"
           >
             Uitloggen
           </button>

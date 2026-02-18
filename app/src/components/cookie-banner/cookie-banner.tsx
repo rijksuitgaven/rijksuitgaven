@@ -38,7 +38,7 @@ export function CookieBanner() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-50 bg-[var(--navy-dark)] text-white px-6 py-3 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] animate-fade-in"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-[var(--navy-dark)] text-white px-4 sm:px-6 py-3 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] animate-fade-in"
     >
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
         <p className="text-sm">
