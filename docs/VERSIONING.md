@@ -71,6 +71,7 @@
 - Recent search history
 - Saved searches
 - **UX-024: Type-ahead with recent searches** - On search bar focus, show recent search history (localStorage). Reduced debounce (50ms→30ms) + client-side response caching for instant repeat queries
+- **Data export/retention after cancellation** - When V2+ introduces user-generated content (saved reports, research sessions), implement a 30-day export grace period before account deletion. V1 has no user data to preserve, so cancellation is immediate.
 
 ### V1.0 Known Issues / Backlog
 

@@ -341,7 +341,7 @@ function ContactForm() {
                     <span style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--navy-medium)' }}>
                       Ik ga akkoord met het{' '}
                       <a href="/privacybeleid" style={{ color: 'var(--navy-dark)', textDecoration: 'underline', textUnderlineOffset: 2 }}>privacy beleid</a>{' '}
-                      en de voorwaarden.
+                      en de <a href="/voorwaarden" style={{ color: 'var(--navy-dark)', textDecoration: 'underline', textUnderlineOffset: 2 }}>voorwaarden</a>.
                     </span>
                   </label>
 

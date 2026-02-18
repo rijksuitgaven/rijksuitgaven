@@ -82,6 +82,11 @@ export function Footer() {
                 </h3>
                 <ul className="space-y-2">
                   <li>
+                    <Link href="/voorwaarden" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
+                      Algemene voorwaarden
+                    </Link>
+                  </li>
+                  <li>
                     <Link href="/privacybeleid" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
                       Privacy beleid
                     </Link>
@@ -117,6 +122,11 @@ export function Footer() {
                   <li>
                     <Link href="/abonnementen" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
                       Abonnementen
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/voorwaarden" className="text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)] rounded">
+                      Voorwaarden
                     </Link>
                   </li>
                   <li>

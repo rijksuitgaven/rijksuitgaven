@@ -924,7 +924,10 @@ export function ContactSection() {
                       <Link href="/privacybeleid" className="underline underline-offset-2 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--pink)] rounded">
                         privacy beleid
                       </Link>{' '}
-                      en de voorwaarden.
+                      en de{' '}
+                      <Link href="/voorwaarden" className="underline underline-offset-2 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--pink)] rounded">
+                        voorwaarden
+                      </Link>.
                     </span>
                   </label>
                   <button
