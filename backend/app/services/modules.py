@@ -1418,7 +1418,7 @@ async def get_row_details(
 
     query = f"""
         SELECT
-            {group_field} AS group_value,
+            {group_field}::text AS group_value,
             {year_columns},
             COALESCE(SUM({amount_field}), 0) * {multiplier} AS totaal,
             COUNT(*) AS row_count
