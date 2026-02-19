@@ -2,9 +2,7 @@
  * Admin API: Campaign Detail
  *
  * GET /api/v1/team/mail/campaigns/[id] — Campaign stats + per-recipient events
- *
- * Returns aggregated counts (delivered, opened, clicked, bounced, complained)
- * plus a per-recipient breakdown showing who did what and when.
+ * DELETE /api/v1/team/mail/campaigns/[id] — Delete campaign + cascading events
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -152,4 +150,34 @@ export async function GET(
     stats,
     recipients,
   })
+}
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  if (!(await isAdmin())) {
+    return NextResponse.json({ error: 'Geen toegang' }, { status: 403 })
+  }
+
+  const { id } = await params
+
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    return NextResponse.json({ error: 'Ongeldig campagne-ID' }, { status: 400 })
+  }
+
+  const supabase = createAdminClient()
+
+  // campaign_events has ON DELETE CASCADE, so this cleans up events too
+  const { error } = await supabase
+    .from('campaigns')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    console.error('[Campaign Delete] Error:', error)
+    return NextResponse.json({ error: 'Fout bij verwijderen' }, { status: 500 })
+  }
+
+  return NextResponse.json({ ok: true })
 }

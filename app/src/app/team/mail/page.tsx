@@ -7,7 +7,7 @@ import {
   RefreshCw, CheckCircle, AlertTriangle,
   Mail, Send, Eye, EyeOff, ChevronDown, Copy,
   ChevronRight, MousePointerClick, MailOpen, Ban, X,
-  BarChart3,
+  BarChart3, Trash2,
 } from 'lucide-react'
 import { EmailEditor, type UploadedImage } from '@/components/email-editor/email-editor'
 
@@ -123,6 +123,7 @@ export default function MailPage() {
   const [expandedCampaignId, setExpandedCampaignId] = useState<string | null>(null)
   const [campaignRecipients, setCampaignRecipients] = useState<CampaignRecipient[]>([])
   const [recipientsLoading, setRecipientsLoading] = useState(false)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   const fetchData = useCallback(() => {
     setLoading(true)
@@ -264,6 +265,20 @@ export default function MailPage() {
   const handleImageDeleted = useCallback((filename: string) => {
     setUploadedImages(prev => prev.filter(img => img.filename !== filename))
   }, [])
+
+  const handleDeleteCampaign = useCallback(async (campaignId: string) => {
+    try {
+      const res = await fetch(`/api/v1/team/mail/campaigns/${campaignId}`, { method: 'DELETE' })
+      if (res.ok) {
+        setCampaigns(prev => prev.filter(c => c.id !== campaignId))
+        if (expandedCampaignId === campaignId) setExpandedCampaignId(null)
+      }
+    } catch {
+      // Silent
+    } finally {
+      setConfirmDeleteId(null)
+    }
+  }, [expandedCampaignId])
 
   const recipientCount = data
     ? segment === 'iedereen'
@@ -626,14 +641,40 @@ export default function MailPage() {
                                 )}
                               </div>
                             </div>
-                            <button
-                              onClick={() => handleUseAsTemplate(campaign)}
-                              className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors"
-                              title="Gebruik als sjabloon"
-                            >
-                              <Copy className="w-3.5 h-3.5" />
-                              Sjabloon
-                            </button>
+                            <div className="shrink-0 flex items-center gap-1.5">
+                              <button
+                                onClick={() => handleUseAsTemplate(campaign)}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors"
+                                title="Gebruik als sjabloon"
+                              >
+                                <Copy className="w-3.5 h-3.5" />
+                                Sjabloon
+                              </button>
+                              {confirmDeleteId === campaign.id ? (
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    onClick={() => handleDeleteCampaign(campaign.id)}
+                                    className="px-2 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                                  >
+                                    Verwijder
+                                  </button>
+                                  <button
+                                    onClick={() => setConfirmDeleteId(null)}
+                                    className="px-2 py-1.5 text-xs text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                                  >
+                                    Annuleer
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => setConfirmDeleteId(campaign.id)}
+                                  className="inline-flex items-center p-1.5 text-[var(--navy-medium)] hover:text-red-600 border border-transparent hover:border-red-200 rounded-lg transition-colors"
+                                  title="Verwijder campagne"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
                           </div>
 
                           {/* Expanded: per-recipient detail */}
