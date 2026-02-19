@@ -25,6 +25,7 @@ interface SyncResult {
   updated: number
   removed: number
   errors: number
+  error_messages?: string[]
 }
 
 const LIST_CONFIG = [
@@ -150,7 +151,11 @@ export default function MailPage() {
 
               {/* Sync result */}
               {syncResult && (
-                <div className="mt-4 flex items-start gap-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3">
+                <div className={`mt-4 flex items-start gap-2 text-sm rounded-lg px-4 py-3 ${
+                  syncResult.errors > 0
+                    ? 'text-amber-700 bg-amber-50 border border-amber-200'
+                    : 'text-green-700 bg-green-50 border border-green-200'
+                }`}>
                   <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" />
                   <div>
                     <span className="font-medium">Synchronisatie voltooid.</span>{' '}
@@ -159,6 +164,13 @@ export default function MailPage() {
                     {syncResult.removed > 0 && `${syncResult.removed} verwijderd, `}
                     {syncResult.errors > 0 && `${syncResult.errors} fouten, `}
                     {syncResult.synced} totaal gesynchroniseerd.
+                    {syncResult.error_messages && syncResult.error_messages.length > 0 && (
+                      <ul className="mt-2 space-y-1 text-xs font-mono">
+                        {syncResult.error_messages.map((msg, i) => (
+                          <li key={i}>{msg}</li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </div>
               )}

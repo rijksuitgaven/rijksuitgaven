@@ -147,13 +147,14 @@ export async function backfillResendAudience(): Promise<{
   updated: number
   removed: number
   errors: number
+  error_messages: string[]
 }> {
   if (!isConfigured()) {
     throw new Error('Resend not configured — missing RESEND_API_KEY or RESEND_AUDIENCE_ID')
   }
 
   const supabase = createAdminClient()
-  const stats = { synced: 0, created: 0, updated: 0, removed: 0, errors: 0 }
+  const stats = { synced: 0, created: 0, updated: 0, removed: 0, errors: 0, error_messages: [] as string[] }
 
   // 1. Fetch all people with their latest subscription
   const { data: people, error: fetchError } = await supabase
@@ -213,6 +214,7 @@ export async function backfillResendAudience(): Promise<{
         })
         if (updateError) {
           console.error(`[Resend] Update contact error for ${person.email}:`, updateError)
+          stats.error_messages.push(`${person.email}: ${updateError.message || JSON.stringify(updateError)}`)
           stats.errors++
           return
         }
@@ -228,6 +230,7 @@ export async function backfillResendAudience(): Promise<{
 
         if (createError) {
           console.error(`[Resend] Create contact error for ${person.email}:`, createError)
+          stats.error_messages.push(`${person.email}: ${createError.message || JSON.stringify(createError)}`)
           stats.errors++
           return
         }
@@ -243,6 +246,7 @@ export async function backfillResendAudience(): Promise<{
       stats.synced++
     } catch (err) {
       console.error(`[Resend] Sync error for person ${person.id}:`, err)
+      stats.error_messages.push(`${person.email}: ${err instanceof Error ? err.message : String(err)}`)
       stats.errors++
     }
   }
