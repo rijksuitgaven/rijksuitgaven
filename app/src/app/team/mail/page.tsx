@@ -4,9 +4,10 @@ import { useState, useEffect, useCallback } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import { TeamNav } from '@/components/team-nav'
 import {
-  Users, RefreshCw, CheckCircle, AlertTriangle,
-  Mail, Send, Eye, EyeOff, ChevronDown, History, Copy,
+  RefreshCw, CheckCircle, AlertTriangle,
+  Mail, Send, Eye, EyeOff, ChevronDown, Copy,
   ChevronRight, MousePointerClick, MailOpen, Ban, X,
+  BarChart3,
 } from 'lucide-react'
 import { EmailEditor, type UploadedImage } from '@/components/email-editor/email-editor'
 
@@ -16,18 +17,7 @@ interface MailData {
     churned: number
     prospects: number
   }
-  resend_contacts: number
   total: number
-}
-
-interface SyncResult {
-  success: boolean
-  synced: number
-  created: number
-  updated: number
-  removed: number
-  errors: number
-  error_messages?: string[]
 }
 
 interface SendResult {
@@ -98,15 +88,13 @@ const SEGMENT_LABELS: Record<string, string> = {
   iedereen: 'Iedereen',
 }
 
+type Tab = 'compose' | 'campaigns'
+
 export default function MailPage() {
   const { role, loading: subLoading } = useSubscription()
   const [data, setData] = useState<MailData | null>(null)
   const [loading, setLoading] = useState(true)
-
-  // Sync state
-  const [syncing, setSyncing] = useState(false)
-  const [syncResult, setSyncResult] = useState<SyncResult | null>(null)
-  const [syncError, setSyncError] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<Tab>('compose')
 
   // Compose state
   const [subject, setSubject] = useState('')
@@ -187,28 +175,6 @@ export default function MailPage() {
     }
   }, [subLoading, role, fetchData, fetchCampaigns])
 
-  const handleSync = useCallback(async () => {
-    setSyncing(true)
-    setSyncResult(null)
-    setSyncError(null)
-
-    try {
-      const res = await fetch('/api/v1/team/mail', { method: 'POST' })
-      const result = await res.json()
-
-      if (!res.ok) {
-        setSyncError(result.error || 'Synchronisatie mislukt')
-      } else {
-        setSyncResult(result)
-        fetchData()
-      }
-    } catch {
-      setSyncError('Netwerkfout bij synchronisatie')
-    } finally {
-      setSyncing(false)
-    }
-  }, [fetchData])
-
   const handlePreview = useCallback(async () => {
     if (showPreview) {
       setShowPreview(false)
@@ -287,7 +253,7 @@ export default function MailPage() {
     setSendResult(null)
     setSendError(null)
     setShowPreview(false)
-    // Scroll to compose form
+    setActiveTab('compose')
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
@@ -347,433 +313,409 @@ export default function MailPage() {
               ))}
             </div>
 
-            {/* Compose form */}
-            <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
-              <div className="flex items-center gap-2 mb-4">
-                <Mail className="w-5 h-5 text-[var(--navy-dark)]" />
-                <h3 className="text-base font-semibold text-[var(--navy-dark)]">Nieuw bericht</h3>
-              </div>
+            {/* Sub-tabs */}
+            <div className="flex gap-1 mb-4">
+              <button
+                onClick={() => setActiveTab('compose')}
+                className={`inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'compose'
+                    ? 'bg-[var(--navy-dark)] text-white'
+                    : 'bg-white text-[var(--navy-medium)] border border-[var(--border)] hover:bg-[var(--gray-light)] hover:text-[var(--navy-dark)]'
+                }`}
+              >
+                <Mail className="w-4 h-4" />
+                Nieuw bericht
+              </button>
+              <button
+                onClick={() => setActiveTab('campaigns')}
+                className={`inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'campaigns'
+                    ? 'bg-[var(--navy-dark)] text-white'
+                    : 'bg-white text-[var(--navy-medium)] border border-[var(--border)] hover:bg-[var(--gray-light)] hover:text-[var(--navy-dark)]'
+                }`}
+              >
+                <BarChart3 className="w-4 h-4" />
+                Campagnes
+                {campaigns.length > 0 && (
+                  <span className={`ml-1 text-xs tabular-nums ${
+                    activeTab === 'campaigns' ? 'text-white/70' : 'text-[var(--navy-medium)]'
+                  }`}>
+                    ({campaigns.length})
+                  </span>
+                )}
+              </button>
+            </div>
 
-              <div className="space-y-4">
-                {/* Segment selector */}
-                <div>
-                  <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Ontvangers</label>
-                  <div className="relative">
-                    <select
-                      value={segment}
-                      onChange={e => setSegment(e.target.value)}
-                      className="w-full appearance-none rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] bg-white pr-8 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
-                    >
-                      {SEGMENT_OPTIONS.map(opt => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                      ))}
-                    </select>
-                    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--navy-medium)] pointer-events-none" />
+            {/* Tab content: Compose */}
+            {activeTab === 'compose' && (
+              <>
+                <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
+                  <div className="space-y-4">
+                    {/* Segment selector */}
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Ontvangers</label>
+                      <div className="relative">
+                        <select
+                          value={segment}
+                          onChange={e => setSegment(e.target.value)}
+                          className="w-full appearance-none rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] bg-white pr-8 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
+                        >
+                          {SEGMENT_OPTIONS.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--navy-medium)] pointer-events-none" />
+                      </div>
+                      <p className="mt-1 text-xs text-[var(--navy-medium)]">
+                        {recipientCount} ontvanger{recipientCount !== 1 ? 's' : ''}
+                      </p>
+                    </div>
+
+                    {/* Subject */}
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Onderwerp</label>
+                      <input
+                        type="text"
+                        value={subject}
+                        onChange={e => setSubject(e.target.value)}
+                        placeholder="Onderwerp van het e-mailbericht"
+                        className="w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
+                      />
+                    </div>
+
+                    {/* Preheader */}
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">
+                        Preheader <span className="font-normal text-[var(--navy-medium)]">(optioneel)</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={preheader}
+                        onChange={e => setPreheader(e.target.value)}
+                        placeholder="Voorbeeldtekst naast het onderwerp in de inbox"
+                        maxLength={150}
+                        className="w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
+                      />
+                      <p className="mt-1 text-xs text-[var(--navy-medium)]">
+                        Wordt getoond naast het onderwerp in de inbox van de ontvanger. Max 150 tekens.
+                      </p>
+                    </div>
+
+                    {/* Heading */}
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Koptekst</label>
+                      <input
+                        type="text"
+                        value={heading}
+                        onChange={e => setHeading(e.target.value)}
+                        placeholder="Titel in het e-mailbericht"
+                        className="w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
+                      />
+                    </div>
+
+                    {/* Body */}
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Bericht</label>
+                      <EmailEditor
+                        value={body}
+                        onChange={setBody}
+                        uploadedImages={uploadedImages}
+                        onImageUploaded={handleImageUploaded}
+                        onImageDeleted={handleImageDeleted}
+                      />
+                      <p className="mt-1 text-xs text-[var(--navy-medium)]">
+                        Gebruik de werkbalk voor opmaak. Klik &ldquo;Voornaam&rdquo; om de naam van de ontvanger in te voegen.
+                      </p>
+                    </div>
+
+                    {/* CTA (optional) */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">
+                          Knoptekst <span className="font-normal text-[var(--navy-medium)]">(optioneel)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={ctaText}
+                          onChange={e => setCtaText(e.target.value)}
+                          placeholder="Bijv. Bekijk op Rijksuitgaven"
+                          className="w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">
+                          Knop URL <span className="font-normal text-[var(--navy-medium)]">(optioneel)</span>
+                        </label>
+                        <input
+                          type="url"
+                          value={ctaUrl}
+                          onChange={e => setCtaUrl(e.target.value)}
+                          placeholder="https://beta.rijksuitgaven.nl"
+                          className="w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-3 pt-2">
+                      <button
+                        onClick={handlePreview}
+                        disabled={!canSend || previewLoading}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {previewLoading ? (
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                        ) : showPreview ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                        {showPreview ? 'Verberg voorbeeld' : 'Voorbeeld'}
+                      </button>
+
+                      {!confirmSend ? (
+                        <button
+                          onClick={() => setConfirmSend(true)}
+                          disabled={!canSend}
+                          className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-[var(--pink)] hover:bg-[var(--pink-hover)] rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          <Send className="w-4 h-4" />
+                          Verzenden naar {recipientCount} ontvanger{recipientCount !== 1 ? 's' : ''}
+                        </button>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-[var(--error)]">
+                            Weet u het zeker?
+                          </span>
+                          <button
+                            onClick={handleSend}
+                            disabled={sending}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50"
+                          >
+                            {sending ? 'Verzenden...' : `Ja, verzend ${recipientCount} e-mails`}
+                          </button>
+                          <button
+                            onClick={() => setConfirmSend(false)}
+                            className="px-3 py-2.5 text-sm text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                          >
+                            Annuleren
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <p className="mt-1 text-xs text-[var(--navy-medium)]">
-                    {recipientCount} ontvanger{recipientCount !== 1 ? 's' : ''}
-                  </p>
-                </div>
 
-                {/* Subject */}
-                <div>
-                  <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Onderwerp</label>
-                  <input
-                    type="text"
-                    value={subject}
-                    onChange={e => setSubject(e.target.value)}
-                    placeholder="Onderwerp van het e-mailbericht"
-                    className="w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
-                  />
-                </div>
-
-                {/* Preheader */}
-                <div>
-                  <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">
-                    Preheader <span className="font-normal text-[var(--navy-medium)]">(optioneel)</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={preheader}
-                    onChange={e => setPreheader(e.target.value)}
-                    placeholder="Voorbeeldtekst naast het onderwerp in de inbox"
-                    maxLength={150}
-                    className="w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
-                  />
-                  <p className="mt-1 text-xs text-[var(--navy-medium)]">
-                    Wordt getoond naast het onderwerp in de inbox van de ontvanger. Max 150 tekens.
-                  </p>
-                </div>
-
-                {/* Heading */}
-                <div>
-                  <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Koptekst</label>
-                  <input
-                    type="text"
-                    value={heading}
-                    onChange={e => setHeading(e.target.value)}
-                    placeholder="Titel in het e-mailbericht"
-                    className="w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
-                  />
-                </div>
-
-                {/* Body */}
-                <div>
-                  <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Bericht</label>
-                  <EmailEditor
-                    value={body}
-                    onChange={setBody}
-                    uploadedImages={uploadedImages}
-                    onImageUploaded={handleImageUploaded}
-                    onImageDeleted={handleImageDeleted}
-                  />
-                  <p className="mt-1 text-xs text-[var(--navy-medium)]">
-                    Gebruik de werkbalk voor opmaak. Klik &ldquo;Voornaam&rdquo; om de naam van de ontvanger in te voegen.
-                  </p>
-                </div>
-
-                {/* CTA (optional) */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">
-                      Knoptekst <span className="font-normal text-[var(--navy-medium)]">(optioneel)</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={ctaText}
-                      onChange={e => setCtaText(e.target.value)}
-                      placeholder="Bijv. Bekijk op Rijksuitgaven"
-                      className="w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">
-                      Knop URL <span className="font-normal text-[var(--navy-medium)]">(optioneel)</span>
-                    </label>
-                    <input
-                      type="url"
-                      value={ctaUrl}
-                      onChange={e => setCtaUrl(e.target.value)}
-                      placeholder="https://beta.rijksuitgaven.nl"
-                      className="w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center gap-3 pt-2">
-                  <button
-                    onClick={handlePreview}
-                    disabled={!canSend || previewLoading}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors disabled:opacity-50"
-                  >
-                    {previewLoading ? (
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                    ) : showPreview ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                    {showPreview ? 'Verberg voorbeeld' : 'Voorbeeld'}
-                  </button>
-
-                  {!confirmSend ? (
-                    <button
-                      onClick={() => setConfirmSend(true)}
-                      disabled={!canSend}
-                      className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-[var(--pink)] hover:bg-[var(--pink-hover)] rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      <Send className="w-4 h-4" />
-                      Verzenden naar {recipientCount} ontvanger{recipientCount !== 1 ? 's' : ''}
-                    </button>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-[var(--error)]">
-                        Weet u het zeker?
+                  {/* Send result */}
+                  {sendResult && (
+                    <div className="mt-4 flex items-start gap-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3">
+                      <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                      <span>
+                        <span className="font-medium">Verzonden!</span>{' '}
+                        {sendResult.sent} van {sendResult.total} e-mails verstuurd
+                        {sendResult.failed > 0 && ` (${sendResult.failed} mislukt)`}.
                       </span>
-                      <button
-                        onClick={handleSend}
-                        disabled={sending}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50"
-                      >
-                        {sending ? 'Verzenden...' : `Ja, verzend ${recipientCount} e-mails`}
-                      </button>
-                      <button
-                        onClick={() => setConfirmSend(false)}
-                        className="px-3 py-2.5 text-sm text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
-                      >
-                        Annuleren
-                      </button>
+                    </div>
+                  )}
+
+                  {sendError && (
+                    <div className="mt-4 flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+                      <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+                      <span>{sendError}</span>
                     </div>
                   )}
                 </div>
-              </div>
 
-              {/* Send result */}
-              {sendResult && (
-                <div className="mt-4 flex items-start gap-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3">
-                  <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>
-                    <span className="font-medium">Verzonden!</span>{' '}
-                    {sendResult.sent} van {sendResult.total} e-mails verstuurd
-                    {sendResult.failed > 0 && ` (${sendResult.failed} mislukt)`}.
-                  </span>
-                </div>
-              )}
-
-              {sendError && (
-                <div className="mt-4 flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
-                  <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>{sendError}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Email preview — server-rendered iframe */}
-            {showPreview && previewHtml && (
-              <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-[var(--navy-dark)]">Voorbeeld</h3>
-                  <span className="text-xs text-[var(--navy-medium)]">
-                    Exact zoals ontvangers het zien
-                  </span>
-                </div>
-                <div className="border border-[var(--border)] rounded-lg overflow-hidden">
-                  <div className="bg-[var(--gray-light)] px-4 py-2 text-xs text-[var(--navy-medium)] border-b border-[var(--border)]">
-                    <span className="font-medium">Onderwerp:</span> {subject}
-                    {preheader && (
-                      <span className="ml-3 text-[var(--navy-medium)]/60">— {preheader}</span>
-                    )}
-                  </div>
-                  <iframe
-                    srcDoc={previewHtml}
-                    sandbox=""
-                    title="E-mail voorbeeld"
-                    className="w-full border-0"
-                    style={{ height: 600 }}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Campaign history */}
-            <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
-              <div className="flex items-center gap-2 mb-4">
-                <History className="w-5 h-5 text-[var(--navy-dark)]" />
-                <h3 className="text-base font-semibold text-[var(--navy-dark)]">Verzonden</h3>
-              </div>
-
-              {campaignsLoading ? (
-                <div className="animate-pulse space-y-2">
-                  {[1, 2, 3].map(i => (
-                    <div key={i} className="h-12 bg-[var(--gray-light)] rounded" />
-                  ))}
-                </div>
-              ) : campaigns.length === 0 ? (
-                <p className="text-sm text-[var(--navy-medium)]">Nog geen campagnes verzonden.</p>
-              ) : (
-                <div className="divide-y divide-[var(--border)]">
-                  {campaigns.map(campaign => {
-                    const isExpanded = expandedCampaignId === campaign.id
-                    const openRate = campaign.sent_count > 0
-                      ? ((campaign.opened_count / campaign.sent_count) * 100).toFixed(1)
-                      : '0.0'
-                    const clickRate = campaign.sent_count > 0
-                      ? ((campaign.clicked_count / campaign.sent_count) * 100).toFixed(1)
-                      : '0.0'
-
-                    return (
-                      <div key={campaign.id} className="py-3 first:pt-0 last:pb-0">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => handleExpandCampaign(campaign.id)}
-                                className="inline-flex items-center gap-1 text-sm font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] transition-colors truncate"
-                              >
-                                <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
-                                {campaign.subject}
-                              </button>
-                              <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-[var(--gray-light)] text-[var(--navy-medium)]">
-                                {SEGMENT_LABELS[campaign.segment] || campaign.segment}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-3 mt-1 ml-5 text-xs text-[var(--navy-medium)]">
-                              <span>
-                                {new Date(campaign.sent_at).toLocaleDateString('nl-NL', {
-                                  day: 'numeric',
-                                  month: 'short',
-                                  year: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <CheckCircle className="w-3 h-3 text-green-600" />
-                                {campaign.sent_count}
-                              </span>
-                              {campaign.opened_count > 0 && (
-                                <span className="flex items-center gap-1" title="Geopend (indicatief — Apple Mail opent automatisch)">
-                                  <MailOpen className="w-3 h-3 text-blue-500" />
-                                  {openRate}%
-                                </span>
-                              )}
-                              {campaign.clicked_count > 0 && (
-                                <span className="flex items-center gap-1" title="Geklikt">
-                                  <MousePointerClick className="w-3 h-3 text-[var(--pink)]" />
-                                  {clickRate}%
-                                </span>
-                              )}
-                              {campaign.bounced_count > 0 && (
-                                <span className="flex items-center gap-1 text-[var(--error)]" title="Bounced">
-                                  <Ban className="w-3 h-3" />
-                                  {campaign.bounced_count}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => handleUseAsTemplate(campaign)}
-                            className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors"
-                            title="Gebruik als sjabloon"
-                          >
-                            <Copy className="w-3.5 h-3.5" />
-                            Sjabloon
-                          </button>
-                        </div>
-
-                        {/* Expanded: per-recipient detail */}
-                        {isExpanded && (
-                          <div className="mt-3 ml-5">
-                            {recipientsLoading ? (
-                              <div className="animate-pulse h-20 bg-[var(--gray-light)] rounded" />
-                            ) : campaignRecipients.length === 0 ? (
-                              <p className="text-xs text-[var(--navy-medium)]">Nog geen events ontvangen van Resend.</p>
-                            ) : (
-                              <>
-                                <div className="overflow-x-auto rounded border border-[var(--border)]">
-                                  <table className="w-full text-xs">
-                                    <thead>
-                                      <tr className="bg-[var(--gray-light)] text-left">
-                                        <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Ontvanger</th>
-                                        <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Bezorgd</th>
-                                        <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geopend</th>
-                                        <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geklikt</th>
-                                        <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Status</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-[var(--border)]">
-                                      {campaignRecipients.map(r => (
-                                        <tr key={r.email} className="hover:bg-[var(--gray-light)]/50">
-                                          <td className="px-3 py-2">
-                                            <div className="text-[var(--navy-dark)]">
-                                              {r.first_name || r.email.split('@')[0]}
-                                            </div>
-                                            <div className="text-[var(--navy-medium)]">{r.email}</div>
-                                          </td>
-                                          <td className="px-3 py-2 text-[var(--navy-medium)]">
-                                            {r.delivered_at ? formatTime(r.delivered_at) : '—'}
-                                          </td>
-                                          <td className="px-3 py-2 text-[var(--navy-medium)]">
-                                            {r.opened_at ? formatTime(r.opened_at) : '—'}
-                                          </td>
-                                          <td className="px-3 py-2">
-                                            {r.clicked_at ? (
-                                              <span className="text-[var(--pink)]" title={r.clicked_url || undefined}>
-                                                {formatTime(r.clicked_at)}
-                                              </span>
-                                            ) : '—'}
-                                          </td>
-                                          <td className="px-3 py-2">
-                                            {r.unsubscribed_at ? (
-                                              <span className="inline-flex items-center gap-1 text-amber-600">
-                                                <X className="w-3 h-3" /> Afgemeld
-                                              </span>
-                                            ) : r.bounced_at ? (
-                                              <span className="inline-flex items-center gap-1 text-[var(--error)]">
-                                                <Ban className="w-3 h-3" /> Bounced
-                                              </span>
-                                            ) : r.complained_at ? (
-                                              <span className="inline-flex items-center gap-1 text-[var(--error)]">
-                                                <AlertTriangle className="w-3 h-3" /> Spam
-                                              </span>
-                                            ) : r.delivered_at ? (
-                                              <span className="text-green-600">✓</span>
-                                            ) : (
-                                              <span className="text-[var(--navy-medium)]">Verstuurd</span>
-                                            )}
-                                          </td>
-                                        </tr>
-                                      ))}
-                                    </tbody>
-                                  </table>
-                                </div>
-                                <p className="mt-2 text-[10px] text-[var(--navy-medium)]">
-                                  * Openpercentage is indicatief — Apple Mail opent alle e-mails automatisch.
-                                </p>
-                              </>
-                            )}
-                          </div>
+                {/* Email preview — server-rendered iframe */}
+                {showPreview && previewHtml && (
+                  <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-semibold text-[var(--navy-dark)]">Voorbeeld</h3>
+                      <span className="text-xs text-[var(--navy-medium)]">
+                        Exact zoals ontvangers het zien
+                      </span>
+                    </div>
+                    <div className="border border-[var(--border)] rounded-lg overflow-hidden">
+                      <div className="bg-[var(--gray-light)] px-4 py-2 text-xs text-[var(--navy-medium)] border-b border-[var(--border)]">
+                        <span className="font-medium">Onderwerp:</span> {subject}
+                        {preheader && (
+                          <span className="ml-3 text-[var(--navy-medium)]/60">— {preheader}</span>
                         )}
                       </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* Sync section */}
-            <div className="bg-white rounded-lg border border-[var(--border)] p-5">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-2 text-sm text-[var(--navy-medium)]">
-                  <Users className="w-4 h-4" />
-                  <span>
-                    <span className="font-semibold text-[var(--navy-dark)]">{data.resend_contacts}</span> van {data.total} contacten gesynchroniseerd met Resend
-                  </span>
-                </div>
-                <button
-                  onClick={handleSync}
-                  disabled={syncing}
-                  className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors disabled:opacity-50"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ${syncing ? 'animate-spin' : ''}`} />
-                  {syncing ? 'Synchroniseren...' : 'Sync Resend'}
-                </button>
-              </div>
-
-              {/* Sync result */}
-              {syncResult && (
-                <div className={`mt-3 flex items-start gap-2 text-sm rounded-lg px-4 py-3 ${
-                  syncResult.errors > 0
-                    ? 'text-amber-700 bg-amber-50 border border-amber-200'
-                    : 'text-green-700 bg-green-50 border border-green-200'
-                }`}>
-                  <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                  <div>
-                    <span className="font-medium">Synchronisatie voltooid.</span>{' '}
-                    {syncResult.created > 0 && `${syncResult.created} nieuw, `}
-                    {syncResult.updated > 0 && `${syncResult.updated} bijgewerkt, `}
-                    {syncResult.removed > 0 && `${syncResult.removed} verwijderd, `}
-                    {syncResult.errors > 0 && `${syncResult.errors} fouten, `}
-                    {syncResult.synced} totaal gesynchroniseerd.
-                    {syncResult.error_messages && syncResult.error_messages.length > 0 && (
-                      <ul className="mt-2 space-y-1 text-xs font-mono">
-                        {syncResult.error_messages.map((msg, i) => (
-                          <li key={i}>{msg}</li>
-                        ))}
-                      </ul>
-                    )}
+                      <iframe
+                        srcDoc={previewHtml}
+                        sandbox=""
+                        title="E-mail voorbeeld"
+                        className="w-full border-0"
+                        style={{ height: 600 }}
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </>
+            )}
 
-              {syncError && (
-                <div className="mt-3 flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
-                  <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>{syncError}</span>
-                </div>
-              )}
-            </div>
+            {/* Tab content: Campaigns */}
+            {activeTab === 'campaigns' && (
+              <div className="bg-white rounded-lg border border-[var(--border)] p-5">
+                {campaignsLoading ? (
+                  <div className="animate-pulse space-y-2">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="h-12 bg-[var(--gray-light)] rounded" />
+                    ))}
+                  </div>
+                ) : campaigns.length === 0 ? (
+                  <p className="text-sm text-[var(--navy-medium)]">Nog geen campagnes verzonden.</p>
+                ) : (
+                  <div className="divide-y divide-[var(--border)]">
+                    {campaigns.map(campaign => {
+                      const isExpanded = expandedCampaignId === campaign.id
+                      const openRate = campaign.sent_count > 0
+                        ? ((campaign.opened_count / campaign.sent_count) * 100).toFixed(1)
+                        : '0.0'
+                      const clickRate = campaign.sent_count > 0
+                        ? ((campaign.clicked_count / campaign.sent_count) * 100).toFixed(1)
+                        : '0.0'
+
+                      return (
+                        <div key={campaign.id} className="py-3 first:pt-0 last:pb-0">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => handleExpandCampaign(campaign.id)}
+                                  className="inline-flex items-center gap-1 text-sm font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] transition-colors truncate"
+                                >
+                                  <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                                  {campaign.subject}
+                                </button>
+                                <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-[var(--gray-light)] text-[var(--navy-medium)]">
+                                  {SEGMENT_LABELS[campaign.segment] || campaign.segment}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-3 mt-1 ml-5 text-xs text-[var(--navy-medium)]">
+                                <span>
+                                  {new Date(campaign.sent_at).toLocaleDateString('nl-NL', {
+                                    day: 'numeric',
+                                    month: 'short',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                  })}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <CheckCircle className="w-3 h-3 text-green-600" />
+                                  {campaign.sent_count}
+                                </span>
+                                {campaign.opened_count > 0 && (
+                                  <span className="flex items-center gap-1" title="Geopend (indicatief — Apple Mail opent automatisch)">
+                                    <MailOpen className="w-3 h-3 text-blue-500" />
+                                    {openRate}%
+                                  </span>
+                                )}
+                                {campaign.clicked_count > 0 && (
+                                  <span className="flex items-center gap-1" title="Geklikt">
+                                    <MousePointerClick className="w-3 h-3 text-[var(--pink)]" />
+                                    {clickRate}%
+                                  </span>
+                                )}
+                                {campaign.bounced_count > 0 && (
+                                  <span className="flex items-center gap-1 text-[var(--error)]" title="Bounced">
+                                    <Ban className="w-3 h-3" />
+                                    {campaign.bounced_count}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleUseAsTemplate(campaign)}
+                              className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors"
+                              title="Gebruik als sjabloon"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                              Sjabloon
+                            </button>
+                          </div>
+
+                          {/* Expanded: per-recipient detail */}
+                          {isExpanded && (
+                            <div className="mt-3 ml-5">
+                              {recipientsLoading ? (
+                                <div className="animate-pulse h-20 bg-[var(--gray-light)] rounded" />
+                              ) : campaignRecipients.length === 0 ? (
+                                <p className="text-xs text-[var(--navy-medium)]">Nog geen events ontvangen van Resend.</p>
+                              ) : (
+                                <>
+                                  <div className="overflow-x-auto rounded border border-[var(--border)]">
+                                    <table className="w-full text-xs">
+                                      <thead>
+                                        <tr className="bg-[var(--gray-light)] text-left">
+                                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Ontvanger</th>
+                                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Bezorgd</th>
+                                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geopend</th>
+                                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geklikt</th>
+                                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Status</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody className="divide-y divide-[var(--border)]">
+                                        {campaignRecipients.map(r => (
+                                          <tr key={r.email} className="hover:bg-[var(--gray-light)]/50">
+                                            <td className="px-3 py-2">
+                                              <div className="text-[var(--navy-dark)]">
+                                                {r.first_name || r.email.split('@')[0]}
+                                              </div>
+                                              <div className="text-[var(--navy-medium)]">{r.email}</div>
+                                            </td>
+                                            <td className="px-3 py-2 text-[var(--navy-medium)]">
+                                              {r.delivered_at ? formatTime(r.delivered_at) : '—'}
+                                            </td>
+                                            <td className="px-3 py-2 text-[var(--navy-medium)]">
+                                              {r.opened_at ? formatTime(r.opened_at) : '—'}
+                                            </td>
+                                            <td className="px-3 py-2">
+                                              {r.clicked_at ? (
+                                                <span className="text-[var(--pink)]" title={r.clicked_url || undefined}>
+                                                  {formatTime(r.clicked_at)}
+                                                </span>
+                                              ) : '—'}
+                                            </td>
+                                            <td className="px-3 py-2">
+                                              {r.unsubscribed_at ? (
+                                                <span className="inline-flex items-center gap-1 text-amber-600">
+                                                  <X className="w-3 h-3" /> Afgemeld
+                                                </span>
+                                              ) : r.bounced_at ? (
+                                                <span className="inline-flex items-center gap-1 text-[var(--error)]">
+                                                  <Ban className="w-3 h-3" /> Bounced
+                                                </span>
+                                              ) : r.complained_at ? (
+                                                <span className="inline-flex items-center gap-1 text-[var(--error)]">
+                                                  <AlertTriangle className="w-3 h-3" /> Spam
+                                                </span>
+                                              ) : r.delivered_at ? (
+                                                <span className="text-green-600">&#10003;</span>
+                                              ) : (
+                                                <span className="text-[var(--navy-medium)]">Verstuurd</span>
+                                              )}
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                  <p className="mt-2 text-[10px] text-[var(--navy-medium)]">
+                                    * Openpercentage is indicatief — Apple Mail opent alle e-mails automatisch.
+                                  </p>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
           </>
         ) : (
           <div className="bg-white rounded-lg border border-[var(--border)] p-5">
