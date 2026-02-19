@@ -11,7 +11,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isAdmin } from '@/app/api/_lib/admin'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
-import { syncPersonToResend } from '@/app/api/_lib/resend-audience'
+import { syncPersonToResend, type ListType } from '@/app/api/_lib/resend-audience'
 
 function forbiddenResponse() {
   return NextResponse.json({ error: 'Geen toegang' }, { status: 403 })
@@ -224,13 +224,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Fout bij aanmaken abonnement' }, { status: 500 })
   }
 
-  // 5. Sync person to Resend Audience (fire-and-forget)
+  // 5. Sync person to Resend Audience with segment (fire-and-forget)
+  const listType: ListType = (plan === 'monthly' || plan === 'yearly') ? 'leden' : 'prospects'
   syncPersonToResend('create', {
     id: personId,
     email: normalizedEmail,
     first_name,
     last_name,
-  }).catch(err => {
+  }, listType).catch(err => {
     console.error('[Resend] Sync error on member create:', err)
   })
 

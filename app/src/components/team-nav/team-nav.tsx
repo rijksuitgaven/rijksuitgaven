@@ -28,6 +28,7 @@ export function TeamNav() {
     { href: '/team/feedback', label: 'Feedback', exact: false, count: newCount, countVariant: 'pink' },
     { href: '/team/statistieken', label: 'Statistieken', exact: false },
     { href: '/team/fouten', label: 'Fouten', exact: false, count: errorCount, countVariant: 'red' },
+    { href: '/team/mail', label: 'E-mail', exact: false },
   ]
 
   return (

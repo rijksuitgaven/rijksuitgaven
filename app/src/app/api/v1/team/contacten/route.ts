@@ -133,8 +133,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Fout bij aanmaken contact' }, { status: 500 })
   }
 
-  // Sync to Resend Audience (fire-and-forget)
-  syncPersonToResend('create', person).catch(err => {
+  // Sync to Resend Audience as prospect (fire-and-forget)
+  syncPersonToResend('create', person, 'prospects').catch(err => {
     console.error('[Resend] Sync error on create:', err)
   })
 

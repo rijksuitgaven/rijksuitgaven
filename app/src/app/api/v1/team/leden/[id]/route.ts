@@ -11,6 +11,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isAdmin } from '@/app/api/_lib/admin'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
+import { syncPersonToResend, computeListType } from '@/app/api/_lib/resend-audience'
 
 function forbiddenResponse() {
   return NextResponse.json({ error: 'Geen toegang' }, { status: 403 })
@@ -134,7 +135,7 @@ export async function PATCH(
   // Fetch updated member with person data for response
   const { data: updated, error: fetchError } = await adminSupabase
     .from('subscriptions')
-    .select('id, user_id, person_id, plan, role, start_date, end_date, grace_ends_at, cancelled_at, invited_at, activated_at, last_active_at, notes, created_at, people!inner(email, first_name, last_name, organization)')
+    .select('id, user_id, person_id, plan, role, start_date, end_date, grace_ends_at, cancelled_at, invited_at, activated_at, last_active_at, notes, created_at, people!inner(email, first_name, last_name, organization, resend_contact_id)')
     .eq('id', id)
     .single()
 
@@ -144,6 +145,19 @@ export async function PATCH(
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { people, ...subData } = updated as any
+
+  // Sync to Resend with updated segment (fire-and-forget)
+  const list = computeListType(subData)
+  syncPersonToResend('update', {
+    id: sub.person_id,
+    email: people.email,
+    first_name: people.first_name,
+    last_name: people.last_name,
+    resend_contact_id: people.resend_contact_id,
+  }, list).catch(err => {
+    console.error('[Resend] Sync error on member update:', err)
+  })
+
   return NextResponse.json({
     member: {
       ...subData,
@@ -171,10 +185,10 @@ export async function DELETE(
 
   const adminClient = createAdminClient()
 
-  // Look up the subscription to get user_id
+  // Look up the subscription to get user_id and person_id
   const { data: sub, error: lookupError } = await adminClient
     .from('subscriptions')
-    .select('user_id')
+    .select('user_id, person_id')
     .eq('id', id)
     .single()
 
@@ -199,6 +213,19 @@ export async function DELETE(
   if (softDeleteError) {
     console.error('[Admin] Soft-delete subscription error:', softDeleteError)
     return NextResponse.json({ error: 'Fout bij verwijderen lid' }, { status: 500 })
+  }
+
+  // Sync to Resend as churned (fire-and-forget)
+  const { data: person } = await adminClient
+    .from('people')
+    .select('id, email, first_name, last_name, resend_contact_id')
+    .eq('id', sub.person_id)
+    .single()
+
+  if (person) {
+    syncPersonToResend('update', person, 'churned').catch(err => {
+      console.error('[Resend] Sync error on member delete:', err)
+    })
   }
 
   return NextResponse.json({ ok: true })

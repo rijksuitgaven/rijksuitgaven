@@ -71,8 +71,8 @@ export async function PATCH(
     return NextResponse.json({ error: 'Contact niet gevonden' }, { status: 404 })
   }
 
-  // Sync to Resend Audience (fire-and-forget)
-  syncPersonToResend('update', data).catch(err => {
+  // Sync to Resend Audience as prospect (fire-and-forget)
+  syncPersonToResend('update', data, 'prospects').catch(err => {
     console.error('[Resend] Sync error on update:', err)
   })
 
