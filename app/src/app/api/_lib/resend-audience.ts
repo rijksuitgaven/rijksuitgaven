@@ -1,15 +1,16 @@
 /**
- * Resend Audience Sync
+ * Resend Contact Sync
  *
- * Syncs people to a Resend Audience for email broadcasts.
- * Each contact is assigned to one of 4 segments: per_maand, per_jaar, churned, prospects.
+ * Syncs people to Resend Contacts for email broadcasts.
+ * Each contact is assigned to one of 3 segments: leden, churned, prospects.
  * Graceful degradation: sync failures are logged but don't block operations.
  *
+ * Uses the new Contacts API (no audienceId — audiences are deprecated).
+ * Contacts are created directly and assigned to segments via the `segments` array.
+ *
  * Required env vars:
- *   RESEND_API_KEY              — Resend API key
- *   RESEND_AUDIENCE_ID          — Resend Audience ID for contacts
- *   RESEND_SEGMENT_MAAND        — Segment ID for monthly subscribers
- *   RESEND_SEGMENT_JAAR         — Segment ID for yearly subscribers
+ *   RESEND_API_KEY              — Resend API key (full access)
+ *   RESEND_SEGMENT_LEDEN        — Segment ID for active members
  *   RESEND_SEGMENT_CHURNED      — Segment ID for churned members
  *   RESEND_SEGMENT_PROSPECTS    — Segment ID for prospects
  */
@@ -18,7 +19,6 @@ import { Resend } from 'resend'
 import { createAdminClient } from './supabase-admin'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
-const RESEND_AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID
 
 const SEGMENT_IDS = {
   leden: process.env.RESEND_SEGMENT_LEDEN,
@@ -37,11 +37,17 @@ interface PersonRow {
 }
 
 function isConfigured(): boolean {
-  return !!(RESEND_API_KEY && RESEND_AUDIENCE_ID)
+  return !!RESEND_API_KEY
+}
+
+function segmentsForList(list?: ListType): { id: string }[] | undefined {
+  if (!list) return undefined
+  const segmentId = SEGMENT_IDS[list]
+  return segmentId ? [{ id: segmentId }] : undefined
 }
 
 /**
- * Sync a single person to Resend Audience with segment assignment.
+ * Sync a single person to Resend with segment assignment.
  */
 export async function syncPersonToResend(
   action: 'create' | 'update' | 'delete',
@@ -49,7 +55,7 @@ export async function syncPersonToResend(
   list?: ListType
 ): Promise<void> {
   if (!isConfigured()) {
-    console.warn('[Resend] Missing RESEND_API_KEY or RESEND_AUDIENCE_ID — skipping sync')
+    console.warn('[Resend] Missing RESEND_API_KEY — skipping sync')
     return
   }
 
@@ -57,10 +63,10 @@ export async function syncPersonToResend(
 
   if (action === 'create' && person.email) {
     const { data, error } = await resend.contacts.create({
-      audienceId: RESEND_AUDIENCE_ID!,
       email: person.email,
       firstName: person.first_name || undefined,
       lastName: person.last_name || undefined,
+      segments: segmentsForList(list),
     })
 
     if (error) {
@@ -68,7 +74,6 @@ export async function syncPersonToResend(
       return
     }
 
-    // Store the Resend contact ID on the people record
     if (data?.id) {
       const supabase = createAdminClient()
       await supabase
@@ -80,7 +85,6 @@ export async function syncPersonToResend(
 
   if (action === 'update' && person.resend_contact_id) {
     const { error } = await resend.contacts.update({
-      audienceId: RESEND_AUDIENCE_ID!,
       id: person.resend_contact_id,
       firstName: person.first_name || undefined,
       lastName: person.last_name || undefined,
@@ -93,7 +97,6 @@ export async function syncPersonToResend(
 
   if (action === 'delete' && person.resend_contact_id) {
     const { error } = await resend.contacts.remove({
-      audienceId: RESEND_AUDIENCE_ID!,
       id: person.resend_contact_id,
     })
 
@@ -101,7 +104,6 @@ export async function syncPersonToResend(
       console.error('[Resend] Delete contact error:', error)
     }
 
-    // Clear resend_contact_id
     const supabase = createAdminClient()
     await supabase
       .from('people')
@@ -128,17 +130,15 @@ export function computeListType(sub: {
   const graceEnds = sub.grace_ends_at ? new Date(sub.grace_ends_at) : null
   const effectiveEnd = graceEnds || endDate
 
-  // If subscription has ended (past grace period), it's churned
   if (effectiveEnd && effectiveEnd < now) return 'churned'
 
   if (sub.plan === 'monthly' || sub.plan === 'yearly') return 'leden'
 
-  // Trial or unknown plan → prospects
   return 'prospects'
 }
 
 /**
- * Full backfill: sync ALL people to Resend Audience with correct segments.
+ * Full backfill: sync ALL people to Resend with correct segments.
  * Returns sync statistics.
  */
 export async function backfillResendAudience(): Promise<{
@@ -150,13 +150,12 @@ export async function backfillResendAudience(): Promise<{
   error_messages: string[]
 }> {
   if (!isConfigured()) {
-    throw new Error('Resend not configured — missing RESEND_API_KEY or RESEND_AUDIENCE_ID')
+    throw new Error('Resend not configured — missing RESEND_API_KEY')
   }
 
   const supabase = createAdminClient()
   const stats = { synced: 0, created: 0, updated: 0, removed: 0, errors: 0, error_messages: [] as string[] }
 
-  // 1. Fetch all people with their latest subscription
   const { data: people, error: fetchError } = await supabase
     .from('people')
     .select('id, email, first_name, last_name, resend_contact_id, archived_at')
@@ -165,12 +164,10 @@ export async function backfillResendAudience(): Promise<{
     throw new Error(`Failed to fetch people: ${fetchError?.message}`)
   }
 
-  // 2. Fetch all subscriptions (non-deleted) to compute list types
   const { data: subscriptions } = await supabase
     .from('subscriptions')
     .select('person_id, plan, cancelled_at, deleted_at, end_date, grace_ends_at')
 
-  // Build person_id → subscription map (latest non-deleted)
   const subMap = new Map<string, typeof subscriptions extends (infer T)[] | null ? T : never>()
   if (subscriptions) {
     for (const sub of subscriptions) {
@@ -179,8 +176,6 @@ export async function backfillResendAudience(): Promise<{
   }
 
   const resend = new Resend(RESEND_API_KEY)
-
-  // Process in batches of 5 concurrent requests
   const CONCURRENCY = 5
   const queue = [...people]
 
@@ -189,10 +184,7 @@ export async function backfillResendAudience(): Promise<{
       // Archived people should be removed from Resend
       if (person.archived_at) {
         if (person.resend_contact_id) {
-          await resend.contacts.remove({
-            audienceId: RESEND_AUDIENCE_ID!,
-            id: person.resend_contact_id,
-          })
+          await resend.contacts.remove({ id: person.resend_contact_id })
           await supabase
             .from('people')
             .update({ resend_contact_id: null })
@@ -204,32 +196,33 @@ export async function backfillResendAudience(): Promise<{
 
       if (!person.email) return
 
+      const sub = subMap.get(person.id) || null
+      const list = computeListType(sub)
+      const segments = segmentsForList(list)
+
       if (person.resend_contact_id) {
-        // Update existing contact
         const { error: updateError } = await resend.contacts.update({
-          audienceId: RESEND_AUDIENCE_ID!,
           id: person.resend_contact_id,
           firstName: person.first_name || undefined,
           lastName: person.last_name || undefined,
         })
         if (updateError) {
-          console.error(`[Resend] Update contact error for ${person.email}:`, updateError)
+          console.error(`[Resend] Update error for ${person.email}:`, updateError)
           stats.error_messages.push(`${person.email}: ${updateError.message || JSON.stringify(updateError)}`)
           stats.errors++
           return
         }
         stats.updated++
       } else {
-        // Create new contact (without segments — add via separate API if needed)
         const { data, error: createError } = await resend.contacts.create({
-          audienceId: RESEND_AUDIENCE_ID!,
           email: person.email,
           firstName: person.first_name || undefined,
           lastName: person.last_name || undefined,
+          segments,
         })
 
         if (createError) {
-          console.error(`[Resend] Create contact error for ${person.email}:`, createError)
+          console.error(`[Resend] Create error for ${person.email}:`, createError)
           stats.error_messages.push(`${person.email}: ${createError.message || JSON.stringify(createError)}`)
           stats.errors++
           return
@@ -251,7 +244,6 @@ export async function backfillResendAudience(): Promise<{
     }
   }
 
-  // Process with concurrency pool
   for (let i = 0; i < queue.length; i += CONCURRENCY) {
     const batch = queue.slice(i, i + CONCURRENCY)
     await Promise.all(batch.map(processOne))
