@@ -118,6 +118,7 @@
 - ✅ **2026-02-18 (Session 7):** "+N meer" context-aware grouping + inkoop staffel bug fix. Clicking "+N meer" now pre-selects matching column as expanded row grouping (expandGroupingRef → initialGrouping prop). Added missing publiek groupable fields (regio, staffel, onderdeel). Fixed inkoop staffel 500 error: Pydantic v2 rejects int→str on DetailRow.group_value; belt-and-suspenders fix with SQL `::text` cast + Python `str()`. Deploy learning: Railway "Redeploy" restarts same build, new code needs new deployment. 5 commits.
 - ✅ **2026-02-18 (Session 8):** Mobile responsiveness audit + fixes. 4 parallel audit agents reviewed all public pages at 375px — 25 issues found (CRITICAL/HIGH/MEDIUM/LOW). 18 fixes across 10 files: header nav scroll fade indicators (left/right gradient overlays with scroll tracking), auth button 4 touch target fixes (min-h/w-[44px]), footer social icon negative margin technique (p-2 -m-2), mobile banner `relative` fix, over page responsive grid, 404 responsive text size, verlopen/login touch targets, cookie banner mobile padding, homepage card/discovery mobile padding + share button targets. TypeScript clean. 1 commit.
 - ✅ **2026-02-19 (Session 1):** Email campaign system — end-to-end Resend Broadcasts integration. Design via brainstorm-mode (6 experts). `resend-audience.ts` full rewrite: 3 segments (leden/churned/prospects), `computeListType()` from subscription status, `backfillResendAudience()` with sequential processing (600ms delay for free plan 2 req/s). Migrated from deprecated Resend Audiences API to new Contacts API (no `audienceId`). `/team/mail` admin page (3 count cards, sync button with inline results, Resend Dashboard link). BFF endpoints (GET counts, POST backfill). Ongoing sync triggers wired to leden CRUD + contacten CRUD. Branded campaign template (`assets/email-templates/campaign-template.html`). Auto-recovery of stale `resend_contact_id`. TeamNav "E-mail" tab. Env vars: +RESEND_SEGMENT_LEDEN/CHURNED/PROSPECTS, -RESEND_AUDIENCE_ID. 6 commits.
+- ✅ **2026-02-19 (Session 2):** Self-service campaigns + branded unsubscribe. Adversarial review caught P0: unsigned email in URL, two-path sync, GDPR re-subscribe. Replaced Resend Dashboard with own compose UI + Batch API. `/afmelden?token=UUID` (opaque tokens). Webhook for Gmail header unsubscribes (Svix). `List-Unsubscribe` headers (RFC 8058). `unsubscribed_at` GDPR guard. Migration 058. First campaign sent. 1 commit.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ✅ **Homepage mobile** — Mobile responsiveness audit + 18 fixes across 10 public pages (2026-02-18, Session 8)
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -148,20 +149,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **Email campaign system** (2026-02-19, Session 1)
-   End-to-end Resend Broadcasts integration. 3 segments, new Contacts API (deprecated Audiences removed), admin page, sync engine, branded template. 6 commits.
+1. **Self-service campaigns + branded unsubscribe** (2026-02-19, Session 2)
+   Compose UI, Resend Batch API, /afmelden with opaque tokens, webhook sync, RFC 8058 headers, GDPR guard. 1 commit.
 
-2. **Mobile responsiveness audit + fixes** (2026-02-18, Session 8)
-   4 parallel audit agents, 25 issues found, 18 fixes across 10 files. Header scroll fade indicators, touch targets, responsive layouts, mobile padding. 1 commit.
+2. **Email campaign sync system** (2026-02-19, Session 1)
+   Resend Contacts API migration, 3 segments, sync engine, /team/mail admin page. 6 commits.
 
-3. **"+N meer" grouping + staffel bug fix** (2026-02-18, Session 7)
-   Context-aware expanded row grouping from "+N meer" clicks. Inkoop staffel 500 fix (Pydantic v2 int→str rejection, SQL `::text` cast). Added publiek groupable fields. 5 commits.
+3. **Mobile responsiveness audit + fixes** (2026-02-18, Session 8)
+   25 issues found, 18 fixes across 10 files. Touch targets, scroll indicators, responsive layouts. 1 commit.
 
-4. **Scroll indicator + data table UX** (2026-02-18, Sessions 5-6)
-   Ghost column removal, sticky Totaal, collapse chevron. Dark navy gradient scroll indicator (4 iterations). 9 commits.
+4. **"+N meer" grouping + staffel bug fix** (2026-02-18, Session 7)
+   Context-aware expanded row grouping. Inkoop staffel 500 fix. 5 commits.
 
-5. **UX-035 Dataoverzicht + entity sync** (2026-02-18, Session 4)
-   Dynamic data availability matrix page. Entity list drift fix (module hub, support page, runbook). 6 commits.
+5. **Scroll indicator + data table UX** (2026-02-18, Sessions 5-6)
+   Ghost column removal, sticky Totaal, dark navy gradient scroll indicator. 9 commits.
 
 ---
 
