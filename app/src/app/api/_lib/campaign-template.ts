@@ -19,15 +19,27 @@ export interface CampaignParams {
 }
 
 /**
- * Convert plain text body to HTML paragraphs.
- * Double newlines → paragraph breaks, single newlines → <br />.
+ * Add inline styles to WYSIWYG HTML for email client compatibility.
+ * Tiptap outputs clean HTML tags; email clients need inline styles.
  */
-function bodyToHtml(text: string): string {
-  return text
-    .split(/\n\n+/)
-    .map(para => para.replace(/\n/g, '<br />'))
-    .map(para => `<p style="margin: 0 0 16px 0;">${para}</p>`)
-    .join('')
+function addEmailStyles(html: string): string {
+  return html
+    .replace(/<p>/g, '<p style="margin: 0 0 16px 0;">')
+    .replace(/<ul>/g, '<ul style="margin: 0 0 16px 0; padding-left: 20px;">')
+    .replace(/<ol>/g, '<ol style="margin: 0 0 16px 0; padding-left: 20px;">')
+    .replace(/<li>/g, '<li style="margin: 0 0 4px 0;">')
+    .replace(/<strong>/g, '<strong style="font-weight: 700;">')
+    .replace(/<em>/g, '<em style="font-style: italic;">')
+    .replace(/<a /g, '<a style="color: #436FA3; text-decoration: none;" ')
+    .replace(/<img /g, '<img style="max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 0 16px 0;" ')
+}
+
+/**
+ * Replace {{voornaam}} variable with recipient's first name.
+ */
+function replaceVariables(html: string, firstName?: string): string {
+  const name = firstName || 'lezer'
+  return html.replace(/\{\{voornaam\}\}/g, escapeHtml(name))
 }
 
 export function renderCampaignEmail(params: CampaignParams): string {
@@ -35,7 +47,8 @@ export function renderCampaignEmail(params: CampaignParams): string {
     ? `Beste ${params.firstName},`
     : 'Beste lezer,'
 
-  const bodyHtml = bodyToHtml(params.body)
+  // Body is HTML from WYSIWYG editor — add inline styles + replace variables
+  const bodyHtml = replaceVariables(addEmailStyles(params.body), params.firstName)
 
   const ctaBlock = params.ctaText && params.ctaUrl
     ? `<tr>

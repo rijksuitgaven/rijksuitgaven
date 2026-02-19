@@ -325,3 +325,36 @@
   opacity: 1;
   visibility: visible;
 }
+
+/* Tiptap WYSIWYG editor — email composer */
+.tiptap {
+  outline: none;
+}
+.tiptap p {
+  margin: 0 0 12px;
+}
+.tiptap ul,
+.tiptap ol {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+.tiptap li {
+  margin: 0 0 4px;
+}
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+.tiptap a {
+  color: #436FA3;
+  text-decoration: none;
+}
+.tiptap p.is-editor-empty:first-child::before {
+  color: var(--navy-medium);
+  opacity: 0.5;
+  content: "Schrijf uw bericht hier...";
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

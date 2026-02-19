@@ -7,6 +7,7 @@ import {
   Users, RefreshCw, CheckCircle, AlertTriangle,
   Mail, Send, Eye, ChevronDown,
 } from 'lucide-react'
+import { EmailEditor } from '@/components/email-editor/email-editor'
 
 interface MailData {
   counts: {
@@ -154,7 +155,9 @@ export default function MailPage() {
       : data.counts[segment as keyof typeof data.counts] ?? 0
     : 0
 
-  const canSend = subject.trim() && heading.trim() && body.trim() && !sending
+  // Body from Tiptap is HTML — check it's not just empty tags
+  const bodyHasContent = body.replace(/<[^>]*>/g, '').trim().length > 0
+  const canSend = subject.trim() && heading.trim() && bodyHasContent && !sending
 
   if (subLoading) return null
   if (role !== 'admin') {
@@ -249,13 +252,10 @@ export default function MailPage() {
                 {/* Body */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Bericht</label>
-                  <textarea
-                    value={body}
-                    onChange={e => setBody(e.target.value)}
-                    placeholder="Schrijf uw bericht hier. Gebruik lege regels voor alinea's."
-                    rows={8}
-                    className="w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent resize-y"
-                  />
+                  <EmailEditor value={body} onChange={setBody} />
+                  <p className="mt-1 text-xs text-[var(--navy-medium)]">
+                    Gebruik de werkbalk voor opmaak. Klik &ldquo;Voornaam&rdquo; om de naam van de ontvanger in te voegen.
+                  </p>
                 </div>
 
                 {/* CTA (optional) */}
@@ -370,11 +370,12 @@ export default function MailPage() {
                       </h2>
                       <div className="text-sm" style={{ color: '#4a4a4a', lineHeight: '24px' }}>
                         <p className="mb-3">Beste Michiel,</p>
-                        {body.split(/\n\n+/).map((para, i) => (
-                          <p key={i} className="mb-3" dangerouslySetInnerHTML={{
-                            __html: para.replace(/\n/g, '<br />')
-                          }} />
-                        ))}
+                        <div
+                          className="[&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-3 [&_li]:mb-1 [&_strong]:font-bold [&_em]:italic [&_a]:text-[#436FA3] [&_img]:max-w-full [&_img]:rounded"
+                          dangerouslySetInnerHTML={{
+                            __html: body.replace(/\{\{voornaam\}\}/g, 'Michiel')
+                          }}
+                        />
                       </div>
                       {ctaText && ctaUrl && (
                         <div className="text-center mt-4">
