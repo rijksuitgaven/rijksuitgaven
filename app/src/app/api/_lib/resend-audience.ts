@@ -176,7 +176,8 @@ export async function backfillResendAudience(): Promise<{
   }
 
   const resend = new Resend(RESEND_API_KEY)
-  const CONCURRENCY = 5
+  const CONCURRENCY = 1  // Resend free plan: 2 req/s — sequential to stay within limit
+  const DELAY_MS = 600   // 600ms between requests to stay under 2/s
   const queue = [...people]
 
   async function processOne(person: NonNullable<typeof people>[number]): Promise<void> {
@@ -244,9 +245,9 @@ export async function backfillResendAudience(): Promise<{
     }
   }
 
-  for (let i = 0; i < queue.length; i += CONCURRENCY) {
-    const batch = queue.slice(i, i + CONCURRENCY)
-    await Promise.all(batch.map(processOne))
+  for (const person of queue) {
+    await processOne(person)
+    await new Promise(resolve => setTimeout(resolve, DELAY_MS))
   }
 
   return stats
