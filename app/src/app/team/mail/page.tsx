@@ -5,9 +5,9 @@ import { useSubscription } from '@/hooks/use-subscription'
 import { TeamNav } from '@/components/team-nav'
 import {
   Users, RefreshCw, CheckCircle, AlertTriangle,
-  Mail, Send, Eye, ChevronDown,
+  Mail, Send, Eye, EyeOff, ChevronDown, History, Copy,
 } from 'lucide-react'
-import { EmailEditor } from '@/components/email-editor/email-editor'
+import { EmailEditor, type UploadedImage } from '@/components/email-editor/email-editor'
 
 interface MailData {
   counts: {
@@ -37,6 +37,20 @@ interface SendResult {
   segment: string
 }
 
+interface Campaign {
+  id: string
+  subject: string
+  heading: string
+  preheader: string | null
+  body: string
+  cta_text: string | null
+  cta_url: string | null
+  segment: string
+  sent_count: number
+  failed_count: number
+  sent_at: string
+}
+
 const LIST_CONFIG = [
   { key: 'leden', label: 'Leden', color: 'bg-blue-50 border-blue-200 text-blue-700' },
   { key: 'prospects', label: 'Prospects', color: 'bg-amber-50 border-amber-200 text-amber-700' },
@@ -49,6 +63,13 @@ const SEGMENT_OPTIONS = [
   { value: 'churned', label: 'Churned' },
   { value: 'iedereen', label: 'Iedereen' },
 ] as const
+
+const SEGMENT_LABELS: Record<string, string> = {
+  leden: 'Leden',
+  prospects: 'Prospects',
+  churned: 'Churned',
+  iedereen: 'Iedereen',
+}
 
 export default function MailPage() {
   const { role, loading: subLoading } = useSubscription()
@@ -63,17 +84,27 @@ export default function MailPage() {
   // Compose state
   const [subject, setSubject] = useState('')
   const [heading, setHeading] = useState('')
+  const [preheader, setPreheader] = useState('')
   const [body, setBody] = useState('')
   const [ctaText, setCtaText] = useState('')
   const [ctaUrl, setCtaUrl] = useState('')
   const [segment, setSegment] = useState<string>('leden')
   const [showPreview, setShowPreview] = useState(false)
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null)
+  const [previewLoading, setPreviewLoading] = useState(false)
+
+  // Uploaded images state
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([])
 
   // Send state
   const [sending, setSending] = useState(false)
   const [sendResult, setSendResult] = useState<SendResult | null>(null)
   const [sendError, setSendError] = useState<string | null>(null)
   const [confirmSend, setConfirmSend] = useState(false)
+
+  // Campaign history state
+  const [campaigns, setCampaigns] = useState<Campaign[]>([])
+  const [campaignsLoading, setCampaignsLoading] = useState(false)
 
   const fetchData = useCallback(() => {
     setLoading(true)
@@ -86,13 +117,25 @@ export default function MailPage() {
       .catch(() => setLoading(false))
   }, [])
 
+  const fetchCampaigns = useCallback(() => {
+    setCampaignsLoading(true)
+    fetch('/api/v1/team/mail/campaigns')
+      .then(res => res.json())
+      .then(d => {
+        setCampaigns(d.campaigns || [])
+        setCampaignsLoading(false)
+      })
+      .catch(() => setCampaignsLoading(false))
+  }, [])
+
   useEffect(() => {
     if (!subLoading && role === 'admin') {
       fetchData()
+      fetchCampaigns()
     } else if (!subLoading) {
       setLoading(false)
     }
-  }, [subLoading, role, fetchData])
+  }, [subLoading, role, fetchData, fetchCampaigns])
 
   const handleSync = useCallback(async () => {
     setSyncing(true)
@@ -116,6 +159,38 @@ export default function MailPage() {
     }
   }, [fetchData])
 
+  const handlePreview = useCallback(async () => {
+    if (showPreview) {
+      setShowPreview(false)
+      return
+    }
+
+    setPreviewLoading(true)
+    try {
+      const res = await fetch('/api/v1/team/mail/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: subject.trim(),
+          heading: heading.trim(),
+          preheader: preheader.trim() || undefined,
+          bodyHtml: body.trim(),
+          ctaText: ctaText.trim() || undefined,
+          ctaUrl: ctaUrl.trim() || undefined,
+        }),
+      })
+      if (res.ok) {
+        const html = await res.text()
+        setPreviewHtml(html)
+        setShowPreview(true)
+      }
+    } catch {
+      // Silent — preview is non-critical
+    } finally {
+      setPreviewLoading(false)
+    }
+  }, [showPreview, subject, heading, preheader, body, ctaText, ctaUrl])
+
   const handleSend = useCallback(async () => {
     setConfirmSend(false)
     setSending(true)
@@ -129,6 +204,7 @@ export default function MailPage() {
         body: JSON.stringify({
           subject: subject.trim(),
           heading: heading.trim(),
+          preheader: preheader.trim() || undefined,
           body: body.trim(),
           ctaText: ctaText.trim() || undefined,
           ctaUrl: ctaUrl.trim() || undefined,
@@ -141,13 +217,37 @@ export default function MailPage() {
         setSendError(result.error || 'Verzenden mislukt')
       } else {
         setSendResult(result)
+        fetchCampaigns() // Refresh campaign list
       }
     } catch {
       setSendError('Netwerkfout bij verzenden')
     } finally {
       setSending(false)
     }
-  }, [subject, heading, body, ctaText, ctaUrl, segment])
+  }, [subject, heading, preheader, body, ctaText, ctaUrl, segment, fetchCampaigns])
+
+  const handleUseAsTemplate = useCallback((campaign: Campaign) => {
+    setSubject(campaign.subject)
+    setHeading(campaign.heading)
+    setPreheader(campaign.preheader || '')
+    setBody(campaign.body)
+    setCtaText(campaign.cta_text || '')
+    setCtaUrl(campaign.cta_url || '')
+    setSegment(campaign.segment)
+    setSendResult(null)
+    setSendError(null)
+    setShowPreview(false)
+    // Scroll to compose form
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
+  const handleImageUploaded = useCallback((img: UploadedImage) => {
+    setUploadedImages(prev => [...prev, img])
+  }, [])
+
+  const handleImageDeleted = useCallback((filename: string) => {
+    setUploadedImages(prev => prev.filter(img => img.filename !== filename))
+  }, [])
 
   const recipientCount = data
     ? segment === 'iedereen'
@@ -237,6 +337,24 @@ export default function MailPage() {
                   />
                 </div>
 
+                {/* Preheader */}
+                <div>
+                  <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">
+                    Preheader <span className="font-normal text-[var(--navy-medium)]">(optioneel)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={preheader}
+                    onChange={e => setPreheader(e.target.value)}
+                    placeholder="Voorbeeldtekst naast het onderwerp in de inbox"
+                    maxLength={150}
+                    className="w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
+                  />
+                  <p className="mt-1 text-xs text-[var(--navy-medium)]">
+                    Wordt getoond naast het onderwerp in de inbox van de ontvanger. Max 150 tekens.
+                  </p>
+                </div>
+
                 {/* Heading */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Koptekst</label>
@@ -252,7 +370,13 @@ export default function MailPage() {
                 {/* Body */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Bericht</label>
-                  <EmailEditor value={body} onChange={setBody} />
+                  <EmailEditor
+                    value={body}
+                    onChange={setBody}
+                    uploadedImages={uploadedImages}
+                    onImageUploaded={handleImageUploaded}
+                    onImageDeleted={handleImageDeleted}
+                  />
                   <p className="mt-1 text-xs text-[var(--navy-medium)]">
                     Gebruik de werkbalk voor opmaak. Klik &ldquo;Voornaam&rdquo; om de naam van de ontvanger in te voegen.
                   </p>
@@ -289,11 +413,17 @@ export default function MailPage() {
                 {/* Actions */}
                 <div className="flex items-center gap-3 pt-2">
                   <button
-                    onClick={() => setShowPreview(!showPreview)}
-                    disabled={!canSend}
+                    onClick={handlePreview}
+                    disabled={!canSend || previewLoading}
                     className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors disabled:opacity-50"
                   >
-                    <Eye className="w-4 h-4" />
+                    {previewLoading ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : showPreview ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
                     {showPreview ? 'Verberg voorbeeld' : 'Voorbeeld'}
                   </button>
 
@@ -349,56 +479,94 @@ export default function MailPage() {
               )}
             </div>
 
-            {/* Email preview */}
-            {showPreview && canSend && (
+            {/* Email preview — server-rendered iframe */}
+            {showPreview && previewHtml && (
               <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
-                <h3 className="text-sm font-semibold text-[var(--navy-dark)] mb-3">Voorbeeld</h3>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-semibold text-[var(--navy-dark)]">Voorbeeld</h3>
+                  <span className="text-xs text-[var(--navy-medium)]">
+                    Exact zoals ontvangers het zien
+                  </span>
+                </div>
                 <div className="border border-[var(--border)] rounded-lg overflow-hidden">
                   <div className="bg-[var(--gray-light)] px-4 py-2 text-xs text-[var(--navy-medium)] border-b border-[var(--border)]">
                     <span className="font-medium">Onderwerp:</span> {subject}
+                    {preheader && (
+                      <span className="ml-3 text-[var(--navy-medium)]/60">— {preheader}</span>
+                    )}
                   </div>
-                  <div
-                    className="bg-[#E1EAF2] p-6"
-                    style={{ minHeight: 200 }}
-                  >
-                    <div
-                      className="mx-auto bg-white rounded-lg p-8"
-                      style={{ maxWidth: 480, fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}
-                    >
-                      <h2 className="text-center font-bold text-lg mb-3" style={{ color: '#0E3261' }}>
-                        {heading}
-                      </h2>
-                      <div className="text-sm" style={{ color: '#4a4a4a', lineHeight: '24px' }}>
-                        <p className="mb-3">Beste Michiel,</p>
-                        <div
-                          className="[&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-3 [&_li]:mb-1 [&_strong]:font-bold [&_em]:italic [&_a]:text-[#436FA3] [&_img]:max-w-full [&_img]:rounded"
-                          dangerouslySetInnerHTML={{
-                            __html: body.replace(/\{\{voornaam\}\}/g, 'Michiel')
-                          }}
-                        />
-                      </div>
-                      {ctaText && ctaUrl && (
-                        <div className="text-center mt-4">
-                          <span
-                            className="inline-block px-8 py-3 text-white text-sm font-semibold rounded-md"
-                            style={{ backgroundColor: '#D4286B' }}
-                          >
-                            {ctaText}
-                          </span>
-                        </div>
-                      )}
-                      <hr className="my-4 border-gray-200" />
-                      <p className="text-xs text-center text-gray-400">
-                        Vragen? Neem contact op met ons team.
-                      </p>
-                    </div>
-                    <p className="text-xs text-center text-gray-400 mt-4">
-                      Rijksuitgaven.nl &middot; Het Maven Collectief &middot; <span className="underline">Afmelden</span>
-                    </p>
-                  </div>
+                  <iframe
+                    srcDoc={previewHtml}
+                    sandbox=""
+                    title="E-mail voorbeeld"
+                    className="w-full border-0"
+                    style={{ height: 600 }}
+                  />
                 </div>
               </div>
             )}
+
+            {/* Campaign history */}
+            <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
+              <div className="flex items-center gap-2 mb-4">
+                <History className="w-5 h-5 text-[var(--navy-dark)]" />
+                <h3 className="text-base font-semibold text-[var(--navy-dark)]">Verzonden</h3>
+              </div>
+
+              {campaignsLoading ? (
+                <div className="animate-pulse space-y-2">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="h-12 bg-[var(--gray-light)] rounded" />
+                  ))}
+                </div>
+              ) : campaigns.length === 0 ? (
+                <p className="text-sm text-[var(--navy-medium)]">Nog geen campagnes verzonden.</p>
+              ) : (
+                <div className="divide-y divide-[var(--border)]">
+                  {campaigns.map(campaign => (
+                    <div key={campaign.id} className="py-3 first:pt-0 last:pb-0">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-[var(--navy-dark)] truncate">
+                              {campaign.subject}
+                            </span>
+                            <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-[var(--gray-light)] text-[var(--navy-medium)]">
+                              {SEGMENT_LABELS[campaign.segment] || campaign.segment}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3 mt-1 text-xs text-[var(--navy-medium)]">
+                            <span>
+                              {new Date(campaign.sent_at).toLocaleDateString('nl-NL', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
+                            <span>
+                              {campaign.sent_count} verstuurd
+                              {campaign.failed_count > 0 && (
+                                <span className="text-[var(--error)]"> · {campaign.failed_count} mislukt</span>
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleUseAsTemplate(campaign)}
+                          className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors"
+                          title="Gebruik als sjabloon"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                          Sjabloon
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Sync section */}
             <div className="bg-white rounded-lg border border-[var(--border)] p-5">

@@ -11,6 +11,7 @@
 export interface CampaignParams {
   subject: string
   heading: string
+  preheader?: string
   body: string
   ctaText?: string
   ctaUrl?: string
@@ -50,6 +51,11 @@ export function renderCampaignEmail(params: CampaignParams): string {
   // Body is HTML from WYSIWYG editor — add inline styles + replace variables
   const bodyHtml = replaceVariables(addEmailStyles(params.body), params.firstName)
 
+  // Preheader: hidden text shown in email client preview (next to subject line)
+  const preheaderBlock = params.preheader
+    ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${escapeHtml(params.preheader)}</div><div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${'&zwnj;&nbsp;'.repeat(40)}</div>`
+    : ''
+
   const ctaBlock = params.ctaText && params.ctaUrl
     ? `<tr>
         <td align="center" style="padding-bottom: 24px;">
@@ -74,6 +80,7 @@ export function renderCampaignEmail(params: CampaignParams): string {
   <title>${escapeHtml(params.subject)}</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #E1EAF2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  ${preheaderBlock}
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #E1EAF2;">
     <tr>
       <td align="center" style="padding: 40px 20px;">

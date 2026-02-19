@@ -14,6 +14,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { isAdmin } from '@/app/api/_lib/admin'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
+import { createClient } from '@/lib/supabase/server'
 import { computeListType, type ListType } from '@/app/api/_lib/resend-audience'
 import { renderCampaignEmail } from '@/app/api/_lib/campaign-template'
 
@@ -29,6 +30,7 @@ function forbiddenResponse() {
 interface SendRequest {
   subject: string
   heading: string
+  preheader?: string
   body: string
   ctaText?: string
   ctaUrl?: string
@@ -61,7 +63,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { subject, heading, body, ctaText, ctaUrl, segment } = params
+  const { subject, heading, preheader, body, ctaText, ctaUrl, segment } = params
 
   if (!subject?.trim() || !heading?.trim() || !body?.trim() || !segment) {
     return NextResponse.json({ error: 'Verplichte velden: subject, heading, body, segment' }, { status: 400 })
@@ -131,6 +133,7 @@ export async function POST(request: NextRequest) {
       const html = renderCampaignEmail({
         subject,
         heading,
+        preheader: preheader || undefined,
         body,
         ctaText: ctaText || undefined,
         ctaUrl: ctaUrl || undefined,
@@ -167,6 +170,27 @@ export async function POST(request: NextRequest) {
     if (i + BATCH_SIZE < recipients.length) {
       await new Promise(resolve => setTimeout(resolve, BATCH_DELAY_MS))
     }
+  }
+
+  // Save campaign to history
+  try {
+    const sessionClient = await createClient()
+    const { data: { session } } = await sessionClient.auth.getSession()
+    await supabase.from('campaigns').insert({
+      subject,
+      heading,
+      preheader: preheader || null,
+      body,
+      cta_text: ctaText || null,
+      cta_url: ctaUrl || null,
+      segment,
+      sent_count: stats.sent,
+      failed_count: stats.failed,
+      sent_by: session?.user?.id || null,
+    })
+  } catch (err) {
+    // Non-fatal: campaign was sent, history save failed
+    console.error('[Campaign] Failed to save campaign history:', err)
   }
 
   return NextResponse.json({
