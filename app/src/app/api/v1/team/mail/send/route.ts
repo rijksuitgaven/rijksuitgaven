@@ -18,7 +18,6 @@ import { Resend } from 'resend'
 import { isAdmin } from '@/app/api/_lib/admin'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 import { createClient } from '@/lib/supabase/server'
-import { computeListType, type ListType } from '@/app/api/_lib/resend-audience'
 import { renderCampaignEmail } from '@/app/api/_lib/campaign-template'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
@@ -30,6 +29,15 @@ function forbiddenResponse() {
   return NextResponse.json({ error: 'Geen toegang' }, { status: 403 })
 }
 
+const VALID_SEGMENTS = new Set(['nieuw', 'in_gesprek', 'leden_maandelijks', 'leden_jaarlijks', 'verloren', 'ex_klant'])
+
+function isActiveSub(sub: { cancelled_at: string | null; deleted_at: string | null; end_date: string | null; grace_ends_at: string | null }): boolean {
+  if (sub.cancelled_at || sub.deleted_at) return false
+  const now = new Date().toISOString().split('T')[0]
+  const graceEnd = sub.grace_ends_at || sub.end_date
+  return !!graceEnd && graceEnd >= now
+}
+
 interface SendRequest {
   subject: string
   heading: string
@@ -37,7 +45,7 @@ interface SendRequest {
   body: string
   ctaText?: string
   ctaUrl?: string
-  segment: 'leden' | 'prospects' | 'churned' | 'iedereen'
+  segments: string[]
 }
 
 export async function POST(request: NextRequest) {
@@ -66,14 +74,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { subject, heading, preheader, body, ctaText, ctaUrl, segment } = params
+  const { subject, heading, preheader, body, ctaText, ctaUrl, segments } = params
 
-  if (!subject?.trim() || !heading?.trim() || !body?.trim() || !segment) {
-    return NextResponse.json({ error: 'Verplichte velden: subject, heading, body, segment' }, { status: 400 })
+  if (!subject?.trim() || !heading?.trim() || !body?.trim() || !segments?.length) {
+    return NextResponse.json({ error: 'Verplichte velden: subject, heading, body, segments' }, { status: 400 })
   }
 
-  if (!['leden', 'prospects', 'churned', 'iedereen'].includes(segment)) {
-    return NextResponse.json({ error: 'Ongeldig segment' }, { status: 400 })
+  if (!Array.isArray(segments) || segments.length > 6 || segments.some(s => !VALID_SEGMENTS.has(s))) {
+    return NextResponse.json({ error: 'Ongeldige segmenten' }, { status: 400 })
   }
 
   if (ctaUrl && !/^https?:\/\/.+/.test(ctaUrl)) {
@@ -85,7 +93,7 @@ export async function POST(request: NextRequest) {
 
   const { data: people, error: fetchError } = await supabase
     .from('people')
-    .select('id, email, first_name, unsubscribe_token, archived_at, unsubscribed_at')
+    .select('id, email, first_name, pipeline_stage, unsubscribe_token, archived_at, unsubscribed_at')
 
   if (fetchError || !people) {
     return NextResponse.json({ error: 'Fout bij ophalen contacten' }, { status: 500 })
@@ -102,16 +110,25 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Filter recipients based on segment, exclude archived/unsubscribed
+  const segmentSet = new Set(segments)
+
+  // Filter recipients based on pipeline stage + plan, exclude archived/unsubscribed
   const recipients = people.filter(person => {
     if (!person.email || person.archived_at || person.unsubscribed_at) return false
     if (!person.unsubscribe_token) return false
 
-    if (segment === 'iedereen') return true
+    const stage = person.pipeline_stage
 
-    const sub = subMap.get(person.id) || null
-    const list: ListType = computeListType(sub)
-    return list === segment
+    if (stage === 'gewonnen') {
+      const sub = subMap.get(person.id)
+      if (sub && isActiveSub(sub)) {
+        if (sub.plan === 'monthly' && segmentSet.has('leden_maandelijks')) return true
+        if (sub.plan === 'yearly' && segmentSet.has('leden_jaarlijks')) return true
+      }
+      return false
+    }
+
+    return segmentSet.has(stage)
   })
 
   if (recipients.length === 0) {
@@ -138,7 +155,7 @@ export async function POST(request: NextRequest) {
       body,
       cta_text: ctaText || null,
       cta_url: ctaUrl || null,
-      segment,
+      segment: segments.join(','),
       sent_count: 0,
       failed_count: 0,
       sent_by: sentBy,
@@ -224,6 +241,6 @@ export async function POST(request: NextRequest) {
     sent: stats.sent,
     failed: stats.failed,
     total: stats.total,
-    segment,
+    segments,
   })
 }

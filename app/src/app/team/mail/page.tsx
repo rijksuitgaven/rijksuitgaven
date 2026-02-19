@@ -5,19 +5,14 @@ import { useSubscription } from '@/hooks/use-subscription'
 import { TeamNav } from '@/components/team-nav'
 import {
   RefreshCw, CheckCircle, AlertTriangle,
-  Mail, Send, Eye, EyeOff, ChevronDown, Copy,
+  Mail, Send, Eye, EyeOff, Copy,
   ChevronRight, MousePointerClick, MailOpen, Ban, X,
   BarChart3, Trash2,
 } from 'lucide-react'
 import { EmailEditor, type UploadedImage } from '@/components/email-editor/email-editor'
 
 interface MailData {
-  counts: {
-    leden: number
-    churned: number
-    prospects: number
-  }
-  total: number
+  counts: Record<string, number>
 }
 
 interface SendResult {
@@ -59,17 +54,13 @@ interface CampaignRecipient {
   unsubscribed_at: string | null
 }
 
-const LIST_CONFIG = [
-  { key: 'leden', label: 'Leden', color: 'bg-blue-50 border-blue-200 text-blue-700' },
-  { key: 'prospects', label: 'Prospects', color: 'bg-amber-50 border-amber-200 text-amber-700' },
-  { key: 'churned', label: 'Churned', color: 'bg-gray-50 border-gray-200 text-gray-600' },
-] as const
-
 const SEGMENT_OPTIONS = [
-  { value: 'leden', label: 'Leden' },
-  { value: 'prospects', label: 'Prospects' },
-  { value: 'churned', label: 'Churned' },
-  { value: 'iedereen', label: 'Iedereen' },
+  { value: 'nieuw', label: 'Nieuw' },
+  { value: 'in_gesprek', label: 'In gesprek' },
+  { value: 'leden_maandelijks', label: 'Leden (maandelijks)' },
+  { value: 'leden_jaarlijks', label: 'Leden (jaarlijks)' },
+  { value: 'verloren', label: 'Verloren' },
+  { value: 'ex_klant', label: 'Ex-klant' },
 ] as const
 
 function formatTime(iso: string): string {
@@ -82,11 +73,15 @@ function formatTime(iso: string): string {
 }
 
 const SEGMENT_LABELS: Record<string, string> = {
-  leden: 'Leden',
-  prospects: 'Prospects',
-  churned: 'Churned',
-  iedereen: 'Iedereen',
+  nieuw: 'Nieuw',
+  in_gesprek: 'In gesprek',
+  leden_maandelijks: 'Leden (maandelijks)',
+  leden_jaarlijks: 'Leden (jaarlijks)',
+  verloren: 'Verloren',
+  ex_klant: 'Ex-klant',
 }
+
+const VALID_SEGMENTS_SET = new Set<string>(SEGMENT_OPTIONS.map(o => o.value))
 
 type Tab = 'compose' | 'campaigns'
 
@@ -103,7 +98,7 @@ export default function MailPage() {
   const [body, setBody] = useState('')
   const [ctaText, setCtaText] = useState('')
   const [ctaUrl, setCtaUrl] = useState('')
-  const [segment, setSegment] = useState<string>('leden')
+  const [selectedSegments, setSelectedSegments] = useState<Set<string>>(new Set(['nieuw']))
   const [showPreview, setShowPreview] = useState(false)
   const [previewHtml, setPreviewHtml] = useState<string | null>(null)
   const [previewLoading, setPreviewLoading] = useState(false)
@@ -225,7 +220,7 @@ export default function MailPage() {
           body: body.trim(),
           ctaText: ctaText.trim() || undefined,
           ctaUrl: ctaUrl.trim() || undefined,
-          segment,
+          segments: Array.from(selectedSegments),
         }),
       })
       const result = await res.json()
@@ -241,7 +236,7 @@ export default function MailPage() {
     } finally {
       setSending(false)
     }
-  }, [subject, heading, preheader, body, ctaText, ctaUrl, segment, fetchCampaigns])
+  }, [subject, heading, preheader, body, ctaText, ctaUrl, selectedSegments, fetchCampaigns])
 
   const handleUseAsTemplate = useCallback((campaign: Campaign) => {
     setSubject(campaign.subject)
@@ -250,7 +245,8 @@ export default function MailPage() {
     setBody(campaign.body)
     setCtaText(campaign.cta_text || '')
     setCtaUrl(campaign.cta_url || '')
-    setSegment(campaign.segment)
+    const segs = campaign.segment.split(',').filter(s => VALID_SEGMENTS_SET.has(s))
+    setSelectedSegments(new Set(segs.length > 0 ? segs : ['nieuw']))
     setSendResult(null)
     setSendError(null)
     setShowPreview(false)
@@ -281,14 +277,12 @@ export default function MailPage() {
   }, [expandedCampaignId])
 
   const recipientCount = data
-    ? segment === 'iedereen'
-      ? data.total
-      : data.counts[segment as keyof typeof data.counts] ?? 0
+    ? Array.from(selectedSegments).reduce((sum, seg) => sum + (data.counts[seg] ?? 0), 0)
     : 0
 
   // Body from Tiptap is HTML — check it's not just empty tags
   const bodyHasContent = body.replace(/<[^>]*>/g, '').trim().length > 0
-  const canSend = subject.trim() && heading.trim() && bodyHasContent && !sending
+  const canSend = subject.trim() && heading.trim() && bodyHasContent && !sending && selectedSegments.size > 0
 
   if (subLoading) return null
   if (role !== 'admin') {
@@ -316,18 +310,6 @@ export default function MailPage() {
           </div>
         ) : data ? (
           <>
-            {/* Segment count cards */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              {LIST_CONFIG.map(({ key, label, color }) => (
-                <div key={key} className={`rounded-lg border p-4 ${color}`}>
-                  <div className="text-2xl font-bold tabular-nums">
-                    {data.counts[key as keyof typeof data.counts]}
-                  </div>
-                  <div className="text-sm font-medium mt-1">{label}</div>
-                </div>
-              ))}
-            </div>
-
             {/* Sub-tabs */}
             <div className="flex gap-1 mb-4">
               <button
@@ -366,23 +348,48 @@ export default function MailPage() {
               <>
                 <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
                   <div className="space-y-4">
-                    {/* Segment selector */}
+                    {/* Segment multi-select */}
                     <div>
-                      <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Ontvangers</label>
-                      <div className="relative">
-                        <select
-                          value={segment}
-                          onChange={e => setSegment(e.target.value)}
-                          className="w-full appearance-none rounded-lg border border-[var(--border)] px-3 py-2.5 text-sm text-[var(--navy-dark)] bg-white pr-8 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
-                        >
-                          {SEGMENT_OPTIONS.map(opt => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                          ))}
-                        </select>
-                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--navy-medium)] pointer-events-none" />
+                      <label className="block text-sm font-medium text-[var(--navy-dark)] mb-2">Ontvangers</label>
+                      <div className="space-y-1">
+                        {SEGMENT_OPTIONS.map(opt => {
+                          const count = data?.counts[opt.value] ?? 0
+                          const checked = selectedSegments.has(opt.value)
+                          return (
+                            <label
+                              key={opt.value}
+                              className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                                checked
+                                  ? 'bg-[var(--navy-dark)]/5 border border-[var(--navy-dark)]/20'
+                                  : 'border border-transparent hover:bg-[var(--gray-light)]'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2.5">
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  onChange={() => {
+                                    setSelectedSegments(prev => {
+                                      const next = new Set(prev)
+                                      if (next.has(opt.value)) next.delete(opt.value)
+                                      else next.add(opt.value)
+                                      return next
+                                    })
+                                  }}
+                                  className="w-4 h-4 rounded border-[var(--border)] text-[var(--pink)] focus:ring-[var(--pink)]"
+                                />
+                                <span className="text-sm text-[var(--navy-dark)]">{opt.label}</span>
+                              </div>
+                              <span className="text-xs tabular-nums text-[var(--navy-medium)]">{count}</span>
+                            </label>
+                          )
+                        })}
                       </div>
-                      <p className="mt-1 text-xs text-[var(--navy-medium)]">
-                        {recipientCount} ontvanger{recipientCount !== 1 ? 's' : ''}
+                      <p className="mt-2 text-xs text-[var(--navy-medium)]">
+                        {selectedSegments.size > 0
+                          ? `${recipientCount} ontvanger${recipientCount !== 1 ? 's' : ''} geselecteerd`
+                          : 'Selecteer minimaal één groep'
+                        }
                       </p>
                     </div>
 
@@ -603,9 +610,11 @@ export default function MailPage() {
                                   <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                                   {campaign.subject}
                                 </button>
-                                <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-[var(--gray-light)] text-[var(--navy-medium)]">
-                                  {SEGMENT_LABELS[campaign.segment] || campaign.segment}
-                                </span>
+                                {campaign.segment.split(',').map(seg => (
+                                  <span key={seg} className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-[var(--gray-light)] text-[var(--navy-medium)]">
+                                    {SEGMENT_LABELS[seg] || seg}
+                                  </span>
+                                ))}
                               </div>
                               <div className="flex items-center gap-3 mt-1 ml-5 text-xs text-[var(--navy-medium)]">
                                 <span>

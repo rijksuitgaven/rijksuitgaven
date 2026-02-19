@@ -1,14 +1,14 @@
 /**
  * Admin API: Email audience management
  *
- * GET  /api/v1/team/mail — Get list counts + sync status
+ * GET  /api/v1/team/mail — Get pipeline-based recipient counts
  * POST /api/v1/team/mail — Trigger full Resend Audience sync
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { isAdmin } from '@/app/api/_lib/admin'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
-import { backfillResendAudience, computeListType } from '@/app/api/_lib/resend-audience'
+import { backfillResendAudience } from '@/app/api/_lib/resend-audience'
 
 function forbiddenResponse() {
   return NextResponse.json({ error: 'Geen toegang' }, { status: 403 })
@@ -19,42 +19,52 @@ export async function GET() {
 
   const supabase = createAdminClient()
 
-  // Fetch all people with subscriptions to compute list counts
   const { data: people } = await supabase
     .from('people')
-    .select('id, archived_at, resend_contact_id')
+    .select('id, pipeline_stage, archived_at, unsubscribed_at, unsubscribe_token')
 
   const { data: subscriptions } = await supabase
     .from('subscriptions')
     .select('person_id, plan, cancelled_at, deleted_at, end_date, grace_ends_at')
 
-  // Build person_id → subscription map
-  const subMap = new Map<string, NonNullable<typeof subscriptions>[number]>()
+  // Build active subscription map: person_id → plan
+  const activeSubMap = new Map<string, string>()
   if (subscriptions) {
+    const now = new Date().toISOString().split('T')[0]
     for (const sub of subscriptions) {
-      subMap.set(sub.person_id, sub)
+      if (sub.cancelled_at || sub.deleted_at) continue
+      const graceEnd = sub.grace_ends_at || sub.end_date
+      if (graceEnd && graceEnd >= now) {
+        activeSubMap.set(sub.person_id, sub.plan)
+      }
     }
   }
 
-  // Compute counts
-  const counts = { leden: 0, churned: 0, prospects: 0 }
-  let resendContacts = 0
+  const counts: Record<string, number> = {
+    nieuw: 0,
+    in_gesprek: 0,
+    leden_maandelijks: 0,
+    leden_jaarlijks: 0,
+    verloren: 0,
+    ex_klant: 0,
+  }
 
   if (people) {
     for (const person of people) {
-      if (person.archived_at) continue
-      const sub = subMap.get(person.id) || null
-      const list = computeListType(sub)
-      counts[list]++
-      if (person.resend_contact_id) resendContacts++
+      if (!person.unsubscribe_token || person.archived_at || person.unsubscribed_at) continue
+
+      const stage = person.pipeline_stage
+      if (stage === 'gewonnen') {
+        const plan = activeSubMap.get(person.id)
+        if (plan === 'monthly') counts.leden_maandelijks++
+        else if (plan === 'yearly') counts.leden_jaarlijks++
+      } else if (stage in counts) {
+        counts[stage]++
+      }
     }
   }
 
-  return NextResponse.json({
-    counts,
-    resend_contacts: resendContacts,
-    total: Object.values(counts).reduce((a, b) => a + b, 0),
-  })
+  return NextResponse.json({ counts })
 }
 
 export async function POST(request: NextRequest) {
