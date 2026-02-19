@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-02-19
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE, footer COMPLETE, about page COMPLETE, support page COMPLETE, data availability audit COMPLETE, datasets page COMPLETE, data table UX COMPLETE, mobile responsiveness COMPLETE, email campaign system COMPLETE)
+**Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE, footer COMPLETE, about page COMPLETE, support page COMPLETE, data availability audit COMPLETE, datasets page COMPLETE, data table UX COMPLETE, mobile responsiveness COMPLETE, email campaign system COMPLETE, campaign analytics COMPLETE)
 
 ---
 
@@ -121,6 +121,7 @@
 - ✅ **2026-02-19 (Session 2):** Self-service campaigns + branded unsubscribe. Adversarial review caught P0: unsigned email in URL, two-path sync, GDPR re-subscribe. Replaced Resend Dashboard with own compose UI + Batch API. `/afmelden?token=UUID` (opaque tokens). Webhook for Gmail header unsubscribes (Svix). `List-Unsubscribe` headers (RFC 8058). `unsubscribed_at` GDPR guard. Migration 058. First campaign sent. 1 commit.
 - ✅ **2026-02-19 (Session 3):** WYSIWYG email editor — Tiptap with toolbar (bold, italic, lists, links, images). `{{voornaam}}` variable button (per-recipient replacement, "lezer" fallback). Email-safe inline styles for client compatibility. 1 commit.
 - ✅ **2026-02-19 (Session 4):** Email campaign improvements — 4 features via expert panel. Preheader field (hidden inbox preview text, zwnj spacer). Full-fidelity preview (server-rendered iframe via POST /preview, shows logo+template). Image upload/delete (Supabase Storage `email-images` bucket, 2MB max, file picker in toolbar, thumbnail strip with delete). Campaign history (migration 059, GET /campaigns, "Verzonden" section with "Sjabloon" reuse). Send endpoint saves to campaigns table. 1 commit.
+- ✅ **2026-02-19 (Session 5):** Campaign analytics — open/click/bounce tracking via Resend webhooks. 5-expert panel (deliverability, webhooks, GDPR, frontend, adversarial). Migration 060 (campaign_events table with dedup index). Send refactored: save campaign BEFORE sending, tag each email with campaign_id for webhook correlation. Webhook handler expanded: 5 email event types (delivered/opened/clicked/bounced/complained) → campaign_events. Campaign detail endpoint with per-recipient drill-down. Frontend: expandable campaign rows with engagement stats (open %, click %, bounces), per-recipient table. Apple MPP caveat (open rates indicatief). Privacy policy updated (email analytics under legitimate interest). 3 V1.1 backlog items (bounce suppress, complaint unsub, event retention). 1 commit.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ✅ **Homepage mobile** — Mobile responsiveness audit + 18 fixes across 10 public pages (2026-02-18, Session 8)
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -151,20 +152,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **Email campaign improvements** (2026-02-19, Session 4)
+1. **Campaign analytics** (2026-02-19, Session 5)
+   Open/click/bounce tracking via Resend webhooks. Migration 060, send-first tagging, webhook expansion (5 events), campaign detail drill-down, per-recipient table, privacy policy update. 1 commit.
+
+2. **Email campaign improvements** (2026-02-19, Session 4)
    Preheader, full-fidelity iframe preview, image upload/delete (Supabase Storage), campaign history with template reuse. 1 commit.
 
-2. **WYSIWYG email editor** (2026-02-19, Session 3)
+3. **WYSIWYG email editor** (2026-02-19, Session 3)
    Tiptap editor with toolbar, {{voornaam}} variable, email-safe inline styles. 1 commit.
 
-3. **Self-service campaigns + branded unsubscribe** (2026-02-19, Session 2)
+4. **Self-service campaigns + branded unsubscribe** (2026-02-19, Session 2)
    Compose UI, Resend Batch API, /afmelden with opaque tokens, webhook sync, RFC 8058 headers, GDPR guard. 1 commit.
 
-4. **Email campaign sync system** (2026-02-19, Session 1)
+5. **Email campaign sync system** (2026-02-19, Session 1)
    Resend Contacts API migration, 3 segments, sync engine, /team/mail admin page. 6 commits.
-
-5. **Mobile responsiveness audit + fixes** (2026-02-18, Session 8)
-   25 issues found, 18 fixes across 10 files. Touch targets, scroll indicators, responsive layouts. 1 commit.
 
 4. **"+N meer" grouping + staffel bug fix** (2026-02-18, Session 7)
    Context-aware expanded row grouping. Inkoop staffel 500 fix. 5 commits.
