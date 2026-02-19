@@ -9,9 +9,7 @@ export default function AfmeldenPage() {
   return (
     <Suspense fallback={
       <main className="min-h-screen bg-gradient-to-b from-[#E1EAF2] to-white flex items-center justify-center px-4">
-        <div className="max-w-sm w-full text-center">
-          <img src="/logo.png" alt="Rijksuitgaven" className="mx-auto" style={{ width: 180, height: 'auto' }} />
-        </div>
+        <div className="max-w-sm w-full text-center" />
       </main>
     }>
       <AfmeldenContent />
@@ -55,14 +53,6 @@ function AfmeldenContent() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#E1EAF2] to-white flex items-center justify-center px-4">
       <div className="max-w-sm w-full text-center space-y-6">
-        {/* Logo */}
-        <img
-          src="/logo.png"
-          alt="Rijksuitgaven"
-          className="mx-auto"
-          style={{ width: 180, height: 'auto' }}
-        />
-
         {status === 'success' ? (
           <>
             <div className="w-16 h-16 mx-auto rounded-full bg-green-50 flex items-center justify-center">
