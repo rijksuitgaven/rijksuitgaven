@@ -8,6 +8,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { LoginForm } from '@/components/auth/login-form'
+import { TrackPageView } from '@/components/analytics/track-page-view'
 
 export const metadata = {
   title: 'Inloggen',
@@ -23,6 +24,7 @@ export default async function LoginPage() {
 
   return (
     <main className="min-h-[calc(100vh-theme(spacing.24)-theme(spacing.16))] flex items-center justify-center px-4">
+      <TrackPageView page="login" />
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>

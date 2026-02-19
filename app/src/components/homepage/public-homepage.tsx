@@ -1,6 +1,8 @@
+// H7 PROTOTYPE HOMEPAGE — used by app/h7/page.tsx only, NOT the live site
+// The live homepage is homepage.tsx (rendered by app/page.tsx)
 'use client'
 
-import { useState, useEffect, useRef, type ReactNode } from 'react'
+import { useState, useEffect, useRef, useCallback, type ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useAnalytics } from '@/hooks/use-analytics'
@@ -14,13 +16,17 @@ export function ScrollReveal({
   children,
   className = '',
   as: Tag = 'div',
+  onVisible,
 }: {
   children: ReactNode
   className?: string
   as?: 'div' | 'section' | 'p' | 'ul'
+  onVisible?: () => void
 }) {
   const ref = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
+  const onVisibleRef = useRef(onVisible)
+  onVisibleRef.current = onVisible
 
   useEffect(() => {
     const el = ref.current
@@ -29,6 +35,7 @@ export function ScrollReveal({
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true)
+          onVisibleRef.current?.()
           observer.unobserve(el)
         }
       },
@@ -52,7 +59,7 @@ export function ScrollReveal({
 // Public Header (phone + demo + login)
 // ============================================================================
 
-export function PublicHeader() {
+export function PublicHeader({ onCtaClick }: { onCtaClick?: (section: string, element: string) => void }) {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-[var(--gray-light)]">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
@@ -82,6 +89,7 @@ export function PublicHeader() {
           <div className="flex items-center gap-3">
             <a
               href="tel:0850806960"
+              onClick={() => onCtaClick?.('header', 'phone')}
               className="hidden lg:inline-flex items-center gap-2 px-3 py-2 text-[15px] font-semibold text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pink)] focus-visible:ring-offset-2 rounded-lg"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -91,12 +99,14 @@ export function PublicHeader() {
             </a>
             <a
               href="#aanmelden"
+              onClick={() => onCtaClick?.('header', 'boek_demo')}
               className="inline-flex items-center px-4 py-2 text-[15px] font-bold text-white bg-[var(--pink)] rounded-lg hover:bg-[var(--pink-hover)] transition-all hover:shadow-lg hover:shadow-pink-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pink)] focus-visible:ring-offset-2"
             >
               Boek een demo
             </a>
             <Link
               href="/login"
+              onClick={() => onCtaClick?.('header', 'login')}
               className="inline-flex items-center px-4 py-2 text-[15px] font-bold text-[var(--pink)] border border-[var(--pink)] rounded-lg bg-white hover:bg-[#fce8f0] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pink)] focus-visible:ring-offset-2"
             >
               Login
@@ -113,11 +123,11 @@ export function PublicHeader() {
 // SPACING: pt-20 pb-16 (generous top, tighter to value props)
 // ============================================================================
 
-export function HeroSection() {
+export function HeroSection({ onCtaClick, onSectionView }: { onCtaClick?: (section: string, element: string) => void; onSectionView?: (section: string) => void }) {
   return (
     <section className="bg-white pt-16 md:pt-20 pb-12 md:pb-16">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
-        <ScrollReveal>
+        <ScrollReveal onVisible={() => onSectionView?.('hero')}>
           <h2 className="text-[32px] md:text-[44px] lg:text-[54px] font-bold leading-[1.1] tracking-tight text-[var(--pink)]" style={{ fontFamily: 'var(--font-heading), sans-serif', textWrap: 'balance' } as React.CSSProperties}>
             Waar gaat €1.700 miljard naartoe?
           </h2>
@@ -176,12 +186,14 @@ export function HeroSection() {
           <div className="mt-10 md:mt-12 flex flex-col sm:flex-row items-center gap-4">
             <a
               href="#aanmelden"
+              onClick={() => onCtaClick?.('hero', 'probeer_nu')}
               className="inline-flex items-center px-5 py-2.5 text-[16px] font-bold text-white bg-[var(--pink)] rounded-lg leading-[1.5] hover:bg-[var(--pink-hover)] transition-all hover:shadow-lg hover:shadow-pink-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pink)] focus-visible:ring-offset-2"
             >
               Probeer nu ›
             </a>
             <a
               href="#features"
+              onClick={() => onCtaClick?.('hero', 'bekijk_functies')}
               className="inline-flex items-center text-[16px] font-medium text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors underline underline-offset-4 decoration-[var(--navy-medium)]/30 hover:decoration-[var(--navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pink)] focus-visible:ring-offset-2 rounded"
             >
               Bekijk de functies
@@ -215,11 +227,11 @@ function ValueProp({ icon, title, description }: { icon: string; title: string; 
 // Trust Bar — data metrics that establish credibility instantly
 // ============================================================================
 
-export function TrustBar() {
+export function TrustBar({ onSectionView }: { onSectionView?: (section: string) => void }) {
   return (
     <section className="bg-white pb-2 md:pb-4">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
-        <ScrollReveal>
+        <ScrollReveal onVisible={() => onSectionView?.('trust')}>
           <div className="flex flex-wrap justify-center gap-8 md:gap-14 py-6 border-y border-[var(--gray-light)]">
             <div className="text-center">
               <p className="text-[26px] md:text-[32px] font-bold text-[var(--navy-dark)]" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>&euro;1.700+&nbsp;mld</p>
@@ -250,11 +262,11 @@ export function TrustBar() {
 // TRANSITION: bg switches to #f8f9fb (subtle off-white)
 // ============================================================================
 
-export function B2GSection() {
+export function B2GSection({ onCtaClick, onSectionView }: { onCtaClick?: (section: string, element: string) => void; onSectionView?: (section: string) => void }) {
   return (
     <section id="b2g" className="bg-[#f8f9fb] pt-16 md:pt-24 pb-16 md:pb-20">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
-        <ScrollReveal>
+        <ScrollReveal onVisible={() => onSectionView?.('b2g')}>
           <div className="max-w-[680px]">
             <span className="inline-block px-3 py-1 text-[13px] font-bold uppercase tracking-wider text-white bg-[var(--navy-dark)] rounded-md">
               Nieuwe dienst
@@ -276,12 +288,14 @@ export function B2GSection() {
           <div className="mt-8 flex flex-wrap gap-3">
             <a
               href="#aanmelden"
+              onClick={() => onCtaClick?.('b2g', 'maak_afspraak')}
               className="inline-flex items-center px-5 py-2.5 text-[16px] font-bold text-white bg-[var(--pink)] rounded-lg leading-[1.5] hover:bg-[var(--pink-hover)] transition-all hover:shadow-lg hover:shadow-pink-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pink)] focus-visible:ring-offset-2"
             >
               Maak afspraak ›
             </a>
             <a
               href="#aanmelden"
+              onClick={() => onCtaClick?.('b2g', 'vraag_brochure')}
               className="inline-flex items-center px-5 py-2.5 text-[16px] font-semibold text-[var(--pink)] border-2 border-[var(--pink)] rounded-lg leading-[1.5] hover:bg-[var(--pink)] hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pink)] focus-visible:ring-offset-2"
             >
               Vraag brochure aan
@@ -394,7 +408,7 @@ const audiences = [
   },
 ]
 
-export function AudienceSection() {
+export function AudienceSection({ onSectionView, onTabClick }: { onSectionView?: (section: string) => void; onTabClick?: (tab: string) => void }) {
   const [active, setActive] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const tabsRef = useRef<HTMLDivElement>(null)
@@ -410,7 +424,7 @@ export function AudienceSection() {
 
   return (
     <section className="bg-white py-12 md:py-16">
-      <ScrollReveal>
+      <ScrollReveal onVisible={() => onSectionView?.('audience')}>
         <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
           {/* Section label */}
           <p className="text-center text-[13px] font-semibold uppercase tracking-[0.15em] text-[var(--navy-medium)]/60 mb-6">
@@ -427,7 +441,7 @@ export function AudienceSection() {
             {audiences.map((audience, i) => (
               <button
                 key={i}
-                onClick={() => setActive(i)}
+                onClick={() => { setActive(i); onTabClick?.(audiences[i].label) }}
                 className={`relative z-10 flex items-center gap-2 px-4 py-2.5 rounded-full text-[14px] font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pink)] focus-visible:ring-offset-2 ${
                   i === active
                     ? 'text-white'
@@ -505,11 +519,11 @@ export function AudienceSection() {
 // TRANSITION: gradient from white to #f0f3f8
 // ============================================================================
 
-export function FeaturesSection() {
+export function FeaturesSection({ onCtaClick, onSectionView }: { onCtaClick?: (section: string, element: string) => void; onSectionView?: (section: string) => void }) {
   return (
     <section id="features" className="bg-gradient-to-b from-[#f8f9fb] from-[30%] to-[#eef2f7] pt-16 md:pt-20 pb-16 md:pb-24">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
-        <ScrollReveal>
+        <ScrollReveal onVisible={() => onSectionView?.('features')}>
           <p className="text-[28px] md:text-[38px] lg:text-[46px] text-[var(--pink)] font-bold leading-[1.1] tracking-tight" style={{ fontFamily: 'var(--font-heading), sans-serif', textWrap: 'balance' } as React.CSSProperties}>
             Het meest complete platform voor overheidsuitgaven
           </p>
@@ -600,6 +614,7 @@ export function FeaturesSection() {
             </p>
             <a
               href="#aanmelden"
+              onClick={() => onCtaClick?.('features', 'boek_demo')}
               className="inline-flex items-center mt-5 px-5 py-2.5 text-[16px] font-bold text-white bg-[var(--pink)] rounded-lg leading-[1.5] hover:bg-[var(--pink-hover)] transition-all hover:shadow-lg hover:shadow-pink-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--pink)] focus-visible:ring-offset-2"
             >
               Boek een demo ›
@@ -664,11 +679,11 @@ function FeatureCard({ title, description, images }: { title: string; descriptio
 // TRANSITION: gradient from #eef2f7 to white
 // ============================================================================
 
-export function SubscriptionSection() {
+export function SubscriptionSection({ onCtaClick, onSectionView }: { onCtaClick?: (section: string, element: string) => void; onSectionView?: (section: string) => void }) {
   return (
     <section className="bg-gradient-to-b from-[#eef2f7] to-white pt-12 md:pt-16 pb-16 md:pb-24">
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
-        <ScrollReveal>
+        <ScrollReveal onVisible={() => onSectionView?.('subscriptions')}>
           <h2 className="text-[28px] md:text-[38px] lg:text-[46px] font-bold leading-[1.1] tracking-tight text-[var(--pink)]" style={{ fontFamily: 'var(--font-heading), sans-serif', textWrap: 'balance' } as React.CSSProperties}>
             Onze abonnementen
           </h2>
@@ -778,6 +793,7 @@ export function SubscriptionSection() {
             <div className="mt-6">
               <a
                 href="#aanmelden"
+                onClick={() => onCtaClick?.('subscriptions', 'neem_contact_op')}
                 className="inline-flex items-center px-5 py-2 text-[16px] font-semibold text-white border-2 border-white/40 rounded-lg leading-[1.5] hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy-dark)]"
               >
                 Neem contact op ›
@@ -795,9 +811,10 @@ export function SubscriptionSection() {
 // SPACING: py-20 (spacious, final section, inviting)
 // ============================================================================
 
-export function ContactSection() {
+export function ContactSection({ onCtaClick, onSectionView, onFormStart, onFormSubmit }: { onCtaClick?: (section: string, element: string) => void; onSectionView?: (section: string) => void; onFormStart?: () => void; onFormSubmit?: (success: boolean) => void }) {
   const { track } = useAnalytics()
   const [formState, setFormState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const formStarted = useRef(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -820,13 +837,16 @@ export function ContactSection() {
 
       if (res.ok) {
         setFormState('sent')
+        onFormSubmit?.(true)
         form.reset()
       } else {
         setFormState('error')
+        onFormSubmit?.(false)
         track('error', undefined, { message: `Contact form HTTP ${res.status}`, trigger: 'contact_form' })
       }
     } catch (err) {
       setFormState('error')
+      onFormSubmit?.(false)
       track('error', undefined, { message: err instanceof Error ? err.message : 'Contact form network error', trigger: 'contact_form' })
     }
   }
@@ -836,7 +856,7 @@ export function ContactSection() {
       <div className="max-w-[1080px] mx-auto px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-start">
           {/* Left: text */}
-          <ScrollReveal>
+          <ScrollReveal onVisible={() => onSectionView?.('contact')}>
             <div>
               <h2 className="text-[30px] md:text-[36px] font-bold leading-[1.3] text-white" style={{ fontFamily: 'var(--font-heading), sans-serif', textWrap: 'balance' } as React.CSSProperties}>
                 Interesse? Vraag meteen een demo aan
@@ -848,7 +868,7 @@ export function ContactSection() {
                 Direct persoonlijk contact?
                 <br />
                 Bel ons op{' '}
-                <a href="tel:0850806960" className="text-white underline underline-offset-4 hover:no-underline font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--pink)] rounded">
+                <a href="tel:0850806960" onClick={() => onCtaClick?.('contact', 'phone')} className="text-white underline underline-offset-4 hover:no-underline font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--pink)] rounded">
                   085-0806960
                 </a>.
               </p>
@@ -867,7 +887,7 @@ export function ContactSection() {
                   <p className="mt-2 text-[15px] text-white/85">Wij nemen zo snel mogelijk contact met u op.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-3">
+                <form onSubmit={handleSubmit} className="space-y-3" onFocus={() => { if (!formStarted.current) { formStarted.current = true; onFormStart?.() } }}>
                   <div>
                     <label htmlFor="contact-firstName" className="sr-only">Voornaam</label>
                     <input
@@ -956,15 +976,91 @@ export function ContactSection() {
 // ============================================================================
 
 export function PublicHomepage() {
+  const { track, publicSessionId } = useAnalytics()
+  const pageViewTracked = useRef(false)
+
+  // Track page view on mount (once)
+  useEffect(() => {
+    if (pageViewTracked.current) return
+    pageViewTracked.current = true
+
+    let referrer: string | null = null
+    try {
+      if (document.referrer) {
+        const refHost = new URL(document.referrer).hostname
+        if (refHost !== window.location.hostname) {
+          referrer = refHost
+        }
+      }
+    } catch { /* invalid referrer */ }
+
+    const params = new URLSearchParams(window.location.search)
+    const utm_source = params.get('utm_source') || null
+    const utm_medium = params.get('utm_medium') || null
+    const utm_campaign = params.get('utm_campaign') || null
+
+    track('public_page_view', undefined, {
+      page: 'homepage',
+      session_id: publicSessionId,
+      referrer,
+      ...(utm_source && { utm_source }),
+      ...(utm_medium && { utm_medium }),
+      ...(utm_campaign && { utm_campaign }),
+    })
+  }, [track, publicSessionId])
+
+  const handleCtaClick = useCallback((section: string, element: string) => {
+    track('public_interaction', undefined, {
+      action: 'cta_click',
+      section,
+      element,
+      session_id: publicSessionId,
+    })
+  }, [track, publicSessionId])
+
+  const handleSectionView = useCallback((section: string) => {
+    track('public_interaction', undefined, {
+      action: 'section_view',
+      section,
+      session_id: publicSessionId,
+    })
+  }, [track, publicSessionId])
+
+  const handleAudienceTab = useCallback((tab: string) => {
+    track('public_interaction', undefined, {
+      action: 'audience_tab',
+      section: 'audience',
+      element: tab,
+      session_id: publicSessionId,
+    })
+  }, [track, publicSessionId])
+
+  const handleFormStart = useCallback(() => {
+    track('public_interaction', undefined, {
+      action: 'contact_form_start',
+      section: 'contact',
+      session_id: publicSessionId,
+    })
+  }, [track, publicSessionId])
+
+  const handleFormSubmit = useCallback((success: boolean) => {
+    track('public_interaction', undefined, {
+      action: 'contact_form_submit',
+      section: 'contact',
+      element: success ? 'success' : 'error',
+      session_id: publicSessionId,
+    })
+  }, [track, publicSessionId])
+
   return (
     <>
-      <HeroSection />
-      <TrustBar />
-      <AudienceSection />
-      <FeaturesSection />
-      <SubscriptionSection />
-      <B2GSection />
-      <ContactSection />
+      <HeroSection onCtaClick={handleCtaClick} onSectionView={handleSectionView} />
+      <TrustBar onSectionView={handleSectionView} />
+      <AudienceSection onSectionView={handleSectionView} onTabClick={handleAudienceTab} />
+      <FeaturesSection onCtaClick={handleCtaClick} onSectionView={handleSectionView} />
+      <SubscriptionSection onCtaClick={handleCtaClick} onSectionView={handleSectionView} />
+      <B2GSection onCtaClick={handleCtaClick} onSectionView={handleSectionView} />
+      <ContactSection onCtaClick={handleCtaClick} onSectionView={handleSectionView} onFormStart={handleFormStart} onFormSubmit={handleFormSubmit} />
     </>
   )
 }

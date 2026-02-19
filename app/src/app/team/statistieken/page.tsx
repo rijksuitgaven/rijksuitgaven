@@ -8,7 +8,7 @@ import {
   ChevronDown, ChevronRight, Eye, SlidersHorizontal, Columns, Clock,
   ArrowUpDown, ArrowRight, Sparkles, ChevronsRight,
   ExternalLink, TrendingUp, TrendingDown, Minus, Timer,
-  Target, Activity,
+  Target, Activity, Globe, LogIn, Phone, MousePointer,
 } from 'lucide-react'
 
 // --- Constants ---
@@ -197,6 +197,26 @@ interface RetentionItem {
   retention_rate: number
 }
 
+// UX-036: Public analytics types
+interface PublicPageView { page: string; view_count: number; unique_sessions: number }
+interface PublicInteraction { action: string; interaction_count: number; unique_sessions: number }
+interface PublicFunnelStep { step: string; step_count: number; unique_sessions: number }
+interface PublicReferrer { referrer: string; visit_count: number; unique_sessions: number }
+interface PublicCtaClick { section: string; element: string; click_count: number; unique_sessions: number }
+interface PublicScrollFunnel { section: string; view_count: number; unique_sessions: number }
+interface PublicUtmCampaign { utm_source: string; utm_medium: string; utm_campaign: string; visit_count: number; unique_sessions: number }
+
+interface PublicData {
+  page_views: PublicPageView[]
+  interactions: PublicInteraction[]
+  contact_funnel: PublicFunnelStep[]
+  referrers: PublicReferrer[]
+  cta_clicks: PublicCtaClick[]
+  scroll_funnel: PublicScrollFunnel[]
+  login_funnel: PublicFunnelStep[]
+  utm_campaigns: PublicUtmCampaign[]
+}
+
 interface StatsData {
   days: number
   total_members: number
@@ -217,6 +237,8 @@ interface StatsData {
   search_engagement: SearchEngagementItem[]
   pulse_previous: PulseItem[]
   module_events: ModuleEventItem[]
+  // UX-036: Public page analytics
+  public?: PublicData
 }
 
 // --- Helpers ---
@@ -411,6 +433,7 @@ export default function StatistiekenPage() {
   const [actorDetailLoading, setActorDetailLoading] = useState(false)
   const [sortField, setSortField] = useState<string>('engagement_score')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  const [tab, setTab] = useState<'gebruik' | 'website'>('gebruik')
 
   // Fetch dashboard data
   useEffect(() => {
@@ -510,7 +533,7 @@ export default function StatistiekenPage() {
         <TeamNav />
 
         {/* Header + date range */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold text-[var(--navy-dark)] tracking-tight">Gebruiksstatistieken</h1>
           <div className="flex gap-1 bg-white rounded-lg shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 p-1">
             {DATE_RANGES.map(range => (
@@ -529,7 +552,34 @@ export default function StatistiekenPage() {
           </div>
         </div>
 
+        {/* Tab bar */}
+        <div className="flex gap-1 mb-6 bg-white rounded-lg shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 p-1 w-fit">
+          <button
+            onClick={() => setTab('gebruik')}
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              tab === 'gebruik'
+                ? 'bg-[var(--navy-dark)] text-white'
+                : 'text-[var(--navy-medium)] hover:bg-[var(--gray-light)]'
+            }`}
+          >
+            <BarChart3 className="w-3.5 h-3.5" />
+            Gebruik
+          </button>
+          <button
+            onClick={() => setTab('website')}
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              tab === 'website'
+                ? 'bg-[var(--navy-dark)] text-white'
+                : 'text-[var(--navy-medium)] hover:bg-[var(--gray-light)]'
+            }`}
+          >
+            <Globe className="w-3.5 h-3.5" />
+            Website
+          </button>
+        </div>
+
         {loading ? (
+          /* Loading skeleton — shared across tabs */
           <div className="space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[1, 2].map(i => (
@@ -556,6 +606,8 @@ export default function StatistiekenPage() {
               </div>
             </div>
           </div>
+        ) : data && tab === 'website' ? (
+          <WebsiteSection publicData={data.public} />
         ) : data ? (
           <>
             {/* ═══ ACT 1: PULSE ═══ */}
@@ -1321,6 +1373,258 @@ function ActorRow({ actor, allActors, isExpanded, color, onToggle, detail, detai
           </td>
         </tr>
       )}
+    </>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Website Section — UX-036 Public Page Analytics
+// ═══════════════════════════════════════════════════════════════════════════
+
+const PAGE_LABELS: Record<string, string> = {
+  homepage: 'Homepage',
+  login: 'Login',
+  privacybeleid: 'Privacybeleid',
+  voorwaarden: 'Voorwaarden',
+  over: 'Over ons',
+  support: 'Support / FAQ',
+  dataoverzicht: 'Dataoverzicht',
+  verlopen: 'Verlopen',
+  afmelden: 'Afmelden',
+}
+
+const SECTION_LABELS: Record<string, string> = {
+  hero: 'Hero',
+  trust: 'Trust Bar',
+  audience: 'Doelgroepen',
+  features: 'Features',
+  subscriptions: 'Abonnementen',
+  b2g: 'B2G Overheden',
+  contact: 'Contact',
+}
+
+const ACTION_LABELS: Record<string, string> = {
+  cta_click: 'CTA klik',
+  section_view: 'Sectie gezien',
+  audience_tab: 'Doelgroep tab',
+  contact_form_start: 'Formulier gestart',
+  contact_form_submit: 'Formulier verzonden',
+  login_attempt: 'Login poging',
+  login_magic_link_sent: 'Magic link verzonden',
+}
+
+function WebsiteSection({ publicData }: { publicData?: PublicData }) {
+  if (!publicData) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 p-8 text-center text-[var(--muted-foreground)]">
+        Nog geen websitedata beschikbaar. Voer migratie 062 uit op de database.
+      </div>
+    )
+  }
+
+  const totalViews = publicData.page_views.reduce((s, p) => s + p.view_count, 0)
+  const totalSessions = publicData.page_views.reduce((s, p) => s + p.unique_sessions, 0)
+  const uniqueSessions = new Set(publicData.page_views.map(p => p.unique_sessions)).size > 0 ? totalSessions : 0
+  const totalInteractions = publicData.interactions.reduce((s, i) => s + i.interaction_count, 0)
+  const contactStarts = publicData.contact_funnel.find(s => s.step === 'start')?.step_count ?? 0
+  const contactSuccess = publicData.contact_funnel.find(s => s.step === 'submit_success')?.step_count ?? 0
+  const loginAttempts = publicData.login_funnel.find(s => s.step === 'login_attempt')?.step_count ?? 0
+  const loginSent = publicData.login_funnel.find(s => s.step === 'login_magic_link_sent')?.step_count ?? 0
+
+  const noData = totalViews === 0 && totalInteractions === 0
+
+  if (noData) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm shadow-black/[0.04] border border-[var(--border)]/40 p-8 text-center text-[var(--muted-foreground)]">
+        <Globe className="w-8 h-8 mx-auto mb-3 text-[var(--navy-medium)]/40" />
+        <p className="text-sm">Nog geen websiteverkeer geregistreerd in deze periode</p>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      {/* KPI cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+        <PulseCard
+          icon={<Eye className="w-4 h-4" />}
+          label="Paginaweergaven"
+          value={totalViews}
+          subtext={`${uniqueSessions} unieke sessies`}
+        />
+        <PulseCard
+          icon={<MousePointer className="w-4 h-4" />}
+          label="Interacties"
+          value={totalInteractions}
+          subtext="CTA's, tabs, formulier"
+        />
+        <PulseCard
+          icon={<Phone className="w-4 h-4" />}
+          label="Contactformulier"
+          value={contactSuccess}
+          subtext={contactStarts > 0 ? `${contactStarts} gestart → ${contactSuccess} verzonden` : 'geen formulieren'}
+        />
+        <PulseCard
+          icon={<LogIn className="w-4 h-4" />}
+          label="Loginpogingen"
+          value={loginAttempts}
+          subtext={loginSent > 0 ? `${loginSent} magic links verzonden` : 'geen pogingen'}
+        />
+      </div>
+
+      {/* Page views breakdown */}
+      <Section title="Paginaweergaven" icon={<Eye className="w-4 h-4" />}>
+        {publicData.page_views.length === 0 ? (
+          <EmptyState>Nog geen paginaweergaven</EmptyState>
+        ) : (
+          <div className="space-y-2">
+            {publicData.page_views.map((p, i) => {
+              const maxViews = publicData.page_views[0]?.view_count || 1
+              const barWidth = Math.max((p.view_count / maxViews) * 100, 3)
+              return (
+                <div key={i} className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-[var(--navy-dark)] w-32 shrink-0 truncate">
+                    {PAGE_LABELS[p.page] || p.page}
+                  </span>
+                  <div className="flex-1 h-5 bg-[var(--gray-light)]/40 rounded overflow-hidden">
+                    <div
+                      className="h-full rounded"
+                      style={{ width: `${barWidth}%`, background: 'linear-gradient(90deg, var(--navy-dark), var(--navy-medium))' }}
+                    />
+                  </div>
+                  <span className="text-sm font-bold text-[var(--navy-dark)] w-12 text-right" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {p.view_count}
+                  </span>
+                  <span className="text-xs text-[var(--muted-foreground)] w-20 text-right shrink-0">
+                    {p.unique_sessions} sessies
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </Section>
+
+      {/* Scroll funnel */}
+      {publicData.scroll_funnel.length > 0 && (
+        <Section title="Scroll funnel (homepage)" icon={<ChevronDown className="w-4 h-4" />}>
+          <div className="space-y-1.5">
+            {/* Sort by expected order: hero → trust → audience → features → subscriptions → b2g → contact */}
+            {['hero', 'trust', 'audience', 'features', 'subscriptions', 'b2g', 'contact']
+              .map(section => publicData.scroll_funnel.find(s => s.section === section))
+              .filter((s): s is PublicScrollFunnel => !!s)
+              .map((s, i, arr) => {
+                const maxViews = arr[0]?.view_count || 1
+                const pct = Math.round((s.view_count / maxViews) * 100)
+                const barWidth = Math.max(pct, 3)
+                return (
+                  <div key={i} className="flex items-center gap-3">
+                    <span className="text-sm text-[var(--navy-dark)] w-28 shrink-0">
+                      {SECTION_LABELS[s.section] || s.section}
+                    </span>
+                    <div className="flex-1 h-5 bg-[var(--gray-light)]/40 rounded overflow-hidden">
+                      <div
+                        className="h-full rounded"
+                        style={{
+                          width: `${barWidth}%`,
+                          background: `linear-gradient(90deg, var(--navy-dark), var(--navy-medium))`,
+                          opacity: pct < 30 ? 0.6 : 1,
+                        }}
+                      />
+                    </div>
+                    <span className="text-sm font-bold text-[var(--navy-dark)] w-10 text-right" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                      {pct}%
+                    </span>
+                    <span className="text-xs text-[var(--muted-foreground)] w-16 text-right shrink-0">
+                      {s.view_count}×
+                    </span>
+                  </div>
+                )
+              })}
+          </div>
+        </Section>
+      )}
+
+      {/* CTA clicks */}
+      {publicData.cta_clicks.length > 0 && (
+        <Section title="CTA klikken" icon={<MousePointerClick className="w-4 h-4" />}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
+                  <th className="pb-2 pr-4">Sectie</th>
+                  <th className="pb-2 pr-4">Element</th>
+                  <th className="pb-2 pr-4 text-right">Kliks</th>
+                  <th className="pb-2 text-right">Sessies</th>
+                </tr>
+              </thead>
+              <tbody>
+                {publicData.cta_clicks.map((c, i) => (
+                  <tr key={i} className="border-t border-[var(--border)]">
+                    <td className="py-2 pr-4 font-medium text-[var(--navy-dark)]">
+                      {SECTION_LABELS[c.section] || c.section}
+                    </td>
+                    <td className="py-2 pr-4 text-[var(--navy-medium)]">
+                      {c.element.replace(/_/g, ' ')}
+                    </td>
+                    <td className="py-2 pr-4 text-right font-bold text-[var(--navy-dark)]" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                      {c.click_count}
+                    </td>
+                    <td className="py-2 text-right text-[var(--muted-foreground)]" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                      {c.unique_sessions}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Section>
+      )}
+
+      {/* Referrers + UTM campaigns side by side */}
+      <div className="grid md:grid-cols-2 gap-4 mb-4">
+        {/* Referrers */}
+        <Section title="Referrers" icon={<ExternalLink className="w-4 h-4" />}>
+          {publicData.referrers.length === 0 ? (
+            <EmptyState>Geen externe referrers</EmptyState>
+          ) : (
+            <div className="space-y-1.5">
+              {publicData.referrers.map((r, i) => (
+                <div key={i} className="flex items-center justify-between gap-2 text-sm">
+                  <span className="text-[var(--navy-dark)] truncate">{r.referrer}</span>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className="font-bold text-[var(--navy-dark)]" style={{ fontVariantNumeric: 'tabular-nums' }}>{r.visit_count}</span>
+                    <span className="text-xs text-[var(--muted-foreground)]">{r.unique_sessions} sessies</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Section>
+
+        {/* UTM campaigns */}
+        <Section title="Campagnes (UTM)" icon={<Target className="w-4 h-4" />}>
+          {publicData.utm_campaigns.length === 0 ? (
+            <EmptyState>Geen UTM-campagnes gedetecteerd</EmptyState>
+          ) : (
+            <div className="space-y-1.5">
+              {publicData.utm_campaigns.map((u, i) => (
+                <div key={i} className="flex items-center justify-between gap-2 text-sm">
+                  <div className="truncate">
+                    <span className="font-medium text-[var(--navy-dark)]">{u.utm_source}</span>
+                    {u.utm_medium && <span className="text-[var(--muted-foreground)]"> / {u.utm_medium}</span>}
+                    {u.utm_campaign && <span className="text-[var(--navy-medium)]"> — {u.utm_campaign}</span>}
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className="font-bold text-[var(--navy-dark)]" style={{ fontVariantNumeric: 'tabular-nums' }}>{u.visit_count}</span>
+                    <span className="text-xs text-[var(--muted-foreground)]">{u.unique_sessions} sessies</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Section>
+      </div>
     </>
   )
 }

@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-02-19
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE, footer COMPLETE, about page COMPLETE, support page COMPLETE, data availability audit COMPLETE, datasets page COMPLETE, data table UX COMPLETE, mobile responsiveness COMPLETE, email campaign system COMPLETE, campaign analytics COMPLETE, CRM pipeline COMPLETE, email pipeline targeting COMPLETE)
+**Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE, footer COMPLETE, about page COMPLETE, support page COMPLETE, data availability audit COMPLETE, datasets page COMPLETE, data table UX COMPLETE, mobile responsiveness COMPLETE, email campaign system COMPLETE, campaign analytics COMPLETE, CRM pipeline COMPLETE, email pipeline targeting COMPLETE, public page analytics COMPLETE)
 
 ---
 
@@ -125,6 +125,7 @@
 - ✅ **2026-02-19 (Session 6):** UX polish — sub-tabs on /team/mail (Nieuw bericht / Campagnes pill toggle), removed Sync Resend button (auto-sync via CRUD), removed afmelden logo, campaign delete with inline confirmation (DELETE endpoint + cascade). 3 commits.
 - ✅ **2026-02-19 (Session 7):** CRM Pipeline Stages — 5-person expert panel brainstorm (10 rounds). 6 stages on `people.pipeline_stage`: nieuw, in_gesprek, gewonnen, afgesloten, verloren, ex_klant. Migration 061 (column + data migration). Automatic transitions (convert → gewonnen, delete → ex_klant). Contacten page redesigned with color-coded stage badges + edit modal. Dashboard pipeline summary card. Key decision: pipeline and email are independent axes. 1 commit.
 - ✅ **2026-02-19 (Session 8):** Email pipeline targeting — replaced subscription-based segments (Leden/Prospects/Churned) with pipeline-based multi-select (Nieuw, In gesprek, Leden maandelijks/jaarlijks, Verloren, Ex-klant). Checkbox UI with inline counts, multiple segments per campaign, leden split for upsell targeting. 1 commit.
+- ✅ **2026-02-19 (Session 9):** UX-036 Public Page Analytics — 2 new event types (public_page_view + public_interaction) with GDPR-safe session_id. TrackPageView on 8 public pages. Login tracking (attempt + magic_link_sent). Homepage tracking (page_view, 7 section_views, 8 CTA clicks, contact form start/submit). Migration 062 (8 RPC functions, executed). Dashboard "Website" tab with KPIs, scroll funnel, CTAs, referrers, UTM. Bug fix: tracking initially on wrong file (public-homepage.tsx = h7 prototype) — corrected to homepage.tsx (live). Cleanup: deleted /h7 page, removed "Bekijk alle jaren en data" CTA.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ✅ **Homepage mobile** — Mobile responsiveness audit + 18 fixes across 10 public pages (2026-02-18, Session 8)
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -155,20 +156,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **Email pipeline targeting** (2026-02-19, Session 8)
+1. **UX-036 Public Page Analytics** (2026-02-19, Session 9)
+   2 new event types, 8 pages tracked, homepage tracking (corrected to live file), migration 062, dashboard Website tab. Deleted /h7, removed "Bekijk alle jaren" CTA.
+
+2. **Email pipeline targeting** (2026-02-19, Session 8)
    Multi-select checkboxes replace segment dropdown. 6 pipeline-based segments with leden split. 1 commit.
 
-2. **CRM Pipeline Stages** (2026-02-19, Session 7)
+3. **CRM Pipeline Stages** (2026-02-19, Session 7)
    6 stages on people.pipeline_stage. Migration 061. Contacten redesign + dashboard card. 1 commit.
 
-3. **Email UX polish** (2026-02-19, Session 6)
+4. **Email UX polish** (2026-02-19, Session 6)
    Sub-tabs, removed Sync Resend, removed afmelden logo, campaign delete. 3 commits.
 
-4. **Campaign analytics** (2026-02-19, Session 5)
+5. **Campaign analytics** (2026-02-19, Session 5)
    Open/click/bounce tracking via Resend webhooks. Migration 060. 1 commit.
-
-5. **Email campaign improvements** (2026-02-19, Session 4)
-   Preheader, preview, image upload, campaign history. 1 commit.
 
 ---
 

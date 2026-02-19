@@ -1621,6 +1621,37 @@ The current `data_availability` table has incorrect year ranges inherited from i
 
 ---
 
+### UX-036: Public Page Analytics
+
+**Requirement:** Track visitor behavior on all public pages (homepage, login, privacy, terms, verlopen, afmelden) using server-side event ingestion. Provide a "Website" dashboard tab in `/team/statistieken` showing conversion funnel, scroll depth, CTA performance, referrer attribution, and demo search engagement.
+
+**Behavior:**
+- **2 new event types:** `public_page_view` (page load) + `public_interaction` (user actions with `action` property)
+- **Session-scoped ID:** `crypto.randomUUID()` in memory (not persisted — no cookies, no localStorage, GDPR-safe). Enables `COUNT(DISTINCT session_id)` for unique session counting
+- **12 interaction actions:** `cta_click`, `section_view`, `audience_tab`, `contact_form_start`, `contact_form_submit`, `demo_search`, `demo_result_click`, `phone_click`, `login_attempt`, `login_magic_link_sent`, `feature_card_click`, `pricing_plan_click`
+- **Referrer tracking:** Domain-only (`new URL(referrer).hostname`), not full URL
+- **UTM capture:** `utm_source`, `utm_medium`, `utm_campaign` on page_view events
+- **Dashboard:** "Website" tab in statistieken with 4 KPIs (unique sessions, conversion rate, demo searches, scroll-to-pricing %), scroll funnel, CTA ranking, referrer/campaign table, contact form funnel, demo search queries, audience interest breakdown, login funnel
+- **Privacy:** No PII, no cookies, no localStorage. Anonymous visitors tracked as `anon_000000000000` with per-session `session_id` for uniqueness. Compliant with existing privacy policy Article 5
+
+**Components:**
+- `components/analytics/track-page-view.tsx` — Shared client component for server-rendered pages
+- `components/homepage/scroll-reveal.tsx` — `onVisible` callback prop added
+- `components/team/website-section.tsx` — Dashboard UI component
+- SQL migration `062-public-analytics.sql` — 8 RPC functions
+
+**Rationale:**
+- At 500+ users, homepage is primary acquisition channel — must measure conversion effectiveness
+- Existing analytics only covers authenticated app usage (14 event types, all module-scoped)
+- Server-side tracking avoids third-party dependencies and consent requirements
+- Separated dashboard tab prevents anonymous event pollution of product usage metrics
+
+**Priority:** P1 (V1.0 — pre-launch conversion visibility)
+
+**Status:** ✅ Implemented 2026-02-19
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload

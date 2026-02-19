@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { AVAILABLE_YEARS } from '@/lib/constants'
+import { TrackPageView } from '@/components/analytics/track-page-view'
 
 interface DataAvailability {
   module: string
@@ -94,6 +95,7 @@ export default function DataoverzichtPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <TrackPageView page="dataoverzicht" />
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
         <div className="mb-8">
           <Link

@@ -8,7 +8,7 @@ type FormState = 'idle' | 'loading' | 'success' | 'error'
 
 export function LoginForm() {
   const searchParams = useSearchParams()
-  const { track } = useAnalytics()
+  const { track, publicSessionId } = useAnalytics()
   const [email, setEmail] = useState('')
   const [state, setState] = useState<FormState>('idle')
   const [errorMessage, setErrorMessage] = useState('')
@@ -44,6 +44,8 @@ export function LoginForm() {
     setState('loading')
     setErrorMessage('')
 
+    track('public_interaction', undefined, { action: 'login_attempt', section: 'login', session_id: publicSessionId })
+
     try {
       const res = await fetch('/api/v1/auth/magic-link', {
         method: 'POST',
@@ -59,6 +61,7 @@ export function LoginForm() {
       }
 
       // Always show success (server returns 200 even for non-existent users)
+      track('public_interaction', undefined, { action: 'login_magic_link_sent', section: 'login', session_id: publicSessionId })
       setState('success')
       setCooldown(60)
       const interval = setInterval(() => {
@@ -75,7 +78,7 @@ export function LoginForm() {
       setState('error')
       track('error', undefined, { message: err instanceof Error ? err.message : 'Network error during login', trigger: 'login' })
     }
-  }, [email, cooldown])
+  }, [email, cooldown, track, publicSessionId])
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">

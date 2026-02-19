@@ -3,6 +3,7 @@
 import { useSubscription } from '@/hooks/use-subscription'
 import { useAuth } from '@/hooks/use-auth'
 import { createClient } from '@/lib/supabase/client'
+import { TrackPageView } from '@/components/analytics/track-page-view'
 
 export default function VerlopenPage() {
   const { endDate, plan } = useSubscription()
@@ -26,6 +27,7 @@ export default function VerlopenPage() {
 
   return (
     <main className="min-h-[calc(100vh-theme(spacing.24)-theme(spacing.16))] flex items-center justify-center px-4">
+      <TrackPageView page="verlopen" />
       <div className="max-w-md w-full text-center space-y-6">
         <div className="w-16 h-16 mx-auto rounded-full bg-red-50 flex items-center justify-center">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-8 h-8 text-red-500" aria-hidden="true">

@@ -1,3 +1,5 @@
+// LIVE HOMEPAGE — rendered by app/page.tsx for unauthenticated visitors
+// See also: public-homepage.tsx (h7 prototype, NOT the live site)
 'use client'
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
@@ -213,16 +215,16 @@ function NavyOverlays() {
 // Discovery Card (H3)
 // ============================================================================
 
-function DiscoveryCard({ discovery, active, direction }: { discovery: Discovery; active: boolean; direction: 'enter' | 'exit' | 'idle' }) {
+function DiscoveryCard({ discovery, active, direction, onCtaClick }: { discovery: Discovery; active: boolean; direction: 'enter' | 'exit' | 'idle'; onCtaClick?: (section: string, element: string) => void }) {
   const animatedValue = useCountUp(discovery.target, 1400, active)
   const shareText = `${discovery.insight}\n\nOntdek meer op rijksuitgaven.nl`
 
   return (
     <div className="h6-discovery-card" style={{ position: 'absolute', inset: 0, opacity: active ? 1 : 0, transform: active ? 'translateY(0)' : direction === 'exit' ? 'translateY(-12px)' : 'translateY(12px)', transition: 'opacity 0.7s cubic-bezier(0.2,1,0.2,1), transform 0.7s cubic-bezier(0.2,1,0.2,1)', pointerEvents: active ? 'auto' : 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '2rem 2.5rem' }}>
       <div style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', gap: 6 }}>
-        <ShareButton label="Deel op LinkedIn" icon={<LinkedInIcon />} onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://rijksuitgaven.nl')}`, '_blank', 'noopener')} />
-        <ShareButton label="Deel op X" icon={<XIcon />} onClick={() => window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener')} />
-        <ShareButton label="Deel op Bluesky" icon={<BlueskyIcon />} onClick={() => window.open(`https://bsky.app/intent/compose?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener')} />
+        <ShareButton label="Deel op LinkedIn" icon={<LinkedInIcon />} onClick={() => { onCtaClick?.('discovery', 'share_linkedin'); window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://rijksuitgaven.nl')}`, '_blank', 'noopener') }} />
+        <ShareButton label="Deel op X" icon={<XIcon />} onClick={() => { onCtaClick?.('discovery', 'share_x'); window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener') }} />
+        <ShareButton label="Deel op Bluesky" icon={<BlueskyIcon />} onClick={() => { onCtaClick?.('discovery', 'share_bluesky'); window.open(`https://bsky.app/intent/compose?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener') }} />
       </div>
       <div style={{ fontFamily: 'var(--font-body)', fontFeatureSettings: '"tnum"', fontVariantNumeric: 'tabular-nums', fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 700, lineHeight: 1, color: 'var(--pink)', letterSpacing: '-0.02em', marginBottom: '1rem' }}>
         {discovery.prefix && <span style={{ opacity: 0.9 }}>{discovery.prefix}</span>}
@@ -231,7 +233,7 @@ function DiscoveryCard({ discovery, active, direction }: { discovery: Discovery;
       </div>
       <p style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(1.05rem, 2vw, 1.35rem)', fontWeight: 400, lineHeight: 1.55, color: '#ffffff', maxWidth: 580, marginBottom: '1.25rem' }}>{discovery.insight}</p>
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '1.5rem' }}>
-        <a href={`/${discovery.module}`} style={{ fontFamily: 'var(--font-body)', fontSize: '0.925rem', fontWeight: 600, color: '#fff', background: 'var(--pink)', padding: '0.65rem 1.5rem', borderRadius: 8, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.4em', transition: 'background 0.2s', whiteSpace: 'nowrap' }}
+        <a href={`/${discovery.module}`} onClick={() => onCtaClick?.('discovery', `ontdek_meer_${discovery.module}`)} style={{ fontFamily: 'var(--font-body)', fontSize: '0.925rem', fontWeight: 600, color: '#fff', background: 'var(--pink)', padding: '0.65rem 1.5rem', borderRadius: 8, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.4em', transition: 'background 0.2s', whiteSpace: 'nowrap' }}
           onMouseEnter={e => (e.currentTarget.style.background = 'var(--pink-hover)')}
           onMouseLeave={e => (e.currentTarget.style.background = 'var(--pink)')}>
           Ontdek meer <span aria-hidden="true" style={{ transition: 'transform 0.2s', display: 'inline-block' }}>&rarr;</span>
@@ -247,8 +249,15 @@ function DiscoveryCard({ discovery, active, direction }: { discovery: Discovery;
 // ============================================================================
 
 function ContactForm() {
-  const { track } = useAnalytics()
+  const { track, publicSessionId } = useAnalytics()
   const [formState, setFormState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const formStartedRef = useRef(false)
+
+  const handleFormStart = useCallback(() => {
+    if (formStartedRef.current) return
+    formStartedRef.current = true
+    track('public_interaction', undefined, { action: 'contact_form_start', section: 'contact', session_id: publicSessionId })
+  }, [track, publicSessionId])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -261,8 +270,8 @@ function ContactForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ firstName: fd.get('firstName'), lastName: fd.get('lastName'), email: fd.get('email'), phone: fd.get('phone') }),
       })
-      if (res.ok) { setFormState('sent'); form.reset() }
-      else { setFormState('error'); track('error', undefined, { message: `Contact form HTTP ${res.status}`, trigger: 'contact_form' }) }
+      if (res.ok) { setFormState('sent'); form.reset(); track('public_interaction', undefined, { action: 'contact_form_submit', element: 'success', section: 'contact', session_id: publicSessionId }) }
+      else { setFormState('error'); track('public_interaction', undefined, { action: 'contact_form_submit', element: 'error', section: 'contact', session_id: publicSessionId }); track('error', undefined, { message: `Contact form HTTP ${res.status}`, trigger: 'contact_form' }) }
     } catch (err) {
       setFormState('error')
       track('error', undefined, { message: err instanceof Error ? err.message : 'Contact form network error', trigger: 'contact_form' })
@@ -277,7 +286,7 @@ function ContactForm() {
 
   return (
     <section id="aanmelden" style={{ background: '#f8f9fb', padding: '56px 24px 64px', borderTop: '1px solid #E8ECF1' }}>
-      <ScrollReveal>
+      <ScrollReveal onVisible={() => track('public_interaction', undefined, { action: 'section_view', section: 'contact', session_id: publicSessionId })}>
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
           <div className="h6-contact-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(32px, 5vw, 64px)', alignItems: 'start' }}>
             {/* Left: copy */}
@@ -325,7 +334,7 @@ function ContactForm() {
               ) : (
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <label htmlFor="h6-firstName" className="sr-only">Voornaam</label>
-                  <input id="h6-firstName" name="firstName" type="text" required placeholder="Voornaam *" className="h6-contact-input" style={inputStyle} />
+                  <input id="h6-firstName" name="firstName" type="text" required placeholder="Voornaam *" className="h6-contact-input" style={inputStyle} onFocus={handleFormStart} />
 
                   <label htmlFor="h6-lastName" className="sr-only">Achternaam</label>
                   <input id="h6-lastName" name="lastName" type="text" required placeholder="Achternaam *" className="h6-contact-input" style={inputStyle} />
@@ -376,6 +385,35 @@ function ContactForm() {
 // ============================================================================
 
 export default function Homepage() {
+  const { track, publicSessionId } = useAnalytics()
+
+  // === Page View Tracking ===
+  const pageViewTracked = useRef(false)
+  useEffect(() => {
+    if (pageViewTracked.current) return
+    pageViewTracked.current = true
+    const props: Record<string, string> = { page: 'homepage', session_id: publicSessionId }
+    try {
+      const ref = document.referrer ? new URL(document.referrer).hostname : ''
+      if (ref && ref !== window.location.hostname) props.referrer = ref
+    } catch { /* ignore */ }
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('utm_source')) props.utm_source = params.get('utm_source')!
+    if (params.get('utm_medium')) props.utm_medium = params.get('utm_medium')!
+    if (params.get('utm_campaign')) props.utm_campaign = params.get('utm_campaign')!
+    track('public_page_view', undefined, props)
+  }, [track, publicSessionId])
+
+  // === Section View Tracking ===
+  const handleSectionView = useCallback((section: string) => {
+    track('public_interaction', undefined, { action: 'section_view', section, session_id: publicSessionId })
+  }, [track, publicSessionId])
+
+  // === CTA Click Tracking ===
+  const handleCtaClick = useCallback((section: string, element: string) => {
+    track('public_interaction', undefined, { action: 'cta_click', section, element, session_id: publicSessionId })
+  }, [track, publicSessionId])
+
   // === H2 Search State ===
   const [query, setQuery] = useState('')
   const [isFocused, setIsFocused] = useState(false)
@@ -443,7 +481,7 @@ export default function Homepage() {
       <section style={{ background: '#ffffff', padding: '64px 0 56px' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 24px' }}>
           {/* Headline */}
-          <ScrollReveal>
+          <ScrollReveal onVisible={() => handleSectionView('hero')}>
             <h1 style={{
               fontSize: 'clamp(32px, 5.5vw, 54px)',
               fontWeight: 700,
@@ -521,7 +559,7 @@ export default function Homepage() {
       {/* ================================================================ */}
       <section style={{ background: '#ffffff', padding: '0 24px 56px' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', textAlign: 'center' }}>
-          <ScrollReveal>
+          <ScrollReveal onVisible={() => handleSectionView('search')}>
             <p style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pink)', marginBottom: 12 }}>Probeer het zelf</p>
           </ScrollReveal>
         </div>
@@ -602,12 +640,8 @@ export default function Homepage() {
               </div>
 
               {/* Footer */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, padding: '0 4px', gap: 8 }}>
+              <div style={{ marginTop: 16, padding: '0 4px' }}>
                 <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-condensed)' }}>Bronnen: Rijksoverheid &amp; medeoverheden</span>
-                <a href="/login" className="h6-cta-link" style={{ fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.75)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6, transition: 'color 0.2s' }}>
-                  <span>Bekijk alle jaren en data</span>
-                  <span className="h6-cta-arrow" style={{ transition: 'transform 0.2s' }}>&rarr;</span>
-                </a>
               </div>
             </div>
           </div>
@@ -619,7 +653,7 @@ export default function Homepage() {
       {/* ================================================================ */}
       <section style={{ background: '#ffffff', padding: '0 0 40px' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 24px' }}>
-          <ScrollReveal className="scroll-reveal-scale">
+          <ScrollReveal className="scroll-reveal-scale" onVisible={() => handleSectionView('trust')}>
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px 56px', padding: '24px 0 28px', borderTop: '1px solid var(--gray-light, #E1EAF2)', borderBottom: '1px solid var(--gray-light, #E1EAF2)' }}>
               {[
                 { value: '450.000+', label: 'ontvangers' },
@@ -641,7 +675,7 @@ export default function Homepage() {
       {/* ================================================================ */}
       <section style={{ background: '#f8f9fb', padding: '56px 24px 64px' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-          <ScrollReveal>
+          <ScrollReveal onVisible={() => handleSectionView('audience')}>
             <p style={{ textAlign: 'center', fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pink)', marginBottom: 24 }}>
               Gebouwd voor
             </p>
@@ -720,7 +754,7 @@ export default function Homepage() {
       {/* ================================================================ */}
       <section style={{ background: '#ffffff', padding: '56px 24px 64px' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-          <ScrollReveal>
+          <ScrollReveal onVisible={() => handleSectionView('pricing')}>
             <p style={{ textAlign: 'center', fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pink)', marginBottom: 12 }}>
               Onze abonnementen
             </p>
@@ -774,7 +808,7 @@ export default function Homepage() {
                       </li>
                     ))}
                   </ul>
-                  <a href="#aanmelden" className="h6-pricing-cta" style={{
+                  <a href="#aanmelden" className="h6-pricing-cta" onClick={() => handleCtaClick('pricing', 'neem_contact_professioneel')} style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6,
                     fontSize: 15, fontWeight: 600, color: 'var(--navy-dark)',
                     textDecoration: 'none', paddingTop: 8,
@@ -822,7 +856,7 @@ export default function Homepage() {
                       </li>
                     ))}
                   </ul>
-                  <a href="#aanmelden" className="h6-pricing-cta" style={{
+                  <a href="#aanmelden" className="h6-pricing-cta" onClick={() => handleCtaClick('pricing', 'neem_contact_op_maat')} style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6,
                     fontSize: 15, fontWeight: 600, color: 'var(--navy-dark)',
                     textDecoration: 'none', paddingTop: 8,
@@ -874,7 +908,7 @@ export default function Homepage() {
                       </li>
                     ))}
                   </ul>
-                  <a href="#aanmelden" className="h6-pricing-cta" style={{
+                  <a href="#aanmelden" className="h6-pricing-cta" onClick={() => handleCtaClick('pricing', 'neem_contact_overheden')} style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6,
                     fontSize: 15, fontWeight: 600, color: 'var(--navy-dark)',
                     textDecoration: 'none', paddingTop: 8,
@@ -894,7 +928,7 @@ export default function Homepage() {
       {/* ================================================================ */}
       <section style={{ background: '#ffffff', padding: '40px 24px 64px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <ScrollReveal>
+          <ScrollReveal onVisible={() => handleSectionView('discovery')}>
             <div
               onMouseEnter={() => setPaused(true)}
               onMouseLeave={() => setPaused(false)}
@@ -903,7 +937,7 @@ export default function Homepage() {
               <NavyOverlays />
               <div style={{ position: 'relative', zIndex: 3, minHeight: 280 }}>
                 {shuffled.map((d, i) => (
-                  <DiscoveryCard key={i} discovery={d} active={i === current} direction={i === previous ? 'exit' : i === current ? 'enter' : 'idle'} />
+                  <DiscoveryCard key={i} discovery={d} active={i === current} direction={i === previous ? 'exit' : i === current ? 'enter' : 'idle'} onCtaClick={handleCtaClick} />
                 ))}
               </div>
             </div>
@@ -932,8 +966,6 @@ export default function Homepage() {
           animation: h6Shimmer 1.2s ease-in-out infinite;
         }
         .h6-table-row:hover td { background: #F8FAFD !important; }
-        .h6-cta-link:hover { color: var(--pink, #E62D75) !important; }
-        .h6-cta-link:hover .h6-cta-arrow { transform: translateX(4px); }
         input::placeholder { color: var(--navy-medium, #436FA3); opacity: 0.6; }
         .h6-table-scroll { scrollbar-width: thin; scrollbar-color: #C4CDD8 #F0F2F5; }
         .h6-table-scroll::-webkit-scrollbar { height: 6px; }

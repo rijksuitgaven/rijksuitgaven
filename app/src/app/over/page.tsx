@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ScrollReveal } from '@/components/homepage'
+import { TrackPageView } from '@/components/analytics/track-page-view'
 
 export const metadata = {
   title: 'Over Rijksuitgaven',
@@ -9,6 +10,7 @@ export const metadata = {
 export default function OverPage() {
   return (
     <>
+      <TrackPageView page="over" />
       {/* Hero */}
       <section className="bg-white pt-8 md:pt-12 pb-12 md:pb-16">
         <div className="max-w-[1080px] mx-auto px-6 lg:px-8">

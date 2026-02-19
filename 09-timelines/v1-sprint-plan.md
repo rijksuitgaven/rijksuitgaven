@@ -516,9 +516,9 @@ Additional UI/UX work completed after mini sprint was marked complete:
 - [x] UX-025 feedback button (2026-02-11)
 - [ ] Exact phrase search (`"rode kruis"`) — moved from V1.1 to V1.0
 - [ ] Wildcard syntax (`prorail*`) — moved from V1.1 to V1.0
-- [ ] `contacts` table + admin UI at `/team/contacten` (prospects + subscribers)
-- [ ] Resend Audience sync (contacts → Resend on create/update)
-- [ ] Resend Broadcasts setup (campaign template, test send)
+- [x] `contacts` table + admin UI at `/team/contacten` (2026-02-13, CRM pipeline 2026-02-19)
+- [x] Resend Audience sync (2026-02-19, CRUD triggers on leden/contacten endpoints)
+- [x] Resend Broadcasts setup (2026-02-19, self-service compose UI + Batch API)
 - [ ] Migrate Mailster contacts into `contacts` table
 - [ ] Rate limiting on backend (Cloudflare)
 - [ ] All systems QA verified

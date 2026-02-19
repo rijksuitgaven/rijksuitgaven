@@ -101,6 +101,15 @@ export async function GET(request: NextRequest) {
     subscriptionsResult,
     pulsePrevResult,
     moduleEventsResult,
+    // UX-036: Public page analytics
+    publicPageViewsResult,
+    publicInteractionsResult,
+    publicContactFunnelResult,
+    publicReferrersResult,
+    publicCtaClicksResult,
+    publicScrollFunnelResult,
+    publicLoginFunnelResult,
+    publicUtmCampaignsResult,
   ] = await withTimeout(Promise.all([
     supabase.rpc('get_usage_pulse', { since_date: sinceISO }),
     supabase.rpc('get_usage_modules', { since_date: sinceISO }),
@@ -125,6 +134,15 @@ export async function GET(request: NextRequest) {
     supabase.rpc('get_usage_pulse_period', { period_start: prevStartISO, period_end: prevEndISO }),
     // Per-module event counts for module-centric dashboard
     supabase.rpc('get_usage_module_events', { since_date: sinceISO }),
+    // UX-036: Public page analytics (8 queries)
+    supabase.rpc('get_public_page_views', { since_date: sinceISO }),
+    supabase.rpc('get_public_interactions', { since_date: sinceISO }),
+    supabase.rpc('get_public_contact_funnel', { since_date: sinceISO }),
+    supabase.rpc('get_public_referrers', { since_date: sinceISO, max_results: 20 }),
+    supabase.rpc('get_public_cta_clicks', { since_date: sinceISO }),
+    supabase.rpc('get_public_scroll_funnel', { since_date: sinceISO }),
+    supabase.rpc('get_public_login_funnel', { since_date: sinceISO }),
+    supabase.rpc('get_public_utm_campaigns', { since_date: sinceISO, max_results: 20 }),
   ]), 'dashboard queries')
 
   // Check for errors (core queries block, new queries don't)
@@ -161,6 +179,22 @@ export async function GET(request: NextRequest) {
   }
   if (moduleEventsResult.error) {
     console.error('[Statistics] Module events query error (non-blocking):', moduleEventsResult.error.message)
+  }
+
+  // UX-036: Log public analytics errors (non-blocking)
+  for (const [label, result] of [
+    ['Public page views', publicPageViewsResult],
+    ['Public interactions', publicInteractionsResult],
+    ['Public contact funnel', publicContactFunnelResult],
+    ['Public referrers', publicReferrersResult],
+    ['Public CTA clicks', publicCtaClicksResult],
+    ['Public scroll funnel', publicScrollFunnelResult],
+    ['Public login funnel', publicLoginFunnelResult],
+    ['Public UTM campaigns', publicUtmCampaignsResult],
+  ] as const) {
+    if (result.error) {
+      console.error(`[Statistics] ${label} query error (non-blocking):`, result.error.message)
+    }
   }
 
   // De-anonymize actors: hash each subscription user_id and match to actor_hash
@@ -212,6 +246,17 @@ export async function GET(request: NextRequest) {
     search_engagement: searchEngagementResult.data ?? [],
     pulse_previous: pulsePrevResult.data ?? [],
     module_events: moduleEventsResult.data ?? [],
+    // UX-036: Public page analytics
+    public: {
+      page_views: publicPageViewsResult.data ?? [],
+      interactions: publicInteractionsResult.data ?? [],
+      contact_funnel: publicContactFunnelResult.data ?? [],
+      referrers: publicReferrersResult.data ?? [],
+      cta_clicks: publicCtaClicksResult.data ?? [],
+      scroll_funnel: publicScrollFunnelResult.data ?? [],
+      login_funnel: publicLoginFunnelResult.data ?? [],
+      utm_campaigns: publicUtmCampaignsResult.data ?? [],
+    },
   })
 }
 

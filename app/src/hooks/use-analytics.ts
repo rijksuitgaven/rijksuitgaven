@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef } from 'react'
 
 /**
- * Analytics event types tracked by the system (UX-032)
+ * Analytics event types tracked by the system (UX-032 + UX-036)
  */
 export type AnalyticsEventType =
   | 'module_view'
@@ -20,6 +20,8 @@ export type AnalyticsEventType =
   | 'page_change'
   | 'error'
   | 'external_link'
+  | 'public_page_view'
+  | 'public_interaction'
 
 interface AnalyticsEvent {
   event_type: AnalyticsEventType
@@ -37,6 +39,12 @@ const ENDPOINT = '/api/v1/events'
 let eventQueue: AnalyticsEvent[] = []
 let flushTimer: ReturnType<typeof setInterval> | null = null
 let hookCount = 0
+
+// Session-scoped ID for public page analytics (UX-036)
+// Lives in memory only — dies when tab closes. No cookies, no localStorage, GDPR-safe.
+const publicSessionId = typeof crypto !== 'undefined' && crypto.randomUUID
+  ? crypto.randomUUID()
+  : Math.random().toString(36).substring(2, 15)
 
 /**
  * Send events via fetch (primary method).
@@ -156,5 +164,5 @@ export function useAnalytics() {
     []
   )
 
-  return { track }
+  return { track, publicSessionId }
 }

@@ -2,18 +2,22 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { TrackPageView } from '@/components/analytics/track-page-view'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
 export default function AfmeldenPage() {
   return (
-    <Suspense fallback={
-      <main className="min-h-screen bg-gradient-to-b from-[#E1EAF2] to-white flex items-center justify-center px-4">
-        <div className="max-w-sm w-full text-center" />
-      </main>
-    }>
-      <AfmeldenContent />
-    </Suspense>
+    <>
+      <TrackPageView page="afmelden" />
+      <Suspense fallback={
+        <main className="min-h-screen bg-gradient-to-b from-[#E1EAF2] to-white flex items-center justify-center px-4">
+          <div className="max-w-sm w-full text-center" />
+        </main>
+      }>
+        <AfmeldenContent />
+      </Suspense>
+    </>
   )
 }
 

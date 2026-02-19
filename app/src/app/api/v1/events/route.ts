@@ -29,6 +29,8 @@ const VALID_EVENT_TYPES = [
   'page_change',
   'error',
   'external_link',
+  'public_page_view',
+  'public_interaction',
 ] as const
 
 const VALID_MODULES = [
