@@ -158,7 +158,7 @@ export async function backfillResendAudience(): Promise<{
 
   const { data: people, error: fetchError } = await supabase
     .from('people')
-    .select('id, email, first_name, last_name, resend_contact_id, archived_at')
+    .select('id, email, first_name, last_name, resend_contact_id, archived_at, unsubscribed_at')
 
   if (fetchError || !people) {
     throw new Error(`Failed to fetch people: ${fetchError?.message}`)
@@ -182,6 +182,19 @@ export async function backfillResendAudience(): Promise<{
 
   async function processOne(person: NonNullable<typeof people>[number]): Promise<void> {
     try {
+      // Unsubscribed people must NOT be synced to Resend (GDPR)
+      if (person.unsubscribed_at) {
+        if (person.resend_contact_id) {
+          await resend.contacts.remove({ id: person.resend_contact_id })
+          await supabase
+            .from('people')
+            .update({ resend_contact_id: null })
+            .eq('id', person.id)
+          stats.removed++
+        }
+        return
+      }
+
       // Archived people should be removed from Resend
       if (person.archived_at) {
         if (person.resend_contact_id) {
