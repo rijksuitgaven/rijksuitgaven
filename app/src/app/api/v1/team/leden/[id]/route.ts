@@ -215,6 +215,12 @@ export async function DELETE(
     return NextResponse.json({ error: 'Fout bij verwijderen lid' }, { status: 500 })
   }
 
+  // Set pipeline stage to ex_klant
+  await adminClient
+    .from('people')
+    .update({ pipeline_stage: 'ex_klant' })
+    .eq('id', sub.person_id)
+
   // Sync to Resend as churned (fire-and-forget)
   const { data: person } = await adminClient
     .from('people')

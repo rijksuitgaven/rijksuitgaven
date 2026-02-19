@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
 import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react'
 
+type PipelineStage = 'nieuw' | 'in_gesprek' | 'gewonnen' | 'afgesloten' | 'verloren' | 'ex_klant'
+
 interface Contact {
   id: string
   email: string
@@ -13,26 +15,29 @@ interface Contact {
   last_name: string | null
   organization: string | null
   phone: string | null
-  type: 'prospect' | 'churned' | 'gearchiveerd'
+  pipeline_stage: PipelineStage
+  lost_reason: string | null
   source: string | null
   notes: string | null
-  archived_at: string | null
   resend_contact_id: string | null
   created_at: string
   updated_at: string
 }
 
-type SortField = 'name' | 'organization' | 'email' | 'type' | 'source' | 'created_at'
+type SortField = 'name' | 'organization' | 'email' | 'pipeline_stage' | 'source' | 'created_at'
 type SortDirection = 'asc' | 'desc'
 
-const typeConfig: Record<Contact['type'], { label: string; className: string }> = {
-  prospect: { label: 'Prospect', className: 'bg-blue-50 text-blue-700 border-blue-200' },
-  churned: { label: 'Churned', className: 'bg-gray-50 text-gray-600 border-gray-200' },
-  gearchiveerd: { label: 'Gearchiveerd', className: 'bg-stone-50 text-stone-500 border-stone-200' },
+const stageConfig: Record<PipelineStage, { label: string; className: string }> = {
+  nieuw: { label: 'Nieuw', className: 'bg-blue-50 text-blue-700 border-blue-200' },
+  in_gesprek: { label: 'In gesprek', className: 'bg-purple-50 text-purple-700 border-purple-200' },
+  gewonnen: { label: 'Gewonnen', className: 'bg-green-50 text-green-700 border-green-200' },
+  afgesloten: { label: 'Afgesloten', className: 'bg-stone-50 text-stone-600 border-stone-200' },
+  verloren: { label: 'Verloren', className: 'bg-amber-50 text-amber-700 border-amber-200' },
+  ex_klant: { label: 'Ex-klant', className: 'bg-gray-50 text-gray-600 border-gray-200' },
 }
 
-function TypeBadge({ type }: { type: Contact['type'] }) {
-  const { label, className } = typeConfig[type]
+function StageBadge({ stage }: { stage: PipelineStage }) {
+  const { label, className } = stageConfig[stage] || stageConfig.nieuw
   return (
     <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full border ${className}`}>
       {label}
@@ -278,6 +283,8 @@ function EditContactModal({ contact, onClose, onSaved }: {
 }) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [stage, setStage] = useState<PipelineStage>(contact.pipeline_stage)
+  const [lostReason, setLostReason] = useState(contact.lost_reason || '')
 
   useEffect(() => {
     function handleEsc(e: KeyboardEvent) {
@@ -293,13 +300,15 @@ function EditContactModal({ contact, onClose, onSaved }: {
     setError(null)
 
     const form = new FormData(e.currentTarget)
-    const body = {
+    const body: Record<string, unknown> = {
       first_name: form.get('first_name') || null,
       last_name: form.get('last_name') || null,
       organization: form.get('organization') || null,
       phone: form.get('phone') || null,
       source: form.get('source') || null,
       notes: form.get('notes') || null,
+      pipeline_stage: stage,
+      lost_reason: (stage === 'verloren' || stage === 'afgesloten') ? (lostReason.trim() || null) : null,
     }
 
     try {
@@ -321,27 +330,6 @@ function EditContactModal({ contact, onClose, onSaved }: {
     }
   }
 
-  async function handleArchive() {
-    if (!confirm('Weet u zeker dat u dit contact wilt archiveren?')) return
-    setSubmitting(true)
-    try {
-      const res = await fetch(`/api/v1/team/contacten/${contact.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ archived_at: new Date().toISOString() }),
-      })
-      if (res.ok) onSaved()
-      else {
-        const data = await res.json()
-        setError(data.error || 'Fout bij archiveren')
-      }
-    } catch {
-      setError('Netwerkfout')
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 space-y-4" onClick={e => e.stopPropagation()}>
@@ -354,13 +342,13 @@ function EditContactModal({ contact, onClose, onSaved }: {
 
         <div className="flex items-center justify-between">
           <p className="text-sm text-[var(--navy-medium)]">{contact.email}</p>
-          <TypeBadge type={contact.type} />
+          <StageBadge stage={contact.pipeline_stage} />
         </div>
 
         <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-[var(--navy-medium)]">
           <span>Aangemaakt: <span className="font-medium">{formatDate(contact.created_at)}</span></span>
           {contact.resend_contact_id && (
-            <span className="text-green-600">✓ Resend gesynchroniseerd</span>
+            <span className="text-green-600">&#10003; Resend gesynchroniseerd</span>
           )}
         </div>
 
@@ -395,6 +383,44 @@ function EditContactModal({ contact, onClose, onSaved }: {
               <option value="referral">Referral</option>
             </select>
           </div>
+
+          {/* Pipeline stage */}
+          <div>
+            <label className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Pipeline</label>
+            <div className="flex flex-wrap gap-2">
+              {(['nieuw', 'in_gesprek', 'afgesloten', 'verloren', 'ex_klant'] as PipelineStage[]).map(s => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setStage(s)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
+                    stage === s
+                      ? stageConfig[s].className + ' ring-2 ring-offset-1 ring-[var(--navy-dark)]'
+                      : 'bg-white text-[var(--navy-medium)] border-[var(--border)] hover:bg-[var(--gray-light)]'
+                  }`}
+                >
+                  {stageConfig[s].label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Lost reason (shown for verloren and afgesloten) */}
+          {(stage === 'verloren' || stage === 'afgesloten') && (
+            <div>
+              <label htmlFor="edit_lost_reason" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">
+                Reden {stage === 'verloren' ? '(waarom verloren)' : '(waarom afgesloten)'}
+              </label>
+              <input
+                id="edit_lost_reason"
+                value={lostReason}
+                onChange={e => setLostReason(e.target.value)}
+                placeholder={stage === 'verloren' ? 'Bijv. te duur, concurrent gekozen' : 'Bijv. niet relevant, verkeerde doelgroep'}
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]"
+              />
+            </div>
+          )}
+
           <div>
             <label htmlFor="edit_notes" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Notities</label>
             <textarea id="edit_notes" name="notes" rows={2} defaultValue={contact.notes ?? ''} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]" />
@@ -402,43 +428,13 @@ function EditContactModal({ contact, onClose, onSaved }: {
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <div className="flex items-center justify-between pt-2">
-            {contact.type === 'prospect' ? (
-              <button type="button" onClick={handleArchive} disabled={submitting} className="text-sm text-stone-500 hover:text-stone-700">
-                Archiveren
-              </button>
-            ) : contact.type === 'gearchiveerd' ? (
-              <button
-                type="button"
-                disabled={submitting}
-                onClick={async () => {
-                  setSubmitting(true)
-                  try {
-                    const res = await fetch(`/api/v1/team/contacten/${contact.id}`, {
-                      method: 'PATCH',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ archived_at: null }),
-                    })
-                    if (res.ok) onSaved()
-                    else { const d = await res.json(); setError(d.error || 'Fout') }
-                  } catch { setError('Netwerkfout') }
-                  finally { setSubmitting(false) }
-                }}
-                className="text-sm text-blue-600 hover:text-blue-800"
-              >
-                Dearchiveren
-              </button>
-            ) : (
-              <span />
-            )}
-            <div className="flex gap-2">
-              <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-[var(--border)] rounded-md hover:bg-gray-50">
-                Annuleren
-              </button>
-              <button type="submit" disabled={submitting} className="px-4 py-2 bg-[var(--pink)] text-white rounded-md text-sm font-medium hover:opacity-90 disabled:opacity-50">
-                {submitting ? 'Bezig...' : 'Opslaan'}
-              </button>
-            </div>
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-[var(--border)] rounded-md hover:bg-gray-50">
+              Annuleren
+            </button>
+            <button type="submit" disabled={submitting} className="px-4 py-2 bg-[var(--pink)] text-white rounded-md text-sm font-medium hover:opacity-90 disabled:opacity-50">
+              {submitting ? 'Bezig...' : 'Opslaan'}
+            </button>
           </div>
         </form>
       </div>
@@ -512,9 +508,9 @@ export default function TeamContactenPage() {
         aVal = a.email.toLowerCase()
         bVal = b.email.toLowerCase()
         break
-      case 'type':
-        aVal = a.type
-        bVal = b.type
+      case 'pipeline_stage':
+        aVal = a.pipeline_stage
+        bVal = b.pipeline_stage
         break
       case 'source':
         aVal = (a.source || '').toLowerCase()
@@ -552,10 +548,12 @@ export default function TeamContactenPage() {
     )
   }
 
-  const counts = {
-    prospect: contacts.filter(c => c.type === 'prospect').length,
-    churned: contacts.filter(c => c.type === 'churned').length,
-    gearchiveerd: contacts.filter(c => c.type === 'gearchiveerd').length,
+  const stageCounts = {
+    nieuw: contacts.filter(c => c.pipeline_stage === 'nieuw').length,
+    in_gesprek: contacts.filter(c => c.pipeline_stage === 'in_gesprek').length,
+    ex_klant: contacts.filter(c => c.pipeline_stage === 'ex_klant').length,
+    verloren: contacts.filter(c => c.pipeline_stage === 'verloren').length,
+    afgesloten: contacts.filter(c => c.pipeline_stage === 'afgesloten').length,
   }
 
   return (
@@ -564,14 +562,22 @@ export default function TeamContactenPage() {
 
       {/* Inline stats + Nieuw contact button */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+        <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm">
           <span className="text-[var(--navy-dark)]"><span className="font-semibold">{contacts.length}</span> totaal</span>
-          <span className="text-blue-700"><span className="font-semibold">{counts.prospect}</span> prospects</span>
-          {counts.churned > 0 && (
-            <span className="text-gray-600"><span className="font-semibold">{counts.churned}</span> churned</span>
+          {stageCounts.nieuw > 0 && (
+            <span className="text-blue-700"><span className="font-semibold">{stageCounts.nieuw}</span> nieuw</span>
           )}
-          {counts.gearchiveerd > 0 && (
-            <span className="text-stone-500"><span className="font-semibold">{counts.gearchiveerd}</span> gearchiveerd</span>
+          {stageCounts.in_gesprek > 0 && (
+            <span className="text-purple-700"><span className="font-semibold">{stageCounts.in_gesprek}</span> in gesprek</span>
+          )}
+          {stageCounts.ex_klant > 0 && (
+            <span className="text-gray-600"><span className="font-semibold">{stageCounts.ex_klant}</span> ex-klant</span>
+          )}
+          {stageCounts.verloren > 0 && (
+            <span className="text-amber-700"><span className="font-semibold">{stageCounts.verloren}</span> verloren</span>
+          )}
+          {stageCounts.afgesloten > 0 && (
+            <span className="text-stone-500"><span className="font-semibold">{stageCounts.afgesloten}</span> afgesloten</span>
           )}
         </div>
         <button
@@ -599,7 +605,7 @@ export default function TeamContactenPage() {
                 <SortableHeader label="Naam" field="name" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
                 <SortableHeader label="Organisatie" field="organization" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
                 <SortableHeader label="E-mail" field="email" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
-                <SortableHeader label="Type" field="type" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+                <SortableHeader label="Pipeline" field="pipeline_stage" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
                 <SortableHeader label="Bron" field="source" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
                 <SortableHeader label="Aangemaakt" field="created_at" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
                 <th className="px-4 py-3 w-24" />
@@ -622,44 +628,25 @@ export default function TeamContactenPage() {
                     <td className="px-4 py-3 text-[var(--navy-dark)] font-medium">
                       {getContactName(contact)}
                       {contact.resend_contact_id && (
-                        <span className="ml-1.5 text-xs text-green-600" title="Resend gesynchroniseerd">✓</span>
+                        <span className="ml-1.5 text-xs text-green-600" title="Resend gesynchroniseerd">&#10003;</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-[var(--navy-medium)]">{contact.organization || '—'}</td>
                     <td className="px-4 py-3 text-[var(--navy-medium)]">{contact.email}</td>
-                    <td className="px-4 py-3"><TypeBadge type={contact.type} /></td>
+                    <td className="px-4 py-3"><StageBadge stage={contact.pipeline_stage} /></td>
                     <td className="px-4 py-3 text-[var(--navy-medium)]">{contact.source || '—'}</td>
                     <td className="px-4 py-3 text-[var(--navy-medium)]">{formatDate(contact.created_at)}</td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={(ev) => {
-                            ev.stopPropagation()
-                            setConvertingContact(contact)
-                          }}
-                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors"
-                          title="Omzetten naar lid"
-                        >
-                          Maak lid
-                        </button>
-                        {contact.type === 'prospect' && (
-                          <button
-                            onClick={(ev) => {
-                              ev.stopPropagation()
-                              if (!confirm('Weet u zeker dat u dit contact wilt archiveren?')) return
-                              fetch(`/api/v1/team/contacten/${contact.id}`, {
-                                method: 'PATCH',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ archived_at: new Date().toISOString() }),
-                              }).then(res => { if (res.ok) fetchContacts() })
-                            }}
-                            className="p-1.5 text-[var(--muted-foreground)] hover:text-stone-600 hover:bg-stone-50 rounded transition-colors"
-                            title="Archiveren"
-                          >
-                            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H2Z" /><path fillRule="evenodd" d="M2 7.5h16l-.811 7.71a2 2 0 0 1-1.99 1.79H4.802a2 2 0 0 1-1.99-1.79L2 7.5ZM7 11a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Z" clipRule="evenodd" /></svg>
-                          </button>
-                        )}
-                      </div>
+                      <button
+                        onClick={(ev) => {
+                          ev.stopPropagation()
+                          setConvertingContact(contact)
+                        }}
+                        className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors"
+                        title="Omzetten naar lid"
+                      >
+                        Maak lid
+                      </button>
                     </td>
                   </tr>
                 ))

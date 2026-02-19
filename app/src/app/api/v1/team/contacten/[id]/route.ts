@@ -3,7 +3,7 @@
  *
  * PATCH  /api/v1/team/contacten/[id] — Update person fields (+ Resend sync)
  *
- * Type is computed, not editable. No deletion — use archived_at for prospects.
+ * Pipeline stage is editable via pipeline_stage field.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -40,8 +40,14 @@ export async function PATCH(
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  // Person fields only (type is computed, not editable)
-  const allowedFields = ['first_name', 'last_name', 'organization', 'phone', 'source', 'notes', 'archived_at'] as const
+  const VALID_STAGES = new Set(['nieuw', 'in_gesprek', 'gewonnen', 'afgesloten', 'verloren', 'ex_klant'])
+
+  // Validate pipeline_stage if provided
+  if ('pipeline_stage' in body && !VALID_STAGES.has(body.pipeline_stage as string)) {
+    return NextResponse.json({ error: 'Ongeldige pipeline stage' }, { status: 400 })
+  }
+
+  const allowedFields = ['first_name', 'last_name', 'organization', 'phone', 'source', 'notes', 'archived_at', 'pipeline_stage', 'lost_reason'] as const
   const updates: Record<string, unknown> = {}
 
   for (const field of allowedFields) {

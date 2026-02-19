@@ -140,6 +140,12 @@ export async function POST(
     .eq('person_id', personId)
     .not('deleted_at', 'is', null)
 
+  // Set pipeline stage to 'gewonnen'
+  await supabase
+    .from('people')
+    .update({ pipeline_stage: 'gewonnen' })
+    .eq('id', personId)
+
   // Create subscription
   const { data: sub, error: subError } = await supabase
     .from('subscriptions')

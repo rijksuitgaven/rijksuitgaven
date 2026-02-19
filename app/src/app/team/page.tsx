@@ -44,6 +44,7 @@ function formatDate(dateStr: string) {
 export default function TeamDashboardPage() {
   const { role, loading: subLoading } = useSubscription()
   const [members, setMembers] = useState<Member[]>([])
+  const [pipelineCounts, setPipelineCounts] = useState<Record<string, number>>({})
   const [feedbackStats, setFeedbackStats] = useState<{ nieuw: number; bug: number; suggestie: number; vraag: number }>({ nieuw: 0, bug: 0, suggestie: 0, vraag: 0 })
   const [errors, setErrors] = useState<{ module: string; message: string; created_at: string }[]>([])
   const [loading, setLoading] = useState(true)
@@ -54,8 +55,17 @@ export default function TeamDashboardPage() {
         fetch('/api/v1/team/leden').then(res => res.json()),
         fetch('/api/v1/team/feedback').then(res => res.json()),
         fetch('/api/v1/team/statistieken?days=7').then(res => res.json()).catch(() => null),
-      ]).then(([ledenData, feedbackData, statsData]) => {
+        fetch('/api/v1/team/contacten').then(res => res.json()).catch(() => null),
+      ]).then(([ledenData, feedbackData, statsData, contactenData]) => {
         if (ledenData.members) setMembers(ledenData.members)
+        if (contactenData?.contacts) {
+          const counts: Record<string, number> = {}
+          for (const c of contactenData.contacts) {
+            const stage = c.pipeline_stage || 'nieuw'
+            counts[stage] = (counts[stage] || 0) + 1
+          }
+          setPipelineCounts(counts)
+        }
         if (feedbackData.items) {
           const items = feedbackData.items as { status: string; category: string }[]
           const open = items.filter(i => i.status !== 'afgewezen' && i.status !== 'afgerond')
@@ -217,6 +227,52 @@ export default function TeamDashboardPage() {
             )}
           </div>
         </div>
+
+        {/* Pipeline section */}
+        {Object.keys(pipelineCounts).length > 0 && (
+          <div className="bg-white border border-[var(--border)] rounded-lg">
+            <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between">
+              <h2 className="text-base font-semibold text-[var(--navy-dark)]">Pipeline</h2>
+              <Link href="/team/contacten" className="text-xs text-[var(--navy-medium)] hover:text-[var(--pink)] transition-colors">
+                Bekijk alle contacten →
+              </Link>
+            </div>
+            <div className="px-5 py-4">
+              <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+                {(pipelineCounts['nieuw'] ?? 0) > 0 && (
+                  <span className="text-blue-700">
+                    <span className="inline-block w-2 h-2 rounded-full bg-blue-500 mr-1.5" />
+                    <span className="font-semibold">{pipelineCounts['nieuw']}</span> nieuw
+                  </span>
+                )}
+                {(pipelineCounts['in_gesprek'] ?? 0) > 0 && (
+                  <span className="text-purple-700">
+                    <span className="inline-block w-2 h-2 rounded-full bg-purple-500 mr-1.5" />
+                    <span className="font-semibold">{pipelineCounts['in_gesprek']}</span> in gesprek
+                  </span>
+                )}
+                {(pipelineCounts['afgesloten'] ?? 0) > 0 && (
+                  <span className="text-stone-600">
+                    <span className="inline-block w-2 h-2 rounded-full bg-stone-400 mr-1.5" />
+                    <span className="font-semibold">{pipelineCounts['afgesloten']}</span> afgesloten
+                  </span>
+                )}
+                {(pipelineCounts['verloren'] ?? 0) > 0 && (
+                  <span className="text-amber-700">
+                    <span className="inline-block w-2 h-2 rounded-full bg-amber-500 mr-1.5" />
+                    <span className="font-semibold">{pipelineCounts['verloren']}</span> verloren
+                  </span>
+                )}
+                {(pipelineCounts['ex_klant'] ?? 0) > 0 && (
+                  <span className="text-gray-600">
+                    <span className="inline-block w-2 h-2 rounded-full bg-gray-400 mr-1.5" />
+                    <span className="font-semibold">{pipelineCounts['ex_klant']}</span> ex-klant
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Feedback section */}
         <div className="bg-white border border-[var(--border)] rounded-lg">

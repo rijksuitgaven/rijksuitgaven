@@ -4,10 +4,8 @@
  * GET  /api/v1/team/contacten — List people without active subscription
  * POST /api/v1/team/contacten — Create new person (prospect)
  *
- * Type is computed, not stored:
- *   - No subscription history, not archived → prospect
- *   - No subscription history, archived_at set → gearchiveerd
- *   - Had subscription, now expired/cancelled → churned
+ * Pipeline stage is stored on people.pipeline_stage:
+ *   nieuw | in_gesprek | gewonnen | afgesloten | verloren | ex_klant
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -24,10 +22,10 @@ export async function GET() {
 
   const supabase = createAdminClient()
 
-  // Get all people with their subscriptions (if any)
+  // Get all people who are NOT active members (pipeline_stage != 'gewonnen' or no active sub)
   const { data: people, error } = await supabase
     .from('people')
-    .select('id, email, first_name, last_name, organization, phone, source, notes, resend_contact_id, archived_at, created_at, updated_at, subscriptions(id, end_date, grace_ends_at, cancelled_at)')
+    .select('id, email, first_name, last_name, organization, phone, source, notes, resend_contact_id, pipeline_stage, lost_reason, created_at, updated_at, subscriptions(id, end_date, grace_ends_at, cancelled_at)')
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -40,8 +38,7 @@ export async function GET() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const contacts = (people ?? []).filter((person: any) => {
     const subs = person.subscriptions as { id: string; end_date: string; grace_ends_at: string | null; cancelled_at: string | null }[]
-    if (!subs || subs.length === 0) return true // No subscription = prospect
-    // Check if ANY subscription is still active
+    if (!subs || subs.length === 0) return true
     const hasActive = subs.some(s => {
       if (s.cancelled_at) return false
       const graceEnd = s.grace_ends_at || s.end_date
@@ -49,19 +46,7 @@ export async function GET() {
     })
     return !hasActive
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  }).map(({ subscriptions, ...person }: any) => {
-    // Compute type: churned (had subscription), gearchiveerd (archived prospect), or prospect
-    const subs = subscriptions as { id: string }[]
-    let type: 'prospect' | 'churned' | 'gearchiveerd'
-    if (subs && subs.length > 0) {
-      type = 'churned'
-    } else if (person.archived_at) {
-      type = 'gearchiveerd'
-    } else {
-      type = 'prospect'
-    }
-    return { ...person, type }
-  })
+  }).map(({ subscriptions, ...person }: any) => person)
 
   return NextResponse.json({ contacts })
 }
@@ -138,5 +123,5 @@ export async function POST(request: NextRequest) {
     console.error('[Resend] Sync error on create:', err)
   })
 
-  return NextResponse.json({ contact: { ...person, type: 'prospect' } }, { status: 201 })
+  return NextResponse.json({ contact: person }, { status: 201 })
 }
