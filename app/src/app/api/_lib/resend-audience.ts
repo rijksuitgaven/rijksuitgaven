@@ -56,14 +56,11 @@ export async function syncPersonToResend(
   const resend = new Resend(RESEND_API_KEY)
 
   if (action === 'create' && person.email) {
-    const segmentId = list ? SEGMENT_IDS[list] : undefined
-
     const { data, error } = await resend.contacts.create({
       audienceId: RESEND_AUDIENCE_ID!,
       email: person.email,
       firstName: person.first_name || undefined,
       lastName: person.last_name || undefined,
-      ...(segmentId ? { segments: [{ id: segmentId }] } : {}),
     })
 
     if (error) {
@@ -82,14 +79,11 @@ export async function syncPersonToResend(
   }
 
   if (action === 'update' && person.resend_contact_id) {
-    const segmentId = list ? SEGMENT_IDS[list] : undefined
-
     const { error } = await resend.contacts.update({
       audienceId: RESEND_AUDIENCE_ID!,
       id: person.resend_contact_id,
       firstName: person.first_name || undefined,
       lastName: person.last_name || undefined,
-      ...(segmentId ? { segments: [{ id: segmentId }] } : {}),
     })
 
     if (error) {
@@ -209,37 +203,42 @@ export async function backfillResendAudience(): Promise<{
 
       if (!person.email) return
 
-      const sub = subMap.get(person.id) || null
-      const list = computeListType(sub)
-      const segmentId = SEGMENT_IDS[list]
-
       if (person.resend_contact_id) {
         // Update existing contact
-        await resend.contacts.update({
+        const { error: updateError } = await resend.contacts.update({
           audienceId: RESEND_AUDIENCE_ID!,
           id: person.resend_contact_id,
           firstName: person.first_name || undefined,
           lastName: person.last_name || undefined,
-          ...(segmentId ? { segments: [{ id: segmentId }] } : {}),
         })
+        if (updateError) {
+          console.error(`[Resend] Update contact error for ${person.email}:`, updateError)
+          stats.errors++
+          return
+        }
         stats.updated++
       } else {
-        // Create new contact
-        const { data } = await resend.contacts.create({
+        // Create new contact (without segments — add via separate API if needed)
+        const { data, error: createError } = await resend.contacts.create({
           audienceId: RESEND_AUDIENCE_ID!,
           email: person.email,
           firstName: person.first_name || undefined,
           lastName: person.last_name || undefined,
-          ...(segmentId ? { segments: [{ id: segmentId }] } : {}),
         })
+
+        if (createError) {
+          console.error(`[Resend] Create contact error for ${person.email}:`, createError)
+          stats.errors++
+          return
+        }
 
         if (data?.id) {
           await supabase
             .from('people')
             .update({ resend_contact_id: data.id })
             .eq('id', person.id)
+          stats.created++
         }
-        stats.created++
       }
       stats.synced++
     } catch (err) {
