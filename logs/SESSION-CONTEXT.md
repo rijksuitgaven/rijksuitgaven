@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-02-19
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE, footer COMPLETE, about page COMPLETE, support page COMPLETE, data availability audit COMPLETE, datasets page COMPLETE, data table UX COMPLETE, mobile responsiveness COMPLETE, email campaign system COMPLETE, campaign analytics COMPLETE)
+**Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE, footer COMPLETE, about page COMPLETE, support page COMPLETE, data availability audit COMPLETE, datasets page COMPLETE, data table UX COMPLETE, mobile responsiveness COMPLETE, email campaign system COMPLETE, campaign analytics COMPLETE, CRM pipeline COMPLETE, email pipeline targeting COMPLETE)
 
 ---
 
@@ -123,6 +123,8 @@
 - ✅ **2026-02-19 (Session 4):** Email campaign improvements — 4 features via expert panel. Preheader field (hidden inbox preview text, zwnj spacer). Full-fidelity preview (server-rendered iframe via POST /preview, shows logo+template). Image upload/delete (Supabase Storage `email-images` bucket, 2MB max, file picker in toolbar, thumbnail strip with delete). Campaign history (migration 059, GET /campaigns, "Verzonden" section with "Sjabloon" reuse). Send endpoint saves to campaigns table. 1 commit.
 - ✅ **2026-02-19 (Session 5):** Campaign analytics — open/click/bounce tracking via Resend webhooks. 5-expert panel (deliverability, webhooks, GDPR, frontend, adversarial). Migration 060 (campaign_events table with dedup index). Send refactored: save campaign BEFORE sending, tag each email with campaign_id for webhook correlation. Webhook handler expanded: 5 email event types (delivered/opened/clicked/bounced/complained) → campaign_events. Campaign detail endpoint with per-recipient drill-down. Frontend: expandable campaign rows with engagement stats (open %, click %, bounces), per-recipient table. Apple MPP caveat (open rates indicatief). Privacy policy updated (email analytics under legitimate interest). 3 V1.1 backlog items (bounce suppress, complaint unsub, event retention). 1 commit.
 - ✅ **2026-02-19 (Session 6):** UX polish — sub-tabs on /team/mail (Nieuw bericht / Campagnes pill toggle), removed Sync Resend button (auto-sync via CRUD), removed afmelden logo, campaign delete with inline confirmation (DELETE endpoint + cascade). 3 commits.
+- ✅ **2026-02-19 (Session 7):** CRM Pipeline Stages — 5-person expert panel brainstorm (10 rounds). 6 stages on `people.pipeline_stage`: nieuw, in_gesprek, gewonnen, afgesloten, verloren, ex_klant. Migration 061 (column + data migration). Automatic transitions (convert → gewonnen, delete → ex_klant). Contacten page redesigned with color-coded stage badges + edit modal. Dashboard pipeline summary card. Key decision: pipeline and email are independent axes. 1 commit.
+- ✅ **2026-02-19 (Session 8):** Email pipeline targeting — replaced subscription-based segments (Leden/Prospects/Churned) with pipeline-based multi-select (Nieuw, In gesprek, Leden maandelijks/jaarlijks, Verloren, Ex-klant). Checkbox UI with inline counts, multiple segments per campaign, leden split for upsell targeting. 1 commit.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ✅ **Homepage mobile** — Mobile responsiveness audit + 18 fixes across 10 public pages (2026-02-18, Session 8)
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -153,26 +155,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **Email UX polish** (2026-02-19, Session 6)
-   Sub-tabs (Nieuw bericht / Campagnes), removed Sync Resend, removed afmelden logo, campaign delete. 3 commits.
+1. **Email pipeline targeting** (2026-02-19, Session 8)
+   Multi-select checkboxes replace segment dropdown. 6 pipeline-based segments with leden split. 1 commit.
 
-2. **Campaign analytics** (2026-02-19, Session 5)
-   Open/click/bounce tracking via Resend webhooks. Migration 060, send-first tagging, webhook expansion (5 events), campaign detail drill-down, per-recipient table, privacy policy update. 1 commit.
+2. **CRM Pipeline Stages** (2026-02-19, Session 7)
+   6 stages on people.pipeline_stage. Migration 061. Contacten redesign + dashboard card. 1 commit.
 
-3. **Email campaign improvements** (2026-02-19, Session 4)
-   Preheader, full-fidelity iframe preview, image upload/delete (Supabase Storage), campaign history with template reuse. 1 commit.
+3. **Email UX polish** (2026-02-19, Session 6)
+   Sub-tabs, removed Sync Resend, removed afmelden logo, campaign delete. 3 commits.
 
-4. **WYSIWYG email editor** (2026-02-19, Session 3)
-   Tiptap editor with toolbar, {{voornaam}} variable, email-safe inline styles. 1 commit.
+4. **Campaign analytics** (2026-02-19, Session 5)
+   Open/click/bounce tracking via Resend webhooks. Migration 060. 1 commit.
 
-5. **Self-service campaigns + branded unsubscribe** (2026-02-19, Session 2)
-   Resend Contacts API migration, 3 segments, sync engine, /team/mail admin page. 6 commits.
-
-4. **"+N meer" grouping + staffel bug fix** (2026-02-18, Session 7)
-   Context-aware expanded row grouping. Inkoop staffel 500 fix. 5 commits.
-
-5. **Scroll indicator + data table UX** (2026-02-18, Sessions 5-6)
-   Ghost column removal, sticky Totaal, dark navy gradient scroll indicator. 9 commits.
+5. **Email campaign improvements** (2026-02-19, Session 4)
+   Preheader, preview, image upload, campaign history. 1 commit.
 
 ---
 
