@@ -1,8 +1,8 @@
 # Session Context
 
-**Last Updated:** 2026-02-18
+**Last Updated:** 2026-02-19
 **Project Phase:** V1.0 Development
-**Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE, footer COMPLETE, about page COMPLETE, support page COMPLETE, data availability audit COMPLETE, datasets page COMPLETE, data table UX COMPLETE, mobile responsiveness COMPLETE)
+**Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE, footer COMPLETE, about page COMPLETE, support page COMPLETE, data availability audit COMPLETE, datasets page COMPLETE, data table UX COMPLETE, mobile responsiveness COMPLETE, email campaign system COMPLETE)
 
 ---
 
@@ -117,6 +117,7 @@
 - ✅ **2026-02-18 (Session 6):** Horizontal scroll indicator — 4 iterations. box-shadow on sticky elements CLIPPED by overflow boundary (CSS spec limitation). White gradient created ugly wash on navy header + visible blank gaps on white body. Final: dark navy-tinted gradient `rgba(14,50,97,0.22)` overlay OUTSIDE overflow container, 40px wide, with ResizeObserver scroll tracking + opacity transition. Key learning: never use box-shadow on sticky elements inside overflow:auto. 8 commits.
 - ✅ **2026-02-18 (Session 7):** "+N meer" context-aware grouping + inkoop staffel bug fix. Clicking "+N meer" now pre-selects matching column as expanded row grouping (expandGroupingRef → initialGrouping prop). Added missing publiek groupable fields (regio, staffel, onderdeel). Fixed inkoop staffel 500 error: Pydantic v2 rejects int→str on DetailRow.group_value; belt-and-suspenders fix with SQL `::text` cast + Python `str()`. Deploy learning: Railway "Redeploy" restarts same build, new code needs new deployment. 5 commits.
 - ✅ **2026-02-18 (Session 8):** Mobile responsiveness audit + fixes. 4 parallel audit agents reviewed all public pages at 375px — 25 issues found (CRITICAL/HIGH/MEDIUM/LOW). 18 fixes across 10 files: header nav scroll fade indicators (left/right gradient overlays with scroll tracking), auth button 4 touch target fixes (min-h/w-[44px]), footer social icon negative margin technique (p-2 -m-2), mobile banner `relative` fix, over page responsive grid, 404 responsive text size, verlopen/login touch targets, cookie banner mobile padding, homepage card/discovery mobile padding + share button targets. TypeScript clean. 1 commit.
+- ✅ **2026-02-19 (Session 1):** Email campaign system — end-to-end Resend Broadcasts integration. Design via brainstorm-mode (6 experts). `resend-audience.ts` full rewrite: 3 segments (leden/churned/prospects), `computeListType()` from subscription status, `backfillResendAudience()` with sequential processing (600ms delay for free plan 2 req/s). Migrated from deprecated Resend Audiences API to new Contacts API (no `audienceId`). `/team/mail` admin page (3 count cards, sync button with inline results, Resend Dashboard link). BFF endpoints (GET counts, POST backfill). Ongoing sync triggers wired to leden CRUD + contacten CRUD. Branded campaign template (`assets/email-templates/campaign-template.html`). Auto-recovery of stale `resend_contact_id`. TeamNav "E-mail" tab. Env vars: +RESEND_SEGMENT_LEDEN/CHURNED/PROSPECTS, -RESEND_AUDIENCE_ID. 6 commits.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ✅ **Homepage mobile** — Mobile responsiveness audit + 18 fixes across 10 public pages (2026-02-18, Session 8)
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -147,20 +148,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **Mobile responsiveness audit + fixes** (2026-02-18, Session 8)
+1. **Email campaign system** (2026-02-19, Session 1)
+   End-to-end Resend Broadcasts integration. 3 segments, new Contacts API (deprecated Audiences removed), admin page, sync engine, branded template. 6 commits.
+
+2. **Mobile responsiveness audit + fixes** (2026-02-18, Session 8)
    4 parallel audit agents, 25 issues found, 18 fixes across 10 files. Header scroll fade indicators, touch targets, responsive layouts, mobile padding. 1 commit.
 
-2. **"+N meer" grouping + staffel bug fix** (2026-02-18, Session 7)
+3. **"+N meer" grouping + staffel bug fix** (2026-02-18, Session 7)
    Context-aware expanded row grouping from "+N meer" clicks. Inkoop staffel 500 fix (Pydantic v2 int→str rejection, SQL `::text` cast). Added publiek groupable fields. 5 commits.
 
-3. **Scroll indicator + data table UX** (2026-02-18, Sessions 5-6)
+4. **Scroll indicator + data table UX** (2026-02-18, Sessions 5-6)
    Ghost column removal, sticky Totaal, collapse chevron. Dark navy gradient scroll indicator (4 iterations). 9 commits.
 
-4. **UX-035 Dataoverzicht + entity sync** (2026-02-18, Session 4)
+5. **UX-035 Dataoverzicht + entity sync** (2026-02-18, Session 4)
    Dynamic data availability matrix page. Entity list drift fix (module hub, support page, runbook). 6 commits.
-
-5. **QA + Legal + Content** (2026-02-18, Sessions 1-2)
-   Lighthouse all >90. WCAG AA. Privacy + Terms rewrites. Footer rework. About page. Support page. 13 commits.
 
 ---
 
