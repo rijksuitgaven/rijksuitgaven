@@ -208,13 +208,27 @@ export async function backfillResendAudience(): Promise<{
           lastName: person.last_name || undefined,
         })
         if (updateError) {
-          console.error(`[Resend] Update error for ${person.email}:`, updateError)
-          stats.error_messages.push(`${person.email}: ${updateError.message || JSON.stringify(updateError)}`)
-          stats.errors++
-          return
+          // Contact was deleted from Resend — clear stale ID and create fresh
+          if (updateError.message?.includes('not found')) {
+            console.warn(`[Resend] Stale contact for ${person.email}, recreating...`)
+            await supabase
+              .from('people')
+              .update({ resend_contact_id: null })
+              .eq('id', person.id)
+            person.resend_contact_id = null
+            // Fall through to create below
+          } else {
+            console.error(`[Resend] Update error for ${person.email}:`, updateError)
+            stats.error_messages.push(`${person.email}: ${updateError.message || JSON.stringify(updateError)}`)
+            stats.errors++
+            return
+          }
+        } else {
+          stats.updated++
         }
-        stats.updated++
-      } else {
+      }
+
+      if (!person.resend_contact_id) {
         const { data, error: createError } = await resend.contacts.create({
           email: person.email,
           firstName: person.first_name || undefined,
