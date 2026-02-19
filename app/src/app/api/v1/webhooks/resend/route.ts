@@ -3,9 +3,9 @@
  *
  * POST /api/v1/webhooks/resend — Receives Resend webhook events
  *
- * Handles contact.updated events to sync unsubscribes back to our DB.
- * This catches unsubscribes via Gmail's List-Unsubscribe header button,
- * which goes through Resend directly (bypassing our /afmelden page).
+ * Handles:
+ * - contact.updated: Sync unsubscribes from Gmail List-Unsubscribe header
+ * - email.delivered/opened/clicked/bounced/complained: Campaign engagement tracking
  *
  * Verification: Svix signature (HMAC-SHA256).
  * Required env var: RESEND_WEBHOOK_SECRET (from Resend Dashboard → Webhooks)
@@ -16,6 +16,15 @@ import { createHmac, timingSafeEqual } from 'crypto'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 
 const WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET
+
+// Email event types we track for campaign analytics
+const TRACKED_EMAIL_EVENTS = new Set([
+  'email.delivered',
+  'email.opened',
+  'email.clicked',
+  'email.bounced',
+  'email.complained',
+])
 
 function verifySignature(
   payload: string,
@@ -46,6 +55,23 @@ function verifySignature(
       return false
     }
   })
+}
+
+interface EmailEventData {
+  email_id?: string
+  from?: string
+  to?: string[]
+  subject?: string
+  created_at?: string
+  tags?: Record<string, string>
+  click?: {
+    link?: string
+    timestamp?: string
+  }
+  bounce?: {
+    message?: string
+    type?: string
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -82,19 +108,20 @@ export async function POST(request: NextRequest) {
   }
 
   // Parse event
-  let event: { type: string; data: Record<string, unknown> }
+  let event: { type: string; created_at?: string; data: Record<string, unknown> }
   try {
     event = JSON.parse(payload)
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
+  const supabase = createAdminClient()
+
   // Handle contact.updated — sync unsubscribe status
   if (event.type === 'contact.updated' && event.data?.unsubscribed === true) {
     const contactId = event.data.id as string
     if (contactId) {
       try {
-        const supabase = createAdminClient()
         await supabase
           .from('people')
           .update({
@@ -106,6 +133,49 @@ export async function POST(request: NextRequest) {
         console.log(`[Webhook] Contact ${contactId} unsubscribed via Resend`)
       } catch (err) {
         console.error('[Webhook] DB update error:', err)
+      }
+    }
+  }
+
+  // Handle email events — campaign engagement tracking
+  if (TRACKED_EMAIL_EVENTS.has(event.type)) {
+    const data = event.data as EmailEventData
+    const campaignId = data.tags?.campaign_id
+    const recipientEmail = data.to?.[0]
+    const resendEmailId = data.email_id
+
+    // Only track if we have a campaign_id tag (our campaigns, not transactional)
+    if (campaignId && recipientEmail) {
+      try {
+        // Strip "email." prefix for storage: "email.opened" → "opened"
+        const eventType = event.type.replace('email.', '')
+
+        // Look up person by email
+        const { data: person } = await supabase
+          .from('people')
+          .select('id')
+          .eq('email', recipientEmail)
+          .single()
+
+        // Determine occurred_at from event-specific fields or top-level
+        const occurredAt = data.click?.timestamp || event.created_at || new Date().toISOString()
+
+        await supabase.from('campaign_events').insert({
+          campaign_id: campaignId,
+          person_id: person?.id || null,
+          email: recipientEmail,
+          event_type: eventType,
+          link_url: data.click?.link || null,
+          resend_email_id: resendEmailId || null,
+          occurred_at: occurredAt,
+        })
+      } catch (err) {
+        // Likely a duplicate (unique index on resend_email_id + event_type)
+        // This is expected for webhook retries — silently ignore
+        const message = err instanceof Error ? err.message : String(err)
+        if (!message.includes('duplicate') && !message.includes('23505')) {
+          console.error('[Webhook] Campaign event insert error:', err)
+        }
       }
     }
   }

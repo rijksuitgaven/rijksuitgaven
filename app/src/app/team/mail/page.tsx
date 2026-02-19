@@ -6,6 +6,7 @@ import { TeamNav } from '@/components/team-nav'
 import {
   Users, RefreshCw, CheckCircle, AlertTriangle,
   Mail, Send, Eye, EyeOff, ChevronDown, History, Copy,
+  ChevronRight, MousePointerClick, MailOpen, Ban, X,
 } from 'lucide-react'
 import { EmailEditor, type UploadedImage } from '@/components/email-editor/email-editor'
 
@@ -49,6 +50,23 @@ interface Campaign {
   sent_count: number
   failed_count: number
   sent_at: string
+  delivered_count: number
+  opened_count: number
+  clicked_count: number
+  bounced_count: number
+}
+
+interface CampaignRecipient {
+  person_id: string | null
+  email: string
+  first_name: string | null
+  delivered_at: string | null
+  opened_at: string | null
+  clicked_at: string | null
+  clicked_url: string | null
+  bounced_at: string | null
+  complained_at: string | null
+  unsubscribed_at: string | null
 }
 
 const LIST_CONFIG = [
@@ -63,6 +81,15 @@ const SEGMENT_OPTIONS = [
   { value: 'churned', label: 'Churned' },
   { value: 'iedereen', label: 'Iedereen' },
 ] as const
+
+function formatTime(iso: string): string {
+  return new Date(iso).toLocaleString('nl-NL', {
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
 
 const SEGMENT_LABELS: Record<string, string> = {
   leden: 'Leden',
@@ -105,6 +132,9 @@ export default function MailPage() {
   // Campaign history state
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [campaignsLoading, setCampaignsLoading] = useState(false)
+  const [expandedCampaignId, setExpandedCampaignId] = useState<string | null>(null)
+  const [campaignRecipients, setCampaignRecipients] = useState<CampaignRecipient[]>([])
+  const [recipientsLoading, setRecipientsLoading] = useState(false)
 
   const fetchData = useCallback(() => {
     setLoading(true)
@@ -127,6 +157,26 @@ export default function MailPage() {
       })
       .catch(() => setCampaignsLoading(false))
   }, [])
+
+  const handleExpandCampaign = useCallback(async (campaignId: string) => {
+    if (expandedCampaignId === campaignId) {
+      setExpandedCampaignId(null)
+      return
+    }
+    setExpandedCampaignId(campaignId)
+    setRecipientsLoading(true)
+    try {
+      const res = await fetch(`/api/v1/team/mail/campaigns/${campaignId}`)
+      const data = await res.json()
+      if (res.ok) {
+        setCampaignRecipients(data.recipients || [])
+      }
+    } catch {
+      // Silent
+    } finally {
+      setRecipientsLoading(false)
+    }
+  }, [expandedCampaignId])
 
   useEffect(() => {
     if (!subLoading && role === 'admin') {
@@ -523,47 +573,151 @@ export default function MailPage() {
                 <p className="text-sm text-[var(--navy-medium)]">Nog geen campagnes verzonden.</p>
               ) : (
                 <div className="divide-y divide-[var(--border)]">
-                  {campaigns.map(campaign => (
-                    <div key={campaign.id} className="py-3 first:pt-0 last:pb-0">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-[var(--navy-dark)] truncate">
-                              {campaign.subject}
-                            </span>
-                            <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-[var(--gray-light)] text-[var(--navy-medium)]">
-                              {SEGMENT_LABELS[campaign.segment] || campaign.segment}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-3 mt-1 text-xs text-[var(--navy-medium)]">
-                            <span>
-                              {new Date(campaign.sent_at).toLocaleDateString('nl-NL', {
-                                day: 'numeric',
-                                month: 'short',
-                                year: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              })}
-                            </span>
-                            <span>
-                              {campaign.sent_count} verstuurd
-                              {campaign.failed_count > 0 && (
-                                <span className="text-[var(--error)]"> · {campaign.failed_count} mislukt</span>
+                  {campaigns.map(campaign => {
+                    const isExpanded = expandedCampaignId === campaign.id
+                    const openRate = campaign.sent_count > 0
+                      ? ((campaign.opened_count / campaign.sent_count) * 100).toFixed(1)
+                      : '0.0'
+                    const clickRate = campaign.sent_count > 0
+                      ? ((campaign.clicked_count / campaign.sent_count) * 100).toFixed(1)
+                      : '0.0'
+
+                    return (
+                      <div key={campaign.id} className="py-3 first:pt-0 last:pb-0">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleExpandCampaign(campaign.id)}
+                                className="inline-flex items-center gap-1 text-sm font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] transition-colors truncate"
+                              >
+                                <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                                {campaign.subject}
+                              </button>
+                              <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-[var(--gray-light)] text-[var(--navy-medium)]">
+                                {SEGMENT_LABELS[campaign.segment] || campaign.segment}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-3 mt-1 ml-5 text-xs text-[var(--navy-medium)]">
+                              <span>
+                                {new Date(campaign.sent_at).toLocaleDateString('nl-NL', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <CheckCircle className="w-3 h-3 text-green-600" />
+                                {campaign.sent_count}
+                              </span>
+                              {campaign.opened_count > 0 && (
+                                <span className="flex items-center gap-1" title="Geopend (indicatief — Apple Mail opent automatisch)">
+                                  <MailOpen className="w-3 h-3 text-blue-500" />
+                                  {openRate}%
+                                </span>
                               )}
-                            </span>
+                              {campaign.clicked_count > 0 && (
+                                <span className="flex items-center gap-1" title="Geklikt">
+                                  <MousePointerClick className="w-3 h-3 text-[var(--pink)]" />
+                                  {clickRate}%
+                                </span>
+                              )}
+                              {campaign.bounced_count > 0 && (
+                                <span className="flex items-center gap-1 text-[var(--error)]" title="Bounced">
+                                  <Ban className="w-3 h-3" />
+                                  {campaign.bounced_count}
+                                </span>
+                              )}
+                            </div>
                           </div>
+                          <button
+                            onClick={() => handleUseAsTemplate(campaign)}
+                            className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors"
+                            title="Gebruik als sjabloon"
+                          >
+                            <Copy className="w-3.5 h-3.5" />
+                            Sjabloon
+                          </button>
                         </div>
-                        <button
-                          onClick={() => handleUseAsTemplate(campaign)}
-                          className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors"
-                          title="Gebruik als sjabloon"
-                        >
-                          <Copy className="w-3.5 h-3.5" />
-                          Sjabloon
-                        </button>
+
+                        {/* Expanded: per-recipient detail */}
+                        {isExpanded && (
+                          <div className="mt-3 ml-5">
+                            {recipientsLoading ? (
+                              <div className="animate-pulse h-20 bg-[var(--gray-light)] rounded" />
+                            ) : campaignRecipients.length === 0 ? (
+                              <p className="text-xs text-[var(--navy-medium)]">Nog geen events ontvangen van Resend.</p>
+                            ) : (
+                              <>
+                                <div className="overflow-x-auto rounded border border-[var(--border)]">
+                                  <table className="w-full text-xs">
+                                    <thead>
+                                      <tr className="bg-[var(--gray-light)] text-left">
+                                        <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Ontvanger</th>
+                                        <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Bezorgd</th>
+                                        <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geopend</th>
+                                        <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geklikt</th>
+                                        <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Status</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-[var(--border)]">
+                                      {campaignRecipients.map(r => (
+                                        <tr key={r.email} className="hover:bg-[var(--gray-light)]/50">
+                                          <td className="px-3 py-2">
+                                            <div className="text-[var(--navy-dark)]">
+                                              {r.first_name || r.email.split('@')[0]}
+                                            </div>
+                                            <div className="text-[var(--navy-medium)]">{r.email}</div>
+                                          </td>
+                                          <td className="px-3 py-2 text-[var(--navy-medium)]">
+                                            {r.delivered_at ? formatTime(r.delivered_at) : '—'}
+                                          </td>
+                                          <td className="px-3 py-2 text-[var(--navy-medium)]">
+                                            {r.opened_at ? formatTime(r.opened_at) : '—'}
+                                          </td>
+                                          <td className="px-3 py-2">
+                                            {r.clicked_at ? (
+                                              <span className="text-[var(--pink)]" title={r.clicked_url || undefined}>
+                                                {formatTime(r.clicked_at)}
+                                              </span>
+                                            ) : '—'}
+                                          </td>
+                                          <td className="px-3 py-2">
+                                            {r.unsubscribed_at ? (
+                                              <span className="inline-flex items-center gap-1 text-amber-600">
+                                                <X className="w-3 h-3" /> Afgemeld
+                                              </span>
+                                            ) : r.bounced_at ? (
+                                              <span className="inline-flex items-center gap-1 text-[var(--error)]">
+                                                <Ban className="w-3 h-3" /> Bounced
+                                              </span>
+                                            ) : r.complained_at ? (
+                                              <span className="inline-flex items-center gap-1 text-[var(--error)]">
+                                                <AlertTriangle className="w-3 h-3" /> Spam
+                                              </span>
+                                            ) : r.delivered_at ? (
+                                              <span className="text-green-600">✓</span>
+                                            ) : (
+                                              <span className="text-[var(--navy-medium)]">Verstuurd</span>
+                                            )}
+                                          </td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </div>
+                                <p className="mt-2 text-[10px] text-[var(--navy-medium)]">
+                                  * Openpercentage is indicatief — Apple Mail opent alle e-mails automatisch.
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
             </div>

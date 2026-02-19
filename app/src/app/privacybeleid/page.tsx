@@ -78,7 +78,7 @@ export default function PrivacybeleidPage() {
             <ul className="list-disc pl-6 text-[var(--foreground)] space-y-2 mb-3">
               <li><strong>Uitvoering van de overeenkomst (AVG artikel 6(1)(b)):</strong> Het verlenen van toegang tot het platform, authenticatie, beheer van abonnementen en gebruikersaccounts, en het verzenden van inloglinks en systeemberichten.</li>
               <li><strong>Wettelijke verplichtingen (AVG artikel 6(1)(c)):</strong> Het bewaren van administratieve en financiële gegevens conform fiscale wetgeving.</li>
-              <li><strong>Gerechtvaardigd belang (AVG artikel 6(1)(f)):</strong> Gepseudonimiseerde logging van platformgebruik voor servicekwaliteit en misbruikpreventie (zie artikel 5), en beantwoording van contactverzoeken en feedback.</li>
+              <li><strong>Gerechtvaardigd belang (AVG artikel 6(1)(f)):</strong> Gepseudonimiseerde logging van platformgebruik voor servicekwaliteit en misbruikpreventie (zie artikel 5), beantwoording van contactverzoeken en feedback, en het meten van bezorg-, open- en klikpercentages van e-mailcampagnes ter verbetering van onze communicatie.</li>
             </ul>
             <p className="text-[var(--foreground)]">
               3.2 Rijksuitgaven.nl verwerkt geen bijzondere categorieën persoonsgegevens.

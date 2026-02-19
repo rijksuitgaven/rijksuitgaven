@@ -6,6 +6,9 @@
  * Each recipient gets a personalized email with their first name and
  * a unique unsubscribe URL using their opaque unsubscribe_token.
  *
+ * Campaign is saved BEFORE sending so we can tag each email with campaign_id.
+ * Tags flow through to Resend webhook events for open/click tracking.
+ *
  * Sends in batches of 100 (Resend limit). Rate-limited with 600ms delay
  * between batches for free plan (2 req/s).
  */
@@ -115,6 +118,41 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Geen ontvangers in dit segment' }, { status: 400 })
   }
 
+  // Get current user ID for sent_by
+  let sentBy: string | null = null
+  try {
+    const sessionClient = await createClient()
+    const { data: { session } } = await sessionClient.auth.getSession()
+    sentBy = session?.user?.id || null
+  } catch {
+    // Non-fatal
+  }
+
+  // Save campaign FIRST so we have the ID for Resend tags
+  const { data: campaign, error: insertError } = await supabase
+    .from('campaigns')
+    .insert({
+      subject,
+      heading,
+      preheader: preheader || null,
+      body,
+      cta_text: ctaText || null,
+      cta_url: ctaUrl || null,
+      segment,
+      sent_count: 0,
+      failed_count: 0,
+      sent_by: sentBy,
+    })
+    .select('id')
+    .single()
+
+  if (insertError || !campaign) {
+    console.error('[Campaign] Failed to save campaign:', insertError)
+    return NextResponse.json({ error: 'Fout bij opslaan campagne' }, { status: 500 })
+  }
+
+  const campaignId = campaign.id
+
   // Determine base URL for unsubscribe links
   const proto = request.headers.get('x-forwarded-proto') ?? 'https'
   const hostHeader = request.headers.get('x-forwarded-host') || request.headers.get('host') || 'beta.rijksuitgaven.nl'
@@ -146,6 +184,9 @@ export async function POST(request: NextRequest) {
         to: [person.email!],
         subject,
         html,
+        tags: [
+          { name: 'campaign_id', value: campaignId },
+        ],
         headers: {
           'List-Unsubscribe': `<${unsubscribeUrl}>`,
           'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
@@ -172,26 +213,11 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Save campaign to history
-  try {
-    const sessionClient = await createClient()
-    const { data: { session } } = await sessionClient.auth.getSession()
-    await supabase.from('campaigns').insert({
-      subject,
-      heading,
-      preheader: preheader || null,
-      body,
-      cta_text: ctaText || null,
-      cta_url: ctaUrl || null,
-      segment,
-      sent_count: stats.sent,
-      failed_count: stats.failed,
-      sent_by: session?.user?.id || null,
-    })
-  } catch (err) {
-    // Non-fatal: campaign was sent, history save failed
-    console.error('[Campaign] Failed to save campaign history:', err)
-  }
+  // Update campaign with actual counts
+  await supabase
+    .from('campaigns')
+    .update({ sent_count: stats.sent, failed_count: stats.failed })
+    .eq('id', campaignId)
 
   return NextResponse.json({
     success: true,

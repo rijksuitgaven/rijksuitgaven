@@ -1315,6 +1315,57 @@ Audience-specific landing variants using query params or UTM paths:
 
 ---
 
+### Campaign Analytics: Bounce Auto-Suppress (V1.1)
+
+**Priority:** Medium (V1.1)
+**Added:** 2026-02-19
+**Status:** ⏳ Backlog
+**Type:** Feature / Email
+
+**Problem:**
+When an email bounces permanently (hard bounce), Resend marks it, but we continue trying to send to that address in future campaigns. This wastes sends and hurts sender reputation.
+
+**Solution:**
+Auto-suppress recipients after N hard bounces (e.g., 2). Mark `bounced_at` on people table. Exclude from future campaign sends. Show "Geblokkeerd" status in admin UI.
+
+**Estimated effort:** 2-3 hours
+
+---
+
+### Campaign Analytics: Complaint Auto-Unsubscribe (V1.1)
+
+**Priority:** Medium (V1.1)
+**Added:** 2026-02-19
+**Status:** ⏳ Backlog
+**Type:** Feature / Email / GDPR
+
+**Problem:**
+When a recipient marks email as spam (complaint), we should immediately unsubscribe them. Currently we track the complaint but don't auto-unsubscribe.
+
+**Solution:**
+On `email.complained` webhook, automatically set `unsubscribed_at` on the person. Remove from Resend contacts. Same as manual unsubscribe flow.
+
+**Estimated effort:** 1 hour
+
+---
+
+### Campaign Event Retention Cleanup (V1.1)
+
+**Priority:** Low (V1.1)
+**Added:** 2026-02-19
+**Status:** ⏳ Backlog
+**Type:** Maintenance / Data
+
+**Problem:**
+`campaign_events` table grows with every open/click. At 100 campaigns × 500 recipients × ~10 events each = ~500K rows/year. Acceptable now but needs periodic cleanup.
+
+**Solution:**
+Delete individual events older than 1 year, keeping only aggregated counts on the campaigns table. Run as manual SQL or scheduled cron.
+
+**Estimated effort:** 1 hour
+
+---
+
 ### SEO Optimization (Pre-Launch)
 
 **Priority:** High (Pre-Launch)
