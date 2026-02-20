@@ -93,10 +93,10 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
                   </td>
                 </tr>
 
-                <!-- Expiry notice -->
+                <!-- Expiry + renewal -->
                 <tr>
-                  <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 28px;">
-                    Deze link is een uur geldig.
+                  <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 12px;">
+                    Deze link is een uur geldig. Verlopen? Ga naar <a href="${siteUrl}" style="color: #436FA3; text-decoration: none;">${displayHost}</a>, klik op <strong>Inloggen</strong> en vraag een nieuwe link aan met uw e-mailadres (${email}).
                   </td>
                 </tr>
                 <tr>
@@ -104,26 +104,12 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
                     Rijksuitgaven is geoptimaliseerd voor desktop en laptop.
                   </td>
                 </tr>
-                <tr>
-                  <td style="font-size: 13px; line-height: 20px; color: #0E3261; text-align: center; padding: 12px 16px 28px 16px;">
-                    <strong>Uw toegang:</strong> <a href="${siteUrl}" style="color: #436FA3; text-decoration: none;">${displayHost}</a><br />
-                    Bewaar dit adres — de beta is alleen hier beschikbaar.
-                  </td>
-                </tr>
-
                 <!-- Divider -->
                 <tr>
                   <td style="padding-bottom: 20px;">
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                       <tr><td style="border-top: 1px solid #eeeeee;"></td></tr>
                     </table>
-                  </td>
-                </tr>
-
-                <!-- Renewal instructions -->
-                <tr>
-                  <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center;">
-                    Link verlopen? Ga naar <a href="${siteUrl}" style="color: #436FA3; text-decoration: none;">${displayHost}</a>, klik op <strong>Inloggen</strong> en vraag een nieuwe link aan met uw e-mailadres (${email}).
                   </td>
                 </tr>
                 <tr>
