@@ -132,6 +132,7 @@
 - ✅ **2026-02-20 (Session 4):** Typesense autocomplete fix — "wolfwerend" bug revealed non-primary fields missing `facet:true` in Typesense schema (required for `group_by`). Fixed 4 existing fields (omschrijving×3, detail×1), added 4 new fields (artikelonderdeel, detail for instrumenten; trefwoorden, sectoren for publiek). Updated sync script + backend search field dicts. All 7 collections re-synced on production (2.09M docs verified). Also added V7.2 TenderNed to VERSIONING.md. 1 commit.
 - ✅ **2026-02-20 (Session 5):** UX-038 "Ook in" column — renamed "Gevonden in" → "Ook in" (old name implied broken promise when cell showed "-"). Added `_enrich_matched_info()` SQL enrichment: after Typesense, checks if primary-only matches also have search term in secondary fields (regeling, omschrijving, etc.). Empty cell instead of "-" dash. Expert panel brainstorm (5 specialists + adversarial). 1 commit.
 - ✅ **2026-02-20 (Session 6):** Beta welcome email — rewritten for existing contacts who know the product. Subject: "Rijksuitgaven 2.0 Beta — uw toegang". Body: no pitch copy, beta URL callout with "Bewaar dit adres", desktop note, link renewal instructions. Dutch copywriter review (formal u/uw). 1 commit.
+- ✅ **2026-02-20 (Session 7):** Welcome email polish — removed beta URL callout block, combined "Deze link is een uur geldig" with renewal instructions into single paragraph above divider. 1 commit.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ✅ **Homepage mobile** — Mobile responsiveness audit + 18 fixes across 10 public pages (2026-02-18, Session 8)
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -162,20 +163,20 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **Beta welcome email** (2026-02-20, Session 6)
-   Rewritten for existing contacts. "Rijksuitgaven 2.0 Beta — uw toegang". Beta URL callout, no pitch copy. 1 commit.
+1. **Welcome email polish** (2026-02-20, Session 7)
+   Removed beta URL callout, combined expiry+renewal above divider. 1 commit.
 
-2. **UX-038 "Ook in" column** (2026-02-20, Session 5)
+2. **Beta welcome email** (2026-02-20, Session 6)
+   Rewritten for existing contacts. "Rijksuitgaven 2.0 Beta — uw toegang". No pitch copy. 1 commit.
+
+3. **UX-038 "Ook in" column** (2026-02-20, Session 5)
    Renamed "Gevonden in" → "Ook in". SQL enrichment for secondary matches. Empty cell instead of "-". 1 commit.
 
-3. **Typesense autocomplete fix** (2026-02-20, Session 4)
+4. **Typesense autocomplete fix** (2026-02-20, Session 4)
    Fixed `facet:true` on 4 fields, added 4 new fields, re-synced 7 collections (2.09M docs). 1 commit.
 
-4. **Database column naming audit** (2026-02-20, Session 3)
+5. **Database column naming audit** (2026-02-20, Session 3)
    Expert panel confirmed all inconsistencies abstracted by MODULE_CONFIG. No changes.
-
-5. **Legal entity name update** (2026-02-20, Session 2)
-   Het Maven Collectief → Rijksuitgaven.nl. 7 changes across 4 files. 1 commit.
 
 ---
 
