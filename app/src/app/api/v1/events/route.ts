@@ -63,6 +63,21 @@ function hashUserId(userId: string): string {
     .substring(0, 16)
 }
 
+function parseUserAgent(ua: string): { browser: string; device: string } {
+  let browser = 'Onbekend'
+  if (ua.includes('Firefox/')) browser = 'Firefox'
+  else if (ua.includes('Edg/')) browser = 'Edge'
+  else if (ua.includes('OPR/') || ua.includes('Opera/')) browser = 'Opera'
+  else if (ua.includes('Chrome/') && ua.includes('Safari/')) browser = 'Chrome'
+  else if (ua.includes('Safari/') && !ua.includes('Chrome/')) browser = 'Safari'
+
+  let device = 'Desktop'
+  if (/iPad|Tablet/i.test(ua)) device = 'Tablet'
+  else if (/Mobile|iPhone|Android.*Mobile/i.test(ua)) device = 'Mobiel'
+
+  return { browser, device }
+}
+
 function validateEvent(event: unknown): event is IncomingEvent {
   if (!event || typeof event !== 'object') return false
   const e = event as Record<string, unknown>
@@ -102,6 +117,10 @@ export async function POST(request: NextRequest) {
   // Cap at MAX_BATCH_SIZE
   const rawEvents = body.events.slice(0, MAX_BATCH_SIZE)
 
+  // Parse user-agent for browser/device tracking
+  const ua = request.headers.get('user-agent') || ''
+  const { browser, device } = parseUserAgent(ua)
+
   // Validate and transform
   const validEvents = rawEvents
     .filter(validateEvent)
@@ -109,7 +128,7 @@ export async function POST(request: NextRequest) {
       event_type: event.event_type,
       actor_hash: actorHash,
       module: event.module || null,
-      properties: event.properties || {},
+      properties: { ...event.properties, browser, device },
       created_at: event.timestamp || new Date().toISOString(),
     }))
 
