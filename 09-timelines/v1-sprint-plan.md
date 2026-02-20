@@ -583,25 +583,26 @@ Additional UI/UX work completed after mini sprint was marked complete:
 ## Week 9: V0.9 — Private Beta Launch
 
 **Goal:** 10 beta testers using beta.rijksuitgaven.nl for real-world testing
-**Status:** PLANNED (starts 2026-02-24)
+**Status:** IN PROGRESS (started early 2026-02-21)
 
 ### V0.9 Preparation (Day 1-2)
 
 | Task | Details | Status |
 |------|---------|--------|
-| Select 10 beta testers | From WordPress user base — mix of journalists, researchers, policy staff | Pending |
-| Import testers to Supabase | Add via /team/leden with appropriate plans | Pending |
-| Send invite emails | Magic link invitations via /team/leden invite button | Pending |
-| Briefing email | What to test, how to use feedback button, known limitations, desktop-optimized | Pending |
-| Smoke test | Login → search → expand → export flow verified on production | Pending |
+| Select 10 beta testers | From WordPress user base — mix of journalists, researchers, policy staff | ✅ Done (2026-02-21) |
+| Import testers to Supabase | Add via /team/leden with appropriate plans | ✅ Done (2026-02-21) |
+| Send invite emails | Magic link invitations via /team/leden invite button | ✅ Done (2026-02-21) |
+| Briefing email | What to test, how to use feedback button, known limitations, desktop-optimized | ✅ Done (2026-02-20) |
+| Smoke test | Login → search → expand → export flow verified on production | ✅ Done (2026-02-21) |
+| Staging environment | Frontend staging on Railway for safe feature development | ✅ Done (2026-02-21) |
 
 ### V0.9 Monitoring (Day 3-7)
 
 | Task | Details | Status |
 |------|---------|--------|
-| Monitor usage statistics | Check /team/statistieken daily for adoption + errors | Pending |
-| Monitor feedback inbox | Check /team/feedback for bug reports | Pending |
-| Triage issues | Critical (fix immediately) vs. minor (fix before V1.0) | Pending |
+| Monitor usage statistics | Check /team/statistieken daily for adoption + errors | In Progress |
+| Monitor feedback inbox | Check /team/feedback for bug reports | In Progress |
+| Triage issues | Critical (fix immediately) vs. minor (fix before V1.0) | In Progress |
 
 ### Mobile Test — All Public Pages (Day 3-5)
 
@@ -623,10 +624,10 @@ Additional UI/UX work completed after mini sprint was marked complete:
 - Full WordPress migration (only 10 of ~50)
 
 **Week 9 Deliverables:**
-- [ ] 10 beta testers active on beta.rijksuitgaven.nl
-- [ ] Briefing email sent
-- [ ] All public pages mobile-tested and fixed
-- [ ] Monitoring active (statistieken + feedback)
+- [x] 10 beta testers active on beta.rijksuitgaven.nl (2026-02-21)
+- [x] Briefing email sent (2026-02-20)
+- [x] All public pages mobile-tested and fixed (2026-02-18)
+- [x] Monitoring active (statistieken + feedback) (2026-02-21)
 
 ---
 
@@ -841,9 +842,9 @@ After V1.0 is stable:
 | Week 6 | 2026-02-10–11 | ✅ COMPLETE | Auth (Magic Link), membership management, UX-026 profile dropdown |
 | Week 7 | 2026-02-12–18 | ✅ COMPLETE | Homepage, CRM, analytics, email templates, security audits |
 | **Week 8** | **2026-02-17–25** | **IN PROGRESS** | Homepage live, privacy policy, Lighthouse >90, cross-browser |
-| Week 9 | 2026-02-26–04 | PLANNED | Final testing, launch |
+| **Week 9** | **2026-02-21–** | **IN PROGRESS** | Beta live (10 testers), staging env, monitoring |
 
-**V1.0 Progress:** ~95% complete | **Next: User migration, rate limiting, SEO, DNS switch**
+**V1.0 Progress:** ~97% complete | **Next: Beta feedback, rate limiting, SEO, DNS switch**
 
 ---
 
