@@ -239,7 +239,7 @@ async def _lookup_matched_fields(
     matchedField/matchedValue without the expensive GROUP BY on full table.
 
     OPTIMIZATION: Only looks up fields OTHER than primary (if primary matched,
-    user already sees the match in the name - no need for "Gevonden in").
+    user already sees the match in the name - "Ook in" shows secondary context).
 
     Args:
         table: Source table name
@@ -628,8 +628,8 @@ async def _typesense_get_primary_keys_with_highlights(
         Tuple of:
         - list[str]: Primary keys that matched
         - dict[str, tuple]: Map of primary_key -> (matched_field, matched_value)
-          Only includes entries where match was in a NON-primary field
-          (no need to show "Gevonden in" if match is already visible in name)
+          Initially only includes non-primary field matches from Typesense.
+          Later enriched by _enrich_matched_info() for primary-only matches.
 
     Args:
         collection: Typesense collection name
@@ -696,6 +696,87 @@ async def _typesense_get_primary_keys_with_highlights(
     )
 
     return primary_keys, matched_info
+
+
+async def _enrich_matched_info(
+    table: str,
+    primary_field: str,
+    search_fields: list[str],
+    primary_keys: list[str],
+    matched_info: dict[str, tuple[str | None, str | None]],
+    search: str,
+) -> dict[str, tuple[str | None, str | None]]:
+    """
+    Enrich matched_info for rows that matched on primary field but may ALSO
+    match on secondary fields. Shows "Ook in" context for these rows.
+
+    After Typesense search, some rows only have a primary field match (their
+    ontvanger name contains the search term). But their secondary fields
+    (regeling, omschrijving, etc.) may ALSO contain the search term.
+    This SQL query finds those secondary matches.
+
+    Only enriches rows that don't already have matched_info (i.e., rows
+    where Typesense recorded a primary-only match).
+    """
+    if not primary_keys or not search:
+        return matched_info
+
+    # Find primary keys WITHOUT matched_info (primary-only matches)
+    unenriched = [k for k in primary_keys if k not in matched_info]
+    if not unenriched:
+        return matched_info  # All rows already have secondary match info
+
+    # Secondary fields only (exclude primary)
+    other_fields = [f for f in search_fields if f != primary_field]
+    if not other_fields:
+        return matched_info  # No secondary fields to check
+
+    # Build CASE expressions: find first matching secondary field
+    _, pattern = build_search_condition(other_fields[0], 1, search)
+
+    case_field = "CASE\n"
+    case_value = "CASE\n"
+    for field in other_fields:
+        case_field += f"            WHEN {field} ~* $1 THEN '{field}'\n"
+        case_value += f"            WHEN {field} ~* $1 THEN {field}\n"
+    case_field += "            ELSE NULL\n        END"
+    case_value += "            ELSE NULL\n        END"
+
+    or_conditions = " OR ".join([f"{f} ~* $1" for f in other_fields])
+
+    query = f"""
+        WITH primary_list AS (
+            SELECT unnest($2::text[]) AS pv
+        )
+        SELECT
+            pl.pv AS key,
+            {case_field} AS matched_field,
+            {case_value} AS matched_value
+        FROM primary_list pl
+        CROSS JOIN LATERAL (
+            SELECT *
+            FROM {table}
+            WHERE {primary_field} = pl.pv
+              AND ({or_conditions})
+            LIMIT 1
+        ) t
+    """
+
+    try:
+        rows = await fetch_all(query, pattern, unenriched)
+        enriched_count = 0
+        for row in rows:
+            key = row["key"]
+            if row["matched_field"] and key not in matched_info:
+                matched_info[key] = (row["matched_field"], row["matched_value"])
+                enriched_count += 1
+        if enriched_count:
+            logger.info(f"Enriched {enriched_count} primary-only matches with secondary field context")
+    except Exception as e:
+        # Non-critical: if enrichment fails, rows just show empty "Ook in"
+        logger.warning(f"matched_info enrichment failed: {e}")
+
+    return matched_info
 
 
 async def _typesense_search_recipient_keys(
@@ -824,7 +905,7 @@ async def _get_from_aggregated_view(
     # Problem: Regex search on 5 columns is slow (5+ seconds on 200K rows)
     # Solution: Use Typesense to find matching primary keys (<50ms),
     #           then query PostgreSQL with WHERE IN (uses index, fast)
-    # Also extracts "which field matched" info for "Gevonden in" column
+    # Also extracts "which field matched" info for "Ook in" column
     # ==========================================================================
     typesense_primary_keys: list[str] = []
     typesense_matched_info: dict[str, tuple[str | None, str | None]] = {}
@@ -1024,10 +1105,18 @@ async def _get_from_aggregated_view(
         logger.error(f"Query failed for {module}: {type(e).__name__}: {e}", exc_info=True)
         raise
 
-    # Use Typesense highlight info for "Gevonden in" column (fast!)
-    # This replaces the slow PostgreSQL LATERAL JOIN approach.
-    # typesense_matched_info contains: primary_value -> (matched_field, matched_value)
-    # Only for matches in NON-primary fields (no need to show if name matched)
+    # Enrich "Ook in" column: for rows that matched on primary field (name),
+    # check if secondary fields also contain the search term (SQL enrichment).
+    # This fills in context for rows that Typesense only found via primary match.
+    if search and typesense_primary_keys and typesense_matched_info is not None:
+        typesense_matched_info = await _enrich_matched_info(
+            table=config["table"],
+            primary_field=primary,
+            search_fields=config.get("search_fields", [primary]),
+            primary_keys=typesense_primary_keys,
+            matched_info=typesense_matched_info,
+            search=search,
+        )
 
     # Transform rows
     result = []
@@ -1053,8 +1142,8 @@ async def _get_from_aggregated_view(
             row_data["extra_columns"] = extra_cols
             row_data["extra_column_counts"] = extra_counts
 
-        # Add matched field info from Typesense highlights (fast!)
-        # Only populated when match was in a NON-primary field
+        # Add matched field info for "Ook in" column
+        # Populated when match found in a secondary field (via Typesense + SQL enrichment)
         if search:
             # Look up by exact primary_value (case-sensitive match from Typesense)
             matched = typesense_matched_info.get(row["primary_value"], (None, None))

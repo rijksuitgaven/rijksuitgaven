@@ -207,7 +207,7 @@ export function ExpandedRow({
     : availableYears.filter((y) => y > COLLAPSED_YEARS_END)
 
   // Number of columns before years: expand(1) + primary(1) + extras(N)
-  // When searching, extra columns are replaced by a single "Gevonden in" column
+  // When searching, extra columns are replaced by a single "Ook in" column
   const extraCols = isSearching ? 1 : extraColumnsCount
   const contentColSpan = 2 + extraCols
 

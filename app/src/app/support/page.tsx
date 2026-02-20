@@ -64,7 +64,7 @@ export default function SupportPage() {
                 <p>
                   De module <strong>Zoeken in alle modules</strong> doorzoekt alle databronnen tegelijk.
                   Handig als u niet weet in welke module een ontvanger voorkomt.
-                  De kolom &ldquo;Gevonden in&rdquo; toont in welke module(s) de ontvanger is aangetroffen.
+                  De kolom &ldquo;Ook in&rdquo; toont in welk veld de zoekterm ook voorkomt.
                 </p>
               </div>
             </AccordionContent>

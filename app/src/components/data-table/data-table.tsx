@@ -555,11 +555,11 @@ export function DataTable({
     const isSearching = Boolean(searchQuery && searchQuery.trim().length > 0)
 
     if (isSearching) {
-      // "Gevonden in" column when searching - shows matched value and field
+      // "Ook in" column when searching - shows which secondary field also matched
       cols.push({
         id: 'matched',
         header: () => (
-          <span className="text-sm font-semibold text-white">Gevonden in</span>
+          <span className="text-sm font-semibold text-white">Ook in</span>
         ),
         cell: ({ row }) => {
           const matchedField = row.original.matchedField
@@ -567,14 +567,14 @@ export function DataTable({
           const matchedFieldLabel = matchedField ? (FIELD_LABELS[matchedField] || matchedField) : null
 
           if (!matchedValue && !matchedFieldLabel) {
-            return <span className="text-[var(--muted-foreground)]">-</span>
+            return null // Empty cell — no secondary match
           }
 
           return (
             <div className="max-w-[200px]" data-tooltip={matchedValue || undefined}>
               {/* Line 1: The matched value */}
               <div className="text-sm text-[var(--navy-dark)] truncate">
-                {matchedValue || '-'}
+                {matchedValue}
               </div>
               {/* Line 2: The field name (small) */}
               {matchedFieldLabel && (
@@ -815,7 +815,7 @@ export function DataTable({
                 <div className="px-4 pt-4 pb-4 space-y-3">
                   <div className="flex gap-3">
                     <Search className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
-                    <p className="text-sm text-white/80">Doorzoekt ook regelingen, artikelen en categorieën. De kolom &ldquo;Gevonden in&rdquo; toont wáár.</p>
+                    <p className="text-sm text-white/80">Doorzoekt ook regelingen, artikelen en categorieën. De kolom &ldquo;Ook in&rdquo; toont in welk veld de zoekterm ook voorkomt.</p>
                   </div>
                   <div className="flex gap-3">
                     <ChevronRight className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
