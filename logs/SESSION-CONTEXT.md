@@ -137,6 +137,7 @@
 - ✅ **2026-02-21 (Session 1):** Staging environment — V0.9 beta live with 10 testers. Created `staging` branch + Railway "Frontend Staging" service (shared backend/DB/Typesense, ~€5-10/month). URL: `frontend-staging-production-ce7d.up.railway.app`. Added to ALLOWED_HOSTS for auth. Workflow: feature → staging → main. Design doc: `docs/plans/2026-02-21-staging-environment.md`. 1 commit.
 - ✅ **2026-02-21 (Session 2):** Staging processes — 5-person expert team review. 3 workflows (quick fix, feature, migration), 7 risks documented. CLAUDE.md staging rules added. Fixed stale local branch issue. 1 commit.
 - ⏳ **2026-02-21 (Session 3):** UX-039 Vergelijk (Row Pinning) — pin up to 4 rows for side-by-side comparison. TanStack Table native RowPinning API. Pin icon on hover, PinOff when pinned, export selection, max 4 cap. **On staging only** — production untouched. 1 commit (staging).
+- ⏳ **2026-02-21 (Session 4):** UX-039 styling polish — "Wis selectie" restyled from plain text to bordered toolbar button with pink accent + count. 1 commit (staging).
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ✅ **Homepage mobile** — Mobile responsiveness audit + 18 fixes across 10 public pages (2026-02-18, Session 8)
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -167,8 +168,8 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **UX-039 Vergelijk — Row Pinning** (2026-02-21, Session 3, staging only)
-   Pin up to 4 rows to top of data table. TanStack RowPinning API. Export selection. Expert brainstorm (15 Qs). 1 commit.
+1. **UX-039 Vergelijk — Row Pinning + styling** (2026-02-21, Sessions 3-4, staging only)
+   Pin up to 4 rows to top of data table. TanStack RowPinning API. Export selection. "Wis selectie" restyled as toolbar button. 2 commits.
 
 2. **Staging processes** (2026-02-21, Session 2)
    Expert team review (5 specialists). 3 workflows, 7 risks, CLAUDE.md rules. 1 commit.
