@@ -853,8 +853,18 @@ export function DataTable({
           <span className="text-sm text-[var(--navy-dark)]">resultaten weergeven</span>
         </div>
 
-        {/* Right: Info + Kolommen + CSV Export */}
+        {/* Right: Wis selectie + Info + Kolommen + CSV Export */}
         <div className="flex items-center gap-2">
+          {/* Wis selectie (UX-039) — only shown when rows are pinned */}
+          {pinnedCount > 0 && (
+            <button
+              onClick={() => setRowPinning({ top: [], bottom: [] })}
+              className="text-sm text-[var(--pink)] hover:underline transition-colors"
+            >
+              Wis selectie
+            </button>
+          )}
+
           {/* Info popover (UX-019) */}
           <div className="relative" ref={infoRef}>
             <button
@@ -1185,21 +1195,6 @@ export function DataTable({
           aria-hidden="true"
         />
       </div>
-
-      {/* Pinned rows indicator + clear (UX-039) */}
-      {pinnedCount > 0 && (
-        <div className="flex items-center justify-between mt-2 px-2">
-          <span className="text-sm text-[var(--navy-medium)]">
-            {pinnedCount} {pinnedCount === 1 ? 'rij' : 'rijen'} vastgezet
-          </span>
-          <button
-            onClick={() => setRowPinning({ top: [], bottom: [] })}
-            className="text-sm text-[var(--pink)] hover:underline transition-colors"
-          >
-            Wis selectie
-          </button>
-        </div>
-      )}
 
       {/* Footer */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-2">
