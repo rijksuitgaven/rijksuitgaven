@@ -8,7 +8,7 @@ import {
   ChevronDown, ChevronRight, Eye, SlidersHorizontal, Columns, Clock,
   ArrowUpDown, ArrowRight, Sparkles, ChevronsRight,
   ExternalLink, TrendingUp, TrendingDown, Minus, Timer,
-  Target, Activity, Globe, LogIn, Phone, MousePointer,
+  Target, Activity, Globe, LogIn, Phone, MousePointer, Monitor, Smartphone,
 } from 'lucide-react'
 
 // --- Constants ---
@@ -197,6 +197,8 @@ interface RetentionItem {
   retention_rate: number
 }
 
+interface DeviceItem { scope: string; browser: string; device: string; event_count: number; unique_actors: number }
+
 // UX-036: Public analytics types
 interface PublicPageView { page: string; view_count: number; unique_sessions: number }
 interface PublicInteraction { action: string; interaction_count: number; unique_sessions: number }
@@ -237,6 +239,7 @@ interface StatsData {
   search_engagement: SearchEngagementItem[]
   pulse_previous: PulseItem[]
   module_events: ModuleEventItem[]
+  devices: DeviceItem[]
   // UX-036: Public page analytics
   public?: PublicData
 }
@@ -607,7 +610,10 @@ export default function StatistiekenPage() {
             </div>
           </div>
         ) : data && tab === 'website' ? (
-          <WebsiteSection publicData={data.public} />
+          <>
+            <WebsiteSection publicData={data.public} />
+            <DevicesSection devices={data.devices} scope="public" />
+          </>
         ) : data ? (
           <>
             {/* ═══ ACT 1: PULSE ═══ */}
@@ -662,6 +668,9 @@ export default function StatistiekenPage() {
             {data.retention.length > 0 && (
               <RetentionSection retention={data.retention} />
             )}
+
+            {/* Browser & Device — logged-in users */}
+            <DevicesSection devices={data.devices} scope="logged_in" />
 
             {/* ═══ ACT 3: GEBRUIKERS ═══ */}
             <Section title="Gebruikers" icon={<Users className="w-4 h-4" />}>
@@ -1374,6 +1383,97 @@ function ActorRow({ actor, allActors, isExpanded, color, onToggle, detail, detai
         </tr>
       )}
     </>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Devices Section — Browser & Device Breakdown
+// ═══════════════════════════════════════════════════════════════════════════
+
+function DevicesSection({ devices, scope }: { devices: DeviceItem[]; scope: 'logged_in' | 'public' }) {
+  const filtered = devices.filter(d => d.scope === scope)
+  if (filtered.length === 0) {
+    return (
+      <Section title="Browser & Apparaat" icon={<Monitor className="w-4 h-4" />}>
+        <EmptyState>Nog geen browser/apparaat-data in deze periode</EmptyState>
+      </Section>
+    )
+  }
+
+  // Aggregate browsers
+  const browserMap = new Map<string, { events: number; actors: number }>()
+  const deviceMap = new Map<string, { events: number; actors: number }>()
+  for (const d of filtered) {
+    const b = browserMap.get(d.browser) || { events: 0, actors: 0 }
+    b.events += d.event_count; b.actors += d.unique_actors
+    browserMap.set(d.browser, b)
+    const dev = deviceMap.get(d.device) || { events: 0, actors: 0 }
+    dev.events += d.event_count; dev.actors += d.unique_actors
+    deviceMap.set(d.device, dev)
+  }
+
+  const browsers = [...browserMap.entries()].sort((a, b) => b[1].events - a[1].events)
+  const deviceTypes = [...deviceMap.entries()].sort((a, b) => b[1].events - a[1].events)
+  const maxBrowser = browsers[0]?.[1].events || 1
+  const totalEvents = browsers.reduce((s, [, v]) => s + v.events, 0)
+
+  const DEVICE_ICONS: Record<string, React.ReactNode> = {
+    Desktop: <Monitor className="w-3.5 h-3.5" />,
+    Mobiel: <Smartphone className="w-3.5 h-3.5" />,
+    Tablet: <Phone className="w-3.5 h-3.5" />,
+  }
+
+  return (
+    <Section title="Browser & Apparaat" icon={<Monitor className="w-4 h-4" />}>
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Browsers */}
+        <div>
+          <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-3">Browser</h3>
+          <div className="space-y-2">
+            {browsers.map(([name, val]) => {
+              const pct = Math.round((val.events / totalEvents) * 100)
+              const barWidth = Math.max((val.events / maxBrowser) * 100, 3)
+              return (
+                <div key={name} className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-[var(--navy-dark)] w-20 shrink-0 truncate">{name}</span>
+                  <div className="flex-1 h-5 bg-[var(--gray-light)]/40 rounded overflow-hidden">
+                    <div
+                      className="h-full rounded"
+                      style={{ width: `${barWidth}%`, background: 'linear-gradient(90deg, var(--navy-dark), var(--navy-medium))' }}
+                    />
+                  </div>
+                  <span className="text-sm font-bold text-[var(--navy-dark)] w-10 text-right" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {pct}%
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Device types */}
+        <div>
+          <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-3">Apparaat</h3>
+          <div className="space-y-2">
+            {deviceTypes.map(([name, val]) => {
+              const pct = Math.round((val.events / totalEvents) * 100)
+              return (
+                <div key={name} className="flex items-center gap-3">
+                  <span className="text-[var(--navy-medium)]">{DEVICE_ICONS[name] || <Monitor className="w-3.5 h-3.5" />}</span>
+                  <span className="text-sm font-medium text-[var(--navy-dark)] w-16 shrink-0">{name}</span>
+                  <span className="text-2xl font-bold text-[var(--navy-dark)]" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    {pct}%
+                  </span>
+                  <span className="text-xs text-[var(--muted-foreground)]">
+                    {val.events.toLocaleString('nl-NL')} events
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </Section>
   )
 }
 

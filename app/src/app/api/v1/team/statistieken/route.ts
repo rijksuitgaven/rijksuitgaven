@@ -110,6 +110,7 @@ export async function GET(request: NextRequest) {
     publicScrollFunnelResult,
     publicLoginFunnelResult,
     publicUtmCampaignsResult,
+    devicesResult,
   ] = await withTimeout(Promise.all([
     supabase.rpc('get_usage_pulse', { since_date: sinceISO }),
     supabase.rpc('get_usage_modules', { since_date: sinceISO }),
@@ -143,6 +144,8 @@ export async function GET(request: NextRequest) {
     supabase.rpc('get_public_scroll_funnel', { since_date: sinceISO }),
     supabase.rpc('get_public_login_funnel', { since_date: sinceISO }),
     supabase.rpc('get_public_utm_campaigns', { since_date: sinceISO, max_results: 20 }),
+    // Browser & device analytics
+    supabase.rpc('get_usage_devices', { since_date: sinceISO }),
   ]), 'dashboard queries')
 
   // Check for errors (core queries block, new queries don't)
@@ -197,6 +200,10 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  if (devicesResult.error) {
+    console.error('[Statistics] Devices query error (non-blocking):', devicesResult.error.message)
+  }
+
   // De-anonymize actors: hash each subscription user_id and match to actor_hash
   const hashToUser = new Map<string, { name: string; email: string }>()
   if (subscriptionsResult.data) {
@@ -246,6 +253,7 @@ export async function GET(request: NextRequest) {
     search_engagement: searchEngagementResult.data ?? [],
     pulse_previous: pulsePrevResult.data ?? [],
     module_events: moduleEventsResult.data ?? [],
+    devices: devicesResult.data ?? [],
     // UX-036: Public page analytics
     public: {
       page_views: publicPageViewsResult.data ?? [],
