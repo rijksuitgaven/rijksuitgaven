@@ -43,7 +43,7 @@ export default function VoorwaardenPage() {
                 <tbody>
                   <tr>
                     <td className={`${tdStyle} font-semibold`}>Dienstverlener</td>
-                    <td className={tdStyle}>Het Maven Collectief, geregistreerd bij de Kamer van Koophandel onder nummer 96257008, handelend onder de naam Rijksuitgaven.nl.</td>
+                    <td className={tdStyle}>Rijksuitgaven.nl, geregistreerd bij de Kamer van Koophandel onder nummer 96257008.</td>
                   </tr>
                   <tr>
                     <td className={`${tdStyle} font-semibold`}>Platform</td>
@@ -149,7 +149,7 @@ export default function VoorwaardenPage() {
               Artikel 6 – Betaling
             </h2>
             <p className="text-[var(--foreground)] mb-3">
-              6.1 De Dienstverlener factureert de Abonnementsgelden vooraf. Facturen worden verstuurd door Het Maven Collectief.
+              6.1 De Dienstverlener factureert de Abonnementsgelden vooraf. Facturen worden verstuurd door Rijksuitgaven.nl.
             </p>
             <p className="text-[var(--foreground)] mb-3">
               6.2 Betaling dient te geschieden binnen 14 dagen na factuurdatum, tenzij schriftelijk anders is overeengekomen.
@@ -316,7 +316,7 @@ export default function VoorwaardenPage() {
               Contact
             </h2>
             <div className="text-[var(--foreground)]">
-              <p className="font-semibold">Het Maven Collectief</p>
+              <p className="font-semibold">Rijksuitgaven.nl</p>
               <p>KvK-nummer: 96257008</p>
               <p>
                 E-mail:{' '}

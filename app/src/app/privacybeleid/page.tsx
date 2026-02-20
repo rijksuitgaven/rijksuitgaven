@@ -36,7 +36,7 @@ export default function PrivacybeleidPage() {
               1.1 Dit privacybeleid beschrijft hoe Rijksuitgaven.nl omgaat met persoonsgegevens van bezoekers en abonnees van het platform.
             </p>
             <p className="text-[var(--foreground)] mb-3">
-              1.2 Rijksuitgaven.nl is een dienst van <strong>Het Maven Collectief</strong> (KvK-nummer: 96257008). Het Maven Collectief is de verwerkingsverantwoordelijke in de zin van de Algemene Verordening Gegevensbescherming (AVG).
+              1.2 Rijksuitgaven.nl (KvK-nummer: 96257008) is de verwerkingsverantwoordelijke in de zin van de Algemene Verordening Gegevensbescherming (AVG).
             </p>
             <p className="text-[var(--foreground)]">
               1.3 Rijksuitgaven.nl respecteert de privacy van alle gebruikers en draagt er zorg voor dat persoonsgegevens vertrouwelijk en conform de toepasselijke wet- en regelgeving worden verwerkt.
@@ -303,7 +303,7 @@ export default function PrivacybeleidPage() {
               11.1 Voor vragen over dit privacybeleid of de verwerking van uw persoonsgegevens kunt u contact opnemen via:
             </p>
             <div className="text-[var(--foreground)]">
-              <p className="font-semibold">Het Maven Collectief</p>
+              <p className="font-semibold">Rijksuitgaven.nl</p>
               <p>KvK-nummer: 96257008</p>
               <p>
                 E-mail:{' '}
