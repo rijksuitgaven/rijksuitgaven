@@ -1652,6 +1652,39 @@ The current `data_availability` table has incorrect year ranges inherited from i
 
 ---
 
+### UX-037: Concept E-mails (Drafts)
+
+**Requirement:** Allow saving email compositions as drafts in `/team/mail` before sending, with the ability to edit and delete drafts.
+
+**Behavior:**
+- **Save draft:** "Opslaan als concept" button in compose actions bar saves all fields (subject, heading, preheader, body, CTA, segments) to the campaigns table with `status = 'draft'`
+- **Edit draft:** Loading a draft populates the compose form; button changes to "Concept bijwerken"
+- **Send draft:** Sending a loaded draft converts it to `status = 'sent'` (no duplicate row)
+- **Delete draft:** Same delete flow as sent campaigns (confirm → delete)
+- **Campaigns tab:** Split into "Concepten" (pinned at top) and "Verzonden" sections
+- **Segment display:** Pipeline stage badges shown on all campaigns and drafts in the list
+- **Draft badge:** Amber "CONCEPT" badge distinguishes drafts from sent campaigns
+- **Drafts show:** "Bewerken" button (loads into editor) instead of "Sjabloon" (copy as new)
+- **Timestamp:** Drafts show "Laatst bewerkt" instead of sent timestamp
+
+**Database:**
+- `campaigns.status` column: `'draft'` | `'sent'` (default: `'sent'`)
+- `campaigns.sent_at` made nullable (NULL for drafts)
+- `campaigns.updated_at` added for edit tracking
+- SQL migration: `063-campaign-drafts.sql`
+
+**API:**
+- `POST /api/v1/team/mail/drafts` — save new draft
+- `PUT /api/v1/team/mail/drafts/[id]` — update existing draft
+- Send route accepts optional `draft_id` to convert draft on send
+- Campaigns list returns both drafts and sent with `status` field
+
+**Priority:** P2 (Admin tooling improvement)
+
+**Status:** ⏳ In Development
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload

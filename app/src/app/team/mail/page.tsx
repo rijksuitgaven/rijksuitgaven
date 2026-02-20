@@ -7,7 +7,7 @@ import {
   RefreshCw, CheckCircle, AlertTriangle,
   Mail, Send, Eye, EyeOff, Copy,
   ChevronRight, MousePointerClick, MailOpen, Ban, X,
-  BarChart3, Trash2,
+  BarChart3, Trash2, Save, Pencil,
 } from 'lucide-react'
 import { EmailEditor, type UploadedImage } from '@/components/email-editor/email-editor'
 
@@ -34,7 +34,9 @@ interface Campaign {
   segment: string
   sent_count: number
   failed_count: number
-  sent_at: string
+  sent_at: string | null
+  status: 'draft' | 'sent'
+  updated_at: string
   delivered_count: number
   opened_count: number
   clicked_count: number
@@ -102,6 +104,11 @@ export default function MailPage() {
   const [showPreview, setShowPreview] = useState(false)
   const [previewHtml, setPreviewHtml] = useState<string | null>(null)
   const [previewLoading, setPreviewLoading] = useState(false)
+
+  // Draft state
+  const [editingDraftId, setEditingDraftId] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState(false)
 
   // Uploaded images state
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([])
@@ -203,6 +210,52 @@ export default function MailPage() {
     }
   }, [showPreview, subject, heading, preheader, body, ctaText, ctaUrl])
 
+  const handleSaveDraft = useCallback(async () => {
+    setSaving(true)
+    setSaveSuccess(false)
+
+    const payload = {
+      subject: subject.trim(),
+      heading: heading.trim(),
+      preheader: preheader.trim() || undefined,
+      body: body.trim(),
+      ctaText: ctaText.trim() || undefined,
+      ctaUrl: ctaUrl.trim() || undefined,
+      segments: Array.from(selectedSegments),
+    }
+
+    try {
+      let res: Response
+      if (editingDraftId) {
+        res = await fetch(`/api/v1/team/mail/drafts/${editingDraftId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+      } else {
+        res = await fetch('/api/v1/team/mail/drafts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+      }
+
+      if (res.ok) {
+        const data = await res.json()
+        if (!editingDraftId && data.id) {
+          setEditingDraftId(data.id)
+        }
+        setSaveSuccess(true)
+        fetchCampaigns()
+        setTimeout(() => setSaveSuccess(false), 3000)
+      }
+    } catch {
+      // Silent
+    } finally {
+      setSaving(false)
+    }
+  }, [subject, heading, preheader, body, ctaText, ctaUrl, selectedSegments, editingDraftId, fetchCampaigns])
+
   const handleSend = useCallback(async () => {
     setConfirmSend(false)
     setSending(true)
@@ -221,6 +274,7 @@ export default function MailPage() {
           ctaText: ctaText.trim() || undefined,
           ctaUrl: ctaUrl.trim() || undefined,
           segments: Array.from(selectedSegments),
+          draftId: editingDraftId || undefined,
         }),
       })
       const result = await res.json()
@@ -229,6 +283,7 @@ export default function MailPage() {
         setSendError(result.error || 'Verzenden mislukt')
       } else {
         setSendResult(result)
+        setEditingDraftId(null) // Clear draft reference after send
         fetchCampaigns() // Refresh campaign list
       }
     } catch {
@@ -236,7 +291,7 @@ export default function MailPage() {
     } finally {
       setSending(false)
     }
-  }, [subject, heading, preheader, body, ctaText, ctaUrl, selectedSegments, fetchCampaigns])
+  }, [subject, heading, preheader, body, ctaText, ctaUrl, selectedSegments, editingDraftId, fetchCampaigns])
 
   const handleUseAsTemplate = useCallback((campaign: Campaign) => {
     setSubject(campaign.subject)
@@ -247,11 +302,46 @@ export default function MailPage() {
     setCtaUrl(campaign.cta_url || '')
     const segs = campaign.segment.split(',').filter(s => VALID_SEGMENTS_SET.has(s))
     setSelectedSegments(new Set(segs.length > 0 ? segs : ['nieuw']))
+    setEditingDraftId(null) // Template = new compose, not editing a draft
     setSendResult(null)
     setSendError(null)
+    setSaveSuccess(false)
     setShowPreview(false)
     setActiveTab('compose')
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
+  const handleEditDraft = useCallback((campaign: Campaign) => {
+    setSubject(campaign.subject)
+    setHeading(campaign.heading)
+    setPreheader(campaign.preheader || '')
+    setBody(campaign.body)
+    setCtaText(campaign.cta_text || '')
+    setCtaUrl(campaign.cta_url || '')
+    const segs = campaign.segment.split(',').filter(s => VALID_SEGMENTS_SET.has(s))
+    setSelectedSegments(new Set(segs.length > 0 ? segs : ['nieuw']))
+    setEditingDraftId(campaign.id)
+    setSendResult(null)
+    setSendError(null)
+    setSaveSuccess(false)
+    setShowPreview(false)
+    setActiveTab('compose')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
+  const handleNewCompose = useCallback(() => {
+    setSubject('')
+    setHeading('')
+    setPreheader('')
+    setBody('')
+    setCtaText('')
+    setCtaUrl('')
+    setSelectedSegments(new Set(['nieuw']))
+    setEditingDraftId(null)
+    setSendResult(null)
+    setSendError(null)
+    setSaveSuccess(false)
+    setShowPreview(false)
   }, [])
 
   const handleImageUploaded = useCallback((img: UploadedImage) => {
@@ -262,19 +352,25 @@ export default function MailPage() {
     setUploadedImages(prev => prev.filter(img => img.filename !== filename))
   }, [])
 
-  const handleDeleteCampaign = useCallback(async (campaignId: string) => {
+  const handleDeleteCampaign = useCallback(async (campaignId: string, isDraft: boolean) => {
     try {
-      const res = await fetch(`/api/v1/team/mail/campaigns/${campaignId}`, { method: 'DELETE' })
+      const url = isDraft
+        ? `/api/v1/team/mail/drafts/${campaignId}`
+        : `/api/v1/team/mail/campaigns/${campaignId}`
+      const res = await fetch(url, { method: 'DELETE' })
       if (res.ok) {
         setCampaigns(prev => prev.filter(c => c.id !== campaignId))
         if (expandedCampaignId === campaignId) setExpandedCampaignId(null)
+        if (editingDraftId === campaignId) {
+          setEditingDraftId(null)
+        }
       }
     } catch {
       // Silent
     } finally {
       setConfirmDeleteId(null)
     }
-  }, [expandedCampaignId])
+  }, [expandedCampaignId, editingDraftId])
 
   const recipientCount = data
     ? Array.from(selectedSegments).reduce((sum, seg) => sum + (data.counts[seg] ?? 0), 0)
@@ -283,6 +379,10 @@ export default function MailPage() {
   // Body from Tiptap is HTML — check it's not just empty tags
   const bodyHasContent = body.replace(/<[^>]*>/g, '').trim().length > 0
   const canSend = subject.trim() && heading.trim() && bodyHasContent && !sending && selectedSegments.size > 0
+  const canSave = subject.trim() && heading.trim() && bodyHasContent && !saving
+
+  const drafts = campaigns.filter(c => c.status === 'draft')
+  const sentCampaigns = campaigns.filter(c => c.status !== 'draft')
 
   if (subLoading) return null
   if (role !== 'admin') {
@@ -321,7 +421,7 @@ export default function MailPage() {
                 }`}
               >
                 <Mail className="w-4 h-4" />
-                Nieuw bericht
+                {editingDraftId ? 'Concept bewerken' : 'Nieuw bericht'}
               </button>
               <button
                 onClick={() => setActiveTab('campaigns')}
@@ -346,6 +446,21 @@ export default function MailPage() {
             {/* Tab content: Compose */}
             {activeTab === 'compose' && (
               <>
+                {/* Draft indicator bar */}
+                {editingDraftId && (
+                  <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 mb-4">
+                    <span className="text-sm text-amber-800">
+                      <span className="font-medium">Concept bewerken</span> — wijzigingen worden pas opgeslagen als u op &ldquo;Concept bijwerken&rdquo; klikt
+                    </span>
+                    <button
+                      onClick={handleNewCompose}
+                      className="text-xs text-amber-700 hover:text-amber-900 underline transition-colors"
+                    >
+                      Nieuw bericht starten
+                    </button>
+                  </div>
+                )}
+
                 <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
                   <div className="space-y-4">
                     {/* Segment multi-select */}
@@ -495,6 +610,21 @@ export default function MailPage() {
                         {showPreview ? 'Verberg voorbeeld' : 'Voorbeeld'}
                       </button>
 
+                      <button
+                        onClick={handleSaveDraft}
+                        disabled={!canSave}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {saving ? (
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                        ) : saveSuccess ? (
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                        ) : (
+                          <Save className="w-4 h-4" />
+                        )}
+                        {editingDraftId ? 'Concept bijwerken' : 'Opslaan als concept'}
+                      </button>
+
                       {!confirmSend ? (
                         <button
                           onClick={() => setConfirmSend(true)}
@@ -586,183 +716,275 @@ export default function MailPage() {
                     ))}
                   </div>
                 ) : campaigns.length === 0 ? (
-                  <p className="text-sm text-[var(--navy-medium)]">Nog geen campagnes verzonden.</p>
+                  <p className="text-sm text-[var(--navy-medium)]">Nog geen campagnes of concepten.</p>
                 ) : (
-                  <div className="divide-y divide-[var(--border)]">
-                    {campaigns.map(campaign => {
-                      const isExpanded = expandedCampaignId === campaign.id
-                      const openRate = campaign.sent_count > 0
-                        ? ((campaign.opened_count / campaign.sent_count) * 100).toFixed(1)
-                        : '0.0'
-                      const clickRate = campaign.sent_count > 0
-                        ? ((campaign.clicked_count / campaign.sent_count) * 100).toFixed(1)
-                        : '0.0'
-
-                      return (
-                        <div key={campaign.id} className="py-3 first:pt-0 last:pb-0">
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-2">
-                                <button
-                                  onClick={() => handleExpandCampaign(campaign.id)}
-                                  className="inline-flex items-center gap-1 text-sm font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] transition-colors truncate"
-                                >
-                                  <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
-                                  {campaign.subject}
-                                </button>
-                                {campaign.segment.split(',').map(seg => (
-                                  <span key={seg} className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-[var(--gray-light)] text-[var(--navy-medium)]">
-                                    {SEGMENT_LABELS[seg] || seg}
-                                  </span>
-                                ))}
-                              </div>
-                              <div className="flex items-center gap-3 mt-1 ml-5 text-xs text-[var(--navy-medium)]">
-                                <span>
-                                  {new Date(campaign.sent_at).toLocaleDateString('nl-NL', {
-                                    day: 'numeric',
-                                    month: 'short',
-                                    year: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                  })}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <CheckCircle className="w-3 h-3 text-green-600" />
-                                  {campaign.sent_count}
-                                </span>
-                                {campaign.opened_count > 0 && (
-                                  <span className="flex items-center gap-1" title="Geopend (indicatief — Apple Mail opent automatisch)">
-                                    <MailOpen className="w-3 h-3 text-blue-500" />
-                                    {openRate}%
-                                  </span>
-                                )}
-                                {campaign.clicked_count > 0 && (
-                                  <span className="flex items-center gap-1" title="Geklikt">
-                                    <MousePointerClick className="w-3 h-3 text-[var(--pink)]" />
-                                    {clickRate}%
-                                  </span>
-                                )}
-                                {campaign.bounced_count > 0 && (
-                                  <span className="flex items-center gap-1 text-[var(--error)]" title="Bounced">
-                                    <Ban className="w-3 h-3" />
-                                    {campaign.bounced_count}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                            <div className="shrink-0 flex items-center gap-1.5">
-                              <button
-                                onClick={() => handleUseAsTemplate(campaign)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors"
-                                title="Gebruik als sjabloon"
-                              >
-                                <Copy className="w-3.5 h-3.5" />
-                                Sjabloon
-                              </button>
-                              {confirmDeleteId === campaign.id ? (
-                                <div className="flex items-center gap-1">
-                                  <button
-                                    onClick={() => handleDeleteCampaign(campaign.id)}
-                                    className="px-2 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-                                  >
-                                    Verwijder
-                                  </button>
-                                  <button
-                                    onClick={() => setConfirmDeleteId(null)}
-                                    className="px-2 py-1.5 text-xs text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
-                                  >
-                                    Annuleer
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => setConfirmDeleteId(campaign.id)}
-                                  className="inline-flex items-center p-1.5 text-[var(--navy-medium)] hover:text-red-600 border border-transparent hover:border-red-200 rounded-lg transition-colors"
-                                  title="Verwijder campagne"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Expanded: per-recipient detail */}
-                          {isExpanded && (
-                            <div className="mt-3 ml-5">
-                              {recipientsLoading ? (
-                                <div className="animate-pulse h-20 bg-[var(--gray-light)] rounded" />
-                              ) : campaignRecipients.length === 0 ? (
-                                <p className="text-xs text-[var(--navy-medium)]">Nog geen events ontvangen van Resend.</p>
-                              ) : (
-                                <>
-                                  <div className="overflow-x-auto rounded border border-[var(--border)]">
-                                    <table className="w-full text-xs">
-                                      <thead>
-                                        <tr className="bg-[var(--gray-light)] text-left">
-                                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Ontvanger</th>
-                                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Bezorgd</th>
-                                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geopend</th>
-                                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geklikt</th>
-                                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Status</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody className="divide-y divide-[var(--border)]">
-                                        {campaignRecipients.map(r => (
-                                          <tr key={r.email} className="hover:bg-[var(--gray-light)]/50">
-                                            <td className="px-3 py-2">
-                                              <div className="text-[var(--navy-dark)]">
-                                                {r.first_name || r.email.split('@')[0]}
-                                              </div>
-                                              <div className="text-[var(--navy-medium)]">{r.email}</div>
-                                            </td>
-                                            <td className="px-3 py-2 text-[var(--navy-medium)]">
-                                              {r.delivered_at ? formatTime(r.delivered_at) : '—'}
-                                            </td>
-                                            <td className="px-3 py-2 text-[var(--navy-medium)]">
-                                              {r.opened_at ? formatTime(r.opened_at) : '—'}
-                                            </td>
-                                            <td className="px-3 py-2">
-                                              {r.clicked_at ? (
-                                                <span className="text-[var(--pink)]" title={r.clicked_url || undefined}>
-                                                  {formatTime(r.clicked_at)}
-                                                </span>
-                                              ) : '—'}
-                                            </td>
-                                            <td className="px-3 py-2">
-                                              {r.unsubscribed_at ? (
-                                                <span className="inline-flex items-center gap-1 text-amber-600">
-                                                  <X className="w-3 h-3" /> Afgemeld
-                                                </span>
-                                              ) : r.bounced_at ? (
-                                                <span className="inline-flex items-center gap-1 text-[var(--error)]">
-                                                  <Ban className="w-3 h-3" /> Bounced
-                                                </span>
-                                              ) : r.complained_at ? (
-                                                <span className="inline-flex items-center gap-1 text-[var(--error)]">
-                                                  <AlertTriangle className="w-3 h-3" /> Spam
-                                                </span>
-                                              ) : r.delivered_at ? (
-                                                <span className="text-green-600">&#10003;</span>
-                                              ) : (
-                                                <span className="text-[var(--navy-medium)]">Verstuurd</span>
-                                              )}
-                                            </td>
-                                          </tr>
-                                        ))}
-                                      </tbody>
-                                    </table>
+                  <>
+                    {/* Drafts section */}
+                    {drafts.length > 0 && (
+                      <>
+                        <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--navy-medium)] mb-3">
+                          Concepten
+                        </h3>
+                        <div className="divide-y divide-[var(--border)] mb-6">
+                          {drafts.map(campaign => (
+                            <div key={campaign.id} className="py-3 first:pt-0 last:pb-0">
+                              <div className="flex items-start justify-between gap-4">
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm font-medium text-[var(--navy-dark)] truncate">
+                                      {campaign.subject}
+                                    </span>
+                                    <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-medium">
+                                      Concept
+                                    </span>
+                                    {campaign.segment.split(',').map(seg => (
+                                      <span key={seg} className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-[var(--gray-light)] text-[var(--navy-medium)]">
+                                        {SEGMENT_LABELS[seg] || seg}
+                                      </span>
+                                    ))}
                                   </div>
-                                  <p className="mt-2 text-[10px] text-[var(--navy-medium)]">
-                                    * Openpercentage is indicatief — Apple Mail opent alle e-mails automatisch.
-                                  </p>
-                                </>
-                              )}
+                                  <div className="flex items-center gap-3 mt-1 text-xs text-[var(--navy-medium)]">
+                                    <span>
+                                      Laatst bewerkt: {new Date(campaign.updated_at).toLocaleDateString('nl-NL', {
+                                        day: 'numeric',
+                                        month: 'short',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                      })}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="shrink-0 flex items-center gap-1.5">
+                                  <button
+                                    onClick={() => handleEditDraft(campaign)}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors"
+                                    title="Bewerk concept"
+                                  >
+                                    <Pencil className="w-3.5 h-3.5" />
+                                    Bewerken
+                                  </button>
+                                  {confirmDeleteId === campaign.id ? (
+                                    <div className="flex items-center gap-1">
+                                      <button
+                                        onClick={() => handleDeleteCampaign(campaign.id, true)}
+                                        className="px-2 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                                      >
+                                        Verwijder
+                                      </button>
+                                      <button
+                                        onClick={() => setConfirmDeleteId(null)}
+                                        className="px-2 py-1.5 text-xs text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                                      >
+                                        Annuleer
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <button
+                                      onClick={() => setConfirmDeleteId(campaign.id)}
+                                      className="inline-flex items-center p-1.5 text-[var(--navy-medium)] hover:text-red-600 border border-transparent hover:border-red-200 rounded-lg transition-colors"
+                                      title="Verwijder concept"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
                             </div>
-                          )}
+                          ))}
                         </div>
-                      )
-                    })}
-                  </div>
+                      </>
+                    )}
+
+                    {/* Sent campaigns section */}
+                    {sentCampaigns.length > 0 && (
+                      <>
+                        {drafts.length > 0 && (
+                          <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--navy-medium)] mb-3">
+                            Verzonden
+                          </h3>
+                        )}
+                        <div className="divide-y divide-[var(--border)]">
+                          {sentCampaigns.map(campaign => {
+                            const isExpanded = expandedCampaignId === campaign.id
+                            const openRate = campaign.sent_count > 0
+                              ? ((campaign.opened_count / campaign.sent_count) * 100).toFixed(1)
+                              : '0.0'
+                            const clickRate = campaign.sent_count > 0
+                              ? ((campaign.clicked_count / campaign.sent_count) * 100).toFixed(1)
+                              : '0.0'
+
+                            return (
+                              <div key={campaign.id} className="py-3 first:pt-0 last:pb-0">
+                                <div className="flex items-start justify-between gap-4">
+                                  <div className="min-w-0 flex-1">
+                                    <div className="flex items-center gap-2">
+                                      <button
+                                        onClick={() => handleExpandCampaign(campaign.id)}
+                                        className="inline-flex items-center gap-1 text-sm font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] transition-colors truncate"
+                                      >
+                                        <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                                        {campaign.subject}
+                                      </button>
+                                      {campaign.segment.split(',').map(seg => (
+                                        <span key={seg} className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-[var(--gray-light)] text-[var(--navy-medium)]">
+                                          {SEGMENT_LABELS[seg] || seg}
+                                        </span>
+                                      ))}
+                                    </div>
+                                    <div className="flex items-center gap-3 mt-1 ml-5 text-xs text-[var(--navy-medium)]">
+                                      <span>
+                                        {campaign.sent_at ? new Date(campaign.sent_at).toLocaleDateString('nl-NL', {
+                                          day: 'numeric',
+                                          month: 'short',
+                                          year: 'numeric',
+                                          hour: '2-digit',
+                                          minute: '2-digit',
+                                        }) : '—'}
+                                      </span>
+                                      <span className="flex items-center gap-1">
+                                        <CheckCircle className="w-3 h-3 text-green-600" />
+                                        {campaign.sent_count}
+                                      </span>
+                                      {campaign.opened_count > 0 && (
+                                        <span className="flex items-center gap-1" title="Geopend (indicatief — Apple Mail opent automatisch)">
+                                          <MailOpen className="w-3 h-3 text-blue-500" />
+                                          {openRate}%
+                                        </span>
+                                      )}
+                                      {campaign.clicked_count > 0 && (
+                                        <span className="flex items-center gap-1" title="Geklikt">
+                                          <MousePointerClick className="w-3 h-3 text-[var(--pink)]" />
+                                          {clickRate}%
+                                        </span>
+                                      )}
+                                      {campaign.bounced_count > 0 && (
+                                        <span className="flex items-center gap-1 text-[var(--error)]" title="Bounced">
+                                          <Ban className="w-3 h-3" />
+                                          {campaign.bounced_count}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="shrink-0 flex items-center gap-1.5">
+                                    <button
+                                      onClick={() => handleUseAsTemplate(campaign)}
+                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors"
+                                      title="Gebruik als sjabloon"
+                                    >
+                                      <Copy className="w-3.5 h-3.5" />
+                                      Sjabloon
+                                    </button>
+                                    {confirmDeleteId === campaign.id ? (
+                                      <div className="flex items-center gap-1">
+                                        <button
+                                          onClick={() => handleDeleteCampaign(campaign.id, false)}
+                                          className="px-2 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                                        >
+                                          Verwijder
+                                        </button>
+                                        <button
+                                          onClick={() => setConfirmDeleteId(null)}
+                                          className="px-2 py-1.5 text-xs text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                                        >
+                                          Annuleer
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <button
+                                        onClick={() => setConfirmDeleteId(campaign.id)}
+                                        className="inline-flex items-center p-1.5 text-[var(--navy-medium)] hover:text-red-600 border border-transparent hover:border-red-200 rounded-lg transition-colors"
+                                        title="Verwijder campagne"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Expanded: per-recipient detail */}
+                                {isExpanded && (
+                                  <div className="mt-3 ml-5">
+                                    {recipientsLoading ? (
+                                      <div className="animate-pulse h-20 bg-[var(--gray-light)] rounded" />
+                                    ) : campaignRecipients.length === 0 ? (
+                                      <p className="text-xs text-[var(--navy-medium)]">Nog geen events ontvangen van Resend.</p>
+                                    ) : (
+                                      <>
+                                        <div className="overflow-x-auto rounded border border-[var(--border)]">
+                                          <table className="w-full text-xs">
+                                            <thead>
+                                              <tr className="bg-[var(--gray-light)] text-left">
+                                                <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Ontvanger</th>
+                                                <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Bezorgd</th>
+                                                <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geopend</th>
+                                                <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geklikt</th>
+                                                <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Status</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-[var(--border)]">
+                                              {campaignRecipients.map(r => (
+                                                <tr key={r.email} className="hover:bg-[var(--gray-light)]/50">
+                                                  <td className="px-3 py-2">
+                                                    <div className="text-[var(--navy-dark)]">
+                                                      {r.first_name || r.email.split('@')[0]}
+                                                    </div>
+                                                    <div className="text-[var(--navy-medium)]">{r.email}</div>
+                                                  </td>
+                                                  <td className="px-3 py-2 text-[var(--navy-medium)]">
+                                                    {r.delivered_at ? formatTime(r.delivered_at) : '—'}
+                                                  </td>
+                                                  <td className="px-3 py-2 text-[var(--navy-medium)]">
+                                                    {r.opened_at ? formatTime(r.opened_at) : '—'}
+                                                  </td>
+                                                  <td className="px-3 py-2">
+                                                    {r.clicked_at ? (
+                                                      <span className="text-[var(--pink)]" title={r.clicked_url || undefined}>
+                                                        {formatTime(r.clicked_at)}
+                                                      </span>
+                                                    ) : '—'}
+                                                  </td>
+                                                  <td className="px-3 py-2">
+                                                    {r.unsubscribed_at ? (
+                                                      <span className="inline-flex items-center gap-1 text-amber-600">
+                                                        <X className="w-3 h-3" /> Afgemeld
+                                                      </span>
+                                                    ) : r.bounced_at ? (
+                                                      <span className="inline-flex items-center gap-1 text-[var(--error)]">
+                                                        <Ban className="w-3 h-3" /> Bounced
+                                                      </span>
+                                                    ) : r.complained_at ? (
+                                                      <span className="inline-flex items-center gap-1 text-[var(--error)]">
+                                                        <AlertTriangle className="w-3 h-3" /> Spam
+                                                      </span>
+                                                    ) : r.delivered_at ? (
+                                                      <span className="text-green-600">&#10003;</span>
+                                                    ) : (
+                                                      <span className="text-[var(--navy-medium)]">Verstuurd</span>
+                                                    )}
+                                                  </td>
+                                                </tr>
+                                              ))}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                        <p className="mt-2 text-[10px] text-[var(--navy-medium)]">
+                                          * Openpercentage is indicatief — Apple Mail opent alle e-mails automatisch.
+                                        </p>
+                                      </>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </>
+                    )}
+
+                    {drafts.length === 0 && sentCampaigns.length === 0 && (
+                      <p className="text-sm text-[var(--navy-medium)]">Nog geen campagnes of concepten.</p>
+                    )}
+                  </>
                 )}
               </div>
             )}

@@ -17,11 +17,12 @@ export async function GET() {
 
   const supabase = createAdminClient()
 
-  // Fetch campaigns
+  // Fetch campaigns (drafts + sent)
   const { data: campaigns, error } = await supabase
     .from('campaigns')
-    .select('id, subject, heading, preheader, body, cta_text, cta_url, segment, sent_count, failed_count, sent_at')
-    .order('sent_at', { ascending: false })
+    .select('id, subject, heading, preheader, body, cta_text, cta_url, segment, sent_count, failed_count, sent_at, status, updated_at')
+    .order('status', { ascending: true }) // 'draft' before 'sent'
+    .order('updated_at', { ascending: false })
     .limit(50)
 
   if (error) {

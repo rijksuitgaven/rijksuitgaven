@@ -46,6 +46,7 @@ interface SendRequest {
   ctaText?: string
   ctaUrl?: string
   segments: string[]
+  draftId?: string
 }
 
 export async function POST(request: NextRequest) {
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { subject, heading, preheader, body, ctaText, ctaUrl, segments } = params
+  const { subject, heading, preheader, body, ctaText, ctaUrl, segments, draftId } = params
 
   if (!subject?.trim() || !heading?.trim() || !body?.trim() || !segments?.length) {
     return NextResponse.json({ error: 'Verplichte velden: subject, heading, body, segments' }, { status: 400 })
@@ -146,29 +147,65 @@ export async function POST(request: NextRequest) {
   }
 
   // Save campaign FIRST so we have the ID for Resend tags
-  const { data: campaign, error: insertError } = await supabase
-    .from('campaigns')
-    .insert({
-      subject,
-      heading,
-      preheader: preheader || null,
-      body,
-      cta_text: ctaText || null,
-      cta_url: ctaUrl || null,
-      segment: segments.join(','),
-      sent_count: 0,
-      failed_count: 0,
-      sent_by: sentBy,
-    })
-    .select('id')
-    .single()
+  // If draftId is provided, convert the draft to a sent campaign
+  let campaignId: string
 
-  if (insertError || !campaign) {
-    console.error('[Campaign] Failed to save campaign:', insertError)
-    return NextResponse.json({ error: 'Fout bij opslaan campagne' }, { status: 500 })
+  if (draftId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(draftId)) {
+    // Convert existing draft to sent
+    const { data: updated, error: updateError } = await supabase
+      .from('campaigns')
+      .update({
+        subject,
+        heading,
+        preheader: preheader || null,
+        body,
+        cta_text: ctaText || null,
+        cta_url: ctaUrl || null,
+        segment: segments.join(','),
+        sent_count: 0,
+        failed_count: 0,
+        sent_by: sentBy,
+        status: 'sent',
+        sent_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', draftId)
+      .eq('status', 'draft')
+      .select('id')
+      .single()
+
+    if (updateError || !updated) {
+      console.error('[Campaign] Failed to convert draft:', updateError)
+      return NextResponse.json({ error: 'Fout bij converteren concept' }, { status: 500 })
+    }
+    campaignId = updated.id
+  } else {
+    // Create new campaign
+    const { data: campaign, error: insertError } = await supabase
+      .from('campaigns')
+      .insert({
+        subject,
+        heading,
+        preheader: preheader || null,
+        body,
+        cta_text: ctaText || null,
+        cta_url: ctaUrl || null,
+        segment: segments.join(','),
+        sent_count: 0,
+        failed_count: 0,
+        sent_by: sentBy,
+        status: 'sent',
+        sent_at: new Date().toISOString(),
+      })
+      .select('id')
+      .single()
+
+    if (insertError || !campaign) {
+      console.error('[Campaign] Failed to save campaign:', insertError)
+      return NextResponse.json({ error: 'Fout bij opslaan campagne' }, { status: 500 })
+    }
+    campaignId = campaign.id
   }
-
-  const campaignId = campaign.id
 
   // Determine base URL for unsubscribe links
   const proto = request.headers.get('x-forwarded-proto') ?? 'https'
