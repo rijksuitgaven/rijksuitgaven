@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-20
+**Last Updated:** 2026-02-21
 **Project Phase:** V1.0 Development
 **Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE, footer COMPLETE, about page COMPLETE, support page COMPLETE, data availability audit COMPLETE, datasets page COMPLETE, data table UX COMPLETE, mobile responsiveness COMPLETE, email campaign system COMPLETE, campaign analytics COMPLETE, CRM pipeline COMPLETE, email pipeline targeting COMPLETE, public page analytics COMPLETE, email drafts COMPLETE)
 
@@ -134,6 +134,7 @@
 - ✅ **2026-02-20 (Session 6):** Beta welcome email — rewritten for existing contacts who know the product. Subject: "Rijksuitgaven 2.0 Beta — uw toegang". Body: no pitch copy, beta URL callout with "Bewaar dit adres", desktop note, link renewal instructions. Dutch copywriter review (formal u/uw). 1 commit.
 - ✅ **2026-02-20 (Session 7):** Welcome email polish — removed beta URL callout block, combined "Deze link is een uur geldig" with renewal instructions into single paragraph above divider. 1 commit.
 - ✅ **2026-02-20 (Session 8):** Browser & device analytics — server-side user-agent parsing (`parseUserAgent()` in BFF events route), injects browser+device into every event's properties JSONB. SQL function `get_usage_devices` (migration 064). Dashboard `DevicesSection` on both Gebruik (logged_in) and Website (public) tabs. 2 commits.
+- ✅ **2026-02-21 (Session 1):** Staging environment — V0.9 beta live with 10 testers. Created `staging` branch + Railway "Frontend Staging" service (shared backend/DB/Typesense, ~€5-10/month). URL: `frontend-staging-production-ce7d.up.railway.app`. Added to ALLOWED_HOSTS for auth. Workflow: feature → staging → main. Design doc: `docs/plans/2026-02-21-staging-environment.md`. 1 commit.
 - ⏳ **CRM Phase 3** — drop redundant columns from subscriptions (email, first_name, last_name, organization) once Phase 2 stable
 - ✅ **Homepage mobile** — Mobile responsiveness audit + 18 fixes across 10 public pages (2026-02-18, Session 8)
 - ⏳ **Search enhancements** — multi-word AND, exact phrase, prefix (plan reviewed, user wants to think through more before implementation)
@@ -164,14 +165,14 @@
 
 ## Recent Work (Last 5 Files)
 
-1. **Browser & device analytics** (2026-02-20, Session 8)
+1. **Staging environment** (2026-02-21, Session 1)
+   V0.9 beta live with 10 testers. Railway "Frontend Staging" service on `staging` branch. Shared backend/DB. ALLOWED_HOSTS updated. 1 commit.
+
+2. **Browser & device analytics** (2026-02-20, Session 8)
    Server-side UA parsing, SQL function, dashboard DevicesSection on both tabs. Migration 064. 2 commits.
 
-2. **Welcome email polish** (2026-02-20, Session 7)
+3. **Welcome email polish** (2026-02-20, Session 7)
    Removed beta URL callout, combined expiry+renewal above divider. 1 commit.
-
-3. **Beta welcome email** (2026-02-20, Session 6)
-   Rewritten for existing contacts. "Rijksuitgaven 2.0 Beta — uw toegang". No pitch copy. 1 commit.
 
 4. **UX-038 "Ook in" column** (2026-02-20, Session 5)
    Renamed "Gevonden in" → "Ook in". SQL enrichment for secondary matches. Empty cell instead of "-". 1 commit.
@@ -201,8 +202,10 @@
 | Created | 2026-01-21 |
 | Billing | Active (credit card added) |
 | **Next.js App URL** | `https://rijksuitgaven-production.up.railway.app` |
-| **Beta URL** | `https://beta.rijksuitgaven.nl` |
+| **Beta URL (Production)** | `https://beta.rijksuitgaven.nl` |
 | **Beta CNAME Target** | `j65ghs38.up.railway.app` (Railway-provided) |
+| **Staging URL** | `https://frontend-staging-production-ce7d.up.railway.app` |
+| **Staging Branch** | `staging` |
 | Root Directory | `app` |
 | Region | EU West (Amsterdam) |
 
