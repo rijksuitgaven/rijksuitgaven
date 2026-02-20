@@ -304,6 +304,14 @@
 - Beneficial ownership data
 - Company financials context
 
+### V7.2 - Procurement Integration (TenderNed)
+
+- **TenderNed API integration** (tenderned.nl — official Dutch government procurement platform)
+- Enrich inkoop module with tender details (contract descriptions, award criteria, procedure type)
+- Link leveranciers to awarded tenders
+- Contract value vs. actual spending comparison
+- Tender timeline (publication → award → spending)
+
 ---
 
 ## V8 - Network Analysis (Rijksnetwerken)

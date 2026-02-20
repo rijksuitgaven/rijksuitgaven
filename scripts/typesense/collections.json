@@ -33,6 +33,8 @@
         {"name": "begrotingsnaam", "type": "string", "facet": true, "optional": true},
         {"name": "artikel", "type": "string", "facet": true, "optional": true},
         {"name": "instrument", "type": "string", "facet": true, "optional": true},
+        {"name": "artikelonderdeel", "type": "string", "facet": true, "optional": true},
+        {"name": "detail", "type": "string", "facet": true, "optional": true},
         {"name": "begrotingsjaar", "type": "int32", "facet": true},
         {"name": "bedrag", "type": "int64"}
       ],
@@ -60,7 +62,9 @@
         {"name": "ontvanger_lower", "type": "string"},
         {"name": "source", "type": "string", "facet": true},
         {"name": "regeling", "type": "string", "facet": true, "optional": true},
-        {"name": "omschrijving", "type": "string", "optional": true},
+        {"name": "omschrijving", "type": "string", "facet": true, "optional": true},
+        {"name": "trefwoorden", "type": "string", "facet": true, "optional": true},
+        {"name": "sectoren", "type": "string", "facet": true, "optional": true},
         {"name": "jaar", "type": "int32", "facet": true},
         {"name": "bedrag", "type": "int64"}
       ],
@@ -75,7 +79,7 @@
         {"name": "gemeente", "type": "string", "facet": true},
         {"name": "beleidsterrein", "type": "string", "facet": true, "optional": true},
         {"name": "regeling", "type": "string", "facet": true, "optional": true},
-        {"name": "omschrijving", "type": "string", "optional": true},
+        {"name": "omschrijving", "type": "string", "facet": true, "optional": true},
         {"name": "jaar", "type": "int32", "facet": true},
         {"name": "bedrag", "type": "int64"}
       ],
@@ -88,7 +92,7 @@
         {"name": "ontvanger", "type": "string"},
         {"name": "ontvanger_lower", "type": "string"},
         {"name": "provincie", "type": "string", "facet": true},
-        {"name": "omschrijving", "type": "string", "optional": true},
+        {"name": "omschrijving", "type": "string", "facet": true, "optional": true},
         {"name": "jaar", "type": "int32", "facet": true},
         {"name": "bedrag", "type": "int64"}
       ],
@@ -105,7 +109,7 @@
         {"name": "begrotingsnaam", "type": "string", "facet": true},
         {"name": "begrotingsnaam_lower", "type": "string"},
         {"name": "artikel", "type": "string", "facet": true, "optional": true},
-        {"name": "detail", "type": "string", "optional": true},
+        {"name": "detail", "type": "string", "facet": true, "optional": true},
         {"name": "totaal", "type": "int64"}
       ],
       "default_sorting_field": "totaal",

@@ -183,6 +183,8 @@ def index_instrumenten(client, conn, recreate=False):
             begrotingsnaam,
             artikel,
             instrument,
+            artikelonderdeel,
+            detail,
             begrotingsjaar,
             COALESCE(bedrag, 0)::bigint * 1000 as bedrag
         FROM instrumenten
@@ -201,6 +203,8 @@ def index_instrumenten(client, conn, recreate=False):
             'begrotingsnaam': row['begrotingsnaam'] or '',
             'artikel': row['artikel'] or '',
             'instrument': row['instrument'] or '',
+            'artikelonderdeel': row['artikelonderdeel'] or '',
+            'detail': (row['detail'] or '')[:500],
             'begrotingsjaar': row['begrotingsjaar'] or 0,
             'bedrag': int(row['bedrag'] or 0)
         }
@@ -284,6 +288,8 @@ def index_publiek(client, conn, recreate=False):
             source,
             regeling,
             omschrijving,
+            trefwoorden,
+            sectoren,
             jaar,
             COALESCE(bedrag, 0) as bedrag
         FROM publiek
@@ -300,7 +306,9 @@ def index_publiek(client, conn, recreate=False):
             'ontvanger_lower': (row['ontvanger'] or '').lower(),
             'source': row['source'] or '',
             'regeling': row['regeling'] or '',
-            'omschrijving': (row['omschrijving'] or '')[:500],  # Limit length
+            'omschrijving': (row['omschrijving'] or '')[:500],
+            'trefwoorden': (row['trefwoorden'] or '')[:500],
+            'sectoren': (row['sectoren'] or '')[:500],
             'jaar': row['jaar'] or 0,
             'bedrag': int(row['bedrag'] or 0)
         }

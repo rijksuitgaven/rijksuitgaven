@@ -597,10 +597,10 @@ TYPESENSE_LOWER_FIELDS = {
 
 # All searchable fields per Typesense collection
 TYPESENSE_SEARCHABLE_FIELDS = {
-    "instrumenten": ["ontvanger", "regeling", "begrotingsnaam", "artikel", "instrument"],
+    "instrumenten": ["ontvanger", "regeling", "begrotingsnaam", "artikel", "instrument", "artikelonderdeel", "detail"],
     "apparaat": ["kostensoort", "begrotingsnaam", "artikel", "detail"],
     "inkoop": ["leverancier", "ministerie", "categorie"],
-    "publiek": ["ontvanger", "source", "regeling", "omschrijving"],
+    "publiek": ["ontvanger", "source", "regeling", "omschrijving", "trefwoorden", "sectoren"],
     "gemeente": ["ontvanger", "gemeente", "beleidsterrein", "regeling", "omschrijving"],
     "provincie": ["ontvanger", "provincie", "omschrijving"],
 }
@@ -1987,12 +1987,12 @@ TYPESENSE_PRIMARY_FIELDS = {
 
 # Searchable fields for field_matches section per module
 TYPESENSE_SEARCH_FIELDS = {
-    "instrumenten": ["regeling", "begrotingsnaam", "artikel", "instrument"],
+    "instrumenten": ["regeling", "begrotingsnaam", "artikel", "instrument", "artikelonderdeel", "detail"],
     "apparaat": ["begrotingsnaam", "artikel", "detail"],
     "inkoop": ["ministerie", "categorie"],
     "provincie": ["provincie", "omschrijving"],
     "gemeente": ["gemeente", "beleidsterrein", "regeling", "omschrijving"],
-    "publiek": ["regeling", "omschrijving"],
+    "publiek": ["regeling", "omschrijving", "trefwoorden", "sectoren"],
 }
 
 # Module display names for "other modules" section
