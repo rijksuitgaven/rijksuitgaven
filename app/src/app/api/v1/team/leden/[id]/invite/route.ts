@@ -34,7 +34,7 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welkom bij Rijksuitgaven</title>
+  <title>Welkom bij Rijksuitgaven 2.0</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #E1EAF2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #E1EAF2;">
@@ -57,7 +57,7 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
                 <!-- Heading -->
                 <tr>
                   <td style="font-size: 22px; font-weight: 700; color: #0E3261; text-align: center; padding-bottom: 16px;">
-                    Welkom bij Rijksuitgaven
+                    Welkom bij Rijksuitgaven 2.0
                   </td>
                 </tr>
 
@@ -68,8 +68,13 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
                   </td>
                 </tr>
                 <tr>
+                  <td style="font-size: 15px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 8px;">
+                    De beta van Rijksuitgaven 2.0 is klaar om te testen.
+                  </td>
+                </tr>
+                <tr>
                   <td style="font-size: 15px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 28px;">
-                    Klik hieronder om direct in te loggen en aan de slag te gaan.
+                    Klik hieronder om in te loggen en direct aan de slag te gaan.
                   </td>
                 </tr>
 
@@ -95,8 +100,14 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
                   </td>
                 </tr>
                 <tr>
-                  <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 28px;">
+                  <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 12px;">
                     Rijksuitgaven is geoptimaliseerd voor desktop en laptop.
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-size: 13px; line-height: 20px; color: #0E3261; text-align: center; padding: 12px 16px 28px 16px;">
+                    <strong>Uw toegang:</strong> <a href="${siteUrl}" style="color: #436FA3; text-decoration: none;">${displayHost}</a><br />
+                    Bewaar dit adres — de beta is alleen hier beschikbaar.
                   </td>
                 </tr>
 
@@ -247,7 +258,7 @@ export async function POST(
   const { error: sendError } = await resend.emails.send({
     from: 'Rijksuitgaven <noreply@rijksuitgaven.nl>',
     to: person.email,
-    subject: 'Welkom bij Rijksuitgaven — log direct in',
+    subject: 'Rijksuitgaven 2.0 Beta — uw toegang',
     html: buildWelcomeEmail(person.first_name, person.email, activationLink, origin),
   })
 
