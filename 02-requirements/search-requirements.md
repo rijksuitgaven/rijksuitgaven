@@ -659,25 +659,26 @@ When expanded:
 
 ---
 
-### UX-002d: "Gevonden in" Column
+### UX-002d: "Ook in" Column (formerly "Gevonden in")
 
-**Requirement:** Show which field matched when search hits non-primary fields
+**Requirement:** Show which secondary field also contains the search term
 
 **Behavior:**
-- When search matches primary field (Ontvanger): No indicator needed (visible in name)
-- When search matches other fields (Regeling, Artikel, etc.): Shows "Gevonden in" column
-- Column displays: Matched value + field name below
+- Column header: "Ook in" (renamed from "Gevonden in" — old name implied broken promise when showing "-")
+- When search matches a secondary field (Regeling, Artikel, etc.): Shows matched value + field label
+- When search matches ONLY the primary field (name): Empty cell (no dash)
+- SQL enrichment: rows that matched on primary field are checked for secondary field matches too (UX-038)
 
 **Example:**
-Search "bedrijvenbeleid" shows:
-- Ontvanger: "Stichting XYZ"
-- Gevonden in: "Bedrijvenbeleid: innovatief en duurzaam ondernemen" / "artikel"
+Search "covid" shows:
+- Ontvanger: "Geanonimiseerde ontvanger(s) van Subsidies voor ... COVID-19"
+- Ook in: "Regeling subsidie financiering vaste lasten MKB COVID-19" / Regeling
 
-**Implementation:** Uses Typesense highlight data (zero additional latency)
+**Implementation:** Typesense highlight data + `_enrich_matched_info()` SQL query (~20-50ms)
 
 **Priority:** P1 (High)
 
-**Status:** ✅ Implemented 2026-01-31
+**Status:** ✅ Implemented 2026-01-31, updated 2026-02-20 (UX-038)
 
 ---
 
@@ -1680,6 +1681,28 @@ The current `data_availability` table has incorrect year ranges inherited from i
 - Campaigns list returns both drafts and sent with `status` field
 
 **Priority:** P2 (Admin tooling improvement)
+
+**Status:** ✅ Implemented 2026-02-20
+
+---
+
+### UX-038: "Ook in" Column Enrichment
+
+**Requirement:** Show secondary field context for rows that matched on primary field (name), replacing the confusing "-" dash in the old "Gevonden in" column.
+
+**Problem:** When searching "covid" in Instrumenten, 216 ontvangers contain "COVID" in their name. The "Gevonden in" column showed "-" for all of them, even though many also have "COVID" in their Regeling. Users interpreted "-" as "not found" — a broken UX promise.
+
+**Solution:**
+1. **Rename:** "Gevonden in" → "Ook in" — sets correct expectation ("also found in")
+2. **SQL enrichment:** After Typesense search, one additional SQL query checks if primary-only matches also have the search term in secondary fields (regeling, omschrijving, etc.)
+3. **Empty cell:** When no secondary match exists, show empty cell instead of "-"
+
+**Implementation:**
+- `_enrich_matched_info()` in `modules.py` — LATERAL JOIN on source table, checks all secondary fields via CASE WHEN chain
+- Runs once per search page load (~20-50ms), only for rows without existing matched_info
+- Non-critical: if enrichment fails, rows show empty "Ook in" (graceful degradation)
+
+**Priority:** P1 (UX clarity)
 
 **Status:** ✅ Implemented 2026-02-20
 
