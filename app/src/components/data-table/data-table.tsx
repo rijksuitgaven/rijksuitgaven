@@ -492,8 +492,8 @@ export function DataTable({
               <button
                 onClick={() => row.pin(false)}
                 className="p-1 hover:bg-[var(--pink)]/10 rounded transition-colors"
-                aria-label="Rij losmaken"
-                data-tooltip-center="Losmaken"
+                aria-label="Verwijder uit vergelijking"
+                title="Verwijder"
               >
                 <PinOff className="h-4 w-4 text-[var(--pink)]" aria-hidden="true" />
               </button>
@@ -517,8 +517,8 @@ export function DataTable({
                     ? 'cursor-not-allowed text-[var(--muted-foreground)]'
                     : 'hover:bg-[var(--pink)]/10 text-[var(--navy-medium)] hover:text-[var(--pink)]'
                 )}
-                aria-label={pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS} rijen` : 'Rij vastzetten'}
-                data-tooltip-center={pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS}` : 'Vastzetten'}
+                aria-label={pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS} rijen` : 'Vergelijk'}
+                title={pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS}` : 'Vergelijk'}
                 disabled={pinnedCount >= MAX_PINNED_ROWS}
               >
                 <Pin className="h-3.5 w-3.5" aria-hidden="true" />
