@@ -268,11 +268,28 @@ Senior specialist (10+ years equivalent) in all disciplines. Never ask technical
 ### Constraints
 | Constraint | Value |
 |------------|-------|
-| Budget | €180/month infrastructure |
+| Budget | ~€190/month infrastructure |
 | Export | 500 rows max, always |
 | Auth | Magic Link only, no social |
 | Performance | <100ms search, <1s page load |
 | Railway deploy | ~2 minutes after push to main |
+
+### Staging Environment (MANDATORY)
+
+**Two environments exist. Both must stay in sync.**
+
+| Environment | Branch | URL |
+|-------------|--------|-----|
+| Production | `main` | beta.rijksuitgaven.nl |
+| Staging | `staging` | frontend-staging-production-ce7d.up.railway.app |
+
+**Rules for every push:**
+1. **Every push to `main` MUST sync staging:** `git push origin main:staging && git branch -f staging main`
+2. **Features go to staging first:** merge to main → push to staging → test → push to production
+3. **SQL migrations BEFORE code:** execute migration on Supabase, then push code
+4. **One feature on staging at a time**
+
+**Full process doc:** `docs/plans/2026-02-21-staging-environment.md`
 
 ---
 

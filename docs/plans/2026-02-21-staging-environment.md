@@ -1,142 +1,125 @@
 # Staging Environment Setup
 
 **Date:** 2026-02-21
-**Status:** Approved
+**Status:** Approved & Operational
 **Context:** V0.9 beta is live on beta.rijksuitgaven.nl with 10 testers. We need a safe way to develop and test new features without affecting beta users.
 
 ---
 
-## Current Deployment
+## Deployment Map
 
-| Component | Service | Deploys From |
-|-----------|---------|-------------|
-| Frontend (Next.js) | Railway | `main` branch, auto-deploy |
-| Backend (FastAPI) | Railway | `main` branch, auto-deploy |
-| Database | Supabase | Manual migrations |
-| Search | Typesense | Railway, manual sync |
+| Component | Service | Deploys From | Auto-deploy? |
+|-----------|---------|-------------|-------------|
+| Frontend Production | Railway | `main` branch | Yes |
+| Frontend Staging | Railway | `staging` branch | Yes |
+| Backend (FastAPI) | Railway | `main` branch | Yes |
+| Database | Supabase | Manual migrations | N/A |
+| Search | Typesense | Railway, manual sync | N/A |
 
-**Production URL:** beta.rijksuitgaven.nl
-**Auto-deploy:** Every push to `main` triggers a Railway deploy (~2 min).
+| Environment | URL | Branch |
+|-------------|-----|--------|
+| **Production** | beta.rijksuitgaven.nl | `main` |
+| **Staging** | frontend-staging-production-ce7d.up.railway.app | `staging` |
 
----
-
-## Proposed Setup
-
-### Two Environments
-
-| | Production | Staging |
-|--|-----------|---------|
-| **Branch** | `main` | `staging` |
-| **URL** | beta.rijksuitgaven.nl | staging-rijksuitgaven.up.railway.app |
-| **Database** | Supabase (shared) | Supabase (shared) |
-| **Typesense** | Shared | Shared |
-| **Backend** | Shared | Shared |
-| **Cost** | Existing | ~€5/month (one extra Railway service) |
-
-Staging is a separate Railway service for the **frontend only**. It shares the same backend, database, and Typesense instance. This means:
-
-- Real data for realistic testing
-- No data duplication or sync issues
-- Minimal extra cost
-- SQL migrations still need care (see below)
-
-### Why Not a Separate Backend/Database?
-
-A fully isolated staging environment (own Supabase project, own backend, own Typesense) would cost ~€30-40/month extra and require data syncing. Not worth it at this stage. The shared-backend approach works because:
-
-1. Most changes are frontend/BFF — the staging frontend just calls the same backend
-2. Backend changes are typically backwards-compatible
-3. SQL migrations are additive (new tables/columns/functions), not destructive
-
-If we ever need destructive database testing, we can spin up a temporary Supabase project.
+**Constraint:** Backend deploys from `main` only. There is no staging backend. Backend changes go live immediately. Frontend staging calls the shared production backend.
 
 ---
 
-## Workflow
+## Three Workflows
 
-### Day-to-Day Development
+### A. Quick Fix (direct to main)
 
-```
-1. Code locally on any branch (main, feature/xyz)
-2. Push to `staging` branch → auto-deploys to staging URL
-3. Test on staging URL with real data
-4. When satisfied, merge to `main` → auto-deploys to beta.rijksuitgaven.nl
-```
-
-### Git Branch Strategy
+**When:** Typos, copy changes, urgent bugs, documentation.
 
 ```
-feature/xyz ──→ staging ──→ main
-                  │            │
-                  ▼            ▼
-              staging URL    beta.rijksuitgaven.nl
+1. Code on main locally
+2. git add + git commit
+3. git push origin main                                    → production deploys
+4. git push origin main:staging && git branch -f staging main  → keep staging in sync
 ```
 
-- **`main`** — always stable, always matches what beta testers see
-- **`staging`** — integration branch for testing before release
-- **Feature branches** — optional, for larger features
+**Rule:** Every push to main MUST sync staging. Never leave staging behind.
 
-### For Quick Fixes
+### B. Feature Development (staging first)
 
-```
-main (direct push) → beta.rijksuitgaven.nl
-```
-
-Small fixes (typos, copy changes, urgent bugs) can still go directly to `main`.
-
-### For New Features
+**When:** New components, new API routes, UI changes, anything non-trivial.
 
 ```
-1. git checkout -b feature/xyz
-2. ... develop ...
-3. git checkout staging && git merge feature/xyz
-4. git push origin staging          → test on staging URL
-5. git checkout main && git merge staging
-6. git push origin main             → live on beta
+1. git checkout -b feature/xyz           (branch from main)
+2. ... develop + commit ...
+3. git checkout main
+4. git merge feature/xyz
+5. git push origin main:staging && git branch -f staging main   → staging deploys
+6. ... test on staging URL ...
+7. git push origin main                  → production deploys
+8. git branch -d feature/xyz             → cleanup
 ```
 
-### SQL Migrations
+**Rule:** One feature on staging at a time. Finish and promote before starting the next.
 
-SQL migrations run against the shared database, so they affect both environments:
+**Verification checklist before promoting to production:**
+- [ ] Feature works on staging URL
+- [ ] Auth/login still works
+- [ ] No console errors
+- [ ] If visual change: checked on mobile
 
-- **Additive migrations** (new tables, columns, functions): Safe to run anytime
-- **Destructive migrations** (ALTER column type, DROP): Test locally first, apply carefully
-- **Rule:** Run migrations BEFORE merging to main, so staging can verify the new schema works
+### C. Database Migration (highest risk)
+
+**When:** New tables, columns, functions, indexes, ALTER statements.
+
+```
+1. Write migration SQL in scripts/sql/
+2. Review carefully (additive only — no DROP, no ALTER TYPE)
+3. Execute migration on Supabase                           → shared DB, affects both envs
+4. Push code to staging                                    → staging deploys
+5. Test on staging URL                                     → verify new schema works
+6. Push to main                                            → production deploys
+```
+
+**Rule:** Migration FIRST, code SECOND. Code must never reference non-existent schema.
+
+**Rule:** Keep migrations backwards-compatible. Old code must still work with new schema during the deploy window.
 
 ---
 
-## Railway Configuration
+## Constraints & Risks
 
-### What Needs to Be Created
+| # | Risk | Impact | Prevention |
+|---|------|--------|------------|
+| 1 | Push to main, forget to sync staging | Staging falls behind, future merges conflict | Always use combined push command |
+| 2 | Push code before migration | 500 errors for all users | Migration-first rule |
+| 3 | Two features on staging, one not ready | Can't promote cleanly | One feature at a time |
+| 4 | Env var mismatch between environments | Feature works on staging, breaks on production | Quarterly env var audit |
+| 5 | Shared DB migration breaks both envs | Both staging and production down | Additive-only migrations, test locally first |
+| 6 | Local staging branch goes stale | Confusion about what's deployed | Always run `git branch -f staging main` after sync |
+| 7 | Staging sends real emails | Beta testers get duplicate/test emails | Accepted risk — staging is founder-only |
 
-1. **New Railway service** in the existing project — "Frontend Staging"
-2. **Source:** Same GitHub repo, `staging` branch
-3. **Root directory:** `app/` (same as production frontend)
-4. **Environment variables:** Copy from production frontend, with these changes:
+### Staging Sends Real Emails
 
-| Variable | Change |
-|----------|--------|
-| `NEXT_PUBLIC_SITE_URL` | Set to staging Railway URL |
-| All others | Same as production |
+Staging has the same `RESEND_API_KEY` as production. Actions on staging (invites, campaigns) send **real emails**. This is acceptable while only the founder uses staging. If staging is ever shared with others, remove `RESEND_API_KEY` from staging env vars.
 
-### What Does NOT Change
+### No Staging Backend
 
-- Production Railway service (stays on `main`)
-- Backend service (shared)
-- Supabase project (shared)
-- Typesense service (shared)
-- Custom domain setup (beta.rijksuitgaven.nl stays on production)
+Backend changes deploy from `main` only. For breaking backend changes (rare), test locally first, then push to `main` with the frontend change in the same commit/deploy window.
+
+---
+
+## Environment Variables
+
+Staging is a duplicate of production. All env vars are identical. No `NEXT_PUBLIC_SITE_URL` exists — the app derives its URL from request headers (`x-forwarded-host`).
+
+Staging URL is added to `ALLOWED_HOSTS` in:
+- `app/src/app/api/v1/auth/magic-link/route.ts`
+- `app/src/app/api/v1/team/leden/[id]/invite/route.ts`
 
 ---
 
 ## Future: Full Production
 
-When we move from beta to full production (V1.0+), the setup evolves:
-
 | | V0.9 (now) | V1.0+ |
 |--|-----------|-------|
 | **Production URL** | beta.rijksuitgaven.nl | rijksuitgaven.nl |
-| **Staging URL** | staging-*.up.railway.app | staging.rijksuitgaven.nl (optional) |
+| **Staging URL** | frontend-staging-production-ce7d.up.railway.app | staging.rijksuitgaven.nl (optional) |
 | **Staging purpose** | Test before beta testers see it | Test before all users see it |
 
 The workflow stays the same — only the URLs change.
@@ -150,5 +133,3 @@ The workflow stays the same — only the URLs change.
 | Current total | ~€180 |
 | Staging frontend service | +€5-10 |
 | **New total** | ~€185-190 |
-
-The staging service is lightweight — it's just a Next.js frontend with minimal traffic (only you).
