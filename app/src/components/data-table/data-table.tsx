@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useRef, Fragment, useEffect } from 'react'
+import { useState, useMemo, useRef, Fragment, useEffect, useCallback } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
@@ -10,9 +10,10 @@ import {
   type ColumnDef,
   type SortingState,
   type ExpandedState,
+  type RowPinningState,
   type Column,
 } from '@tanstack/react-table'
-import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet, ExternalLink, Info, Search, MousePointerClick, AlertTriangle, SlidersHorizontal, Columns3 } from 'lucide-react'
+import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet, ExternalLink, Info, Search, MousePointerClick, AlertTriangle, SlidersHorizontal, Columns3, Pin, PinOff } from 'lucide-react'
 import * as XLSX from 'xlsx'
 import { cn } from '@/lib/utils'
 import { useAnalytics } from '@/hooks/use-analytics'
@@ -33,6 +34,7 @@ const COLLAPSED_YEARS_START = 2016
 const COLLAPSED_YEARS_END = 2020
 
 const MAX_EXPORT_ROWS = 500
+const MAX_PINNED_ROWS = 4
 
 // Sticky column offset for primary column (in pixels)
 const STICKY_PRIMARY_OFFSET_PX = 40
@@ -339,11 +341,20 @@ export function DataTable({
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const expandGroupingRef = useRef<Record<string, string>>({})
   const [yearsExpanded, setYearsExpanded] = useState(false)
+  const [rowPinning, setRowPinning] = useState<RowPinningState>({ top: [], bottom: [] })
 
-  // Reset expanded state when data changes (e.g., after filter applied)
+  // Number of currently pinned rows
+  const pinnedCount = rowPinning.top?.length ?? 0
+
+  // Reset expanded state and pinned rows when data changes (e.g., after filter applied)
   useEffect(() => {
     setExpanded({})
   }, [data])
+
+  // Clear pins when module changes
+  useEffect(() => {
+    setRowPinning({ top: [], bottom: [] })
+  }, [moduleId])
   const [isExportingCSV, setIsExportingCSV] = useState(false)
   const [isExportingXLS, setIsExportingXLS] = useState(false)
   const [isStaffelOpen, setIsStaffelOpen] = useState(false)
@@ -412,17 +423,25 @@ export function DataTable({
     }
   }, [])
 
+  // Get pinned row data for export selection (UX-039)
+  const getPinnedData = useCallback((): RecipientRow[] => {
+    const pinnedIds = new Set(rowPinning.top ?? [])
+    return data.filter(row => pinnedIds.has(row.primary_value))
+  }, [data, rowPinning])
+
   // CSV Export handler
-  const handleExportCSV = () => {
-    if (data.length === 0) return
+  const handleExportCSV = (selectionOnly = false) => {
+    const exportData = selectionOnly ? getPinnedData() : data
+    if (exportData.length === 0) return
     setIsExportingCSV(true)
 
     try {
-      const csvContent = generateCSV(data, availableYears, primaryColumnName, selectedColumns, moduleId)
+      const csvContent = generateCSV(exportData, availableYears, primaryColumnName, selectedColumns, moduleId)
       const timestamp = new Date().toISOString().split('T')[0]
-      const filename = `rijksuitgaven-${moduleId}-${timestamp}.csv`
+      const suffix = selectionOnly ? '-selectie' : ''
+      const filename = `rijksuitgaven-${moduleId}${suffix}-${timestamp}.csv`
       downloadCSV(csvContent, filename)
-      const exportCount = Math.min(data.length, MAX_EXPORT_ROWS)
+      const exportCount = Math.min(exportData.length, MAX_EXPORT_ROWS)
       onExport?.('csv', exportCount)
     } finally {
       setIsExportingCSV(false)
@@ -430,15 +449,17 @@ export function DataTable({
   }
 
   // XLS Export handler
-  const handleExportXLS = () => {
-    if (data.length === 0) return
+  const handleExportXLS = (selectionOnly = false) => {
+    const exportData = selectionOnly ? getPinnedData() : data
+    if (exportData.length === 0) return
     setIsExportingXLS(true)
 
     try {
       const timestamp = new Date().toISOString().split('T')[0]
-      const filename = `rijksuitgaven-${moduleId}-${timestamp}.xlsx`
-      downloadXLS(data, availableYears, primaryColumnName, filename, selectedColumns, moduleId)
-      const exportCount = Math.min(data.length, MAX_EXPORT_ROWS)
+      const suffix = selectionOnly ? '-selectie' : ''
+      const filename = `rijksuitgaven-${moduleId}${suffix}-${timestamp}.xlsx`
+      downloadXLS(exportData, availableYears, primaryColumnName, filename, selectedColumns, moduleId)
+      const exportCount = Math.min(exportData.length, MAX_EXPORT_ROWS)
       onExport?.('xls', exportCount)
     } finally {
       setIsExportingXLS(false)
@@ -458,30 +479,72 @@ export function DataTable({
   // Build columns dynamically based on available years
   const columns = useMemo<ColumnDef<RecipientRow>[]>(() => {
     const cols: ColumnDef<RecipientRow>[] = [
-      // Expand button column
+      // Expand/Pin button column (UX-039)
       {
         id: 'expand',
         header: () => null,
-        cell: ({ row }) => (
-          <button
-            onClick={() => {
-              delete expandGroupingRef.current[row.original.primary_value]
-              row.toggleExpanded()
-              if (!row.getIsExpanded() && onRowExpand) {
-                onRowExpand(row.original.primary_value)
-              }
-            }}
-            className="p-1 hover:bg-[var(--gray-light)] rounded transition-colors"
-            aria-expanded={row.getIsExpanded()}
-            aria-label={row.getIsExpanded() ? 'Rij inklappen' : 'Rij uitklappen'}
-          >
-            {row.getIsExpanded() ? (
-              <ChevronDown className="h-4 w-4 text-[var(--navy-medium)]" aria-hidden="true" />
-            ) : (
-              <ChevronRight className="h-4 w-4 text-[var(--navy-medium)]" aria-hidden="true" />
-            )}
-          </button>
-        ),
+        cell: ({ row }) => {
+          const isPinned = row.getIsPinned()
+
+          // Pinned rows show unpin icon instead of expand
+          if (isPinned) {
+            return (
+              <button
+                onClick={() => row.pin(false)}
+                className="p-1 hover:bg-[var(--pink)]/10 rounded transition-colors"
+                aria-label="Rij losmaken"
+                data-tooltip-center="Losmaken"
+              >
+                <PinOff className="h-4 w-4 text-[var(--pink)]" aria-hidden="true" />
+              </button>
+            )
+          }
+
+          return (
+            <div className="flex items-center">
+              {/* Pin button — visible on hover via group-hover */}
+              <button
+                onClick={() => {
+                  if (pinnedCount < MAX_PINNED_ROWS) {
+                    row.pin('top')
+                    // Collapse if expanded
+                    if (row.getIsExpanded()) row.toggleExpanded()
+                  }
+                }}
+                className={cn(
+                  'p-1 rounded transition-all opacity-0 group-hover:opacity-100 -mr-1',
+                  pinnedCount >= MAX_PINNED_ROWS
+                    ? 'cursor-not-allowed text-[var(--muted-foreground)]'
+                    : 'hover:bg-[var(--pink)]/10 text-[var(--navy-medium)] hover:text-[var(--pink)]'
+                )}
+                aria-label={pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS} rijen` : 'Rij vastzetten'}
+                data-tooltip-center={pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS}` : 'Vastzetten'}
+                disabled={pinnedCount >= MAX_PINNED_ROWS}
+              >
+                <Pin className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+              {/* Expand button */}
+              <button
+                onClick={() => {
+                  delete expandGroupingRef.current[row.original.primary_value]
+                  row.toggleExpanded()
+                  if (!row.getIsExpanded() && onRowExpand) {
+                    onRowExpand(row.original.primary_value)
+                  }
+                }}
+                className="p-1 hover:bg-[var(--gray-light)] rounded transition-colors"
+                aria-expanded={row.getIsExpanded()}
+                aria-label={row.getIsExpanded() ? 'Rij inklappen' : 'Rij uitklappen'}
+              >
+                {row.getIsExpanded() ? (
+                  <ChevronDown className="h-4 w-4 text-[var(--navy-medium)]" aria-hidden="true" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 text-[var(--navy-medium)]" aria-hidden="true" />
+                )}
+              </button>
+            </div>
+          )
+        },
         size: 40,
       },
       // Primary column (Ontvanger) - sticky on mobile
@@ -752,14 +815,19 @@ export function DataTable({
     state: {
       sorting,
       expanded,
+      rowPinning,
     },
     onSortingChange: setSorting,
     onExpandedChange: setExpanded,
+    onRowPinningChange: setRowPinning,
+    enableRowPinning: true,
+    keepPinnedRows: true, // Keep pinned rows visible even when filtered out
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     manualPagination: true, // Server-side pagination
     pageCount: Math.ceil(totalRows / perPage),
+    getRowId: (row) => row.primary_value, // Stable row IDs for pinning
   })
 
   const totalPages = Math.ceil(totalRows / perPage)
@@ -851,27 +919,53 @@ export function DataTable({
             />
           )}
 
-          {/* CSV Export button */}
-          <button
-            onClick={handleExportCSV}
-            disabled={isLoading || isExportingCSV || data.length === 0}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            aria-label="Download als CSV"
-          >
-            <Download className="h-4 w-4" aria-hidden="true" />
-            {isExportingCSV ? 'Bezig...' : 'CSV'}
-          </button>
+          {/* CSV Export button (UX-039: selection export when rows pinned) */}
+          {pinnedCount > 0 ? (
+            <ExportDropdown
+              label="CSV"
+              icon={<Download className="h-4 w-4" aria-hidden="true" />}
+              isExporting={isExportingCSV}
+              disabled={isLoading || data.length === 0}
+              pinnedCount={pinnedCount}
+              totalCount={data.length}
+              onExportAll={() => handleExportCSV(false)}
+              onExportSelection={() => handleExportCSV(true)}
+            />
+          ) : (
+            <button
+              onClick={() => handleExportCSV(false)}
+              disabled={isLoading || isExportingCSV || data.length === 0}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              aria-label="Download als CSV"
+            >
+              <Download className="h-4 w-4" aria-hidden="true" />
+              {isExportingCSV ? 'Bezig...' : 'CSV'}
+            </button>
+          )}
 
-          {/* XLS Export button */}
-          <button
-            onClick={handleExportXLS}
-            disabled={isLoading || isExportingXLS || data.length === 0}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            aria-label="Download als Excel"
-          >
-            <FileSpreadsheet className="h-4 w-4" aria-hidden="true" />
-            {isExportingXLS ? 'Bezig...' : 'XLS'}
-          </button>
+          {/* XLS Export button (UX-039: selection export when rows pinned) */}
+          {pinnedCount > 0 ? (
+            <ExportDropdown
+              label="XLS"
+              icon={<FileSpreadsheet className="h-4 w-4" aria-hidden="true" />}
+              isExporting={isExportingXLS}
+              disabled={isLoading || data.length === 0}
+              pinnedCount={pinnedCount}
+              totalCount={data.length}
+              onExportAll={() => handleExportXLS(false)}
+              onExportSelection={() => handleExportXLS(true)}
+            />
+          ) : (
+            <button
+              onClick={() => handleExportXLS(false)}
+              disabled={isLoading || isExportingXLS || data.length === 0}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              aria-label="Download als Excel"
+            >
+              <FileSpreadsheet className="h-4 w-4" aria-hidden="true" />
+              {isExportingXLS ? 'Bezig...' : 'XLS'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -943,45 +1037,85 @@ export function DataTable({
                 </td>
               </tr>
             ) : (
-              table.getRowModel().rows.map((row) => (
-                <Fragment key={row.id}>
-                  <tr
-                    className={cn(
-                      'group hover:bg-[var(--gray-light)] transition-colors',
-                      row.getIsExpanded() && 'bg-[var(--gray-light)]'
-                    )}
-                  >
-                    {row.getVisibleCells().map((cell, cellIndex) => {
-                      const isSticky = (cell.column.columnDef.meta as ColumnMeta | undefined)?.sticky || cellIndex === 0 || cellIndex === 1
-                      const isExpanded = row.getIsExpanded()
-                      const isTotaal = cell.column.id === 'total'
-                      // Year columns and Totaal are right-aligned
-                      const isYearOrTotal = cell.column.id.startsWith('year-') || cell.column.id === 'collapsed-years' || cell.column.id === 'total'
-                      return (
-                        <td
-                          key={cell.id}
-                          className={cn(
-                            'px-3 py-2 border-b border-[var(--border)] transition-colors',
-                            isYearOrTotal ? 'text-right' : 'text-left',
-                            isSticky && 'sticky left-0 bg-white group-hover:bg-[var(--gray-light)] z-10',
-                            cellIndex === 1 && 'sticky bg-white group-hover:bg-[var(--gray-light)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
-                            isExpanded && isSticky && 'bg-[var(--gray-light)]',
-                            isTotaal && 'sticky right-0 bg-[var(--totaal-bg)] font-semibold z-10 border-l border-[var(--border)]'
-                          )}
-                          style={{
-                            width: cell.column.getSize(),
-                            left: cellIndex === 1 ? `${STICKY_PRIMARY_OFFSET_PX}px` : undefined
-                          }}
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      )
-                    })}
+              <>
+                {/* Pinned rows (UX-039) — always visible at top */}
+                {table.getTopRows().map((row) => (
+                  <Fragment key={row.id}>
+                    <tr
+                      className="group bg-blue-50/60 border-l-2 border-l-[var(--pink)] hover:bg-blue-50/80 transition-colors"
+                    >
+                      {row.getVisibleCells().map((cell, cellIndex) => {
+                        const isSticky = (cell.column.columnDef.meta as ColumnMeta | undefined)?.sticky || cellIndex === 0 || cellIndex === 1
+                        const isTotaal = cell.column.id === 'total'
+                        const isYearOrTotal = cell.column.id.startsWith('year-') || cell.column.id === 'collapsed-years' || cell.column.id === 'total'
+                        return (
+                          <td
+                            key={cell.id}
+                            className={cn(
+                              'px-3 py-2 border-b border-[var(--border)] transition-colors',
+                              isYearOrTotal ? 'text-right' : 'text-left',
+                              isSticky && 'sticky left-0 bg-blue-50/60 group-hover:bg-blue-50/80 z-10',
+                              cellIndex === 1 && 'sticky bg-blue-50/60 group-hover:bg-blue-50/80 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
+                              isTotaal && 'sticky right-0 bg-blue-100/60 font-semibold z-10 border-l border-[var(--border)]'
+                            )}
+                            style={{
+                              width: cell.column.getSize(),
+                              left: cellIndex === 1 ? `${STICKY_PRIMARY_OFFSET_PX}px` : undefined
+                            }}
+                          >
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </td>
+                        )
+                      })}
+                    </tr>
+                  </Fragment>
+                ))}
+                {/* Separator between pinned and unpinned rows */}
+                {pinnedCount > 0 && (
+                  <tr>
+                    <td colSpan={columns.length} className="h-0 border-b-2 border-[var(--pink)]/30 p-0" />
                   </tr>
-                  {/* Expanded row content - renders directly as <tr> elements */}
-                  {row.getIsExpanded() && renderExpandedRow && renderExpandedRow(row.original, expandGroupingRef.current[row.original.primary_value])}
-                </Fragment>
-              ))
+                )}
+                {/* Regular (unpinned) rows */}
+                {table.getCenterRows().map((row) => (
+                  <Fragment key={row.id}>
+                    <tr
+                      className={cn(
+                        'group hover:bg-[var(--gray-light)] transition-colors',
+                        row.getIsExpanded() && 'bg-[var(--gray-light)]'
+                      )}
+                    >
+                      {row.getVisibleCells().map((cell, cellIndex) => {
+                        const isSticky = (cell.column.columnDef.meta as ColumnMeta | undefined)?.sticky || cellIndex === 0 || cellIndex === 1
+                        const isExpanded = row.getIsExpanded()
+                        const isTotaal = cell.column.id === 'total'
+                        const isYearOrTotal = cell.column.id.startsWith('year-') || cell.column.id === 'collapsed-years' || cell.column.id === 'total'
+                        return (
+                          <td
+                            key={cell.id}
+                            className={cn(
+                              'px-3 py-2 border-b border-[var(--border)] transition-colors',
+                              isYearOrTotal ? 'text-right' : 'text-left',
+                              isSticky && 'sticky left-0 bg-white group-hover:bg-[var(--gray-light)] z-10',
+                              cellIndex === 1 && 'sticky bg-white group-hover:bg-[var(--gray-light)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
+                              isExpanded && isSticky && 'bg-[var(--gray-light)]',
+                              isTotaal && 'sticky right-0 bg-[var(--totaal-bg)] font-semibold z-10 border-l border-[var(--border)]'
+                            )}
+                            style={{
+                              width: cell.column.getSize(),
+                              left: cellIndex === 1 ? `${STICKY_PRIMARY_OFFSET_PX}px` : undefined
+                            }}
+                          >
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </td>
+                        )
+                      })}
+                    </tr>
+                    {/* Expanded row content - renders directly as <tr> elements */}
+                    {row.getIsExpanded() && renderExpandedRow && renderExpandedRow(row.original, expandGroupingRef.current[row.original.primary_value])}
+                  </Fragment>
+                ))}
+              </>
             )}
           </tbody>
           {/* Totals row - only shown when searching/filtering */}
@@ -1052,6 +1186,21 @@ export function DataTable({
         />
       </div>
 
+      {/* Pinned rows indicator + clear (UX-039) */}
+      {pinnedCount > 0 && (
+        <div className="flex items-center justify-between mt-2 px-2">
+          <span className="text-sm text-[var(--navy-medium)]">
+            {pinnedCount} {pinnedCount === 1 ? 'rij' : 'rijen'} vastgezet
+          </span>
+          <button
+            onClick={() => setRowPinning({ top: [], bottom: [] })}
+            className="text-sm text-[var(--pink)] hover:underline transition-colors"
+          >
+            Wis selectie
+          </button>
+        </div>
+      )}
+
       {/* Footer */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-2">
         {/* Left: Amount note - module-specific */}
@@ -1092,6 +1241,73 @@ export function DataTable({
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+// Export dropdown with "all" and "selection" options (UX-039)
+function ExportDropdown({
+  label,
+  icon,
+  isExporting,
+  disabled,
+  pinnedCount,
+  totalCount,
+  onExportAll,
+  onExportSelection,
+}: {
+  label: string
+  icon: React.ReactNode
+  isExporting: boolean
+  disabled: boolean
+  pinnedCount: number
+  totalCount: number
+  onExportAll: () => void
+  onExportSelection: () => void
+}) {
+  const [isOpen, setIsOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!isOpen) return
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        disabled={disabled || isExporting}
+        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border border-[var(--border)] rounded hover:bg-[var(--gray-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        aria-label={`Download als ${label}`}
+        aria-expanded={isOpen}
+      >
+        {icon}
+        {isExporting ? 'Bezig...' : label}
+        <ChevronDown className="h-3 w-3 ml-0.5" aria-hidden="true" />
+      </button>
+      {isOpen && (
+        <div className="absolute top-full right-0 mt-1 bg-white border border-[var(--border)] rounded-lg shadow-lg z-50 min-w-[200px] py-1">
+          <button
+            onClick={() => { onExportAll(); setIsOpen(false) }}
+            className="w-full text-left px-3 py-2 text-sm hover:bg-[var(--gray-light)] transition-colors"
+          >
+            Exporteer alles ({Math.min(totalCount, MAX_EXPORT_ROWS)})
+          </button>
+          <button
+            onClick={() => { onExportSelection(); setIsOpen(false) }}
+            className="w-full text-left px-3 py-2 text-sm hover:bg-[var(--gray-light)] transition-colors text-[var(--pink)]"
+          >
+            Exporteer selectie ({pinnedCount})
+          </button>
+        </div>
+      )}
     </div>
   )
 }

@@ -1708,6 +1708,50 @@ The current `data_availability` table has incorrect year ranges inherited from i
 
 ---
 
+### UX-039: Vergelijk (Row Pinning)
+
+**Requirement:** Allow users to pin up to 4 rows to the top of the data table for side-by-side comparison while scrolling, sorting, and filtering.
+
+**Problem:** When comparing recipients (e.g., ProRail vs NS), scrolling to find one loses sight of the other. Users can't keep specific rows visible while browsing the full result set.
+
+**Interaction:**
+- Pin icon (📌) appears on hover/focus, left of the expand chevron
+- Click to pin → row moves to top of table, stays visible during scroll/sort/filter
+- Click again to unpin → row returns to normal flow
+- Maximum 4 pinned rows
+- "Wis selectie" link appears when any rows are pinned
+
+**Visual treatment:**
+- Pinned rows: light accent background + left border accent (2px, brand color)
+- Separator line between pinned rows and scrollable rows
+- Pinned rows are visually distinct from filtered results
+
+**Behavior:**
+- Pinned rows ignore sort order and active filters (always visible at top)
+- Expand disabled on pinned rows (tooltip: "Ontkoppel om details te bekijken")
+- Cleared on module switch (per-module scope)
+- React state only (not persisted across sessions)
+
+**Export integration:**
+- When pins exist, export offers "Exporteer selectie (N rijen)" in addition to "Exporteer alles"
+
+**Technical approach:**
+- TanStack Table `enableRowPinning` + `row.pin('top')` (native API)
+- `getTopRows()` for pinned section, `getCenterRows()` for scrollable section
+- Sticky positioning below header row
+
+**Not building (YAGNI):**
+- Cross-module pinning (Integraal already serves this use case)
+- Comparison chart/visualization
+- Pin persistence (sessionStorage/URL)
+- Side-by-side modal view
+
+**Priority:** P2 (Enhancement)
+
+**Status:** ⏳ In Development
+
+---
+
 ### UX-008: Hard Navigation on Module Menu
 
 **Requirement:** Clicking a module in the navigation menu forces a full page reload
