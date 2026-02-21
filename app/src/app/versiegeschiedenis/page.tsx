@@ -39,13 +39,13 @@ export default function VersiegeschiedenisPage() {
             </h3>
             <ul className="list-disc pl-6 text-[var(--foreground)] space-y-3">
               <li>
-                <strong>Woorden in willekeurige volgorde:</strong> Zoek op <code className="bg-[var(--gray-light)] px-1.5 py-0.5 rounded text-sm">rode kruis</code> en u vindt alle ontvangers waarin beide woorden voorkomen — ongeacht waar ze staan. Voorheen moesten de woorden exact naast elkaar staan, waardoor u resultaten miste.
+                <strong>Woorden in willekeurige volgorde:</strong> Zoek op <code className="bg-[var(--gray-light)] px-1.5 py-0.5 rounded text-sm">rode kruis</code> en u vindt alle ontvangers waarin beide woorden voorkomen — ongeacht waar ze staan.
               </li>
               <li>
                 <strong>Exacte woordgroep zoeken:</strong> Zet aanhalingstekens om woorden die u als groep wilt zoeken. <code className="bg-[var(--gray-light)] px-1.5 py-0.5 rounded text-sm">&quot;rode kruis&quot;</code> vindt alleen resultaten waar deze woorden direct naast elkaar staan, in precies die volgorde. Handig als u een specifieke naam of regeling zoekt.
               </li>
               <li>
-                <strong>Sterretje werkt nu:</strong> Typ <code className="bg-[var(--gray-light)] px-1.5 py-0.5 rounded text-sm">prorail*</code> om alles te vinden dat begint met &quot;prorail&quot; — ProRail B.V., Prorail Holding, enzovoort. Eerder werd het sterretje genegeerd.
+                <strong>Zoeken met sterretje:</strong> Typ <code className="bg-[var(--gray-light)] px-1.5 py-0.5 rounded text-sm">prorail*</code> om alles te vinden dat begint met &quot;prorail&quot; — ProRail B.V., Prorail Holding, enzovoort.
               </li>
             </ul>
           </section>
@@ -77,13 +77,13 @@ export default function VersiegeschiedenisPage() {
             </p>
             <ul className="list-disc pl-6 text-[var(--foreground)] space-y-3 mb-8">
               <li>
-                <strong>Autocomplete uit alle bronnen:</strong> Zodra u begint te typen krijgt u suggesties uit alle 6 databronnen tegelijk. U ziet direct of een ontvanger voorkomt in de Rijksbegroting, bij gemeenten, provincies of publieke uitvoeringsorganisaties.
+                <strong>Autocomplete uit alle bronnen:</strong> Zodra u begint te typen krijgt u suggesties uit alle databronnen tegelijk. U ziet direct of een ontvanger voorkomt in de Rijksbegroting, bij gemeenten, provincies of publieke uitvoeringsorganisaties.
               </li>
               <li>
                 <strong>Het systeem begrijpt Nederlands:</strong> Zoek op <code className="bg-[var(--gray-light)] px-1.5 py-0.5 rounded text-sm">politie</code> en u vindt &quot;Nationale Politie&quot; en &quot;Politieacademie&quot;, maar niet &quot;Politieke beweging DENK&quot;. Het systeem herkent Nederlandse woordgrenzen en voorkomt irrelevante resultaten.
               </li>
               <li>
-                <strong>Integraal doorzoeken:</strong> Doorzoek alle databronnen in één keer. U ziet per ontvanger in welke bronnen deze voorkomt en hoeveel betalingen er zijn — zonder dat u per module apart hoeft te zoeken.
+                <strong>Integraal doorzoeken:</strong> Doorzoek alle databronnen in één keer. U ziet per ontvanger in welke bronnen deze voorkomt en hoeveel betalingen er zijn.
               </li>
             </ul>
 
@@ -92,7 +92,7 @@ export default function VersiegeschiedenisPage() {
               Zes databronnen, negen jaar, in één overzicht
             </h4>
             <p className="text-[var(--foreground)] mb-3">
-              Alle overheidsuitgaven van 2016 tot en met 2024, gebundeld in 6 datamodules en één integraal overzicht. Waar u eerder per module moest navigeren, heeft u nu alles onder handbereik.
+              Alle overheidsuitgaven van 2016 tot en met 2024, gebundeld in meerdere datamodules en één integraal overzicht.
             </p>
             <ul className="list-disc pl-6 text-[var(--foreground)] space-y-2 mb-4">
               <li><strong>Financiële Instrumenten</strong> — subsidies en bijdragen vanuit de Rijksbegroting</li>
@@ -104,7 +104,7 @@ export default function VersiegeschiedenisPage() {
               <li><strong>Integraal</strong> — alle bronnen gecombineerd, per ontvanger</li>
             </ul>
             <p className="text-[var(--foreground)] mb-8">
-              Jaarbedragen staan naast elkaar in kolommen, met een totaalkolom. Cellen met meer dan 50% jaar-op-jaar verandering worden rood gemarkeerd — zo ziet u in één oogopslag waar opvallende verschuivingen zijn.
+              Alle bedragen worden als absolute getallen getoond — u ziet exact wat er is uitgegeven, zonder afkortingen. Jaarbedragen staan naast elkaar in kolommen, met een totaalkolom. Cellen met meer dan 50% jaar-op-jaar verandering worden rood gemarkeerd — zo ziet u in één oogopslag waar opvallende verschuivingen zijn.
             </p>
 
             {/* Filteren */}
@@ -119,7 +119,7 @@ export default function VersiegeschiedenisPage() {
                 <strong>Filters die op elkaar reageren:</strong> Selecteer een provincie en de overige filtervelden tonen automatisch alleen de opties die daarbinnen relevant zijn, met aantallen. Zo filtert u nooit naar een lege selectie.
               </li>
               <li>
-                <strong>Klik om te filteren:</strong> Zie een interessante regeling of gemeente in de tabel? Klik erop en de tabel filtert direct op die waarde. Geen handmatig zoeken in filtermenu&apos;s meer.
+                <strong>Klik om te filteren:</strong> Zie een interessante regeling of gemeente in de tabel? Klik erop en de tabel filtert direct op die waarde.
               </li>
               <li>
                 <strong>Kies uw eigen kolommen:</strong> Bepaal via de Kolommen-knop welke extra informatie u in de tabel wilt zien — artikel, regeling, gemeente, categorie of andere velden.
@@ -131,7 +131,7 @@ export default function VersiegeschiedenisPage() {
               Zoom in op de details achter de bedragen
             </h4>
             <p className="text-[var(--foreground)] mb-3">
-              Klik op een ontvanger om alle onderliggende betalingen te zien. Waar het oude systeem een aparte detailpagina opende, klapt het nieuwe platform de details direct onder de rij uit.
+              Klik op een ontvanger om alle onderliggende betalingen te zien. De details klappen direct onder de rij uit.
             </p>
             <ul className="list-disc pl-6 text-[var(--foreground)] space-y-3 mb-8">
               <li>
