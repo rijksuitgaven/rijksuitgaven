@@ -12,6 +12,7 @@ import asyncio
 import logging
 import random
 import re
+from dataclasses import dataclass, field
 from typing import Optional
 import httpx
 from app.services.database import fetch_all, fetch_val, get_pool
@@ -162,6 +163,72 @@ async def _typesense_search(collection: str, params: dict) -> dict:
 # Compound words like "Designpolitie" break that expectation.
 # =============================================================================
 
+
+# =============================================================================
+# Query Parser — handles multi-word AND, exact phrase, wildcard stripping
+# =============================================================================
+
+@dataclass
+class ParsedQuery:
+    """Parsed user search input."""
+    phrases: list[str] = field(default_factory=list)  # From "quoted segments"
+    words: list[str] = field(default_factory=list)     # From unquoted segments
+    raw: str = ""  # All terms joined, quotes/wildcards stripped (for Typesense)
+
+
+def parse_search_query(search: str) -> ParsedQuery:
+    """
+    Parse raw user search input into structured query.
+
+    - "rode kruis" → phrase "rode kruis"
+    - rode kruis → words ["rode", "kruis"]
+    - prorail* → word "prorail" (wildcard stripped)
+    - "van oord" bouw → phrase "van oord" + word "bouw"
+    - Unmatched quote → stripped, contents treated as words
+    - Empty/whitespace-only quotes → ignored
+    """
+    if not search or not search.strip():
+        return ParsedQuery()
+
+    text = search.strip()
+    phrases: list[str] = []
+    remainder_parts: list[str] = []
+
+    # Extract quoted phrases
+    quote_pattern = re.compile(r'"([^"]*)"')
+    last_end = 0
+    for match in quote_pattern.finditer(text):
+        # Collect text before this quote
+        before = text[last_end:match.start()].strip()
+        if before:
+            remainder_parts.append(before)
+        # Add quoted content if non-empty
+        phrase = match.group(1).strip()
+        if phrase:
+            phrases.append(phrase)
+        last_end = match.end()
+
+    # Collect text after last quote
+    after = text[last_end:].strip()
+    if after:
+        remainder_parts.append(after)
+
+    # Join remainder, strip any leftover unmatched quotes
+    remainder = " ".join(remainder_parts).replace('"', '')
+
+    # Strip trailing wildcard
+    remainder = remainder.rstrip("*").strip()
+
+    # Split remainder into individual words
+    words = [w for w in remainder.split() if w]
+
+    # Build raw string for Typesense (all terms, no syntax)
+    raw_parts = phrases + words
+    raw = " ".join(raw_parts)
+
+    return ParsedQuery(phrases=phrases, words=words, raw=raw)
+
+
 def build_search_condition(field: str, param_idx: int, search: str) -> tuple[str, str]:
     """
     Build a search condition with word-boundary matching.
@@ -201,28 +268,36 @@ def build_search_condition(field: str, param_idx: int, search: str) -> tuple[str
 
 def is_word_boundary_match(search: str, text: str) -> bool:
     """
-    Check if search term appears as a whole word in text.
+    Check if ALL search terms appear as whole words in text.
+
+    Parses the search input to support:
+    - Multi-word AND: "rode kruis" → both \\brode\\b AND \\bkruis\\b must match
+    - Exact phrase: '"rode kruis"' → \\brode kruis\\b must match (adjacent, in order)
+    - Wildcard stripping: "prorail*" → \\bprorail\\b
+    - Single keyword: "COA" → \\bCOA\\b (unchanged from before)
 
     Uses Python regex \\b for word boundaries.
-    "COA" matches "COA", "Centraal Bureau COA", "(COA)"
-    but NOT "Coaching", "Coach"
 
     Args:
-        search: The search term
+        search: The search term (raw user input)
         text: The text to search in
 
     Returns:
-        True if search appears as a whole word in text
+        True if ALL parsed terms appear as whole words in text
     """
     if not search or not text:
         return False
 
-    # Escape regex special characters
-    escaped = re.escape(search)
+    parsed = parse_search_query(search)
+    if not parsed.phrases and not parsed.words:
+        return False
 
-    # Word boundary matching: \b = word boundary in Python regex
-    pattern = rf'\b{escaped}\b'
-    return bool(re.search(pattern, text, re.IGNORECASE))
+    # ALL terms must match (AND logic)
+    for term in parsed.phrases + parsed.words:
+        escaped = re.escape(term)
+        if not re.search(rf'\b{escaped}\b', text, re.IGNORECASE):
+            return False
+    return True
 
 
 async def _lookup_matched_fields(
@@ -640,6 +715,9 @@ async def _typesense_get_primary_keys_with_highlights(
     search_fields = TYPESENSE_SEARCHABLE_FIELDS.get(collection, [primary_field])
     lower_fields = TYPESENSE_LOWER_FIELDS.get(collection, [])
 
+    # Parse search input: strip quotes/wildcards for Typesense
+    parsed = parse_search_query(search)
+
     # Collect unique primary values across all field searches
     seen = set()
     primary_keys = []
@@ -657,7 +735,7 @@ async def _typesense_get_primary_keys_with_highlights(
             query_by = f"{field},{field}_lower"
 
         params = {
-            "q": search,
+            "q": parsed.raw,
             "query_by": query_by,
             "prefix": "true",
             "per_page": str(min(limit * 5, 250)),  # Get enough per field
@@ -793,8 +871,11 @@ async def _typesense_search_recipient_keys(
     Returns list of ontvanger_key strings (Typesense document IDs).
     Empty list means Typesense returned nothing (caller should fall back to regex).
     """
+    # Parse search input: strip quotes/wildcards for Typesense
+    parsed = parse_search_query(search)
+
     params = {
-        "q": search,
+        "q": parsed.raw,
         "query_by": "name,name_lower",
         "prefix": "true",
         "per_page": str(min(limit * 5, 250)),
@@ -2137,6 +2218,9 @@ async def get_module_autocomplete(
     field_matches: list[dict] = []
     other_modules_results: list[dict] = []
 
+    # Parse search input: strip quotes/wildcards for Typesense
+    parsed = parse_search_query(search)
+
     # ── Fire ALL Typesense searches in parallel ──────────────────────────
     # Previously sequential (~220ms), now parallel (~50ms)
 
@@ -2148,7 +2232,7 @@ async def get_module_autocomplete(
         query_by = f"{primary_field},{primary_field}_lower" if primary_field != "kostensoort" else "kostensoort,kostensoort_lower"
         sort_field = "totaal" if module == "apparaat" else "bedrag"
         primary_params = {
-            "q": search,
+            "q": parsed.raw,
             "query_by": query_by,
             "prefix": "true",
             "per_page": str(limit * 20),
@@ -2163,7 +2247,7 @@ async def get_module_autocomplete(
     if collection and search_fields:
         for field in search_fields[:3]:
             field_params = {
-                "q": search,
+                "q": parsed.raw,
                 "query_by": field,
                 "prefix": "true",
                 "per_page": "10",
@@ -2175,7 +2259,7 @@ async def get_module_autocomplete(
 
     # Task: recipients collection search
     recipients_params = {
-        "q": search,
+        "q": parsed.raw,
         "query_by": "name,name_lower",
         "prefix": "true",
         "per_page": str(limit * 20),
@@ -2338,9 +2422,12 @@ async def get_integraal_autocomplete(
 
     Uses Typesense for fast search (<100ms vs 800ms with PostgreSQL).
     """
+    # Parse search input: strip quotes/wildcards for Typesense
+    parsed = parse_search_query(search)
+
     # Search the recipients collection (already has all recipients with sources)
     params = {
-        "q": search,
+        "q": parsed.raw,
         "query_by": "name,name_lower",
         "prefix": "true",
         "per_page": str(limit * 20),  # Get many more since word-boundary filter discards ~80%
