@@ -15,7 +15,7 @@ export function StaffelPopover({ position = 'below' }: { position?: 'above' | 'b
       <div className="p-4">
         <h3 className="text-sm font-bold uppercase tracking-wider mb-2">Staffelbedragen</h3>
         <p className="text-xs text-white/80 mb-3">
-          Inkoopuitgaven en COA-subsidies worden niet als exact bedrag gepubliceerd, maar in staffels (bandbreedtes). De getoonde bedragen zijn het <strong>gemiddelde</strong> van elke staffel.
+          Inkoopuitgaven en COA-subsidies worden niet als exact bedrag gepubliceerd, maar in staffels (bandbreedtes). De getoonde bedragen zijn het <strong>gemiddelde</strong> van elke staffel. Voor staffel 13 (&gt;€150M) wordt €225M gebruikt.
         </p>
         <div className="border-t border-white/20 pt-3 mb-3">
           <table className="w-full text-xs">
@@ -26,16 +26,20 @@ export function StaffelPopover({ position = 'below' }: { position?: 'above' | 'b
               </tr>
             </thead>
             <tbody className="text-white/80">
+              <tr><td className="py-0.5">0</td><td>Negatief – €0</td></tr>
               <tr><td className="py-0.5">1</td><td>€1 – €10.000</td></tr>
               <tr><td className="py-0.5">2</td><td>€10.001 – €50.000</td></tr>
               <tr><td className="py-0.5">3</td><td>€50.001 – €100.000</td></tr>
               <tr><td className="py-0.5">4</td><td>€100.001 – €250.000</td></tr>
               <tr><td className="py-0.5">5</td><td>€250.001 – €500.000</td></tr>
               <tr><td className="py-0.5">6</td><td>€500.001 – €1.000.000</td></tr>
-              <tr><td className="py-0.5">7</td><td>€1M – €5M</td></tr>
-              <tr><td className="py-0.5">8</td><td>€5M – €10M</td></tr>
-              <tr><td className="py-0.5">9</td><td>€10M – €25M</td></tr>
-              <tr><td className="py-0.5">10–13</td><td>€25M – €150M+</td></tr>
+              <tr><td className="py-0.5">7</td><td>€1.000.001 – €5.000.000</td></tr>
+              <tr><td className="py-0.5">8</td><td>€5.000.001 – €10.000.000</td></tr>
+              <tr><td className="py-0.5">9</td><td>€10.000.001 – €25.000.000</td></tr>
+              <tr><td className="py-0.5">10</td><td>€25.000.001 – €50.000.000</td></tr>
+              <tr><td className="py-0.5">11</td><td>€50.000.001 – €100.000.000</td></tr>
+              <tr><td className="py-0.5">12</td><td>€100.000.001 – €150.000.000</td></tr>
+              <tr><td className="py-0.5">13</td><td>Meer dan €150.000.001</td></tr>
             </tbody>
           </table>
         </div>
