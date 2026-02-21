@@ -71,27 +71,56 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 
 **Target users:** Journalists, researchers, opposition parties
 
-### V2.1 - Search Improvements
+### V2.1 - Vergelijk
 
-- Semantic search (embeddings via Cohere)
-- Search on Regeling/Omschrijving fields
-- Recent search history
-- Saved searches
-- **UX-024: Type-ahead with recent searches** - On search bar focus, show recent search history (localStorage). Reduced debounce (50ms→30ms) + client-side response caching for instant repeat queries
-- **Data export/retention after cancellation** - When V3+ introduces user-generated content (saved reports, research sessions), implement a 30-day export grace period before account deletion. V2 has no user data to preserve, so cancellation is immediate.
+**Status:** On staging, release ~1 week post-launch
 
-### V2.0 Known Issues / Backlog
+- UX-039: Row pinning (pin up to 4 rows for side-by-side comparison, export selection)
 
-*No known issues at this time.*
+### V2.2 - Zoeken
 
-<!-- Fixed 2026-02-03: Details API total mismatch (commit 6e2da2a) -->
+- UX-024: Type-ahead with recent searches (localStorage, reduced debounce, response caching)
+- Fuzzy/typo tolerance (Typesense `num_typos`)
+- Accurate multi-field match reporting ("Ook in" for multi-word searches)
+- Semantic search (Cohere embeddings, ~€1/month)
+- Field-specific search syntax (`leverancier:prorail`) — power users
 
-### V2.2 - Search Polish
+### V2.3 - Performance
 
-- Search analytics
-- Performance optimizations
-- Accessibility improvements
+- Cascading filter performance optimization (materialized cache or Typesense facets)
+- Filter performance optimization (indexes, progressive loading)
+- Railway private networking (Typesense egress savings)
+
+### V2.4 - Homepage & Marketing
+
+- Tab-based feature explorer (replace 6-card grid with tabbed browser frame)
+- Audience-personalized landing variants (`?ref=journalist`, `?ref=gemeente`)
+- Logo asset optimization (compact variant, SVG)
+
+### V2.5 - E-mail & CRM
+
+- Campaign bounce auto-suppress (auto-block after N hard bounces)
+- Campaign complaint auto-unsubscribe (GDPR)
+- Campaign event retention cleanup (1-year rolling)
+- Row selector for bulk actions (admin `/team/leden`)
+
+### V2.6 - Data & Integraal
+
+- Integraal cross-module data completeness (regelingen in integraal view)
+- Integraal view redesign (brainstorm — module-specific columns)
+- Data provenance / freshness indicator ("Data bijgewerkt: [date]")
+
+### V2.7 - Polish & Toegankelijkheid
+
+- Accessibility: colorblind anomaly indicator (pattern/dot overlay)
+- xlsx package replacement (ExcelJS — CVE cleanup)
 - UX refinements from beta feedback
+- GitHub Projects visual dashboard (stakeholder visibility)
+
+### V2.8 - Externe Koppelingen
+
+- AI Integration: MCP Server + OpenAI GPT (teaser API, lead generation)
+- Full URL state restoration (expanded rows, pagination, all filters)
 
 ---
 
@@ -428,7 +457,7 @@ V1 WordPress (legacy) ───────────────────�
 
 V2.0 Search ─────────────────────────────────► CURRENT
   │
-  ├─► V2.1, V2.2 (improvements)
+  ├─► V2.1 Vergelijk → V2.2 Zoeken → V2.3-V2.8 (improvements)
   │
   ├─► V3.0 Rijksuitgaven Reporter ◄─────────── NEXT
   │     │
@@ -465,7 +494,14 @@ V10.0 European Platform
 |---------|--------|----------|
 | V1 | ✅ Legacy (WordPress) | Superseded by V2 |
 | V2.0 | 🔨 95% Complete (beta live, public launch remaining) | Week 9-11 |
-| V2.1 | 📋 Planned | Post-launch |
+| V2.1 | 📋 Vergelijk (on staging) | ~1 week post-launch |
+| V2.2 | 📋 Zoeken | Post-launch |
+| V2.3 | 📋 Performance | Post-launch |
+| V2.4 | 📋 Homepage & Marketing | Post-launch |
+| V2.5 | 📋 E-mail & CRM | Post-launch |
+| V2.6 | 📋 Data & Integraal | Post-launch |
+| V2.7 | 📋 Polish & Toegankelijkheid | Post-launch |
+| V2.8 | 📋 Externe Koppelingen | Post-launch |
 | V3.0 | 📋 Planned | Post V2.0 launch |
 | V4.0 | 📋 Planned | Q1-Q2 2026 |
 | V5.0 | 📋 Planned | Q2 2026 |

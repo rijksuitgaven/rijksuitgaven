@@ -68,6 +68,10 @@ Create a comprehensive daily log for today and update session context. Follow th
 - [ ] Daily log captures everything done today
 - [ ] Pending decisions are listed for next session
 
+**Versiegeschiedenis:**
+- [ ] If user-visible features shipped today → CHANGELOG.md updated (show user for approval)
+- [ ] If CHANGELOG.md changed → versiegeschiedenis page updated to match
+
 **Understanding Check:**
 - [ ] I understand everything - if ANY doubt, I MUST ask before closing
 - [ ] All my questions have been answered by the user
@@ -92,6 +96,12 @@ If today is the last day of a sprint, run these additional cross-file checks:
 - Every new table/migration appears in `scripts/sql/DATABASE-DOCUMENTATION.md`
 - Every new UX feature has a status in `02-requirements/search-requirements.md`
 - `02-requirements/backlog.md` reflects completed items
+
+**Versiegeschiedenis / Changelog (end-user facing):**
+- If any user-visible features shipped today, check if `CHANGELOG.md` needs a new entry or update
+- If CHANGELOG.md was updated, also update `app/src/app/versiegeschiedenis/page.tsx` to match
+- Show the user the proposed changelog entry for approval BEFORE committing
+- Only published/live features go in the changelog — never unreleased or staging-only work
 
 **Architecture stubs:**
 - No empty files in `04-target-architecture/`, `09-timelines/`, `01-project-overview/`
