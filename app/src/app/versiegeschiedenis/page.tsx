@@ -85,16 +85,19 @@ export default function VersiegeschiedenisPage() {
               <li>
                 <strong>Integraal doorzoeken:</strong> Doorzoek alle databronnen in één keer. U ziet per ontvanger in welke bronnen deze voorkomt en hoeveel betalingen er zijn.
               </li>
+              <li>
+                <strong>Zie waar uw zoekterm ook voorkomt:</strong> De &quot;Ook in&quot; kolom toont of uw zoekterm ook in een regeling, omschrijving of ander veld staat. Zo ontdekt u verbanden die u anders zou missen.
+              </li>
             </ul>
 
             {/* Data */}
             <h4 className="text-base font-semibold text-[var(--navy-dark)] mb-3" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
-              Zes databronnen, negen jaar, in één overzicht
+              Negen jaar overheidsuitgaven in één overzicht
             </h4>
             <p className="text-[var(--foreground)] mb-3">
               Alle overheidsuitgaven van 2016 tot en met 2024, gebundeld in meerdere datamodules en één integraal overzicht.
             </p>
-            <ul className="list-disc pl-6 text-[var(--foreground)] space-y-2 mb-4">
+            <ul className="list-disc pl-6 text-[var(--foreground)] space-y-2 mb-8">
               <li><strong>Financiële Instrumenten</strong> — subsidies en bijdragen vanuit de Rijksbegroting</li>
               <li><strong>Apparaatsuitgaven</strong> — kosten van de rijksoverheid zelf</li>
               <li><strong>Inkoopuitgaven</strong> — wat de overheid inkoopt bij leveranciers</li>
@@ -103,54 +106,21 @@ export default function VersiegeschiedenisPage() {
               <li><strong>Publieke Uitvoeringsorganisaties</strong> — bestedingen van RVO, COA, NWO en ZonMW</li>
               <li><strong>Integraal</strong> — alle bronnen gecombineerd, per ontvanger</li>
             </ul>
-            <p className="text-[var(--foreground)] mb-8">
-              Alle bedragen worden als absolute getallen getoond — u ziet exact wat er is uitgegeven, zonder afkortingen. Jaarbedragen staan naast elkaar in kolommen, met een totaalkolom. Cellen met meer dan 50% jaar-op-jaar verandering worden rood gemarkeerd — zo ziet u in één oogopslag waar opvallende verschuivingen zijn.
-            </p>
 
-            {/* Filteren */}
+            {/* Absolute bedragen */}
             <h4 className="text-base font-semibold text-[var(--navy-dark)] mb-3" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
-              Filter tot u precies vindt wat u nodig heeft
-            </h4>
-            <p className="text-[var(--foreground)] mb-3">
-              Elke databron heeft eigen filters waarmee u snel kunt inzoomen. Combineer meerdere filters tegelijk en de resultaten worden direct bijgewerkt.
-            </p>
-            <ul className="list-disc pl-6 text-[var(--foreground)] space-y-3 mb-8">
-              <li>
-                <strong>Filters die op elkaar reageren:</strong> Selecteer een provincie en de overige filtervelden tonen automatisch alleen de opties die daarbinnen relevant zijn, met aantallen. Zo filtert u nooit naar een lege selectie.
-              </li>
-              <li>
-                <strong>Klik om te filteren:</strong> Zie een interessante regeling of gemeente in de tabel? Klik erop en de tabel filtert direct op die waarde.
-              </li>
-              <li>
-                <strong>Kies uw eigen kolommen:</strong> Bepaal via de Kolommen-knop welke extra informatie u in de tabel wilt zien — artikel, regeling, gemeente, categorie of andere velden.
-              </li>
-            </ul>
-
-            {/* Details */}
-            <h4 className="text-base font-semibold text-[var(--navy-dark)] mb-3" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
-              Zoom in op de details achter de bedragen
-            </h4>
-            <p className="text-[var(--foreground)] mb-3">
-              Klik op een ontvanger om alle onderliggende betalingen te zien. De details klappen direct onder de rij uit.
-            </p>
-            <ul className="list-disc pl-6 text-[var(--foreground)] space-y-3 mb-8">
-              <li>
-                <strong>Groepeer op elk veld:</strong> Bekijk de betalingen gegroepeerd op artikel, regeling, gemeente of een ander veld. Wissel tussen groeperingen om het bedrag vanuit verschillende invalshoeken te bekijken.
-              </li>
-              <li>
-                <strong>Zie waar uw zoekterm ook voorkomt:</strong> De &quot;Ook in&quot; kolom toont of uw zoekterm ook in een regeling, omschrijving of ander veld staat. Zo ontdekt u verbanden die u anders zou missen.
-              </li>
-              <li>
-                <strong>Zoek een ontvanger op Google:</strong> Eén klik op het linkicoon naast de naam opent Google met die ontvangernaam. Handig voor snel achtergrondonderzoek.
-              </li>
-            </ul>
-
-            {/* Exporteren */}
-            <h4 className="text-base font-semibold text-[var(--navy-dark)] mb-3" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
-              Exporteer data voor uw eigen analyses
+              Elk bedrag volledig uitgeschreven
             </h4>
             <p className="text-[var(--foreground)] mb-8">
-              Download tot 500 rijen naar Excel (.xlsx) of CSV, inclusief alle zichtbare kolommen en jaarbedragen. Het bestand wordt automatisch benoemd met de module en datum, zodat u uw exports geordend houdt.
+              Alle bedragen worden als <strong>absolute getallen</strong> getoond. U ziet exact wat er is uitgegeven, tot op de euro — geen afkortingen, geen &quot;x 1.000&quot;. Jaarbedragen staan naast elkaar in kolommen, met een totaalkolom.
+            </p>
+
+            {/* Anomalieën */}
+            <h4 className="text-base font-semibold text-[var(--navy-dark)] mb-3" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
+              Opvallende verschuivingen in één oogopslag
+            </h4>
+            <p className="text-[var(--foreground)] mb-8">
+              Cellen met meer dan 50% jaar-op-jaar verandering worden rood gemarkeerd. Beweeg uw muis over de cel om het exacte percentage te zien. Zo ziet u direct waar budgetten sterk zijn gestegen of gedaald.
             </p>
 
             {/* Databeschikbaarheid */}
@@ -169,12 +139,55 @@ export default function VersiegeschiedenisPage() {
               </li>
             </ul>
 
+            {/* Filteren */}
+            <h4 className="text-base font-semibold text-[var(--navy-dark)] mb-3" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
+              Filter tot u precies vindt wat u nodig heeft
+            </h4>
+            <p className="text-[var(--foreground)] mb-3">
+              Elke module heeft eigen filters waarmee u snel kunt inzoomen. Combineer meerdere filters tegelijk en de resultaten worden direct bijgewerkt.
+            </p>
+            <ul className="list-disc pl-6 text-[var(--foreground)] space-y-3 mb-8">
+              <li>
+                <strong>Filters die op elkaar reageren:</strong> Selecteer een provincie en de overige filtervelden tonen automatisch alleen de opties die daarbinnen relevant zijn, met aantallen. Zo filtert u nooit naar een lege selectie.
+              </li>
+              <li>
+                <strong>Klik om te filteren:</strong> Ziet u een interessante regeling of gemeente in de tabel? Klik erop en de tabel filtert direct op die waarde.
+              </li>
+              <li>
+                <strong>Kies uw eigen kolommen:</strong> Bepaal via de Kolommen-knop welke extra informatie u in de tabel wilt zien — artikel, regeling, gemeente, categorie of andere velden.
+              </li>
+            </ul>
+
+            {/* Details */}
+            <h4 className="text-base font-semibold text-[var(--navy-dark)] mb-3" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
+              Zoom in op de details achter de bedragen
+            </h4>
+            <p className="text-[var(--foreground)] mb-3">
+              Klik op een ontvanger om alle onderliggende betalingen te zien. De details klappen direct onder de rij uit.
+            </p>
+            <ul className="list-disc pl-6 text-[var(--foreground)] space-y-3 mb-8">
+              <li>
+                <strong>Groepeer op elk veld:</strong> Bekijk de betalingen gegroepeerd op artikel, regeling, gemeente of een ander veld. Wissel tussen groeperingen om het bedrag vanuit verschillende invalshoeken te bekijken.
+              </li>
+              <li>
+                <strong>Zoek een ontvanger op Google:</strong> Eén klik op het linkicoon naast de naam opent Google met die ontvangernaam. Handig voor snel achtergrondonderzoek.
+              </li>
+            </ul>
+
+            {/* Exporteren */}
+            <h4 className="text-base font-semibold text-[var(--navy-dark)] mb-3" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
+              Exporteer data voor uw eigen analyses
+            </h4>
+            <p className="text-[var(--foreground)] mb-8">
+              Download tot 500 rijen naar Excel (.xlsx) of CSV, inclusief alle zichtbare kolommen en jaarbedragen. Het bestand wordt automatisch benoemd met de module en datum, zodat u uw exports geordend houdt.
+            </p>
+
             {/* Account */}
             <h4 className="text-base font-semibold text-[var(--navy-dark)] mb-3" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
               Inloggen zonder wachtwoord
             </h4>
             <p className="text-[var(--foreground)]">
-              Log in via een link die u per e-mail ontvangt — geen wachtwoord nodig, geen wachtwoord dat u kunt vergeten. U heeft een persoonlijk profiel met uw abonnementsgegevens en kunt feedback direct vanuit het platform sturen.
+              Log in via een link die u per e-mail ontvangt — geen wachtwoord nodig, geen wachtwoord dat u kunt vergeten. U heeft een persoonlijk profiel met uw abonnementsgegevens en kunt direct vanuit het platform feedback sturen.
             </p>
           </section>
 

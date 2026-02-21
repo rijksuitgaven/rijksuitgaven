@@ -27,8 +27,9 @@ U ziet resultaten terwijl u typt.
 - **Autocomplete uit alle bronnen:** Zodra u begint te typen krijgt u suggesties uit alle databronnen tegelijk. U ziet direct of een ontvanger voorkomt in de Rijksbegroting, bij gemeenten, provincies of publieke uitvoeringsorganisaties.
 - **Het systeem begrijpt Nederlands:** Zoek op `politie` en u vindt "Nationale Politie" en "Politieacademie", maar niet "Politieke beweging DENK". Het systeem herkent Nederlandse woordgrenzen en voorkomt irrelevante resultaten.
 - **Integraal doorzoeken:** Doorzoek alle databronnen in één keer. U ziet per ontvanger in welke bronnen deze voorkomt en hoeveel betalingen er zijn.
+- **Zie waar uw zoekterm ook voorkomt:** De "Ook in" kolom toont of uw zoekterm ook in een regeling, omschrijving of ander veld staat. Zo ontdekt u verbanden die u anders zou missen.
 
-#### Zes databronnen, negen jaar, in één overzicht
+#### Negen jaar overheidsuitgaven in één overzicht
 
 Alle overheidsuitgaven van 2016 tot en met 2024, gebundeld in meerdere datamodules en één integraal overzicht.
 
@@ -40,27 +41,13 @@ Alle overheidsuitgaven van 2016 tot en met 2024, gebundeld in meerdere datamodul
 - **Publieke Uitvoeringsorganisaties** — bestedingen van RVO, COA, NWO en ZonMW
 - **Integraal** — alle bronnen gecombineerd, per ontvanger
 
-Alle bedragen worden als absolute getallen getoond — u ziet exact wat er is uitgegeven, zonder afkortingen. Jaarbedragen staan naast elkaar in kolommen, met een totaalkolom. Cellen met meer dan 50% jaar-op-jaar verandering worden rood gemarkeerd — zo ziet u in één oogopslag waar opvallende verschuivingen zijn.
+#### Elk bedrag volledig uitgeschreven
 
-#### Filter tot u precies vindt wat u nodig heeft
+Alle bedragen worden als **absolute getallen** getoond. U ziet exact wat er is uitgegeven, tot op de euro — geen afkortingen, geen "x 1.000". Jaarbedragen staan naast elkaar in kolommen, met een totaalkolom.
 
-Elke databron heeft eigen filters waarmee u snel kunt inzoomen. Combineer meerdere filters tegelijk en de resultaten worden direct bijgewerkt.
+#### Opvallende verschuivingen in één oogopslag
 
-- **Filters die op elkaar reageren:** Selecteer een provincie en de overige filtervelden tonen automatisch alleen de opties die daarbinnen relevant zijn, met aantallen. Zo filtert u nooit naar een lege selectie.
-- **Klik om te filteren:** Zie een interessante regeling of gemeente in de tabel? Klik erop en de tabel filtert direct op die waarde.
-- **Kies uw eigen kolommen:** Bepaal via de Kolommen-knop welke extra informatie u in de tabel wilt zien — artikel, regeling, gemeente, categorie of andere velden.
-
-#### Zoom in op de details achter de bedragen
-
-Klik op een ontvanger om alle onderliggende betalingen te zien. De details klappen direct onder de rij uit.
-
-- **Groepeer op elk veld:** Bekijk de betalingen gegroepeerd op artikel, regeling, gemeente of een ander veld. Wissel tussen groeperingen om het bedrag vanuit verschillende invalshoeken te bekijken.
-- **Zie waar uw zoekterm ook voorkomt:** De "Ook in" kolom toont of uw zoekterm ook in een regeling, omschrijving of ander veld staat. Zo ontdekt u verbanden die u anders zou missen.
-- **Zoek een ontvanger op Google:** Eén klik op het linkicoon naast de naam opent Google met die ontvangernaam. Handig voor snel achtergrondonderzoek.
-
-#### Exporteer data voor uw eigen analyses
-
-Download tot 500 rijen naar Excel (.xlsx) of CSV, inclusief alle zichtbare kolommen en jaarbedragen. Het bestand wordt automatisch benoemd met de module en datum, zodat u uw exports geordend houdt.
+Cellen met meer dan 50% jaar-op-jaar verandering worden rood gemarkeerd. Beweeg uw muis over de cel om het exacte percentage te zien. Zo ziet u direct waar budgetten sterk zijn gestegen of gedaald.
 
 #### Weet precies welke data beschikbaar is
 
@@ -69,6 +56,25 @@ Niet elke databron dekt alle jaren. Het platform is daar transparant over:
 - **Streepje betekent "geen data":** Jaren waarvoor geen data bestaat tonen een streepje (—) in plaats van €0. Zo weet u altijd of een nul een werkelijk bedrag is of dat er simpelweg geen data voor dat jaar bestaat.
 - **Datasetsoverzicht:** Een overzichtspagina toont per databron, entiteit en jaar precies wat er beschikbaar is.
 
+#### Filter tot u precies vindt wat u nodig heeft
+
+Elke module heeft eigen filters waarmee u snel kunt inzoomen. Combineer meerdere filters tegelijk en de resultaten worden direct bijgewerkt.
+
+- **Filters die op elkaar reageren:** Selecteer een provincie en de overige filtervelden tonen automatisch alleen de opties die daarbinnen relevant zijn, met aantallen. Zo filtert u nooit naar een lege selectie.
+- **Klik om te filteren:** Ziet u een interessante regeling of gemeente in de tabel? Klik erop en de tabel filtert direct op die waarde.
+- **Kies uw eigen kolommen:** Bepaal via de Kolommen-knop welke extra informatie u in de tabel wilt zien — artikel, regeling, gemeente, categorie of andere velden.
+
+#### Zoom in op de details achter de bedragen
+
+Klik op een ontvanger om alle onderliggende betalingen te zien. De details klappen direct onder de rij uit.
+
+- **Groepeer op elk veld:** Bekijk de betalingen gegroepeerd op artikel, regeling, gemeente of een ander veld. Wissel tussen groeperingen om het bedrag vanuit verschillende invalshoeken te bekijken.
+- **Zoek een ontvanger op Google:** Eén klik op het linkicoon naast de naam opent Google met die ontvangernaam. Handig voor snel achtergrondonderzoek.
+
+#### Exporteer data voor uw eigen analyses
+
+Download tot 500 rijen naar Excel (.xlsx) of CSV, inclusief alle zichtbare kolommen en jaarbedragen. Het bestand wordt automatisch benoemd met de module en datum, zodat u uw exports geordend houdt.
+
 #### Inloggen zonder wachtwoord
 
-Log in via een link die u per e-mail ontvangt — geen wachtwoord nodig, geen wachtwoord dat u kunt vergeten. U heeft een persoonlijk profiel met uw abonnementsgegevens en kunt feedback direct vanuit het platform sturen.
+Log in via een link die u per e-mail ontvangt — geen wachtwoord nodig, geen wachtwoord dat u kunt vergeten. U heeft een persoonlijk profiel met uw abonnementsgegevens en kunt direct vanuit het platform feedback sturen.
