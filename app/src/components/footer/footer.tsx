@@ -60,6 +60,24 @@ export function Footer() {
             {isLoggedIn ? (
               <>
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40 mb-4">
+                  Rijksuitgaven
+                </h3>
+                <ul className="space-y-2.5">
+                  <li>
+                    <Link href="/over" className={linkClass}>Over Rijksuitgaven</Link>
+                  </li>
+                  <li>
+                    <Link href="/support" className={linkClass}>Ondersteuning</Link>
+                  </li>
+                  <li>
+                    <Link href="/dataoverzicht" className={linkClass}>Dataoverzicht</Link>
+                  </li>
+                  <li>
+                    <Link href="/versiegeschiedenis" className={linkClass}>Versiegeschiedenis</Link>
+                  </li>
+                </ul>
+
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40 mt-6 mb-4">
                   Juridisch
                 </h3>
                 <ul className="space-y-2.5">
@@ -77,28 +95,6 @@ export function Footer() {
                     <Link href="/privacybeleid#cookies" className={linkClass}>
                       Cookiebeleid
                     </Link>
-                  </li>
-                </ul>
-
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40 mt-6 mb-4">
-                  Rijksuitgaven
-                </h3>
-                <ul className="space-y-2.5">
-                  <li>
-                    <Link href="/over" className={linkClass}>Over Rijksuitgaven</Link>
-                  </li>
-                  <li>
-                    <Link href="/support" className={linkClass}>Ondersteuning</Link>
-                  </li>
-                  <li>
-                    <Link href="/dataoverzicht" className={linkClass}>Dataoverzicht</Link>
-                  </li>
-                  <li>
-                    <span className={inactiveClass}>Word partner</span>
-                  </li>
-
-                  <li>
-                    <span className={inactiveClass}>Vacatures</span>
                   </li>
                 </ul>
               </>
