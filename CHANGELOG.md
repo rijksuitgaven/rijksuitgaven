@@ -1,6 +1,6 @@
 # Versiegeschiedenis
 
-Alle wijzigingen aan Rijksuitgaven.nl, chronologisch bijgehouden sinds de beta-lancering.
+Alle wijzigingen aan Rijksuitgaven.nl, chronologisch bijgehouden.
 
 **Versienummering:** `X.Y.Z`
 - **X.0** — Grote release met nieuwe kernfunctionaliteit (V1.0, V2.0)
@@ -9,11 +9,31 @@ Alle wijzigingen aan Rijksuitgaven.nl, chronologisch bijgehouden sinds de beta-l
 
 ---
 
-## V1.0 — In ontwikkeling
+## V1.1.1 — 2026-02-21
 
-### Beta-lancering (V0.9 — 2026-02-21)
+### Zoeken verbeterd
 
-Eerste beta-versie beschikbaar voor een selecte groep testers.
+- **Meerdere zoekwoorden:** `rode kruis` vindt nu resultaten waarin beide woorden voorkomen, ongeacht de volgorde. Voorheen moesten de woorden exact naast elkaar staan.
+- **Exacte woordgroep:** Gebruik aanhalingstekens voor een exacte match. `"rode kruis"` vindt alleen resultaten waar deze woorden direct naast elkaar staan, in die volgorde.
+- **Jokerteken:** Een `*` aan het einde van een zoekterm wordt nu correct verwerkt in plaats van genegeerd.
+
+---
+
+## V1.1 — 2026-02-21
+
+### Vergelijk-functie
+
+- **Rijen vastzetten:** Zet tot 4 rijen vast bovenaan de tabel om ze naast elkaar te vergelijken. Klik op het pin-icoon dat verschijnt als u over een rij beweegt.
+- **Selectie exporteren:** Bij vastgezette rijen kunt u kiezen tussen "Exporteer alles" en "Exporteer selectie" (alleen de vastgezette rijen).
+- **Wis selectie:** Eenvoudig alle vastgezette rijen verwijderen via de knop in de werkbalk.
+
+---
+
+## V1.0 Beta — 2026-02-21
+
+### Het Search Platform
+
+Eerste versie beschikbaar voor een selecte groep testers.
 
 - 6 datamodules: Instrumenten, Apparaat, Inkoop, Provincie, Gemeente, Publiek
 - Integraal zoeken over alle modules
@@ -23,15 +43,3 @@ Eerste beta-versie beschikbaar voor een selecte groep testers.
 - Inloggen via Magic Link (e-mail)
 - Persoonlijk profiel en abonnementsbeheer
 - Administratiepaneel voor teambeheer
-
-### V1.1 — Vergelijk-functie
-
-- **Rijen vastzetten:** Zet tot 4 rijen vast bovenaan de tabel om ze naast elkaar te vergelijken. Klik op het pin-icoon dat verschijnt als u over een rij beweegt.
-- **Selectie exporteren:** Bij vastgezette rijen kunt u kiezen tussen "Exporteer alles" en "Exporteer selectie" (alleen de vastgezette rijen).
-- **Wis selectie:** Eenvoudig alle vastgezette rijen verwijderen via de knop in de werkbalk.
-
-### V1.1.1 — Zoeken verbeterd
-
-- **Meerdere zoekwoorden:** `rode kruis` vindt nu resultaten waarin beide woorden voorkomen, ongeacht de volgorde. Voorheen moesten de woorden exact naast elkaar staan.
-- **Exacte woordgroep:** Gebruik aanhalingstekens voor een exacte match. `"rode kruis"` vindt alleen resultaten waar deze woorden direct naast elkaar staan, in die volgorde.
-- **Jokerteken:** Een `*` aan het einde van een zoekterm wordt nu correct verwerkt in plaats van genegeerd.
