@@ -7,7 +7,7 @@
 | Document | Purpose |
 |----------|---------|
 | [Deployment Strategy](./deployment-strategy.md) | Domain setup, staging, cutover procedure |
-| [Sprint Plan](../09-timelines/v1-sprint-plan.md) | Week-by-week execution |
+| [Sprint Plan](../09-timelines/v2-sprint-plan.md) | Week-by-week execution |
 
 ## Key Decisions (2026-01-21)
 

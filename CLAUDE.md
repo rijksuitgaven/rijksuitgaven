@@ -301,7 +301,7 @@ Senior specialist (10+ years equivalent) in all disciplines. Never ask technical
 | V2 requirements | `02-requirements/search-requirements.md` |
 | Brand identity | `02-requirements/brand-identity.md` |
 | Tech stack | `04-target-architecture/RECOMMENDED-TECH-STACK.md` |
-| Sprint plan | `09-timelines/v1-sprint-plan.md` |
+| Sprint plan | `09-timelines/v2-sprint-plan.md` |
 | Session state | `logs/SESSION-CONTEXT.md` |
 | Frontend docs | `docs/FRONTEND-DOCUMENTATION.md` |
 | Database docs | `scripts/sql/DATABASE-DOCUMENTATION.md` |

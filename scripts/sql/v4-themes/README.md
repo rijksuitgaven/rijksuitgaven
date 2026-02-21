@@ -1,7 +1,7 @@
-# V3 Theme Classification - SQL Migrations
+# V4 Theme Classification - SQL Migrations
 
 **Project:** Rijksuitgaven.nl
-**Version:** V3 - Theme Discovery
+**Version:** V4 - Theme Discovery
 **Status:** Not Started
 
 ---
@@ -26,7 +26,7 @@ Execute in numerical order:
 - Run via Supabase SQL Editor or `psql`
 - Each migration is idempotent (safe to re-run)
 - Check `scripts/sql/DATABASE-DOCUMENTATION.md` after each migration
-- Update `docs/v3-themes/PROGRESS.md` after seed scripts
+- Update `docs/v4-themes/PROGRESS.md` after seed scripts
 
 ---
 

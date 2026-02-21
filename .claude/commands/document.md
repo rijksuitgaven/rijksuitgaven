@@ -45,10 +45,10 @@ Read `02-requirements/search-requirements.md` and verify:
 ### V2.0 Roadmap Check
 Read `02-requirements/research-mode-vision.md` and verify:
 - [ ] Today's work doesn't block V2.0 features
-- [ ] Architecture decisions are V2-compatible
+- [ ] Architecture decisions are V3-compatible
 
 ### Sprint Plan Check
-Read `09-timelines/v1-sprint-plan.md` and verify:
+Read `09-timelines/v2-sprint-plan.md` and verify:
 - [ ] Current sprint status
 - [ ] Which deliverables are complete
 - [ ] What remains for current week

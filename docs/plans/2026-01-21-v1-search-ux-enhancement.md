@@ -246,9 +246,9 @@ Keywords may appear in many rows. Autocomplete should deduplicate:
 
 ## Related Documents
 
-- [V2.0 Vision & Roadmap](../../02-requirements/v2-vision-roadmap.md)
+- [V3.0 Vision & Roadmap](../../02-requirements/v3-vision-roadmap.md)
 - [Search Requirements](../../02-requirements/search-requirements.md)
-- [Sprint Plan - Week 5](../../09-timelines/v1-sprint-plan.md)
+- [Sprint Plan - Week 5](../../09-timelines/v2-sprint-plan.md)
 
 ---
 

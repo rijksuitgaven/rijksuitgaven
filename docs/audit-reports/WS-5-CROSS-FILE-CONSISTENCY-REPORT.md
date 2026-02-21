@@ -181,7 +181,7 @@
 | `scripts/typesense/README.md` | 463,731 | ✅ |
 | `scripts/data/DATA-UPDATE-RUNBOOK.md` | 463,731 | ✅ |
 | `docs/VERSIONING.md` | "450K recipients" (V3 IBOS context) | ✅ Acceptable (rounded) |
-| `docs/v3-themes/PROGRESS.md` | "~450,000" (V3 planning) | ✅ Acceptable (estimate) |
+| `docs/v4-themes/PROGRESS.md` | "~450,000" (V4 planning) | ✅ Acceptable (estimate) |
 
 **Conclusion:** Consistent. Rounded numbers (450K) only appear in V3 planning docs (future feature).
 
