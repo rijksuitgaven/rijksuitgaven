@@ -9,7 +9,7 @@ This document defines measurable criteria for determining whether the migration 
 
 ### Performance
 
-| Metric | Target | **Actual (V1.0)** | Priority |
+| Metric | Target | **Actual (V2.0)** | Priority |
 |--------|--------|-------------------|----------|
 | Search response time | < 100ms (95th percentile) | **~15-25ms** (Typesense) | **Critical** |
 | Autocomplete response | < 50ms | **<25ms** | **Critical** |
@@ -23,7 +23,7 @@ This document defines measurable criteria for determining whether the migration 
 
 | Metric | Target | Notes |
 |--------|--------|-------|
-| Concurrent users | 50+ | V1.0 target |
+| Concurrent users | 50+ | V2.0 target |
 | Total records | 500K+ | Current scale |
 | Database query time | < 500ms for aggregations | On-the-fly grouping |
 | Search index size | Full dataset indexed | All modules |
@@ -54,7 +54,7 @@ This document defines measurable criteria for determining whether the migration 
 | Metric | Target | **Critical** |
 |--------|--------|--------------|
 | Monthly infrastructure cost | < €180 | **Yes** |
-| V1.0 estimated cost | €87-120/month | - |
+| V2.0 estimated cost | €87-120/month | - |
 | Budget buffer | > €30/month | - |
 
 ### Customer Continuity
@@ -64,7 +64,7 @@ This document defines measurable criteria for determining whether the migration 
 - [ ] < 2 hours planned downtime for migration
 - [ ] Customer notification sent 2 weeks before migration
 
-### Feature Delivery (V1.0)
+### Feature Delivery (V2.0)
 
 | Feature | Status | Completion Date |
 |---------|--------|-----------------|
@@ -79,7 +79,7 @@ This document defines measurable criteria for determining whether the migration 
 | Year column visibility | ✅ COMPLETE | 2026-01-26 |
 | Cascading filters | ✅ COMPLETE | 2026-02-08 |
 | Membership management | ✅ COMPLETE | 2026-02-11 |
-| Overzicht page | ⏸️ DEFERRED to V5 | Expanded row suffices |
+| Overzicht page | ⏸️ DEFERRED to V6 | Expanded row suffices |
 | Marketing pages | ⏳ IN PROGRESS | Week 8 (planned) |
 
 ---
@@ -106,9 +106,9 @@ This document defines measurable criteria for determining whether the migration 
 
 | Milestone | Target |
 |-----------|--------|
-| V1.0 complete | 8 weeks from start |
-| V2.0 complete | +12 weeks after V1.0 |
-| No scope creep | V1.0 features only |
+| V2.0 complete | 8 weeks from start |
+| V3.0 complete | +12 weeks after V2.0 |
+| No scope creep | V2.0 features only |
 
 ---
 
@@ -137,7 +137,7 @@ This document defines measurable criteria for determining whether the migration 
 
 ## Go/No-Go Criteria
 
-### Pre-Launch Checklist (V1.0)
+### Pre-Launch Checklist (V2.0)
 
 **Must Have (Blocking):**
 - [x] All 7 modules functional (✅ 2026-01-26)
@@ -188,20 +188,20 @@ This document defines measurable criteria for determining whether the migration 
 ### First 90 Days
 - [ ] Customer satisfaction maintained
 - [ ] New features can be added easily
-- [ ] V2.0 development can begin
+- [ ] V3.0 development can begin
 - [ ] Infrastructure costs as projected
 
 ---
 
-## V2.0 Readiness Criteria
+## V3.0 Readiness Criteria
 
-These are **not blocking for V1.0 launch** but verify architecture is V2.0-ready:
+These are **not blocking for V2.0 launch** but verify architecture is V3.0-ready:
 
-- [ ] V2 database tables created (empty)
+- [ ] V3 database tables created (empty)
 - [ ] pgvector extension enabled
 - [ ] Feature flags infrastructure ready
 - [ ] API versioning in place (/v1/, /v2/ stubs)
-- [ ] No platform migrations needed for V2.0
+- [ ] No platform migrations needed for V3.0
 
 ---
 
@@ -250,7 +250,7 @@ These are **not blocking for V1.0 launch** but verify architecture is V2.0-ready
 
 ## Current Status (2026-02-11)
 
-**V1.0 Progress:** ~90% complete
+**V2.0 Progress:** ~90% complete
 
 **Completed:**
 - ✅ All 7 modules (Week 1-4)

@@ -1,7 +1,7 @@
-# V1.0 Sprint Plan
+# V2.0 Sprint Plan
 
 **Created:** 2026-01-20
-**Duration:** 11 weeks (was 9; added 2-week V0.9 beta before V1.0 launch)
+**Duration:** 11 weeks (was 9; added 2-week V0.9 beta before V2.0 launch)
 **Working Mode:** Solo founder + AI (few hours daily)
 **Start Date:** 2026-01-21
 
@@ -58,7 +58,7 @@
 |------|---------|
 | Create database schema | Claude provides SQL, you execute in Supabase SQL editor |
 | Tables to create | `apparaat`, `inkoop`, `instrumenten`, `provincie`, `publiek`, `stad`, `universal_search`, `universal_search_source` |
-| Enable pgvector | For V2.0 readiness (empty, just enable extension) |
+| Enable pgvector | For V3.0 readiness (empty, just enable extension) |
 | Set up Row Level Security | Basic policies for authenticated users |
 
 ### Day 3-4: Data Migration
@@ -341,20 +341,20 @@
 | **Hard navigation (UX-008)** | **HIGH** | ✅ Completed 2026-02-04 |
 | **Mobile message banner (UX-003)** | **HIGH** | ✅ Completed 2026-02-05 |
 | **Filter performance (indexes)** | **HIGH** | ✅ Completed 2026-02-05 (70% faster) |
-| **Search performance optimization** | **HIGH** | ✅ Phase 1 done (~130-280ms), Phase 2 deferred to V1.1 |
-| Overzicht page design + implementation | ~~HIGH~~ | ✅ Deferred to V5 (2026-02-06) - V1 expanded row suffices |
+| **Search performance optimization** | **HIGH** | ✅ Phase 1 done (~130-280ms), Phase 2 deferred to V2.1 |
+| Overzicht page design + implementation | ~~HIGH~~ | ✅ Deferred to V6 (2026-02-06) - V2 expanded row suffices |
 | **UX-010: Google search link** | **HIGH** | ✅ Completed 2026-02-06 |
 | **UX-011: Module-specific footer text** | **MEDIUM** | ✅ Completed 2026-02-06 |
 | **Site-wide footer component** | **HIGH** | ✅ Completed 2026-02-06 |
 | **Code audit (security, accessibility)** | **HIGH** | ✅ Completed 2026-02-06 |
 | **Data availability indicators (UX-012)** | **HIGH** | ✅ Implemented 2026-02-07 (design 02-06, live 02-07) |
-| Typography/spacing consistency audit | LOW | ❌ Deferred (post-V1.0) |
-| Mobile responsiveness audit | LOW | ❌ Deferred (post-V1.0) |
+| Typography/spacing consistency audit | LOW | ❌ Deferred (post-V2.0) |
+| Mobile responsiveness audit | LOW | ❌ Deferred (post-V2.0) |
 
 **Decisions (2026-02-03):**
-- Mobile responsiveness audit → SKIP for V1.0, add mobile message instead
+- Mobile responsiveness audit → SKIP for V2.0, add mobile message instead
 - Search performance Phase 1 → ✅ Solved via parallel queries (750ms → ~200ms avg)
-- Search performance Phase 2 → ✅ **Completed 2026-02-09** (moved from V1.1 to V1.0: Typesense data enrichment)
+- Search performance Phase 2 → ✅ **Completed 2026-02-09** (moved from V2.1 to V2.0: Typesense data enrichment)
 - Next task → Mobile message banner
 
 **Performance Results (2026-02-03 - Phase 1):**
@@ -363,7 +363,7 @@
 - Commit: `ee055a4`
 - Query tuning attempt (Python relevance sorting) reverted - no improvement
 
-**V1.0 Optimization (2026-02-09) — Typesense data enrichment moved from V1.1 to V1.0:**
+**V2.0 Optimization (2026-02-09) — Typesense data enrichment moved from V2.1 to V2.0:**
 - ✅ Enriched recipients Typesense collection with year amounts
 - ✅ Integraal search uses Typesense hybrid (WHERE IN) instead of regex
 - ✅ Production: ~100-150ms warm (was ~200ms regex)
@@ -373,7 +373,7 @@
 - [x] Security fixes complete
 - [x] Code audit issues resolved
 - [x] Search performance acceptable (~130-280ms)
-- [x] Overzicht page → Deferred to V5 (V1 expanded row suffices)
+- [x] Overzicht page → Deferred to V6 (V2 expanded row suffices)
 - [x] Mobile message banner (UX-003)
 - [x] Google search link (UX-010)
 - [x] Module-specific footer text (UX-011)
@@ -412,7 +412,7 @@ Additional UI/UX work completed after mini sprint was marked complete:
 **Status:** ✅ COMPLETE (2026-02-11) — Auth + membership fully functional
 **Requirements:** `02-requirements/auth-requirements.md` (18 requirements, all decisions resolved 2026-02-08)
 
-> **Note:** Overzicht page was originally planned for this week but deferred to V5 (AI Research Mode) on 2026-02-06. V1 expanded row covers the functional need.
+> **Note:** Overzicht page was originally planned for this week but deferred to V6 (AI Research) on 2026-02-06. V2 expanded row covers the functional need.
 
 ### Implementation (2026-02-10) ✅
 
@@ -514,8 +514,8 @@ Additional UI/UX work completed after mini sprint was marked complete:
 - [ ] ~50 WordPress users migrated to Supabase
 - [x] Invite system functional (2026-02-11)
 - [x] UX-025 feedback button (2026-02-11)
-- [ ] Exact phrase search (`"rode kruis"`) — moved from V1.1 to V1.0
-- [ ] Wildcard syntax (`prorail*`) — moved from V1.1 to V1.0
+- [ ] Exact phrase search (`"rode kruis"`) — moved from V2.1 to V2.0
+- [ ] Wildcard syntax (`prorail*`) — moved from V2.1 to V2.0
 - [x] `contacts` table + admin UI at `/team/contacten` (2026-02-13, CRM pipeline 2026-02-19)
 - [x] Resend Audience sync (2026-02-19, CRUD triggers on leden/contacten endpoints)
 - [x] Resend Broadcasts setup (2026-02-19, self-service compose UI + Batch API)
@@ -602,7 +602,7 @@ Additional UI/UX work completed after mini sprint was marked complete:
 |------|---------|--------|
 | Monitor usage statistics | Check /team/statistieken daily for adoption + errors | In Progress |
 | Monitor feedback inbox | Check /team/feedback for bug reports | In Progress |
-| Triage issues | Critical (fix immediately) vs. minor (fix before V1.0) | In Progress |
+| Triage issues | Critical (fix immediately) vs. minor (fix before V2.0) | In Progress |
 
 ### Mobile Test — All Public Pages (Day 3-5)
 
@@ -645,22 +645,22 @@ Additional UI/UX work completed after mini sprint was marked complete:
 | UX improvements | Address usability feedback from testers | Pending |
 | Check-in with testers | Mid-beta: email asking for specific feedback | Pending |
 
-### Week 11: V1.0 Preparation
+### Week 11: V2.0 Preparation
 
 | Task | Details | Status |
 |------|---------|--------|
-| Incorporate beta feedback | All critical fixes deployed | Pending |
+| Incorporate beta feedback | All critical fixes before V2.0 deployed | Pending |
 | Remaining WordPress users | Import ~40 remaining users | Pending |
 | Rate limiting (Cloudflare) | Free tier DNS proxy in front of Railway | Pending |
 | SEO optimization | OG image, twitter cards, per-page metadata | Pending |
-| Homepage mobile | Verify V0.9 fixes hold, test logged-in pages | Pending |
+| Homepage mobile | Verify V0.9 fixes hold, test logged-in pages  | Pending |
 | DNS TTL | Lower to 300s for quick cutover | Pending |
 | Rollback plan | Document DNS rollback steps | Pending |
 | Email campaign | Draft announcement email via Resend Broadcasts | Pending |
 
 ---
 
-## Week 11 (end): V1.0 — Public Launch
+## Week 11 (end): V2.0 — Public Launch
 
 **Goal:** DNS switch, full user base, publicly discoverable
 **Status:** PLANNED (target: ~2026-03-09)
@@ -683,14 +683,14 @@ Additional UI/UX work completed after mini sprint was marked complete:
 | Monitor stability | Watch for bugs, performance issues | Days 1-7 |
 | User feedback | Collect and prioritize issues | Days 1-14 |
 | WordPress shutdown | Decommission old system after 1 week | Week 13 |
-| V1.1 planning | Plan next iteration | Week 12 |
+| V2.1 planning | Plan next iteration | Week 12 |
 
-**V1.0 Launch Deliverables:**
+**V2.0 Launch Deliverables:**
 - [ ] All beta feedback addressed
 - [ ] All ~50 users migrated and notified
 - [ ] Rate limiting active (Cloudflare)
 - [ ] SEO optimized (OG, twitter cards, metadata)
-- [ ] V1.0 LIVE on rijksuitgaven.nl
+- [ ] V2.0 LIVE on rijksuitgaven.nl
 - [ ] Monitoring active
 - [ ] Rollback plan ready
 
@@ -738,7 +738,7 @@ Additional UI/UX work completed after mini sprint was marked complete:
 
 ---
 
-## V1.0 Launch Checklist
+## V2.0 Launch Checklist
 
 **MUST BE COMPLETE BEFORE DNS SWITCH:**
 
@@ -797,17 +797,17 @@ End of session:
 | Data migration issues | Keep MySQL running until verified |
 | Performance problems | Typesense handles search; optimize queries |
 | User complaints | Have support email ready; respond quickly |
-| Scope creep | Refer to this plan; add to backlog, not V1.0 |
+| Scope creep | Refer to this plan; add to backlog, not V2.0 |
 
 ---
 
 ## Post-Launch (Week 9+)
 
-After V1.0 is stable:
+After V2.0 is stable:
 1. Monitor for bugs (1-2 weeks)
 2. Gather user feedback
-3. Plan V2.0 Research Mode
-4. Begin V2.0 development (+12 weeks)
+3. Plan V3.0 Research Mode
+4. Begin V3.0 development (+12 weeks)
 
 ---
 
@@ -844,7 +844,7 @@ After V1.0 is stable:
 | **Week 8** | **2026-02-17–25** | **IN PROGRESS** | Homepage live, privacy policy, Lighthouse >90, cross-browser |
 | **Week 9** | **2026-02-21–** | **IN PROGRESS** | Beta live (10 testers), staging env, monitoring |
 
-**V1.0 Progress:** ~97% complete | **Next: Beta feedback, rate limiting, SEO, DNS switch**
+**V2.0 Progress:** ~97% complete | **Next: Beta feedback, rate limiting, SEO, DNS switch**
 
 ---
 

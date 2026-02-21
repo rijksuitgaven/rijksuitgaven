@@ -1,7 +1,7 @@
 # Beleidsterrein → IBOS Mapping
 
 **Project:** Rijksuitgaven.nl
-**Version:** V3 - Theme Discovery
+**Version:** V4 - Theme Discovery
 **Status:** Stub - To be populated
 **Source Module:** Gemeente
 

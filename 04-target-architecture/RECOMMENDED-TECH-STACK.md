@@ -9,22 +9,22 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
 
 **Recommended Stack:** Python + FastAPI + Next.js + Supabase + Typesense + Railway
 
-**Design Principle:** V2-ready from day 1. No platform migrations between V1 and V2.
+**Design Principle:** V3-ready from day 1. No platform migrations between V2 and V3.
 
 **Why:**
 - ✅ Within €180/month budget (estimated €102-150)
 - ✅ Easy deployment (Supabase + Railway - both GUI-based)
-- ✅ Fast development (8 weeks for V1.0)
-- ✅ **V2-ready architecture** - only feature enablement, no migrations
+- ✅ Fast development (8 weeks for V2.0)
+- ✅ **V3-ready architecture** - only feature enablement, no migrations
 - ✅ Excellent for AI/data work
 - ✅ MCP server support built-in
-- ✅ pgvector included in Supabase for V2.0 semantic search
+- ✅ pgvector included in Supabase for V3.0 semantic search
 - ✅ Great documentation and community
 
 **Monthly Cost Estimate:** €102-150 (well within €180 budget!)
 
 **Migration-Free Guarantee:**
-| Component | V1 | V2 | Migration |
+| Component | V2 | V3 | Migration |
 |-----------|----|----|-----------|
 | Next.js + Recharts | ✅ | ✅ | None |
 | FastAPI | ✅ | ✅ | None |
@@ -44,7 +44,7 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
 
 ---
 
-## Architecture Diagram (V2-Ready)
+## Architecture Diagram (V3-Ready)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -59,7 +59,7 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
 │  │  State:            TanStack Query (server state)                    │   │
 │  │  Auth:             Supabase Auth (Magic Link + PKCE)                │   │
 │  │  Icons:            Lucide React                                     │   │
-│  │  Maps (V2):        react-map-gl (Mapbox)                            │   │
+│  │  Maps (V3):        react-map-gl (Mapbox)                            │   │
 │  │                                                                     │   │
 │  └───────────────────────────────┬─────────────────────────────────────┘   │
 │                                  │                                          │
@@ -76,14 +76,14 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
 │      ▼           ▼               ▼               ▼           ▼             │
 │  ┌───────┐  ┌─────────┐  ┌─────────────┐  ┌─────────┐  ┌─────────┐        │
 │  │Redis  │  │Typesense│  │  Supabase   │  │ Worker  │  │Puppeteer│        │
-│  │Cache  │  │ Search  │  │ PostgreSQL  │  │  Jobs   │  │  (V2)   │        │
+│  │Cache  │  │ Search  │  │ PostgreSQL  │  │  Jobs   │  │  (V3)   │        │
 │  │       │  │         │  │ + pgvector  │  │         │  │         │        │
 │  │       │  │         │  │ + Storage   │  │         │  │         │        │
 │  │       │  │         │  │ + Auth      │  │         │  │         │        │
 │  └───────┘  └─────────┘  └─────────────┘  └─────────┘  └─────────┘        │
 │                                                                             │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                    EXTERNAL SERVICES (V2)                           │   │
+│  │                    EXTERNAL SERVICES (V3)                           │   │
 │  │  Claude API │ KvK API │ Mapbox │ wetten.overheid.nl scraper         │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
@@ -93,7 +93,7 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
 
 ### Data Flow Summary
 
-| Flow | V1.0 | V2.0 |
+| Flow | V2.0 | V3.0 |
 |------|------|------|
 | **Keyword search** | Typesense (<100ms) | Same |
 | **Autocomplete** | Typesense (<50ms) | Same |
@@ -117,7 +117,7 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
 - ✅ Deploy to Railway with one command
 - ✅ Future-proof (backed by Vercel, massive adoption)
 
-**Complete Frontend Stack (V1 + V2 Ready):**
+**Complete Frontend Stack (V2 + V3 Ready):**
 
 | Category | Library | Purpose |
 |----------|---------|---------|
@@ -130,16 +130,16 @@ Based on your requirements: beginner-friendly, cost-effective (€50-200/month),
 | **Forms** | React Hook Form + Zod | Validation |
 | **State** | TanStack Query | Server state, caching |
 | **Icons** | Lucide React | Consistent iconography |
-| **Maps (V2)** | react-map-gl | Geographic visualization |
-| **Rich Text (V2)** | Tiptap | Dossier notes |
-| **PDF Export (V2)** | Puppeteer | Server-side rendering |
+| **Maps (V3)** | react-map-gl | Geographic visualization |
+| **Rich Text (V3)** | Tiptap | Dossier notes |
+| **PDF Export (V3)** | Puppeteer | Server-side rendering |
 
 **Why Recharts for Charts (Updated 2026-01-26):**
 - ✅ **React 19 compatible** (Tremor not yet supported)
 - Small bundle footprint (~50KB gzipped)
 - Recharts is the proven base that Tremor builds on
-- Handles V1 needs (trends, bars, areas with full customization)
-- V2.0 prepared: Sankey built-in, Treemap/Heatmap via Nivo addition
+- Handles V2 needs (trends, bars, areas with full customization)
+- V3.0 prepared: Sankey built-in, Treemap/Heatmap via Nivo addition
 - Tailwind-compatible with minimal setup
 
 ```tsx
@@ -162,16 +162,16 @@ import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 - ✅ Component wrapper approach matches shadcn/ui pattern
 - ⚠️ Requires custom styling vs Tremor's opinionated design (mitigated with component library)
 
-**V2.0 Advanced Visualization Plan:**
+**V3.0 Advanced Visualization Plan:**
 - Recharts Sankey (built-in for module flow viz)
 - Nivo for Treemap + Heatmap (added selectively when needed, ~80KB)
-- Total V2 bundle: ~130KB for full suite
+- Total V3 bundle: ~130KB for full suite
 
 **Why not alternatives (2026-01-26):**
 - Tremor: ❌ React 19 not supported
-- Chart.js: No Sankey/Treemap/Heatmap support (V2 blocker)
-- Victory: Slightly larger bundle, missing some V2 viz
-- Nivo: Excellent but over-engineered for V1, bundle too large upfront
+- Chart.js: No Sankey/Treemap/Heatmap support (V3 blocker)
+- Victory: Slightly larger bundle, missing some V3 viz
+- Nivo: Excellent but over-engineered for V2, bundle too large upfront
 
 ---
 
@@ -200,7 +200,7 @@ import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 - PHP Laravel: Outdated for modern APIs
 - Go: Too complex for small team, overkill for your needs
 
-**V2-Ready Backend Structure:**
+**V3-Ready Backend Structure:**
 
 ```
 /backend
@@ -247,28 +247,28 @@ import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 │       └── schemas.py
 ```
 
-**Key Libraries (V1.0 - Current):**
+**Key Libraries (V2.0 - Current):**
 - **asyncpg** - PostgreSQL async driver (NOT SQLAlchemy)
 - **Pydantic** - Data validation
 - **python-dotenv** - Environment configuration
 - **httpx** - Async HTTP client
 - **typesense** - Typesense search client
 
-**Future Libraries (V2+):**
-- **anthropic** - Claude API (V2 Reporter, V5 Research Mode)
-- **LangChain** - AI orchestration (V5 Research Mode)
+**Future Libraries (V3+):**
+- **anthropic** - Claude API (V3 Reporter, V6 Research Mode)
+- **LangChain** - AI orchestration (V6 Research Mode)
 - **langchain-anthropic** - Claude integration for LangChain
-- **MCP SDK** - MCP server implementation (V5 Research Mode)
-- **BeautifulSoup4** - Web scraping wetten.overheid.nl (V7)
+- **MCP SDK** - MCP server implementation (V6 Research Mode)
+- **BeautifulSoup4** - Web scraping wetten.overheid.nl (V8)
 
 ---
 
 ### Database: Supabase (PostgreSQL) ⭐ DEPLOYED 2026-01-23
 
-**Decision:** Migrated to Supabase for V1.0
+**Decision:** Migrated to Supabase for V2.0
 
 **Why Supabase:**
-- ✅ PostgreSQL with pgvector included (ready for V2.0+)
+- ✅ PostgreSQL with pgvector included (ready for V3.0+)
 - ✅ Authentication built-in (Magic Link + PKCE)
 - ✅ Easy GUI dashboard (copy/paste friendly)
 - ✅ Row Level Security enabled on all tables
@@ -289,13 +289,13 @@ import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 - Database: 500MB / 8GB capacity
 - Extensions: postgis, vector (pgvector)
 
-**V2-Ready Database Schema:** ⭐ UPDATED 2026-01-20
+**V3-Ready Database Schema:** ⭐ UPDATED 2026-01-20
 
-Create V2 tables in V1 (empty) to avoid schema migrations later.
+Create V3 tables in V2 (empty) to avoid schema migrations later.
 
 ```sql
 -- ============================================
--- V1 TABLES (Active from day 1)
+-- V2 TABLES (Active from day 1)
 -- ============================================
 
 -- Source data tables: instrumenten, apparaat, gemeente,
@@ -324,7 +324,7 @@ CREATE TABLE user_profiles (
 );
 
 -- ============================================
--- V2 TABLES (Created empty, populated later)
+-- V3 TABLES (Created empty, populated later)
 -- ============================================
 
 -- Entity resolution (recipient normalization)
@@ -424,7 +424,7 @@ CREATE TABLE recipient_domain_mappings (
 );
 ```
 
-**Why create V2 tables in V1:**
+**Why create V3 tables in V2:**
 - Schema migrations cause downtime
 - Adding tables later requires coordinated deploys
 - Empty tables have zero performance impact
@@ -434,7 +434,7 @@ CREATE TABLE recipient_domain_mappings (
 
 ### Search Engine: Typesense ⭐ CONFIRMED
 
-**Role:** V1.0 keyword search, autocomplete, filters (NOT semantic search)
+**Role:** V2.0 keyword search, autocomplete, filters (NOT semantic search)
 
 **Why Typesense:**
 - ✅ Autocomplete <50ms (required)
@@ -444,7 +444,7 @@ CREATE TABLE recipient_domain_mappings (
 - ✅ 500K+ records, still fast
 - ✅ Railway deployment: ~€15-25/month
 
-**What Typesense handles (V1.0):**
+**What Typesense handles (V2.0):**
 - Keyword search <100ms
 - Autocomplete suggestions
 - Fuzzy matching ("prorai" → "prorail")
@@ -452,7 +452,7 @@ CREATE TABLE recipient_domain_mappings (
 - Filter by year, amount, module
 - Cross-module search
 
-**What Typesense does NOT handle (V2.0):**
+**What Typesense does NOT handle (V3.0):**
 - Semantic search ("defense spending") → Use IBOS lookup
 - Vector similarity → Use pgvector in Supabase
 - AI reasoning → Use Claude
@@ -491,12 +491,12 @@ Step 3: Database query
 Result: All defense-related recipients (FREE, <100ms)
 ```
 
-**Vector search only for (V2.0):**
+**Vector search only for (V3.0):**
 - Regeling → Wet matching (~2,000 vectors)
 - "Find similar recipients" feature (~2,000 top recipients)
 - Ambiguous queries that IBOS can't classify
 
-**IBOS Classification Task (V2.0 development):**
+**IBOS Classification Task (V3.0 development):**
 - Classify 500K recipients into 30 IBOS domains
 - Method: Claude batch API (~€30-50) + manual review
 - Store: `recipient_domain_mappings` table in Supabase
@@ -512,14 +512,14 @@ Result: All defense-related recipients (FREE, <100ms)
 
 ### Caching: Redis (NOT YET DEPLOYED)
 
-**Status:** Deferred to V5 (AI Research Mode)
+**Status:** Deferred to V6 (AI Research Mode)
 
 **Why deferred:**
-- V1 traffic too low to justify cost
+- V2 traffic too low to justify cost
 - Supabase query performance adequate (<200ms)
-- Will add for AI response caching in V5
+- Will add for AI response caching in V6
 
-**Future use cases (V5+):**
+**Future use cases (V6+):**
 - ✅ Cache AI responses (80% hit rate expected)
 - ✅ Rate limiting for AI queries
 - ✅ Session storage (currently in Supabase)
@@ -530,16 +530,16 @@ Result: All defense-related recipients (FREE, <100ms)
 
 ### AI Integration: NOT YET DEPLOYED
 
-**Status:** Deferred to V2+ (Rijksuitgaven Reporter, Research Mode)
+**Status:** Deferred to V3+ (Rijksuitgaven Reporter, Research Mode)
 
-#### V2.0 - Rijksuitgaven Reporter (Planned)
+#### V3.0 - Rijksuitgaven Reporter (Planned)
 
 **Primary: Claude Haiku (Anthropic)**
 - News article keyword extraction
 - Lightweight AI analysis
 - Cost: ~€10-15/month
 
-#### V5.0 - AI Research Mode (Planned)
+#### V6.0 - AI Research Mode (Planned)
 
 **Primary: Claude Sonnet 4.5 (Anthropic)**
 - Conversational analysis
@@ -551,7 +551,7 @@ Result: All defense-related recipients (FREE, <100ms)
 - Claude API unavailable
 - Cost: ~€5-10/month (5% of queries)
 
-#### V2.0 Research Mode AI Architecture
+#### V3.0 Research Mode AI Architecture
 ```
 User Query → LangChain Agent → Claude Sonnet 4.5
                     ↓
@@ -580,7 +580,7 @@ User Query → LangChain Agent → Claude Sonnet 4.5
 **What is MCP (Model Context Protocol)?**
 Anthropic's standard for AI to access external data sources.
 
-**V1.0 Tools (Basic):**
+**V2.0 Tools (Basic):**
 ```python
 @mcp_server.tool
 def get_financial_data(recipient: str, year: int):
@@ -593,7 +593,7 @@ def search_recipients(query: str):
     return search_typesense(query)
 ```
 
-**V2.0 Tools (Research Mode):** ⭐ NEW
+**V3.0 Tools (Research Mode):** ⭐ NEW
 ```python
 @mcp_server.tool
 def get_domain_distribution(year: int):
@@ -654,7 +654,7 @@ def get_fastest_growers(ibos_code: str, start_year: int, end_year: int):
 
 **Cost Breakdown (Monthly):** ⭐ UPDATED 2026-01-20
 
-**V1 (V2-Ready Setup):**
+**V2 (V3-Ready Setup):**
 ```
 Supabase (Pro):            €25
   - PostgreSQL + pgvector
@@ -666,43 +666,43 @@ Railway:
   - Backend (FastAPI):     €15-25
   - Typesense:             €15-25
 ──────────────────────────────
-V1 Infrastructure:         €70-100
+V2 Infrastructure:         €70-100
 Budget:                    €180/month
 Buffer:                    €80-110
 ```
 
-**Not yet deployed (deferred to V2+):**
-- Worker service (V2 Reporter): €5-10/month
-- Redis (V5 Research Mode): €7-10/month
-- Claude API (V2 Reporter + V5 Research Mode): €10-40/month
+**Not yet deployed (deferred to V3+):**
+- Worker service (V3 Reporter): €5-10/month
+- Redis (V6 Research Mode): €7-10/month
+- Claude API (V3 Reporter + V6 Research Mode): €10-40/month
 
-**Future V2 Additions (when enabled):**
+**Future V3 Additions (when enabled):**
 ```
 AI Services:
-  - Claude Haiku (V2):     €10-15
-  - Claude Sonnet (V5):    €20-35
+  - Claude Haiku (V3):     €10-15
+  - Claude Sonnet (V6):    €20-35
 Worker service:            €5-10
 ──────────────────────────────
-V2 Additions:              €35-60
+V3 Additions:              €35-60
 ```
 
-**Future V5 Additions (when enabled):**
+**Future V6 Additions (when enabled):**
 ```
 Redis (caching):           €7-10
 ──────────────────────────────
-V5 Additions:              €7-10
+V6 Additions:              €7-10
 ```
 
 **Total:**
 ```
-V1 Phase (current):        €70-100/month
-V2 Phase:                  €105-160/month
-V5 Phase:                  €112-170/month
+V2 Phase (current):        €70-100/month
+V3 Phase:                  €105-160/month
+V6 Phase:                  €112-170/month
 Budget:                    €180/month
 
-V1 Buffer:                 €80-110 ✅
-V2 Buffer:                 €20-75 ✅
-V5 Buffer:                 €10-68 ✅
+V2 Buffer:                 €80-110 ✅
+V3 Buffer:                 €20-75 ✅
+V6 Buffer:                 €10-68 ✅
 ```
 
 **Note:** All future phases fit within €180 budget with caching.
@@ -775,7 +775,7 @@ main (production)
 - [ ] Production deployment
 - [ ] User migration
 
-**Post-Launch (V1.1):**
+**Post-Launch (V2.1):**
 - Enhanced AI features
 - MCP server refinement
 - Additional analytics
@@ -933,7 +933,7 @@ If you grow beyond:
 
 ## Decision Summary
 
-### What You Get (V1.0 + V2.0)
+### What You Get (V2.0 + V3.0)
 ✅ Modern, fast platform (5s → <100ms search)
 ✅ AI-powered Research Mode ("Bloomberg Terminal for Rijksfinanciën")
 ✅ Domain-first analysis (IBOS - "Where does tax euro go?")
@@ -944,7 +944,7 @@ If you grow beyond:
 ✅ Easy deployment (GUI-based Railway)
 ✅ Future-proof technology (Claude + LangChain)
 ✅ Scalable architecture
-✅ V1.0 in 8 weeks, V2.0 in +12 weeks
+✅ V2.0 in 8 weeks, V3.0 in +12 weeks
 ✅ Maintainable by 2-3 person team
 
 ### Trade-offs
@@ -972,46 +972,46 @@ Ready to proceed? Let me know and I'll create:
 
 ---
 
-## V2-Ready Checklist ⭐ NEW
+## V3-Ready Checklist ⭐ NEW
 
-### What V1 Sets Up for V2 (No Migration Needed)
+### What V2 Sets Up for V3 (No Migration Needed)
 
-| Component | V1 Setup | V2 Enablement |
+| Component | V2 Setup | V3 Enablement |
 |-----------|----------|---------------|
 | **Frontend** | Next.js + shadcn/ui + Recharts + TanStack Table | Add Mapbox, Tiptap, Puppeteer, Nivo (advanced viz) |
 | **Backend** | FastAPI with /api/v1/* endpoints | Enable /api/v2/* endpoints |
-| **Database** | All V2 tables created (empty) | Populate with data |
+| **Database** | All V3 tables created (empty) | Populate with data |
 | **pgvector** | Extension enabled, embeddings table ready | Generate embeddings |
 | **Storage** | Supabase Storage configured | Store PDFs, exports |
 | **Workers** | Background job infrastructure | Add enrichment jobs |
-| **Feature Flags** | All V2 flags = false | Flip to true |
+| **Feature Flags** | All V3 flags = false | Flip to true |
 
 ### Feature Flags (Environment Variables)
 
 ```env
-# V1 Configuration (Active)
+# V2 Configuration (Active)
 DATABASE_URL=postgresql://...
 SUPABASE_URL=https://xxx.supabase.co
 SUPABASE_ANON_KEY=xxx
 TYPESENSE_HOST=xxx
 REDIS_URL=redis://...
 
-# V2 Configuration (Prepared, not active)
-ANTHROPIC_API_KEY=           # Add when V2 starts
-KVK_API_KEY=                 # Add when V2 starts
-MAPBOX_TOKEN=                # Add when V2 starts
+# V3 Configuration (Prepared, not active)
+ANTHROPIC_API_KEY=           # Add when V3 starts
+KVK_API_KEY=                 # Add when V3 starts
+MAPBOX_TOKEN=                # Add when V3 starts
 
 # Feature Flags
-FEATURE_AI_ASSISTANT=false   # Enable in V2
-FEATURE_DOSSIERS=false       # Enable in V2
+FEATURE_AI_ASSISTANT=false   # Enable in V3
+FEATURE_DOSSIERS=false       # Enable in V3
 FEATURE_COMPANY_PROFILES=false
 FEATURE_RESEARCH_MODE=false
 ```
 
-### V1 → V2 Upgrade Path
+### V2 → V3 Upgrade Path
 
 ```
-V1 COMPLETE                    V2 DEVELOPMENT
+V2 COMPLETE                    V3 DEVELOPMENT
 ─────────────                  ─────────────────
      │                              │
      │  1. Add API keys             │

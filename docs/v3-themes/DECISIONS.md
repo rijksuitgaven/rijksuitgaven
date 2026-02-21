@@ -1,17 +1,17 @@
-# V3 Theme Classification - Decisions
+# V4 Theme Classification - Decisions
 
 **Project:** Rijksuitgaven.nl
-**Version:** V3 - Theme Discovery
+**Version:** V4 - Theme Discovery
 
 ---
 
 ## Decision Log
 
-Architecture decisions specific to V3 theme classification.
+Architecture decisions specific to V4 theme classification.
 
 ---
 
-### ADR-V3-001: Row-Level vs Recipient-Level Classification
+### ADR-V4-001: Row-Level vs Recipient-Level Classification
 
 **Date:** 2026-02-03
 **Status:** Decided
@@ -36,7 +36,7 @@ Context fields (beleidsterrein, sectoren, ministerie) provide classification hin
 
 ---
 
-### ADR-V3-002: Hybrid Classification Layers
+### ADR-V4-002: Hybrid Classification Layers
 
 **Date:** 2026-02-03
 **Status:** Decided
@@ -65,7 +65,7 @@ How to classify rows without IBOS codes?
 
 ---
 
-### ADR-V3-003: Confidence Score Schema
+### ADR-V4-003: Confidence Score Schema
 
 **Date:** 2026-02-03
 **Status:** Decided
@@ -101,8 +101,8 @@ classification_method TEXT NOT NULL
 
 | ID | Question | Options | Status |
 |----|----------|---------|--------|
-| ADR-V3-004 | Multi-domain recipients? | A) Primary only / B) Multiple allowed | Pending |
-| ADR-V3-005 | Classification refresh frequency? | A) Once / B) On data update / C) Scheduled | Pending |
+| ADR-V4-004 | Multi-domain recipients? | A) Primary only / B) Multiple allowed | Pending |
+| ADR-V4-005 | Classification refresh frequency? | A) Once / B) On data update / C) Scheduled | Pending |
 
 ---
 

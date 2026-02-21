@@ -2,15 +2,15 @@
 
 **Last Updated:** 2026-02-18
 
-Items logged for future versions, not in V1.0 scope.
+Items logged for future versions, not in V2.0 scope.
 
 ---
 
-## V1.0 Backlog
+## V2.0 Backlog
 
 ### Staffelbedrag Explanation (User Education) (COMPLETED)
 
-**Priority:** Medium (V1.0)
+**Priority:** Medium (V2.0)
 **Added:** 2026-02-06
 **Completed:** 2026-02-07
 **Status:** ✅ COMPLETED
@@ -32,7 +32,7 @@ Users unfamiliar with government data may not understand what "staffelbedrag" me
 
 ### Data Quality: Encoding Corruption Cleanup (COMPLETED)
 
-**Priority:** High (V1.0)
+**Priority:** High (V2.0)
 **Added:** 2026-02-07
 **Completed:** 2026-02-07
 **Status:** ✅ COMPLETED
@@ -47,7 +47,7 @@ Legacy WordPress/MySQL data had encoding corruption from CSV export. Three types
 
 ### Data Quality: "Amsersfoort" Typo in Gemeente Data (COMPLETED)
 
-**Priority:** Medium (V1.0)
+**Priority:** Medium (V2.0)
 **Added:** 2026-02-07
 **Completed:** 2026-02-07
 **Status:** ✅ COMPLETED
@@ -62,7 +62,7 @@ The gemeente table contained "Amsersfoort" (typo) alongside "Amersfoort". 1,168 
 
 ### Data Availability Indicators (COMPLETED)
 
-**Priority:** High (V1.0)
+**Priority:** High (V2.0)
 **Added:** 2026-02-06
 **Completed:** 2026-02-07
 **Status:** ✅ COMPLETED
@@ -97,7 +97,7 @@ Example: Gemeente Amersfoort has data for 2020-2024, but not 2016-2019. Currentl
 
 ### Cascading Filter Performance Optimization
 
-**Priority:** Medium (V1.1)
+**Priority:** Medium (V2.1)
 **Added:** 2026-02-08
 **Status:** BACKLOGGED
 **Type:** Performance
@@ -126,13 +126,13 @@ Cascading filter option requests (POST `/filter-options`) take 300-500ms per req
 | **Partial indexes on filter columns** | 2 hours | Medium — faster GROUP BY |
 | **Frontend option caching** | 2 hours | Medium — cache unfiltered options, only refetch on filter change |
 
-**Decision:** Parked for V1.1. Current performance is acceptable for launch.
+**Decision:** Parked for V2.1. Current performance is acceptable for launch.
 
 ---
 
 ### Custom 404 Page Design
 
-**Priority:** Medium (V1.0)
+**Priority:** Medium (V2.0)
 **Added:** 2026-02-08
 **Completed:** 2026-02-13
 **Status:** ✅ COMPLETED
@@ -156,7 +156,7 @@ Design a branded 404 page that:
 **Priority:** High (Pre-Launch)
 **Added:** 2026-02-08
 **Updated:** 2026-02-12
-**Status:** ⏳ TODO (V1.0 — before launch)
+**Status:** ⏳ TODO (V2.0 — before launch)
 **Type:** Security / Infrastructure
 
 **Problem:**
@@ -179,7 +179,7 @@ No rate limiting exists anywhere in the stack. An attacker can send thousands of
 
 **Priority:** High (Pre-Launch)
 **Added:** 2026-02-08
-**Status:** ✅ COMPLETE (BFF secret implemented 2026-02-10, private networking deferred to V1.1)
+**Status:** ✅ COMPLETE (BFF secret implemented 2026-02-10, private networking deferred to V2.1)
 **Type:** Security
 
 **Problem:**
@@ -189,11 +189,11 @@ The backend FastAPI service is directly accessible on the internet at its Railwa
 
 | Option | Effort | Impact | Status |
 |--------|--------|--------|--------|
-| **Railway private networking** | 1 hour | High — backend only reachable from BFF container | V1.1 |
+| **Railway private networking** | 1 hour | High — backend only reachable from BFF container | V2.1 |
 | **API key between BFF and backend** | 2-4 hours | High — backend rejects requests without secret header | ✅ Done 2026-02-10 |
 | **IP allowlisting** | 1 hour | Medium — fragile if Railway IPs change | Not needed |
 
-**Implemented:** `X-BFF-Secret` shared secret. `proxyToBackend()` sends header; `BFFSecretMiddleware` in FastAPI validates it. Railway private networking deferred to V1.1 for full network isolation.
+**Implemented:** `X-BFF-Secret` shared secret. `proxyToBackend()` sends header; `BFFSecretMiddleware` in FastAPI validates it. Railway private networking deferred to V2.1 for full network isolation.
 
 ---
 
@@ -215,9 +215,9 @@ Expert panel review (Creative Strategist, Brand Designer, Frontend UI, UX Resear
 
 ---
 
-### xlsx Package Replacement (V1.1)
+### xlsx Package Replacement (V2.1)
 
-**Priority:** Medium (V1.1)
+**Priority:** Medium (V2.1)
 **Added:** 2026-02-08
 **Status:** BACKLOGGED
 **Type:** Security / Dependency
@@ -233,15 +233,15 @@ The `xlsx` (SheetJS) npm package has known CVEs: prototype pollution (GHSA-4r6h-
 | **Replace with commercial SheetJS** | 2 hours | Medium — requires license, different npm package |
 | **Remove XLS export** | 30 min | Low — only offer CSV (functional regression) |
 
-**Decision:** Replace with ExcelJS in V1.1. Low urgency since write-only usage.
+**Decision:** Replace with ExcelJS in V2.1. Low urgency since write-only usage.
 
 ---
 
-## Post-V1.0 Backlog
+## Post-V2.0 Backlog
 
 ### Overzichtspagina / Recipient Profile Panel
 
-**Priority:** Deferred to V5 (AI Research Mode)
+**Priority:** Deferred to V6 (AI Research Mode)
 **Added:** 2026-01-20 (original)
 **Updated:** 2026-02-06 (deferred decision)
 **Type:** Feature / UX
@@ -250,44 +250,44 @@ The `xlsx` (SheetJS) npm package has known CVEs: prototype pollution (GHSA-4r6h-
 High-level overview page showing module totals per year, as entry point to platform.
 
 **Analysis (2026-02-06):**
-Compared WordPress "detail page" with current V1 expanded row:
+Compared WordPress "detail page" with current V2 expanded row:
 
-| Feature | WordPress Detail Page | V1 Expanded Row |
+| Feature | WordPress Detail Page | V2 Expanded Row |
 |---------|----------------------|-----------------|
 | Scope | All metadata at once | One grouping at a time |
 | Year breakdown | ✅ | ✅ |
 | Groupable fields | Links to filter | Clickable filters |
 | Google search link | ✅ | ✅ (added 2026-02-06) |
 
-**Conclusion:** V1 expanded row covers the functional need. A comprehensive "Recipient Profile Panel" is not needed until V5.
+**Conclusion:** V2 expanded row covers the functional need. A comprehensive "Recipient Profile Panel" is not needed until V6.
 
 **Where This Functionality Fits:**
 
 | Version | Need Level | Reason |
 |---------|------------|--------|
-| V1 | Low | Expanded row suffices for "who received money" |
-| V2 | Low | Email briefings, not interactive exploration |
-| V3 | Medium | Theme pages link to recipients, but search handles it |
-| V5 | **HIGH** | AI Research needs full recipient context to analyze |
-| V6 | **HIGH** | Workspace needs full profile to save/annotate |
-| V8 | **CRITICAL** | Network analysis: click node → see full profile + connections |
+| V2 | Low | Expanded row suffices for "who received money" |
+| V3 | Low | Email briefings, not interactive exploration |
+| V4 | Medium | Theme pages link to recipients, but search handles it |
+| V6 | **HIGH** | AI Research needs full recipient context to analyze |
+| V7 | **HIGH** | Workspace needs full profile to save/annotate |
+| V9 | **CRITICAL** | Network analysis: click node → see full profile + connections |
 
-**V5 Implementation (Recommended):**
+**V6 Implementation (Recommended):**
 Build **Recipient Profile Panel** as slide-out panel:
 - All years across all modules
 - All metadata fields
 - Cross-module summary ("€450M total: Instrumenten €300M, Publiek €150M")
-- External links (Google, KvK in V7)
+- External links (Google, KvK in V8)
 - AI context reference
-- "Add to Dossier" action (V6)
+- "Add to Dossier" action (V7)
 
-**Decision:** Skip for V1.0. Build as part of V5 AI Research Mode where it becomes essential.
+**Decision:** Skip for V2.0. Build as part of V6 AI Research Mode where it becomes essential.
 
 ---
 
 ### Logo Asset Optimization
 
-**Priority:** Low (V1.1)
+**Priority:** Low (V2.1)
 **Added:** 2026-02-06
 **Type:** Design / Brand
 
@@ -306,7 +306,7 @@ Current `logo.png` (1900×540px) includes tagline "Snel inzicht voor krachtige a
 3. Redesign tagline with larger font in source file
 4. Accept current size as brand presence vs. space trade-off
 
-**Decision:** Keep current implementation for V1.0 launch. Revisit in V1.1 UX polish phase.
+**Decision:** Keep current implementation for V2.0 launch. Revisit in V2.1 UX polish phase.
 
 ---
 
@@ -339,7 +339,7 @@ The current Integraal view (`universal_search` materialized view) is not a "true
 3. Is the current "discovery layer" approach sufficient (find recipient → navigate to module)?
 4. What do users actually need from cross-module view?
 
-**Decision:** Requires brainstorm session to determine approach. Park for post-V1.0.
+**Decision:** Requires brainstorm session to determine approach. Park for post-V2.0.
 
 ---
 
@@ -377,7 +377,7 @@ The current Integraal view (`universal_search` materialized view) is not a "true
 
 ### Entity Resolution / Recipient Normalization
 
-**Priority:** ✅ COMPLETED (V1.0)
+**Priority:** ✅ COMPLETED (V2.0)
 **Added:** 2026-01-20
 **Completed:** 2026-01-26
 
@@ -403,7 +403,7 @@ Rebuilt `universal_search` materialized view with normalization.
 
 **Script:** `scripts/sql/009-entity-resolution-normalization.sql`
 
-**Remaining (V2.0+):**
+**Remaining (V3.0+):**
 - KvK-based matching for remaining name variations (e.g., "Politie" vs "Korps Nationale Politie")
 - Entity mapping table for complex cases
 
@@ -439,14 +439,14 @@ When search matches on fields OTHER than Ontvanger (e.g., Regeling, Omschrijving
 **Priority:** Medium
 **Added:** 2026-01-20
 
-V1.0 has basic URL sharing (search term, module, key filters).
-V2.0: Full state in URL including expanded rows, pagination position, all filter states.
+V2.0 has basic URL sharing (search term, module, key filters).
+V3.0: Full state in URL including expanded rows, pagination position, all filter states.
 
 ---
 
 ### Analytics Integration
 
-**Priority:** Medium (V1.1 or V1.2)
+**Priority:** Medium (V2.1 or V2.2)
 **Added:** 2026-01-21
 **Updated:** 2026-02-14
 **Status:** ✅ COMPLETED 2026-02-14 (Phase 2 implemented as UX-032)
@@ -492,7 +492,7 @@ V2.0: Full state in URL including expanded rows, pagination position, all filter
 
 ### Committed Search Tracking — UX-034 (COMPLETED)
 
-**Priority:** High (V1.0)
+**Priority:** High (V2.0)
 **Added:** 2026-02-16
 **Completed:** 2026-02-16
 **Status:** ✅ COMPLETED
@@ -519,9 +519,9 @@ Search analytics tracked typing noise via 2-second debounce timer. Dashboard sho
 
 ---
 
-### Homepage Analytics Tracking (V1.1)
+### Homepage Analytics Tracking (V2.1)
 
-**Priority:** Low (V1.1)
+**Priority:** Low (V2.1)
 **Added:** 2026-02-14
 **Status:** BACKLOGGED
 **Type:** Analytics / UX-032
@@ -537,7 +537,7 @@ Homepage user interactions (CTA clicks, contact form submissions, section scroll
 - ScrollReveal section visibility (which sections users scroll to)
 - Login flow interactions (magic link request, callback)
 
-**Decision:** Excluded from initial UX-032 implementation to keep scope focused on in-app usage. Implement in V1.1 when conversion analytics become a priority.
+**Decision:** Excluded from initial UX-032 implementation to keep scope focused on in-app usage. Implement in V2.1 when conversion analytics become a priority.
 
 ---
 
@@ -568,7 +568,7 @@ Homepage user interactions (CTA clicks, contact form submissions, section scroll
 **Added:** 2026-01-21
 **Source:** UX Brainstorm Session
 
-V1.0 has fixed 50% threshold for trend anomaly highlighting (red cells). Originally 10% but raised to 50% on 2026-02-07 as normal government budget adjustments (5-20% YoY) created too much noise.
+V2.0 has fixed 50% threshold for trend anomaly highlighting (red cells). Originally 10% but raised to 50% on 2026-02-07 as normal government budget adjustments (5-20% YoY) created too much noise.
 
 **Future enhancement:** Allow users to configure their own threshold:
 - 25% (sensitive - more highlights)
@@ -595,7 +595,7 @@ Show users when data was last updated and where it came from.
 - Publication date
 - Data provider
 
-**Decision:** Deferred to post-V1.0. Review implementation approach later.
+**Decision:** Deferred to post-V2.0. Review implementation approach later.
 
 ---
 
@@ -605,7 +605,7 @@ Show users when data was last updated and where it came from.
 **Added:** 2026-01-21
 **Source:** UX Brainstorm Session
 
-V1.0 trend anomaly indicator uses red color only. Users with color blindness may not see it.
+V2.0 trend anomaly indicator uses red color only. Users with color blindness may not see it.
 
 **Options:**
 - Add small dot (●) in corner of highlighted cells
@@ -634,7 +634,7 @@ Content marketing idea: Monitor Dutch media for trending topics, connect to spen
 - Demonstrates platform value
 - Timely, relevant content
 
-**Decision:** Evaluate post-V1.0 as marketing initiative.
+**Decision:** Evaluate post-V2.0 as marketing initiative.
 
 ---
 
@@ -679,13 +679,13 @@ AI: "ProRail B.V. received €461M in 2024.
 
 **Effort:** 8-12 hours total
 
-**Decision:** Post-V1.0. Implement after platform stable.
+**Decision:** Post-V2.0. Implement after platform stable.
 
 ---
 
 ### Entity Resolution: Module Views (Case Normalization)
 
-**Priority:** High - V1.0 Release
+**Priority:** High - V2.0 Release
 **Added:** 2026-01-29
 **Related:** Extends previous entity resolution work (scripts/sql/009-entity-resolution-normalization.sql)
 
@@ -715,10 +715,10 @@ Rebuild all module aggregated views using `normalize_recipient()` in the GROUP B
 
 ### Semantic Search: Dutch Language Awareness
 
-**Priority:** ✅ V1.1 COMPLETE
+**Priority:** ✅ V2.1 COMPLETE
 **Added:** 2026-01-29
-**V1.1 Completed:** 2026-01-29
-**Target:** V2.0 (embeddings)
+**V2.1 Completed:** 2026-01-29
+**Target:** V3.0 (embeddings)
 
 **Problem:**
 Current keyword search (`ILIKE '%term%'`) matches substrings without understanding meaning.
@@ -731,7 +731,7 @@ Example: "politie" (police) matches "Politieke" (political) - completely differe
 | politie → Politieacademie | ✅ | ✅ |
 | politie → Politieke beweging | ✅ | ❌ |
 
-**V1.1 Implementation (COMPLETE):**
+**V2.1 Implementation (COMPLETE):**
 1. **Dutch word rules:** For searches ending in "-ie", exclude "-iek" false cognates
 2. **Option C ranking:** Exact match first, then everything else by totaal (biggest money flows)
 
@@ -739,10 +739,10 @@ Example: "politie" (police) matches "Politieke" (political) - completely differe
 
 | Version | Approach | Effort | Accuracy | Status |
 |---------|----------|--------|----------|--------|
-| V1.1a | Dutch word rules + Option C ranking | 4-8 hours | ~90% | ✅ Complete |
-| V1.1b | Embeddings (Cohere, vector similarity) | 2-3 days | ~95% | Planned |
+| V2.1a | Dutch word rules + Option C ranking | 4-8 hours | ~90% | ✅ Complete |
+| V2.1b | Embeddings (Cohere, vector similarity) | 2-3 days | ~95% | Planned |
 
-**V2.0 Embeddings:**
+**V3.0 Embeddings:**
 - **Vendor:** Cohere embed-multilingual-v3 (native Dutch support)
 - **Scope:** Full database (~9M tokens: recipients, regelingen, omschrijvingen)
 - **Cost:** €0.90 one-time, ~€1/month
@@ -850,27 +850,27 @@ When switching between filter dropdowns (e.g., Regeling → Artikel), the new dr
 |--------|----------------|--------|--------|
 | **Filter-specific indexes** | #1 | 2 hours | Medium |
 | **Pre-cache filter options** | #2 | 4 hours | High |
-| **Typesense data enrichment (V1.1)** | #1 | 1-2 days | High |
+| **Typesense data enrichment (V2.1)** | #1 | 1-2 days | High |
 | **Progressive dropdown loading** | #2 | 4 hours | Medium |
 | **Redis cache for filter combos** | #1, #2 | 4-8 hours | High |
 
-**Quick Wins (V1.0):**
+**Quick Wins (V2.0):**
 1. Add B-tree indexes on filter columns in source tables (reduces 900ms → 300ms)
 
-**V1.1 Solution (Recommended):**
+**V2.1 Solution (Recommended):**
 - **Typesense facets** - Use built-in faceting feature for filter dropdowns
 - Single request returns search results + all filter option counts
 - ~10ms response time (vs 300-900ms PostgreSQL DISTINCT)
 - Aligns with Typesense data enrichment work
 - No additional infrastructure needed
 
-**Decision:** V1.0 quick fix with indexes. V1.1 full solution with Typesense facets.
+**Decision:** V2.0 quick fix with indexes. V2.1 full solution with Typesense facets.
 
 ---
 
 ### Mobile Responsiveness Audit (COMPLETED)
 
-**Priority:** High (V1.0)
+**Priority:** High (V2.0)
 **Added:** 2026-02-03
 **Updated:** 2026-02-18
 **Completed:** 2026-02-18
@@ -930,7 +930,7 @@ When switching between filter dropdowns (e.g., Regeling → Artikel), the new dr
 
 ### GitHub Projects Visual Dashboard
 
-**Priority:** Low (V1.2)
+**Priority:** Low (V2.2)
 **Added:** 2026-02-09
 **Status:** BACKLOGGED
 **Type:** Tooling / Process
@@ -941,20 +941,20 @@ Backlog, roadmap, and release tracking live in markdown files. Works well for de
 **Proposed Solution:**
 GitHub Projects board as a **read-only dashboard** on top of existing markdown:
 - Board view: Triage → Backlog → In Progress → Done
-- Roadmap view: timeline grouped by milestone (V1.0, V1.1, V2.0, etc.)
+- Roadmap view: timeline grouped by milestone (V2.0, V2.1, V3.0, etc.)
 - Issues are lightweight pointers (title + label + link to markdown spec)
 - Partner can submit ideas via `idea`-labeled issues → Triage column
 - Markdown stays source of truth; board is a view, not a second system
 
 **Setup:** ~30 minutes. Requires `gh auth refresh -s project` for CLI access.
 
-**Decision:** Not needed for launch. Revisit in V1.2 polish phase or when partner needs independent visibility.
+**Decision:** Not needed for launch. Revisit in V2.2 polish phase or when partner needs independent visibility.
 
 ---
 
 ### Invite Email for New Members (COMPLETED)
 
-**Priority:** High (V1.0 — just before launch)
+**Priority:** High (V2.0 — just before launch)
 **Added:** 2026-02-11
 **Completed:** 2026-02-11
 **Status:** ✅ COMPLETED
@@ -974,7 +974,7 @@ When admin adds a new member via `/team/leden`, `admin.createUser()` creates the
 
 ### Contact-to-Subscriber Flow (Admin Module)
 
-**Priority:** Medium (V1.1)
+**Priority:** Medium (V2.1)
 **Added:** 2026-02-14
 **Completed:** 2026-02-14
 **Status:** ✅ COMPLETED
@@ -992,7 +992,7 @@ When admin adds a new member via `/team/leden`, `admin.createUser()` creates the
 
 ### Row Selector for Bulk Actions (Admin Module)
 
-**Priority:** Low (V1.1+)
+**Priority:** Low (V2.1+)
 **Added:** 2026-02-11
 **Status:** ⏳ Backlog
 **Type:** Feature / UX
@@ -1012,7 +1012,7 @@ Add checkbox column to `/team/leden` table with bulk action bar:
 
 ### Integraal View: Cross-Module Data Completeness
 
-**Priority:** Medium (V1.1 — Database Structure)
+**Priority:** Medium (V2.1 — Database Structure)
 **Added:** 2026-02-11
 **Status:** ⏳ Backlog
 **Type:** Architecture / Data
@@ -1043,7 +1043,7 @@ Enrich the integraal view so it can surface module-specific data like regelingen
 
 ### Branded Magic Link Email Template
 
-**Priority:** High (V1.0 — before launch)
+**Priority:** High (V2.0 — before launch)
 **Added:** 2026-02-11
 **Completed:** 2026-02-11
 **Status:** ✅ COMPLETED
@@ -1084,15 +1084,15 @@ Create branded HTML email template matching Rijksuitgaven brand identity:
 
 ### Search: Accurate Multi-Field Match Reporting
 
-**Priority:** Medium (V1.1)
+**Priority:** Medium (V2.1)
 **Added:** 2026-02-12
 **Status:** BACKLOGGED
 **Type:** Search / UX
 
 **Problem:**
-With multi-word AND search (e.g., `rode kruis`), the "Gevonden in" column uses a heuristic: it checks only the **first word** to determine which field matched. This can be inaccurate when words match across different fields (e.g., "rode" in `ontvanger`, "kruis" in `regeling`). Since matched_field is a UI hint (not a filter), this is acceptable for V1.0.
+With multi-word AND search (e.g., `rode kruis`), the "Gevonden in" column uses a heuristic: it checks only the **first word** to determine which field matched. This can be inaccurate when words match across different fields (e.g., "rode" in `ontvanger`, "kruis" in `regeling`). Since matched_field is a UI hint (not a filter), this is acceptable for V2.0.
 
-**V1.1 Improvement:**
+**V2.1 Improvement:**
 - Check all words against all fields, report all matched fields
 - Possibly highlight each word in its respective field
 - Requires minor UI change to show multiple matched fields
@@ -1103,15 +1103,15 @@ With multi-word AND search (e.g., `rode kruis`), the "Gevonden in" column uses a
 
 ### Search: Fuzzy/Typo Tolerance
 
-**Priority:** Medium (V1.1)
+**Priority:** Medium (V2.1)
 **Added:** 2026-02-12
 **Status:** BACKLOGGED
 **Type:** Search / UX
 
 **Problem:**
-V1.0 search requires exact spelling. Users who misspell recipient names (e.g., "proraill" instead of "prorail") get no results. Typesense already supports `num_typos` parameter for typo tolerance, but it's not exposed in the current implementation.
+V2.0 search requires exact spelling. Users who misspell recipient names (e.g., "proraill" instead of "prorail") get no results. Typesense already supports `num_typos` parameter for typo tolerance, but it's not exposed in the current implementation.
 
-**V1.1 Improvement:**
+**V2.1 Improvement:**
 - Enable Typesense `num_typos: 1` or `2` for autocomplete and search
 - PostgreSQL regex fallback stays exact (acceptable — Typesense handles most searches)
 - May need UI indicator: "Bedoelde u: ProRail?" for fuzzy matches
@@ -1122,7 +1122,7 @@ V1.0 search requires exact spelling. Users who misspell recipient names (e.g., "
 
 ### Search: Field-Specific Search Syntax
 
-**Priority:** Low (V2+)
+**Priority:** Low (V3+)
 **Added:** 2026-02-12
 **Status:** BACKLOGGED
 **Type:** Search / Power User
@@ -1132,7 +1132,7 @@ Power users may want to search within specific fields. Currently all searches go
 
 **Syntax idea:** `leverancier:prorail` or `regeling:subsidie`
 
-**Deferred to V2+** — requires parser extension, field validation per module, and UI for field selection. Not needed for V1.0 audience.
+**Deferred to V3+** — requires parser extension, field validation per module, and UI for field selection. Not needed for V2.0 audience.
 
 **Estimated effort:** 4-8 hours
 
@@ -1140,7 +1140,7 @@ Power users may want to search within specific fields. Currently all searches go
 
 ### Email Campaign Management (Resend Broadcasts)
 
-**Priority:** High (V1.0 — before launch, replaces WordPress/Mailster)
+**Priority:** High (V2.0 — before launch, replaces WordPress/Mailster)
 **Added:** 2026-02-12
 **Updated:** 2026-02-13
 **Status:** ⏳ IN PROGRESS (people table + admin UI done, migration + Resend Audience + campaign template remaining)
@@ -1155,7 +1155,7 @@ Current email campaigns run on WordPress + Mailster + Mailgun at `nieuws.rijksui
 - Already handles magic link + invite emails (zero new vendors)
 - Single contact list shared with transactional (subscriptions → Resend Audience)
 - React Email templates (same tech as existing `docs/email-templates/`)
-- Broadcast API enables programmatic sends (V2 Reporter ready)
+- Broadcast API enables programmatic sends (V3 Reporter ready)
 - Free for 1,000 contacts, $40/mo for 5,000+
 - Kills WordPress dependency entirely
 
@@ -1213,7 +1213,7 @@ contacts (
 
 ### Interactive Search Demo on Homepage (No Login Required)
 
-**Priority:** High (V1.0 — work on soon)
+**Priority:** High (V2.0 — work on soon)
 **Added:** 2026-02-12
 **Completed:** 2026-02-17
 **Status:** ✅ COMPLETED
@@ -1244,7 +1244,7 @@ A sandboxed search experience embedded on the homepage — limited to one module
 
 ### Tab-Based Feature Explorer (Homepage Features Section)
 
-**Priority:** Medium (V1.1)
+**Priority:** Medium (V2.1)
 **Added:** 2026-02-12
 **Status:** ⏳ Backlog
 **Type:** UX / Design
@@ -1284,7 +1284,7 @@ Replace the 6-card grid with a tab-based feature explorer — one large browser 
 
 ### Audience-Personalized Landing Variants
 
-**Priority:** Medium (V1.1)
+**Priority:** Medium (V2.1)
 **Added:** 2026-02-12
 **Status:** ⏳ Backlog
 **Type:** Feature / Marketing
@@ -1315,9 +1315,9 @@ Audience-specific landing variants using query params or UTM paths:
 
 ---
 
-### Campaign Analytics: Bounce Auto-Suppress (V1.1)
+### Campaign Analytics: Bounce Auto-Suppress (V2.1)
 
-**Priority:** Medium (V1.1)
+**Priority:** Medium (V2.1)
 **Added:** 2026-02-19
 **Status:** ⏳ Backlog
 **Type:** Feature / Email
@@ -1332,9 +1332,9 @@ Auto-suppress recipients after N hard bounces (e.g., 2). Mark `bounced_at` on pe
 
 ---
 
-### Campaign Analytics: Complaint Auto-Unsubscribe (V1.1)
+### Campaign Analytics: Complaint Auto-Unsubscribe (V2.1)
 
-**Priority:** Medium (V1.1)
+**Priority:** Medium (V2.1)
 **Added:** 2026-02-19
 **Status:** ⏳ Backlog
 **Type:** Feature / Email / GDPR
@@ -1349,9 +1349,9 @@ On `email.complained` webhook, automatically set `unsubscribed_at` on the person
 
 ---
 
-### Campaign Event Retention Cleanup (V1.1)
+### Campaign Event Retention Cleanup (V2.1)
 
-**Priority:** Low (V1.1)
+**Priority:** Low (V2.1)
 **Added:** 2026-02-19
 **Status:** ⏳ Backlog
 **Type:** Maintenance / Data
@@ -1370,7 +1370,7 @@ Delete individual events older than 1 year, keeping only aggregated counts on th
 
 **Priority:** High (Pre-Launch)
 **Added:** 2026-02-18
-**Status:** ⏳ TODO (V1.0 — before launch)
+**Status:** ⏳ TODO (V2.0 — before launch)
 **Type:** SEO / Marketing
 
 **Problem:**

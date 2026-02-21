@@ -1,7 +1,7 @@
 # Infrastructure Architecture
 
 **Project:** Rijksuitgaven.nl
-**Version:** 1.0 (Current Deployment)
+**Version:** 2.0 (Current Deployment)
 **Date:** 2026-02-11
 **Status:** Deployed
 
@@ -189,8 +189,8 @@ Next.js Frontend (Railway Amsterdam)
 
 **Extensions Enabled:**
 
-- `postgis` (geospatial, for future V8 address clustering)
-- `vector` (pgvector, for future V2+ semantic search)
+- `postgis` (geospatial, for future V9 address clustering)
+- `vector` (pgvector, for future V3+ semantic search)
 
 ### Authentication Configuration
 
@@ -212,7 +212,7 @@ Next.js Frontend (Railway Amsterdam)
 | `avatars` | User profile images (future) | Public |
 | `exports` | CSV/XLS exports (future) | Private (signed URLs) |
 
-**Current Usage:** 0GB (no file uploads in V1.0)
+**Current Usage:** 0GB (no file uploads in V2.0)
 
 ### Database Schema
 
@@ -430,7 +430,7 @@ railway logs --service rijksuitgaven-api
 
 **Log Search:** Railway UI → Service → Logs tab → Search bar
 
-**Alerting:** Not yet configured (deferred to V1.1)
+**Alerting:** Not yet configured (deferred to V2.1)
 
 ### Supabase Dashboard
 
@@ -471,7 +471,7 @@ railway logs --service rijksuitgaven-api
 
 ## Cost Breakdown
 
-### Monthly Operating Costs (Current V1.0)
+### Monthly Operating Costs (Current V2.0)
 
 | Service | Component | Cost (€/month) |
 |---------|-----------|----------------|
@@ -484,7 +484,7 @@ railway logs --service rijksuitgaven-api
 
 **Budget:** €180/month
 
-**Buffer:** €80-110/month (for growth, V2 AI services, etc.)
+**Buffer:** €80-110/month (for growth, V3 AI services, etc.)
 
 ### Cost Drivers
 
@@ -506,16 +506,16 @@ railway logs --service rijksuitgaven-api
 3. **Database pooler:** Supabase pooler reduces connection overhead
 4. **Typesense volume:** Fixed 5GB (doesn't grow with data)
 
-### Future V2+ Costs
+### Future V3+ Costs
 
 | Service | Purpose | Est. Cost (€/month) |
 |---------|---------|---------------------|
-| Claude API | Rijksuitgaven Reporter (V2) | €10-15 |
-| Redis | AI response caching (V5) | €7-10 |
-| Worker service | Background jobs (V2+) | €5-10 |
-| **Total V2-V5** | | **€22-35** |
+| Claude API | Rijksuitgaven Reporter (V3) | €10-15 |
+| Redis | AI response caching (V6) | €7-10 |
+| Worker service | Background jobs (V3+) | €5-10 |
+| **Total V3-V6** | | **€22-35** |
 
-**Projected V5 Total:** €92-135/month (within €180 budget)
+**Projected V6 Total:** €92-135/month (within €180 budget)
 
 ---
 

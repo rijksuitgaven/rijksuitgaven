@@ -1,7 +1,7 @@
 # Integration Architecture
 
 **Project:** Rijksuitgaven.nl
-**Version:** 1.0 (Current Deployment)
+**Version:** 2.0 (Current Deployment)
 **Date:** 2026-02-11
 **Status:** Deployed
 
@@ -18,13 +18,13 @@
 
 ## Overview
 
-This document describes the actual integrations in the deployed V1.0 system.
+This document describes the actual integrations in the deployed V2.0 system.
 
 ### Current Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│                    RIJKSUITGAVEN V1.0                     │
+│                    RIJKSUITGAVEN V2.0                     │
 │                                                           │
 │  Next.js Frontend ──► BFF Routes ──► FastAPI Backend     │
 │         │                                    │            │
@@ -40,8 +40,8 @@ This document describes the actual integrations in the deployed V1.0 system.
 **Key Points:**
 
 - All integrations are internal or simple HTTPS/JSON
-- No AI integrations yet (deferred to V2+)
-- No external data APIs yet (deferred to V7+)
+- No AI integrations yet (deferred to V3+)
+- No external data APIs yet (deferred to V8+)
 - Authentication via Supabase (built-in)
 
 ---
@@ -289,7 +289,7 @@ if (error) {
 <a href="{{ .ConfirmationURL }}">Sign in</a>
 ```
 
-**Customization:** Can override template in Supabase dashboard (deferred to V1.1)
+**Customization:** Can override template in Supabase dashboard (deferred to V2.1)
 
 **Rate Limiting:**
 
@@ -304,9 +304,9 @@ if (error) {
 
 ---
 
-## Future Integrations (V2+)
+## Future Integrations (V3+)
 
-### V2.0 - Rijksuitgaven Reporter
+### V3.0 - Rijksuitgaven Reporter
 
 **Claude API (Anthropic):**
 
@@ -362,7 +362,7 @@ resend.Emails.send({
 
 ---
 
-### V5.0 - AI Research Mode
+### V6.0 - AI Research Mode
 
 **Claude API (Conversational):**
 
@@ -425,7 +425,7 @@ if cached:
 
 ---
 
-### V7.0 - External Integrations
+### V8.0 - External Integrations
 
 **wetten.overheid.nl (Web Scraping):**
 

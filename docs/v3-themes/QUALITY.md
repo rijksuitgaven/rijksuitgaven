@@ -1,7 +1,7 @@
-# V3 Theme Classification - Quality
+# V4 Theme Classification - Quality
 
 **Project:** Rijksuitgaven.nl
-**Version:** V3 - Theme Discovery
+**Version:** V4 - Theme Discovery
 **Status:** Not Started
 
 ---

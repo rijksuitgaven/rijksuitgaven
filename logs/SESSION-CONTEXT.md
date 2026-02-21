@@ -1,26 +1,27 @@
 # Session Context
 
 **Last Updated:** 2026-02-21
-**Project Phase:** V1.0 Development
+**Project Phase:** V2.0 Development
 **Current Sprint:** Week 8 - Marketing Pages & Final Polish (Lighthouse COMPLETE, CSS COMPLETE, privacy policy COMPLETE, welcome email COMPLETE, terms of service COMPLETE, footer COMPLETE, about page COMPLETE, support page COMPLETE, data availability audit COMPLETE, datasets page COMPLETE, data table UX COMPLETE, mobile responsiveness COMPLETE, email campaign system COMPLETE, campaign analytics COMPLETE, CRM pipeline COMPLETE, email pipeline targeting COMPLETE, public page analytics COMPLETE, email drafts COMPLETE)
 
 ---
 
-## Product Versioning (UPDATED 2026-02-03)
+## Product Versioning (UPDATED 2026-02-21)
 
 **Source of truth:** `docs/VERSIONING.md`
 
 | Version | Name | Use Case | Status |
 |---------|------|----------|--------|
-| **V1** | Search Platform | "Who received money?" | 🔨 Building |
-| **V2** | Rijksuitgaven Reporter | "What's in the news about spending?" | 📋 Planned |
-| **V3** | Theme Discovery | "What's happening in defensie?" | 📋 Planned |
-| **V4** | Inzichten (Self-Service BI) | "Show me trends and anomalies" | 📋 Planned |
-| **V5** | AI Research Mode | "Help me investigate this" | 📋 Planned |
-| **V6** | Research Workspace | "Build a case, share with team" | 📋 Planned |
-| **V7** | External Integrations | "What law governs this?" | 📋 Planned |
-| **V8** | Network Analysis | "Who runs these organizations?" | 📋 Planned |
-| **V9** | European Platform | "Compare NL with Germany" | 📋 Planned |
+| **V1** | WordPress Platform | rijksuitgaven.nl (legacy) | ✅ Superseded |
+| **V2** | Search Platform | "Who received money?" | 🔨 Building |
+| **V3** | Rijksuitgaven Reporter | "What's in the news about spending?" | 📋 Planned |
+| **V4** | Theme Discovery | "What's happening in defensie?" | 📋 Planned |
+| **V5** | Inzichten (Self-Service BI) | "Show me trends and anomalies" | 📋 Planned |
+| **V6** | AI Research Mode | "Help me investigate this" | 📋 Planned |
+| **V7** | Research Workspace | "Build a case, share with team" | 📋 Planned |
+| **V8** | External Integrations | "What law governs this?" | 📋 Planned |
+| **V9** | Network Analysis | "Who runs these organizations?" | 📋 Planned |
+| **V10** | European Platform | "Compare NL with Germany" | 📋 Planned |
 
 **Version scheme:** X.0 = Major (new capability) | X.Y = Minor (improvements) | X.Y.Z = Patch (fixes)
 

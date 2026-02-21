@@ -298,7 +298,7 @@ Senior specialist (10+ years equivalent) in all disciplines. Never ask technical
 | Topic | Source |
 |-------|--------|
 | Version roadmap | `docs/VERSIONING.md` |
-| V1 requirements | `02-requirements/search-requirements.md` |
+| V2 requirements | `02-requirements/search-requirements.md` |
 | Brand identity | `02-requirements/brand-identity.md` |
 | Tech stack | `04-target-architecture/RECOMMENDED-TECH-STACK.md` |
 | Sprint plan | `09-timelines/v1-sprint-plan.md` |
@@ -324,7 +324,7 @@ Senior specialist (10+ years equivalent) in all disciplines. Never ask technical
 2. Update its status (Priority, Status field, dates)
 3. If COMPLETE: Mark as ✅ COMPLETED with date
 4. If PARTIAL: Note what's done vs. remaining
-5. If DEFERRED: Note the version it's deferred to (e.g., "Deferred to V1.1")
+5. If DEFERRED: Note the version it's deferred to (e.g., "Deferred to V2.1")
 
 **Rule:** Backlog items must NEVER go stale. If work was done, the backlog reflects it.
 
@@ -415,7 +415,7 @@ All user-facing Dutch text MUST use the formal form:
 
 ---
 
-## V1.0 Scope Summary
+## V2.0 Scope Summary
 
 **Building:**
 - 6 module pages + Overzicht + Integraal
@@ -427,7 +427,7 @@ All user-facing Dutch text MUST use the formal form:
 **Not Building:**
 - Social login
 - Unlimited exports
-- Research Mode (V2+)
+- Research Mode (V3+)
 - Two-view toggle
 
 ---
@@ -437,12 +437,13 @@ All user-facing Dutch text MUST use the formal form:
 ### Versioning
 | Version | Name | Use Case |
 |---------|------|----------|
-| V1 | Search Platform | "Who received money?" |
-| V2 | Rijksuitgaven Reporter | "What's in the news?" |
-| V3 | Theme Discovery | "What's in defensie?" |
-| V4 | Inzichten | "Show me trends" |
-| V5 | AI Research | "Help me investigate" |
-| V6+ | Workspace, Integrations, Network, European |
+| V1 | WordPress (legacy) | Original site |
+| V2 | Search Platform | "Who received money?" |
+| V3 | Rijksuitgaven Reporter | "What's in the news?" |
+| V4 | Theme Discovery | "What's in defensie?" |
+| V5 | Inzichten | "Show me trends" |
+| V6 | AI Research | "Help me investigate" |
+| V7+ | Workspace, Integrations, Network, European |
 
 ### Module Fields
 | Module | Primary | Key Fields |

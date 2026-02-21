@@ -4,7 +4,7 @@
 > This document was written before implementation. The actual system uses Supabase PostgreSQL (NOT MySQL), asyncpg (NOT SQLAlchemy), and Supabase Auth (NOT NextAuth.js). For current architecture, see `logs/SESSION-CONTEXT.md`.
 
 **Project:** Rijksuitgaven.nl SaaS Platform
-**Version:** 1.0
+**Version:** 2.0
 **Date:** 2026-01-23
 **Status:** Historical Document
 
@@ -13,8 +13,8 @@
 ## Document Structure
 
 This document has two parts:
-- **Part 1: V1.0 Architecture** - Search Bar implementation (what we're building now)
-- **Part 2: V2.0 Architecture** - Research Mode planning (what's coming next)
+- **Part 1: V2.0 Architecture** - Search Bar implementation (what we're building now)
+- **Part 2: V3.0 Architecture** - Research Mode planning (what's coming next)
 
 ---
 
@@ -22,8 +22,8 @@ This document has two parts:
 
 Evaluate whether the **recommended technology stack** (Python + FastAPI + Next.js + Railway + Typesense) supports the search requirements.
 
-- **V1.0:** Search Bar - fully validated, ready for implementation
-- **V2.0:** Research Mode - architecture planned, implementation post-V1.0
+- **V2.0:** Search Bar - fully validated, ready for implementation
+- **V3.0:** Research Mode - architecture planned, implementation post-V2.0
 
 ---
 
@@ -31,7 +31,7 @@ Evaluate whether the **recommended technology stack** (Python + FastAPI + Next.j
 
 ### ✅ Good News: Core Architecture Still Valid
 
-The recommended stack (Typesense + FastAPI + Next.js) **fully supports** Search Bar requirements (V1.0). Minor adjustments needed for Research Mode (V2.0).
+The recommended stack (Typesense + FastAPI + Next.js) **fully supports** Search Bar requirements (V2.0). Minor adjustments needed for Research Mode (V3.0).
 
 ### ⚠️ Key Findings:
 
@@ -61,37 +61,37 @@ The recommended stack (Typesense + FastAPI + Next.js) **fully supports** Search 
 
 ---
 
-# PART 1: V1.0 ARCHITECTURE (Search Bar)
+# PART 1: V2.0 ARCHITECTURE (Search Bar)
 
-*This section covers V1.0 implementation. Ready for development.*
+*This section covers V2.0 implementation. Ready for development.*
 
 ---
 
 ## Search Bar Requirements vs Typesense
 
-| Requirement | Typesense Capability | Status (Actual V1.0) | Notes |
+| Requirement | Typesense Capability | Status (Actual V2.0) | Notes |
 |-------------|----------------------|----------------------|-------|
 | **<100ms search** | Yes, <50ms typical | ✅ **<25ms deployed** | Exceeds target |
 | **Autocomplete** | Yes, instant | ✅ **Deployed** | 7 collections indexed |
 | **Typo tolerance** | Yes, fuzzy matching | ✅ **Deployed** | Up to 2 edits |
 | **Boolean operators** | Yes (AND, OR, NOT) | ✅ **Deployed** | Native support |
-| **Wildcards** | Partial | ✅ **Prefix matching deployed** | Full wildcards deferred to V1.1 |
+| **Wildcards** | Partial | ✅ **Prefix matching deployed** | Full wildcards deferred to V2.1 |
 | **Fuzzy matching** | Yes | ✅ **Deployed** | Automatic |
 | **Cross-module search** | Yes | ✅ **Deployed** | Universal_search collection |
 | **Filter by fields** | Yes | ✅ **Deployed** | Cascading filters (UX-021) |
-| **Numeric ranges** | Yes | ⏳ **V1.1** | Not yet exposed in UI |
+| **Numeric ranges** | Yes | ⏳ **V2.1** | Not yet exposed in UI |
 | **Faceted filtering** | Yes | ✅ **Deployed** | Filter options API |
 | **Sort options** | Yes | ✅ **Deployed** | Multi-field sorting |
-| **Field weighting** | Yes | ⏳ **V1.1** | Not yet configured |
+| **Field weighting** | Yes | ⏳ **V2.1** | Not yet configured |
 
-**Conclusion:** Typesense **exceeded** performance targets. V1.0 deployed successfully. Additional features deferred to V1.1.
+**Conclusion:** Typesense **exceeded** performance targets. V2.0 deployed successfully. Additional features deferred to V2.1.
 
 ---
 
-# PART 2: V2.0 ARCHITECTURE (Research Mode)
+# PART 2: V3.0 ARCHITECTURE (Research Mode)
 
-*This section covers V2.0 planning. Do not implement until V1.0 is complete.*
-*For full V2.0 requirements, see: `02-requirements/research-mode-vision.md`*
+*This section covers V3.0 planning. Do not implement until V2.0 is complete.*
+*For full V3.0 requirements, see: `02-requirements/research-mode-vision.md`*
 
 ---
 
@@ -118,7 +118,7 @@ The recommended stack (Typesense + FastAPI + Next.js) **fully supports** Search 
 
 **Updated Recommendation:**
 
-**V2.0 Architecture:**
+**V3.0 Architecture:**
 - **Primary:** Claude Sonnet 4.5 (for Research Mode)
   - Reason: Native MCP, 10x cheaper for long conversations, excellent multi-step reasoning
 - **Secondary:** OpenAI GPT-4 (fallback only)
@@ -190,7 +190,7 @@ def search_typesense(query: str, filters: dict):
 - ⚠️ Data staleness (re-embed on updates)
 - ⚠️ Less precise
 
-**Recommendation:** **MCP-first, add vector search in V2.1**
+**Recommendation:** **MCP-first, add vector search in V3.1**
 
 **Rationale:**
 - MCP is simpler, more precise
@@ -275,7 +275,7 @@ response = agent.run(user_message)
 
 **Updated Tech Stack:**
 ```python
-# V2.0 Backend Dependencies
+# V3.0 Backend Dependencies
 fastapi
 sqlalchemy
 typesense-client
@@ -420,7 +420,7 @@ httpx  # Async HTTP client
 
 ## Performance Analysis
 
-### V1.0: Search Bar Performance Targets
+### V2.0: Search Bar Performance Targets
 
 | Query Type | Target | Typesense Capability | Status |
 |------------|--------|----------------------|--------|
@@ -434,7 +434,7 @@ httpx  # Async HTTP client
 
 ---
 
-### V2.0: Research Mode Performance Targets
+### V3.0: Research Mode Performance Targets
 
 | Operation | Target | Analysis | Status |
 |-----------|--------|----------|--------|
@@ -475,14 +475,14 @@ Subtotal:                   €59-92/month
 
 #### 4.2 AI Costs (Updated - Research Mode Focus)
 
-**V1.0 (No Research Mode):**
+**V2.0 (No Research Mode):**
 ```
 Search Bar only (keyword search with AI fallback for complex queries):
 - OpenAI GPT-4 Turbo: ~€20-30/month
 - Total AI: €20-30/month
 ```
 
-**V2.0 (Research Mode - 20 Active Users):**
+**V3.0 (Research Mode - 20 Active Users):**
 ```
 Claude Sonnet 4.5 (Primary):
 - 20 users × 50 conversations/month = 1,000 conversations
@@ -495,10 +495,10 @@ With 80% cache hit rate:
 OpenAI GPT-4 (Fallback - 5% of queries):
 - €28 × 0.05 = €1.40/month
 
-Total AI (V2.0): €30-35/month ✅
+Total AI (V3.0): €30-35/month ✅
 ```
 
-**Updated Total Monthly Cost (V2.0):**
+**Updated Total Monthly Cost (V3.0):**
 ```
 Infrastructure:              €59-92
 AI (Research Mode):          €30-35
@@ -518,7 +518,7 @@ Buffer for growth: €53-91
 
 ## Data Layer Requirements
 
-### V1.0: Search Bar - Current Database OK
+### V2.0: Search Bar - Current Database OK
 
 **Requirement:** Typesense index of all searchable fields
 
@@ -558,7 +558,7 @@ MySQL (source) → API (reads) → Typesense (indexes)
 
 ---
 
-### V2.0: Research Mode - Needs Pre-Computed Aggregations
+### V3.0: Research Mode - Needs Pre-Computed Aggregations
 
 **Requirement:** AI needs fast access to aggregated data for analysis
 
@@ -633,11 +633,11 @@ CREATE TABLE analytics_module_trends (
 
 ---
 
-### V2.1: Vector Search (Optional - Future)
+### V3.1: Vector Search (Optional - Future)
 
 **Requirement:** "Find similar recipients" feature
 
-**Not needed for V2.0, but plan for future:**
+**Not needed for V3.0, but plan for future:**
 
 **Vector Database Options:**
 - **Option A:** Typesense vector search (native support!)
@@ -650,7 +650,7 @@ CREATE TABLE analytics_module_trends (
 - No additional service needed
 - Hybrid search (keyword + semantic) in one query
 
-**Implementation (Future V2.1):**
+**Implementation (Future V3.1):**
 ```python
 # Generate embeddings for recipients
 from sentence_transformers import SentenceTransformer
@@ -749,7 +749,7 @@ PRO_TIER_LIMITS = {
 
 ---
 
-### Updated Tech Stack (V2.0)
+### Updated Tech Stack (V3.0)
 
 #### Frontend (Next.js 14)
 ```
@@ -774,7 +774,7 @@ PRO_TIER_LIMITS = {
 - langchain-anthropic (Claude integration)
 - beautifulsoup4 (web scraping for wetten.overheid.nl)
 - httpx (async HTTP client)
-- sentence-transformers (future - vector embeddings for V2.1)
+- sentence-transformers (future - vector embeddings for V3.1)
 ```
 
 #### Database
@@ -797,25 +797,25 @@ PRO_TIER_LIMITS = {
 
 ## Cost Summary (Updated)
 
-### V1.0 (Search Bar Only)
+### V2.0 (Search Bar Only)
 
 ```
 Infrastructure:              €59-92/month
 AI (minimal):                €20-30/month
 ───────────────────────────────────────
-Total V1.0:                  €79-122/month
+Total V2.0:                  €79-122/month
 
 Budget:                      €180/month
 Buffer:                      €58-101/month ✅
 ```
 
-### V2.0 (Search Bar + Research Mode)
+### V3.0 (Search Bar + Research Mode)
 
 ```
 Infrastructure:              €59-92/month
 AI (Claude-primary):         €30-35/month
 ───────────────────────────────────────
-Total V2.0:                  €89-127/month
+Total V3.0:                  €89-127/month
 
 Budget:                      €180/month
 Buffer:                      €53-91/month ✅
@@ -867,7 +867,7 @@ Savings vs current:          €53-91/month ✅
 
 ## Recommendations
 
-### Immediate (V1.0 Development)
+### Immediate (V2.0 Development)
 
 1. ✅ **Proceed with Typesense for Search Bar**
    - No changes needed
@@ -882,7 +882,7 @@ Savings vs current:          €53-91/month ✅
 
 ---
 
-### Before V2.0 (Research Mode)
+### Before V3.0 (Research Mode)
 
 1. 🆕 **Switch AI Primary to Claude**
    - Update RECOMMENDED-TECH-STACK.md
@@ -909,7 +909,7 @@ Savings vs current:          €53-91/month ✅
 
 ---
 
-### Optional (V2.1 Enhancements)
+### Optional (V3.1 Enhancements)
 
 1. **Vector search for similarity**
    - Use Typesense native vector search
@@ -946,12 +946,12 @@ Savings vs current:          €53-91/month ✅
 ### 3. Estimate Development Effort
 
 **Break down user stories into tasks:**
-- V1.0: Search Bar (Weeks 1-8)
-- V2.0: Research Mode (Weeks 9-16)
+- V2.0: Search Bar (Weeks 1-8)
+- V3.0: Research Mode (Weeks 9-16)
 
 ### 4. Prioritize MVP Features
 
-**Define what must be in V1.0 vs V2.0:**
+**Define what must be in V2.0 vs V3.0:**
 - Critical: Search bar, filters, Typesense
 - Important: Basic exports, user accounts
 - Nice-to-have: Advanced analytics, insights
@@ -962,7 +962,7 @@ Savings vs current:          €53-91/month ✅
 
 ### ✅ Architecture is Sound
 
-The recommended stack (Python + FastAPI + Next.js + Railway + Typesense) **fully supports** both Search Bar (V1.0) and Research Mode (V2.0) requirements.
+The recommended stack (Python + FastAPI + Next.js + Railway + Typesense) **fully supports** both Search Bar (V2.0) and Research Mode (V3.0) requirements.
 
 ### 🆕 Key Changes
 
@@ -973,8 +973,8 @@ The recommended stack (Python + FastAPI + Next.js + Railway + Typesense) **fully
 
 ### 💰 Budget Confirmed
 
-- **V1.0:** €79-122/month (within €180 budget)
-- **V2.0:** €89-127/month (within €180 budget)
+- **V2.0:** €79-122/month (within €180 budget)
+- **V3.0:** €89-127/month (within €180 budget)
 - **Buffer:** €53-91/month for growth
 
 ### 🚀 Ready to Proceed
@@ -982,7 +982,7 @@ The recommended stack (Python + FastAPI + Next.js + Railway + Typesense) **fully
 All requirements validated against architecture. No blockers identified. Proceed with:
 1. Wireframe design
 2. Development effort estimation
-3. V1.0 MVP definition
+3. V2.0 MVP definition
 
 ---
 

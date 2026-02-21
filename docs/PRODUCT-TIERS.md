@@ -16,12 +16,12 @@ Tiers control ACCESS to versions. Each tier unlocks specific capabilities.
 
 | Tier | Price | Version Access | Target Audience |
 |------|-------|----------------|-----------------|
-| **Pro** | €1,500/year | V1 + V2 | Journalists, researchers, opposition parties |
-| **Research** | TBD | V1 + V2 + V3 + V4 | Investigative journalists, policy analysts |
-| **Voor Overheden** | €9,000+/year | V1-V5 + municipality features | Municipalities, provinces |
-| **Voor Universiteiten** | €3,000+/year | V1-V5 + academic features | Universities, research institutes |
-| **Rijksnetwerken** | €25,000+/year | V6 (compliance/KYC module) | Banks, insurers, accountants |
-| **Franchise** | License fee | V7 (white-label European) | International partners |
+| **Pro** | €1,500/year | V2 + V3 | Journalists, researchers, opposition parties |
+| **Research** | TBD | V2 + V3 + V4 + V5 | Investigative journalists, policy analysts |
+| **Voor Overheden** | €9,000+/year | V2-V6 + municipality features | Municipalities, provinces |
+| **Voor Universiteiten** | €3,000+/year | V2-V6 + academic features | Universities, research institutes |
+| **Rijksnetwerken** | €25,000+/year | V7 (compliance/KYC module) | Banks, insurers, accountants |
+| **Franchise** | License fee | V8 (white-label European) | International partners |
 
 ---
 
@@ -29,7 +29,7 @@ Tiers control ACCESS to versions. Each tier unlocks specific capabilities.
 
 ### Pro (€1,500/year or €150/month)
 
-**Current tier - V1 launch**
+**Current tier - V2 launch**
 
 **Pricing:**
 - Monthly: €150/month
@@ -58,7 +58,7 @@ Tiers control ACCESS to versions. Each tier unlocks specific capabilities.
 - RLS policies enforce row-level access control
 - Middleware checks subscription status on every page request
 
-**V2 adds:**
+**V3 adds:**
 - Theme landing pages (/thema/defensie, etc.)
 - IBOS domain navigation
 - Basic visualizations
@@ -69,7 +69,7 @@ Tiers control ACCESS to versions. Each tier unlocks specific capabilities.
 
 ### Research (Price TBD)
 
-**V3 launch**
+**V4 launch**
 
 **Includes everything in Pro, plus:**
 - AI Research Mode (/research page)
@@ -128,7 +128,7 @@ Tiers control ACCESS to versions. Each tier unlocks specific capabilities.
 
 ### Rijksnetwerken (€25,000+/year)
 
-**V6 - Network Analysis module**
+**V7 - Network Analysis module**
 
 **Separate product tier for compliance market**
 
@@ -155,7 +155,7 @@ Tiers control ACCESS to versions. Each tier unlocks specific capabilities.
 
 ### Franchise (License)
 
-**V7 - European expansion**
+**V8 - European expansion**
 
 **White-label platform for international partners**
 

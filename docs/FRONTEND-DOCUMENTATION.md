@@ -491,11 +491,11 @@ None required. SearchBar uses the BFF proxy (`/api/v1/search/autocomplete`) whic
 
 ### DetailPanel (`components/detail-panel/detail-panel.tsx`) — INACTIVE
 
-**Status:** Component exists but is no longer used in module pages. Deferred to V5 (AI Research Mode) where it will become the Recipient Profile Panel.
+**Status:** Component exists but is no longer used in module pages. Deferred to V6 (AI Research) where it will become the Recipient Profile Panel.
 
 **Previous usage:** Opened when user clicked recipient name. Now clicking recipient name expands the row instead (2026-02-07).
 
-**V5 plan:** Rebuild as slide-out panel with full recipient context for AI Research Mode. See `02-requirements/backlog.md`.
+**V6 plan:** Rebuild as slide-out panel with full recipient context for AI Research Mode. See `02-requirements/backlog.md`.
 
 ### CrossModuleResults (`components/cross-module-results/cross-module-results.tsx`)
 
@@ -941,7 +941,7 @@ All frontend API calls are proxied through Next.js BFF routes:
 /instrumenten?q=prorail&jaar=2024&min_bedrag=1000000
 ```
 
-**Not in URL (V1.0):**
+**Not in URL (V2.0):**
 - Expanded row state
 - Pagination position
 - Grouping selection
@@ -1017,7 +1017,7 @@ npm run build
 - [ ] Clear button works
 - [ ] Click outside closes dropdown
 
-### DetailPanel — DEFERRED TO V5
+### DetailPanel — DEFERRED TO V6
 > Component exists but is inactive. Testing checklist will be added when rebuilt for AI Research Mode.
 
 ### CrossModuleResults
@@ -1068,7 +1068,7 @@ npm run build
 | 2026-02-05 | Added MobileBanner component (UX-003) |
 | 2026-02-06 | Added UX-010 Google search link in DataTable |
 | 2026-02-07 | Added UX-012 data availability indicators, updated RecipientRow/ApiRecipientRow interfaces, testing checklist |
-| 2026-02-07 | DetailPanel marked inactive (deferred to V5), click ontvanger expands row, added constants.ts/api-config.ts to project structure |
+| 2026-02-07 | DetailPanel marked inactive (deferred to V6), click ontvanger expands row, added constants.ts/api-config.ts to project structure |
 | 2026-02-07 | Added UX-013 staffelbedrag explanation popover on Inkoop/Publiek footer |
 | 2026-02-07 | Anomaly threshold 10%→50%, instant year tooltips, integraal module navigation |
 | 2026-02-08 | Added UX-019 table info popover, UX-020 filter auto-expand, UX-021 cascading bidirectional filters |

@@ -1,18 +1,19 @@
-# Search Requirements (V1)
+# Search Requirements (V2)
 
 **Project:** Rijksuitgaven.nl SaaS Platform
-**Version:** V1 - Search Platform
+**Version:** V2 - Search Platform
 **Date:** 2026-01-23 (Updated: 2026-02-08)
 **Status:** In Development
 
-> **Scope:** This document covers V1 Search Platform requirements.
+> **Scope:** This document covers V2 Search Platform requirements.
 > See `docs/VERSIONING.md` for full version roadmap.
 >
 > **Version context:**
-> - V1 = Search Platform (this document)
-> - V2 = Rijksuitgaven Reporter (daily news + spending email)
-> - V3 = Theme Discovery (IBOS domains, landing pages)
-> - V5 = AI Research Mode (see `research-mode-vision.md`)
+> - V1 = WordPress (legacy)
+> - V2 = Search Platform (this document)
+> - V3 = Rijksuitgaven Reporter (daily news + spending email)
+> - V4 = Theme Discovery (IBOS domains, landing pages)
+> - V6 = AI Research Mode (see `research-mode-vision.md`)
 
 ---
 
@@ -37,7 +38,7 @@
 - **Search Engine:** MySQL FULLTEXT (limited capabilities)
 - **Interface:** Basic keyword search + advanced filters per module
 
-### Target State (V1.0)
+### Target State (V2.0)
 
 **Fast, Intelligent Search Bar:**
 - **Speed:** <100ms (instant, Google-like)
@@ -50,7 +51,7 @@
   - Cross-module search with module filtering
 - **User Experience:** Intuitive, no syntax required
 
-> **Future Version Context:** This search bar architecture is designed to support future Research Mode (AI conversational interface). The Typesense engine and API layer will integrate with AI in V2.0. See: `research-mode-vision.md`
+> **Future Version Context:** This search bar architecture is designed to support future Research Mode (AI conversational interface). The Typesense engine and API layer will integrate with AI in V3.0. See: `research-mode-vision.md`
 
 ### Key Principle
 Search should be as intuitive as Google - requiring zero technical knowledge from users.
@@ -68,9 +69,9 @@ Enable professionals (journalists, researchers, policymakers, financial analysts
 - Discover insights through powerful filtering
 - Export data for further analysis
 
-### Success Metrics (V1.0)
+### Success Metrics (V2.0)
 
-| Metric | Current | Target V1.0 |
+| Metric | Current | Target V2.0 |
 |--------|---------|-------------|
 | Search response time | 5s | <100ms |
 | User searches/day | Unknown | 1000+ |
@@ -181,19 +182,19 @@ User types: "prorai" (typo)
 
 **Priority:** P0 (Critical for keyword/phrase), P1 (High for boolean/wildcards)
 
-**V1.0 Implementation Scope (2026-02-12):**
+**V2.0 Implementation Scope (2026-02-12):**
 
-| Type | V1.0 | Syntax | Behavior |
+| Type | V2.0 | Syntax | Behavior |
 |------|------|--------|----------|
 | Multi-word AND | ✅ | `rode kruis` | All words must be present (default) |
 | Exact phrase | ✅ | `"rode kruis"` | Consecutive words in order |
 | Prefix/wildcard | ✅ | `prorail*` | Word starts with prefix |
 | Single keyword | ✅ | `prorail` | Word boundary match (existing) |
-| Fuzzy/typo-tolerant | V1.1 | — | Typesense `num_typos` |
-| Field-specific | V2+ | `leverancier:prorail` | Search within specific field |
-| Boolean operators | V2+ | `prorail AND NOT ns` | Explicit boolean logic |
-| Filters in query | V2+ | `prorail year:2024` | Query-embedded filters |
-| Numeric ranges | V2+ | `amount:1000000-5000000` | Query-embedded ranges |
+| Fuzzy/typo-tolerant | V2.1 | — | Typesense `num_typos` |
+| Field-specific | V3+ | `leverancier:prorail` | Search within specific field |
+| Boolean operators | V3+ | `prorail AND NOT ns` | Explicit boolean logic |
+| Filters in query | V3+ | `prorail year:2024` | Query-embedded filters |
+| Numeric ranges | V3+ | `amount:1000000-5000000` | Query-embedded ranges |
 
 **Edge Case Handling (parser sanitization):**
 
@@ -206,7 +207,7 @@ User types: "prorai" (typo)
 | `pro rail*` (asterisk with spaces) | AND search: `pro rail` (prefix only for single words) |
 | `*prorail` (leading asterisk) | AND search: `prorail` (strip leading `*`) |
 
-**"Gevonden in" Column Behavior (V1.0 known limitation):**
+**"Gevonden in" Column Behavior (V2.0 known limitation):**
 
 The "Gevonden in" column identifies which non-primary field matched the search. With multi-word AND, this uses a heuristic: the first word's pattern determines the matched field. This is acceptable because:
 - "Gevonden in" is a UI hint, not a data filter — no results are lost
@@ -215,7 +216,7 @@ The "Gevonden in" column identifies which non-primary field matched the search. 
 
 The same heuristic applies to relevance scoring (3-tier ranking). Results still appear correctly, ordering may be slightly suboptimal for cross-field matches.
 
-**Deferred to V1.1:** Accurate multi-field match reporting (check all words, report all matched fields). See backlog: "Search: Accurate Multi-Field Match Reporting".
+**Deferred to V2.1:** Accurate multi-field match reporting (check all words, report all matched fields). See backlog: "Search: Accurate Multi-Field Match Reporting".
 
 ---
 
@@ -413,7 +414,7 @@ User on "Financiële Instrumenten" page searches "prorail"
 
 > **Note (2026-02-08):** The publiek source table has a `provincie` column, not `regio`. UI label shows "Provincie (RVO)" to match the actual data column.
 
-> **Future Version Context:** This module has GIS/location data (POINT geometry field). Geographic search will be enabled in V2.0. See: `research-mode-vision.md`
+> **Future Version Context:** This module has GIS/location data (POINT geometry field). Geographic search will be enabled in V3.0. See: `research-mode-vision.md`
 
 ---
 
@@ -474,7 +475,7 @@ When expanded:
 
 **Requirement:** Fast, responsive search experience
 
-| Query Type | Current | Target V1.0 |
+| Query Type | Current | Target V2.0 |
 |------------|---------|-------------|
 | **Simple keyword** | 5s | <100ms |
 | **Multi-word phrase** | 5s | <150ms |
@@ -510,11 +511,11 @@ When expanded:
 
 ---
 
-### PERF-003: Concurrent User Capacity (V1.0)
+### PERF-003: Concurrent User Capacity (V2.0)
 
 **Requirement:** Support multiple users simultaneously
 
-**V1.0 Targets:**
+**V2.0 Targets:**
 - 100 concurrent users (search bar)
 - 1,000 searches/minute
 - 10,000 searches/hour
@@ -604,7 +605,7 @@ When expanded:
 
 ---
 
-### UX-002b: Dutch False Cognate Filtering (V1.1)
+### UX-002b: Dutch False Cognate Filtering (V2.1)
 
 **Requirement:** Exclude semantically unrelated results that share a prefix with the search term
 
@@ -623,15 +624,15 @@ When expanded:
 - Applied to all 6 search locations (aggregated views, source tables, integraal, autocomplete)
 - Standard ILIKE for non "-ie" searches (unchanged behavior)
 
-**Priority:** P1 (V1.1)
+**Priority:** P1 (V2.1)
 
 **Status:** ✅ Implemented 2026-01-29
 
-**V1.1 Complete:**
+**V2.1 Complete:**
 - Dutch word rules (-ie/-iek exclusion)
 - Option C ranking (exact match first, then by totaal)
 
-**V1.1 Roadmap:**
+**V2.1 Roadmap:**
 - Embeddings with Cohere embed-multilingual-v3 (~€1/month)
 
 **Design Doc:** `docs/plans/2026-01-29-semantic-search-design.md`
@@ -959,7 +960,7 @@ Search "covid" shows:
 **Rationale:**
 - Essential cookies only = simple disclosure (no consent mechanism needed under GDPR)
 - Self-hosted fonts (no external Google Fonts requests)
-- No analytics in V1.0
+- No analytics in V2.0
 
 **Related:** Privacy policy page (`/privacybeleid`)
 
@@ -967,7 +968,7 @@ Search "covid" shows:
 
 **Status:** ✅ Implemented 2026-01-27
 
-> **Note:** When analytics is added (V1.1+), replace simple banner with proper consent mechanism.
+> **Note:** When analytics is added (V2.1+), replace simple banner with proper consent mechanism.
 
 ---
 
@@ -1045,13 +1046,13 @@ Search "covid" shows:
 - Does NOT block access to the app
 
 **Rationale:**
-- V1.0 is desktop-first for data work
+- V2.0 is desktop-first for data work
 - Mobile banner is lighter than full responsive audit
 - Users can still continue if they choose
 
 **Related:** UX-003 (Mobile Responsiveness - broader scope, deferred)
 
-**Priority:** P0 (V1.0 launch requirement)
+**Priority:** P0 (V2.0 launch requirement)
 
 **Status:** ✅ Implemented 2026-02-05
 
@@ -1190,7 +1191,7 @@ Search "covid" shows:
 
 ---
 
-### UX-024: Type-Ahead with Recent Searches (V1.1)
+### UX-024: Type-Ahead with Recent Searches (V2.1)
 
 **Requirement:** Show recent search history instantly when the search bar receives focus, and reduce perceived latency through client-side response caching and reduced debounce.
 
@@ -1237,9 +1238,9 @@ Search "covid" shows:
 
 **Estimated effort:** 2-3 hours
 
-**Priority:** P2 (V1.1 — improvement to existing search UX)
+**Priority:** P2 (V2.1 — improvement to existing search UX)
 
-**Status:** ⏳ Planned for V1.1
+**Status:** ⏳ Planned for V2.1
 
 ---
 
@@ -1294,7 +1295,7 @@ Search "covid" shows:
 - Swap Resend email for GitHub Issue creation via API
 - Issue label: `user-feedback`
 - Screenshot attached as image
-- Integrates with GitHub Projects board (V1.2 backlog item)
+- Integrates with GitHub Projects board (V2.2 backlog item)
 
 **Technical Implementation:**
 - Frontend: `components/feedback/feedback-button.tsx` — client component with marking overlay
@@ -1302,7 +1303,7 @@ Search "covid" shows:
 - Dependencies: `html2canvas` (element capture), `resend` (email delivery)
 - Element highlighting via `document.elementFromPoint()` + capture-phase event listeners
 
-**Priority:** P1 (V1.0 — required before beta launch)
+**Priority:** P1 (V2.0 — required before beta launch)
 
 **Status:** ✅ Implemented 2026-02-11
 
@@ -1405,7 +1406,7 @@ Search "covid" shows:
 - On delete: remove from Resend Audience
 - Graceful degradation: sync failure logged, not user-facing
 
-**Priority:** P1 (V1.0 — required for email campaigns, replaces WordPress/Mailster)
+**Priority:** P1 (V2.0 — required for email campaigns, replaces WordPress/Mailster)
 
 **Status:** ⏳ In Development
 
@@ -1451,7 +1452,7 @@ Search "covid" shows:
 - Inkoop/Publiek (COA) amounts are average staffelbedragen (midpoint estimates)
 - Inkoop ministry names normalized (I&W/I & W/I & M → canonical)
 
-**Priority:** P1 (V1.0 — homepage hero)
+**Priority:** P1 (V2.0 — homepage hero)
 
 **Status:** ⏳ In Development
 
@@ -1482,7 +1483,7 @@ Search "covid" shows:
 - Three social share icons (top-right): LinkedIn, X, Bluesky
 - Noise texture + grid overlay on card background
 
-**Priority:** P1 (V1.0 — homepage section)
+**Priority:** P1 (V2.0 — homepage section)
 
 **Status:** ⏳ In Development
 
@@ -1517,7 +1518,7 @@ Search "covid" shows:
 
 **Design Document:** `docs/plans/2026-02-14-usage-statistics-design.md`
 
-**Priority:** P1 (V1.0 — pre-launch)
+**Priority:** P1 (V2.0 — pre-launch)
 
 **Status:** ✅ Implemented 2026-02-14
 
@@ -1539,7 +1540,7 @@ Search "covid" shows:
 - Separate tab makes error monitoring more visible and accessible
 - Consistent with Feedback having its own tab and badge
 
-**Priority:** P1 (V1.0 — pre-launch)
+**Priority:** P1 (V2.0 — pre-launch)
 
 **Status:** ✅ Implemented 2026-02-15
 
@@ -1568,7 +1569,7 @@ Search "covid" shows:
 - Committed actions reflect actual user intent
 - Three-layer model (Resultaat → Engagement → Geen resultaat) gives actionable insights
 
-**Priority:** P1 (V1.0 — pre-launch data quality)
+**Priority:** P1 (V2.0 — pre-launch data quality)
 
 **Status:** ✅ Implemented 2026-02-16
 
@@ -1616,7 +1617,7 @@ The current `data_availability` table has incorrect year ranges inherited from i
 - Transparency: users see exactly which entities have which years
 - Source links provide attribution to original government sources
 
-**Priority:** P2 (V1.0 — nice to have for launch, not blocking)
+**Priority:** P2 (V2.0 — nice to have for launch, not blocking)
 
 **Status:** ✅ Implemented 2026-02-18
 
@@ -1647,7 +1648,7 @@ The current `data_availability` table has incorrect year ranges inherited from i
 - Server-side tracking avoids third-party dependencies and consent requirements
 - Separated dashboard tab prevents anonymous event pollution of product usage metrics
 
-**Priority:** P1 (V1.0 — pre-launch conversion visibility)
+**Priority:** P1 (V2.0 — pre-launch conversion visibility)
 
 **Status:** ✅ Implemented 2026-02-19
 
@@ -1787,7 +1788,7 @@ The current `data_availability` table has incorrect year ranges inherited from i
 - Horizontal scroll for data tables
 - Fixed first column (Ontvanger) on horizontal scroll
 
-**V1.0 Mobile Message (NEW):**
+**V2.0 Mobile Message (NEW):**
 - Detect mobile viewport (< 768px)
 - Show friendly message: "Rijksuitgaven werkt het beste op een groter scherm"
 - Include option to continue anyway
@@ -1795,7 +1796,7 @@ The current `data_availability` table has incorrect year ranges inherited from i
 - Does NOT block access, just informs
 
 **Priority:** P1 (High) - Core mobile optimizations
-**Mobile Message:** P0 (V1.0 launch requirement)
+**Mobile Message:** P0 (V2.0 launch requirement)
 
 **Status:** ✅ Mobile Message Implemented 2026-02-05
 
@@ -1812,11 +1813,11 @@ The current `data_availability` table has incorrect year ranges inherited from i
 
 **Requirement:** Dutch-first, with internationalization framework
 
-**V1.0:**
+**V2.0:**
 - Dutch only (all UI, all content)
 - Code structured for i18n (but not translated)
 
-> **Future Version Context:** English UI will be added in V2.0 for international users and franchising potential. Framework prepared in V1.0.
+> **Future Version Context:** English UI will be added in V3.0 for international users and franchising potential. Framework prepared in V2.0.
 
 **Priority:** P2 (Medium - framework only)
 
@@ -1887,7 +1888,7 @@ The current `data_availability` table has incorrect year ranges inherited from i
 
 ### TECH-002: Database Architecture
 
-**V1.0 Architecture:**
+**V2.0 Architecture:**
 - Source data in Supabase (PostgreSQL)
 - Search index in Typesense
 - API layer (FastAPI) between frontend and data stores
@@ -2004,7 +2005,7 @@ The current `data_availability` table has incorrect year ranges inherited from i
 
 ## Acceptance Criteria
 
-### Search Bar (V1.0) - Must Have
+### Search Bar (V2.0) - Must Have
 
 - [x] Search bar visible on all pages (except account/support) ✅ 2026-01-26
 - [x] Autocomplete after 3 characters (<50ms) ✅ 2026-01-26 (<25ms achieved)
@@ -2018,21 +2019,21 @@ The current `data_availability` table has incorrect year ranges inherited from i
 
 **Performance Note (2026-02-09):** Target was <100ms. Initially achieved ~750ms via hybrid search (Typesense for discovery, PostgreSQL for data). Optimized to ~130-280ms via parallel query execution (`asyncio.gather`). Further optimized to ~100-150ms via Typesense data enrichment: integraal now uses Typesense hybrid search (key lookup → WHERE IN) instead of regex. All modules 20-40x faster than original 5-10s WordPress search.
 
-### Search Bar (V1.0) - Should Have
+### Search Bar (V2.0) - Should Have
 
 - [x] "Did you mean" suggestions for no results ✅ 2026-01-26 (fuzzy matches)
 - [ ] Recent search history (logged-in users) - Requires auth (Week 6)
 - [x] Keyboard shortcuts (/ to focus search) ✅ 2026-01-26
 - [x] Loading indicators (>200ms) ✅ 2026-01-26
 
-### Search Bar (V1.0) - Could Have
+### Search Bar (V2.0) - Could Have
 
 - [ ] Advanced search syntax builder (UI-based) - Deferred
 - [ ] Search analytics (track popular queries) - Deferred to backlog
 
 ---
 
-## V1.0 Scope Summary
+## V2.0 Scope Summary
 
 **Building:**
 - Global search bar with autocomplete
@@ -2042,17 +2043,17 @@ The current `data_availability` table has incorrect year ranges inherited from i
 - CSV export (500 row limit)
 - Column customization per module
 
-**Not Building (V2.0):**
+**Not Building (V3.0):**
 - Research Mode (AI conversational interface)
 - Natural language queries
 - Data visualizations (charts)
 - wetten.overheid.nl integration
 - Save/share queries
 
-> **Future Version Context:** Research Mode will add AI-powered conversational analysis. This V1.0 search bar provides the foundation for V2.0. See: `research-mode-vision.md`
+> **Future Version Context:** Research Mode will add AI-powered conversational analysis. This V2.0 search bar provides the foundation for V3.0. See: `research-mode-vision.md`
 
 ---
 
-**Document Status:** V1.0 Scope - Implementation In Progress
+**Document Status:** V2.0 Scope - Implementation In Progress
 **Last Updated:** 2026-02-09
 **Author:** Technical Project Manager (AI Assistant)

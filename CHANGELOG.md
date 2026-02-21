@@ -3,13 +3,13 @@
 Alle wijzigingen aan Rijksuitgaven.nl, chronologisch bijgehouden.
 
 **Versienummering:** `X.Y.Z`
-- **X.0** — Grote release met nieuwe kernfunctionaliteit (V1.0, V2.0)
-- **X.Y** — Nieuwe functie binnen een release (V1.1, V1.2)
-- **X.Y.Z** — Fixes en kleine verbeteringen (V1.1.1, V1.1.2)
+- **X.0** — Grote release met nieuwe kernfunctionaliteit (V2.0, V3.0)
+- **X.Y** — Nieuwe functie binnen een release (V2.1, V2.2)
+- **X.Y.Z** — Fixes en kleine verbeteringen (V2.1.1, V2.1.2)
 
 ---
 
-## V1.1.1 — 2026-02-21
+## V2.1.1 — 2026-02-21
 
 ### Zoeken verbeterd
 
@@ -19,7 +19,7 @@ Alle wijzigingen aan Rijksuitgaven.nl, chronologisch bijgehouden.
 
 ---
 
-## V1.1 — 2026-02-21
+## V2.1 — 2026-02-21
 
 ### Vergelijk-functie
 
@@ -29,7 +29,7 @@ Alle wijzigingen aan Rijksuitgaven.nl, chronologisch bijgehouden.
 
 ---
 
-## V1.0 Beta — 2026-02-21
+## V2.0 Beta — 2026-02-21
 
 ### Het Search Platform
 

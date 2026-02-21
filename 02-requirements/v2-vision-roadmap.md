@@ -1,4 +1,4 @@
-# V2.0 Vision & Roadmap
+# V3.0 Vision & Roadmap
 
 **Created:** 2026-01-20
 **Status:** Vision / Planning
@@ -32,9 +32,9 @@ Transform Rijksuitgaven from a search tool into the definitive platform for unde
 
 ---
 
-## The V2.0 Difference
+## The V3.0 Difference
 
-| V1.0 | V2.0 |
+| V2.0 | V3.0 |
 |------|------|
 | Search for recipients | Discover patterns |
 | View spending data | Understand spending context |
@@ -194,7 +194,7 @@ Transform Rijksuitgaven from a search tool into the definitive platform for unde
 ## Feature Roadmap
 
 ### Phase 1: Research Foundation
-*First 6 weeks of V2.0 development*
+*First 6 weeks of V3.0 development*
 
 | Feature | Priority | Effort |
 |---------|----------|--------|
@@ -224,7 +224,7 @@ Transform Rijksuitgaven from a search tool into the definitive platform for unde
 | Alternative Budget Builder (PR) | Low | Small |
 
 ### Phase 4: Collaboration & API
-*Future (V2.5+)*
+*Future (V3.5+)*
 
 | Feature | Priority | Effort |
 |---------|----------|--------|
@@ -242,7 +242,7 @@ Transform Rijksuitgaven from a search tool into the definitive platform for unde
 
 | Tier | Price | Target | Key Features |
 |------|-------|--------|--------------|
-| **Professional** | €150/mo | Individuals | V1.0 features |
+| **Professional** | €150/mo | Individuals | V2.0 features |
 | **Research** | €350/mo | Power users | + AI, trends, company profiles |
 | **Newsroom** | €800/mo | Media teams | + 5 seats, collaboration |
 | **Political** | €1,500/mo | Parties, large orgs | + unlimited seats, custom reports |
@@ -299,14 +299,14 @@ Transform Rijksuitgaven from a search tool into the definitive platform for unde
 
 ## Success Metrics
 
-### V2.0 Launch Goals
+### V3.0 Launch Goals
 
 | Metric | Target |
 |--------|--------|
 | Research tier conversions | 20% of Professional users upgrade |
 | New segment acquisition | 5 media organizations, 3 political parties |
 | Feature engagement | 60% of Research users use AI assistant weekly |
-| Revenue increase | 2x MRR within 6 months of V2.0 launch |
+| Revenue increase | 2x MRR within 6 months of V3.0 launch |
 
 ### User Value Indicators
 
@@ -332,12 +332,12 @@ Transform Rijksuitgaven from a search tool into the definitive platform for unde
 ## Timeline Overview
 
 ```
-V1.0 Launch ──────────────────────────────────────────────────────────────────>
-             |         V2.0 Phase 1        |    Phase 2    |    Phase 3    |
+V2.0 Launch ──────────────────────────────────────────────────────────────────>
+             |         V3.0 Phase 1        |    Phase 2    |    Phase 3    |
              |   Research + Trends + KvK   | Connections   | Network + PR  |
              |        (6 weeks)            |  (6 weeks)    |  (6 weeks)    |
              |                             |               |               |
-        V1.0 Done                     V2.0 Alpha      V2.0 Beta       V2.0 Launch
+        V2.0 Done                     V3.0 Alpha      V3.0 Beta       V3.0 Launch
 ```
 
 ---
@@ -498,10 +498,10 @@ The AI presents data and connections. Users draw conclusions.
 
 ## Related Documents
 
-- [Research Mode Vision (V2.0)](./research-mode-vision.md) - Detailed V2.0 specifications
-- [ADR-008 to ADR-012: V2.0 Research Mode Decisions](../08-decisions/)
+- [Research Mode Vision (V6.0)](./research-mode-vision.md) - Detailed V6.0 specifications
+- [ADR-008 to ADR-012: V3.0 Reporter Decisions](../08-decisions/)
 - [IBOS Classification](./ibos-classification.md)
-- [Search Requirements (V1.0)](./search-requirements.md)
+- [Search Requirements (V2.0)](./search-requirements.md)
 
 ---
 

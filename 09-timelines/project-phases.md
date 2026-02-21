@@ -1,6 +1,6 @@
 # Project Phases
 
-**Project:** Rijksuitgaven.nl V1.0 SaaS Migration
+**Project:** Rijksuitgaven.nl V2.0 SaaS Migration
 **Created:** 2026-01-20
 **Last Updated:** 2026-02-11
 
@@ -218,7 +218,7 @@
 **Duration:** Week 9 (2026-02-26 to 2026-03-04)
 **Status:** PLANNED
 
-**Objective:** Launch V1.0 to production and migrate users
+**Objective:** Launch V2.0 to production and migrate users
 
 **Key Activities:**
 1. Final testing and QA
@@ -270,7 +270,7 @@
 - [ ] Monitor stability (Days 1-7)
 - [ ] Collect user feedback (Days 1-14)
 - [ ] WordPress shutdown (Week 11)
-- [ ] V1.1 planning (Week 10)
+- [ ] V2.1 planning (Week 10)
 
 **Expected Launch Date:** 2026-03-04 (Week 9, Day 7)
 
@@ -342,7 +342,7 @@ Migr.     Platf.     +Memb.     Launch
 - [ ] Lighthouse score >90
 
 ### Phase 5 🔜
-- [ ] V1.0 live on rijksuitgaven.nl
+- [ ] V2.0 live on rijksuitgaven.nl
 - [ ] All 50 users notified
 - [ ] No critical bugs
 - [ ] Performance targets met

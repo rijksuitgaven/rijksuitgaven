@@ -1,7 +1,7 @@
 # IBOS Policy Domains
 
 **Project:** Rijksuitgaven.nl
-**Version:** V3 - Theme Discovery
+**Version:** V4 - Theme Discovery
 **Status:** Stub - To be populated
 
 ---
@@ -42,7 +42,7 @@ These codes are used in:
 - `ibos_domains` database table
 - Field mapping lookups
 - AI classification prompts
-- Theme landing pages (V3)
+- Theme landing pages (V4)
 
 ---
 

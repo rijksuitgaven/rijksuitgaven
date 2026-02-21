@@ -13,32 +13,32 @@ Non-functional requirements define system qualities and constraints.
   - **Priority:** Critical
   - **Measurement:** Browser performance monitoring (target: Lighthouse score >90)
   - **Rationale:** Fast page loads are essential for professional users analyzing data
-  - **Actual (V1.0):** <1s achieved on module pages
+  - **Actual (V2.0):** <1s achieved on module pages
 
 - **NFR-PERF-002:** API response time
   - **Requirement:** Search API endpoints must respond in < 100ms (P50), module data < 500ms (P50)
   - **Priority:** Critical
   - **Measurement:** Backend timing logs, Railway monitoring
   - **Rationale:** Instant search is a core product differentiator vs. WordPress (5s)
-  - **Actual (V1.0):**
+  - **Actual (V2.0):**
     - Autocomplete: <25ms (target was <50ms)
     - Module search: 100-150ms (target was <100ms)
     - Cross-module (integraal): 100-150ms after Typesense enrichment
 
 ### Throughput
 - **NFR-PERF-003:** Concurrent users
-  - **Requirement:** System must support 100 concurrent users (V1.0), 500+ (V1.2)
+  - **Requirement:** System must support 100 concurrent users (V2.0), 500+ (V2.2)
   - **Priority:** High
   - **Measurement:** Load testing on Railway
   - **Rationale:** Current user base is ~50, but must support growth to 500+
   - **Implementation:** Railway auto-scaling, asyncpg connection pool (10 connections)
 
 - **NFR-PERF-004:** Transaction volume
-  - **Requirement:** System must process 1,000 searches/minute (V1.0)
+  - **Requirement:** System must process 1,000 searches/minute (V2.0)
   - **Priority:** High
   - **Measurement:** Backend request logging
   - **Rationale:** Peak usage during research deadlines, journalist queries
-  - **Actual (V1.0):** Not yet measured in production (beta phase)
+  - **Actual (V2.0):** Not yet measured in production (beta phase)
 
 ## Scalability Requirements
 
@@ -92,8 +92,8 @@ Non-functional requirements define system qualities and constraints.
   - **Status:** ✅ Implemented 2026-02-10
 
 - **NFR-SEC-002:** Multi-factor authentication
-  - **Requirement:** Not required for V1.0 (50 users). Consider for V1.1+ if enterprise customers request.
-  - **Priority:** Low (V1.1+)
+  - **Requirement:** Not required for V2.0 (50 users). Consider for V2.1+ if enterprise customers request.
+  - **Priority:** Low (V2.1+)
   - **Rationale:** Small trusted user base, low risk profile
 
 ### Authorization
@@ -123,8 +123,8 @@ Non-functional requirements define system qualities and constraints.
 
 ### Audit & Compliance
 - **NFR-SEC-007:** Audit logging
-  - **Requirement:** Supabase Auth logs (last_sign_in_at). Server-side event logging deferred to V1.2.
-  - **Priority:** Medium (V1.2)
+  - **Requirement:** Supabase Auth logs (last_sign_in_at). Server-side event logging deferred to V2.2.
+  - **Priority:** Medium (V2.2)
   - **Rationale:** Basic auth audit via Supabase sufficient for beta
   - **Status:** Partial (auth events only)
 
@@ -139,7 +139,7 @@ Non-functional requirements define system qualities and constraints.
     - **Encryption at rest:** Supabase/AWS AES-256 encryption for all database storage
     - **Access control:** Row Level Security (RLS) policies, service role key for admin-only operations
     - **User rights:** Privacy policy at /privacybeleid documents all AVG rights (inzage, rectificatie, verwijdering, beperking, bezwaar, overdraagbaarheid)
-    - **Right to deletion:** Manual deletion via Supabase dashboard (self-service deferred to V1.1+)
+    - **Right to deletion:** Manual deletion via Supabase dashboard (self-service deferred to V2.1+)
     - **Data portability:** CSV/Excel export available (max 500 rows per export)
     - **Privacy policy:** Comprehensive Dutch-language policy at /privacybeleid, updated 2026-02-12
     - **Cookie policy:** Essential cookies only (sb-access-token, sb-refresh-token), no consent required, documented in privacy policy
@@ -153,7 +153,7 @@ Non-functional requirements define system qualities and constraints.
 - **NFR-SEC-009:** BFF shared secret
   - **Requirement:** `X-BFF-Secret` header required on all BFF→backend requests
   - **Priority:** Critical
-  - **Rationale:** Backend is publicly accessible without private networking (V1.1 deferred)
+  - **Rationale:** Backend is publicly accessible without private networking (V2.1 deferred)
   - **Status:** ✅ Implemented 2026-02-10
 
 - **NFR-SEC-010:** Input validation and sanitization
@@ -191,8 +191,8 @@ Non-functional requirements define system qualities and constraints.
 ## Internationalization & Localization Requirements
 
 > **Version Scope:**
-> - **V1.0:** i18n framework in place, Dutch-only UI (no translations needed yet)
-> - **V2.0:** English UI option added
+> - **V2.0:** i18n framework in place, Dutch-only UI (no translations needed yet)
+> - **V3.0:** English UI option added
 > - **Future:** Additional languages for franchise expansion
 
 ### Language Support
@@ -200,25 +200,25 @@ Non-functional requirements define system qualities and constraints.
 - **NFR-I18N-001:** Multi-language architecture
   - **Requirement:** System must be built with internationalization (i18n) from the ground up with no hard-coded strings in the codebase
   - **Priority:** Critical
-  - **Version:** V1.0 (framework), V2.0+ (translations)
+  - **Version:** V2.0 (framework), V3.0+ (translations)
   - **Rationale:** Platform is designed for franchise model to multiple countries. Hard-coded strings would require code changes for each new market, creating technical debt and scaling challenges.
 
 - **NFR-I18N-002:** Source language
   - **Requirement:** English must be used as the source language for all UI strings, error messages, and system text in the codebase
   - **Priority:** High
-  - **Version:** V1.0
+  - **Version:** V2.0
   - **Rationale:** English as source language is industry best practice for international SaaS platforms, facilitating easier expansion to new markets and better developer experience with international teams.
 
 - **NFR-I18N-003:** Dutch as primary translation
   - **Requirement:** Dutch (NL) must be the first complete translation and default language for the Netherlands market
   - **Priority:** Critical
-  - **Version:** V1.0
+  - **Version:** V2.0
   - **Rationale:** Current customer base is Dutch-speaking, requiring seamless migration experience with Dutch as the primary user-facing language.
 
 - **NFR-I18N-004:** Translation management
   - **Requirement:** All translatable strings must be externalized in translation files (e.g., JSON, YAML, or dedicated i18n service) with unique keys
   - **Priority:** Critical
-  - **Version:** V1.0 (structure), V2.0 (multi-language files)
+  - **Version:** V2.0 (structure), V3.0 (multi-language files)
   - **Rationale:** Enables non-developers to manage translations and supports continuous localization without code deployments.
 
 - **NFR-I18N-005:** Language detection and selection
@@ -291,19 +291,19 @@ Non-functional requirements define system qualities and constraints.
 - **NFR-I18N-017:** Easy language addition
   - **Requirement:** Adding a new language should require only translation files, not code changes
   - **Priority:** Critical
-  - **Version:** V1.0 (architecture ready)
+  - **Version:** V2.0 (architecture ready)
   - **Rationale:** Reduces time-to-market for new countries and enables rapid international expansion.
 
 - **NFR-I18N-018:** Initial language support
-  - **Requirement:** Launch V1.0 with Dutch (NL) fully implemented. Add English UI option in V2.0.
+  - **Requirement:** Launch V2.0 with Dutch (NL) fully implemented. Add English UI option in V3.0.
   - **Priority:** Critical
-  - **Version:** V1.0 (Dutch only), V2.0 (English added)
+  - **Version:** V2.0 (Dutch only), V3.0 (English added)
   - **Rationale:** Validates i18n architecture while serving current market needs.
 
 - **NFR-I18N-019:** Future language roadmap
   - **Requirement:** Architecture should accommodate 10+ languages without performance degradation
   - **Priority:** Medium
-  - **Version:** V2.0+ (franchise expansion)
+  - **Version:** V3.0+ (franchise expansion)
   - **Rationale:** Supports long-term franchise expansion to major European markets and beyond.
 
 ### Performance Considerations

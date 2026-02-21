@@ -1,6 +1,6 @@
 # Project Milestones
 
-**Project:** Rijksuitgaven.nl V1.0 SaaS Migration
+**Project:** Rijksuitgaven.nl V2.0 SaaS Migration
 **Created:** 2026-01-20
 **Last Updated:** 2026-02-11
 
