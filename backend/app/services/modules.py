@@ -240,14 +240,16 @@ def build_search_condition(field: str, param_idx: int, search: str) -> tuple[str
     Args:
         field: The column name to search
         param_idx: The parameter index (e.g., 1 for $1)
-        search: The search term from user
+        search: The search term from user (raw input — quotes/wildcards stripped internally)
 
     Returns:
         Tuple of (sql_condition, search_pattern)
         - sql_condition: e.g., "field ~* $1"
         - search_pattern: e.g., "\\ypolitie\\y"
     """
-    search_lower = search.lower().strip()
+    # Strip quotes and wildcards before building SQL pattern
+    parsed = parse_search_query(search)
+    search_lower = parsed.raw.lower().strip()
 
     # Escape regex special characters (e.g., ".", "+", "*")
     escaped = re.escape(search_lower)
@@ -1074,14 +1076,17 @@ async def _get_from_aggregated_view(
         # 1. Exact match on name → score 1
         # 2. Name contains search term (word boundary) → score 2
         # 3. Match only in other fields (Regeling, etc.) → score 3
-        search_pattern = rf"\y{re.escape(search.lower())}\y"
+        # Parse search to strip quotes/wildcards for clean SQL patterns
+        parsed_rel = parse_search_query(search)
+        clean_search = parsed_rel.raw
+        search_pattern = rf"\y{re.escape(clean_search.lower())}\y"
         relevance_select = f""",
             CASE
                 WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
                 WHEN {primary} ~* ${param_idx + 1} THEN 2
                 ELSE 3
             END AS relevance_score"""
-        params.append(search)
+        params.append(clean_search)
         params.append(search_pattern)
         param_idx += 2
         sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
@@ -1385,14 +1390,17 @@ async def _get_from_source_table(
         # 1. Exact match on name → score 1
         # 2. Name contains search term (word boundary) → score 2
         # 3. Match only in other fields (Regeling, etc.) → score 3
-        search_pattern = rf"\y{re.escape(search.lower())}\y"
+        # Parse search to strip quotes/wildcards for clean SQL patterns
+        parsed_rel = parse_search_query(search)
+        clean_search = parsed_rel.raw
+        search_pattern = rf"\y{re.escape(clean_search.lower())}\y"
         relevance_select = f""",
             CASE
                 WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
                 WHEN {primary} ~* ${param_idx + 1} THEN 2
                 ELSE 3
             END AS relevance_score"""
-        params.append(search)
+        params.append(clean_search)
         params.append(search_pattern)
         param_idx += 2
         sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
@@ -1786,14 +1794,17 @@ async def get_integraal_data(
         # 1. Exact match on name → score 1
         # 2. Name contains search term (word boundary) → score 2
         # 3. Match only in other fields → score 3
-        search_pattern = rf"\y{re.escape(search.lower())}\y"
+        # Parse search to strip quotes/wildcards for clean SQL patterns
+        parsed_rel = parse_search_query(search)
+        clean_search = parsed_rel.raw
+        search_pattern = rf"\y{re.escape(clean_search.lower())}\y"
         relevance_select = f""",
             CASE
                 WHEN UPPER(ontvanger) = UPPER(${param_idx}) THEN 1
                 WHEN ontvanger ~* ${param_idx + 1} THEN 2
                 ELSE 3
             END AS relevance_score"""
-        params.append(search)
+        params.append(clean_search)
         params.append(search_pattern)
         param_idx += 2
         sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
