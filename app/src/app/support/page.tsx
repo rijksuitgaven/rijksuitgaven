@@ -46,6 +46,26 @@ export default function SupportPage() {
                   De resultaten worden direct getoond in de tabel.
                 </p>
 
+                <h3 className="font-semibold text-[var(--navy-dark)] pt-2">Slim zoeken</h3>
+                <p>
+                  De zoekfunctie ondersteunt drie manieren van zoeken:
+                </p>
+                <ul className="list-disc pl-6 space-y-2 mt-2">
+                  <li>
+                    <strong>Meerdere woorden:</strong> Typ <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm">rode kruis</code> en
+                    u vindt alle ontvangers waarin beide woorden voorkomen — ongeacht de volgorde.
+                  </li>
+                  <li>
+                    <strong>Exacte woordgroep:</strong> Zet aanhalingstekens om woorden die exact naast elkaar moeten
+                    staan: <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&quot;rode kruis&quot;</code>.
+                  </li>
+                  <li>
+                    <strong>Begint met:</strong> Gebruik een sterretje om alles te vinden dat begint met een
+                    bepaald woord: <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prorail*</code> vindt
+                    ProRail B.V., Prorail Holding, enzovoort.
+                  </li>
+                </ul>
+
                 <h3 className="font-semibold text-[var(--navy-dark)] pt-2">Geconsolideerde weergave</h3>
                 <p>
                   De tabel toont per ontvanger het <strong>totaalbedrag per jaar</strong>.

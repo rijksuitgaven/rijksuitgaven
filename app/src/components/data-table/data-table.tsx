@@ -893,7 +893,7 @@ export function DataTable({
                 <div className="px-4 pt-4 pb-4 space-y-3">
                   <div className="flex gap-3">
                     <Search className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
-                    <p className="text-sm text-white/80">Doorzoekt ook regelingen, artikelen en categorieën. De kolom &ldquo;Ook in&rdquo; toont in welk veld de zoekterm ook voorkomt.</p>
+                    <p className="text-sm text-white/80">Zoek op meerdere woorden, gebruik <strong>&ldquo;aanhalingstekens&rdquo;</strong> voor een exacte woordgroep, of een <strong>sterretje*</strong> voor alles dat begint met&hellip; De kolom &ldquo;Ook in&rdquo; toont waar de zoekterm ook voorkomt.</p>
                   </div>
                   <div className="flex gap-3">
                     <ChevronRight className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
