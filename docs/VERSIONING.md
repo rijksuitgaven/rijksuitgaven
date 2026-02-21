@@ -11,11 +11,15 @@
 
 | Format | Meaning | Example |
 |--------|---------|---------|
-| **X.0** | Major release - new capability, new use cases | 2.0, 3.0, 4.0 |
-| **X.Y** | Minor release - improvements and smaller additions within major | 2.1, 2.2, 3.1 |
-| **X.Y.Z** | Patch release - bug fixes | 2.0.1, 2.1.2 |
+| **X.0** | Major release - new capability, new use cases | V2.0, V3.0, V4.0 |
+| **X.Y** | Minor release - improvements and smaller additions within major | V2.1, V2.2, V3.1 |
+| **X.Y.Z** | Patch release - bug fixes | V2.0.1, V2.1.2 |
+| **AX.Y** | Admin/internal release - /team pages, admin tooling | A1.0, A1.1, A2.0 |
 
-**Rule:** If it enables a NEW use case or serves a NEW audience, it's a major release.
+**Rules:**
+- If it enables a NEW use case or serves a NEW audience, it's a major release.
+- If it only affects `/team/*` pages or admin tooling, it goes in the **A-track** (not V-track).
+- The V-track is end-user facing. The A-track is internal/admin facing.
 
 ---
 
@@ -97,30 +101,60 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 - Audience-personalized landing variants (`?ref=journalist`, `?ref=gemeente`)
 - Logo asset optimization (compact variant, SVG)
 
-### V2.5 - E-mail & CRM
-
-- Campaign bounce auto-suppress (auto-block after N hard bounces)
-- Campaign complaint auto-unsubscribe (GDPR)
-- Campaign event retention cleanup (1-year rolling)
-- Row selector for bulk actions (admin `/team/leden`)
-
-### V2.6 - Data & Integraal
+### V2.5 - Data & Integraal
 
 - Integraal cross-module data completeness (regelingen in integraal view)
 - Integraal view redesign (brainstorm — module-specific columns)
 - Data provenance / freshness indicator ("Data bijgewerkt: [date]")
 
-### V2.7 - Polish & Toegankelijkheid
+### V2.6 - Polish & Toegankelijkheid
 
 - Accessibility: colorblind anomaly indicator (pattern/dot overlay)
 - xlsx package replacement (ExcelJS — CVE cleanup)
 - UX refinements from beta feedback
 - GitHub Projects visual dashboard (stakeholder visibility)
 
-### V2.8 - Externe Koppelingen
+### V2.7 - Externe Koppelingen
 
 - AI Integration: MCP Server + OpenAI GPT (teaser API, lead generation)
 - Full URL state restoration (expanded rows, pagination, all filters)
+
+---
+
+## Admin Track (A-series)
+
+Internal admin tooling at `/team/*`. Separate release cadence from the end-user V-track.
+
+**Audience:** Platform admin (founder)
+
+### A1.0 - Beheer MVP (Current)
+
+**Status:** ✅ Live
+
+- Member management (`/team/leden`) — add, invite, deactivate, role assignment
+- Feedback inbox (`/team/feedback`) — status workflow, admin notes
+- Usage statistics (`/team/statistieken`) — pulse, insights, user activity, error tracking
+- Contact management (`/team/contacten`) — prospect tracking, Resend audience sync
+- Email campaigns via Resend Broadcasts
+
+### A1.1 - Bulk & CRM
+
+- Row selector for bulk actions (`/team/leden`)
+- Contact-to-subscriber conversion flow (`/team/contacten`)
+- Campaign bounce auto-suppress (auto-block after N hard bounces)
+- Campaign complaint auto-unsubscribe (GDPR)
+- Campaign event retention cleanup (1-year rolling)
+
+### A1.2 - Inzichten
+
+- Enhanced statistieken dashboard (deeper search funnel, retention metrics)
+- Search success/failure analysis improvements
+
+### A2.0 - Subscription Management
+
+- Self-service plan management (upgrade/downgrade)
+- Stripe integration for automated billing
+- Automated renewal notifications
 
 ---
 
@@ -457,7 +491,9 @@ V1 WordPress (legacy) ───────────────────�
 
 V2.0 Search ─────────────────────────────────► CURRENT
   │
-  ├─► V2.1 Vergelijk → V2.2 Zoeken → V2.3-V2.8 (improvements)
+  ├─► V2.1 Vergelijk → V2.2 Zoeken → V2.3-V2.7 (improvements)
+  │
+  ├─► A1.0 Beheer MVP ─► A1.1 Bulk & CRM ─► A1.2 Inzichten ─► A2.0 Subscriptions
   │
   ├─► V3.0 Rijksuitgaven Reporter ◄─────────── NEXT
   │     │
@@ -490,6 +526,8 @@ V10.0 European Platform
 
 ## Current Roadmap
 
+**End-User (V-track):**
+
 | Version | Status | Timeline |
 |---------|--------|----------|
 | V1 | ✅ Legacy (WordPress) | Superseded by V2 |
@@ -498,10 +536,9 @@ V10.0 European Platform
 | V2.2 | 📋 Zoeken | Post-launch |
 | V2.3 | 📋 Performance | Post-launch |
 | V2.4 | 📋 Homepage & Marketing | Post-launch |
-| V2.5 | 📋 E-mail & CRM | Post-launch |
-| V2.6 | 📋 Data & Integraal | Post-launch |
-| V2.7 | 📋 Polish & Toegankelijkheid | Post-launch |
-| V2.8 | 📋 Externe Koppelingen | Post-launch |
+| V2.5 | 📋 Data & Integraal | Post-launch |
+| V2.6 | 📋 Polish & Toegankelijkheid | Post-launch |
+| V2.7 | 📋 Externe Koppelingen | Post-launch |
 | V3.0 | 📋 Planned | Post V2.0 launch |
 | V4.0 | 📋 Planned | Q1-Q2 2026 |
 | V5.0 | 📋 Planned | Q2 2026 |
@@ -510,6 +547,15 @@ V10.0 European Platform
 | V8.0 | 📋 Planned | Q3 2026 |
 | V9.0 | 📋 Planned | Q3+ 2026 (can start after V2, benefits from V6) |
 | V10.0 | 📋 Planned | 2027+ (after NL market proven) |
+
+**Admin (A-track):**
+
+| Version | Status | Timeline |
+|---------|--------|----------|
+| A1.0 | ✅ Live | Shipped with V2.0 |
+| A1.1 | 📋 Bulk & CRM | Post-launch |
+| A1.2 | 📋 Inzichten | Post-launch |
+| A2.0 | 📋 Subscription Management | TBD |
 
 **V2.0 Deployed Infrastructure (as of 2026-02-21):**
 - ✅ Supabase PostgreSQL (Frankfurt EU, Pro plan)
