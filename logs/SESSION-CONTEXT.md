@@ -35,6 +35,7 @@
 | Email Media Library | ✅ Live (both) | Sharp processing, DB tracking, media picker, media tab. Admin feature |
 | Email deliverability (SPF fix) | ✅ Done (DNS) | Replaced broken self-referencing SPF with correct Resend + ZXCS includes |
 | Campaign features (13) | ✅ Implemented (Feb 22) | 6 phases: webhook, pre-send, analytics, engagement, sequences, preferences |
+| Conditional segment builder | ✅ Implemented (Feb 22) | AND/OR conditions on campaigns, 4 types, negation, live evaluation. Migration 072 |
 | Railway cron service | ✅ Deployed (Feb 22) | curlimages/curl, sequence processor, hourly weekdays. Verified: returns weekend skip |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
@@ -48,23 +49,20 @@
 
 ## Recent Work (Last 5)
 
-1. **Homepage Copy + Onboarding Sequence Design** (2026-02-22)
+1. **Conditional Segment Builder** (2026-02-22)
+   AND/OR campaign targeting: 4 condition types (delivered/opened/clicked/engagement), negation toggle, live evaluation. Migration 072, evaluate API, send route filter, condition builder UI. Building philosophy established: perfection for 500+ users.
+
+2. **Homepage Copy + Onboarding Sequence Design** (2026-02-22)
    Restored V1 headline/subheadline, applied "doel door doen" to value prop. Designed 5-email onboarding sequence for beta users (welkom+login, zoeken, filteren, ontdekking, details+export). Full copy written and documented.
 
-2. **Email Module UX Polish** (2026-02-22)
-   Help popovers (Dutch) for compose workflow + sequence setup. Sequence steps upgraded from basic textarea to full compose experience: rich text editor (Tiptap), preheader, preview with device toggles, pre-send checklist, test email, edit existing steps. 2 commits.
+3. **Email Module UX Polish** (2026-02-22)
+   Help popovers (Dutch) for compose workflow + sequence setup. Sequence steps upgraded from basic textarea to full compose experience: rich text editor (Tiptap), preheader, preview with device toggles, pre-send checklist, test email, edit existing steps.
 
-2. **Professional Campaign Features (13 features)** (2026-02-22)
-   6 phases: bounce/complaint/UA webhooks, test email + precheck + device preview, link tracking + device stats + campaign comparison, engagement scoring + per-person timeline, sequence engine (4 tables + cron), preference center (/voorkeuren). 6 SQL migrations (066-071). Railway cron service for sequences. Staging protocol fix (merge, never force-push).
+4. **Professional Campaign Features (13 features)** (2026-02-22)
+   6 phases: bounce/complaint/UA webhooks, test email + precheck + device preview, link tracking + device stats + campaign comparison, engagement scoring + per-person timeline, sequence engine (4 tables + cron), preference center (/voorkeuren). 6 SQL migrations (066-071). Railway cron service for sequences.
 
-3. **Email Media Library + Deployment Protocol + SPF Fix** (2026-02-22)
+5. **Email Media Library + Deployment Protocol + SPF Fix** (2026-02-22)
    Sharp image processing (960px, thumbnails), email_media table, media picker, media tab. Reverted UX-039 from production. CLAUDE.md deployment gate. Fixed broken SPF record for email deliverability.
-
-4. **Versiegeschiedenis + search enhancements** (2026-02-21, afternoon)
-   Multi-word AND search, exact phrase, wildcard. /versiegeschiedenis page. Staffel popover fix. 8 commits.
-
-5. **Versiegeschiedenis + search enhancements** (2026-02-21, afternoon)
-   Multi-word AND search, exact phrase, wildcard. /versiegeschiedenis page. Staffel popover fix. 8 commits.
 
 ---
 
@@ -120,9 +118,9 @@
 
 ## Executed SQL Migrations
 
-Last migration: **071-email-preferences.sql** (2026-02-22)
+Last migration: **072-campaign-conditions.sql** (2026-02-22)
 
-Full list: 001 → 071. See `SESSION-CONTEXT-ARCHIVE.md` for complete execution log.
+Full list: 001 → 072. See `SESSION-CONTEXT-ARCHIVE.md` for complete execution log.
 
 Key recent migrations:
 | # | Description | Date |
@@ -139,6 +137,7 @@ Key recent migrations:
 | 069 | Email sequences (4 tables) | 2026-02-22 |
 | 070 | Campaign events sequence columns | 2026-02-22 |
 | 071 | Email preferences + topics | 2026-02-22 |
+| 072 | Campaign conditions (JSONB + index) | 2026-02-22 |
 
 ---
 
@@ -159,6 +158,7 @@ Key recent migrations:
 | Email sequences | Cron-based hourly (weekdays), configurable send_time per sequence, auto-enroll on invite |
 | Email preferences | Topic-based opt-out, public preference center at /voorkeuren, default opt-in |
 | Copywriting | "Doel door doen" principle: lead with goal (why), then means (how). Formal u/uw. No em dashes. |
+| Campaign targeting | AND/OR conditions on campaigns: delivered/opened/clicked/engagement_level. JSONB on campaigns table. |
 
 ---
 
