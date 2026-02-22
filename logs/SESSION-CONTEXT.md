@@ -37,6 +37,7 @@
 | Campaign features (13) | ✅ Implemented (Feb 22) | 6 phases: webhook, pre-send, analytics, engagement, sequences, preferences |
 | Conditional segment builder | ✅ Implemented (Feb 22) | AND/OR conditions on campaigns, 4 types, negation, live evaluation. Migration 072 |
 | Campaign detail view upgrade | ✅ Implemented (Feb 22) | KPI bar, header card, recipient filters/sort, single-line format, last_name |
+| Email system polish | ✅ Implemented (Feb 22) | Template fixes, editor autolink/unlink, test email input, segment counting fix, Mail 1 copy |
 | Railway cron service | ✅ Deployed (Feb 22) | curlimages/curl, sequence processor, hourly weekdays. Verified: returns weekend skip |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
@@ -50,20 +51,20 @@
 
 ## Recent Work (Last 5)
 
-1. **Campaign Detail View Upgrade** (2026-02-22)
-   Team brainstorm analyzed old email system screenshots → P0+P1 implementation. KPI summary bar (5 metrics with %), campaign header card (subject, date, preheader, segments), recipient filter toggles (by status with counts), sort controls (name/delivered/opened + direction), single-line recipient format (full name + email), last_name in API.
+1. **Email System Polish** (2026-02-22)
+   Template fixes: list spacing, duplicate footer, heading left-align+spacing, auto-greeting removed. Editor: autolink disabled, unlink button. Test email: editable recipient address. Segment bug: active subscription determines leden (not pipeline_stage). Onboarding Mail 1 copy updated. CLAUDE.md Rule 0: never act without approval.
 
-2. **Conditional Segment Builder** (2026-02-22)
-   AND/OR campaign targeting: 4 condition types (delivered/opened/clicked/engagement), negation toggle, live evaluation. Migration 072, evaluate API, send route filter, condition builder UI. Building philosophy established: perfection for 500+ users.
+2. **Campaign Detail View Upgrade** (2026-02-22)
+   Team brainstorm analyzed old email system screenshots → P0+P1 implementation. KPI summary bar (5 metrics with %), campaign header card, recipient filter toggles, sort controls, single-line recipient format, last_name in API.
 
-3. **Homepage Copy + Onboarding Sequence Design** (2026-02-22)
-   Restored V1 headline/subheadline, applied "doel door doen" to value prop. Designed 5-email onboarding sequence for beta users (welkom+login, zoeken, filteren, ontdekking, details+export). Full copy written and documented.
+3. **Conditional Segment Builder** (2026-02-22)
+   AND/OR campaign targeting: 4 condition types (delivered/opened/clicked/engagement), negation toggle, live evaluation. Migration 072, evaluate API, send route filter, condition builder UI.
 
-4. **Email Module UX Polish** (2026-02-22)
-   Help popovers (Dutch) for compose workflow + sequence setup. Sequence steps upgraded from basic textarea to full compose experience: rich text editor (Tiptap), preheader, preview with device toggles, pre-send checklist, test email, edit existing steps.
+4. **Homepage Copy + Onboarding Sequence Design** (2026-02-22)
+   Restored V1 headline/subheadline, applied "doel door doen" to value prop. Designed 5-email onboarding sequence for beta users (5 emails, 11 days).
 
-5. **Professional Campaign Features (13 features)** (2026-02-22)
-   6 phases: bounce/complaint/UA webhooks, test email + precheck + device preview, link tracking + device stats + campaign comparison, engagement scoring + per-person timeline, sequence engine (4 tables + cron), preference center (/voorkeuren). 6 SQL migrations (066-071). Railway cron service for sequences.
+5. **Email Module UX Polish** (2026-02-22)
+   Help popovers (Dutch) for compose workflow + sequence setup. Sequence steps upgraded to full compose experience: rich text editor, preheader, preview, pre-send checklist, test email, edit existing steps.
 
 ---
 
