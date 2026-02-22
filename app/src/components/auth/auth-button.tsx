@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-auth'
+import { useSubscription } from '@/hooks/use-subscription'
 import { createClient } from '@/lib/supabase/client'
 
 function UserIcon({ className }: { className?: string }) {
@@ -23,6 +24,7 @@ function ChevronIcon({ className }: { className?: string }) {
 
 export function AuthButton() {
   const { userEmail, isLoading } = useAuth()
+  const { role } = useSubscription()
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -92,6 +94,16 @@ export function AuthButton() {
           >
             Mijn profiel
           </Link>
+
+          {role === 'admin' && (
+            <Link
+              href="/team"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 px-3 py-3 text-sm text-[var(--navy-dark)] hover:bg-[var(--gray-light)] transition-colors min-h-[44px]"
+            >
+              Admin
+            </Link>
+          )}
 
           <div className="border-t border-[var(--border)] my-1" />
 

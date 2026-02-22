@@ -99,14 +99,12 @@ export default function ProfielPage() {
           </p>
         )}
 
-        <div className="pt-4 border-t border-[var(--border)]">
-          <button
-            onClick={handleLogout}
-            className="text-sm font-medium text-red-600 hover:text-red-800 transition-colors"
-          >
-            Uitloggen
-          </button>
-        </div>
+        <button
+          onClick={handleLogout}
+          className="text-sm text-[var(--navy-medium)] underline hover:no-underline transition-colors"
+        >
+          Uitloggen
+        </button>
       </div>
     </main>
   )
