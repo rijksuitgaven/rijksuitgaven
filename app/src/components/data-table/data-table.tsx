@@ -608,6 +608,11 @@ export function DataTable({
                 return <span className="text-[var(--muted-foreground)]">-</span>
               }
 
+              // Betalingen is a count — render as plain text, not a filter link
+              if (colKey === 'betalingen') {
+                return <span className="text-sm text-[var(--navy-dark)] tabular-nums">{value}</span>
+              }
+
               return (
                 <div className="max-w-[140px]" data-tooltip={value}>
                   {/* Clickable value - filters to show all recipients with this value */}
