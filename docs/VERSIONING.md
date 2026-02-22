@@ -2,7 +2,7 @@
 
 **Project:** Rijksuitgaven.nl
 **Created:** 2026-01-30
-**Updated:** 2026-02-21
+**Updated:** 2026-02-22
 **Status:** Active
 
 ---
@@ -131,35 +131,44 @@ Internal admin tooling at `/team/*`. Separate release cadence from the end-user 
 
 **Status:** ✅ Live
 
-- Member management (`/team/leden`) — add, invite, deactivate, role assignment
-- Feedback inbox (`/team/feedback`) — status workflow, admin notes
-- Usage statistics (`/team/statistieken`) — pulse, insights, user activity, error tracking
-- Contact management (`/team/contacten`) — prospect tracking, Resend audience sync
-- Email campaigns via Resend Broadcasts (compose, drafts, segments, batch send)
-- Email Media Library — Sharp image processing, DB tracking, media picker, browsable media tab
-- Campaign analytics — link tracking, device stats, campaign comparison
-- Pre-send quality — test email, 5-area precheck, device preview
-- Bounce/complaint auto-suppress — webhook-driven, hard bounce + complaint handling
-- Subscriber engagement scoring — per-person timeline, engagement badges (active/at_risk/cold/new)
-- Email sequences — multi-step drip campaigns, cron-based hourly processor, auto-enroll on invite
-- Preference center — topic-based opt-out, public page at /voorkeuren
+| Feature | Status |
+|---------|--------|
+| Member management (`/team/leden`) — add, invite, deactivate, role assignment | ✅ Live |
+| Feedback inbox (`/team/feedback`) — status workflow, admin notes | ✅ Live |
+| Usage statistics (`/team/statistieken`) — pulse, insights, user activity, error tracking | ✅ Live |
+| Contact management (`/team/contacten`) — prospect tracking, Resend audience sync | ✅ Live |
+| Email campaigns via Resend Broadcasts (compose, drafts, segments, batch send) | ✅ Live |
+| Email Media Library — Sharp image processing, DB tracking, media picker, browsable media tab | ✅ Live |
+| Campaign analytics — link tracking, device stats, campaign comparison | ✅ Live |
+| Pre-send quality — test email, 5-area precheck, device preview | ✅ Live |
+| Bounce/complaint auto-suppress — webhook-driven, hard bounce + complaint handling | ✅ Live |
+| Subscriber engagement scoring — per-person timeline, engagement badges | ✅ Live |
+| Email sequences — multi-step drip campaigns, cron-based hourly processor, auto-enroll on invite | ✅ Live |
+| Preference center — topic-based opt-out, public page at /voorkeuren | ✅ Live |
+| UTM builder — compose UI for UTM parameters, auto-append to CTA + body links | 📋 Planned |
 
 ### A1.1 - Bulk & CRM
 
-- Row selector for bulk actions (`/team/leden`)
-- Contact-to-subscriber conversion flow (`/team/contacten`)
-- Campaign event retention cleanup (1-year rolling)
+| Feature | Status |
+|---------|--------|
+| Row selector for bulk actions (`/team/leden`) | 📋 Planned |
+| Contact-to-subscriber conversion flow (`/team/contacten`) | 📋 Planned |
+| Campaign event retention cleanup (1-year rolling) | 📋 Planned |
 
 ### A1.2 - Inzichten
 
-- Enhanced statistieken dashboard (deeper search funnel, retention metrics)
-- Search success/failure analysis improvements
+| Feature | Status |
+|---------|--------|
+| Enhanced statistieken dashboard (deeper search funnel, retention metrics) | 📋 Planned |
+| Search success/failure analysis improvements | 📋 Planned |
 
 ### A2.0 - Subscription Management
 
-- Self-service plan management (upgrade/downgrade)
-- Stripe integration for automated billing
-- Automated renewal notifications
+| Feature | Status |
+|---------|--------|
+| Self-service plan management (upgrade/downgrade) | 📋 Planned |
+| Stripe integration for automated billing | 📋 Planned |
+| Automated renewal notifications | 📋 Planned |
 
 ---
 
