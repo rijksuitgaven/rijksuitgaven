@@ -4,11 +4,12 @@
 
 | Check | Action |
 |-------|--------|
-| **Model** | State `**Model:** [Haiku/Sonnet/Opus] - [reason]` and WAIT for approval |
+| **Model** | State `**Model:** [Haiku/Sonnet/Opus] - [reason]` and WAIT for approval. EVERY response, no exceptions. |
+| **Approval** | NEVER edit files, run commands, or make changes without explicit user approval ("ok", "yes", "go"). Proposing a change is NOT permission to execute it. |
 | **Skill** | UI → `/frontend-design`. DB schema → `/database-schema-designer`. Query/RLS → `/supabase-postgres`. Creative → `/brainstorm-mode`. |
 | **Docs** | Read requirements BEFORE proposing. Check `docs/VERSIONING.md` for roadmap. |
 
-**Model selection is MANDATORY.** Do not proceed without user approval (except for follow-ups in same task).
+**Model selection is MANDATORY.** Do not proceed without user approval. The ONLY exception is direct follow-ups where the user explicitly said "yes/ok/go" to a specific proposed action in the same task.
 
 ---
 
@@ -30,7 +31,20 @@
 
 ---
 
-## Golden Rules (6 Rules - No Exceptions)
+## Golden Rules (7 Rules - No Exceptions)
+
+### 0. NEVER ACT WITHOUT APPROVAL (ABSOLUTE RULE)
+
+**Propose first, then WAIT. Never edit, write, or execute anything without explicit user approval.**
+
+This means:
+- **Describe** what you plan to do
+- **WAIT** for the user to say "ok", "yes", "go", or similar
+- **THEN** execute
+
+**This applies to EVERYTHING:** file edits, git operations, code changes, documentation updates, builds, pushes. Even when the user seems to agree with a direction in discussion, that is NOT permission to edit files. Only an explicit "yes/ok/go/do it/update it" is approval.
+
+**Violations:** If you edit a file before receiving explicit approval, you have broken the most important rule. There are ZERO exceptions.
 
 ### 1. Model Selection (MANDATORY - COST CONTROL)
 
@@ -72,7 +86,7 @@ Claude: **Model:** Opus - architecture decision
 
 #### No Approval Needed
 
-Skip approval for immediate follow-ups in the same task (e.g., user says "yes" to a fix, you implement it without re-asking).
+Skip model approval ONLY when the user explicitly says "yes/ok/go" to a specific proposed action and you are executing that exact action. All other responses MUST state the model. When in doubt, state the model.
 
 ### 1b. Design Discussion (BEFORE Implementation)
 
@@ -261,6 +275,15 @@ Solo founder. Marketing-savvy with tech background. Values speed and simplicity.
 - Minimize tools/systems
 - Never over-engineer
 - Complete tasks properly before moving on
+
+### Building Philosophy (MANDATORY)
+
+**We are building for 500+ users. The guiding principle is perfection and 100% accuracy.**
+
+- NEVER use current user count as an argument to deprioritize or simplify features
+- Build every feature as if 500+ users depend on it today
+- Beta is a phase, not a constraint — build production-grade from day one
+- "We only have X users" is NOT a valid reason to cut corners, skip features, or suggest simpler alternatives
 
 ### Claude's Role
 Senior specialist (10+ years equivalent) in all disciplines. Never ask technical questions the founder can't answer. Present options with recommendations.
