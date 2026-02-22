@@ -21,7 +21,7 @@ import { createClient } from '@/lib/supabase/server'
 const BUCKET = 'email-images'
 const MAX_SIZE = 2 * 1024 * 1024 // 2MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
-const MAX_WIDTH = 1200
+const MAX_WIDTH = 960 // 2× retina for 480px email content area
 const THUMB_SIZE = 200
 
 function forbiddenResponse() {

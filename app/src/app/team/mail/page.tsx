@@ -813,7 +813,7 @@ export default function MailPage() {
                   <label className="flex flex-col items-center justify-center border-2 border-dashed border-[var(--border)] rounded-lg p-6 cursor-pointer hover:border-[var(--pink)] hover:bg-[var(--gray-light)]/50 transition-colors">
                     <Upload className="w-8 h-8 text-[var(--navy-medium)] mb-2" />
                     <span className="text-sm font-medium text-[var(--navy-dark)]">Afbeelding uploaden</span>
-                    <span className="text-xs text-[var(--navy-medium)] mt-1">JPEG, PNG, GIF of WebP — max 2MB</span>
+                    <span className="text-xs text-[var(--navy-medium)] mt-1">JPEG, PNG, GIF of WebP — max 2MB — wordt geoptimaliseerd tot max 960px breed</span>
                     <input
                       type="file"
                       accept="image/jpeg,image/png,image/gif,image/webp"
