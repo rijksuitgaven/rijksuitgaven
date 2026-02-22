@@ -15,6 +15,7 @@ import {
 } from '@tanstack/react-table'
 import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet, ExternalLink, Info, Search, MousePointerClick, AlertTriangle, SlidersHorizontal, Columns3, Pin, PinOff } from 'lucide-react'
 import * as XLSX from 'xlsx'
+import * as Tooltip from '@radix-ui/react-tooltip'
 import { cn } from '@/lib/utils'
 import { useAnalytics } from '@/hooks/use-analytics'
 import { StaffelPopover } from '@/components/staffel-popover/staffel-popover'
@@ -489,39 +490,59 @@ export function DataTable({
           // Pinned rows show unpin icon instead of expand
           if (isPinned) {
             return (
-              <button
-                onClick={() => row.pin(false)}
-                className="p-1 hover:bg-[var(--pink)]/10 rounded transition-colors"
-                aria-label="Verwijder uit vergelijking"
-                data-tooltip-center="Verwijder"
-              >
-                <PinOff className="h-4 w-4 text-[var(--pink)]" aria-hidden="true" />
-              </button>
+              <Tooltip.Provider delayDuration={0}>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <button
+                      onClick={() => row.pin(false)}
+                      className="p-1 hover:bg-[var(--pink)]/10 rounded transition-colors"
+                      aria-label="Verwijder uit vergelijking"
+                    >
+                      <PinOff className="h-4 w-4 text-[var(--pink)]" aria-hidden="true" />
+                    </button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content className="px-[10px] py-[6px] bg-[var(--navy-dark,#1e3a5f)] text-white text-[13px] font-normal leading-[1.4] rounded whitespace-nowrap z-[9999]" sideOffset={6}>
+                      Verwijder
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+              </Tooltip.Provider>
             )
           }
 
           return (
             <div className="flex items-center">
               {/* Pin button — visible on hover via group-hover */}
-              <button
-                onClick={() => {
-                  if (pinnedCount < MAX_PINNED_ROWS) {
-                    row.pin('top')
-                    // Collapse if expanded
-                    if (row.getIsExpanded()) row.toggleExpanded()
-                  }
-                }}
-                className={cn(
-                  'p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity -mr-1',
-                  pinnedCount >= MAX_PINNED_ROWS
-                    ? 'cursor-not-allowed text-[var(--muted-foreground)]'
-                    : 'hover:bg-[var(--pink)]/10 text-[var(--navy-medium)] hover:text-[var(--pink)]'
-                )}
-                title={pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS}` : 'Vergelijk'}
-                disabled={pinnedCount >= MAX_PINNED_ROWS}
-              >
-                <Pin className="h-3.5 w-3.5" aria-hidden="true" />
-              </button>
+              <Tooltip.Provider delayDuration={0}>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <button
+                      onClick={() => {
+                        if (pinnedCount < MAX_PINNED_ROWS) {
+                          row.pin('top')
+                          // Collapse if expanded
+                          if (row.getIsExpanded()) row.toggleExpanded()
+                        }
+                      }}
+                      className={cn(
+                        'p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity -mr-1',
+                        pinnedCount >= MAX_PINNED_ROWS
+                          ? 'cursor-not-allowed text-[var(--muted-foreground)]'
+                          : 'hover:bg-[var(--pink)]/10 text-[var(--navy-medium)] hover:text-[var(--pink)]'
+                      )}
+                      disabled={pinnedCount >= MAX_PINNED_ROWS}
+                    >
+                      <Pin className="h-3.5 w-3.5" aria-hidden="true" />
+                    </button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content className="px-[10px] py-[6px] bg-[var(--navy-dark,#1e3a5f)] text-white text-[13px] font-normal leading-[1.4] rounded whitespace-nowrap z-[9999]" sideOffset={6}>
+                      {pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS}` : 'Vergelijk'}
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+              </Tooltip.Provider>
               {/* Expand button */}
               <button
                 onClick={() => {
