@@ -97,7 +97,7 @@ export function renderCampaignEmail(params: CampaignParams): string {
 
                 <!-- Heading -->
                 <tr>
-                  <td style="font-size: 22px; font-weight: 700; color: #0E3261; text-align: left; padding-bottom: 16px;">
+                  <td style="font-size: 22px; font-weight: 700; color: #0E3261; text-align: left; padding-bottom: 28px;">
                     ${escapeHtml(params.heading)}
                   </td>
                 </tr>
