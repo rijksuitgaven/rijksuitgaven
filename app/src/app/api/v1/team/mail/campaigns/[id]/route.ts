@@ -151,15 +151,15 @@ export async function GET(
       .filter((id): id is string => id !== null)
   )]
 
-  const nameMap = new Map<string, { first_name: string | null; unsubscribed_at: string | null }>()
+  const nameMap = new Map<string, { first_name: string | null; last_name: string | null; unsubscribed_at: string | null }>()
   if (personIds.length > 0) {
     const { data: persons } = await supabase
       .from('people')
-      .select('id, first_name, unsubscribed_at')
+      .select('id, first_name, last_name, unsubscribed_at')
       .in('id', personIds)
 
     for (const p of persons || []) {
-      nameMap.set(p.id, { first_name: p.first_name, unsubscribed_at: p.unsubscribed_at })
+      nameMap.set(p.id, { first_name: p.first_name, last_name: p.last_name, unsubscribed_at: p.unsubscribed_at })
     }
   }
 
@@ -168,6 +168,7 @@ export async function GET(
     return {
       ...r,
       first_name: person?.first_name || null,
+      last_name: person?.last_name || null,
       unsubscribed_at: person?.unsubscribed_at || null,
     }
   })

@@ -50,6 +50,7 @@ interface CampaignRecipient {
   person_id: string | null
   email: string
   first_name: string | null
+  last_name: string | null
   delivered_at: string | null
   opened_at: string | null
   clicked_at: string | null
@@ -71,7 +72,27 @@ interface DeviceStats {
   operating_systems: { name: string; count: number }[]
 }
 
+interface CampaignDetailStats {
+  delivered: number
+  opened: number
+  clicked: number
+  bounced: number
+  complained: number
+}
+
+interface CampaignDetailCampaign {
+  subject: string
+  heading: string
+  preheader: string | null
+  segment: string
+  sent_at: string | null
+  sent_count: number
+  conditions: { groups: CampaignConditionGroup[] } | null
+}
+
 interface CampaignDetail {
+  campaign?: CampaignDetailCampaign
+  stats?: CampaignDetailStats
   recipients: CampaignRecipient[]
   link_stats: LinkStat[]
   device_stats: DeviceStats
@@ -266,6 +287,11 @@ export default function MailPage() {
   const [compareResult, setCompareResult] = useState<ComparisonCampaign[] | null>(null)
   const [compareLoading, setCompareLoading] = useState(false)
 
+  // Recipient filter/sort state
+  const [recipientFilter, setRecipientFilter] = useState<Set<string>>(new Set(['delivered', 'opened', 'clicked', 'bounced', 'unsubscribed']))
+  const [recipientSort, setRecipientSort] = useState<'name' | 'delivered' | 'opened'>('delivered')
+  const [recipientSortAsc, setRecipientSortAsc] = useState(true)
+
   // Media library state
   const [mediaLibrary, setMediaLibrary] = useState<MediaItem[]>([])
   const [mediaLoading, setMediaLoading] = useState(false)
@@ -373,6 +399,8 @@ export default function MailPage() {
       const data = await res.json()
       if (res.ok) {
         setCampaignDetail({
+          campaign: data.campaign || undefined,
+          stats: data.stats || undefined,
           recipients: data.recipients || [],
           link_stats: data.link_stats || [],
           device_stats: data.device_stats || { clients: [], devices: [], operating_systems: [] },
@@ -2156,16 +2184,125 @@ export default function MailPage() {
 
                                 {/* Expanded: campaign detail with recipients, links, devices */}
                                 {isExpanded && (
-                                  <div className="mt-3 ml-5">
+                                  <div className="mt-3 ml-5 space-y-4">
                                     {recipientsLoading ? (
                                       <div className="animate-pulse h-20 bg-[var(--gray-light)] rounded" />
                                     ) : !campaignDetail || campaignDetail.recipients.length === 0 ? (
                                       <p className="text-xs text-[var(--navy-medium)]">Nog geen events ontvangen van Resend.</p>
-                                    ) : (
+                                    ) : (() => {
+                                      const s = campaignDetail.stats
+                                      const c = campaignDetail.campaign
+                                      const sentCount = campaign.sent_count || 1
+                                      const openPct = s ? ((s.opened / sentCount) * 100).toFixed(1) : '0.0'
+                                      const clickPct = s ? ((s.clicked / sentCount) * 100).toFixed(1) : '0.0'
+                                      const unsubPct = s ? ((s.complained / sentCount) * 100).toFixed(1) : '0.0'
+                                      const bouncePct = s ? ((s.bounced / sentCount) * 100).toFixed(1) : '0.0'
+
+                                      // Classify each recipient for filtering
+                                      const classifyRecipient = (r: CampaignRecipient): string[] => {
+                                        const tags: string[] = []
+                                        if (r.unsubscribed_at) tags.push('unsubscribed')
+                                        if (r.bounced_at) tags.push('bounced')
+                                        if (r.clicked_at) tags.push('clicked')
+                                        if (r.opened_at && !r.clicked_at) tags.push('opened')
+                                        if (r.delivered_at && !r.opened_at && !r.clicked_at && !r.bounced_at && !r.unsubscribed_at) tags.push('delivered')
+                                        if (tags.length === 0) tags.push('delivered') // fallback: sent but no events
+                                        return tags
+                                      }
+
+                                      // Count per filter category
+                                      const filterCounts = { delivered: 0, opened: 0, clicked: 0, bounced: 0, unsubscribed: 0 }
+                                      for (const r of campaignDetail.recipients) {
+                                        const tags = classifyRecipient(r)
+                                        for (const tag of tags) {
+                                          if (tag in filterCounts) filterCounts[tag as keyof typeof filterCounts]++
+                                        }
+                                      }
+
+                                      // Apply filter
+                                      const filteredRecips = campaignDetail.recipients.filter(r => {
+                                        const tags = classifyRecipient(r)
+                                        return tags.some(t => recipientFilter.has(t))
+                                      })
+
+                                      // Apply sort
+                                      const recipientName = (r: CampaignRecipient) => {
+                                        if (r.first_name && r.last_name) return `${r.first_name} ${r.last_name}`
+                                        if (r.first_name) return r.first_name
+                                        return r.email.split('@')[0]
+                                      }
+
+                                      const sortedRecips = [...filteredRecips].sort((a, b) => {
+                                        let cmp = 0
+                                        if (recipientSort === 'name') {
+                                          cmp = recipientName(a).localeCompare(recipientName(b), 'nl')
+                                        } else if (recipientSort === 'delivered') {
+                                          cmp = (a.delivered_at || '').localeCompare(b.delivered_at || '')
+                                        } else if (recipientSort === 'opened') {
+                                          cmp = (a.opened_at || '').localeCompare(b.opened_at || '')
+                                        }
+                                        return recipientSortAsc ? cmp : -cmp
+                                      })
+
+                                      return (
                                       <>
+                                        {/* P0: Campaign header card */}
+                                        {c && (
+                                          <div className="bg-[var(--gray-light)]/50 rounded-lg border border-[var(--border)] p-4">
+                                            <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-xs">
+                                              <span className="font-medium text-[var(--navy-medium)]">Onderwerp</span>
+                                              <span className="font-semibold text-[var(--navy-dark)]">{c.subject}</span>
+                                              <span className="font-medium text-[var(--navy-medium)]">Datum</span>
+                                              <span className="text-[var(--navy-dark)]">
+                                                {c.sent_at ? new Date(c.sent_at).toLocaleString('nl-NL', {
+                                                  day: 'numeric', month: 'long', year: 'numeric',
+                                                  hour: '2-digit', minute: '2-digit',
+                                                }) : '—'}
+                                              </span>
+                                              {c.preheader && (
+                                                <>
+                                                  <span className="font-medium text-[var(--navy-medium)]">Preheader</span>
+                                                  <span className="text-[var(--navy-dark)]">{c.preheader}</span>
+                                                </>
+                                              )}
+                                              <span className="font-medium text-[var(--navy-medium)]">Segmenten</span>
+                                              <div className="flex items-center gap-1.5">
+                                                {c.segment.split(',').map(seg => (
+                                                  <span key={seg} className="text-xs px-2 py-0.5 rounded-full bg-white border border-[var(--border)] text-[var(--navy-medium)]">
+                                                    {SEGMENT_LABELS[seg] || seg}
+                                                  </span>
+                                                ))}
+                                              </div>
+                                            </div>
+                                          </div>
+                                        )}
+
+                                        {/* P0: KPI summary bar */}
+                                        {s && (
+                                          <div className="grid grid-cols-5 gap-3">
+                                            {[
+                                              { label: 'Verzonden', count: sentCount, pct: null, color: 'text-[var(--navy-dark)]' },
+                                              { label: 'Geopend', count: s.opened, pct: openPct, color: 'text-blue-600' },
+                                              { label: 'Geklikt', count: s.clicked, pct: clickPct, color: 'text-[var(--pink)]' },
+                                              { label: 'Afgemeld', count: s.complained, pct: unsubPct, color: 'text-amber-600' },
+                                              { label: 'Bounced', count: s.bounced, pct: bouncePct, color: 'text-red-600' },
+                                            ].map(kpi => (
+                                              <div key={kpi.label} className="bg-white rounded-lg border border-[var(--border)] p-3 text-center">
+                                                <div className={`text-lg font-bold tabular-nums ${kpi.color}`}>
+                                                  {kpi.count}
+                                                  {kpi.pct !== null && (
+                                                    <span className="text-xs font-medium ml-1 text-[var(--navy-medium)]">{kpi.pct}%</span>
+                                                  )}
+                                                </div>
+                                                <div className="text-[10px] font-medium text-[var(--navy-medium)] uppercase tracking-wider mt-0.5">{kpi.label}</div>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        )}
+
                                         {/* Link stats */}
                                         {campaignDetail.link_stats.length > 0 && (
-                                          <div className="mb-4">
+                                          <div>
                                             <h4 className="text-xs font-semibold text-[var(--navy-dark)] mb-2 flex items-center gap-1.5">
                                               <Link2 className="w-3.5 h-3.5" />
                                               Geklikte links
@@ -2194,7 +2331,7 @@ export default function MailPage() {
                                         {(campaignDetail.device_stats.clients.length > 0 ||
                                           campaignDetail.device_stats.devices.length > 0 ||
                                           campaignDetail.device_stats.operating_systems.length > 0) && (
-                                          <div className="mb-4 grid grid-cols-3 gap-4">
+                                          <div className="grid grid-cols-3 gap-4">
                                             {[
                                               { label: 'E-mailclient', items: campaignDetail.device_stats.clients },
                                               { label: 'Apparaat', items: campaignDetail.device_stats.devices },
@@ -2227,69 +2364,139 @@ export default function MailPage() {
                                           </div>
                                         )}
 
-                                        {/* Recipients table */}
-                                        <div className="overflow-x-auto rounded border border-[var(--border)]">
-                                          <table className="w-full text-xs">
-                                            <thead>
-                                              <tr className="bg-[var(--gray-light)] text-left">
-                                                <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Ontvanger</th>
-                                                <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Bezorgd</th>
-                                                <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geopend</th>
-                                                <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geklikt</th>
-                                                <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Status</th>
-                                              </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-[var(--border)]">
-                                              {campaignDetail.recipients.map(r => (
-                                                <tr key={r.email} className="hover:bg-[var(--gray-light)]/50">
-                                                  <td className="px-3 py-2">
-                                                    <div className="text-[var(--navy-dark)]">
-                                                      {r.first_name || r.email.split('@')[0]}
-                                                    </div>
-                                                    <div className="text-[var(--navy-medium)]">{r.email}</div>
-                                                  </td>
-                                                  <td className="px-3 py-2 text-[var(--navy-medium)]">
-                                                    {r.delivered_at ? formatTime(r.delivered_at) : '—'}
-                                                  </td>
-                                                  <td className="px-3 py-2 text-[var(--navy-medium)]">
-                                                    {r.opened_at ? formatTime(r.opened_at) : '—'}
-                                                  </td>
-                                                  <td className="px-3 py-2">
-                                                    {r.clicked_at ? (
-                                                      <span className="text-[var(--pink)]" title={r.clicked_url || undefined}>
-                                                        {formatTime(r.clicked_at)}
-                                                      </span>
-                                                    ) : '—'}
-                                                  </td>
-                                                  <td className="px-3 py-2">
-                                                    {r.unsubscribed_at ? (
-                                                      <span className="inline-flex items-center gap-1 text-amber-600">
-                                                        <X className="w-3 h-3" /> Afgemeld
-                                                      </span>
-                                                    ) : r.bounced_at ? (
-                                                      <span className="inline-flex items-center gap-1 text-[var(--error)]">
-                                                        <Ban className="w-3 h-3" /> Bounced
-                                                      </span>
-                                                    ) : r.complained_at ? (
-                                                      <span className="inline-flex items-center gap-1 text-[var(--error)]">
-                                                        <AlertTriangle className="w-3 h-3" /> Spam
-                                                      </span>
-                                                    ) : r.delivered_at ? (
-                                                      <span className="text-green-600">&#10003;</span>
-                                                    ) : (
-                                                      <span className="text-[var(--navy-medium)]">Verstuurd</span>
-                                                    )}
-                                                  </td>
+                                        {/* P1: Recipients with filter + sort */}
+                                        <div>
+                                          <div className="flex items-center justify-between mb-2">
+                                            <h4 className="text-xs font-semibold text-[var(--navy-dark)] flex items-center gap-1.5">
+                                              <Users className="w-3.5 h-3.5" />
+                                              Ontvangers ({filteredRecips.length} van {campaignDetail.recipients.length})
+                                            </h4>
+                                          </div>
+
+                                          {/* Filter toggles */}
+                                          <div className="flex flex-wrap items-center gap-2 mb-3">
+                                            <span className="text-[10px] font-medium text-[var(--navy-medium)] uppercase tracking-wider">Filter:</span>
+                                            {([
+                                              { key: 'delivered', label: 'Bezorgd', count: filterCounts.delivered },
+                                              { key: 'opened', label: 'Geopend', count: filterCounts.opened },
+                                              { key: 'clicked', label: 'Geklikt', count: filterCounts.clicked },
+                                              { key: 'bounced', label: 'Bounced', count: filterCounts.bounced },
+                                              { key: 'unsubscribed', label: 'Afgemeld', count: filterCounts.unsubscribed },
+                                            ] as const).map(f => {
+                                              const active = recipientFilter.has(f.key)
+                                              return (
+                                                <button
+                                                  key={f.key}
+                                                  onClick={() => {
+                                                    setRecipientFilter(prev => {
+                                                      const next = new Set(prev)
+                                                      if (next.has(f.key)) next.delete(f.key)
+                                                      else next.add(f.key)
+                                                      return next
+                                                    })
+                                                  }}
+                                                  className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md transition-colors ${
+                                                    active
+                                                      ? 'bg-[var(--navy-dark)] text-white'
+                                                      : 'bg-white text-[var(--navy-medium)] border border-[var(--border)] hover:bg-[var(--gray-light)]'
+                                                  }`}
+                                                >
+                                                  {f.label}
+                                                  <span className={`tabular-nums ${active ? 'text-white/70' : 'text-[var(--navy-medium)]/60'}`}>
+                                                    ({f.count})
+                                                  </span>
+                                                </button>
+                                              )
+                                            })}
+
+                                            {/* Sort controls */}
+                                            <span className="ml-auto text-[10px] font-medium text-[var(--navy-medium)] uppercase tracking-wider">Sorteer:</span>
+                                            <select
+                                              value={recipientSort}
+                                              onChange={e => setRecipientSort(e.target.value as 'name' | 'delivered' | 'opened')}
+                                              className="text-xs rounded border border-[var(--border)] px-2 py-1 text-[var(--navy-dark)] bg-white focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
+                                            >
+                                              <option value="delivered">Bezorgd</option>
+                                              <option value="opened">Geopend</option>
+                                              <option value="name">Naam</option>
+                                            </select>
+                                            <button
+                                              onClick={() => setRecipientSortAsc(prev => !prev)}
+                                              className="p-1 text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                                              title={recipientSortAsc ? 'Oplopend' : 'Aflopend'}
+                                            >
+                                              <ChevronRight className={`w-3.5 h-3.5 transition-transform ${recipientSortAsc ? 'rotate-90' : '-rotate-90'}`} />
+                                            </button>
+                                          </div>
+
+                                          {/* Recipients table */}
+                                          <div className="overflow-x-auto rounded border border-[var(--border)]">
+                                            <table className="w-full text-xs">
+                                              <thead>
+                                                <tr className="bg-[var(--gray-light)] text-left">
+                                                  <th className="px-3 py-2 font-medium text-[var(--navy-dark)] w-8">#</th>
+                                                  <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Ontvanger</th>
+                                                  <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Bezorgd</th>
+                                                  <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geopend</th>
+                                                  <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Geklikt</th>
+                                                  <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Status</th>
                                                 </tr>
-                                              ))}
-                                            </tbody>
-                                          </table>
+                                              </thead>
+                                              <tbody className="divide-y divide-[var(--border)]">
+                                                {sortedRecips.map((r, idx) => {
+                                                  const name = recipientName(r)
+                                                  return (
+                                                    <tr key={r.email} className="hover:bg-[var(--gray-light)]/50">
+                                                      <td className="px-3 py-2 text-[var(--navy-medium)] tabular-nums">{idx + 1}</td>
+                                                      <td className="px-3 py-2">
+                                                        <span className="text-[var(--navy-dark)]">{name}</span>
+                                                        <span className="text-[var(--navy-medium)] ml-1.5">{r.email}</span>
+                                                      </td>
+                                                      <td className="px-3 py-2 text-[var(--navy-medium)]">
+                                                        {r.delivered_at ? formatTime(r.delivered_at) : '—'}
+                                                      </td>
+                                                      <td className="px-3 py-2 text-[var(--navy-medium)]">
+                                                        {r.opened_at ? formatTime(r.opened_at) : '—'}
+                                                      </td>
+                                                      <td className="px-3 py-2">
+                                                        {r.clicked_at ? (
+                                                          <span className="text-[var(--pink)]" title={r.clicked_url || undefined}>
+                                                            {formatTime(r.clicked_at)}
+                                                          </span>
+                                                        ) : '—'}
+                                                      </td>
+                                                      <td className="px-3 py-2">
+                                                        {r.unsubscribed_at ? (
+                                                          <span className="inline-flex items-center gap-1 text-amber-600">
+                                                            <X className="w-3 h-3" /> Afgemeld
+                                                          </span>
+                                                        ) : r.bounced_at ? (
+                                                          <span className="inline-flex items-center gap-1 text-[var(--error)]">
+                                                            <Ban className="w-3 h-3" /> Bounced
+                                                          </span>
+                                                        ) : r.complained_at ? (
+                                                          <span className="inline-flex items-center gap-1 text-[var(--error)]">
+                                                            <AlertTriangle className="w-3 h-3" /> Spam
+                                                          </span>
+                                                        ) : r.delivered_at ? (
+                                                          <span className="text-green-600">&#10003;</span>
+                                                        ) : (
+                                                          <span className="text-[var(--navy-medium)]">Verstuurd</span>
+                                                        )}
+                                                      </td>
+                                                    </tr>
+                                                  )
+                                                })}
+                                              </tbody>
+                                            </table>
+                                          </div>
+                                          <p className="mt-2 text-[10px] text-[var(--navy-medium)]">
+                                            * Openpercentage is indicatief — Apple Mail opent alle e-mails automatisch.
+                                          </p>
                                         </div>
-                                        <p className="mt-2 text-[10px] text-[var(--navy-medium)]">
-                                          * Openpercentage is indicatief — Apple Mail opent alle e-mails automatisch.
-                                        </p>
                                       </>
-                                    )}
+                                      )
+                                    })()}
                                   </div>
                                 )}
                               </div>
