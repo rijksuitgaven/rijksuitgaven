@@ -274,20 +274,58 @@ Senior specialist (10+ years equivalent) in all disciplines. Never ask technical
 | Performance | <100ms search, <1s page load |
 | Railway deploy | ~2 minutes after push to main |
 
-### Staging Environment (MANDATORY)
+### Staging & Deployment Protocol (MANDATORY)
 
-**Two environments exist. Both must stay in sync.**
+**Two environments exist. They do NOT always stay in sync.**
 
 | Environment | Branch | URL |
 |-------------|--------|-----|
 | Production | `main` | beta.rijksuitgaven.nl |
 | Staging | `staging` | frontend-staging-production-ce7d.up.railway.app |
 
-**Rules for every push:**
-1. **Every push to `main` MUST sync staging:** `git push origin main:staging && git branch -f staging main`
-2. **Features go to staging first:** merge to main → push to staging → test → push to production
-3. **SQL migrations BEFORE code:** execute migration on Supabase, then push code
-4. **One feature on staging at a time**
+#### Deployment Decision Gate (EVERY PUSH)
+
+**Before ANY push, Claude must state:**
+
+```
+**Deploy to:** [target] — [reason]
+```
+
+Then WAIT for user approval. Never push without explicit confirmation.
+
+#### What Goes Where
+
+| Change Type | Deploy Target | Process |
+|-------------|--------------|---------|
+| **Admin features** (`/team/*`) | Main + Staging | Push to both — admin-only, low risk |
+| **Small fixes** (bugs, typos) | Ask user | State the fix, ask "Main, staging, or both?" |
+| **New user-facing features** | Staging ONLY | Push to staging → test → batch release to main |
+| **SQL migrations** | Execute BEFORE code | Run on Supabase first, then push code |
+
+#### User-Facing Feature Release Process
+
+New features for end users follow a **batch release** workflow:
+
+1. Push to staging only: `git push origin main:staging` (do NOT push to main)
+2. User tests on staging
+3. Features accumulate on staging until user approves a batch release
+4. Batch release: user explicitly says "release to production"
+5. Only then push to main
+
+**CRITICAL:** `git push origin main:staging && git branch -f staging main` is ONLY used when main and staging should be identical. For staging-only features, push ONLY to staging.
+
+#### Commands Reference
+
+```bash
+# Admin feature or approved release → both environments
+git push origin main && git push origin main:staging && git branch -f staging main
+
+# Staging-only (new user-facing feature)
+git push origin main:staging
+
+# Production-only (revert from staging, hotfix)
+git push origin main
+```
 
 **Full process doc:** `docs/plans/2026-02-21-staging-environment.md`
 
