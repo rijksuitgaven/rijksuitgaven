@@ -136,6 +136,7 @@ Internal admin tooling at `/team/*`. Separate release cadence from the end-user 
 - Usage statistics (`/team/statistieken`) — pulse, insights, user activity, error tracking
 - Contact management (`/team/contacten`) — prospect tracking, Resend audience sync
 - Email campaigns via Resend Broadcasts
+- Email Media Library — Sharp image processing, DB tracking, media picker, browsable media tab
 
 ### A1.1 - Bulk & CRM
 
