@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import { TeamNav } from '@/components/team-nav'
 import {
@@ -9,7 +9,7 @@ import {
   ChevronRight, MousePointerClick, MailOpen, Ban, X,
   BarChart3, Trash2, Save, Pencil, Images, Upload,
   Monitor, Tablet, Smartphone, ShieldCheck, SendHorizontal, Link2,
-  ListOrdered, Plus, Clock, Users, Play, Pause, GripVertical,
+  ListOrdered, Plus, Clock, Users, Play, Pause, GripVertical, HelpCircle,
 } from 'lucide-react'
 import { EmailEditor, type UploadedImage, type MediaItem } from '@/components/email-editor/email-editor'
 
@@ -251,6 +251,7 @@ export default function MailPage() {
   const [newSequenceTime, setNewSequenceTime] = useState('09:00')
   const [showNewSequence, setShowNewSequence] = useState(false)
   const [creatingSequence, setCreatingSequence] = useState(false)
+  const [showHelp, setShowHelp] = useState<'compose' | 'sequences' | null>(null)
   const [editingStepId, setEditingStepId] = useState<string | null>(null)
   const [newStepSubject, setNewStepSubject] = useState('')
   const [newStepHeading, setNewStepHeading] = useState('')
@@ -261,6 +262,17 @@ export default function MailPage() {
   const [showAddStep, setShowAddStep] = useState(false)
   const [addingStep, setAddingStep] = useState(false)
   const [confirmDeleteSeqId, setConfirmDeleteSeqId] = useState<string | null>(null)
+
+  // Close help popover on outside click
+  useEffect(() => {
+    if (!showHelp) return
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (!target.closest('[data-help-popover]')) setShowHelp(null)
+    }
+    document.addEventListener('click', handler, true)
+    return () => document.removeEventListener('click', handler, true)
+  }, [showHelp])
 
   const fetchData = useCallback(() => {
     setLoading(true)
@@ -842,7 +854,61 @@ export default function MailPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8" style={{ fontFamily: 'var(--font-condensed), sans-serif' }}>
         <TeamNav />
 
-        <h2 className="text-xl font-semibold text-[var(--navy-dark)] mb-6">E-mail</h2>
+        <div className="flex items-center gap-2 mb-6">
+          <h2 className="text-xl font-semibold text-[var(--navy-dark)]">E-mail</h2>
+          <div className="relative">
+            <button
+              onClick={() => setShowHelp(showHelp === 'compose' ? null : 'compose')}
+              className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+              aria-label="Help over e-mail module"
+              data-help-popover
+            >
+              <HelpCircle className="w-4.5 h-4.5" />
+            </button>
+            {showHelp === 'compose' && (
+              <div data-help-popover className="absolute left-0 top-8 z-50 w-[400px] bg-white rounded-xl border border-[var(--border)] shadow-lg p-5">
+                <div className="flex items-start justify-between mb-3">
+                  <h4 className="text-sm font-semibold text-[var(--navy-dark)]">Hoe werkt de e-mail module?</h4>
+                  <button onClick={() => setShowHelp(null)} className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)]">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="space-y-3 text-xs text-[var(--navy-medium)] leading-relaxed">
+                  <div>
+                    <p className="font-semibold text-[var(--navy-dark)] mb-1">4 tabbladen</p>
+                    <ul className="space-y-0.5 ml-3 list-disc">
+                      <li><strong>Nieuw bericht</strong> — campagne-e-mails schrijven en versturen</li>
+                      <li><strong>Campagnes</strong> — verzonden campagnes met open/klik-statistieken</li>
+                      <li><strong>Media</strong> — afbeeldingen uploaden en beheren</li>
+                      <li><strong>Sequenties</strong> — automatische e-mailreeksen instellen</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-[var(--navy-dark)] mb-1">E-mail opstellen</p>
+                    <ol className="space-y-0.5 ml-3 list-decimal">
+                      <li>Kies de <strong>segmenten</strong> (ontvangers) via de selectievakjes</li>
+                      <li>Vul <strong>onderwerp</strong>, <strong>koptekst</strong> en <strong>bericht</strong> in</li>
+                      <li>Optioneel: voeg een <strong>preheader</strong> (voorbeeldtekst in inbox) en <strong>actieknop</strong> toe</li>
+                      <li>Gebruik <strong>Voornaam</strong> in de werkbalk om de naam van de ontvanger in te voegen</li>
+                    </ol>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-[var(--navy-dark)] mb-1">Aanbevolen workflow</p>
+                    <ol className="space-y-0.5 ml-3 list-decimal">
+                      <li><strong>Voorbeeld</strong> — bekijk hoe de e-mail eruitziet (desktop/tablet/mobiel)</li>
+                      <li><strong>Controleer</strong> — automatische controle op links, afbeeldingen en authenticatie</li>
+                      <li><strong>Verstuur test</strong> — ontvang de e-mail op uw eigen adres</li>
+                      <li><strong>Verzenden</strong> — verstuur naar alle geselecteerde ontvangers</li>
+                    </ol>
+                  </div>
+                  <p className="text-[10px] text-[var(--navy-medium)]/60 pt-1">
+                    Elke ontvanger krijgt een gepersonaliseerde e-mail met voornaam en een eigen afmeld-/voorkeurenlink.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
 
         {loading ? (
           <div className="animate-pulse space-y-4">
@@ -1825,7 +1891,61 @@ export default function MailPage() {
             {activeTab === 'sequences' && (
               <div className="bg-white rounded-lg border border-[var(--border)] p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-semibold text-[var(--navy-dark)]">Sequenties</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-[var(--navy-dark)]">Sequenties</h3>
+                    <div className="relative">
+                      <button
+                        onClick={() => setShowHelp(showHelp === 'sequences' ? null : 'sequences')}
+                        className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                        aria-label="Help over sequenties"
+                        data-help-popover
+                      >
+                        <HelpCircle className="w-3.5 h-3.5" />
+                      </button>
+                      {showHelp === 'sequences' && (
+                        <div data-help-popover className="absolute left-0 top-7 z-50 w-[380px] bg-white rounded-xl border border-[var(--border)] shadow-lg p-5">
+                          <div className="flex items-start justify-between mb-3">
+                            <h4 className="text-sm font-semibold text-[var(--navy-dark)]">Hoe werken sequenties?</h4>
+                            <button onClick={() => setShowHelp(null)} className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)]">
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <div className="space-y-3 text-xs text-[var(--navy-medium)] leading-relaxed">
+                            <p>
+                              Een sequentie is een reeks e-mails die automatisch worden verstuurd na inschrijving van een lid.
+                              Denk aan een welkomserie of onboarding-reeks.
+                            </p>
+                            <div>
+                              <p className="font-semibold text-[var(--navy-dark)] mb-1">Sequentie instellen</p>
+                              <ol className="space-y-0.5 ml-3 list-decimal">
+                                <li>Klik op <strong>Nieuwe sequentie</strong> en geef een naam op</li>
+                                <li>Kies een <strong>verzendtijd</strong> (bijv. 09:00) — dit is het tijdstip waarop e-mails worden verstuurd</li>
+                                <li>Voeg <strong>stappen</strong> toe — elke stap is een e-mail met een onderwerp, koptekst en bericht</li>
+                                <li>Stel per stap een <strong>vertraging</strong> in (aantal dagen na inschrijving)</li>
+                                <li>Zet de status op <strong>Actief</strong> wanneer de sequentie klaar is</li>
+                              </ol>
+                            </div>
+                            <div>
+                              <p className="font-semibold text-[var(--navy-dark)] mb-1">Hoe het werkt</p>
+                              <ul className="space-y-0.5 ml-3 list-disc">
+                                <li>Nieuwe leden worden automatisch ingeschreven bij het uitnodigen</li>
+                                <li>Elke werkdag op de ingestelde verzendtijd worden e-mails verstuurd</li>
+                                <li>De vertraging per stap bepaalt wanneer de volgende e-mail wordt verstuurd</li>
+                                <li>Afgemelde of gebounste personen worden automatisch overgeslagen</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <p className="font-semibold text-[var(--navy-dark)] mb-1">Voorbeeld</p>
+                              <p>
+                                Welkomserie met 3 stappen: dag 0 (direct welkomstmail), dag 2 (tips voor gebruik),
+                                dag 5 (overzicht van functies). Verzendtijd 09:00 — alle e-mails gaan om 09:00 uit op werkdagen.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                   <button
                     onClick={() => setShowNewSequence(!showNewSequence)}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[var(--pink)] hover:bg-[var(--pink-hover)] rounded-lg transition-colors"
