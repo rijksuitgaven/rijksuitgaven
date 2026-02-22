@@ -268,6 +268,8 @@ export default function MailPage() {
   // Test email state
   const [testSending, setTestSending] = useState(false)
   const [testResult, setTestResult] = useState<string | null>(null)
+  const [testEmailAddress, setTestEmailAddress] = useState('')
+  const [showTestInput, setShowTestInput] = useState(false)
 
   // Precheck state
   const [precheckLoading, setPrecheckLoading] = useState(false)
@@ -470,11 +472,13 @@ export default function MailPage() {
           body: body.trim(),
           ctaText: ctaText.trim() || undefined,
           ctaUrl: ctaUrl.trim() || undefined,
+          email: testEmailAddress.trim() || undefined,
         }),
       })
       const data = await res.json()
       if (res.ok) {
         setTestResult(`Verstuurd naar ${data.email}`)
+        setShowTestInput(false)
         setTimeout(() => setTestResult(null), 5000)
       } else {
         setTestResult(data.error || 'Fout bij versturen')
@@ -486,7 +490,7 @@ export default function MailPage() {
     } finally {
       setTestSending(false)
     }
-  }, [subject, heading, preheader, body, ctaText, ctaUrl])
+  }, [subject, heading, preheader, body, ctaText, ctaUrl, testEmailAddress])
 
   const handlePrecheck = useCallback(async () => {
     if (precheckAreas) {
@@ -1618,20 +1622,46 @@ export default function MailPage() {
                         {precheckAreas ? 'Verberg controle' : 'Controleer'}
                       </button>
 
-                      <button
-                        onClick={handleTestEmail}
-                        disabled={!canSend || testSending}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors disabled:opacity-50"
-                      >
-                        {testSending ? (
-                          <RefreshCw className="w-4 h-4 animate-spin" />
-                        ) : testResult ? (
-                          <CheckCircle className="w-4 h-4 text-green-600" />
-                        ) : (
-                          <SendHorizontal className="w-4 h-4" />
-                        )}
-                        {testResult || 'Verstuur test'}
-                      </button>
+                      {showTestInput ? (
+                        <div className="inline-flex items-center gap-1.5 border border-[var(--border)] rounded-lg bg-white overflow-hidden">
+                          <input
+                            type="email"
+                            value={testEmailAddress}
+                            onChange={e => setTestEmailAddress(e.target.value)}
+                            placeholder="jouw@email.nl"
+                            className="w-48 px-3 py-2 text-sm text-[var(--navy-dark)] focus:outline-none"
+                            onKeyDown={e => { if (e.key === 'Enter') handleTestEmail() }}
+                            autoFocus
+                          />
+                          <button
+                            onClick={handleTestEmail}
+                            disabled={!canSend || testSending}
+                            className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-[var(--navy-dark)] hover:bg-[var(--navy-medium)] transition-colors disabled:opacity-50"
+                          >
+                            {testSending ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <SendHorizontal className="w-3.5 h-3.5" />}
+                            Verstuur
+                          </button>
+                          <button
+                            onClick={() => setShowTestInput(false)}
+                            className="px-2 py-2 text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setShowTestInput(true)}
+                          disabled={!canSend || testSending}
+                          className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          {testResult ? (
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <SendHorizontal className="w-4 h-4" />
+                          )}
+                          {testResult || 'Verstuur test'}
+                        </button>
+                      )}
 
                       <button
                         onClick={handleSaveDraft}
