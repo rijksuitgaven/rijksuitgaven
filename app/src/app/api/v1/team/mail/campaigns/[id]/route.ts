@@ -1,7 +1,7 @@
 /**
  * Admin API: Campaign Detail
  *
- * GET /api/v1/team/mail/campaigns/[id] — Campaign stats + per-recipient events
+ * GET /api/v1/team/mail/campaigns/[id] — Campaign stats + per-recipient events + link stats + device stats
  * DELETE /api/v1/team/mail/campaigns/[id] — Delete campaign + cascading events
  */
 
@@ -37,10 +37,10 @@ export async function GET(
     return NextResponse.json({ error: 'Campagne niet gevonden' }, { status: 404 })
   }
 
-  // Fetch all events for this campaign
+  // Fetch all events for this campaign (include UA columns)
   const { data: events, error: eventsError } = await supabase
     .from('campaign_events')
-    .select('person_id, email, event_type, link_url, occurred_at')
+    .select('person_id, email, event_type, link_url, occurred_at, ua_client, ua_device, ua_os')
     .eq('campaign_id', id)
     .order('occurred_at', { ascending: true })
 
@@ -79,6 +79,14 @@ export async function GET(
     unsubscribed_at: string | null
   }>()
 
+  // Link stats: aggregate clicks per URL
+  const linkClickMap = new Map<string, { total: number; clickers: Set<string> }>()
+
+  // Device stats: aggregate UA data
+  const clientCounts = new Map<string, number>()
+  const deviceCounts = new Map<string, number>()
+  const osCounts = new Map<string, number>()
+
   for (const evt of events || []) {
     if (!recipientMap.has(evt.email)) {
       recipientMap.set(evt.email, {
@@ -106,6 +114,25 @@ export async function GET(
         if (!r.clicked_at) {
           r.clicked_at = evt.occurred_at
           r.clicked_url = evt.link_url
+        }
+        // Accumulate link stats
+        if (evt.link_url) {
+          if (!linkClickMap.has(evt.link_url)) {
+            linkClickMap.set(evt.link_url, { total: 0, clickers: new Set() })
+          }
+          const lc = linkClickMap.get(evt.link_url)!
+          lc.total++
+          lc.clickers.add(evt.email)
+        }
+        // Accumulate device stats
+        if (evt.ua_client) {
+          clientCounts.set(evt.ua_client, (clientCounts.get(evt.ua_client) || 0) + 1)
+        }
+        if (evt.ua_device) {
+          deviceCounts.set(evt.ua_device, (deviceCounts.get(evt.ua_device) || 0) + 1)
+        }
+        if (evt.ua_os) {
+          osCounts.set(evt.ua_os, (osCounts.get(evt.ua_os) || 0) + 1)
         }
         break
       case 'bounced':
@@ -145,10 +172,33 @@ export async function GET(
     }
   })
 
+  // Build link stats sorted by unique clickers desc
+  const link_stats = [...linkClickMap.entries()]
+    .map(([url, data]) => ({
+      url,
+      total_clicks: data.total,
+      unique_clickers: data.clickers.size,
+    }))
+    .sort((a, b) => b.unique_clickers - a.unique_clickers)
+
+  // Build device stats sorted by count desc
+  const mapToSorted = (m: Map<string, number>) =>
+    [...m.entries()]
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+
+  const device_stats = {
+    clients: mapToSorted(clientCounts),
+    devices: mapToSorted(deviceCounts),
+    operating_systems: mapToSorted(osCounts),
+  }
+
   return NextResponse.json({
     campaign,
     stats,
     recipients,
+    link_stats,
+    device_stats,
   })
 }
 

@@ -23,6 +23,7 @@ const ALLOWED_HOSTS = new Set([
   'localhost:3001',
 ])
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
+import { autoEnrollInSequences } from '@/app/api/_lib/sequence-enrollment'
 import { Resend } from 'resend'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
@@ -145,7 +146,7 @@ export async function POST(
   // Get the subscription with person data via FK JOIN
   const { data: sub, error: subError } = await supabase
     .from('subscriptions')
-    .select('user_id, last_active_at, people!inner(email, first_name)')
+    .select('user_id, person_id, last_active_at, people!inner(email, first_name)')
     .eq('id', id)
     .single()
 
@@ -262,6 +263,16 @@ export async function POST(
 
   if (updateError) {
     console.error('[Admin] Update invited_at error:', updateError)
+  }
+
+  // Auto-enroll in active sequences (non-fatal)
+  const personId = (sub as { person_id: string }).person_id
+  if (personId) {
+    try {
+      await autoEnrollInSequences(personId)
+    } catch (err) {
+      console.error('[Admin] Auto-enroll error:', err)
+    }
   }
 
   return NextResponse.json({ success: true })

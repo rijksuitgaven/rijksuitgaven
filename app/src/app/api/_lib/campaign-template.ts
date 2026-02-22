@@ -154,6 +154,8 @@ export function renderCampaignEmail(params: CampaignParams): string {
                 </tr>
                 <tr>
                   <td style="font-size: 12px; line-height: 18px; color: #8a8a8a; text-align: center; padding-top: 12px;">
+                    <a href="${escapeHtml(params.unsubscribeUrl.replace('/afmelden?token=', '/voorkeuren?token='))}" style="color: #8a8a8a; text-decoration: underline;">Voorkeuren beheren</a>
+                    &nbsp;|&nbsp;
                     <a href="${escapeHtml(params.unsubscribeUrl)}" style="color: #8a8a8a; text-decoration: underline;">Afmelden</a>
                   </td>
                 </tr>

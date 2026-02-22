@@ -5,7 +5,7 @@ import { useSubscription } from '@/hooks/use-subscription'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
-import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react'
+import { ChevronUp, ChevronDown, ChevronsUpDown, Zap, Clock, Snowflake, User } from 'lucide-react'
 
 interface Member {
   id: string
@@ -57,6 +57,32 @@ function StatusBadge({ status }: { status: MemberStatus }) {
   return (
     <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full border ${className}`}>
       {label}
+    </span>
+  )
+}
+
+interface EngagementInfo {
+  level: string
+  last_engagement_at: string | null
+  campaigns_sent: number
+  campaigns_opened: number
+  campaigns_clicked: number
+}
+
+const ENGAGEMENT_CONFIG: Record<string, { label: string; color: string; icon: typeof Zap }> = {
+  active: { label: 'Actief', color: 'bg-green-100 text-green-800 border-green-200', icon: Zap },
+  at_risk: { label: 'Risico', color: 'bg-amber-100 text-amber-800 border-amber-200', icon: Clock },
+  cold: { label: 'Koud', color: 'bg-blue-100 text-blue-800 border-blue-200', icon: Snowflake },
+  new: { label: 'Nieuw', color: 'bg-gray-100 text-gray-700 border-gray-200', icon: User },
+}
+
+function EngagementBadge({ level }: { level: string }) {
+  const config = ENGAGEMENT_CONFIG[level] || ENGAGEMENT_CONFIG.new
+  const Icon = config.icon
+  return (
+    <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 text-xs font-medium rounded-full border ${config.color}`}>
+      <Icon className="w-3 h-3" />
+      {config.label}
     </span>
   )
 }
@@ -460,7 +486,8 @@ export default function TeamLedenPage() {
   const [error, setError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [editingMember, setEditingMember] = useState<Member | null>(null)
-  type SortField = 'name' | 'organization' | 'email' | 'plan' | 'status' | 'last_active_at' | 'end_date'
+  const [engagement, setEngagement] = useState<Record<string, EngagementInfo>>({})
+  type SortField = 'name' | 'organization' | 'email' | 'plan' | 'status' | 'last_active_at' | 'end_date' | 'engagement'
   const [sortBy, setSortBy] = useState<SortField | null>(null)
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
 
@@ -486,13 +513,24 @@ export default function TeamLedenPage() {
     }
   }, [])
 
+  const fetchEngagement = useCallback(async () => {
+    try {
+      const res = await fetch('/api/v1/team/leden/engagement')
+      const data = await res.json()
+      if (res.ok) setEngagement(data.engagement || {})
+    } catch {
+      // Non-fatal
+    }
+  }, [])
+
   useEffect(() => {
     if (!subLoading && role === 'admin') {
       fetchMembers()
+      fetchEngagement()
     } else if (!subLoading) {
       setLoading(false)
     }
-  }, [subLoading, role, fetchMembers])
+  }, [subLoading, role, fetchMembers, fetchEngagement])
 
   if (subLoading || loading) {
     return (
@@ -561,6 +599,14 @@ export default function TeamLedenPage() {
         aVal = a.end_date
         bVal = b.end_date
         break
+      case 'engagement': {
+        // Sort order: active > at_risk > new > cold
+        const order: Record<string, number> = { active: 0, at_risk: 1, new: 2, cold: 3 }
+        const aEng = engagement[a.id]?.level || 'new'
+        const bEng = engagement[b.id]?.level || 'new'
+        const cmpVal = (order[aEng] ?? 4) - (order[bEng] ?? 4)
+        return sortDir === 'asc' ? cmpVal : -cmpVal
+      }
       default:
         return 0
     }
@@ -620,7 +666,7 @@ export default function TeamLedenPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-[var(--border)]">
-                {([['name', 'Naam'], ['organization', 'Organisatie'], ['email', 'E-mail'], ['plan', 'Plan'], ['status', 'Status'], ['last_active_at', 'Laatst actief'], ['end_date', 'Einddatum']] as [SortField, string][]).map(([field, label]) => (
+                {([['name', 'Naam'], ['organization', 'Organisatie'], ['email', 'E-mail'], ['plan', 'Plan'], ['status', 'Status'], ['engagement', 'Engagement'], ['last_active_at', 'Laatst actief'], ['end_date', 'Einddatum']] as [SortField, string][]).map(([field, label]) => (
                   <th key={field} onClick={() => toggleSort(field)} className="text-left px-4 py-3 font-medium text-[var(--navy-medium)] cursor-pointer select-none hover:text-[var(--navy-dark)]">
                     <span className="inline-flex items-center gap-1">{label} <SortIcon field={field} /></span>
                   </th>
@@ -631,7 +677,7 @@ export default function TeamLedenPage() {
             <tbody>
               {sortedMembers.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-[var(--navy-medium)]">
+                  <td colSpan={9} className="px-4 py-8 text-center text-[var(--navy-medium)]">
                     Nog geen leden. Voeg het eerste lid toe.
                   </td>
                 </tr>
@@ -645,7 +691,13 @@ export default function TeamLedenPage() {
                       className="border-b border-[var(--border)] hover:bg-gray-50 cursor-pointer transition-colors"
                     >
                       <td className="px-4 py-3 text-[var(--navy-dark)] font-medium">
-                        {member.first_name} {member.last_name}
+                        <Link
+                          href={`/team/leden/${member.id}`}
+                          onClick={e => e.stopPropagation()}
+                          className="hover:text-[var(--pink)] transition-colors"
+                        >
+                          {member.first_name} {member.last_name}
+                        </Link>
                         {member.role === 'admin' && <span className="ml-1.5 text-xs text-[var(--pink)]">admin</span>}
                         {member.role === 'trial' && <span className="ml-1.5 text-xs text-blue-600">trial</span>}
                       </td>
@@ -653,6 +705,13 @@ export default function TeamLedenPage() {
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{member.email}</td>
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{member.plan === 'yearly' ? 'Jaar' : member.plan === 'trial' ? 'Proef' : 'Maand'}</td>
                       <td className="px-4 py-3"><StatusBadge status={status} /></td>
+                      <td className="px-4 py-3">
+                        {engagement[member.id] ? (
+                          <EngagementBadge level={engagement[member.id].level} />
+                        ) : (
+                          <span className="text-xs text-[var(--navy-medium)]">—</span>
+                        )}
+                      </td>
                       <td className="px-4 py-3 text-[var(--navy-medium)]" title={member.last_active_at ? formatDateTime(member.last_active_at) : undefined}>
                         {formatRelativeTime(member.last_active_at)}
                       </td>

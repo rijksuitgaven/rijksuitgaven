@@ -8,6 +8,8 @@ import {
   Mail, Send, Eye, EyeOff, Copy,
   ChevronRight, MousePointerClick, MailOpen, Ban, X,
   BarChart3, Trash2, Save, Pencil, Images, Upload,
+  Monitor, Tablet, Smartphone, ShieldCheck, SendHorizontal, Link2,
+  ListOrdered, Plus, Clock, Users, Play, Pause, GripVertical,
 } from 'lucide-react'
 import { EmailEditor, type UploadedImage, type MediaItem } from '@/components/email-editor/email-editor'
 
@@ -56,6 +58,96 @@ interface CampaignRecipient {
   unsubscribed_at: string | null
 }
 
+interface LinkStat {
+  url: string
+  total_clicks: number
+  unique_clickers: number
+}
+
+interface DeviceStats {
+  clients: { name: string; count: number }[]
+  devices: { name: string; count: number }[]
+  operating_systems: { name: string; count: number }[]
+}
+
+interface CampaignDetail {
+  recipients: CampaignRecipient[]
+  link_stats: LinkStat[]
+  device_stats: DeviceStats
+}
+
+interface PrecheckItem {
+  label: string
+  pass: boolean
+  fix?: string
+}
+
+interface PrecheckArea {
+  area: string
+  pass: boolean
+  items: PrecheckItem[]
+}
+
+interface ComparisonCampaign {
+  id: string
+  subject: string
+  sent_count: number
+  delivered_count: number
+  opened_count: number
+  clicked_count: number
+  bounced_count: number
+  open_rate: number
+  click_rate: number
+  bounce_rate: number
+}
+
+interface Sequence {
+  id: string
+  name: string
+  description: string | null
+  status: 'draft' | 'active' | 'paused'
+  send_time: string
+  created_at: string
+  updated_at: string
+  step_count: number
+  enrollment_active: number
+  enrollment_completed: number
+  enrollment_total: number
+}
+
+interface SequenceStep {
+  id: string
+  sequence_id: string
+  step_order: number
+  delay_days: number
+  subject: string
+  heading: string
+  preheader: string | null
+  body: string
+  cta_text: string | null
+  cta_url: string | null
+  created_at: string
+  updated_at: string
+}
+
+interface SequenceEnrollment {
+  id: string
+  person_id: string
+  current_step: number
+  status: 'active' | 'completed' | 'paused' | 'cancelled'
+  enrolled_at: string
+  completed_at: string | null
+  cancelled_at: string | null
+  email: string | null
+  first_name: string | null
+}
+
+interface SequenceDetail {
+  sequence: Sequence
+  steps: SequenceStep[]
+  enrollments: SequenceEnrollment[]
+}
+
 const SEGMENT_OPTIONS = [
   { value: 'nieuw', label: 'Nieuw' },
   { value: 'in_gesprek', label: 'In gesprek' },
@@ -85,7 +177,8 @@ const SEGMENT_LABELS: Record<string, string> = {
 
 const VALID_SEGMENTS_SET = new Set<string>(SEGMENT_OPTIONS.map(o => o.value))
 
-type Tab = 'compose' | 'campaigns' | 'media'
+type Tab = 'compose' | 'campaigns' | 'media' | 'sequences'
+type PreviewDevice = 'desktop' | 'tablet' | 'mobile'
 
 export default function MailPage() {
   const { role, loading: subLoading } = useSubscription()
@@ -104,6 +197,7 @@ export default function MailPage() {
   const [showPreview, setShowPreview] = useState(false)
   const [previewHtml, setPreviewHtml] = useState<string | null>(null)
   const [previewLoading, setPreviewLoading] = useState(false)
+  const [previewDevice, setPreviewDevice] = useState<PreviewDevice>('desktop')
 
   // Draft state
   const [editingDraftId, setEditingDraftId] = useState<string | null>(null)
@@ -119,18 +213,54 @@ export default function MailPage() {
   const [sendError, setSendError] = useState<string | null>(null)
   const [confirmSend, setConfirmSend] = useState(false)
 
+  // Test email state
+  const [testSending, setTestSending] = useState(false)
+  const [testResult, setTestResult] = useState<string | null>(null)
+
+  // Precheck state
+  const [precheckLoading, setPrecheckLoading] = useState(false)
+  const [precheckAreas, setPrecheckAreas] = useState<PrecheckArea[] | null>(null)
+
   // Campaign history state
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [campaignsLoading, setCampaignsLoading] = useState(false)
   const [expandedCampaignId, setExpandedCampaignId] = useState<string | null>(null)
-  const [campaignRecipients, setCampaignRecipients] = useState<CampaignRecipient[]>([])
+  const [campaignDetail, setCampaignDetail] = useState<CampaignDetail | null>(null)
   const [recipientsLoading, setRecipientsLoading] = useState(false)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+
+  // Comparison state
+  const [compareMode, setCompareMode] = useState(false)
+  const [compareSelected, setCompareSelected] = useState<Set<string>>(new Set())
+  const [compareResult, setCompareResult] = useState<ComparisonCampaign[] | null>(null)
+  const [compareLoading, setCompareLoading] = useState(false)
 
   // Media library state
   const [mediaLibrary, setMediaLibrary] = useState<MediaItem[]>([])
   const [mediaLoading, setMediaLoading] = useState(false)
   const [mediaDeleteConfirm, setMediaDeleteConfirm] = useState<string | null>(null)
+
+  // Sequences state
+  const [sequences, setSequences] = useState<Sequence[]>([])
+  const [sequencesLoading, setSequencesLoading] = useState(false)
+  const [expandedSequenceId, setExpandedSequenceId] = useState<string | null>(null)
+  const [sequenceDetail, setSequenceDetail] = useState<SequenceDetail | null>(null)
+  const [sequenceDetailLoading, setSequenceDetailLoading] = useState(false)
+  const [newSequenceName, setNewSequenceName] = useState('')
+  const [newSequenceDesc, setNewSequenceDesc] = useState('')
+  const [newSequenceTime, setNewSequenceTime] = useState('09:00')
+  const [showNewSequence, setShowNewSequence] = useState(false)
+  const [creatingSequence, setCreatingSequence] = useState(false)
+  const [editingStepId, setEditingStepId] = useState<string | null>(null)
+  const [newStepSubject, setNewStepSubject] = useState('')
+  const [newStepHeading, setNewStepHeading] = useState('')
+  const [newStepBody, setNewStepBody] = useState('')
+  const [newStepDelay, setNewStepDelay] = useState(0)
+  const [newStepCtaText, setNewStepCtaText] = useState('')
+  const [newStepCtaUrl, setNewStepCtaUrl] = useState('')
+  const [showAddStep, setShowAddStep] = useState(false)
+  const [addingStep, setAddingStep] = useState(false)
+  const [confirmDeleteSeqId, setConfirmDeleteSeqId] = useState<string | null>(null)
 
   const fetchData = useCallback(() => {
     setLoading(true)
@@ -165,6 +295,17 @@ export default function MailPage() {
       .catch(() => setMediaLoading(false))
   }, [])
 
+  const fetchSequences = useCallback(() => {
+    setSequencesLoading(true)
+    fetch('/api/v1/team/mail/sequences')
+      .then(res => res.json())
+      .then(d => {
+        setSequences(d.sequences || [])
+        setSequencesLoading(false)
+      })
+      .catch(() => setSequencesLoading(false))
+  }, [])
+
   const handleExpandCampaign = useCallback(async (campaignId: string) => {
     if (expandedCampaignId === campaignId) {
       setExpandedCampaignId(null)
@@ -172,11 +313,16 @@ export default function MailPage() {
     }
     setExpandedCampaignId(campaignId)
     setRecipientsLoading(true)
+    setCampaignDetail(null)
     try {
       const res = await fetch(`/api/v1/team/mail/campaigns/${campaignId}`)
       const data = await res.json()
       if (res.ok) {
-        setCampaignRecipients(data.recipients || [])
+        setCampaignDetail({
+          recipients: data.recipients || [],
+          link_stats: data.link_stats || [],
+          device_stats: data.device_stats || { clients: [], devices: [], operating_systems: [] },
+        })
       }
     } catch {
       // Silent
@@ -190,10 +336,11 @@ export default function MailPage() {
       fetchData()
       fetchCampaigns()
       fetchMedia()
+      fetchSequences()
     } else if (!subLoading) {
       setLoading(false)
     }
-  }, [subLoading, role, fetchData, fetchCampaigns, fetchMedia])
+  }, [subLoading, role, fetchData, fetchCampaigns, fetchMedia, fetchSequences])
 
   const handlePreview = useCallback(async () => {
     if (showPreview) {
@@ -226,6 +373,89 @@ export default function MailPage() {
       setPreviewLoading(false)
     }
   }, [showPreview, subject, heading, preheader, body, ctaText, ctaUrl])
+
+  const handleTestEmail = useCallback(async () => {
+    setTestSending(true)
+    setTestResult(null)
+    try {
+      const res = await fetch('/api/v1/team/mail/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: subject.trim(),
+          heading: heading.trim(),
+          preheader: preheader.trim() || undefined,
+          body: body.trim(),
+          ctaText: ctaText.trim() || undefined,
+          ctaUrl: ctaUrl.trim() || undefined,
+        }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setTestResult(`Verstuurd naar ${data.email}`)
+        setTimeout(() => setTestResult(null), 5000)
+      } else {
+        setTestResult(data.error || 'Fout bij versturen')
+        setTimeout(() => setTestResult(null), 5000)
+      }
+    } catch {
+      setTestResult('Netwerkfout')
+      setTimeout(() => setTestResult(null), 5000)
+    } finally {
+      setTestSending(false)
+    }
+  }, [subject, heading, preheader, body, ctaText, ctaUrl])
+
+  const handlePrecheck = useCallback(async () => {
+    if (precheckAreas) {
+      setPrecheckAreas(null)
+      return
+    }
+    setPrecheckLoading(true)
+    try {
+      const res = await fetch('/api/v1/team/mail/precheck', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: subject.trim(),
+          heading: heading.trim(),
+          preheader: preheader.trim() || undefined,
+          body: body.trim(),
+          ctaText: ctaText.trim() || undefined,
+          ctaUrl: ctaUrl.trim() || undefined,
+          segments: Array.from(selectedSegments),
+        }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setPrecheckAreas(data.areas || [])
+      }
+    } catch {
+      // Silent
+    } finally {
+      setPrecheckLoading(false)
+    }
+  }, [precheckAreas, subject, heading, preheader, body, ctaText, ctaUrl, selectedSegments])
+
+  const handleCompare = useCallback(async () => {
+    if (compareSelected.size < 2) return
+    setCompareLoading(true)
+    try {
+      const res = await fetch('/api/v1/team/mail/campaigns/compare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ campaign_ids: Array.from(compareSelected) }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setCompareResult(data.campaigns || [])
+      }
+    } catch {
+      // Silent
+    } finally {
+      setCompareLoading(false)
+    }
+  }, [compareSelected])
 
   const handleSaveDraft = useCallback(async () => {
     setSaving(true)
@@ -431,6 +661,139 @@ export default function MailPage() {
     })
   }, [])
 
+  const handleExpandSequence = useCallback(async (sequenceId: string) => {
+    if (expandedSequenceId === sequenceId) {
+      setExpandedSequenceId(null)
+      return
+    }
+    setExpandedSequenceId(sequenceId)
+    setSequenceDetailLoading(true)
+    setSequenceDetail(null)
+    setShowAddStep(false)
+    setEditingStepId(null)
+    try {
+      const res = await fetch(`/api/v1/team/mail/sequences/${sequenceId}`)
+      const data = await res.json()
+      if (res.ok) {
+        setSequenceDetail(data)
+      }
+    } catch {
+      // Silent
+    } finally {
+      setSequenceDetailLoading(false)
+    }
+  }, [expandedSequenceId])
+
+  const handleCreateSequence = useCallback(async () => {
+    if (!newSequenceName.trim()) return
+    setCreatingSequence(true)
+    try {
+      const res = await fetch('/api/v1/team/mail/sequences', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newSequenceName.trim(),
+          description: newSequenceDesc.trim() || undefined,
+          send_time: newSequenceTime,
+        }),
+      })
+      if (res.ok) {
+        setNewSequenceName('')
+        setNewSequenceDesc('')
+        setNewSequenceTime('09:00')
+        setShowNewSequence(false)
+        fetchSequences()
+      }
+    } catch {
+      // Silent
+    } finally {
+      setCreatingSequence(false)
+    }
+  }, [newSequenceName, newSequenceDesc, newSequenceTime, fetchSequences])
+
+  const handleToggleSequenceStatus = useCallback(async (seq: Sequence) => {
+    const newStatus = seq.status === 'active' ? 'paused' : 'active'
+    try {
+      const res = await fetch(`/api/v1/team/mail/sequences/${seq.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      if (res.ok) {
+        fetchSequences()
+        if (expandedSequenceId === seq.id) {
+          handleExpandSequence(seq.id)
+        }
+      }
+    } catch {
+      // Silent
+    }
+  }, [fetchSequences, expandedSequenceId, handleExpandSequence])
+
+  const handleDeleteSequence = useCallback(async (sequenceId: string) => {
+    try {
+      const res = await fetch(`/api/v1/team/mail/sequences/${sequenceId}`, { method: 'DELETE' })
+      if (res.ok) {
+        setSequences(prev => prev.filter(s => s.id !== sequenceId))
+        if (expandedSequenceId === sequenceId) setExpandedSequenceId(null)
+      }
+    } catch {
+      // Silent
+    } finally {
+      setConfirmDeleteSeqId(null)
+    }
+  }, [expandedSequenceId])
+
+  const handleAddStep = useCallback(async () => {
+    if (!expandedSequenceId || !newStepSubject.trim() || !newStepHeading.trim() || !newStepBody.trim()) return
+    setAddingStep(true)
+    try {
+      const res = await fetch(`/api/v1/team/mail/sequences/${expandedSequenceId}/steps`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: newStepSubject.trim(),
+          heading: newStepHeading.trim(),
+          body: newStepBody.trim(),
+          delay_days: newStepDelay,
+          cta_text: newStepCtaText.trim() || undefined,
+          cta_url: newStepCtaUrl.trim() || undefined,
+        }),
+      })
+      if (res.ok) {
+        setNewStepSubject('')
+        setNewStepHeading('')
+        setNewStepBody('')
+        setNewStepDelay(0)
+        setNewStepCtaText('')
+        setNewStepCtaUrl('')
+        setShowAddStep(false)
+        // Refresh detail
+        handleExpandSequence(expandedSequenceId)
+        fetchSequences()
+      }
+    } catch {
+      // Silent
+    } finally {
+      setAddingStep(false)
+    }
+  }, [expandedSequenceId, newStepSubject, newStepHeading, newStepBody, newStepDelay, newStepCtaText, newStepCtaUrl, handleExpandSequence, fetchSequences])
+
+  const handleDeleteStep = useCallback(async (stepId: string) => {
+    if (!expandedSequenceId) return
+    try {
+      const res = await fetch(`/api/v1/team/mail/sequences/${expandedSequenceId}/steps/${stepId}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        handleExpandSequence(expandedSequenceId)
+        fetchSequences()
+      }
+    } catch {
+      // Silent
+    }
+  }, [expandedSequenceId, handleExpandSequence, fetchSequences])
+
   const handleDeleteCampaign = useCallback(async (campaignId: string, isDraft: boolean) => {
     try {
       const url = isDraft
@@ -462,6 +825,8 @@ export default function MailPage() {
 
   const drafts = campaigns.filter(c => c.status === 'draft')
   const sentCampaigns = campaigns.filter(c => c.status !== 'draft')
+
+  const previewWidth = previewDevice === 'mobile' ? 375 : previewDevice === 'tablet' ? 768 : undefined
 
   if (subLoading) return null
   if (role !== 'admin') {
@@ -535,6 +900,24 @@ export default function MailPage() {
                     activeTab === 'media' ? 'text-white/70' : 'text-[var(--navy-medium)]'
                   }`}>
                     ({mediaLibrary.length})
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => setActiveTab('sequences')}
+                className={`inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'sequences'
+                    ? 'bg-[var(--navy-dark)] text-white'
+                    : 'bg-white text-[var(--navy-medium)] border border-[var(--border)] hover:bg-[var(--gray-light)] hover:text-[var(--navy-dark)]'
+                }`}
+              >
+                <ListOrdered className="w-4 h-4" />
+                Sequenties
+                {sequences.length > 0 && (
+                  <span className={`ml-1 text-xs tabular-nums ${
+                    activeTab === 'sequences' ? 'text-white/70' : 'text-[var(--navy-medium)]'
+                  }`}>
+                    ({sequences.length})
                   </span>
                 )}
               </button>
@@ -693,7 +1076,7 @@ export default function MailPage() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-3 pt-2">
+                    <div className="flex flex-wrap items-center gap-3 pt-2">
                       <button
                         onClick={handlePreview}
                         disabled={!canSend || previewLoading}
@@ -707,6 +1090,34 @@ export default function MailPage() {
                           <Eye className="w-4 h-4" />
                         )}
                         {showPreview ? 'Verberg voorbeeld' : 'Voorbeeld'}
+                      </button>
+
+                      <button
+                        onClick={handlePrecheck}
+                        disabled={!bodyHasContent || precheckLoading}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {precheckLoading ? (
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <ShieldCheck className="w-4 h-4" />
+                        )}
+                        {precheckAreas ? 'Verberg controle' : 'Controleer'}
+                      </button>
+
+                      <button
+                        onClick={handleTestEmail}
+                        disabled={!canSend || testSending}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {testSending ? (
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                        ) : testResult ? (
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                        ) : (
+                          <SendHorizontal className="w-4 h-4" />
+                        )}
+                        {testResult || 'Verstuur test'}
                       </button>
 
                       <button
@@ -776,14 +1187,69 @@ export default function MailPage() {
                   )}
                 </div>
 
-                {/* Email preview — server-rendered iframe */}
+                {/* Pre-send checklist */}
+                {precheckAreas && (
+                  <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
+                    <h3 className="text-sm font-semibold text-[var(--navy-dark)] mb-3">Pre-send controle</h3>
+                    <div className="space-y-3">
+                      {precheckAreas.map(area => (
+                        <div key={area.area}>
+                          <div className="flex items-center gap-2 mb-1.5">
+                            {area.pass ? (
+                              <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                            ) : (
+                              <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
+                            )}
+                            <span className="text-sm font-medium text-[var(--navy-dark)]">{area.area}</span>
+                          </div>
+                          <div className="ml-6 space-y-1">
+                            {area.items.map((item, idx) => (
+                              <div key={idx} className="flex items-start gap-2 text-xs">
+                                <span className={item.pass ? 'text-green-600' : 'text-red-500'}>
+                                  {item.pass ? '\u2713' : '\u2717'}
+                                </span>
+                                <div>
+                                  <span className={item.pass ? 'text-[var(--navy-medium)]' : 'text-[var(--navy-dark)]'}>
+                                    {item.label}
+                                  </span>
+                                  {item.fix && (
+                                    <p className="text-[var(--navy-medium)] mt-0.5">{item.fix}</p>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Email preview — server-rendered iframe with device toggle */}
                 {showPreview && previewHtml && (
                   <div className="bg-white rounded-lg border border-[var(--border)] p-5 mb-4">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="text-sm font-semibold text-[var(--navy-dark)]">Voorbeeld</h3>
-                      <span className="text-xs text-[var(--navy-medium)]">
-                        Exact zoals ontvangers het zien
-                      </span>
+                      <div className="flex items-center gap-1">
+                        {([
+                          { device: 'desktop' as const, icon: Monitor, label: 'Desktop' },
+                          { device: 'tablet' as const, icon: Tablet, label: 'Tablet' },
+                          { device: 'mobile' as const, icon: Smartphone, label: 'Mobiel' },
+                        ]).map(({ device, icon: Icon, label }) => (
+                          <button
+                            key={device}
+                            onClick={() => setPreviewDevice(device)}
+                            className={`p-1.5 rounded transition-colors ${
+                              previewDevice === device
+                                ? 'bg-[var(--navy-dark)] text-white'
+                                : 'text-[var(--navy-medium)] hover:text-[var(--navy-dark)] hover:bg-[var(--gray-light)]'
+                            }`}
+                            title={label}
+                          >
+                            <Icon className="w-4 h-4" />
+                          </button>
+                        ))}
+                      </div>
                     </div>
                     <div className="border border-[var(--border)] rounded-lg overflow-hidden">
                       <div className="bg-[var(--gray-light)] px-4 py-2 text-xs text-[var(--navy-medium)] border-b border-[var(--border)]">
@@ -792,13 +1258,19 @@ export default function MailPage() {
                           <span className="ml-3 text-[var(--navy-medium)]/60">— {preheader}</span>
                         )}
                       </div>
-                      <iframe
-                        srcDoc={previewHtml}
-                        sandbox=""
-                        title="E-mail voorbeeld"
-                        className="w-full border-0"
-                        style={{ height: 600 }}
-                      />
+                      <div className="flex justify-center bg-[#f0f0f0]">
+                        <iframe
+                          srcDoc={previewHtml}
+                          sandbox=""
+                          title="E-mail voorbeeld"
+                          className="border-0 bg-white transition-all duration-300"
+                          style={{
+                            width: previewWidth || '100%',
+                            maxWidth: '100%',
+                            height: 600,
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
@@ -918,6 +1390,78 @@ export default function MailPage() {
             {/* Tab content: Campaigns */}
             {activeTab === 'campaigns' && (
               <div className="bg-white rounded-lg border border-[var(--border)] p-5">
+                {/* Comparison mode toggle */}
+                {sentCampaigns.length >= 2 && (
+                  <div className="flex items-center justify-between mb-4">
+                    <button
+                      onClick={() => {
+                        setCompareMode(!compareMode)
+                        setCompareSelected(new Set())
+                        setCompareResult(null)
+                      }}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                        compareMode
+                          ? 'bg-[var(--navy-dark)] text-white'
+                          : 'text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)]'
+                      }`}
+                    >
+                      <BarChart3 className="w-3.5 h-3.5" />
+                      Vergelijken
+                    </button>
+                    {compareMode && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-[var(--navy-medium)]">
+                          {compareSelected.size} geselecteerd (2-4)
+                        </span>
+                        <button
+                          onClick={handleCompare}
+                          disabled={compareSelected.size < 2 || compareLoading}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[var(--pink)] hover:bg-[var(--pink-hover)] rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          {compareLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : null}
+                          Vergelijk
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Comparison result */}
+                {compareResult && (
+                  <div className="mb-6 overflow-x-auto rounded border border-[var(--border)]">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="bg-[var(--gray-light)] text-left">
+                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Campagne</th>
+                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)] text-right">Verstuurd</th>
+                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)] text-right">Open %</th>
+                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)] text-right">Klik %</th>
+                          <th className="px-3 py-2 font-medium text-[var(--navy-dark)] text-right">Bounce %</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--border)]">
+                        {compareResult.map(c => (
+                          <tr key={c.id}>
+                            <td className="px-3 py-2 text-[var(--navy-dark)] font-medium max-w-[200px] truncate">{c.subject}</td>
+                            <td className="px-3 py-2 text-[var(--navy-medium)] text-right tabular-nums">{c.sent_count}</td>
+                            <td className="px-3 py-2 text-right tabular-nums">
+                              <span className="text-blue-600">{c.open_rate.toFixed(1)}%</span>
+                            </td>
+                            <td className="px-3 py-2 text-right tabular-nums">
+                              <span className="text-[var(--pink)]">{c.click_rate.toFixed(1)}%</span>
+                            </td>
+                            <td className="px-3 py-2 text-right tabular-nums">
+                              <span className={c.bounce_rate > 5 ? 'text-[var(--error)]' : 'text-[var(--navy-medium)]'}>
+                                {c.bounce_rate.toFixed(1)}%
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
                 {campaignsLoading ? (
                   <div className="animate-pulse space-y-2">
                     {[1, 2, 3].map(i => (
@@ -1027,6 +1571,21 @@ export default function MailPage() {
                                 <div className="flex items-start justify-between gap-4">
                                   <div className="min-w-0 flex-1">
                                     <div className="flex items-center gap-2">
+                                      {compareMode && (
+                                        <input
+                                          type="checkbox"
+                                          checked={compareSelected.has(campaign.id)}
+                                          onChange={() => {
+                                            setCompareSelected(prev => {
+                                              const next = new Set(prev)
+                                              if (next.has(campaign.id)) next.delete(campaign.id)
+                                              else if (next.size < 4) next.add(campaign.id)
+                                              return next
+                                            })
+                                          }}
+                                          className="w-3.5 h-3.5 rounded border-[var(--border)] text-[var(--pink)] focus:ring-[var(--pink)]"
+                                        />
+                                      )}
                                       <button
                                         onClick={() => handleExpandCampaign(campaign.id)}
                                         className="inline-flex items-center gap-1 text-sm font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] transition-colors truncate"
@@ -1110,15 +1669,80 @@ export default function MailPage() {
                                   </div>
                                 </div>
 
-                                {/* Expanded: per-recipient detail */}
+                                {/* Expanded: campaign detail with recipients, links, devices */}
                                 {isExpanded && (
                                   <div className="mt-3 ml-5">
                                     {recipientsLoading ? (
                                       <div className="animate-pulse h-20 bg-[var(--gray-light)] rounded" />
-                                    ) : campaignRecipients.length === 0 ? (
+                                    ) : !campaignDetail || campaignDetail.recipients.length === 0 ? (
                                       <p className="text-xs text-[var(--navy-medium)]">Nog geen events ontvangen van Resend.</p>
                                     ) : (
                                       <>
+                                        {/* Link stats */}
+                                        {campaignDetail.link_stats.length > 0 && (
+                                          <div className="mb-4">
+                                            <h4 className="text-xs font-semibold text-[var(--navy-dark)] mb-2 flex items-center gap-1.5">
+                                              <Link2 className="w-3.5 h-3.5" />
+                                              Geklikte links
+                                            </h4>
+                                            <div className="space-y-1.5">
+                                              {campaignDetail.link_stats.map((ls, idx) => (
+                                                <div key={idx} className="flex items-center justify-between text-xs">
+                                                  <a
+                                                    href={ls.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-[var(--link)] hover:underline truncate max-w-[70%]"
+                                                  >
+                                                    {ls.url.replace(/^https?:\/\//, '').slice(0, 60)}
+                                                  </a>
+                                                  <span className="text-[var(--navy-medium)] tabular-nums">
+                                                    {ls.unique_clickers} uniek / {ls.total_clicks} totaal
+                                                  </span>
+                                                </div>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        )}
+
+                                        {/* Device/Client stats */}
+                                        {(campaignDetail.device_stats.clients.length > 0 ||
+                                          campaignDetail.device_stats.devices.length > 0 ||
+                                          campaignDetail.device_stats.operating_systems.length > 0) && (
+                                          <div className="mb-4 grid grid-cols-3 gap-4">
+                                            {[
+                                              { label: 'E-mailclient', items: campaignDetail.device_stats.clients },
+                                              { label: 'Apparaat', items: campaignDetail.device_stats.devices },
+                                              { label: 'OS', items: campaignDetail.device_stats.operating_systems },
+                                            ].map(({ label, items }) => {
+                                              if (items.length === 0) return null
+                                              const maxCount = Math.max(...items.map(i => i.count))
+                                              return (
+                                                <div key={label}>
+                                                  <h5 className="text-[10px] font-semibold uppercase tracking-wider text-[var(--navy-medium)] mb-1.5">{label}</h5>
+                                                  <div className="space-y-1">
+                                                    {items.slice(0, 5).map((item, idx) => (
+                                                      <div key={idx} className="text-xs">
+                                                        <div className="flex justify-between mb-0.5">
+                                                          <span className="text-[var(--navy-dark)] truncate">{item.name || 'Onbekend'}</span>
+                                                          <span className="text-[var(--navy-medium)] tabular-nums ml-2">{item.count}</span>
+                                                        </div>
+                                                        <div className="h-1 bg-[var(--gray-light)] rounded-full overflow-hidden">
+                                                          <div
+                                                            className="h-full bg-[var(--navy-dark)]/30 rounded-full"
+                                                            style={{ width: `${(item.count / maxCount) * 100}%` }}
+                                                          />
+                                                        </div>
+                                                      </div>
+                                                    ))}
+                                                  </div>
+                                                </div>
+                                              )
+                                            })}
+                                          </div>
+                                        )}
+
+                                        {/* Recipients table */}
                                         <div className="overflow-x-auto rounded border border-[var(--border)]">
                                           <table className="w-full text-xs">
                                             <thead>
@@ -1131,7 +1755,7 @@ export default function MailPage() {
                                               </tr>
                                             </thead>
                                             <tbody className="divide-y divide-[var(--border)]">
-                                              {campaignRecipients.map(r => (
+                                              {campaignDetail.recipients.map(r => (
                                                 <tr key={r.email} className="hover:bg-[var(--gray-light)]/50">
                                                   <td className="px-3 py-2">
                                                     <div className="text-[var(--navy-dark)]">
@@ -1194,6 +1818,423 @@ export default function MailPage() {
                       <p className="text-sm text-[var(--navy-medium)]">Nog geen campagnes of concepten.</p>
                     )}
                   </>
+                )}
+              </div>
+            )}
+            {/* Tab content: Sequences */}
+            {activeTab === 'sequences' && (
+              <div className="bg-white rounded-lg border border-[var(--border)] p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-semibold text-[var(--navy-dark)]">Sequenties</h3>
+                  <button
+                    onClick={() => setShowNewSequence(!showNewSequence)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[var(--pink)] hover:bg-[var(--pink-hover)] rounded-lg transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Nieuwe sequentie
+                  </button>
+                </div>
+
+                {/* Create new sequence form */}
+                {showNewSequence && (
+                  <div className="mb-4 p-4 bg-[var(--gray-light)] rounded-lg border border-[var(--border)]">
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-xs font-medium text-[var(--navy-dark)] mb-1">Naam</label>
+                        <input
+                          type="text"
+                          value={newSequenceName}
+                          onChange={e => setNewSequenceName(e.target.value)}
+                          placeholder="Bijv. Welkom-serie"
+                          className="w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-[var(--navy-dark)] mb-1">Beschrijving (optioneel)</label>
+                        <input
+                          type="text"
+                          value={newSequenceDesc}
+                          onChange={e => setNewSequenceDesc(e.target.value)}
+                          placeholder="Korte beschrijving van de sequentie"
+                          className="w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-[var(--navy-dark)] mb-1">Verzendtijd</label>
+                        <select
+                          value={newSequenceTime}
+                          onChange={e => setNewSequenceTime(e.target.value)}
+                          className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--navy-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent bg-white"
+                        >
+                          <option value="08:00">08:00</option>
+                          <option value="09:00">09:00</option>
+                          <option value="10:00">10:00</option>
+                          <option value="12:00">12:00</option>
+                          <option value="14:00">14:00</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={handleCreateSequence}
+                          disabled={!newSequenceName.trim() || creatingSequence}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[var(--pink)] hover:bg-[var(--pink-hover)] rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          {creatingSequence ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+                          Aanmaken
+                        </button>
+                        <button
+                          onClick={() => setShowNewSequence(false)}
+                          className="px-3 py-1.5 text-xs text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                        >
+                          Annuleren
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Sequences list */}
+                {sequencesLoading ? (
+                  <div className="animate-pulse space-y-2">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="h-14 bg-[var(--gray-light)] rounded" />
+                    ))}
+                  </div>
+                ) : sequences.length === 0 ? (
+                  <p className="text-sm text-[var(--navy-medium)] text-center py-8">
+                    Nog geen sequenties aangemaakt.
+                  </p>
+                ) : (
+                  <div className="divide-y divide-[var(--border)]">
+                    {sequences.map(seq => {
+                      const isExpanded = expandedSequenceId === seq.id
+                      const statusColors: Record<string, string> = {
+                        draft: 'bg-amber-100 text-amber-800',
+                        active: 'bg-green-100 text-green-800',
+                        paused: 'bg-gray-100 text-gray-600',
+                      }
+                      const statusLabels: Record<string, string> = {
+                        draft: 'Concept',
+                        active: 'Actief',
+                        paused: 'Gepauzeerd',
+                      }
+
+                      return (
+                        <div key={seq.id} className="py-3 first:pt-0 last:pb-0">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => handleExpandSequence(seq.id)}
+                                  className="inline-flex items-center gap-1 text-sm font-medium text-[var(--navy-dark)] hover:text-[var(--pink)] transition-colors"
+                                >
+                                  <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                                  {seq.name}
+                                </button>
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${statusColors[seq.status] || ''}`}>
+                                  {statusLabels[seq.status] || seq.status}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-3 mt-1 ml-5 text-xs text-[var(--navy-medium)]">
+                                <span className="flex items-center gap-1">
+                                  <GripVertical className="w-3 h-3" />
+                                  {seq.step_count} stap{seq.step_count !== 1 ? 'pen' : ''}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Users className="w-3 h-3" />
+                                  {seq.enrollment_active} actief / {seq.enrollment_total} totaal
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Clock className="w-3 h-3" />
+                                  {seq.send_time?.slice(0, 5) || '09:00'}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="shrink-0 flex items-center gap-1.5">
+                              {seq.status !== 'draft' && (
+                                <button
+                                  onClick={() => handleToggleSequenceStatus(seq)}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] hover:bg-[var(--gray-light)] rounded-lg transition-colors"
+                                  title={seq.status === 'active' ? 'Pauzeren' : 'Activeren'}
+                                >
+                                  {seq.status === 'active' ? (
+                                    <><Pause className="w-3.5 h-3.5" /> Pauzeer</>
+                                  ) : (
+                                    <><Play className="w-3.5 h-3.5" /> Activeer</>
+                                  )}
+                                </button>
+                              )}
+                              {seq.status === 'draft' && (
+                                <button
+                                  onClick={() => handleToggleSequenceStatus(seq)}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+                                >
+                                  <Play className="w-3.5 h-3.5" /> Activeer
+                                </button>
+                              )}
+                              {confirmDeleteSeqId === seq.id ? (
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    onClick={() => handleDeleteSequence(seq.id)}
+                                    className="px-2 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                                  >
+                                    Verwijder
+                                  </button>
+                                  <button
+                                    onClick={() => setConfirmDeleteSeqId(null)}
+                                    className="px-2 py-1.5 text-xs text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                                  >
+                                    Annuleer
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => setConfirmDeleteSeqId(seq.id)}
+                                  className="inline-flex items-center p-1.5 text-[var(--navy-medium)] hover:text-red-600 border border-transparent hover:border-red-200 rounded-lg transition-colors"
+                                  title="Verwijder sequentie"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Expanded: sequence detail */}
+                          {isExpanded && (
+                            <div className="mt-3 ml-5">
+                              {sequenceDetailLoading ? (
+                                <div className="animate-pulse h-20 bg-[var(--gray-light)] rounded" />
+                              ) : !sequenceDetail ? (
+                                <p className="text-xs text-[var(--navy-medium)]">Fout bij laden details.</p>
+                              ) : (
+                                <>
+                                  {/* Description */}
+                                  {sequenceDetail.sequence.description && (
+                                    <p className="text-xs text-[var(--navy-medium)] mb-3 italic">
+                                      {sequenceDetail.sequence.description}
+                                    </p>
+                                  )}
+
+                                  {/* Steps */}
+                                  <div className="mb-4">
+                                    <div className="flex items-center justify-between mb-2">
+                                      <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--navy-medium)]">
+                                        Stappen
+                                      </h4>
+                                      <button
+                                        onClick={() => {
+                                          setShowAddStep(!showAddStep)
+                                          setNewStepSubject('')
+                                          setNewStepHeading('')
+                                          setNewStepBody('')
+                                          setNewStepDelay(0)
+                                          setNewStepCtaText('')
+                                          setNewStepCtaUrl('')
+                                        }}
+                                        className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-[var(--pink)] hover:bg-[var(--gray-light)] rounded transition-colors"
+                                      >
+                                        <Plus className="w-3 h-3" /> Stap toevoegen
+                                      </button>
+                                    </div>
+
+                                    {sequenceDetail.steps.length === 0 ? (
+                                      <p className="text-xs text-[var(--navy-medium)] py-2">
+                                        Nog geen stappen. Voeg de eerste e-mail toe.
+                                      </p>
+                                    ) : (
+                                      <div className="space-y-2">
+                                        {sequenceDetail.steps.map((step, idx) => (
+                                          <div
+                                            key={step.id}
+                                            className="flex items-start gap-3 p-3 bg-[var(--gray-light)] rounded-lg border border-[var(--border)]"
+                                          >
+                                            <div className="w-6 h-6 rounded-full bg-[var(--navy-dark)] text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                                              {idx + 1}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                              <div className="flex items-center gap-2">
+                                                <span className="text-sm font-medium text-[var(--navy-dark)] truncate">
+                                                  {step.subject}
+                                                </span>
+                                                <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-white text-[var(--navy-medium)] border border-[var(--border)]">
+                                                  {step.delay_days === 0 ? 'Direct' : `+${step.delay_days} dag${step.delay_days !== 1 ? 'en' : ''}`}
+                                                </span>
+                                              </div>
+                                              <p className="text-xs text-[var(--navy-medium)] mt-0.5 truncate">
+                                                {step.heading}
+                                              </p>
+                                              {step.cta_text && (
+                                                <p className="text-[10px] text-[var(--pink)] mt-0.5">
+                                                  CTA: {step.cta_text}
+                                                </p>
+                                              )}
+                                            </div>
+                                            <button
+                                              onClick={() => handleDeleteStep(step.id)}
+                                              className="p-1 text-[var(--navy-medium)] hover:text-red-600 transition-colors shrink-0"
+                                              title="Verwijder stap"
+                                            >
+                                              <Trash2 className="w-3.5 h-3.5" />
+                                            </button>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+
+                                    {/* Add step form */}
+                                    {showAddStep && (
+                                      <div className="mt-3 p-3 bg-white rounded-lg border border-[var(--border)] space-y-2">
+                                        <div className="grid grid-cols-2 gap-2">
+                                          <div>
+                                            <label className="block text-[10px] font-medium text-[var(--navy-dark)] mb-0.5">Onderwerp</label>
+                                            <input
+                                              type="text"
+                                              value={newStepSubject}
+                                              onChange={e => setNewStepSubject(e.target.value)}
+                                              placeholder="E-mail onderwerp"
+                                              className="w-full rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
+                                            />
+                                          </div>
+                                          <div>
+                                            <label className="block text-[10px] font-medium text-[var(--navy-dark)] mb-0.5">Koptekst</label>
+                                            <input
+                                              type="text"
+                                              value={newStepHeading}
+                                              onChange={e => setNewStepHeading(e.target.value)}
+                                              placeholder="Titel in de e-mail"
+                                              className="w-full rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
+                                            />
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <label className="block text-[10px] font-medium text-[var(--navy-dark)] mb-0.5">Bericht (HTML)</label>
+                                          <textarea
+                                            value={newStepBody}
+                                            onChange={e => setNewStepBody(e.target.value)}
+                                            placeholder="<p>Beste {{voornaam}}, ...</p>"
+                                            rows={4}
+                                            className="w-full rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--pink)] font-mono"
+                                          />
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-2">
+                                          <div>
+                                            <label className="block text-[10px] font-medium text-[var(--navy-dark)] mb-0.5">Vertraging (dagen)</label>
+                                            <input
+                                              type="number"
+                                              min={0}
+                                              max={365}
+                                              value={newStepDelay}
+                                              onChange={e => setNewStepDelay(parseInt(e.target.value) || 0)}
+                                              className="w-full rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
+                                            />
+                                          </div>
+                                          <div>
+                                            <label className="block text-[10px] font-medium text-[var(--navy-dark)] mb-0.5">CTA tekst</label>
+                                            <input
+                                              type="text"
+                                              value={newStepCtaText}
+                                              onChange={e => setNewStepCtaText(e.target.value)}
+                                              placeholder="Optioneel"
+                                              className="w-full rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
+                                            />
+                                          </div>
+                                          <div>
+                                            <label className="block text-[10px] font-medium text-[var(--navy-dark)] mb-0.5">CTA URL</label>
+                                            <input
+                                              type="url"
+                                              value={newStepCtaUrl}
+                                              onChange={e => setNewStepCtaUrl(e.target.value)}
+                                              placeholder="https://..."
+                                              className="w-full rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
+                                            />
+                                          </div>
+                                        </div>
+                                        <div className="flex items-center gap-2 pt-1">
+                                          <button
+                                            onClick={handleAddStep}
+                                            disabled={!newStepSubject.trim() || !newStepHeading.trim() || !newStepBody.trim() || addingStep}
+                                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-[var(--pink)] hover:bg-[var(--pink-hover)] rounded-lg transition-colors disabled:opacity-50"
+                                          >
+                                            {addingStep ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
+                                            Toevoegen
+                                          </button>
+                                          <button
+                                            onClick={() => setShowAddStep(false)}
+                                            className="px-3 py-1.5 text-xs text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                                          >
+                                            Annuleren
+                                          </button>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Enrollments */}
+                                  {sequenceDetail.enrollments.length > 0 && (
+                                    <div>
+                                      <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--navy-medium)] mb-2">
+                                        Ingeschreven ({sequenceDetail.enrollments.length})
+                                      </h4>
+                                      <div className="overflow-x-auto rounded border border-[var(--border)]">
+                                        <table className="w-full text-xs">
+                                          <thead>
+                                            <tr className="bg-[var(--gray-light)] text-left">
+                                              <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Persoon</th>
+                                              <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Stap</th>
+                                              <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Status</th>
+                                              <th className="px-3 py-2 font-medium text-[var(--navy-dark)]">Ingeschreven</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody className="divide-y divide-[var(--border)]">
+                                            {sequenceDetail.enrollments.map(enr => {
+                                              const enrStatusColors: Record<string, string> = {
+                                                active: 'text-green-700 bg-green-50',
+                                                completed: 'text-blue-700 bg-blue-50',
+                                                paused: 'text-gray-600 bg-gray-50',
+                                                cancelled: 'text-red-600 bg-red-50',
+                                              }
+                                              const enrStatusLabels: Record<string, string> = {
+                                                active: 'Actief',
+                                                completed: 'Voltooid',
+                                                paused: 'Gepauzeerd',
+                                                cancelled: 'Geannuleerd',
+                                              }
+                                              return (
+                                                <tr key={enr.id} className="hover:bg-[var(--gray-light)]/50">
+                                                  <td className="px-3 py-2">
+                                                    <div className="text-[var(--navy-dark)]">{enr.first_name || '—'}</div>
+                                                    <div className="text-[var(--navy-medium)]">{enr.email || '—'}</div>
+                                                  </td>
+                                                  <td className="px-3 py-2 text-[var(--navy-medium)] tabular-nums">
+                                                    {enr.current_step} / {sequenceDetail.steps.length}
+                                                  </td>
+                                                  <td className="px-3 py-2">
+                                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${enrStatusColors[enr.status] || ''}`}>
+                                                      {enrStatusLabels[enr.status] || enr.status}
+                                                    </span>
+                                                  </td>
+                                                  <td className="px-3 py-2 text-[var(--navy-medium)]">
+                                                    {new Date(enr.enrolled_at).toLocaleDateString('nl-NL', {
+                                                      day: 'numeric',
+                                                      month: 'short',
+                                                    })}
+                                                  </td>
+                                                </tr>
+                                              )
+                                            })}
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
                 )}
               </div>
             )}

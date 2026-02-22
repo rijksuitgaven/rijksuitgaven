@@ -21,7 +21,7 @@ export async function GET() {
 
   const { data: people } = await supabase
     .from('people')
-    .select('id, pipeline_stage, archived_at, unsubscribed_at, unsubscribe_token')
+    .select('id, pipeline_stage, archived_at, unsubscribed_at, unsubscribe_token, bounced_at')
 
   const { data: subscriptions } = await supabase
     .from('subscriptions')
@@ -51,7 +51,7 @@ export async function GET() {
 
   if (people) {
     for (const person of people) {
-      if (!person.unsubscribe_token || person.archived_at || person.unsubscribed_at) continue
+      if (!person.unsubscribe_token || person.archived_at || person.unsubscribed_at || person.bounced_at) continue
 
       const stage = person.pipeline_stage
       if (stage === 'gewonnen') {

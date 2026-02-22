@@ -47,6 +47,7 @@ interface SendRequest {
   ctaUrl?: string
   segments: string[]
   draftId?: string
+  topicId?: string
 }
 
 export async function POST(request: NextRequest) {
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { subject, heading, preheader, body, ctaText, ctaUrl, segments, draftId } = params
+  const { subject, heading, preheader, body, ctaText, ctaUrl, segments, draftId, topicId } = params
 
   if (!subject?.trim() || !heading?.trim() || !body?.trim() || !segments?.length) {
     return NextResponse.json({ error: 'Verplichte velden: subject, heading, body, segments' }, { status: 400 })
@@ -94,7 +95,7 @@ export async function POST(request: NextRequest) {
 
   const { data: people, error: fetchError } = await supabase
     .from('people')
-    .select('id, email, first_name, pipeline_stage, unsubscribe_token, archived_at, unsubscribed_at')
+    .select('id, email, first_name, pipeline_stage, unsubscribe_token, archived_at, unsubscribed_at, bounced_at')
 
   if (fetchError || !people) {
     return NextResponse.json({ error: 'Fout bij ophalen contacten' }, { status: 500 })
@@ -115,7 +116,7 @@ export async function POST(request: NextRequest) {
 
   // Filter recipients based on pipeline stage + plan, exclude archived/unsubscribed
   const recipients = people.filter(person => {
-    if (!person.email || person.archived_at || person.unsubscribed_at) return false
+    if (!person.email || person.archived_at || person.unsubscribed_at || person.bounced_at) return false
     if (!person.unsubscribe_token) return false
 
     const stage = person.pipeline_stage
@@ -132,7 +133,39 @@ export async function POST(request: NextRequest) {
     return segmentSet.has(stage)
   })
 
-  if (recipients.length === 0) {
+  // Filter by topic preference if campaign has a topic_id
+  let filteredRecipients = recipients
+  if (topicId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(topicId)) {
+    // Get topic default
+    const { data: topic } = await supabase
+      .from('email_topics')
+      .select('id, is_default')
+      .eq('id', topicId)
+      .single()
+
+    if (topic) {
+      // Get all preferences for this topic
+      const personIds = recipients.map(r => r.id)
+      const { data: prefs } = await supabase
+        .from('email_preferences')
+        .select('person_id, subscribed')
+        .eq('topic_id', topicId)
+        .in('person_id', personIds)
+
+      const prefMap = new Map<string, boolean>()
+      for (const p of prefs || []) {
+        prefMap.set(p.person_id, p.subscribed)
+      }
+
+      filteredRecipients = recipients.filter(person => {
+        const pref = prefMap.get(person.id)
+        // If explicit preference exists, use it; otherwise use topic default
+        return pref !== undefined ? pref : topic.is_default
+      })
+    }
+  }
+
+  if (filteredRecipients.length === 0) {
     return NextResponse.json({ error: 'Geen ontvangers in dit segment' }, { status: 400 })
   }
 
@@ -214,11 +247,11 @@ export async function POST(request: NextRequest) {
 
   // Build per-recipient emails
   const resend = new Resend(RESEND_API_KEY)
-  const stats = { sent: 0, failed: 0, total: recipients.length }
+  const stats = { sent: 0, failed: 0, total: filteredRecipients.length }
 
   // Process in batches
-  for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
-    const batch = recipients.slice(i, i + BATCH_SIZE)
+  for (let i = 0; i < filteredRecipients.length; i += BATCH_SIZE) {
+    const batch = filteredRecipients.slice(i, i + BATCH_SIZE)
 
     const emails = batch.map(person => {
       const unsubscribeUrl = `${baseUrl}/afmelden?token=${person.unsubscribe_token}`
@@ -262,7 +295,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Rate limit delay between batches
-    if (i + BATCH_SIZE < recipients.length) {
+    if (i + BATCH_SIZE < filteredRecipients.length) {
       await new Promise(resolve => setTimeout(resolve, BATCH_DELAY_MS))
     }
   }
