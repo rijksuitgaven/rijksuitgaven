@@ -24,6 +24,7 @@ interface TestRequest {
   body: string
   ctaText?: string
   ctaUrl?: string
+  email?: string
 }
 
 export async function POST(request: NextRequest) {
@@ -54,20 +55,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { subject, heading, preheader, body, ctaText, ctaUrl } = params
+  const { subject, heading, preheader, body, ctaText, ctaUrl, email: customEmail } = params
 
   if (!subject?.trim() || !heading?.trim() || !body?.trim()) {
     return NextResponse.json({ error: 'Verplichte velden: subject, heading, body' }, { status: 400 })
   }
 
-  // Get admin's email from session
+  // Validate custom email if provided
+  if (customEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customEmail)) {
+    return NextResponse.json({ error: 'Ongeldig e-mailadres' }, { status: 400 })
+  }
+
+  // Get admin's email from session (used as default and for person lookup)
   const sessionClient = await createClient()
   const { data: { session } } = await sessionClient.auth.getSession()
   if (!session?.user?.email) {
     return NextResponse.json({ error: 'Geen sessie gevonden' }, { status: 401 })
   }
 
-  const adminEmail = session.user.email
+  const adminEmail = customEmail?.trim() || session.user.email
 
   // Look up person record for first_name + unsubscribe_token
   const supabase = createAdminClient()
