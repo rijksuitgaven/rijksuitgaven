@@ -10,6 +10,7 @@ import {
   BarChart3, Trash2, Save, Pencil, Images, Upload,
   Monitor, Tablet, Smartphone, ShieldCheck, SendHorizontal, Link2,
   ListOrdered, Plus, Clock, Users, Play, Pause, GripVertical, HelpCircle,
+  Filter,
 } from 'lucide-react'
 import { EmailEditor, type UploadedImage, type MediaItem } from '@/components/email-editor/email-editor'
 
@@ -148,6 +149,32 @@ interface SequenceDetail {
   enrollments: SequenceEnrollment[]
 }
 
+// Condition builder types
+interface CampaignCondition {
+  type: 'campaign_delivered' | 'campaign_opened' | 'campaign_clicked' | 'engagement_level'
+  campaign_id?: string
+  level?: string
+  negated: boolean
+}
+
+interface CampaignConditionGroup {
+  conditions: CampaignCondition[]
+}
+
+const CONDITION_TYPE_OPTIONS = [
+  { value: 'campaign_delivered', label: 'Heeft ontvangen', icon: '📬' },
+  { value: 'campaign_opened', label: 'Heeft geopend', icon: '📖' },
+  { value: 'campaign_clicked', label: 'Heeft geklikt', icon: '🖱️' },
+  { value: 'engagement_level', label: 'Engagement niveau', icon: '📊' },
+] as const
+
+const ENGAGEMENT_LEVEL_OPTIONS = [
+  { value: 'active', label: 'Actief' },
+  { value: 'at_risk', label: 'Risico' },
+  { value: 'cold', label: 'Koud' },
+  { value: 'new', label: 'Nieuw' },
+] as const
+
 const SEGMENT_OPTIONS = [
   { value: 'nieuw', label: 'Nieuw' },
   { value: 'in_gesprek', label: 'In gesprek' },
@@ -194,6 +221,10 @@ export default function MailPage() {
   const [ctaText, setCtaText] = useState('')
   const [ctaUrl, setCtaUrl] = useState('')
   const [selectedSegments, setSelectedSegments] = useState<Set<string>>(new Set(['nieuw']))
+  const [conditionGroups, setConditionGroups] = useState<CampaignConditionGroup[]>([])
+  const [conditionCount, setConditionCount] = useState<number | null>(null)
+  const [conditionEvaluating, setConditionEvaluating] = useState(false)
+  const [showConditions, setShowConditions] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
   const [previewHtml, setPreviewHtml] = useState<string | null>(null)
   const [previewLoading, setPreviewLoading] = useState(false)
@@ -598,6 +629,7 @@ export default function MailPage() {
       ctaText: ctaText.trim() || undefined,
       ctaUrl: ctaUrl.trim() || undefined,
       segments: Array.from(selectedSegments),
+      conditions: conditionGroups.length > 0 ? { groups: conditionGroups } : undefined,
     }
 
     try {
@@ -651,6 +683,7 @@ export default function MailPage() {
           ctaUrl: ctaUrl.trim() || undefined,
           segments: Array.from(selectedSegments),
           draftId: editingDraftId || undefined,
+          conditions: conditionGroups.length > 0 ? { groups: conditionGroups } : undefined,
         }),
       })
       const result = await res.json()
@@ -742,12 +775,98 @@ export default function MailPage() {
     setCtaText('')
     setCtaUrl('')
     setSelectedSegments(new Set(['nieuw']))
+    setConditionGroups([])
+    setConditionCount(null)
+    setShowConditions(false)
     setEditingDraftId(null)
     setSendResult(null)
     setSendError(null)
     setSaveSuccess(false)
     setShowPreview(false)
   }, [])
+
+  // Condition builder handlers
+  const evaluateConditionsDebounceRef = useRef<NodeJS.Timeout | null>(null)
+
+  const evaluateConditions = useCallback(async (groups: CampaignConditionGroup[]) => {
+    if (groups.length === 0 || groups.every(g => g.conditions.length === 0)) {
+      setConditionCount(null)
+      return
+    }
+
+    setConditionEvaluating(true)
+    try {
+      const res = await fetch('/api/v1/team/mail/conditions/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ groups }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setConditionCount(data.count)
+      }
+    } catch {
+      // Silent
+    } finally {
+      setConditionEvaluating(false)
+    }
+  }, [])
+
+  const triggerEvaluation = useCallback((groups: CampaignConditionGroup[]) => {
+    if (evaluateConditionsDebounceRef.current) {
+      clearTimeout(evaluateConditionsDebounceRef.current)
+    }
+    evaluateConditionsDebounceRef.current = setTimeout(() => {
+      evaluateConditions(groups)
+    }, 500)
+  }, [evaluateConditions])
+
+  const addConditionGroup = useCallback(() => {
+    const newGroups = [...conditionGroups, { conditions: [{ type: 'campaign_delivered' as const, negated: false }] }]
+    setConditionGroups(newGroups)
+    triggerEvaluation(newGroups)
+  }, [conditionGroups, triggerEvaluation])
+
+  const removeConditionGroup = useCallback((groupIndex: number) => {
+    const newGroups = conditionGroups.filter((_, i) => i !== groupIndex)
+    setConditionGroups(newGroups)
+    triggerEvaluation(newGroups)
+  }, [conditionGroups, triggerEvaluation])
+
+  const addConditionToGroup = useCallback((groupIndex: number) => {
+    const newGroups = conditionGroups.map((g, i) =>
+      i === groupIndex
+        ? { ...g, conditions: [...g.conditions, { type: 'campaign_delivered' as const, negated: false }] }
+        : g
+    )
+    setConditionGroups(newGroups)
+    triggerEvaluation(newGroups)
+  }, [conditionGroups, triggerEvaluation])
+
+  const removeCondition = useCallback((groupIndex: number, condIndex: number) => {
+    const newGroups = conditionGroups.map((g, i) =>
+      i === groupIndex
+        ? { ...g, conditions: g.conditions.filter((_, ci) => ci !== condIndex) }
+        : g
+    ).filter(g => g.conditions.length > 0) // Remove empty groups
+    setConditionGroups(newGroups)
+    triggerEvaluation(newGroups)
+  }, [conditionGroups, triggerEvaluation])
+
+  const updateCondition = useCallback((groupIndex: number, condIndex: number, updates: Partial<CampaignCondition>) => {
+    const newGroups = conditionGroups.map((g, i) =>
+      i === groupIndex
+        ? {
+            ...g,
+            conditions: g.conditions.map((c, ci) =>
+              ci === condIndex ? { ...c, ...updates } : c
+            ),
+          }
+        : g
+    )
+    setConditionGroups(newGroups)
+    triggerEvaluation(newGroups)
+  }, [conditionGroups, triggerEvaluation])
 
   const handleImageUploaded = useCallback((img: UploadedImage) => {
     setUploadedImages(prev => [...prev, img])
@@ -1191,6 +1310,167 @@ export default function MailPage() {
                           : 'Selecteer minimaal één groep'
                         }
                       </p>
+                    </div>
+
+                    {/* Condition builder */}
+                    <div>
+                      <button
+                        onClick={() => setShowConditions(!showConditions)}
+                        className="inline-flex items-center gap-2 text-sm font-medium text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                      >
+                        <Filter className="w-4 h-4" />
+                        {showConditions ? 'Verberg condities' : 'Condities toevoegen'}
+                        {conditionGroups.length > 0 && (
+                          <span className="ml-1 inline-flex items-center justify-center min-w-[18px] px-1 py-0.5 text-xs font-bold rounded-full bg-[var(--pink)] text-white">
+                            {conditionGroups.length}
+                          </span>
+                        )}
+                      </button>
+
+                      {showConditions && (
+                        <div className="mt-3 space-y-3">
+                          {conditionGroups.length > 0 && (
+                            <p className="text-xs text-[var(--navy-medium)]">
+                              Groepen worden gecombineerd met EN. Condities binnen een groep met OF.
+                            </p>
+                          )}
+
+                          {conditionGroups.map((group, groupIndex) => (
+                            <div key={groupIndex} className="border border-[var(--border)] rounded-lg p-3 bg-[var(--gray-light)]/30">
+                              {groupIndex > 0 && (
+                                <div className="flex items-center gap-2 mb-2 -mt-1">
+                                  <span className="text-xs font-semibold text-[var(--pink)] uppercase tracking-wider">EN</span>
+                                  <div className="flex-1 border-t border-[var(--border)]" />
+                                </div>
+                              )}
+
+                              <div className="space-y-2">
+                                {group.conditions.map((condition, condIndex) => (
+                                  <div key={condIndex}>
+                                    {condIndex > 0 && (
+                                      <div className="flex items-center gap-2 my-1.5 ml-2">
+                                        <span className="text-xs font-medium text-[var(--navy-medium)]">OF</span>
+                                      </div>
+                                    )}
+                                    <div className="flex items-center gap-2">
+                                      {/* Negation toggle */}
+                                      <button
+                                        onClick={() => updateCondition(groupIndex, condIndex, { negated: !condition.negated })}
+                                        className={`shrink-0 px-2 py-1.5 text-xs font-medium rounded transition-colors ${
+                                          condition.negated
+                                            ? 'bg-red-100 text-red-700 border border-red-200'
+                                            : 'bg-green-50 text-green-700 border border-green-200'
+                                        }`}
+                                        title={condition.negated ? 'Klik om te wisselen naar WEL' : 'Klik om te wisselen naar NIET'}
+                                      >
+                                        {condition.negated ? 'NIET' : 'WEL'}
+                                      </button>
+
+                                      {/* Condition type */}
+                                      <select
+                                        value={condition.type}
+                                        onChange={e => {
+                                          const newType = e.target.value as CampaignCondition['type']
+                                          const updates: Partial<CampaignCondition> = { type: newType }
+                                          if (newType === 'engagement_level') {
+                                            updates.campaign_id = undefined
+                                            updates.level = 'active'
+                                          } else {
+                                            updates.level = undefined
+                                          }
+                                          updateCondition(groupIndex, condIndex, updates)
+                                        }}
+                                        className="rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] bg-white focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
+                                      >
+                                        {CONDITION_TYPE_OPTIONS.map(opt => (
+                                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                        ))}
+                                      </select>
+
+                                      {/* Campaign selector (for campaign_* types) */}
+                                      {condition.type.startsWith('campaign_') && (
+                                        <select
+                                          value={condition.campaign_id || ''}
+                                          onChange={e => updateCondition(groupIndex, condIndex, { campaign_id: e.target.value || undefined })}
+                                          className="flex-1 rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] bg-white focus:outline-none focus:ring-1 focus:ring-[var(--pink)] truncate"
+                                        >
+                                          <option value="">Selecteer campagne...</option>
+                                          {sentCampaigns.map(c => (
+                                            <option key={c.id} value={c.id}>
+                                              {c.subject} ({formatTime(c.sent_at!)})
+                                            </option>
+                                          ))}
+                                        </select>
+                                      )}
+
+                                      {/* Engagement level selector */}
+                                      {condition.type === 'engagement_level' && (
+                                        <select
+                                          value={condition.level || ''}
+                                          onChange={e => updateCondition(groupIndex, condIndex, { level: e.target.value || undefined })}
+                                          className="rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] bg-white focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
+                                        >
+                                          {ENGAGEMENT_LEVEL_OPTIONS.map(opt => (
+                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                          ))}
+                                        </select>
+                                      )}
+
+                                      {/* Remove condition */}
+                                      <button
+                                        onClick={() => removeCondition(groupIndex, condIndex)}
+                                        className="shrink-0 p-1 text-[var(--navy-medium)] hover:text-red-500 transition-colors"
+                                        title="Verwijder conditie"
+                                      >
+                                        <X className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
+
+                                <div className="flex items-center gap-2 pt-1">
+                                  <button
+                                    onClick={() => addConditionToGroup(groupIndex)}
+                                    className="text-xs text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                                  >
+                                    + OF conditie
+                                  </button>
+                                  <span className="text-[var(--navy-medium)]/30">|</span>
+                                  <button
+                                    onClick={() => removeConditionGroup(groupIndex)}
+                                    className="text-xs text-red-400 hover:text-red-600 transition-colors"
+                                  >
+                                    Verwijder groep
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+
+                          <button
+                            onClick={addConditionGroup}
+                            className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--pink)] hover:text-[var(--pink-hover)] transition-colors"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            {conditionGroups.length === 0 ? 'Conditiegroep toevoegen' : 'EN groep toevoegen'}
+                          </button>
+
+                          {conditionGroups.length > 0 && (
+                            <div className="flex items-center gap-2 text-xs">
+                              {conditionEvaluating ? (
+                                <span className="text-[var(--navy-medium)] flex items-center gap-1">
+                                  <RefreshCw className="w-3 h-3 animate-spin" />
+                                  Evalueren...
+                                </span>
+                              ) : conditionCount !== null ? (
+                                <span className="text-[var(--navy-dark)] font-medium">
+                                  {conditionCount} ontvanger{conditionCount !== 1 ? 's' : ''} voldoen aan condities
+                                </span>
+                              ) : null}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* Subject */}
