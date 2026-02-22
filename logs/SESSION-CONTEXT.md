@@ -36,6 +36,8 @@
 | Email deliverability (SPF fix) | ✅ Done (DNS) | Replaced broken self-referencing SPF with correct Resend + ZXCS includes |
 | Campaign features (13) | ✅ Implemented (Feb 22) | 6 phases: webhook, pre-send, analytics, engagement, sequences, preferences |
 | Railway cron service | ✅ Deployed (Feb 22) | curlimages/curl, sequence processor, hourly weekdays. Verified: returns weekend skip |
+| Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
+| Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
 | Rate limiting | ⏳ Pending | Cloudflare free tier in front of Railway |
@@ -46,7 +48,10 @@
 
 ## Recent Work (Last 5)
 
-1. **Email Module UX Polish** (2026-02-22)
+1. **Homepage Copy + Onboarding Sequence Design** (2026-02-22)
+   Restored V1 headline/subheadline, applied "doel door doen" to value prop. Designed 5-email onboarding sequence for beta users (welkom+login, zoeken, filteren, ontdekking, details+export). Full copy written and documented.
+
+2. **Email Module UX Polish** (2026-02-22)
    Help popovers (Dutch) for compose workflow + sequence setup. Sequence steps upgraded from basic textarea to full compose experience: rich text editor (Tiptap), preheader, preview with device toggles, pre-send checklist, test email, edit existing steps. 2 commits.
 
 2. **Professional Campaign Features (13 features)** (2026-02-22)
@@ -58,8 +63,8 @@
 4. **Versiegeschiedenis + search enhancements** (2026-02-21, afternoon)
    Multi-word AND search, exact phrase, wildcard. /versiegeschiedenis page. Staffel popover fix. 8 commits.
 
-5. **UX-039 Vergelijk — Row Pinning** (2026-02-21, Sessions 3-4, staging only)
-   Pin up to 4 rows. TanStack RowPinning API. Export selection. "Wis selectie" toolbar button. 2 commits.
+5. **Versiegeschiedenis + search enhancements** (2026-02-21, afternoon)
+   Multi-word AND search, exact phrase, wildcard. /versiegeschiedenis page. Staffel popover fix. 8 commits.
 
 ---
 
@@ -153,6 +158,7 @@ Key recent migrations:
 | CRM | `people` table as identity anchor, pipeline stages |
 | Email sequences | Cron-based hourly (weekdays), configurable send_time per sequence, auto-enroll on invite |
 | Email preferences | Topic-based opt-out, public preference center at /voorkeuren, default opt-in |
+| Copywriting | "Doel door doen" principle: lead with goal (why), then means (how). Formal u/uw. No em dashes. |
 
 ---
 
