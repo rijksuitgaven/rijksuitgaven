@@ -491,7 +491,7 @@ export default function Homepage() {
               fontFamily: 'var(--font-heading)',
               margin: 0,
             }}>
-              Waar gaat &euro;1.700 miljard naartoe?
+              Overheidsbestedingen snel tot in detail doorzoeken en vergelijken
             </h1>
           </ScrollReveal>
 
@@ -504,9 +504,9 @@ export default function Homepage() {
               lineHeight: 1.5,
               color: 'var(--navy-dark)',
               opacity: 0.75,
-              maxWidth: 800,
+              maxWidth: 900,
             }}>
-              Rijksuitgaven is h&eacute;t onafhankelijke platform om overheidsuitgaven snel tot in detail te doorzoeken en vergelijken.
+              Rijksuitgaven is h&eacute;t onafhankelijke platform voor inzicht in overheidsuitgaven.
             </p>
           </ScrollReveal>
 
@@ -519,7 +519,7 @@ export default function Homepage() {
               gap: 32,
             }}>
               {[
-                { title: 'Snel inzicht en overzicht', desc: 'Doorzoek uitgaven van Rijksoverheid en medeoverheden in seconden.' },
+                { title: 'Snel inzicht en overzicht', desc: 'Direct zien wie wat ontvangt, doorzoek overheidsuitgaven in seconden.' },
                 { title: 'Zoek en filter op elk detail', desc: 'Duik de diepte in en signaleer eenvoudig opvallende uitgaven en heldere patronen.' },
                 { title: 'Bespaar tijd en geld', desc: 'Vind direct de data die u nodig heeft en vergelijk met voorgaande jaren voor krachtige analyses.' },
               ].map((prop) => (
