@@ -57,17 +57,14 @@
 2. **Email System Polish** (2026-02-22)
    Template fixes: list spacing, duplicate footer, heading left-align+spacing, auto-greeting removed. Editor: autolink disabled, unlink button. Test email: editable recipient address. Segment bug: active subscription determines leden (not pipeline_stage). Onboarding Mail 1 copy updated. CLAUDE.md Rule 0: never act without approval.
 
-2. **Campaign Detail View Upgrade** (2026-02-22)
+3. **Campaign Detail View Upgrade** (2026-02-22)
    Team brainstorm analyzed old email system screenshots → P0+P1 implementation. KPI summary bar (5 metrics with %), campaign header card, recipient filter toggles, sort controls, single-line recipient format, last_name in API.
 
-3. **Conditional Segment Builder** (2026-02-22)
+4. **Conditional Segment Builder** (2026-02-22)
    AND/OR campaign targeting: 4 condition types (delivered/opened/clicked/engagement), negation toggle, live evaluation. Migration 072, evaluate API, send route filter, condition builder UI.
 
-4. **Homepage Copy + Onboarding Sequence Design** (2026-02-22)
+5. **Homepage Copy + Onboarding Sequence Design** (2026-02-22)
    Restored V1 headline/subheadline, applied "doel door doen" to value prop. Designed 5-email onboarding sequence for beta users (5 emails, 11 days).
-
-5. **Email Module UX Polish** (2026-02-22)
-   Help popovers (Dutch) for compose workflow + sequence setup. Sequence steps upgraded to full compose experience: rich text editor, preheader, preview, pre-send checklist, test email, edit existing steps.
 
 ---
 
