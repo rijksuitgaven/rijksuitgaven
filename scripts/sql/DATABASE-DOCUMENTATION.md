@@ -5,7 +5,7 @@
 **Region:** eu-west-1
 **Created:** 2026-01-21
 **Data Migrated:** 2026-01-23
-**Last Updated:** 2026-02-16 (migrations 053-055: filter origin, pulse comparison, module events)
+**Last Updated:** 2026-02-22 (migrations 066-071: bounce suppress, UA tracking, engagement scoring, email sequences, email preferences)
 
 ---
 
@@ -203,6 +203,11 @@
 | archived_at | TIMESTAMPTZ | When prospect was archived (NULL = active, set = gearchiveerd) |
 | created_at | TIMESTAMPTZ | Row creation time (default NOW()) |
 | updated_at | TIMESTAMPTZ | Last update time (auto-updated by trigger) |
+| bounced_at | TIMESTAMPTZ | When a hard bounce was detected (NULL = not bounced) |
+| bounce_type | TEXT | Type of bounce (hard/soft) |
+| unsubscribe_token | TEXT | Opaque token for unsubscribe/preference URLs |
+| unsubscribed_at | TIMESTAMPTZ | When person unsubscribed from all emails |
+| pipeline_stage | TEXT | CRM stage: nieuw, in_gesprek, gewonnen, verloren, ex_klant |
 
 **Computed type (not stored):**
 - `prospect` — no subscription rows, not archived
@@ -216,6 +221,7 @@
 
 **Indexes:**
 - `people_email_key` (UNIQUE) — prevent duplicate people
+- `idx_people_bounced` — partial index WHERE bounced_at IS NOT NULL
 - Trigger: `people_updated_at` — auto-updates `updated_at`
 
 **Resend Audience Sync:**
@@ -711,6 +717,196 @@ CREATE POLICY "Service role full access" ON subscriptions
 
 ---
 
+### 0f. campaigns (Email Campaigns)
+
+**Description:** Stores sent email campaigns with metadata and delivery statistics.
+
+**Migration:** `059-campaigns.sql` (created 2026-02-19)
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (gen_random_uuid()) |
+| subject | TEXT | Email subject line |
+| heading | TEXT | Email heading |
+| preheader | TEXT | Preview text |
+| body | TEXT | HTML body content |
+| cta_text | TEXT | Call-to-action button text |
+| cta_url | TEXT | Call-to-action URL |
+| segment | TEXT | Comma-separated segment list |
+| sent_count | INTEGER | Number of emails sent |
+| failed_count | INTEGER | Number of failed sends |
+| sent_by | UUID | Admin user who sent |
+| status | TEXT | 'draft' or 'sent' |
+| sent_at | TIMESTAMPTZ | When campaign was sent |
+| topic_id | UUID | FK to email_topics (migration 071) |
+| created_at | TIMESTAMPTZ | Row creation time |
+| updated_at | TIMESTAMPTZ | Last update time |
+
+---
+
+### 0g. campaign_events (Email Event Tracking)
+
+**Description:** Webhook events from Resend for campaign/sequence email tracking (delivered, opened, clicked, bounced, complained).
+
+**Migration:** `060-campaign-events.sql`, `067-campaign-event-ua.sql`, `070-campaign-events-sequence-cols.sql`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (gen_random_uuid()) |
+| campaign_id | UUID | FK to campaigns (nullable after migration 070) |
+| sequence_id | UUID | FK to email_sequences (migration 070) |
+| step_id | UUID | FK to email_sequence_steps (migration 070) |
+| resend_email_id | TEXT | Resend email ID |
+| person_id | UUID | FK to people |
+| event_type | TEXT | delivered, opened, clicked, bounced, complained |
+| link_url | TEXT | Clicked link URL (for click events) |
+| occurred_at | TIMESTAMPTZ | When event occurred |
+| user_agent | TEXT | Raw user agent string (migration 067) |
+| ua_client | TEXT | Parsed email client name (migration 067) |
+| ua_device | TEXT | Parsed device type (migration 067) |
+| ua_os | TEXT | Parsed operating system (migration 067) |
+| created_at | TIMESTAMPTZ | Row creation time |
+
+**Constraint:** `chk_ce_source` — either campaign_id or sequence_id must be NOT NULL
+
+**Indexes:**
+- `idx_ce_campaign` — campaign_id + event_type
+- `idx_ce_person` — person_id
+- `idx_ce_ua_campaign` — campaign_id + ua_client WHERE ua_client IS NOT NULL
+- `idx_ce_sequence` — sequence_id + event_type WHERE sequence_id IS NOT NULL
+
+---
+
+### 0h. email_sequences (Automated Email Sequences)
+
+**Description:** Multi-step email sequence definitions. Supports configurable send time per sequence.
+
+**Migration:** `069-email-sequences.sql`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (gen_random_uuid()) |
+| name | TEXT | Sequence name |
+| description | TEXT | Description |
+| status | TEXT | 'draft', 'active', or 'paused' |
+| send_time | TIME | Daily send time in CET (default '09:00') |
+| topic_id | UUID | FK to email_topics (migration 071) |
+| created_by | UUID | FK to auth.users |
+| created_at | TIMESTAMPTZ | Row creation time |
+| updated_at | TIMESTAMPTZ | Last update time |
+
+**Indexes:** `idx_es_status` — status
+
+---
+
+### 0i. email_sequence_steps (Sequence Email Steps)
+
+**Description:** Individual emails within a sequence, with configurable delay.
+
+**Migration:** `069-email-sequences.sql`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (gen_random_uuid()) |
+| sequence_id | UUID | FK to email_sequences (CASCADE) |
+| step_order | INTEGER | Step position (unique per sequence) |
+| delay_days | INTEGER | Days after enrollment/previous step (default 0) |
+| subject | TEXT | Email subject |
+| heading | TEXT | Email heading |
+| preheader | TEXT | Preview text |
+| body | TEXT | HTML body |
+| cta_text | TEXT | CTA button text |
+| cta_url | TEXT | CTA URL |
+| created_at | TIMESTAMPTZ | Row creation time |
+| updated_at | TIMESTAMPTZ | Last update time |
+
+**Indexes:** `idx_ess_sequence` — sequence_id + step_order
+
+---
+
+### 0j. email_sequence_enrollments (Sequence Enrollments)
+
+**Description:** Per-person enrollment in a sequence. Tracks current step and completion status.
+
+**Migration:** `069-email-sequences.sql`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (gen_random_uuid()) |
+| sequence_id | UUID | FK to email_sequences (CASCADE) |
+| person_id | UUID | FK to people (CASCADE) |
+| current_step | INTEGER | Current step index (default 0) |
+| status | TEXT | 'active', 'completed', 'paused', or 'cancelled' |
+| enrolled_at | TIMESTAMPTZ | When enrolled |
+| completed_at | TIMESTAMPTZ | When completed |
+| cancelled_at | TIMESTAMPTZ | When cancelled |
+
+**Constraints:** UNIQUE(sequence_id, person_id)
+**Indexes:** `idx_ese_active` — sequence_id + status WHERE status = 'active'; `idx_ese_person` — person_id
+
+---
+
+### 0k. email_sequence_sends (Sequence Send Log)
+
+**Description:** Dedup + tracking log for sequence email sends. One row per step per enrollment.
+
+**Migration:** `069-email-sequences.sql`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (gen_random_uuid()) |
+| enrollment_id | UUID | FK to email_sequence_enrollments (CASCADE) |
+| step_id | UUID | FK to email_sequence_steps (CASCADE) |
+| person_id | UUID | FK to people (CASCADE) |
+| resend_email_id | TEXT | Resend email ID |
+| sent_at | TIMESTAMPTZ | When sent |
+| status | TEXT | 'sent' or 'failed' |
+| error_message | TEXT | Error details (if failed) |
+
+**Constraints:** UNIQUE(enrollment_id, step_id)
+**Indexes:** `idx_esends_step` — step_id; `idx_esends_person` — person_id
+
+---
+
+### 0l. email_topics (Email Topic Categories)
+
+**Description:** Admin-managed email topic categories for preference center. Each campaign/sequence can be tagged with a topic.
+
+**Migration:** `071-email-preferences.sql`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (gen_random_uuid()) |
+| slug | TEXT | URL-safe identifier (UNIQUE) |
+| name | TEXT | Display name |
+| description | TEXT | Description shown in preference center |
+| is_default | BOOLEAN | Whether new subscribers are opted in by default |
+| sort_order | INTEGER | Display order in preference center |
+| created_at | TIMESTAMPTZ | Row creation time |
+
+**Seed data:** campagnes, onboarding, product
+
+---
+
+### 0m. email_preferences (Per-Person Topic Preferences)
+
+**Description:** Per-person email topic opt-in/opt-out preferences.
+
+**Migration:** `071-email-preferences.sql`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (gen_random_uuid()) |
+| person_id | UUID | FK to people (CASCADE) |
+| topic_id | UUID | FK to email_topics (CASCADE) |
+| subscribed | BOOLEAN | Whether person wants this topic |
+| updated_at | TIMESTAMPTZ | Last preference change |
+
+**Constraints:** UNIQUE(person_id, topic_id)
+**Indexes:** `idx_ep_person` — person_id
+
+---
+
 ## Triggers
 
 ### Source Column Auto-Population
@@ -994,6 +1190,21 @@ VACUUM ANALYZE universal_search;
 | `054-pulse-period-comparison.sql` | get_usage_pulse_period(period_start, period_end) — bounded pulse for delta comparison | Once (done 2026-02-16) |
 | `055-module-events.sql` | get_usage_module_events(since_date) — event counts grouped by module + event_type | Once (done 2026-02-16) |
 | `056-subscription-unique-person.sql` | Unique partial index on subscriptions(person_id) WHERE cancelled_at IS NULL AND deleted_at IS NULL — prevents duplicate active subscriptions (race condition fix) | Once (done 2026-02-16) |
+| `057-people-pipeline-stage.sql` | Add pipeline_stage to people + unsubscribe_token | Once (done 2026-02-19) |
+| `058-people-unsubscribed-bounced.sql` | Add unsubscribed_at, bounced_at to people | Once (done 2026-02-19) |
+| `059-campaigns.sql` | Create campaigns table + RLS | Once (done 2026-02-19) |
+| `060-campaign-events.sql` | Create campaign_events table + indexes | Once (done 2026-02-19) |
+| `061-crm-pipeline-stages.sql` | CRM pipeline stages | Once (done 2026-02-19) |
+| `062-public-page-analytics.sql` | Public page analytics RPC functions | Once (done 2026-02-19) |
+| `063-campaign-drafts.sql` | Campaign draft support | Once (done 2026-02-20) |
+| `064-browser-device-analytics.sql` | Browser/device analytics | Once (done 2026-02-20) |
+| `065-email-media.sql` | Email media library table | Once (done 2026-02-22) |
+| `066-bounce-suppress.sql` | Add bounced_at + bounce_type to people + index | Once (done 2026-02-22) |
+| `067-campaign-event-ua.sql` | UA columns on campaign_events + index | Once (done 2026-02-22) |
+| `068-engagement-scoring.sql` | 2 engagement scoring SQL functions | Once (done 2026-02-22) |
+| `069-email-sequences.sql` | 4 sequence tables + indexes + RLS | Once (done 2026-02-22) |
+| `070-campaign-events-sequence-cols.sql` | sequence_id/step_id on campaign_events, campaign_id nullable | Once (done 2026-02-22) |
+| `071-email-preferences.sql` | email_topics + email_preferences + topic_id FKs + seed data | Once (done 2026-02-22) |
 | `refresh-all-views.sql` | Refresh all materialized views | After every data update |
 
 ---
