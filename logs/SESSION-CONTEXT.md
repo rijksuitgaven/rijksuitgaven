@@ -13,13 +13,14 @@
 
 **Source of truth:** `docs/VERSIONING.md`
 
-| Version | Name | Status |
-|---------|------|--------|
-| **V1** | WordPress Platform (legacy) | ✅ Superseded |
-| **V2** | Search Platform | 🔨 Building |
-| **V3–V10** | Reporter → European | 📋 Planned |
+| Track | Current | Status |
+|-------|---------|--------|
+| **V** (End-user) | V2.0 Search Platform | 🔨 Building |
+| **A** (Admin) | A1.0 Beheer MVP | ✅ Live |
+| **M** (Marketing) | M1.0 Lancering | 📋 Planned |
+| **D** (Data) | D1.0 Gemeente Uitbreiding | 📋 Planned |
 
-**Scheme:** X.0 = Major | X.Y = Minor | X.Y.Z = Patch
+**Scheme:** VX.Y = end-user | AX.Y = admin | MX.Y = marketing | DX.Y = data
 **API endpoints** `/api/v1/` are API versions, NOT product versions.
 
 ---
@@ -39,6 +40,7 @@
 | Campaign detail view upgrade | ✅ Implemented (Feb 22) | KPI bar, header card, recipient filters/sort, single-line format, last_name |
 | Email system polish | ✅ Implemented (Feb 22) | Template fixes, editor autolink/unlink, test email input, segment counting fix, Mail 1 copy |
 | Railway cron service | ✅ Fixed (Feb 22) | curlimages/curl, hardcoded Bearer token (exec-form no expansion), schedule `0 7-16 * * 1-5`. CRON_SECRET rotated. |
+| VERSIONING restructure | ✅ Done (Feb 22) | 4 tracks (V/A/M/D), URL state→V2.2, M1.0 launch gate, D1.0 Gemeente, V2.x renumbered |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -51,10 +53,13 @@
 
 ## Recent Work (Last 5)
 
-1. **Cron Fix + Versioning** (2026-02-22)
+1. **4 Release Tracks (VERSIONING restructure)** (2026-02-22)
+   VERSIONING.md restructured with 4 release tracks: V (end-user), A (admin), M (marketing/launch), D (data). URL state restoration moved to V2.2. M1.0 Lancering = launch gate (6 items before DNS switch). D1.0 = Gemeente Haarlemmermeer. V2.x renumbered (eliminated V2.4 Homepage, V2.7).
+
+2. **Cron Fix + A-track Status** (2026-02-22)
    A-track per-feature status tracking in VERSIONING.md, UTM builder added to A1.0. Railway cron-sequences crash fixed: `$CRON_SECRET` not expanded in Docker exec-form, hardcoded value. Schedule corrected to weekday hours. Secret rotated.
 
-2. **Email System Polish** (2026-02-22)
+3. **Email System Polish** (2026-02-22)
    Template fixes: list spacing, duplicate footer, heading left-align+spacing, auto-greeting removed. Editor: autolink disabled, unlink button. Test email: editable recipient address. Segment bug: active subscription determines leden (not pipeline_stage). Onboarding Mail 1 copy updated. CLAUDE.md Rule 0: never act without approval.
 
 3. **Campaign Detail View Upgrade** (2026-02-22)
@@ -63,8 +68,8 @@
 4. **Conditional Segment Builder** (2026-02-22)
    AND/OR campaign targeting: 4 condition types (delivered/opened/clicked/engagement), negation toggle, live evaluation. Migration 072, evaluate API, send route filter, condition builder UI.
 
-5. **Homepage Copy + Onboarding Sequence Design** (2026-02-22)
-   Restored V1 headline/subheadline, applied "doel door doen" to value prop. Designed 5-email onboarding sequence for beta users (5 emails, 11 days).
+5. **Conditional Segment Builder** (2026-02-22)
+   AND/OR campaign targeting: 4 condition types (delivered/opened/clicked/engagement), negation toggle, live evaluation. Migration 072, evaluate API, send route filter, condition builder UI.
 
 ---
 
@@ -161,6 +166,9 @@ Key recent migrations:
 | Email preferences | Topic-based opt-out, public preference center at /voorkeuren, default opt-in |
 | Copywriting | "Doel door doen" principle: lead with goal (why), then means (how). Formal u/uw. No em dashes. |
 | Campaign targeting | AND/OR conditions on campaigns: delivered/opened/clicked/engagement_level. JSONB on campaigns table. |
+| Release tracks | 4 tracks: V (end-user), A (admin), M (marketing/launch), D (data). Each has own cadence and audience. |
+| M1.0 Launch Gate | 6 items must complete before DNS switch: SEO, DNS plan, rate limiting, user migration, homepage copy, logo |
+| D-track | Data releases separate from features. D1.0 = Gemeente Haarlemmermeer, D1.1 = Jaarupdate 2025 |
 
 ---
 
