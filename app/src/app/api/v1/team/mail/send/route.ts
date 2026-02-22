@@ -127,22 +127,20 @@ export async function POST(request: NextRequest) {
 
   const segmentSet = new Set(segments)
 
-  // Filter recipients based on pipeline stage + plan, exclude archived/unsubscribed
+  // Filter recipients: active subscription determines "leden" segments (regardless of pipeline stage)
   const recipients = people.filter(person => {
     if (!person.email || person.archived_at || person.unsubscribed_at || person.bounced_at) return false
     if (!person.unsubscribe_token) return false
 
-    const stage = person.pipeline_stage
-
-    if (stage === 'gewonnen') {
-      const sub = subMap.get(person.id)
-      if (sub && isActiveSub(sub)) {
-        if (sub.plan === 'monthly' && segmentSet.has('leden_maandelijks')) return true
-        if (sub.plan === 'yearly' && segmentSet.has('leden_jaarlijks')) return true
-      }
-      return false
+    // Check active subscription first — overrides pipeline stage for leden segments
+    const sub = subMap.get(person.id)
+    if (sub && isActiveSub(sub)) {
+      if (sub.plan === 'monthly' && segmentSet.has('leden_maandelijks')) return true
+      if (sub.plan === 'yearly' && segmentSet.has('leden_jaarlijks')) return true
     }
 
+    // No active sub — use pipeline stage for other segments
+    const stage = person.pipeline_stage
     return segmentSet.has(stage)
   })
 
