@@ -15,11 +15,13 @@
 | **X.Y** | Minor release - improvements and smaller additions within major | V2.1, V2.2, V3.1 |
 | **X.Y.Z** | Patch release - bug fixes | V2.0.1, V2.1.2 |
 | **AX.Y** | Admin/internal release - /team pages, admin tooling | A1.0, A1.1, A2.0 |
+| **MX.Y** | Marketing & launch release - homepage, SEO, infrastructure | M1.0, M1.1 |
 
 **Rules:**
 - If it enables a NEW use case or serves a NEW audience, it's a major release.
 - If it only affects `/team/*` pages or admin tooling, it goes in the **A-track** (not V-track).
-- The V-track is end-user facing. The A-track is internal/admin facing.
+- If it's homepage, SEO, launch infrastructure, or marketing optimization, it goes in the **M-track**.
+- The V-track is end-user facing. The A-track is internal/admin. The M-track is marketing/launch.
 
 ---
 
@@ -81,13 +83,14 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 
 - UX-039: Row pinning (pin up to 4 rows for side-by-side comparison, export selection)
 
-### V2.2 - Zoeken
+### V2.2 - Zoeken & URL State
 
 - UX-024: Type-ahead with recent searches (localStorage, reduced debounce, response caching)
 - Fuzzy/typo tolerance (Typesense `num_typos`)
 - Accurate multi-field match reporting ("Ook in" for multi-word searches)
 - Semantic search (Cohere embeddings, ~€1/month)
 - Field-specific search syntax (`leverancier:prorail`) — power users
+- Full URL state restoration (expanded rows, pagination, all filters)
 
 ### V2.3 - Performance
 
@@ -95,29 +98,19 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 - Filter performance optimization (indexes, progressive loading)
 - Railway private networking (Typesense egress savings)
 
-### V2.4 - Homepage & Marketing
-
-- Tab-based feature explorer (replace 6-card grid with tabbed browser frame)
-- Audience-personalized landing variants (`?ref=journalist`, `?ref=gemeente`)
-- Logo asset optimization (compact variant, SVG)
-
-### V2.5 - Data & Integraal
+### V2.4 - Data & Integraal
 
 - Integraal cross-module data completeness (regelingen in integraal view)
 - Integraal view redesign (brainstorm — module-specific columns)
 - Data provenance / freshness indicator ("Data bijgewerkt: [date]")
 
-### V2.6 - Polish & Toegankelijkheid
+### V2.5 - Polish & Toegankelijkheid
 
 - Accessibility: colorblind anomaly indicator (pattern/dot overlay)
 - xlsx package replacement (ExcelJS — CVE cleanup)
 - UX refinements from beta feedback
 - GitHub Projects visual dashboard (stakeholder visibility)
-
-### V2.7 - Externe Koppelingen
-
 - AI Integration: MCP Server + OpenAI GPT (teaser API, lead generation)
-- Full URL state restoration (expanded rows, pagination, all filters)
 
 ---
 
@@ -169,6 +162,34 @@ Internal admin tooling at `/team/*`. Separate release cadence from the end-user 
 | Self-service plan management (upgrade/downgrade) | 📋 Planned |
 | Stripe integration for automated billing | 📋 Planned |
 | Automated renewal notifications | 📋 Planned |
+
+---
+
+## Marketing Track (M-series)
+
+Marketing, launch infrastructure, and conversion optimization. Not end-user features, not admin tooling — the work needed to bring the product to market and grow it.
+
+**Audience:** Market (prospects, search engines, referrals)
+
+### M1.0 - Lancering (Launch Gate)
+
+**Status:** 📋 Planned — all items are prerequisites for DNS switch
+
+| Feature | Status | Blocks DNS switch? |
+|---------|--------|--------------------|
+| SEO: OG image, twitter cards, per-page metadata, structured data | 📋 Planned | Yes |
+| DNS switch plan: rijksuitgaven.nl → Railway, metadataBase update, rollback plan | 📋 Planned | Yes (is the switch) |
+| Rate limiting: Cloudflare free tier in front of Railway | 📋 Planned | Yes |
+| User migration: ~50 WordPress users to Supabase | 📋 Planned | Yes |
+| Homepage copy optimization (remaining value props) | ⏳ In progress | Yes |
+| Logo asset optimization (compact variant, SVG) | 📋 Planned | No |
+
+### M1.1 - Conversie & Groei
+
+| Feature | Status |
+|---------|--------|
+| Tab-based feature explorer (replace 6-card grid with tabbed browser frame) | 📋 Planned |
+| Audience-personalized landing variants (`?ref=journalist`, `?ref=gemeente`) | 📋 Planned |
 
 ---
 
@@ -505,9 +526,11 @@ V1 WordPress (legacy) ───────────────────�
 
 V2.0 Search ─────────────────────────────────► CURRENT
   │
-  ├─► V2.1 Vergelijk → V2.2 Zoeken → V2.3-V2.7 (improvements)
+  ├─► V2.1 Vergelijk → V2.2 Zoeken & URL State → V2.3-V2.5 (improvements)
   │
   ├─► A1.0 Beheer MVP ─► A1.1 Bulk & CRM ─► A1.2 Inzichten ─► A2.0 Subscriptions
+  │
+  ├─► M1.0 Lancering (launch gate) ─► DNS switch ─► M1.1 Conversie & Groei
   │
   ├─► V3.0 Rijksuitgaven Reporter ◄─────────── NEXT
   │     │
@@ -547,12 +570,10 @@ V10.0 European Platform
 | V1 | ✅ Legacy (WordPress) | Superseded by V2 |
 | V2.0 | 🔨 95% Complete (beta live, public launch remaining) | Week 9-11 |
 | V2.1 | 📋 Vergelijk (on staging) | ~1 week post-launch |
-| V2.2 | 📋 Zoeken | Post-launch |
+| V2.2 | 📋 Zoeken & URL State | Post-launch |
 | V2.3 | 📋 Performance | Post-launch |
-| V2.4 | 📋 Homepage & Marketing | Post-launch |
-| V2.5 | 📋 Data & Integraal | Post-launch |
-| V2.6 | 📋 Polish & Toegankelijkheid | Post-launch |
-| V2.7 | 📋 Externe Koppelingen | Post-launch |
+| V2.4 | 📋 Data & Integraal | Post-launch |
+| V2.5 | 📋 Polish & Toegankelijkheid + AI | Post-launch |
 | V3.0 | 📋 Planned | Post V2.0 launch |
 | V4.0 | 📋 Planned | Q1-Q2 2026 |
 | V5.0 | 📋 Planned | Q2 2026 |
@@ -570,6 +591,13 @@ V10.0 European Platform
 | A1.1 | 📋 Bulk & CRM | Post-launch |
 | A1.2 | 📋 Inzichten | Post-launch |
 | A2.0 | 📋 Subscription Management | TBD |
+
+**Marketing & Launch (M-track):**
+
+| Version | Status | Timeline |
+|---------|--------|----------|
+| M1.0 | 📋 Lancering (launch gate) | Before DNS switch |
+| M1.1 | 📋 Conversie & Groei | Post-launch |
 
 **V2.0 Deployed Infrastructure (as of 2026-02-21):**
 - ✅ Supabase PostgreSQL (Frankfurt EU, Pro plan)
@@ -590,6 +618,8 @@ V10.0 European Platform
 | New capability / new use case | **Major (X.0)** | Reporter, Theme pages, AI chat |
 | Improvement to existing capability | **Minor (X.Y)** | Better search, faster AI |
 | Bug fix | **Patch (X.Y.Z)** | Fix search ranking |
+| Admin/internal tooling | **A-track (AX.Y)** | Member management, CRM |
+| Marketing, SEO, launch infra | **M-track (MX.Y)** | DNS switch, homepage, SEO |
 
 ---
 
