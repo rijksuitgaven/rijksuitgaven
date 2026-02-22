@@ -53,13 +53,17 @@ export async function GET() {
     for (const person of people) {
       if (!person.unsubscribe_token || person.archived_at || person.unsubscribed_at || person.bounced_at) continue
 
-      const stage = person.pipeline_stage
-      if (stage === 'gewonnen') {
-        const plan = activeSubMap.get(person.id)
-        if (plan === 'monthly') counts.leden_maandelijks++
-        else if (plan === 'yearly') counts.leden_jaarlijks++
-      } else if (stage in counts) {
-        counts[stage]++
+      // Active subscription determines "leden" segments (regardless of pipeline stage)
+      const plan = activeSubMap.get(person.id)
+      if (plan === 'monthly') {
+        counts.leden_maandelijks++
+      } else if (plan === 'yearly') {
+        counts.leden_jaarlijks++
+      } else {
+        const stage = person.pipeline_stage
+        if (stage in counts) {
+          counts[stage]++
+        }
       }
     }
   }
