@@ -7,9 +7,9 @@ import {
   RefreshCw, CheckCircle, AlertTriangle,
   Mail, Send, Eye, EyeOff, Copy,
   ChevronRight, MousePointerClick, MailOpen, Ban, X,
-  BarChart3, Trash2, Save, Pencil, Images, Upload,
+  BarChart3, Trash2, Save, Pencil,
 } from 'lucide-react'
-import { EmailEditor, type UploadedImage, type MediaItem } from '@/components/email-editor/email-editor'
+import { EmailEditor, type UploadedImage } from '@/components/email-editor/email-editor'
 
 interface MailData {
   counts: Record<string, number>
@@ -85,7 +85,7 @@ const SEGMENT_LABELS: Record<string, string> = {
 
 const VALID_SEGMENTS_SET = new Set<string>(SEGMENT_OPTIONS.map(o => o.value))
 
-type Tab = 'compose' | 'campaigns' | 'media'
+type Tab = 'compose' | 'campaigns'
 
 export default function MailPage() {
   const { role, loading: subLoading } = useSubscription()
@@ -127,11 +127,6 @@ export default function MailPage() {
   const [recipientsLoading, setRecipientsLoading] = useState(false)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
-  // Media library state
-  const [mediaLibrary, setMediaLibrary] = useState<MediaItem[]>([])
-  const [mediaLoading, setMediaLoading] = useState(false)
-  const [mediaDeleteConfirm, setMediaDeleteConfirm] = useState<string | null>(null)
-
   const fetchData = useCallback(() => {
     setLoading(true)
     fetch('/api/v1/team/mail')
@@ -152,17 +147,6 @@ export default function MailPage() {
         setCampaignsLoading(false)
       })
       .catch(() => setCampaignsLoading(false))
-  }, [])
-
-  const fetchMedia = useCallback(() => {
-    setMediaLoading(true)
-    fetch('/api/v1/team/mail/media')
-      .then(res => res.json())
-      .then(d => {
-        setMediaLibrary(d.media || [])
-        setMediaLoading(false)
-      })
-      .catch(() => setMediaLoading(false))
   }, [])
 
   const handleExpandCampaign = useCallback(async (campaignId: string) => {
@@ -189,11 +173,10 @@ export default function MailPage() {
     if (!subLoading && role === 'admin') {
       fetchData()
       fetchCampaigns()
-      fetchMedia()
     } else if (!subLoading) {
       setLoading(false)
     }
-  }, [subLoading, role, fetchData, fetchCampaigns, fetchMedia])
+  }, [subLoading, role, fetchData, fetchCampaigns])
 
   const handlePreview = useCallback(async () => {
     if (showPreview) {
@@ -343,35 +326,6 @@ export default function MailPage() {
     setSaveSuccess(false)
     setShowPreview(false)
     setActiveTab('compose')
-
-    // Restore images from draft body HTML
-    const imgRegex = /email-images\/([^"'?\s]+)/g
-    const filenames: string[] = []
-    let match
-    while ((match = imgRegex.exec(campaign.body)) !== null) {
-      filenames.push(match[1])
-    }
-    if (filenames.length > 0) {
-      fetch(`/api/v1/team/mail/media?filenames=${filenames.join(',')}`)
-        .then(res => res.json())
-        .then(d => {
-          const restored: UploadedImage[] = (d.media || []).map((m: MediaItem) => ({
-            id: m.id,
-            url: m.url,
-            thumbnailUrl: m.thumbnailUrl,
-            filename: m.filename,
-            originalName: m.originalName,
-            width: m.width ?? undefined,
-            height: m.height ?? undefined,
-            sizeBytes: m.sizeBytes,
-          }))
-          setUploadedImages(restored)
-        })
-        .catch(() => setUploadedImages([]))
-    } else {
-      setUploadedImages([])
-    }
-
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
@@ -392,43 +346,10 @@ export default function MailPage() {
 
   const handleImageUploaded = useCallback((img: UploadedImage) => {
     setUploadedImages(prev => [...prev, img])
-    fetchMedia() // Refresh media library
-  }, [fetchMedia])
+  }, [])
 
   const handleImageDeleted = useCallback((filename: string) => {
     setUploadedImages(prev => prev.filter(img => img.filename !== filename))
-    fetchMedia() // Refresh media library
-  }, [fetchMedia])
-
-  const handleMediaDelete = useCallback(async (filename: string) => {
-    try {
-      const res = await fetch(`/api/v1/team/mail/upload?filename=${encodeURIComponent(filename)}`, {
-        method: 'DELETE',
-      })
-      if (res.ok) {
-        setMediaLibrary(prev => prev.filter(m => m.filename !== filename))
-        setMediaDeleteConfirm(null)
-      }
-    } catch {
-      // Silent
-    }
-  }, [])
-
-  const handleInsertFromLibrary = useCallback((item: MediaItem) => {
-    // Add to uploaded images strip if not already there
-    setUploadedImages(prev => {
-      if (prev.some(img => img.filename === item.filename)) return prev
-      return [...prev, {
-        id: item.id,
-        url: item.url,
-        thumbnailUrl: item.thumbnailUrl,
-        filename: item.filename,
-        originalName: item.originalName,
-        width: item.width ?? undefined,
-        height: item.height ?? undefined,
-        sizeBytes: item.sizeBytes,
-      }]
-    })
   }, [])
 
   const handleDeleteCampaign = useCallback(async (campaignId: string, isDraft: boolean) => {
@@ -517,24 +438,6 @@ export default function MailPage() {
                     activeTab === 'campaigns' ? 'text-white/70' : 'text-[var(--navy-medium)]'
                   }`}>
                     ({campaigns.length})
-                  </span>
-                )}
-              </button>
-              <button
-                onClick={() => setActiveTab('media')}
-                className={`inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  activeTab === 'media'
-                    ? 'bg-[var(--navy-dark)] text-white'
-                    : 'bg-white text-[var(--navy-medium)] border border-[var(--border)] hover:bg-[var(--gray-light)] hover:text-[var(--navy-dark)]'
-                }`}
-              >
-                <Images className="w-4 h-4" />
-                Media
-                {mediaLibrary.length > 0 && (
-                  <span className={`ml-1 text-xs tabular-nums ${
-                    activeTab === 'media' ? 'text-white/70' : 'text-[var(--navy-medium)]'
-                  }`}>
-                    ({mediaLibrary.length})
                   </span>
                 )}
               </button>
@@ -656,8 +559,6 @@ export default function MailPage() {
                         uploadedImages={uploadedImages}
                         onImageUploaded={handleImageUploaded}
                         onImageDeleted={handleImageDeleted}
-                        mediaLibrary={mediaLibrary}
-                        onInsertMedia={handleInsertFromLibrary}
                       />
                       <p className="mt-1 text-xs text-[var(--navy-medium)]">
                         Gebruik de werkbalk voor opmaak. Klik &ldquo;Voornaam&rdquo; om de naam van de ontvanger in te voegen.
@@ -803,116 +704,6 @@ export default function MailPage() {
                   </div>
                 )}
               </>
-            )}
-
-            {/* Tab content: Media Library */}
-            {activeTab === 'media' && (
-              <div className="bg-white rounded-lg border border-[var(--border)] p-5">
-                {/* Upload zone */}
-                <div className="mb-6">
-                  <label className="flex flex-col items-center justify-center border-2 border-dashed border-[var(--border)] rounded-lg p-6 cursor-pointer hover:border-[var(--pink)] hover:bg-[var(--gray-light)]/50 transition-colors">
-                    <Upload className="w-8 h-8 text-[var(--navy-medium)] mb-2" />
-                    <span className="text-sm font-medium text-[var(--navy-dark)]">Afbeelding uploaden</span>
-                    <span className="text-xs text-[var(--navy-medium)] mt-1">JPEG, PNG, GIF of WebP — max 2MB</span>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/gif,image/webp"
-                      className="hidden"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0]
-                        if (!file) return
-                        e.target.value = ''
-
-                        const formData = new FormData()
-                        formData.append('file', file)
-
-                        try {
-                          const res = await fetch('/api/v1/team/mail/upload', {
-                            method: 'POST',
-                            body: formData,
-                          })
-                          const data = await res.json()
-                          if (res.ok) {
-                            fetchMedia()
-                          } else {
-                            alert(data.error || 'Upload mislukt')
-                          }
-                        } catch {
-                          alert('Upload mislukt — controleer uw verbinding')
-                        }
-                      }}
-                    />
-                  </label>
-                </div>
-
-                {/* Media grid */}
-                {mediaLoading ? (
-                  <div className="animate-pulse grid grid-cols-5 gap-3">
-                    {[1, 2, 3, 4, 5].map(i => (
-                      <div key={i} className="aspect-square bg-[var(--gray-light)] rounded-lg" />
-                    ))}
-                  </div>
-                ) : mediaLibrary.length === 0 ? (
-                  <p className="text-sm text-[var(--navy-medium)] text-center py-8">
-                    Nog geen afbeeldingen geüpload.
-                  </p>
-                ) : (
-                  <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
-                    {mediaLibrary.map(item => (
-                      <div
-                        key={item.id}
-                        className="group relative bg-[var(--gray-light)] rounded-lg border border-[var(--border)] overflow-hidden"
-                      >
-                        <div className="aspect-square">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={item.thumbnailUrl}
-                            alt={item.altText || item.originalName}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="px-2 py-1.5">
-                          <p className="text-[11px] font-medium text-[var(--navy-dark)] truncate" title={item.originalName}>
-                            {item.originalName}
-                          </p>
-                          <p className="text-[10px] text-[var(--navy-medium)]">
-                            {item.width && item.height ? `${item.width}×${item.height}` : ''}
-                            {item.sizeBytes ? ` — ${(item.sizeBytes / 1024).toFixed(0)} KB` : ''}
-                          </p>
-                        </div>
-
-                        {/* Hover overlay */}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                          {mediaDeleteConfirm === item.id ? (
-                            <div className="flex flex-col items-center gap-1">
-                              <button
-                                onClick={() => handleMediaDelete(item.filename)}
-                                className="px-3 py-1 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded transition-colors"
-                              >
-                                Verwijder
-                              </button>
-                              <button
-                                onClick={() => setMediaDeleteConfirm(null)}
-                                className="px-3 py-1 text-xs text-white/80 hover:text-white transition-colors"
-                              >
-                                Annuleer
-                              </button>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => setMediaDeleteConfirm(item.id)}
-                              className="p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
-                              title="Verwijderen"
-                            >
-                              <Trash2 className="w-4 h-4 text-white" />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
             )}
 
             {/* Tab content: Campaigns */}
