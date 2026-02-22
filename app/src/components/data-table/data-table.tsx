@@ -1060,7 +1060,7 @@ export function DataTable({
                 {table.getTopRows().map((row) => (
                   <Fragment key={row.id}>
                     <tr
-                      className="group bg-blue-50/60 border-l-2 border-l-[var(--pink)] hover:bg-blue-50/80 transition-colors"
+                      className="group bg-blue-50/60 border-l-2 border-l-[var(--pink)] hover:bg-blue-50/80 transition-colors relative hover:z-20"
                     >
                       {row.getVisibleCells().map((cell, cellIndex) => {
                         const isSticky = (cell.column.columnDef.meta as ColumnMeta | undefined)?.sticky || cellIndex === 0 || cellIndex === 1
@@ -1099,7 +1099,7 @@ export function DataTable({
                   <Fragment key={row.id}>
                     <tr
                       className={cn(
-                        'group hover:bg-[var(--gray-light)] transition-colors',
+                        'group hover:bg-[var(--gray-light)] transition-colors relative hover:z-20',
                         row.getIsExpanded() && 'bg-[var(--gray-light)]'
                       )}
                     >
