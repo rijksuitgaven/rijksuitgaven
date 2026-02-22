@@ -38,6 +38,18 @@ function isActiveSub(sub: { cancelled_at: string | null; deleted_at: string | nu
   return !!graceEnd && graceEnd >= now
 }
 
+interface Condition {
+  type: string
+  campaign_id?: string
+  segment?: string
+  level?: string
+  negated: boolean
+}
+
+interface ConditionGroup {
+  conditions: Condition[]
+}
+
 interface SendRequest {
   subject: string
   heading: string
@@ -48,6 +60,7 @@ interface SendRequest {
   segments: string[]
   draftId?: string
   topicId?: string
+  conditions?: { groups: ConditionGroup[] }
 }
 
 export async function POST(request: NextRequest) {
@@ -76,7 +89,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { subject, heading, preheader, body, ctaText, ctaUrl, segments, draftId, topicId } = params
+  const { subject, heading, preheader, body, ctaText, ctaUrl, segments, draftId, topicId, conditions } = params
 
   if (!subject?.trim() || !heading?.trim() || !body?.trim() || !segments?.length) {
     return NextResponse.json({ error: 'Verplichte velden: subject, heading, body, segments' }, { status: 400 })
@@ -133,8 +146,81 @@ export async function POST(request: NextRequest) {
     return segmentSet.has(stage)
   })
 
+  // Filter by conditions (AND/OR targeting rules)
+  let conditionedRecipients = recipients
+  if (conditions?.groups?.length) {
+    const EVENT_TYPE_MAP: Record<string, string> = {
+      campaign_delivered: 'delivered',
+      campaign_opened: 'opened',
+      campaign_clicked: 'clicked',
+    }
+
+    const recipientIds = new Set(recipients.map(r => r.id))
+    const groupResults: Set<string>[] = []
+
+    for (const group of conditions.groups) {
+      const conditionSets: Set<string>[] = []
+
+      for (const condition of group.conditions) {
+        let personIds = new Set<string>()
+
+        if (condition.type.startsWith('campaign_') && condition.campaign_id) {
+          const eventType = EVENT_TYPE_MAP[condition.type]
+          if (eventType) {
+            const { data: events } = await supabase
+              .from('campaign_events')
+              .select('person_id')
+              .eq('campaign_id', condition.campaign_id)
+              .eq('event_type', eventType)
+              .not('person_id', 'is', null)
+
+            personIds = new Set((events || []).map(e => e.person_id!).filter(Boolean))
+          }
+        } else if (condition.type === 'engagement_level' && condition.level) {
+          const { data: scores } = await supabase.rpc('get_engagement_scores')
+          personIds = new Set(
+            (scores || [])
+              .filter((s: { engagement_level: string }) => s.engagement_level === condition.level)
+              .map((s: { person_id: string }) => s.person_id)
+          )
+        }
+
+        // Apply negation: complement relative to recipients
+        if (condition.negated) {
+          const negated = new Set<string>()
+          for (const id of recipientIds) {
+            if (!personIds.has(id)) negated.add(id)
+          }
+          conditionSets.push(negated)
+        } else {
+          conditionSets.push(personIds)
+        }
+      }
+
+      // OR within group = union
+      const groupSet = new Set<string>()
+      for (const set of conditionSets) {
+        for (const id of set) groupSet.add(id)
+      }
+      groupResults.push(groupSet)
+    }
+
+    // AND between groups = intersection
+    let result = groupResults[0] || new Set<string>()
+    for (let i = 1; i < groupResults.length; i++) {
+      const next = new Set<string>()
+      for (const id of result) {
+        if (groupResults[i].has(id)) next.add(id)
+      }
+      result = next
+    }
+
+    // Filter recipients to only those matching conditions
+    conditionedRecipients = recipients.filter(r => result.has(r.id))
+  }
+
   // Filter by topic preference if campaign has a topic_id
-  let filteredRecipients = recipients
+  let filteredRecipients = conditionedRecipients
   if (topicId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(topicId)) {
     // Get topic default
     const { data: topic } = await supabase
@@ -145,7 +231,7 @@ export async function POST(request: NextRequest) {
 
     if (topic) {
       // Get all preferences for this topic
-      const personIds = recipients.map(r => r.id)
+      const personIds = conditionedRecipients.map(r => r.id)
       const { data: prefs } = await supabase
         .from('email_preferences')
         .select('person_id, subscribed')
@@ -157,7 +243,7 @@ export async function POST(request: NextRequest) {
         prefMap.set(p.person_id, p.subscribed)
       }
 
-      filteredRecipients = recipients.filter(person => {
+      filteredRecipients = conditionedRecipients.filter(person => {
         const pref = prefMap.get(person.id)
         // If explicit preference exists, use it; otherwise use topic default
         return pref !== undefined ? pref : topic.is_default
@@ -195,6 +281,7 @@ export async function POST(request: NextRequest) {
         cta_text: ctaText || null,
         cta_url: ctaUrl || null,
         segment: segments.join(','),
+        conditions: conditions?.groups?.length ? conditions : null,
         sent_count: 0,
         failed_count: 0,
         sent_by: sentBy,
@@ -224,6 +311,7 @@ export async function POST(request: NextRequest) {
         cta_text: ctaText || null,
         cta_url: ctaUrl || null,
         segment: segments.join(','),
+        conditions: conditions?.groups?.length ? conditions : null,
         sent_count: 0,
         failed_count: 0,
         sent_by: sentBy,
