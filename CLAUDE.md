@@ -276,7 +276,7 @@ Senior specialist (10+ years equivalent) in all disciplines. Never ask technical
 
 ### Staging & Deployment Protocol (MANDATORY)
 
-**Two environments exist. They do NOT always stay in sync.**
+**Two environments exist. Staging may contain features that main does not.**
 
 | Environment | Branch | URL |
 |-------------|--------|-----|
@@ -293,39 +293,59 @@ Senior specialist (10+ years equivalent) in all disciplines. Never ask technical
 
 Then WAIT for user approval. Never push without explicit confirmation.
 
+#### CRITICAL: Never Overwrite Staging
+
+**NEVER use `--force` or `main:staging` to push to staging.** Staging may contain
+features being tested that are not yet on main (e.g., UX-039 Vergelijk/Pin).
+Overwriting staging destroys those features.
+
+**Always MERGE main into staging** so staging keeps its extra features and gets
+main's new code too.
+
 #### What Goes Where
 
 | Change Type | Deploy Target | Process |
 |-------------|--------------|---------|
-| **Admin features** (`/team/*`) | Main + Staging | Push to both — admin-only, low risk |
+| **Admin features** (`/team/*`) | Main + Staging | Push to main, then merge main into staging |
 | **Small fixes** (bugs, typos) | Ask user | State the fix, ask "Main, staging, or both?" |
-| **New user-facing features** | Staging ONLY | Push to staging → test → batch release to main |
+| **New user-facing features** | Staging ONLY | Commit on main, push to staging via merge, revert on main |
 | **SQL migrations** | Execute BEFORE code | Run on Supabase first, then push code |
 
 #### User-Facing Feature Release Process
 
 New features for end users follow a **batch release** workflow:
 
-1. Push to staging only: `git push origin main:staging` (do NOT push to main)
-2. User tests on staging
-3. Features accumulate on staging until user approves a batch release
-4. Batch release: user explicitly says "release to production"
-5. Only then push to main
-
-**CRITICAL:** `git push origin main:staging && git branch -f staging main` is ONLY used when main and staging should be identical. For staging-only features, push ONLY to staging.
+1. Commit on main, merge into staging (staging gets the feature)
+2. Revert the commit on main (main stays clean)
+3. User tests on staging
+4. Features accumulate on staging until user approves a batch release
+5. Batch release: cherry-pick approved features onto main, push main
 
 #### Commands Reference
 
 ```bash
 # Admin feature or approved release → both environments
-git push origin main && git push origin main:staging && git branch -f staging main
-
-# Staging-only (new user-facing feature)
-git push origin main:staging
-
-# Production-only (revert from staging, hotfix)
 git push origin main
+git checkout staging && git pull origin staging && git merge main && git push origin staging && git checkout main
+
+# Staging-only (new user-facing feature already committed on main)
+git push origin main:staging
+# Then revert the feature commit on main:
+git revert HEAD && git push origin main
+
+# Production-only (hotfix)
+git push origin main
+# Then merge into staging so staging stays up to date:
+git checkout staging && git pull origin staging && git merge main && git push origin staging && git checkout main
 ```
+
+#### Pre-Push Checklist (MANDATORY)
+
+Before pushing to staging, always check if staging has diverged from main:
+```bash
+git log origin/staging --not origin/main --oneline
+```
+If this shows commits, staging has extra features. **NEVER force-push** in this case.
 
 **Full process doc:** `docs/plans/2026-02-21-staging-environment.md`
 
