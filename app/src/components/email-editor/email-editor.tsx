@@ -6,7 +6,7 @@ import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import {
   Bold, Italic, List, ListOrdered,
-  Link as LinkIcon, ImageIcon, User, Undo2, Redo2, Loader2, Trash2,
+  Link as LinkIcon, Unlink, ImageIcon, User, Undo2, Redo2, Loader2, Trash2,
   Upload, Images, X,
 } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -70,6 +70,7 @@ export function EmailEditor({
       }),
       Link.configure({
         openOnClick: false,
+        autolink: false,
         HTMLAttributes: {
           style: 'color: #436FA3; text-decoration: none;',
         },
@@ -230,6 +231,15 @@ export function EmailEditor({
             title="Link toevoegen"
           >
             <LinkIcon className="w-4 h-4" />
+          </ToolbarButton>
+
+          <ToolbarButton
+            onClick={() => editor.chain().focus().extendMarkRange('link').unsetLink().run()}
+            active={false}
+            disabled={!editor.isActive('link')}
+            title="Link verwijderen"
+          >
+            <Unlink className="w-4 h-4" />
           </ToolbarButton>
 
           {/* Image button — opens media picker */}
