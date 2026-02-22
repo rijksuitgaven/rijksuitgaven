@@ -31,7 +31,9 @@
 | Search enhancements | ✅ Implemented (Feb 21) | Multi-word AND, exact phrase `"..."`, wildcard stripping |
 | /versiegeschiedenis page | ✅ Implemented (Feb 21) | Benefit-oriented changelog + V2.x roadmap |
 | Staffel popover fix | ✅ Fixed (Feb 21) | Shows all 14 staffels (0-13) |
-| UX-039 Vergelijk (row pinning) | ⏳ On staging | Pin up to 4 rows, export selection, promoted to main |
+| UX-039 Vergelijk (row pinning) | ⏳ On staging only | Pin up to 4 rows, export selection. Reverted from main 2026-02-22 |
+| Email Media Library | ✅ Live (both) | Sharp processing, DB tracking, media picker, media tab. Admin feature |
+| Email deliverability (SPF fix) | ✅ Done (DNS) | Replaced broken self-referencing SPF with correct Resend + ZXCS includes |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
 | Rate limiting | ⏳ Pending | Cloudflare free tier in front of Railway |
@@ -42,20 +44,20 @@
 
 ## Recent Work (Last 5)
 
-1. **Versiegeschiedenis + search enhancements** (2026-02-21, afternoon — undocumented due to crash)
-   Multi-word AND search, exact phrase, wildcard. /versiegeschiedenis page. Staffel popover fix. CHANGELOG.md. Version renumbering in docs. A-track admin versioning doc. Email resend design doc. 8 commits.
+1. **Email Media Library + Deployment Protocol + SPF Fix** (2026-02-22)
+   Sharp image processing (960px, thumbnails), email_media table, media picker, media tab. Reverted UX-039 from production. CLAUDE.md deployment gate. Fixed broken SPF record for email deliverability.
 
-2. **UX-039 Vergelijk — Row Pinning** (2026-02-21, Sessions 3-4, staging)
+2. **Versiegeschiedenis + search enhancements** (2026-02-21, afternoon)
+   Multi-word AND search, exact phrase, wildcard. /versiegeschiedenis page. Staffel popover fix. 8 commits.
+
+3. **UX-039 Vergelijk — Row Pinning** (2026-02-21, Sessions 3-4, staging only)
    Pin up to 4 rows. TanStack RowPinning API. Export selection. "Wis selectie" toolbar button. 2 commits.
 
-3. **Staging environment** (2026-02-21, Sessions 1-2)
+4. **Staging environment** (2026-02-21, Sessions 1-2)
    Railway "Frontend Staging" service. 3 workflows, 7 risks. CLAUDE.md rules. 2 commits.
 
-4. **Browser & device analytics** (2026-02-20, Session 8)
+5. **Browser & device analytics** (2026-02-20, Session 8)
    Server-side UA parsing. SQL function `get_usage_devices` (migration 064). Dashboard DevicesSection. 2 commits.
-
-5. **UX-038 "Ook in" column** (2026-02-20, Session 5)
-   Renamed "Gevonden in" → "Ook in". SQL enrichment for secondary matches. 1 commit.
 
 ---
 
@@ -108,20 +110,19 @@
 
 ## Executed SQL Migrations
 
-Last migration: **064-usage-devices.sql** (2026-02-20)
+Last migration: **065-email-media.sql** (2026-02-22)
 
-Full list: 001 → 064. See `SESSION-CONTEXT-ARCHIVE.md` for complete execution log.
+Full list: 001 → 065. See `SESSION-CONTEXT-ARCHIVE.md` for complete execution log.
 
 Key recent migrations:
 | # | Description | Date |
 |---|-------------|------|
-| 058 | Unsubscribe tokens | 2026-02-19 |
-| 059 | Campaign history | 2026-02-19 |
 | 060 | Campaign events | 2026-02-19 |
 | 061 | CRM pipeline stages | 2026-02-19 |
 | 062 | Public page analytics (8 RPC functions) | 2026-02-19 |
 | 063 | Campaign drafts | 2026-02-20 |
 | 064 | Browser/device analytics | 2026-02-20 |
+| 065 | Email media library | 2026-02-22 |
 
 ---
 
@@ -133,7 +134,7 @@ Key recent migrations:
 | Auth | Magic Link only (Supabase Auth + PKCE + Resend) |
 | All transactional email | Bypasses Supabase → Resend with branded templates |
 | Export limit | 500 rows always |
-| Staging workflow | Feature → staging → main. SQL before code. |
+| Staging workflow | Admin→both, fixes→ask, user features→staging only. Batch release. SQL before code. |
 | Legal entity | Rijksuitgaven.nl (KVK 96257008) |
 | Formal Dutch | u/uw in all user-facing text |
 | Typography | IBM Plex Sans (public) + Condensed (data pages) |
