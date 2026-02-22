@@ -48,7 +48,7 @@ All email content derived from `/versiegeschiedenis` page features:
 
 **Subject:** Welkom bij het nieuwe Rijksuitgaven.nl
 
-**Preheader:** Uw persoonlijke toegang tot alle overheidsuitgaven van 2016 tot 2024.
+**Preheader:** Uw beta-toegang is actief. Sneller zoeken en preciezer filteren.
 
 **Heading:** Welkom bij het nieuwe Rijksuitgaven.nl
 
@@ -66,12 +66,15 @@ U logt voortaan in via een persoonlijke link die u per e-mail ontvangt. Geen wac
 3. Open de link in uw inbox (check ook uw spam folder)
 4. U bent ingelogd
 
-Zolang u het platform minstens één keer per week bezoekt, blijft u ingelogd. Pas als u langer dan 7 dagen niet inlogt, ontvangt u een nieuwe link per e-mail.
+Bezoek het platform minstens één keer per week en u blijft automatisch ingelogd.
 
-Alle bedragen worden nu als volledige getallen getoond, tot op de euro, en dus geen mix meer tussen absolute en "x 1.000".
+**Alle bedragen tot op de euro**
+Geen mix meer tussen absolute getallen en "x 1.000". Alle bedragen worden nu als volledige getallen getoond.
 
 **Dit is een beta, uw feedback maakt het beter**
 U bent een van de eerste gebruikers van het nieuwe platform. Ziet u iets dat beter kan, mist u iets, of werkt iets niet zoals verwacht? Gebruik de feedbackknop rechtsonder op het scherm. Elke suggestie wordt gelezen.
+
+De komende weken ontvangt u 5 korte e-mails waarin we u stap voor stap laten zien wat u met het platform kunt doen. In de volgende e-mail: de nieuwe zoekbalk, resultaten terwijl u typt.
 
 **CTA button:** Log in op Rijksuitgaven.nl
 **CTA URL:** https://beta.rijksuitgaven.nl
