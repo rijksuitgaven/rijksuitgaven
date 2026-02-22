@@ -29,6 +29,7 @@ function addEmailStyles(html: string): string {
     .replace(/<ul>/g, '<ul style="margin: 0 0 16px 0; padding-left: 20px;">')
     .replace(/<ol>/g, '<ol style="margin: 0 0 16px 0; padding-left: 20px;">')
     .replace(/<li>/g, '<li style="margin: 0 0 4px 0;">')
+    .replace(/<li([^>]*)><p[^>]*>/g, '<li$1><p style="margin: 0;">')
     .replace(/<strong>/g, '<strong style="font-weight: 700;">')
     .replace(/<em>/g, '<em style="font-style: italic;">')
     .replace(/<a /g, '<a style="color: #436FA3; text-decoration: none;" ')
@@ -44,10 +45,6 @@ function replaceVariables(html: string, firstName?: string): string {
 }
 
 export function renderCampaignEmail(params: CampaignParams): string {
-  const greeting = params.firstName
-    ? `Beste ${params.firstName},`
-    : 'Beste lezer,'
-
   // Body is HTML from WYSIWYG editor — add inline styles + replace variables
   const bodyHtml = replaceVariables(addEmailStyles(params.body), params.firstName)
 
@@ -100,7 +97,7 @@ export function renderCampaignEmail(params: CampaignParams): string {
 
                 <!-- Heading -->
                 <tr>
-                  <td style="font-size: 22px; font-weight: 700; color: #0E3261; text-align: center; padding-bottom: 16px;">
+                  <td style="font-size: 22px; font-weight: 700; color: #0E3261; text-align: left; padding-bottom: 16px;">
                     ${escapeHtml(params.heading)}
                   </td>
                 </tr>
@@ -108,7 +105,6 @@ export function renderCampaignEmail(params: CampaignParams): string {
                 <!-- Body -->
                 <tr>
                   <td style="font-size: 15px; line-height: 24px; color: #4a4a4a; padding-bottom: 24px;">
-                    ${escapeHtml(greeting)}<br /><br />
                     ${bodyHtml}
                   </td>
                 </tr>
@@ -147,7 +143,6 @@ export function renderCampaignEmail(params: CampaignParams): string {
                 </tr>
                 <tr>
                   <td style="font-size: 12px; line-height: 18px; color: #8a8a8a; text-align: center; padding-top: 8px;">
-                    Rijksuitgaven.nl<br />
                     KvK: 96257008<br />
                     <a href="mailto:contact@rijksuitgaven.nl" style="color: #436FA3; text-decoration: none;">contact@rijksuitgaven.nl</a>
                   </td>
