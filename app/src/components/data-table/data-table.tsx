@@ -505,7 +505,7 @@ export function DataTable({
               {/* Pin button — visible on hover via group-hover */}
               <span
                 className="opacity-0 group-hover:opacity-100 transition-opacity -mr-1"
-                data-tooltip-center={pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS}` : 'Vergelijk'}
+                data-tooltip-right={pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS}` : 'Vergelijk'}
               >
                 <button
                   onClick={() => {
@@ -1060,7 +1060,7 @@ export function DataTable({
                 {table.getTopRows().map((row) => (
                   <Fragment key={row.id}>
                     <tr
-                      className="group bg-blue-50/60 border-l-2 border-l-[var(--pink)] hover:bg-blue-50/80 transition-colors relative hover:z-20"
+                      className="group bg-blue-50/60 border-l-2 border-l-[var(--pink)] hover:bg-blue-50/80 transition-colors"
                     >
                       {row.getVisibleCells().map((cell, cellIndex) => {
                         const isSticky = (cell.column.columnDef.meta as ColumnMeta | undefined)?.sticky || cellIndex === 0 || cellIndex === 1
@@ -1099,7 +1099,7 @@ export function DataTable({
                   <Fragment key={row.id}>
                     <tr
                       className={cn(
-                        'group hover:bg-[var(--gray-light)] transition-colors relative hover:z-20',
+                        'group hover:bg-[var(--gray-light)] transition-colors',
                         row.getIsExpanded() && 'bg-[var(--gray-light)]'
                       )}
                     >

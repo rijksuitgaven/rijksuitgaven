@@ -326,6 +326,38 @@
   visibility: visible;
 }
 
+/* Tooltip positioned to the right — avoids z-index clipping in table rows */
+[data-tooltip-right] {
+  position: relative;
+}
+
+[data-tooltip-right]::after {
+  content: attr(data-tooltip-right);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 6px;
+  padding: 6px 10px;
+  background: var(--navy-dark, #1e3a5f);
+  color: white;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 100ms ease-out;
+}
+
+[data-tooltip-right]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Tiptap WYSIWYG editor — email composer */
 .tiptap {
   outline: none;
