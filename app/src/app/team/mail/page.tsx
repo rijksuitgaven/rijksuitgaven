@@ -2538,7 +2538,7 @@ export default function MailPage() {
                           </div>
                           <div className="space-y-3 text-xs text-[var(--navy-medium)] leading-relaxed">
                             <p>
-                              Een sequentie is een reeks e-mails die automatisch worden verstuurd na inschrijving van een lid.
+                              Een sequentie is een reeks e-mails die automatisch worden verstuurd na uitnodiging van een lid.
                               Denk aan een welkomserie of onboarding-reeks.
                             </p>
                             <div>
@@ -2547,7 +2547,7 @@ export default function MailPage() {
                                 <li>Klik op <strong>Nieuwe sequentie</strong> en geef een naam op</li>
                                 <li>Kies een <strong>verzendtijd</strong> (bijv. 09:00) — dit is het tijdstip waarop e-mails worden verstuurd</li>
                                 <li>Voeg <strong>stappen</strong> toe — elke stap is een e-mail met een onderwerp, koptekst en bericht</li>
-                                <li>Stel per stap een <strong>vertraging</strong> in (aantal dagen na inschrijving)</li>
+                                <li>Stel per stap een <strong>vertraging</strong> in (aantal dagen na uitnodiging)</li>
                                 <li>Zet de status op <strong>Actief</strong> wanneer de sequentie klaar is</li>
                               </ol>
                             </div>
@@ -2863,7 +2863,7 @@ export default function MailPage() {
                                             className="w-20 rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
                                           />
                                           <span className="text-xs text-[var(--navy-medium)]">
-                                            {newStepDelay === 0 ? 'Direct na inschrijving' : `${newStepDelay} dag${newStepDelay !== 1 ? 'en' : ''} na inschrijving`}
+                                            {newStepDelay === 0 ? 'Direct na uitnodiging' : `${newStepDelay} dag${newStepDelay !== 1 ? 'en' : ''} na uitnodiging`}
                                           </span>
                                         </div>
 
