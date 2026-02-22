@@ -255,6 +255,7 @@ export default function MailPage() {
   const [editingStepId, setEditingStepId] = useState<string | null>(null)
   const [newStepSubject, setNewStepSubject] = useState('')
   const [newStepHeading, setNewStepHeading] = useState('')
+  const [newStepPreheader, setNewStepPreheader] = useState('')
   const [newStepBody, setNewStepBody] = useState('')
   const [newStepDelay, setNewStepDelay] = useState(0)
   const [newStepCtaText, setNewStepCtaText] = useState('')
@@ -262,6 +263,16 @@ export default function MailPage() {
   const [showAddStep, setShowAddStep] = useState(false)
   const [addingStep, setAddingStep] = useState(false)
   const [confirmDeleteSeqId, setConfirmDeleteSeqId] = useState<string | null>(null)
+  // Step preview/precheck/test state
+  const [stepPreviewHtml, setStepPreviewHtml] = useState<string | null>(null)
+  const [stepShowPreview, setStepShowPreview] = useState(false)
+  const [stepPreviewLoading, setStepPreviewLoading] = useState(false)
+  const [stepPreviewDevice, setStepPreviewDevice] = useState<PreviewDevice>('desktop')
+  const [stepPrecheckAreas, setStepPrecheckAreas] = useState<PrecheckArea[] | null>(null)
+  const [stepPrecheckLoading, setStepPrecheckLoading] = useState(false)
+  const [stepTestSending, setStepTestSending] = useState(false)
+  const [stepTestResult, setStepTestResult] = useState<string | null>(null)
+  const [stepSaving, setStepSaving] = useState(false)
 
   // Close help popover on outside click
   useEffect(() => {
@@ -448,6 +459,112 @@ export default function MailPage() {
       setPrecheckLoading(false)
     }
   }, [precheckAreas, subject, heading, preheader, body, ctaText, ctaUrl, selectedSegments])
+
+  // Step-specific handlers (use newStep* state)
+  const handleStepPreview = useCallback(async () => {
+    if (stepShowPreview) { setStepShowPreview(false); return }
+    setStepPreviewLoading(true)
+    try {
+      const res = await fetch('/api/v1/team/mail/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: newStepSubject.trim(),
+          heading: newStepHeading.trim(),
+          preheader: newStepPreheader.trim() || undefined,
+          bodyHtml: newStepBody.trim(),
+          ctaText: newStepCtaText.trim() || undefined,
+          ctaUrl: newStepCtaUrl.trim() || undefined,
+        }),
+      })
+      if (res.ok) {
+        setStepPreviewHtml(await res.text())
+        setStepShowPreview(true)
+      }
+    } catch { /* Silent */ } finally { setStepPreviewLoading(false) }
+  }, [stepShowPreview, newStepSubject, newStepHeading, newStepPreheader, newStepBody, newStepCtaText, newStepCtaUrl])
+
+  const handleStepTestEmail = useCallback(async () => {
+    setStepTestSending(true)
+    setStepTestResult(null)
+    try {
+      const res = await fetch('/api/v1/team/mail/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: newStepSubject.trim(),
+          heading: newStepHeading.trim(),
+          preheader: newStepPreheader.trim() || undefined,
+          body: newStepBody.trim(),
+          ctaText: newStepCtaText.trim() || undefined,
+          ctaUrl: newStepCtaUrl.trim() || undefined,
+        }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setStepTestResult(`Verstuurd naar ${data.email}`)
+      } else {
+        setStepTestResult(data.error || 'Fout bij versturen')
+      }
+      setTimeout(() => setStepTestResult(null), 5000)
+    } catch {
+      setStepTestResult('Netwerkfout')
+      setTimeout(() => setStepTestResult(null), 5000)
+    } finally { setStepTestSending(false) }
+  }, [newStepSubject, newStepHeading, newStepPreheader, newStepBody, newStepCtaText, newStepCtaUrl])
+
+  const handleStepPrecheck = useCallback(async () => {
+    if (stepPrecheckAreas) { setStepPrecheckAreas(null); return }
+    setStepPrecheckLoading(true)
+    try {
+      const res = await fetch('/api/v1/team/mail/precheck', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: newStepSubject.trim(),
+          heading: newStepHeading.trim(),
+          preheader: newStepPreheader.trim() || undefined,
+          body: newStepBody.trim(),
+          ctaText: newStepCtaText.trim() || undefined,
+          ctaUrl: newStepCtaUrl.trim() || undefined,
+          segments: ['leden_maandelijks', 'leden_jaarlijks'],
+        }),
+      })
+      const data = await res.json()
+      if (res.ok) setStepPrecheckAreas(data.areas || [])
+    } catch { /* Silent */ } finally { setStepPrecheckLoading(false) }
+  }, [stepPrecheckAreas, newStepSubject, newStepHeading, newStepPreheader, newStepBody, newStepCtaText, newStepCtaUrl])
+
+  const resetStepForm = useCallback(() => {
+    setNewStepSubject('')
+    setNewStepHeading('')
+    setNewStepPreheader('')
+    setNewStepBody('')
+    setNewStepDelay(0)
+    setNewStepCtaText('')
+    setNewStepCtaUrl('')
+    setEditingStepId(null)
+    setStepShowPreview(false)
+    setStepPreviewHtml(null)
+    setStepPrecheckAreas(null)
+    setStepTestResult(null)
+  }, [])
+
+  const handleEditStep = useCallback((step: SequenceStep) => {
+    setEditingStepId(step.id)
+    setNewStepSubject(step.subject)
+    setNewStepHeading(step.heading)
+    setNewStepPreheader(step.preheader || '')
+    setNewStepBody(step.body)
+    setNewStepDelay(step.delay_days)
+    setNewStepCtaText(step.cta_text || '')
+    setNewStepCtaUrl(step.cta_url || '')
+    setShowAddStep(true)
+    setStepShowPreview(false)
+    setStepPreviewHtml(null)
+    setStepPrecheckAreas(null)
+    setStepTestResult(null)
+  }, [])
 
   const handleCompare = useCallback(async () => {
     if (compareSelected.size < 2) return
@@ -766,6 +883,7 @@ export default function MailPage() {
         body: JSON.stringify({
           subject: newStepSubject.trim(),
           heading: newStepHeading.trim(),
+          preheader: newStepPreheader.trim() || undefined,
           body: newStepBody.trim(),
           delay_days: newStepDelay,
           cta_text: newStepCtaText.trim() || undefined,
@@ -773,14 +891,8 @@ export default function MailPage() {
         }),
       })
       if (res.ok) {
-        setNewStepSubject('')
-        setNewStepHeading('')
-        setNewStepBody('')
-        setNewStepDelay(0)
-        setNewStepCtaText('')
-        setNewStepCtaUrl('')
+        resetStepForm()
         setShowAddStep(false)
-        // Refresh detail
         handleExpandSequence(expandedSequenceId)
         fetchSequences()
       }
@@ -789,7 +901,7 @@ export default function MailPage() {
     } finally {
       setAddingStep(false)
     }
-  }, [expandedSequenceId, newStepSubject, newStepHeading, newStepBody, newStepDelay, newStepCtaText, newStepCtaUrl, handleExpandSequence, fetchSequences])
+  }, [expandedSequenceId, newStepSubject, newStepHeading, newStepPreheader, newStepBody, newStepDelay, newStepCtaText, newStepCtaUrl, resetStepForm, handleExpandSequence, fetchSequences])
 
   const handleDeleteStep = useCallback(async (stepId: string) => {
     if (!expandedSequenceId) return
@@ -805,6 +917,32 @@ export default function MailPage() {
       // Silent
     }
   }, [expandedSequenceId, handleExpandSequence, fetchSequences])
+
+  const handleSaveStep = useCallback(async () => {
+    if (!expandedSequenceId || !editingStepId) return
+    setStepSaving(true)
+    try {
+      const res = await fetch(`/api/v1/team/mail/sequences/${expandedSequenceId}/steps/${editingStepId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: newStepSubject.trim(),
+          heading: newStepHeading.trim(),
+          preheader: newStepPreheader.trim() || null,
+          body: newStepBody.trim(),
+          delay_days: newStepDelay,
+          cta_text: newStepCtaText.trim() || null,
+          cta_url: newStepCtaUrl.trim() || null,
+        }),
+      })
+      if (res.ok) {
+        resetStepForm()
+        setShowAddStep(false)
+        handleExpandSequence(expandedSequenceId)
+        fetchSequences()
+      }
+    } catch { /* Silent */ } finally { setStepSaving(false) }
+  }, [expandedSequenceId, editingStepId, newStepSubject, newStepHeading, newStepPreheader, newStepBody, newStepDelay, newStepCtaText, newStepCtaUrl, resetStepForm, handleExpandSequence, fetchSequences])
 
   const handleDeleteCampaign = useCallback(async (campaignId: string, isDraft: boolean) => {
     try {
@@ -839,6 +977,7 @@ export default function MailPage() {
   const sentCampaigns = campaigns.filter(c => c.status !== 'draft')
 
   const previewWidth = previewDevice === 'mobile' ? 375 : previewDevice === 'tablet' ? 768 : undefined
+  const stepPreviewWidth = stepPreviewDevice === 'mobile' ? 375 : stepPreviewDevice === 'tablet' ? 768 : undefined
 
   if (subLoading) return null
   if (role !== 'admin') {
@@ -2143,13 +2282,12 @@ export default function MailPage() {
                                       </h4>
                                       <button
                                         onClick={() => {
-                                          setShowAddStep(!showAddStep)
-                                          setNewStepSubject('')
-                                          setNewStepHeading('')
-                                          setNewStepBody('')
-                                          setNewStepDelay(0)
-                                          setNewStepCtaText('')
-                                          setNewStepCtaUrl('')
+                                          if (showAddStep && !editingStepId) {
+                                            setShowAddStep(false)
+                                          } else {
+                                            resetStepForm()
+                                            setShowAddStep(true)
+                                          }
                                         }}
                                         className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-[var(--pink)] hover:bg-[var(--gray-light)] rounded transition-colors"
                                       >
@@ -2166,7 +2304,14 @@ export default function MailPage() {
                                         {sequenceDetail.steps.map((step, idx) => (
                                           <div
                                             key={step.id}
-                                            className="flex items-start gap-3 p-3 bg-[var(--gray-light)] rounded-lg border border-[var(--border)]"
+                                            className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                                              editingStepId === step.id
+                                                ? 'bg-[var(--navy-dark)]/5 border-[var(--navy-dark)]/20'
+                                                : 'bg-[var(--gray-light)] border-[var(--border)] hover:border-[var(--navy-medium)]/30'
+                                            }`}
+                                            onClick={() => {
+                                              if (editingStepId !== step.id) handleEditStep(step)
+                                            }}
                                           >
                                             <div className="w-6 h-6 rounded-full bg-[var(--navy-dark)] text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                                               {idx + 1}
@@ -2189,102 +2334,270 @@ export default function MailPage() {
                                                 </p>
                                               )}
                                             </div>
-                                            <button
-                                              onClick={() => handleDeleteStep(step.id)}
-                                              className="p-1 text-[var(--navy-medium)] hover:text-red-600 transition-colors shrink-0"
-                                              title="Verwijder stap"
-                                            >
-                                              <Trash2 className="w-3.5 h-3.5" />
-                                            </button>
+                                            <div className="flex items-center gap-1 shrink-0">
+                                              <Pencil className="w-3 h-3 text-[var(--navy-medium)]" />
+                                              <button
+                                                onClick={(e) => { e.stopPropagation(); handleDeleteStep(step.id) }}
+                                                className="p-1 text-[var(--navy-medium)] hover:text-red-600 transition-colors"
+                                                title="Verwijder stap"
+                                              >
+                                                <Trash2 className="w-3.5 h-3.5" />
+                                              </button>
+                                            </div>
                                           </div>
                                         ))}
                                       </div>
                                     )}
 
-                                    {/* Add step form */}
+                                    {/* Add/Edit step form — full compose experience */}
                                     {showAddStep && (
-                                      <div className="mt-3 p-3 bg-white rounded-lg border border-[var(--border)] space-y-2">
-                                        <div className="grid grid-cols-2 gap-2">
-                                          <div>
-                                            <label className="block text-[10px] font-medium text-[var(--navy-dark)] mb-0.5">Onderwerp</label>
-                                            <input
-                                              type="text"
-                                              value={newStepSubject}
-                                              onChange={e => setNewStepSubject(e.target.value)}
-                                              placeholder="E-mail onderwerp"
-                                              className="w-full rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
-                                            />
-                                          </div>
-                                          <div>
-                                            <label className="block text-[10px] font-medium text-[var(--navy-dark)] mb-0.5">Koptekst</label>
-                                            <input
-                                              type="text"
-                                              value={newStepHeading}
-                                              onChange={e => setNewStepHeading(e.target.value)}
-                                              placeholder="Titel in de e-mail"
-                                              className="w-full rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
-                                            />
-                                          </div>
+                                      <div className="mt-3 bg-white rounded-lg border border-[var(--border)] p-4 space-y-4">
+                                        <div className="flex items-center justify-between">
+                                          <h5 className="text-xs font-semibold text-[var(--navy-dark)]">
+                                            {editingStepId ? 'Stap bewerken' : 'Nieuwe stap'}
+                                          </h5>
+                                          <button
+                                            onClick={() => { resetStepForm(); setShowAddStep(false) }}
+                                            className="text-[var(--navy-medium)] hover:text-[var(--navy-dark)]"
+                                          >
+                                            <X className="w-4 h-4" />
+                                          </button>
                                         </div>
+
+                                        {/* Vertraging */}
+                                        <div className="flex items-center gap-3">
+                                          <label className="text-xs font-medium text-[var(--navy-dark)]">Vertraging:</label>
+                                          <input
+                                            type="number"
+                                            min={0}
+                                            max={365}
+                                            value={newStepDelay}
+                                            onChange={e => setNewStepDelay(parseInt(e.target.value) || 0)}
+                                            className="w-20 rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
+                                          />
+                                          <span className="text-xs text-[var(--navy-medium)]">
+                                            {newStepDelay === 0 ? 'Direct na inschrijving' : `${newStepDelay} dag${newStepDelay !== 1 ? 'en' : ''} na inschrijving`}
+                                          </span>
+                                        </div>
+
+                                        {/* Onderwerp */}
                                         <div>
-                                          <label className="block text-[10px] font-medium text-[var(--navy-dark)] mb-0.5">Bericht (HTML)</label>
-                                          <textarea
-                                            value={newStepBody}
-                                            onChange={e => setNewStepBody(e.target.value)}
-                                            placeholder="<p>Beste {{voornaam}}, ...</p>"
-                                            rows={4}
-                                            className="w-full rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--pink)] font-mono"
+                                          <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Onderwerp</label>
+                                          <input
+                                            type="text"
+                                            value={newStepSubject}
+                                            onChange={e => setNewStepSubject(e.target.value)}
+                                            placeholder="Onderwerp van het e-mailbericht"
+                                            className="w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
                                           />
                                         </div>
-                                        <div className="grid grid-cols-3 gap-2">
+
+                                        {/* Preheader */}
+                                        <div>
+                                          <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">
+                                            Preheader <span className="text-[var(--navy-medium)] font-normal">(optioneel)</span>
+                                          </label>
+                                          <input
+                                            type="text"
+                                            value={newStepPreheader}
+                                            onChange={e => setNewStepPreheader(e.target.value)}
+                                            placeholder="Voorbeeldtekst naast het onderwerp in de inbox"
+                                            maxLength={150}
+                                            className="w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
+                                          />
+                                          <p className="text-[10px] text-[var(--navy-medium)] mt-1">Wordt getoond naast het onderwerp in de inbox van de ontvanger. Max 150 tekens.</p>
+                                        </div>
+
+                                        {/* Koptekst */}
+                                        <div>
+                                          <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Koptekst</label>
+                                          <input
+                                            type="text"
+                                            value={newStepHeading}
+                                            onChange={e => setNewStepHeading(e.target.value)}
+                                            placeholder="Titel in het e-mailbericht"
+                                            className="w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
+                                          />
+                                        </div>
+
+                                        {/* Rich text editor */}
+                                        <div>
+                                          <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">Bericht</label>
+                                          <EmailEditor
+                                            value={newStepBody}
+                                            onChange={setNewStepBody}
+                                            uploadedImages={[]}
+                                            onImageUploaded={() => {}}
+                                            onImageDeleted={() => {}}
+                                            mediaLibrary={mediaLibrary}
+                                            onInsertMedia={handleInsertFromLibrary}
+                                          />
+                                        </div>
+
+                                        {/* CTA */}
+                                        <div className="grid grid-cols-2 gap-3">
                                           <div>
-                                            <label className="block text-[10px] font-medium text-[var(--navy-dark)] mb-0.5">Vertraging (dagen)</label>
-                                            <input
-                                              type="number"
-                                              min={0}
-                                              max={365}
-                                              value={newStepDelay}
-                                              onChange={e => setNewStepDelay(parseInt(e.target.value) || 0)}
-                                              className="w-full rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
-                                            />
-                                          </div>
-                                          <div>
-                                            <label className="block text-[10px] font-medium text-[var(--navy-dark)] mb-0.5">CTA tekst</label>
+                                            <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">
+                                              Knoptekst <span className="text-[var(--navy-medium)] font-normal">(optioneel)</span>
+                                            </label>
                                             <input
                                               type="text"
                                               value={newStepCtaText}
                                               onChange={e => setNewStepCtaText(e.target.value)}
-                                              placeholder="Optioneel"
-                                              className="w-full rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
+                                              placeholder="Bijv. Bekijk op Rijksuitgaven"
+                                              className="w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
                                             />
                                           </div>
                                           <div>
-                                            <label className="block text-[10px] font-medium text-[var(--navy-dark)] mb-0.5">CTA URL</label>
+                                            <label className="block text-sm font-medium text-[var(--navy-dark)] mb-1">
+                                              Knop URL <span className="text-[var(--navy-medium)] font-normal">(optioneel)</span>
+                                            </label>
                                             <input
                                               type="url"
                                               value={newStepCtaUrl}
                                               onChange={e => setNewStepCtaUrl(e.target.value)}
-                                              placeholder="https://..."
-                                              className="w-full rounded border border-[var(--border)] px-2 py-1.5 text-xs text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--pink)]"
+                                              placeholder="https://beta.rijksuitgaven.nl"
+                                              className="w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--pink)] focus:border-transparent"
                                             />
                                           </div>
                                         </div>
-                                        <div className="flex items-center gap-2 pt-1">
+
+                                        {/* Action bar */}
+                                        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[var(--border)]">
                                           <button
-                                            onClick={handleAddStep}
-                                            disabled={!newStepSubject.trim() || !newStepHeading.trim() || !newStepBody.trim() || addingStep}
-                                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-[var(--pink)] hover:bg-[var(--pink-hover)] rounded-lg transition-colors disabled:opacity-50"
+                                            onClick={handleStepPreview}
+                                            disabled={stepPreviewLoading || !newStepBody.trim()}
+                                            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] rounded-lg hover:bg-[var(--gray-light)] transition-colors disabled:opacity-50"
                                           >
-                                            {addingStep ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
-                                            Toevoegen
+                                            {stepPreviewLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Eye className="w-3.5 h-3.5" />}
+                                            Voorbeeld
                                           </button>
                                           <button
-                                            onClick={() => setShowAddStep(false)}
-                                            className="px-3 py-1.5 text-xs text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors"
+                                            onClick={handleStepPrecheck}
+                                            disabled={stepPrecheckLoading || !newStepBody.trim()}
+                                            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] rounded-lg hover:bg-[var(--gray-light)] transition-colors disabled:opacity-50"
                                           >
-                                            Annuleren
+                                            {stepPrecheckLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
+                                            Controleer
                                           </button>
+                                          <button
+                                            onClick={handleStepTestEmail}
+                                            disabled={stepTestSending || !newStepSubject.trim() || !newStepBody.trim()}
+                                            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[var(--navy-dark)] bg-white border border-[var(--border)] rounded-lg hover:bg-[var(--gray-light)] transition-colors disabled:opacity-50"
+                                          >
+                                            {stepTestSending ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <SendHorizontal className="w-3.5 h-3.5" />}
+                                            Verstuur test
+                                          </button>
+                                          {stepTestResult && (
+                                            <span className="text-xs text-green-600">{stepTestResult}</span>
+                                          )}
+
+                                          <div className="flex-1" />
+
+                                          {editingStepId ? (
+                                            <button
+                                              onClick={handleSaveStep}
+                                              disabled={!newStepSubject.trim() || !newStepHeading.trim() || !newStepBody.trim() || stepSaving}
+                                              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-[var(--pink)] hover:bg-[var(--pink-hover)] rounded-lg transition-colors disabled:opacity-50"
+                                            >
+                                              {stepSaving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                                              Opslaan
+                                            </button>
+                                          ) : (
+                                            <button
+                                              onClick={handleAddStep}
+                                              disabled={!newStepSubject.trim() || !newStepHeading.trim() || !newStepBody.trim() || addingStep}
+                                              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-[var(--pink)] hover:bg-[var(--pink-hover)] rounded-lg transition-colors disabled:opacity-50"
+                                            >
+                                              {addingStep ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+                                              Toevoegen
+                                            </button>
+                                          )}
                                         </div>
+
+                                        {/* Precheck panel */}
+                                        {stepPrecheckAreas && (
+                                          <div className="rounded-lg border border-[var(--border)] p-4">
+                                            <h5 className="text-xs font-semibold text-[var(--navy-dark)] mb-2">Pre-send controle</h5>
+                                            <div className="space-y-2">
+                                              {stepPrecheckAreas.map(area => (
+                                                <div key={area.area}>
+                                                  <div className="flex items-center gap-2 mb-1">
+                                                    {area.pass ? (
+                                                      <CheckCircle className="w-3.5 h-3.5 text-green-600 shrink-0" />
+                                                    ) : (
+                                                      <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                                                    )}
+                                                    <span className="text-xs font-medium text-[var(--navy-dark)]">{area.area}</span>
+                                                  </div>
+                                                  <div className="ml-5 space-y-0.5">
+                                                    {area.items.map((item, idx) => (
+                                                      <div key={idx} className="flex items-start gap-1.5 text-[10px]">
+                                                        <span className={item.pass ? 'text-green-600' : 'text-red-500'}>
+                                                          {item.pass ? '\u2713' : '\u2717'}
+                                                        </span>
+                                                        <div>
+                                                          <span className={item.pass ? 'text-[var(--navy-medium)]' : 'text-[var(--navy-dark)]'}>
+                                                            {item.label}
+                                                          </span>
+                                                          {item.fix && <p className="text-[var(--navy-medium)]">{item.fix}</p>}
+                                                        </div>
+                                                      </div>
+                                                    ))}
+                                                  </div>
+                                                </div>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        )}
+
+                                        {/* Preview panel */}
+                                        {stepShowPreview && stepPreviewHtml && (
+                                          <div className="rounded-lg border border-[var(--border)] overflow-hidden">
+                                            <div className="flex items-center justify-between px-4 py-2 bg-[var(--gray-light)] border-b border-[var(--border)]">
+                                              <h5 className="text-xs font-semibold text-[var(--navy-dark)]">Voorbeeld</h5>
+                                              <div className="flex items-center gap-1">
+                                                {([
+                                                  { device: 'desktop' as const, icon: Monitor, label: 'Desktop' },
+                                                  { device: 'tablet' as const, icon: Tablet, label: 'Tablet' },
+                                                  { device: 'mobile' as const, icon: Smartphone, label: 'Mobiel' },
+                                                ]).map(({ device, icon: Icon, label }) => (
+                                                  <button
+                                                    key={device}
+                                                    onClick={() => setStepPreviewDevice(device)}
+                                                    className={`p-1.5 rounded transition-colors ${
+                                                      stepPreviewDevice === device
+                                                        ? 'bg-[var(--navy-dark)] text-white'
+                                                        : 'text-[var(--navy-medium)] hover:text-[var(--navy-dark)] hover:bg-white'
+                                                    }`}
+                                                    title={label}
+                                                  >
+                                                    <Icon className="w-4 h-4" />
+                                                  </button>
+                                                ))}
+                                              </div>
+                                            </div>
+                                            <div className="bg-[var(--gray-light)] px-4 py-2 text-xs text-[var(--navy-medium)] border-b border-[var(--border)]">
+                                              <span className="font-medium">Onderwerp:</span> {newStepSubject}
+                                              {newStepPreheader && (
+                                                <span className="ml-3 text-[var(--navy-medium)]/60">— {newStepPreheader}</span>
+                                              )}
+                                            </div>
+                                            <div className="flex justify-center bg-[#f0f0f0]">
+                                              <iframe
+                                                srcDoc={stepPreviewHtml}
+                                                sandbox=""
+                                                title="Stap voorbeeld"
+                                                className="border-0 bg-white transition-all duration-300"
+                                                style={{
+                                                  width: stepPreviewWidth || '100%',
+                                                  maxWidth: '100%',
+                                                  height: 500,
+                                                }}
+                                              />
+                                            </div>
+                                          </div>
+                                        )}
                                       </div>
                                     )}
                                   </div>
