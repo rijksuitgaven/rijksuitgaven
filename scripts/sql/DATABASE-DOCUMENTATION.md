@@ -5,7 +5,7 @@
 **Region:** eu-west-1
 **Created:** 2026-01-21
 **Data Migrated:** 2026-01-23
-**Last Updated:** 2026-02-22 (migrations 066-071: bounce suppress, UA tracking, engagement scoring, email sequences, email preferences)
+**Last Updated:** 2026-02-22 (migrations 065-071: email media, bounce suppress, UA tracking, engagement scoring, email sequences, email preferences)
 
 ---
 
@@ -907,6 +907,37 @@ CREATE POLICY "Service role full access" ON subscriptions
 
 ---
 
+### 0n. email_media (Email Media Library)
+
+**Description:** Tracks uploaded images for campaign/sequence emails. Images are stored in Supabase Storage (`email-images` bucket); this table holds metadata. Uses soft-delete pattern (`deleted_at`) so images can be restored and draft references remain valid.
+
+**Migration:** `065-email-media.sql` (created 2026-02-22)
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (gen_random_uuid()) |
+| filename | TEXT | Storage key in `email-images` bucket (NOT NULL) |
+| original_name | TEXT | User's original filename at upload (NOT NULL) |
+| mime_type | TEXT | MIME type, e.g. image/png (NOT NULL) |
+| size_bytes | INTEGER | Optimized file size in bytes (NOT NULL) |
+| width | INTEGER | Image width in pixels (after processing) |
+| height | INTEGER | Image height in pixels (after processing) |
+| alt_text | TEXT | Alt text for accessibility (default '') |
+| uploaded_by | UUID | FK to auth.users (SET NULL on delete) |
+| created_at | TIMESTAMPTZ | Upload time (default NOW()) |
+| deleted_at | TIMESTAMPTZ | Soft-delete timestamp (NULL = active) |
+
+**Soft-delete pattern:** Setting `deleted_at` hides the image from the media library without removing the storage object or breaking existing campaign HTML that references it. All indexes use `WHERE deleted_at IS NULL` partial conditions.
+
+**Indexes:**
+- `idx_email_media_created` — created_at DESC WHERE deleted_at IS NULL (active media, newest first)
+- `idx_email_media_uploaded_by` — uploaded_by WHERE deleted_at IS NULL (per-user listing)
+- `idx_email_media_filename` — filename WHERE deleted_at IS NULL (draft image restoration lookup)
+
+**Storage bucket:** `email-images` in Supabase Storage. Images are processed (resized to max 960px width for 2x retina at 480px email width) before upload.
+
+---
+
 ## Triggers
 
 ### Source Column Auto-Population
@@ -989,6 +1020,41 @@ $$ LANGUAGE SQL IMMUTABLE STRICT;
 | "NS Vastgoed B.V." | "NS VASTGOED" |
 
 **Used by:** `universal_search` materialized view for entity grouping
+
+---
+
+### Engagement Scoring Functions
+
+**Description:** Two SQL functions that compute email engagement levels per person based on campaign_events data. Used by CRM/admin pages to segment recipients.
+
+**Migration:** `068-engagement-scoring.sql` (created 2026-02-22)
+
+#### get_engagement_scores()
+
+**Signature:** `get_engagement_scores() RETURNS TABLE(person_id UUID, engagement_level TEXT, last_engagement_at TIMESTAMPTZ, campaigns_sent BIGINT, campaigns_opened BIGINT, campaigns_clicked BIGINT)`
+
+**Language:** PL/pgSQL, STABLE
+
+**Description:** Bulk function — returns engagement level and stats for all persons who have received at least one campaign. Counts distinct campaigns per event type (delivered, opened, clicked).
+
+#### get_person_engagement(p_person_id UUID)
+
+**Signature:** `get_person_engagement(p_person_id UUID) RETURNS TABLE(engagement_level TEXT, last_engagement_at TIMESTAMPTZ, campaigns_sent BIGINT, campaigns_opened BIGINT, campaigns_clicked BIGINT)`
+
+**Language:** PL/pgSQL, STABLE
+
+**Description:** Single-person variant — returns engagement for one specific person.
+
+#### Engagement Level Definitions
+
+| Level | Condition | Description |
+|-------|-----------|-------------|
+| `new` | < 3 campaigns delivered | Too few sends to score meaningfully |
+| `active` | Last open/click within 30 days | Actively engaging with emails |
+| `at_risk` | Last open/click 30-90 days ago | Engagement declining |
+| `cold` | Last open/click > 90 days ago, or never opened/clicked | Not engaging |
+
+**Logic priority:** Levels are evaluated in order: `new` first (overrides all if < 3 delivered), then recency-based (`active` → `at_risk` → `cold`). A person who has never opened or clicked any campaign defaults to `cold`.
 
 ---
 

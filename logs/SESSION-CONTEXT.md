@@ -35,7 +35,7 @@
 | Email Media Library | ✅ Live (both) | Sharp processing, DB tracking, media picker, media tab. Admin feature |
 | Email deliverability (SPF fix) | ✅ Done (DNS) | Replaced broken self-referencing SPF with correct Resend + ZXCS includes |
 | Campaign features (13) | ✅ Implemented (Feb 22) | 6 phases: webhook, pre-send, analytics, engagement, sequences, preferences |
-| Railway cron service | ⏳ Pending deploy | curlimages/curl, sequence processor, hourly weekdays |
+| Railway cron service | ✅ Deployed (Feb 22) | curlimages/curl, sequence processor, hourly weekdays. Verified: returns weekend skip |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
 | Rate limiting | ⏳ Pending | Cloudflare free tier in front of Railway |

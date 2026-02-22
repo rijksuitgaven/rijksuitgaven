@@ -135,15 +135,19 @@ Internal admin tooling at `/team/*`. Separate release cadence from the end-user 
 - Feedback inbox (`/team/feedback`) — status workflow, admin notes
 - Usage statistics (`/team/statistieken`) — pulse, insights, user activity, error tracking
 - Contact management (`/team/contacten`) — prospect tracking, Resend audience sync
-- Email campaigns via Resend Broadcasts
+- Email campaigns via Resend Broadcasts (compose, drafts, segments, batch send)
 - Email Media Library — Sharp image processing, DB tracking, media picker, browsable media tab
+- Campaign analytics — link tracking, device stats, campaign comparison
+- Pre-send quality — test email, 5-area precheck, device preview
+- Bounce/complaint auto-suppress — webhook-driven, hard bounce + complaint handling
+- Subscriber engagement scoring — per-person timeline, engagement badges (active/at_risk/cold/new)
+- Email sequences — multi-step drip campaigns, cron-based hourly processor, auto-enroll on invite
+- Preference center — topic-based opt-out, public page at /voorkeuren
 
 ### A1.1 - Bulk & CRM
 
 - Row selector for bulk actions (`/team/leden`)
 - Contact-to-subscriber conversion flow (`/team/contacten`)
-- Campaign bounce auto-suppress (auto-block after N hard bounces)
-- Campaign complaint auto-unsubscribe (GDPR)
 - Campaign event retention cleanup (1-year rolling)
 
 ### A1.2 - Inzichten
@@ -581,4 +585,4 @@ V10.0 European Platform
 ---
 
 **Document maintained by:** Product Owner
-**Last updated:** 2026-02-21
+**Last updated:** 2026-02-22
