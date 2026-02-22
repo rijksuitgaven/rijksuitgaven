@@ -503,25 +503,29 @@ export function DataTable({
           return (
             <div className="flex items-center">
               {/* Pin button — visible on hover via group-hover */}
-              <button
-                onClick={() => {
-                  if (pinnedCount < MAX_PINNED_ROWS) {
-                    row.pin('top')
-                    // Collapse if expanded
-                    if (row.getIsExpanded()) row.toggleExpanded()
-                  }
-                }}
-                className={cn(
-                  'p-1 rounded transition-opacity opacity-0 group-hover:opacity-100 -mr-1',
-                  pinnedCount >= MAX_PINNED_ROWS
-                    ? 'cursor-not-allowed text-[var(--muted-foreground)]'
-                    : 'hover:bg-[var(--pink)]/10 text-[var(--navy-medium)] hover:text-[var(--pink)]'
-                )}
+              <span
+                className="opacity-0 group-hover:opacity-100 transition-opacity -mr-1"
                 data-tooltip-center={pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS}` : 'Vergelijk'}
-                disabled={pinnedCount >= MAX_PINNED_ROWS}
               >
-                <Pin className="h-3.5 w-3.5" aria-hidden="true" />
-              </button>
+                <button
+                  onClick={() => {
+                    if (pinnedCount < MAX_PINNED_ROWS) {
+                      row.pin('top')
+                      // Collapse if expanded
+                      if (row.getIsExpanded()) row.toggleExpanded()
+                    }
+                  }}
+                  className={cn(
+                    'p-1 rounded',
+                    pinnedCount >= MAX_PINNED_ROWS
+                      ? 'cursor-not-allowed text-[var(--muted-foreground)]'
+                      : 'hover:bg-[var(--pink)]/10 text-[var(--navy-medium)] hover:text-[var(--pink)]'
+                  )}
+                  disabled={pinnedCount >= MAX_PINNED_ROWS}
+                >
+                  <Pin className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+              </span>
               {/* Expand button */}
               <button
                 onClick={() => {
