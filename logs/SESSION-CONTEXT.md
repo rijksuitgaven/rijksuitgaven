@@ -38,7 +38,7 @@
 | Conditional segment builder | ✅ Implemented (Feb 22) | AND/OR conditions on campaigns, 4 types, negation, live evaluation. Migration 072 |
 | Campaign detail view upgrade | ✅ Implemented (Feb 22) | KPI bar, header card, recipient filters/sort, single-line format, last_name |
 | Email system polish | ✅ Implemented (Feb 22) | Template fixes, editor autolink/unlink, test email input, segment counting fix, Mail 1 copy |
-| Railway cron service | ✅ Deployed (Feb 22) | curlimages/curl, sequence processor, hourly weekdays. Verified: returns weekend skip |
+| Railway cron service | ✅ Fixed (Feb 22) | curlimages/curl, hardcoded Bearer token (exec-form no expansion), schedule `0 7-16 * * 1-5`. CRON_SECRET rotated. |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -51,7 +51,10 @@
 
 ## Recent Work (Last 5)
 
-1. **Email System Polish** (2026-02-22)
+1. **Cron Fix + Versioning** (2026-02-22)
+   A-track per-feature status tracking in VERSIONING.md, UTM builder added to A1.0. Railway cron-sequences crash fixed: `$CRON_SECRET` not expanded in Docker exec-form, hardcoded value. Schedule corrected to weekday hours. Secret rotated.
+
+2. **Email System Polish** (2026-02-22)
    Template fixes: list spacing, duplicate footer, heading left-align+spacing, auto-greeting removed. Editor: autolink disabled, unlink button. Test email: editable recipient address. Segment bug: active subscription determines leden (not pipeline_stage). Onboarding Mail 1 copy updated. CLAUDE.md Rule 0: never act without approval.
 
 2. **Campaign Detail View Upgrade** (2026-02-22)
