@@ -512,12 +512,11 @@ export function DataTable({
                   }
                 }}
                 className={cn(
-                  'p-1 rounded transition-all opacity-0 group-hover:opacity-100 -mr-1',
+                  'p-1 rounded transition-opacity opacity-0 group-hover:opacity-100 -mr-1',
                   pinnedCount >= MAX_PINNED_ROWS
                     ? 'cursor-not-allowed text-[var(--muted-foreground)]'
                     : 'hover:bg-[var(--pink)]/10 text-[var(--navy-medium)] hover:text-[var(--pink)]'
                 )}
-                aria-label={pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS} rijen` : 'Vergelijk'}
                 data-tooltip-center={pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS}` : 'Vergelijk'}
                 disabled={pinnedCount >= MAX_PINNED_ROWS}
               >
