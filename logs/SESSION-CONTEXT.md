@@ -36,6 +36,7 @@
 | Email deliverability (SPF fix) | ✅ Done (DNS) | Replaced broken self-referencing SPF with correct Resend + ZXCS includes |
 | Campaign features (13) | ✅ Implemented (Feb 22) | 6 phases: webhook, pre-send, analytics, engagement, sequences, preferences |
 | Conditional segment builder | ✅ Implemented (Feb 22) | AND/OR conditions on campaigns, 4 types, negation, live evaluation. Migration 072 |
+| Campaign detail view upgrade | ✅ Implemented (Feb 22) | KPI bar, header card, recipient filters/sort, single-line format, last_name |
 | Railway cron service | ✅ Deployed (Feb 22) | curlimages/curl, sequence processor, hourly weekdays. Verified: returns weekend skip |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
@@ -49,20 +50,20 @@
 
 ## Recent Work (Last 5)
 
-1. **Conditional Segment Builder** (2026-02-22)
+1. **Campaign Detail View Upgrade** (2026-02-22)
+   Team brainstorm analyzed old email system screenshots → P0+P1 implementation. KPI summary bar (5 metrics with %), campaign header card (subject, date, preheader, segments), recipient filter toggles (by status with counts), sort controls (name/delivered/opened + direction), single-line recipient format (full name + email), last_name in API.
+
+2. **Conditional Segment Builder** (2026-02-22)
    AND/OR campaign targeting: 4 condition types (delivered/opened/clicked/engagement), negation toggle, live evaluation. Migration 072, evaluate API, send route filter, condition builder UI. Building philosophy established: perfection for 500+ users.
 
-2. **Homepage Copy + Onboarding Sequence Design** (2026-02-22)
+3. **Homepage Copy + Onboarding Sequence Design** (2026-02-22)
    Restored V1 headline/subheadline, applied "doel door doen" to value prop. Designed 5-email onboarding sequence for beta users (welkom+login, zoeken, filteren, ontdekking, details+export). Full copy written and documented.
 
-3. **Email Module UX Polish** (2026-02-22)
+4. **Email Module UX Polish** (2026-02-22)
    Help popovers (Dutch) for compose workflow + sequence setup. Sequence steps upgraded from basic textarea to full compose experience: rich text editor (Tiptap), preheader, preview with device toggles, pre-send checklist, test email, edit existing steps.
 
-4. **Professional Campaign Features (13 features)** (2026-02-22)
+5. **Professional Campaign Features (13 features)** (2026-02-22)
    6 phases: bounce/complaint/UA webhooks, test email + precheck + device preview, link tracking + device stats + campaign comparison, engagement scoring + per-person timeline, sequence engine (4 tables + cron), preference center (/voorkeuren). 6 SQL migrations (066-071). Railway cron service for sequences.
-
-5. **Email Media Library + Deployment Protocol + SPF Fix** (2026-02-22)
-   Sharp image processing (960px, thumbnails), email_media table, media picker, media tab. Reverted UX-039 from production. CLAUDE.md deployment gate. Fixed broken SPF record for email deliverability.
 
 ---
 
