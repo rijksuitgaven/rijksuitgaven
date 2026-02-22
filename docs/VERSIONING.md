@@ -16,12 +16,14 @@
 | **X.Y.Z** | Patch release - bug fixes | V2.0.1, V2.1.2 |
 | **AX.Y** | Admin/internal release - /team pages, admin tooling | A1.0, A1.1, A2.0 |
 | **MX.Y** | Marketing & launch release - homepage, SEO, infrastructure | M1.0, M1.1 |
+| **DX.Y** | Data release - new datasets, year updates, corrections | D1.0, D1.1 |
 
 **Rules:**
 - If it enables a NEW use case or serves a NEW audience, it's a major release.
 - If it only affects `/team/*` pages or admin tooling, it goes in the **A-track** (not V-track).
 - If it's homepage, SEO, launch infrastructure, or marketing optimization, it goes in the **M-track**.
-- The V-track is end-user facing. The A-track is internal/admin. The M-track is marketing/launch.
+- If it's adding or updating datasets (new entities, new years, corrections), it goes in the **D-track**.
+- The V-track is end-user facing. The A-track is internal/admin. The M-track is marketing/launch. The D-track is data.
 
 ---
 
@@ -190,6 +192,33 @@ Marketing, launch infrastructure, and conversion optimization. Not end-user feat
 |---------|--------|
 | Tab-based feature explorer (replace 6-card grid with tabbed browser frame) | 📋 Planned |
 | Audience-personalized landing variants (`?ref=journalist`, `?ref=gemeente`) | 📋 Planned |
+
+---
+
+## Data Track (D-series)
+
+Dataset additions, year updates, and data corrections. New data sources expand coverage; year updates keep existing modules current.
+
+**Audience:** End users (indirectly — more data = more value)
+
+**Process:** See `scripts/data/DATA-UPDATE-RUNBOOK.md` for the data pipeline.
+
+### D1.0 - Gemeente Uitbreiding
+
+| Dataset | Years | Status |
+|---------|-------|--------|
+| Gemeente Haarlemmermeer | 2019–2023 | 📋 Planned |
+
+### D1.1 - Jaarupdate 2025
+
+| Dataset | Update | Status |
+|---------|--------|--------|
+| Rijksbegroting (instrumenten) | Add 2025 | 📋 Planned |
+| Apparaatsuitgaven | Add 2025 | 📋 Planned |
+| Inkoop | Add 2025 | 📋 Planned |
+| Provincie | Add 2025 | 📋 Planned |
+| Gemeente | Add 2025 | 📋 Planned |
+| Publiek | Add 2025 | 📋 Planned |
 
 ---
 
@@ -532,6 +561,8 @@ V2.0 Search ──────────────────────�
   │
   ├─► M1.0 Lancering (launch gate) ─► DNS switch ─► M1.1 Conversie & Groei
   │
+  ├─► D1.0 Gemeente Uitbreiding ─► D1.1 Jaarupdate 2025 ─► (ongoing)
+  │
   ├─► V3.0 Rijksuitgaven Reporter ◄─────────── NEXT
   │     │
   │     └─► V3.1 (improvements)
@@ -598,6 +629,13 @@ V10.0 European Platform
 |---------|--------|----------|
 | M1.0 | 📋 Lancering (launch gate) | Before DNS switch |
 | M1.1 | 📋 Conversie & Groei | Post-launch |
+
+**Data (D-track):**
+
+| Version | Status | Timeline |
+|---------|--------|----------|
+| D1.0 | 📋 Gemeente Uitbreiding (Haarlemmermeer) | Pre-launch |
+| D1.1 | 📋 Jaarupdate 2025 | When available |
 
 **V2.0 Deployed Infrastructure (as of 2026-02-21):**
 - ✅ Supabase PostgreSQL (Frankfurt EU, Pro plan)
