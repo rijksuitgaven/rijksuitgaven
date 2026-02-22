@@ -46,20 +46,20 @@
 
 ## Recent Work (Last 5)
 
-1. **Professional Campaign Features (13 features)** (2026-02-22)
+1. **Email Module UX Polish** (2026-02-22)
+   Help popovers (Dutch) for compose workflow + sequence setup. Sequence steps upgraded from basic textarea to full compose experience: rich text editor (Tiptap), preheader, preview with device toggles, pre-send checklist, test email, edit existing steps. 2 commits.
+
+2. **Professional Campaign Features (13 features)** (2026-02-22)
    6 phases: bounce/complaint/UA webhooks, test email + precheck + device preview, link tracking + device stats + campaign comparison, engagement scoring + per-person timeline, sequence engine (4 tables + cron), preference center (/voorkeuren). 6 SQL migrations (066-071). Railway cron service for sequences. Staging protocol fix (merge, never force-push).
 
-2. **Email Media Library + Deployment Protocol + SPF Fix** (2026-02-22)
+3. **Email Media Library + Deployment Protocol + SPF Fix** (2026-02-22)
    Sharp image processing (960px, thumbnails), email_media table, media picker, media tab. Reverted UX-039 from production. CLAUDE.md deployment gate. Fixed broken SPF record for email deliverability.
 
-3. **Versiegeschiedenis + search enhancements** (2026-02-21, afternoon)
+4. **Versiegeschiedenis + search enhancements** (2026-02-21, afternoon)
    Multi-word AND search, exact phrase, wildcard. /versiegeschiedenis page. Staffel popover fix. 8 commits.
 
-4. **UX-039 Vergelijk — Row Pinning** (2026-02-21, Sessions 3-4, staging only)
+5. **UX-039 Vergelijk — Row Pinning** (2026-02-21, Sessions 3-4, staging only)
    Pin up to 4 rows. TanStack RowPinning API. Export selection. "Wis selectie" toolbar button. 2 commits.
-
-5. **Staging environment** (2026-02-21, Sessions 1-2)
-   Railway "Frontend Staging" service. 3 workflows, 7 risks. CLAUDE.md rules. 2 commits.
 
 ---
 
