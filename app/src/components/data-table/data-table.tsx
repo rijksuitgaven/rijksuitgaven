@@ -859,9 +859,9 @@ export function DataTable({
           {pinnedCount > 0 && (
             <button
               onClick={() => setRowPinning({ top: [], bottom: [] })}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[var(--pink)] border border-[var(--pink)]/30 rounded hover:bg-[var(--pink)]/5 transition-colors"
+              className="text-sm text-[var(--pink)] hover:underline transition-colors"
             >
-              Wis selectie ({pinnedCount})
+              Wis selectie
             </button>
           )}
 
