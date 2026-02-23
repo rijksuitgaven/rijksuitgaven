@@ -1355,13 +1355,13 @@ async def _get_from_source_table(
     # Amount filters (on total - applied in HAVING)
     having_clauses = []
     if min_bedrag is not None:
-        having_clauses.append(f"SUM({amount_field}) * ${param_idx} >= ${param_idx + 1}")
+        having_clauses.append(f"SUM(CASE WHEN {year_field} BETWEEN {YEARS[0]} AND {YEARS[-1]} THEN {amount_field} END) * ${param_idx} >= ${param_idx + 1}")
         params.append(multiplier)
         params.append(min_bedrag)
         param_idx += 2
 
     if max_bedrag is not None:
-        having_clauses.append(f"SUM({amount_field}) * ${param_idx} <= ${param_idx + 1}")
+        having_clauses.append(f"SUM(CASE WHEN {year_field} BETWEEN {YEARS[0]} AND {YEARS[-1]} THEN {amount_field} END) * ${param_idx} <= ${param_idx + 1}")
         params.append(multiplier)
         params.append(max_bedrag)
         param_idx += 2
@@ -1427,7 +1427,7 @@ async def _get_from_source_table(
         SELECT
             {primary} AS primary_value,
             {year_columns},
-            COALESCE(SUM({amount_field}), 0) * {multiplier} AS totaal,
+            COALESCE(SUM(CASE WHEN {year_field} BETWEEN {YEARS[0]} AND {YEARS[-1]} THEN {amount_field} END), 0) * {multiplier} AS totaal,
             COUNT(*) AS row_count{extra_columns_select}{matched_field_sql}{relevance_select}
         FROM {table}
         {where_sql}
@@ -1457,7 +1457,7 @@ async def _get_from_source_table(
     totals_query = f"""
         SELECT
             {totals_year_sums},
-            COALESCE(SUM({amount_field}), 0) * {multiplier} AS sum_totaal
+            COALESCE(SUM(CASE WHEN {year_field} BETWEEN {YEARS[0]} AND {YEARS[-1]} THEN {amount_field} END), 0) * {multiplier} AS sum_totaal
         FROM {table}
         {where_sql}
     """
