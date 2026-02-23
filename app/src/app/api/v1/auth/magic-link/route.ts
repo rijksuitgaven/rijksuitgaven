@@ -55,7 +55,7 @@ function buildMagicLinkEmail(actionLink: string, siteUrl: string): string {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #E1EAF2;">
     <tr>
       <td align="center" style="padding: 40px 20px;">
-        <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width: 480px; width: 100%;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
 
           <!-- Logo -->
           <tr>
@@ -78,7 +78,7 @@ function buildMagicLinkEmail(actionLink: string, siteUrl: string): string {
 
                 <!-- Body -->
                 <tr>
-                  <td style="font-size: 15px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 28px;">
+                  <td style="font-size: 16px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 28px;">
                     Klik hieronder om in te loggen.
                   </td>
                 </tr>

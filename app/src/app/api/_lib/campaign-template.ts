@@ -44,9 +44,19 @@ function replaceVariables(html: string, firstName?: string): string {
   return html.replace(/\{\{voornaam\}\}/g, escapeHtml(name))
 }
 
+/**
+ * Prevent email clients from auto-linking domain-like text.
+ * Inserts a zero-width space before the dot in known domains.
+ * Industry standard trick (Mailchimp, Litmus, Campaign Monitor).
+ */
+function breakAutoLinks(text: string): string {
+  return text.replace(/Rijksuitgaven\.nl/gi, 'Rijksuitgaven&#8203;.nl')
+}
+
 export function renderCampaignEmail(params: CampaignParams): string {
   // Body is HTML from WYSIWYG editor — add inline styles + replace variables
-  const bodyHtml = replaceVariables(addEmailStyles(params.body), params.firstName)
+  // breakAutoLinks runs on body text nodes to prevent email client auto-linking
+  const bodyHtml = breakAutoLinks(replaceVariables(addEmailStyles(params.body), params.firstName))
 
   // Preheader: hidden text shown in email client preview (next to subject line)
   const preheaderBlock = params.preheader
@@ -81,7 +91,7 @@ export function renderCampaignEmail(params: CampaignParams): string {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #E1EAF2;">
     <tr>
       <td align="center" style="padding: 40px 20px;">
-        <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width: 480px; width: 100%;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
 
           <!-- Logo -->
           <tr>
@@ -98,13 +108,13 @@ export function renderCampaignEmail(params: CampaignParams): string {
                 <!-- Heading -->
                 <tr>
                   <td style="font-size: 22px; font-weight: 700; color: #0E3261; text-align: left; padding-bottom: 28px;">
-                    ${escapeHtml(params.heading)}
+                    ${breakAutoLinks(escapeHtml(params.heading))}
                   </td>
                 </tr>
 
                 <!-- Body -->
                 <tr>
-                  <td style="font-size: 15px; line-height: 24px; color: #4a4a4a; padding-bottom: 24px;">
+                  <td style="font-size: 16px; line-height: 24px; color: #4a4a4a; padding-bottom: 24px;">
                     ${bodyHtml}
                   </td>
                 </tr>

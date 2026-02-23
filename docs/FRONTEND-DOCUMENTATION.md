@@ -1052,6 +1052,34 @@ npm run build
 
 ---
 
+## Email Template Standards
+
+**Updated:** 2026-02-23
+
+All email templates share consistent dimensions based on industry standards (Mailchimp, Klaviyo, HubSpot, Litmus).
+
+**Templates using these standards:**
+- `app/api/_lib/campaign-template.ts` — Campaign/sequence emails
+- `app/api/v1/auth/magic-link/route.ts` — Login magic link
+- `app/api/v1/team/leden/[id]/invite/route.ts` — Welcome/invite email
+
+| Property | Value | Industry Standard |
+|----------|-------|-------------------|
+| Content width | 600px | 600px (all major platforms) |
+| Body font size | 16px | 16px (44% of emails, Smashing Magazine) |
+| Heading font size | 22px | 22-26px (B2B range) |
+| Line height | 24px (1.5x) | 1.5x (WCAG 1.4.12 minimum) |
+| Footer/small text | 13px | 12-14px |
+| Card padding | 40px 36px | 40-48px |
+| CTA button | 14px 48px, 16px font, 6px radius | Standard range |
+| Logo width | 220px | 120-220px |
+| Outer padding | 40px 20px | 20-40px top, 0-20px sides |
+| Max width ceiling | 600px | 640px (Gmail clips above) |
+
+**Auto-link prevention:** `breakAutoLinks()` in campaign-template.ts inserts zero-width space (`&#8203;`) before `.nl` in "Rijksuitgaven.nl" to prevent email clients from auto-linking domain text. Industry standard technique (Mailchimp, Litmus, Campaign Monitor).
+
+---
+
 ## Document History
 
 | Date | Change |
@@ -1087,3 +1115,4 @@ npm run build
 | 2026-02-14 | Complete UI event tracking: 9 tracking points, `external_link` event type (13th), 404/react_render error tracking, autocomplete selections, detail-panel export/nav |
 | 2026-02-14 | Comprehensive error tracking: 7 components instrumented (expanded-row, detail-panel, filter-panel, search-bar, feedback-button, login-form, public-homepage). 7 new trigger labels in dashboard |
 | 2026-02-16 | UX-034: Committed search tracking. Killed debounce, track Enter/autocomplete only. `search_end` (14th event type) with duration + exit_action. `search_id` links engagement to originating search. Retry chains via `prev_search_id`. Deferred result counting. Dashboard SearchSection redesign: 4 KPIs, enriched table (Via/Duur/Engagement), zero results with retry badges, engagement breakdown. Migration 052 |
+| 2026-02-23 | Email template standards: width 480→600px, body font 15→16px across all 3 templates. Auto-link prevention via zero-width space. Documented in Email Template Standards section. |

@@ -42,7 +42,7 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #E1EAF2;">
     <tr>
       <td align="center" style="padding: 40px 20px;">
-        <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width: 480px; width: 100%;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
 
           <!-- Logo -->
           <tr>
@@ -65,17 +65,17 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
 
                 <!-- Body -->
                 <tr>
-                  <td style="font-size: 15px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 8px;">
+                  <td style="font-size: 16px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 8px;">
                     Beste ${firstName},
                   </td>
                 </tr>
                 <tr>
-                  <td style="font-size: 15px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 8px;">
+                  <td style="font-size: 16px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 8px;">
                     De beta van Rijksuitgaven 2.0 is klaar om te testen.
                   </td>
                 </tr>
                 <tr>
-                  <td style="font-size: 15px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 28px;">
+                  <td style="font-size: 16px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 28px;">
                     Klik hieronder om in te loggen en direct aan de slag te gaan.
                   </td>
                 </tr>
