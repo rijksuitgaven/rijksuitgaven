@@ -47,6 +47,7 @@
 | Source table year inflation | ✅ Fixed (Feb 23) | `SUM(bedrag)` included 2025+ data. Now `CASE WHEN year BETWEEN 2016 AND 2024` |
 | Kolommen + filters (UX-006 revised) | ✅ Fixed (Feb 23) | Kolommen always visible, user controls column selection. Filter columns no longer auto-override |
 | Publiek regio column bug | ✅ Fixed (Feb 23) | Config used `regio`, DB column is `provincie`. Zero results when Regio selected |
+| Email deliverability overhaul | ✅ Fixed (Feb 23) | noreply→contact@, plain-text multipart, Reply-To, DMARC rua, SPF -all. DNS pending user action. |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -59,8 +60,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Critical Production Bug Fixes** (2026-02-23)
-   6 fixes: UX-039 reverted from main (staging-only registry added), Totaal sort broken across all modules (`total`→`totaal` SORT_FIELD_MAP), source table year inflation (2025+ data in SUM), Kolommen hidden/ignored with filters (UX-006 revised — user controls columns), Publiek zero results (`regio`→`provincie` column mismatch). Prevention mechanisms: staging-only feature registry, Sort Field Contract.
+1. **Critical Production Bug Fixes + Email Deliverability** (2026-02-23)
+   7 fixes + deliverability overhaul: UX-039 reverted from main, Totaal sort broken (`total`→`totaal`), source table year inflation, Kolommen+filters (UX-006 revised), Publiek zero results (`regio`→`provincie`). Email: noreply→contact@, plain-text multipart, Reply-To, DMARC rua, SPF -all. Prevention: staging-only registry, Sort Field Contract.
 
 2. **4 Release Tracks (VERSIONING restructure)** (2026-02-22)
    VERSIONING.md restructured with 4 release tracks: V (end-user), A (admin), M (marketing/launch), D (data). URL state restoration moved to V2.2. M1.0 Lancering = launch gate (6 items before DNS switch). D1.0 = Gemeente Haarlemmermeer. V2.x renumbered (eliminated V2.4 Homepage, V2.7).
@@ -157,7 +158,7 @@ Key recent migrations:
 |----------|---------|
 | Single-view architecture | ADR-014, no two-view toggle |
 | Auth | Magic Link only (Supabase Auth + PKCE + Resend) |
-| All transactional email | Bypasses Supabase → Resend with branded templates |
+| All transactional email | Bypasses Supabase → Resend with branded templates. From: contact@rijksuitgaven.nl. Multipart (HTML+text). |
 | Export limit | 500 rows always |
 | Staging workflow | Admin→both, fixes→ask, user features→staging only. Batch release. SQL before code. |
 | Legal entity | Rijksuitgaven.nl (KVK 96257008) |
