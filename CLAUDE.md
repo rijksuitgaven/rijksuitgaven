@@ -467,6 +467,30 @@ Before declaring week complete:
 
 ## Technical Standards
 
+### Sort Field Contract (CRITICAL — English↔Dutch)
+
+**The frontend uses English column IDs. The backend uses Dutch parameter names. These MUST be mapped.**
+
+The frontend data-table uses English column IDs (`total`, `primary`, `year-2024`). The backend API expects Dutch sort values (`totaal`, `primary`, `y2024`). A mismatch causes a **silent 400 error** — the user sees stale data with a misleading sort indicator.
+
+**All sort mappings live in ONE place:** `SORT_FIELD_MAP` in `module-page.tsx` → `handleSortChange`.
+
+```typescript
+const SORT_FIELD_MAP: Record<string, string> = {
+  'total': 'totaal',
+  'primary': 'primary',
+}
+// Dynamic: year-2024→y2024, extra-*→passthrough
+```
+
+**When adding a new sortable column:**
+1. Add column to data-table.tsx with an `id`
+2. Add the `id` → backend `sort_by` value mapping to `SORT_FIELD_MAP`
+3. Add the `sort_by` value to the backend's validation list (`modules.py` sort_by checks)
+4. Test: click the column header and verify the sort actually changes results
+
+**When this goes wrong:** The sort request returns 400, the frontend catches the error, but the previous data stays displayed. The column header shows a pink sort arrow (TanStack internal state) while the data is from the PREVIOUS request. The user believes the sort is active but sees wrong data.
+
 ### TypeScript
 ```typescript
 // ✅ Descriptive names, immutability, proper types

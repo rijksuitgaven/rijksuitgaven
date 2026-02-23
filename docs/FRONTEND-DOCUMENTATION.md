@@ -681,6 +681,19 @@ All API calls go through `/api/v1/...` which is handled by Next.js BFF (Backend-
 - API uses `totaal`, client uses `total`
 - API uses `modules`, client uses `sources`
 
+**Sort Field Contract (English→Dutch mapping):**
+
+The data-table uses English column IDs, the backend expects Dutch `sort_by` values. All mappings are centralized in `SORT_FIELD_MAP` inside `module-page.tsx` → `handleSortChange`. A mismatch causes a silent 400 error (user sees stale data with misleading sort indicator).
+
+| Data-table column ID | Backend sort_by | Notes |
+|---------------------|----------------|-------|
+| `total` | `totaal` | Static map |
+| `primary` | `primary` | Static map |
+| `year-{YYYY}` | `y{YYYY}` | Dynamic pattern |
+| `extra-{field}` | `extra-{field}` | Passthrough (integraal only) |
+
+When adding a new sortable column: add to `SORT_FIELD_MAP`, add to backend validation, test the click.
+
 ---
 
 ## Format Utilities (`lib/format.ts`)
