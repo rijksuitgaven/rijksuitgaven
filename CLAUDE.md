@@ -362,13 +362,49 @@ git push origin main
 git checkout staging && git pull origin staging && git merge main && git push origin staging && git checkout main
 ```
 
+#### Staging-Only Feature Registry
+
+**These features exist on staging but MUST NOT be on main.** Every feature here was deliberately kept off production. Committing any of this code to main is a production incident.
+
+| Feature | Code Markers (grep patterns) | Files |
+|---------|------------------------------|-------|
+| UX-039 Vergelijk/Pin | `RowPinningState`, `PinOff`, `row.pin(`, `MAX_PINNED_ROWS`, `getPinnedData`, `Wis selectie` | `data-table.tsx`, `globals.css` |
+
+**Maintaining this registry:**
+- When a feature is deployed staging-only, ADD it here with its code markers
+- When a feature is approved for production (batch release), REMOVE it from this registry
+- If you see code matching these markers on main, it's a bug — revert immediately
+
 #### Pre-Push Checklist (MANDATORY)
 
-Before pushing to staging, always check if staging has diverged from main:
+**Before pushing to main:**
+
+1. Check for staging-only code contamination:
+```bash
+# Auto-check: grep for ALL staging-only markers in the diff
+git diff origin/main HEAD -- app/src/ | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS|getPinnedData|Wis selectie"
+```
+If this returns ANY matches, **STOP**. Staging-only code is about to go to production. Revert the offending changes before pushing.
+
+2. Verify commit content matches intent — a commit message saying "staging only" on the main branch is a contradiction. If the feature is staging-only, the main branch must have it **reverted**.
+
+**Before pushing to staging:**
+
+3. Check if staging has diverged from main:
 ```bash
 git log origin/staging --not origin/main --oneline
 ```
 If this shows commits, staging has extra features. **NEVER force-push** in this case.
+
+#### Post-Push Verification (MANDATORY)
+
+**After ANY push to main, verify no staging-only code leaked:**
+```bash
+git show origin/main:app/src/components/data-table/data-table.tsx | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS"
+```
+If matches found, **immediately revert and re-push.**
+
+**When adding new staging-only features:** Update the registry table AND the grep patterns in both pre-push and post-push checks above.
 
 **Full process doc:** `docs/plans/2026-02-21-staging-environment.md`
 
