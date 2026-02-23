@@ -66,7 +66,6 @@ interface DataTableProps {
   selectedColumns?: string[]  // Selected extra columns (UX-005)
   onColumnsChange?: (columns: string[]) => void  // Callback for column selection changes
   searchQuery?: string  // Current search query (for Match column display)
-  hasActiveFilters?: boolean  // True when multiselect filters are active (UX-006)
   onExport?: (format: 'csv' | 'xls', rowCount: number) => void  // Analytics callback (UX-032)
   totals?: TotalsData | null  // Aggregated totals for all search results (not just current page)
 }
@@ -330,7 +329,6 @@ export function DataTable({
   selectedColumns = [],
   onColumnsChange,
   searchQuery,
-  hasActiveFilters = false,
   onExport,
   totals,
 }: DataTableProps) {

@@ -274,11 +274,11 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     return activeFields.slice(0, 2)
   }, [filters])
 
-  // Compute effective columns: active filters override user selection
-  // Memoize to prevent unnecessary re-renders
+  // Compute effective columns: user controls column selection via Kolommen (UX-005)
+  // Filter columns no longer auto-override user selection (UX-006 revised)
   const effectiveColumns = useMemo(() => {
-    return activeFilterColumns.length > 0 ? activeFilterColumns : selectedColumns
-  }, [activeFilterColumns, selectedColumns])
+    return selectedColumns
+  }, [selectedColumns])
 
   // Keep refs in sync for handleSearchCommit (avoids stale closures)
   dataRef.current = data
@@ -643,7 +643,6 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
                 search_id: activeSearchId.current || undefined,
               })
             }}
-            hasActiveFilters={activeFilterColumns.length > 0}
             searchQuery={filters.search}
             totals={data?.totals}
           />
