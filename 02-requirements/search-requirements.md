@@ -744,20 +744,20 @@ Search "covid" shows:
 - Unselected items below with "ALLE OPTIES" header
 - Matches old WordPress system UX pattern
 
-**Feature 2: Auto-show filter columns (max 2)**
-- Active filter fields automatically become visible table columns
-- First 2 active filters shown as columns (unlimited filters allowed)
-- Column selector hidden when filters control columns
-- User's column preference returns when filters cleared
+**Feature 2: Column selector independent of filters (revised 2026-02-23)**
+- Column selector (Kolommen) is always visible, regardless of active filters
+- User controls column selection via Kolommen button (max 2 columns, UX-005)
+- Filters do NOT auto-override user column selection
+- ~~Previous behavior: active filter fields auto-replaced columns, Kolommen hidden~~
 
 **Rationale:**
 - Users need visibility of their active filter selections
-- Showing filtered fields as columns provides immediate context
-- Mirrors the WordPress system behavior users are familiar with
+- Users also need the ability to choose columns independently of filters
+- Original auto-override confused users — selections had no effect when filters active
 
 **Priority:** P1 (High)
 
-**Status:** ✅ Implemented 2026-02-02
+**Status:** ✅ Implemented 2026-02-02, revised 2026-02-23
 
 ---
 
