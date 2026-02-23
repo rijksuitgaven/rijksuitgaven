@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-22
+**Last Updated:** 2026-02-23
 **Project Phase:** V2.0 Development
 **Current Sprint:** Week 8+ — Pre-Launch Polish & Beta Feedback
 **Beta Status:** V0.9 live at beta.rijksuitgaven.nl (10 testers, launched 2026-02-21)
@@ -39,8 +39,14 @@
 | Conditional segment builder | ✅ Implemented (Feb 22) | AND/OR conditions on campaigns, 4 types, negation, live evaluation. Migration 072 |
 | Campaign detail view upgrade | ✅ Implemented (Feb 22) | KPI bar, header card, recipient filters/sort, single-line format, last_name |
 | Email system polish | ✅ Implemented (Feb 22) | Template fixes, editor autolink/unlink, test email input, segment counting fix, Mail 1 copy |
+| Email template width/font | ✅ Fixed (Feb 23) | 480→600px, 15→16px, auto-link prevention |
 | Railway cron service | ✅ Fixed (Feb 22) | curlimages/curl, hardcoded Bearer token (exec-form no expansion), schedule `0 7-16 * * 1-5`. CRON_SECRET rotated. |
 | VERSIONING restructure | ✅ Done (Feb 22) | 4 tracks (V/A/M/D), URL state→V2.2, M1.0 launch gate, D1.0 Gemeente, V2.x renumbered |
+| UX-039 reverted from main | ✅ Fixed (Feb 23) | Reverted `d2e61dd`, staging preserved. Added staging-only registry to CLAUDE.md |
+| Totaal sort broken (all modules) | ✅ Fixed (Feb 23) | `total`→`totaal` mapping via SORT_FIELD_MAP. Sort Field Contract in CLAUDE.md |
+| Source table year inflation | ✅ Fixed (Feb 23) | `SUM(bedrag)` included 2025+ data. Now `CASE WHEN year BETWEEN 2016 AND 2024` |
+| Kolommen + filters (UX-006 revised) | ✅ Fixed (Feb 23) | Kolommen always visible, user controls column selection. Filter columns no longer auto-override |
+| Publiek regio column bug | ✅ Fixed (Feb 23) | Config used `regio`, DB column is `provincie`. Zero results when Regio selected |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -53,23 +59,20 @@
 
 ## Recent Work (Last 5)
 
-1. **4 Release Tracks (VERSIONING restructure)** (2026-02-22)
+1. **Critical Production Bug Fixes** (2026-02-23)
+   6 fixes: UX-039 reverted from main (staging-only registry added), Totaal sort broken across all modules (`total`→`totaal` SORT_FIELD_MAP), source table year inflation (2025+ data in SUM), Kolommen hidden/ignored with filters (UX-006 revised — user controls columns), Publiek zero results (`regio`→`provincie` column mismatch). Prevention mechanisms: staging-only feature registry, Sort Field Contract.
+
+2. **4 Release Tracks (VERSIONING restructure)** (2026-02-22)
    VERSIONING.md restructured with 4 release tracks: V (end-user), A (admin), M (marketing/launch), D (data). URL state restoration moved to V2.2. M1.0 Lancering = launch gate (6 items before DNS switch). D1.0 = Gemeente Haarlemmermeer. V2.x renumbered (eliminated V2.4 Homepage, V2.7).
 
-2. **Cron Fix + A-track Status** (2026-02-22)
+3. **Cron Fix + A-track Status** (2026-02-22)
    A-track per-feature status tracking in VERSIONING.md, UTM builder added to A1.0. Railway cron-sequences crash fixed: `$CRON_SECRET` not expanded in Docker exec-form, hardcoded value. Schedule corrected to weekday hours. Secret rotated.
 
-3. **Email System Polish** (2026-02-22)
+4. **Email System Polish** (2026-02-22)
    Template fixes: list spacing, duplicate footer, heading left-align+spacing, auto-greeting removed. Editor: autolink disabled, unlink button. Test email: editable recipient address. Segment bug: active subscription determines leden (not pipeline_stage). Onboarding Mail 1 copy updated. CLAUDE.md Rule 0: never act without approval.
 
-3. **Campaign Detail View Upgrade** (2026-02-22)
+5. **Campaign Detail View Upgrade** (2026-02-22)
    Team brainstorm analyzed old email system screenshots → P0+P1 implementation. KPI summary bar (5 metrics with %), campaign header card, recipient filter toggles, sort controls, single-line recipient format, last_name in API.
-
-4. **Conditional Segment Builder** (2026-02-22)
-   AND/OR campaign targeting: 4 condition types (delivered/opened/clicked/engagement), negation toggle, live evaluation. Migration 072, evaluate API, send route filter, condition builder UI.
-
-5. **Conditional Segment Builder** (2026-02-22)
-   AND/OR campaign targeting: 4 condition types (delivered/opened/clicked/engagement), negation toggle, live evaluation. Migration 072, evaluate API, send route filter, condition builder UI.
 
 ---
 
