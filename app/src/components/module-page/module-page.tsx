@@ -479,8 +479,26 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   }, [track, moduleId])
 
   const handleSortChange = useCallback((column: string, direction: 'asc' | 'desc') => {
-    // Transform data-table column IDs → backend format (year-2024→y2024, total→totaal)
-    const backendColumn = column === 'total' ? 'totaal' : column.startsWith('year-') ? `y${column.slice(5)}` : column
+    // Map data-table column IDs → backend sort_by values
+    // IMPORTANT: Every sortable column ID must have an entry here or use a dynamic pattern.
+    // If a column ID is missing, the backend rejects it with 400 and the user sees stale data.
+    // See: CLAUDE.md "Sort Field Contract"
+    const SORT_FIELD_MAP: Record<string, string> = {
+      'total': 'totaal',
+      'primary': 'primary',
+    }
+    let backendColumn = SORT_FIELD_MAP[column]
+    if (!backendColumn) {
+      // Dynamic patterns: year-2024→y2024, extra-source→extra-source (passthrough)
+      if (column.startsWith('year-')) {
+        backendColumn = `y${column.slice(5)}`
+      } else {
+        backendColumn = column
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`[Sort] Column "${column}" not in SORT_FIELD_MAP — verify backend accepts sort_by=${column}`)
+        }
+      }
+    }
     lastTrigger.current = 'sort_change'
     setSortBy(backendColumn)
     setSortOrder(direction)
