@@ -45,7 +45,7 @@ export const MODULE_COLUMNS: Record<string, { value: string; label: string; defa
     { value: 'regeling', label: 'Regeling (RVO/COA)', default: false },
     { value: 'trefwoorden', label: 'Trefwoorden (RVO)', default: false },
     { value: 'sectoren', label: 'Sectoren (RVO)', default: false },
-    { value: 'regio', label: 'Regio (RVO)', default: false },
+    { value: 'provincie', label: 'Regio (RVO)', default: false },
     { value: 'staffel', label: 'Staffel (COA)', default: false },
     { value: 'onderdeel', label: 'Onderdeel (NWO)', default: false },
   ],
