@@ -190,7 +190,7 @@ async function sendErrorEmail(errorEvents: { module: string | null; properties: 
     : `${errorEvents.length} fouten geregistreerd`
 
   await resend.emails.send({
-    from: 'Rijksuitgaven.nl <noreply@rijksuitgaven.nl>',
+    from: 'Rijksuitgaven.nl <contact@rijksuitgaven.nl>',
     to: 'contact@rijksuitgaven.nl',
     subject,
     text: [

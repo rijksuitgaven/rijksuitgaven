@@ -11,7 +11,7 @@ import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const FEEDBACK_TO = 'contact@rijksuitgaven.nl'
-const FEEDBACK_FROM = 'Rijksuitgaven Feedback <noreply@rijksuitgaven.nl>'
+const FEEDBACK_FROM = 'Rijksuitgaven Feedback <contact@rijksuitgaven.nl>'
 
 export async function POST(request: NextRequest) {
   // Auth check
@@ -174,6 +174,7 @@ export async function POST(request: NextRequest) {
         to: FEEDBACK_TO,
         subject: `[${categoryTag}] ${subjectPreview}`,
         html: emailHtml,
+        text: `Feedback van ${userEmail}\n\n[${categoryTag}]\n\n${message.trim()}\n\nPagina: ${pageName}\nBrowser: ${friendlyBrowser}\nTijdstip: ${formattedTime}`,
         attachments,
       })
 

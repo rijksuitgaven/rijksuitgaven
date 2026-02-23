@@ -12,10 +12,10 @@ import { Resend } from 'resend'
 import { isAdmin } from '@/app/api/_lib/admin'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 import { createClient } from '@/lib/supabase/server'
-import { renderCampaignEmail } from '@/app/api/_lib/campaign-template'
+import { renderCampaignEmail, renderCampaignEmailText } from '@/app/api/_lib/campaign-template'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
-const FROM_EMAIL = 'Rijksuitgaven.nl <noreply@rijksuitgaven.nl>'
+const FROM_EMAIL = 'Rijksuitgaven.nl <contact@rijksuitgaven.nl>'
 
 interface TestRequest {
   subject: string
@@ -105,11 +105,23 @@ export async function POST(request: NextRequest) {
 
   // Send single email (NOT batch, NO campaign_id tag)
   const resend = new Resend(RESEND_API_KEY)
+  const textParams = {
+    subject: `[TEST] ${subject.trim()}`,
+    heading: heading.trim(),
+    preheader: preheader?.trim() || undefined,
+    body: body.trim(),
+    ctaText: ctaText?.trim() || undefined,
+    ctaUrl: ctaUrl?.trim() || undefined,
+    firstName: person?.first_name || undefined,
+    unsubscribeUrl,
+  }
   const { error: sendError } = await resend.emails.send({
     from: FROM_EMAIL,
+    replyTo: 'contact@rijksuitgaven.nl',
     to: adminEmail,
     subject: `[TEST] ${subject.trim()}`,
     html,
+    text: renderCampaignEmailText(textParams),
   })
 
   if (sendError) {

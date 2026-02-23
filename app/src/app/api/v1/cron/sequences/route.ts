@@ -19,11 +19,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
-import { renderCampaignEmail } from '@/app/api/_lib/campaign-template'
+import { renderCampaignEmail, renderCampaignEmailText } from '@/app/api/_lib/campaign-template'
 
 const CRON_SECRET = process.env.CRON_SECRET
 const RESEND_API_KEY = process.env.RESEND_API_KEY
-const FROM_EMAIL = 'Rijksuitgaven.nl <noreply@rijksuitgaven.nl>'
+const FROM_EMAIL = 'Rijksuitgaven.nl <contact@rijksuitgaven.nl>'
 const SEND_DELAY_MS = 600
 
 function getCETDate(): Date {
@@ -181,11 +181,24 @@ export async function POST(request: NextRequest) {
 
       // Send via Resend
       try {
+        const textParams = {
+          subject: nextStep.subject,
+          heading: nextStep.heading,
+          preheader: nextStep.preheader || undefined,
+          body: nextStep.body,
+          ctaText: nextStep.cta_text || undefined,
+          ctaUrl: nextStep.cta_url || undefined,
+          firstName: person.first_name || undefined,
+          unsubscribeUrl,
+        }
+
         const { data: sendData, error: sendError } = await resend.emails.send({
           from: FROM_EMAIL,
+          replyTo: 'contact@rijksuitgaven.nl',
           to: [person.email],
           subject: nextStep.subject,
           html,
+          text: renderCampaignEmailText(textParams),
           tags: [
             { name: 'sequence_id', value: sequence.id },
             { name: 'step_id', value: nextStep.id },

@@ -93,7 +93,7 @@ export async function POST(request: Request) {
       const resend = new Resend(RESEND_API_KEY)
 
       await resend.emails.send({
-        from: 'Rijksuitgaven.nl <noreply@rijksuitgaven.nl>',
+        from: 'Rijksuitgaven.nl <contact@rijksuitgaven.nl>',
         to: CONTACT_TO,
         replyTo: safeEmail,
         subject: `Demo aanvraag: ${safeFirstName} ${safeLastName}`,
