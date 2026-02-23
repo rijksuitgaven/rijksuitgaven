@@ -479,8 +479,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   }, [track, moduleId])
 
   const handleSortChange = useCallback((column: string, direction: 'asc' | 'desc') => {
-    // Transform data-table column IDs (year-2024) → backend format (y2024)
-    const backendColumn = column.startsWith('year-') ? `y${column.slice(5)}` : column
+    // Transform data-table column IDs → backend format (year-2024→y2024, total→totaal)
+    const backendColumn = column === 'total' ? 'totaal' : column.startsWith('year-') ? `y${column.slice(5)}` : column
     lastTrigger.current = 'sort_change'
     setSortBy(backendColumn)
     setSortOrder(direction)
