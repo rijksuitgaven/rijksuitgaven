@@ -847,8 +847,8 @@ export function DataTable({
             )}
           </div>
 
-          {/* Column selector (UX-005) - hidden when filters control columns (UX-006) */}
-          {onColumnsChange && !hasActiveFilters && (
+          {/* Column selector (UX-005) */}
+          {onColumnsChange && (
             <ColumnSelector
               moduleId={moduleId}
               selectedColumns={selectedColumns}
