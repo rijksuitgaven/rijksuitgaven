@@ -176,6 +176,58 @@ export function renderCampaignEmail(params: CampaignParams): string {
 </html>`
 }
 
+/**
+ * Convert campaign HTML to plain text for multipart emails.
+ * Strips tags, preserves links, converts lists to dashes.
+ */
+export function renderCampaignEmailText(params: CampaignParams): string {
+  const name = params.firstName || 'lezer'
+  const body = params.body.replace(/\{\{voornaam\}\}/g, name)
+
+  let text = body
+    // Convert links: <a href="url">text</a> → text (url)
+    .replace(/<a\s+[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '$2 ($1)')
+    // Convert list items to dashes
+    .replace(/<li[^>]*>/gi, '- ')
+    // Convert block elements to newlines
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/li>/gi, '\n')
+    .replace(/<\/[uo]l>/gi, '\n')
+    // Strip remaining tags
+    .replace(/<[^>]+>/g, '')
+    // Decode entities
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&zwnj;/g, '')
+    .replace(/&#8203;/g, '')
+    // Clean up whitespace
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+
+  const parts: string[] = [params.heading, '', text]
+
+  if (params.ctaText && params.ctaUrl) {
+    parts.push('', `${params.ctaText}: ${params.ctaUrl}`)
+  }
+
+  parts.push(
+    '',
+    '---',
+    'Vragen? Neem contact op met ons team: contact@rijksuitgaven.nl',
+    '',
+    'Rijksuitgaven.nl | KvK: 96257008',
+    `Voorkeuren: ${params.unsubscribeUrl.replace('/afmelden?token=', '/voorkeuren?token=')}`,
+    `Afmelden: ${params.unsubscribeUrl}`,
+  )
+
+  return parts.join('\n')
+}
+
 function escapeHtml(text: string): string {
   return text
     .replace(/&/g, '&amp;')

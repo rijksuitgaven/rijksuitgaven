@@ -243,11 +243,27 @@ export async function POST(
 
   // Send branded welcome email via Resend
   const resend = new Resend(RESEND_API_KEY)
+  const displayHost = origin.replace(/^https?:\/\//, '')
   const { error: sendError } = await resend.emails.send({
-    from: 'Rijksuitgaven <noreply@rijksuitgaven.nl>',
+    from: 'Rijksuitgaven <contact@rijksuitgaven.nl>',
     to: person.email,
     subject: 'Rijksuitgaven 2.0 Beta — uw toegang',
     html: buildWelcomeEmail(person.first_name, person.email, activationLink, origin),
+    text: [
+      'Welkom bij Rijksuitgaven 2.0',
+      '',
+      `Beste ${person.first_name},`,
+      '',
+      'De beta van Rijksuitgaven 2.0 is klaar om te testen.',
+      'Klik op de volgende link om in te loggen en direct aan de slag te gaan:',
+      activationLink,
+      '',
+      `Deze link is een uur geldig. Verlopen? Ga naar ${displayHost}, klik op Inloggen en vraag een nieuwe link aan met uw e-mailadres (${person.email}).`,
+      '',
+      'Rijksuitgaven is geoptimaliseerd voor desktop en laptop.',
+      '',
+      'Vragen? Neem contact op met ons supportteam: contact@rijksuitgaven.nl',
+    ].join('\n'),
   })
 
   if (sendError) {

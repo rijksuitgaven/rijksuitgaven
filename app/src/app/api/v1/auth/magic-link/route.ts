@@ -203,10 +203,21 @@ export async function POST(request: NextRequest) {
     const resend = new Resend(RESEND_API_KEY)
 
     await resend.emails.send({
-      from: 'Rijksuitgaven.nl <noreply@rijksuitgaven.nl>',
+      from: 'Rijksuitgaven.nl <contact@rijksuitgaven.nl>',
       to: email,
       subject: 'Uw inloglink voor Rijksuitgaven',
       html: buildMagicLinkEmail(magicLink, origin),
+      text: [
+        'Inloggen bij uw account',
+        '',
+        'Klik op de volgende link om in te loggen:',
+        magicLink,
+        '',
+        'Deze link is een uur geldig.',
+        '',
+        'Als u dit niet heeft aangevraagd, kunt u deze e-mail negeren.',
+        `Lukt het niet? Neem contact op met ons supportteam: contact@${origin.replace(/^https?:\/\//, '')}`,
+      ].join('\n'),
     })
   } catch (err) {
     console.error('[MagicLink] Resend error:', err)
