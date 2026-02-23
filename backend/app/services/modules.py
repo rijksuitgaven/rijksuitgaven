@@ -423,7 +423,7 @@ def _init_allowed_identifiers():
     ALLOWED_COLUMNS.update([
         "totaal", "row_count", "random_order", "modules", "source",
         "ontvanger", "primary_value", "module",
-        "trefwoorden", "sectoren", "regio", "omschrijving", "organisatie",
+        "trefwoorden", "sectoren", "omschrijving", "organisatie",
     ])
 
     # Add year columns
@@ -530,7 +530,7 @@ MODULE_CONFIG = {
         "amount_multiplier": 1,  # Already in absolute euros
         "search_fields": ["ontvanger", "omschrijving", "regeling", "trefwoorden", "sectoren"],
         "filter_fields": ["source", "regeling", "trefwoorden", "sectoren", "provincie", "onderdeel", "staffel"],
-        "extra_columns": ["source", "regeling", "trefwoorden", "sectoren", "regio", "staffel", "onderdeel"],
+        "extra_columns": ["source", "regeling", "trefwoorden", "sectoren", "provincie", "staffel", "onderdeel"],
         # Columns available in aggregated view (default columns for speed)
         "view_columns": ["source"],
         "entity_field": "source",
