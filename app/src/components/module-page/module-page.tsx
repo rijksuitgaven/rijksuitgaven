@@ -242,13 +242,16 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
   // Sync columns from localStorage after hydration (SSR-safe pattern)
   // UX-041: Skip if URL already provided cols
+  // Only runs on mount + module switch (not on every searchParams change — R-3 fix)
+  const urlHadCols = useRef(!!searchParams.get('cols'))
   useEffect(() => {
-    if (!searchParams.get('cols')) {
+    if (!urlHadCols.current) {
       const stored = getStoredColumns(moduleId)
       setSelectedColumns(stored)
     }
+    urlHadCols.current = false // Reset for future module switches
     setIsHydrated(true)
-  }, [moduleId, searchParams])
+  }, [moduleId])
 
   // Initialize filters from URL params (including dynamic filter fields)
   const [filters, setFilters] = useState<FilterValues>(() => {
@@ -261,7 +264,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
     // Parse dynamic filter params (e.g., regeling=value, artikel=value)
     // UX-041: Support repeated params for multiselect (regeling=A&regeling=B)
-    const standardKeys = ['q', 'jaar', 'min_bedrag', 'max_bedrag', 'sort', 'order', 'page', 'cols', 'expand']
+    const standardKeys = ['q', 'jaar', 'min_bedrag', 'max_bedrag', 'sort', 'order', 'page', 'cols', 'expand', 'betalingen']
     searchParams.forEach((value, key) => {
       if (!standardKeys.includes(key) && value) {
         if (!baseFilters[key]) {
@@ -306,7 +309,13 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
   // Reset state when switching modules (UX-002: randomize on module switch)
   // Note: selectedColumns is handled in the hydration useEffect above
+  // UX-041: Skip on first mount to preserve URL-initialized state (R-1 fix)
+  const isFirstMount = useRef(true)
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false
+      return
+    }
     setSortBy('random')
     setUserHasSorted(false)
     setPage(1)
@@ -568,10 +577,17 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     })
   }, [track, moduleId, filters.search])
 
-  // UX-041: Track expanded row for URL state (ref only — no re-render)
+  // UX-041: Track expanded row for URL state (ref + immediate URL sync — no re-render)
   const handleExpandedChange = useCallback((primaryValue: string | null) => {
     expandedPrimaryRef.current = primaryValue
-  }, [])
+    const url = new URL(window.location.href)
+    if (primaryValue) {
+      url.searchParams.set('expand', primaryValue)
+    } else {
+      url.searchParams.delete('expand')
+    }
+    router.replace(url.pathname + url.search, { scroll: false })
+  }, [router])
 
   const handleNavigateToModule = useCallback((targetModule: string, recipient: string) => {
     track('cross_module_nav', moduleId, {
