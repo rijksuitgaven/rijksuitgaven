@@ -9,7 +9,6 @@ import { LAB_PAGES } from '../page'
 const LAB_COMPONENTS: Record<string, React.ComponentType> = {
   h1: dynamic(() => import('@/components/lab/h1')),
   h2: dynamic(() => import('@/components/lab/h2')),
-  h3: dynamic(() => import('@/components/lab/h3')),
   h4: dynamic(() => import('@/components/lab/h4')),
   h5: dynamic(() => import('@/components/lab/h5')),
 }

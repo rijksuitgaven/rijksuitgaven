@@ -8,7 +8,6 @@ import { FlaskConical } from 'lucide-react'
 export const LAB_PAGES = [
   { slug: 'h1', title: 'Geldstroom Sankey', description: 'Sankey-visualisatie van geldstromen tussen ministeries en ontvangers' },
   { slug: 'h2', title: 'Data Table Prototype', description: 'Tabelweergave met 56 ontvangers uit productie-data' },
-  { slug: 'h3', title: 'Discoveries Homepage', description: '23 geverifieerde ontdekkingen als homepage-concept' },
   { slug: 'h4', title: 'Provincie Kaart', description: 'Interactieve kaart met provinciedata (mock)' },
   { slug: 'h5', title: 'Het Verschil', description: 'Before/after scroll-narrative: handmatig onderzoek vs. Rijksuitgaven' },
 ]
