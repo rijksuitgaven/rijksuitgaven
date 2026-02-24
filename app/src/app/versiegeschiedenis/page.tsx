@@ -25,6 +25,30 @@ export default function VersiegeschiedenisPage() {
 
         <article className="prose prose-slate max-w-none">
 
+          {/* V2.0.2 */}
+          <section className="mb-12">
+            <div className="flex items-baseline gap-3 mb-4">
+              <h2 className="text-xl font-semibold text-[var(--navy-dark)] m-0" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
+                V2.0.2
+              </h2>
+              <span className="text-sm text-[var(--muted-foreground)]">24 februari 2026</span>
+            </div>
+
+            <h3 className="text-lg font-semibold text-[var(--navy-dark)] mb-3" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
+              Sorteer direct op de hoogste bedragen
+            </h3>
+            <ul className="list-disc pl-6 text-[var(--foreground)] space-y-3">
+              <li>
+                <strong>Hoogste bedragen eerst:</strong> Klik op een kolomkop en de tabel sorteert direct van hoog naar laag. Zo ziet u in één klik wie de meeste subsidie ontvangt, welke leverancier het grootste contract heeft, of waar het budget het sterkst is gestegen.
+              </li>
+              <li>
+                <strong>Drie stappen:</strong> Eerste klik sorteert van hoog naar laag. Tweede klik draait om naar laag naar hoog. Derde klik zet de sortering uit.
+              </li>
+            </ul>
+          </section>
+
+          <hr className="border-[var(--border)] my-8" />
+
           {/* V2.0.1 */}
           <section className="mb-12">
             <div className="flex items-baseline gap-3 mb-4">

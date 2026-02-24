@@ -758,6 +758,7 @@ export function DataTable({
     },
     onSortingChange: setSorting,
     onExpandedChange: setExpanded,
+    sortDescFirst: true, // Financial data: show highest values first on initial click
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
