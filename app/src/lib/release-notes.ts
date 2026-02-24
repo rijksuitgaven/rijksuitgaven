@@ -25,7 +25,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
   {
     date: '2026-02-24',
     version: 'V2.0.2',
-    title: 'Sorteren van hoog naar laag',
+    title: 'Sorteer direct op de hoogste bedragen',
     summary: 'Eerste klik sorteert nu van hoog naar laag.',
   },
   {
