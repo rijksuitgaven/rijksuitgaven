@@ -1113,7 +1113,8 @@ function SortableHeader({
   const isSorted = column.getIsSorted()
 
   const handleSort = () => {
-    const newDirection = isSorted === 'asc' ? 'desc' : 'asc'
+    // UX-040: First click → desc (high to low), second → asc (low to high)
+    const newDirection = isSorted === 'desc' ? 'asc' : 'desc'
     column.toggleSorting(newDirection === 'desc')
     onSortChange?.(column.id, newDirection)
   }
