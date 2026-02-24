@@ -2,7 +2,7 @@
 
 **Project:** Rijksuitgaven.nl
 **Created:** 2026-01-30
-**Updated:** 2026-02-22
+**Updated:** 2026-02-24
 **Status:** Active
 
 ---
@@ -58,41 +58,53 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 
 ### V2.0 - Search MVP (Current)
 
-**Status:** In development (~95% complete, V2.0 Beta private beta Week 9, V2.0 public launch Week 11)
-
-**Features:**
-- Fast keyword search (<100ms via Typesense)
-- 7 modules (Instrumenten, Apparaat, Inkoop, Provincie, Gemeente, Publiek, Integraal)
-- Advanced filters per module (searchable multi-select)
-- Cross-module search
-- Year columns with trend indicators
-- Expandable rows with grouping
-- CSV/XLS export (500 rows limit)
-- Magic Link authentication
-- URL sharing
-- BFF proxy (security)
-- Typesense data enrichment (recipients collection with year amounts for hybrid search)
-- Feedback button with screenshot area selection (UX-025)
-- Exact phrase search with quotes (`"rode kruis"`)
-- Wildcard syntax support (`prorail*`)
-- Email campaigns via Resend Broadcasts (replaces WordPress/Mailster)
+**Status:** ✅ Live (V2.0 Beta live Week 9, public launch via M1.0)
 
 **Target users:** Journalists, researchers, opposition parties
 
-### V2.1 - Vergelijk
+| Feature | Status |
+|---------|--------|
+| Fast keyword search (<100ms via Typesense) | ✅ Live |
+| 7 modules (Instrumenten, Apparaat, Inkoop, Provincie, Gemeente, Publiek, Integraal) | ✅ Live |
+| Advanced filters per module (searchable multi-select) | ✅ Live |
+| Cross-module search (Integraal) | ✅ Live |
+| Year columns with trend indicators | ✅ Live |
+| Expandable rows with grouping | ✅ Live |
+| CSV/XLS export (500 rows limit) | ✅ Live |
+| Magic Link authentication (Supabase + Resend) | ✅ Live |
+| URL sharing | ✅ Live |
+| BFF proxy (security) | ✅ Live |
+| Typesense data enrichment (recipients + year amounts for hybrid search) | ✅ Live |
+| UX-025: Feedback button with screenshot area selection | ✅ Live |
+| Exact phrase search (`"rode kruis"`) | ✅ Live |
+| Wildcard syntax (`prorail*`) | ✅ Live |
+| Email campaigns via Resend Broadcasts (replaces WordPress/Mailster) | ✅ Live |
+| UX-040: Sort descending first (first click sorts high-to-low) | ✅ Live |
+| UX-042: In-app release banner (dismissible notification for new features) | ✅ Live |
 
-**Status:** On staging, release ~1 week post-launch
+#### Patches
+
+| Patch | Date | Changes |
+|-------|------|---------|
+| V2.0.2 | 2026-02-24 | UX-040 sort desc first, UX-042 release banner |
+| V2.0.1 | 2026-02-21 | Multi-word AND search, exact phrase, wildcard stripping |
+
+### V2.1 - Vergelijk & URL State
+
+**Status:** 🧪 On staging
 
 - UX-039: Row pinning (pin up to 4 rows for side-by-side comparison, export selection)
+- UX-041: Full URL state restoration (sort, page, columns, expand, group, multiselect filters in URL)
 
-### V2.2 - Zoeken & URL State
+### V2.2 - Zoeken
+
+**Status:** 📋 Planned
 
 - UX-024: Type-ahead with recent searches (localStorage, reduced debounce, response caching)
 - Fuzzy/typo tolerance (Typesense `num_typos`)
 - Accurate multi-field match reporting ("Ook in" for multi-word searches)
 - Semantic search (Cohere embeddings, ~€1/month)
 - Field-specific search syntax (`leverancier:prorail`) — power users
-- Full URL state restoration (expanded rows, pagination, all filters)
 
 ### V2.3 - Performance
 
@@ -553,9 +565,9 @@ Tiers control ACCESS to versions:
 ```
 V1 WordPress (legacy) ──────────────────────► SUPERSEDED
 
-V2.0 Search ─────────────────────────────────► CURRENT
+V2.0 Search ─────────────────────────────────► ✅ LIVE
   │
-  ├─► V2.1 Vergelijk → V2.2 Zoeken & URL State → V2.3-V2.5 (improvements)
+  ├─► V2.1 Vergelijk & URL State → V2.2 Zoeken → V2.3-V2.5 (improvements)
   │
   ├─► A1.0 Beheer MVP ─► A1.1 Bulk & CRM ─► A1.2 Inzichten ─► A2.0 Subscriptions
   │
@@ -599,9 +611,9 @@ V10.0 European Platform
 | Version | Status | Timeline |
 |---------|--------|----------|
 | V1 | ✅ Legacy (WordPress) | Superseded by V2 |
-| V2.0 | 🔨 95% Complete (beta live, public launch remaining) | Week 9-11 |
-| V2.1 | 📋 Vergelijk (on staging) | ~1 week post-launch |
-| V2.2 | 📋 Zoeken & URL State | Post-launch |
+| V2.0 | ✅ Live (beta, public launch via M1.0) | Week 9 |
+| V2.1 | 🧪 Vergelijk & URL State (on staging) | ~1 week post-launch |
+| V2.2 | 📋 Zoeken | Post-launch |
 | V2.3 | 📋 Performance | Post-launch |
 | V2.4 | 📋 Data & Integraal | Post-launch |
 | V2.5 | 📋 Polish & Toegankelijkheid + AI | Post-launch |
@@ -662,4 +674,4 @@ V10.0 European Platform
 ---
 
 **Document maintained by:** Product Owner
-**Last updated:** 2026-02-22
+**Last updated:** 2026-02-24
