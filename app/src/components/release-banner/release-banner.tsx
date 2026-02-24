@@ -66,21 +66,14 @@ export function ReleaseBanner() {
         </p>
         <button
           onClick={handleDismiss}
-          className="shrink-0 p-2 rounded transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="shrink-0 p-1 rounded border transition-colors hover:bg-white/60 focus-visible:outline-2 focus-visible:outline-offset-2"
           style={{
-            color: 'rgba(67, 111, 163, 0.5)',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.color = '#0E3261'
-            e.currentTarget.style.backgroundColor = 'rgba(14, 50, 97, 0.07)'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.color = 'rgba(67, 111, 163, 0.5)'
-            e.currentTarget.style.backgroundColor = 'transparent'
+            color: '#436FA3',
+            borderColor: 'rgba(67, 111, 163, 0.35)',
           }}
           aria-label="Sluiten"
         >
-          <X size={16} aria-hidden="true" />
+          <X size={14} aria-hidden="true" />
         </button>
       </div>
     </div>
