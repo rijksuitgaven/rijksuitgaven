@@ -20,8 +20,8 @@
 # production
 /build
 
-# build-time data copies
-/data/roadmap/
+# build-time generated
+/src/generated/
 
 # misc
 .DS_Store
