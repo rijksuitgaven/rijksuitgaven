@@ -5,15 +5,12 @@
 **Date:** 2026-01-23 (Updated: 2026-02-08)
 **Status:** In Development
 
-> **Scope:** This document covers V2 Search Platform requirements.
-> See `docs/VERSIONING.md` for full version roadmap.
+> **Scope:** This document covers V2 Search Platform requirements (UX-XXX specs).
+> **Release status:** See `docs/VERSIONING.md` for which version each feature shipped in.
+> **Backlog:** See `02-requirements/backlog.md` for planned/future items.
 >
-> **Version context:**
-> - V1 = WordPress (legacy)
-> - V2 = Search Platform (this document)
-> - V3 = Rijksuitgaven Reporter (daily news + spending email)
-> - V4 = Theme Discovery (IBOS domains, landing pages)
-> - V6 = AI Research Mode (see `research-mode-vision.md`)
+> This file is the **requirement spec** (what to build, behavior details).
+> VERSIONING.md is the **release record** (when it shipped, which version).
 
 ---
 
