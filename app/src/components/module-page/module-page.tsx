@@ -389,8 +389,10 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
       try {
         // For default view: use random sort and filter to recipients with 4+ years (UX-002)
+        // UX-041: When expand param is set on default view, search for the value to ensure row is in results
+        const hasExpandTarget = isDefaultView && !userHasSorted && initialExpandedPrimary
         const effectiveSortBy = isDefaultView && !userHasSorted ? 'random' : sortBy
-        const minYears = isDefaultView && !userHasSorted ? 4 : undefined
+        const minYears = isDefaultView && !userHasSorted && !hasExpandTarget ? 4 : undefined
 
         // Build base params
         const baseParams: Parameters<typeof fetchModuleData>[1] = {
@@ -398,7 +400,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
           per_page: perPage,
           sort_by: effectiveSortBy,
           sort_order: sortOrder,
-          search: filters.search || undefined,
+          search: filters.search || (hasExpandTarget ? initialExpandedPrimary : undefined),
           jaar: filters.jaar ?? undefined,
           min_bedrag: filters.minBedrag ?? undefined,
           max_bedrag: filters.maxBedrag ?? undefined,
