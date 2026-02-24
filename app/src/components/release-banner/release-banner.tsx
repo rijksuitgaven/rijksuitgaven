@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { X } from 'lucide-react'
 import { RELEASE_NOTES } from '@/lib/release-notes'
@@ -8,17 +8,17 @@ import { RELEASE_NOTES } from '@/lib/release-notes'
 const STORAGE_KEY = 'rn-last-seen'
 const MAX_VISIBLE_TITLES = 2
 
-export function ReleaseBanner() {
-  const [unseen, setUnseen] = useState<typeof RELEASE_NOTES>([])
-  const [dismissed, setDismissed] = useState(false)
+function getUnseenNotes(): typeof RELEASE_NOTES {
+  if (typeof window === 'undefined') return []
+  const lastSeen = localStorage.getItem(STORAGE_KEY)
+  return lastSeen
+    ? RELEASE_NOTES.filter(n => n.date > lastSeen)
+    : RELEASE_NOTES
+}
 
-  useEffect(() => {
-    const lastSeen = localStorage.getItem(STORAGE_KEY)
-    const newItems = lastSeen
-      ? RELEASE_NOTES.filter(n => n.date > lastSeen)
-      : RELEASE_NOTES
-    setUnseen(newItems)
-  }, [])
+export function ReleaseBanner() {
+  const [unseen, setUnseen] = useState(getUnseenNotes)
+  const [dismissed, setDismissed] = useState(false)
 
   if (dismissed || unseen.length === 0) return null
 
