@@ -108,8 +108,7 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 
 ### V2.3 - Performance
 
-- Cascading filter performance optimization (materialized cache or Typesense facets)
-- Filter performance optimization (indexes, progressive loading)
+- Filter performance: Typesense facets (~10ms vs 300-900ms PostgreSQL)
 - Railway private networking (Typesense egress savings)
 
 ### V2.4 - Data & Integraal

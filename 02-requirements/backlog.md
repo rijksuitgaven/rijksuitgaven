@@ -65,25 +65,15 @@ V2.1 Dutch word rules (✅ Complete). Next step: Cohere embed-multilingual-v3 em
 
 ### V2.3 — Performance
 
-#### Cascading Filter Performance Optimization
+#### Filter Performance: Typesense Facets
 
-**Priority:** Medium | **Added:** 2026-02-08
+**Priority:** Medium | **Added:** 2026-02-05 | **Effort:** 1-2 days
 
-Filter option requests take 300-500ms. Instrumenten (674K rows) worst case.
+Two related problems: cascading filter updates (300-500ms per change) and dropdown option loading (500ms+ for large fields like Regeling with 2000+ options). Both caused by PostgreSQL `SELECT DISTINCT` + `GROUP BY` on large tables.
 
-**Options:** Materialized cache (4-8h), Typesense facets (1-2d, ~10ms), partial indexes (2h), frontend caching (2h).
+**Solution:** Typesense facets — single request returns search results + all filter option counts in ~10ms (vs 300-900ms). Replaces 5 parallel DB queries with one Typesense call.
 
-**Decision:** V2.3. Current performance acceptable for launch.
-
----
-
-#### Filter Performance Optimization
-
-**Priority:** Medium | **Added:** 2026-02-05
-
-Large filter result sets are slow (500ms+). Filter dropdown options slow to load for large fields (Regeling: 2000+ options).
-
-**V2.3 solution:** Typesense facets — single request returns results + all filter option counts (~10ms vs 300-900ms).
+**Current state:** Acceptable for beta after indexes + parallel queries + debouncing. Optimize when user base grows.
 
 ---
 
