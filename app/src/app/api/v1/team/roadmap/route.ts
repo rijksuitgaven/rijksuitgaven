@@ -118,8 +118,9 @@ function parseVersioning(content: string): Map<TrackKey, TrackData> {
         const statusMatch = lines[j].match(/\*\*Status:\*\*\s*(.+)/)
         if (statusMatch) {
           status = parseStatusEmoji(statusMatch[1])
-          // Extract timeline info if present
+          // Extract timeline info if present (in parentheses or after comma)
           const timelineMatch = statusMatch[1].match(/\(([^)]*(?:Week|Q\d|post|before|~)[^)]*)\)/i)
+            || statusMatch[1].match(/,\s*(.*(?:Week|Q\d|post|before|~|launch).*)/i)
           if (timelineMatch) timeline = timelineMatch[1].trim()
           break
         }
@@ -156,7 +157,7 @@ function parseVersioning(content: string): Map<TrackKey, TrackData> {
       const cells = line.split('|').map(c => c.trim()).filter(Boolean)
       if (cells.length >= 2) {
         const title = cells[0].replace(/[`*]/g, '').trim()
-        const statusCell = cells[cells.length - 1]
+        const statusCell = cells.find(c => /[✅⏳📋🔨]/.test(c)) || cells[cells.length - 1]
         const status = parseFeatureStatus(statusCell)
 
         // Extract UX-XXX id if present
@@ -189,13 +190,20 @@ function parseVersioning(content: string): Map<TrackKey, TrackData> {
 
     // Detect bullet-point features (V-track versions like V2.1-V2.5)
     const bulletMatch = line.match(/^- (?:(UX-\d+): )?(.+?)(?:\s*\(.*\))?\s*$/)
-    if (bulletMatch && currentTrack === 'v' && !inFeatureTable) {
+    if (bulletMatch && !inFeatureTable) {
       const id = bulletMatch[1] || null
       const title = bulletMatch[2].replace(/\*\*/g, '').trim()
 
-      // Skip non-feature bullets (like "Two profession templates:")
-      if (title.length < 100 && !title.includes('**') && !title.startsWith('Light ') && !title.startsWith('Platform ')) {
-        const status: FeatureStatus = 'planned'
+      // Skip non-feature bullets (too long or contain unstripped markdown)
+      if (title.length < 120 && !title.includes('**')) {
+        // Inherit status from parent version (bullets have no individual status)
+        const versionObj = track.versions.find(v => v.id === currentVersionId)
+        let status: FeatureStatus = 'planned'
+        if (versionObj) {
+          if (versionObj.status === 'live' || versionObj.status === 'building') status = 'done'
+          else if (versionObj.status === 'staging') status = 'staging'
+          else if (versionObj.status === 'in_progress') status = 'in_progress'
+        }
 
         track.features.push({
           id,
@@ -205,9 +213,9 @@ function parseVersioning(content: string): Map<TrackKey, TrackData> {
           source: 'versioning',
         })
 
-        const version = track.versions.find(v => v.id === currentVersionId)
-        if (version) {
-          version.features_total++
+        if (versionObj) {
+          versionObj.features_total++
+          if (status === 'done') versionObj.features_done++
         }
       }
     }
@@ -226,10 +234,9 @@ function parseBacklog(content: string, tracks: Map<TrackKey, TrackData>): void {
     if (/\(COMPLETED\)/i.test(titleLine)) continue
     if (/✅\s*COMPLETED?/i.test(section.substring(0, 300))) continue
 
-    // Extract status
+    // Extract status (default to backlogged if no Status line)
     const statusMatch = section.match(/\*\*Status:\*\*\s*(.+)/)
-    if (!statusMatch) continue
-    const statusText = statusMatch[1]
+    const statusText = statusMatch ? statusMatch[1] : 'BACKLOGGED'
 
     // Skip completed
     if (/✅\s*COMPLETED?/i.test(statusText)) continue
@@ -272,10 +279,13 @@ function parseBacklog(content: string, tracks: Map<TrackKey, TrackData>): void {
     const track = tracks.get(trackKey)
     if (!track) continue
 
-    // Avoid duplicates — check if feature with same title already exists
-    const exists = track.features.some(f =>
-      f.title.toLowerCase().includes(title.toLowerCase().substring(0, 20))
-    )
+    // Avoid duplicates — keyword-based matching (first 3 significant words)
+    const normalizedTitle = title.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim()
+    const keywords = normalizedTitle.split(' ').filter(w => w.length > 3).slice(0, 3)
+    const exists = track.features.some(f => {
+      const fNorm = f.title.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim()
+      return keywords.length > 0 && keywords.every(k => fNorm.includes(k))
+    })
     if (exists) continue
 
     track.features.push({
