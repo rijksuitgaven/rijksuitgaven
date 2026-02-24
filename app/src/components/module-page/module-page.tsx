@@ -231,6 +231,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   // UX-041: Expanded row — state for initial load (from URL), ref for URL sync (avoids re-render)
   const [initialExpandedPrimary] = useState<string | null>(() => searchParams.get('expand'))
   const expandedPrimaryRef = useRef<string | null>(searchParams.get('expand'))
+  const [initialExpandGrouping] = useState<string | null>(() => searchParams.get('group'))
+  const expandGroupingRef = useRef<string | null>(searchParams.get('group'))
   // Selected extra columns state - lifted from DataTable (UX-005)
   // UX-041: URL cols param overrides localStorage
   const [selectedColumns, setSelectedColumns] = useState<string[]>(() => {
@@ -264,7 +266,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
     // Parse dynamic filter params (e.g., regeling=value, artikel=value)
     // UX-041: Support repeated params for multiselect (regeling=A&regeling=B)
-    const standardKeys = ['q', 'jaar', 'min_bedrag', 'max_bedrag', 'sort', 'order', 'page', 'cols', 'expand', 'betalingen']
+    const standardKeys = ['q', 'jaar', 'min_bedrag', 'max_bedrag', 'sort', 'order', 'page', 'cols', 'expand', 'group', 'betalingen']
     searchParams.forEach((value, key) => {
       if (!standardKeys.includes(key) && value) {
         if (!baseFilters[key]) {
@@ -364,8 +366,11 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
       params.set('cols', selectedColumns.join(','))
     }
 
-    // Expanded row (read from ref to avoid re-render cycle)
-    if (expandedPrimaryRef.current) params.set('expand', expandedPrimaryRef.current)
+    // Expanded row + grouping (read from ref to avoid re-render cycle)
+    if (expandedPrimaryRef.current) {
+      params.set('expand', expandedPrimaryRef.current)
+      if (expandGroupingRef.current) params.set('group', expandGroupingRef.current)
+    }
 
     const newUrl = params.toString() ? `/${moduleId}?${params.toString()}` : `/${moduleId}`
     router.replace(newUrl, { scroll: false })
@@ -579,14 +584,21 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     })
   }, [track, moduleId, filters.search])
 
-  // UX-041: Track expanded row for URL state (ref + immediate URL sync — no re-render)
-  const handleExpandedChange = useCallback((primaryValue: string | null) => {
+  // UX-041: Track expanded row + grouping for URL state (ref + immediate URL sync — no re-render)
+  const handleExpandedChange = useCallback((primaryValue: string | null, grouping?: string | null) => {
     expandedPrimaryRef.current = primaryValue
+    expandGroupingRef.current = grouping ?? null
     const url = new URL(window.location.href)
     if (primaryValue) {
       url.searchParams.set('expand', primaryValue)
+      if (grouping) {
+        url.searchParams.set('group', grouping)
+      } else {
+        url.searchParams.delete('group')
+      }
     } else {
       url.searchParams.delete('expand')
+      url.searchParams.delete('group')
     }
     router.replace(url.pathname + url.search, { scroll: false })
   }, [router])
@@ -619,6 +631,14 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
   const isSearching = Boolean(filters.search && filters.search.trim().length > 0)
 
+  // UX-041: onGroupingChange syncs grouping to URL via handleExpandedChange
+  const handleGroupingChange = useCallback((grouping: string) => {
+    expandGroupingRef.current = grouping
+    const url = new URL(window.location.href)
+    url.searchParams.set('group', grouping)
+    router.replace(url.pathname + url.search, { scroll: false })
+  }, [router])
+
   const renderExpandedRow = useCallback((row: RecipientRow, initialGrouping?: string) => (
     <ExpandedRow
       row={row}
@@ -628,8 +648,9 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
       isSearching={isSearching}
       onFilterLinkClick={handleFilterLinkClick}
       initialGrouping={initialGrouping}
+      onGroupingChange={handleGroupingChange}
     />
-  ), [moduleId, data?.availableYears, effectiveColumns.length, isSearching, handleFilterLinkClick])
+  ), [moduleId, data?.availableYears, effectiveColumns.length, isSearching, handleFilterLinkClick, handleGroupingChange])
 
   if (error) {
     return (
@@ -708,6 +729,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             searchQuery={filters.search}
             totals={data?.totals}
             initialExpandedPrimary={initialExpandedPrimary}
+            initialExpandGrouping={initialExpandGrouping}
             onExpandedChange={handleExpandedChange}
           />
         </div>

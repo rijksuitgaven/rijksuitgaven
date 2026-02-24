@@ -168,6 +168,7 @@ interface ExpandedRowProps {
   isSearching?: boolean
   onFilterLinkClick?: (field: string, value: string) => void
   initialGrouping?: string  // Pre-select grouping when opened via "+N meer" click
+  onGroupingChange?: (grouping: string) => void  // UX-041: Notify parent of grouping change for URL state
 }
 
 /**
@@ -182,6 +183,7 @@ export function ExpandedRow({
   isSearching = false,
   onFilterLinkClick,
   initialGrouping,
+  onGroupingChange,
 }: ExpandedRowProps) {
   const { track } = useAnalytics()
   const defaultGrouping = GROUPABLE_FIELDS[module]?.[0]?.value ?? 'regeling'
@@ -325,7 +327,7 @@ export function ExpandedRow({
             {groupableFields.length > 1 ? (
               <GroupingSelect
                 value={grouping}
-                onChange={setGrouping}
+                onChange={(val) => { setGrouping(val); onGroupingChange?.(val) }}
                 options={groupableFields}
                 counts={groupingCounts}
               />
