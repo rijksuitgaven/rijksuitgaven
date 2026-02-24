@@ -257,16 +257,6 @@ Deferred from UX-032 to keep initial scope focused on in-app usage.
 
 ---
 
-#### GitHub Projects Visual Dashboard
-
-**Priority:** Low | **Added:** 2026-02-09
-
-Visual board on top of markdown for non-technical stakeholders. Issues as lightweight pointers. Markdown stays source of truth.
-
-**Effort:** 30 minutes setup
-
----
-
 ## M-Track (Marketing & Launch)
 
 ### M1.0 — Lancering (Launch Gate)

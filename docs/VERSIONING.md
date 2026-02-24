@@ -121,8 +121,6 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 
 - Accessibility: colorblind anomaly indicator (pattern/dot overlay)
 - xlsx package replacement (ExcelJS — CVE cleanup)
-- UX refinements from beta feedback
-- GitHub Projects visual dashboard (stakeholder visibility)
 - AI Integration: MCP Server + OpenAI GPT (teaser API, lead generation)
 
 ---
