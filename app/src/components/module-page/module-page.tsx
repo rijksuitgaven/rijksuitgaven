@@ -227,7 +227,13 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     return o === 'asc' ? 'asc' : 'desc'
   })
   const [userHasSorted, setUserHasSorted] = useState(() => !!searchParams.get('sort'))
-  const [filterExpandTrigger, setFilterExpandTrigger] = useState(0)  // UX-020: auto-expand filter panel
+  // UX-020: auto-expand filter panel. UX-041: start open when URL has dynamic filters
+  const [filterExpandTrigger, setFilterExpandTrigger] = useState(() => {
+    const reserved = ['q', 'jaar', 'min_bedrag', 'max_bedrag', 'sort', 'order', 'page', 'cols', 'expand', 'group', 'betalingen']
+    let hasDynamicFilter = false
+    searchParams.forEach((_, key) => { if (!reserved.includes(key)) hasDynamicFilter = true })
+    return hasDynamicFilter ? 1 : 0
+  })
   // UX-041: Expanded row — state for initial load (from URL), ref for URL sync (avoids re-render)
   const [initialExpandedPrimary] = useState<string | null>(() => searchParams.get('expand'))
   const expandedPrimaryRef = useRef<string | null>(searchParams.get('expand'))
