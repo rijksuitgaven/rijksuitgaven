@@ -60,6 +60,9 @@
 | UX-042: In-app release banner | ✅ Live (Feb 24, both) | Dismissible banner, expert-reviewed design (Primer+Stripe+Vercel). Brand colors, uniform 13px, bordered dismiss, no icon. Flicker fix: sync localStorage init. |
 | Deployment protocol rewrite | ✅ Done (Feb 24) | 3-scenario decision tree (A/B/C), 5 self-verification questions. Fixes repeated double-push to main. |
 | UX-039 restoration on staging | ✅ Fixed (Feb 24) | Lost during revert-merge cascade. 19 code blocks manually re-applied. |
+| VERSIONING.md staleness fix | ✅ Done (Feb 24) | V2.0 ✅ Live, table format, patches, V2.1 renamed, status vocabulary standardized |
+| /document + /closeday skills | ✅ Done (Feb 24) | Mandatory VERSIONING.md reconciliation step, delta table, status vocabulary |
+| Backlog cleanup | ✅ Done (Feb 24) | 1406→350 lines, future-only, organized by track, source-of-truth pointers |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -72,8 +75,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Login UX + Lab + Cron + Roadmap + UX-040–042 + Deployment Fix** (2026-02-24)
-   S1-S4: Spam analysis, magic link 24h, invite email rewrite, Lab section, cron fix, /team/roadmap, UX-040 sort desc first. S5: UX-041 URL state (staging). S6: UX-042 release banner (staging), deployment protocol rewrite (decision tree + 5 verification Qs), UX-039 restoration on staging (lost during revert-merge cascade, 19 blocks re-applied). S7: UX-042 banner design refinement (5 iterations, expert review: Primer+Stripe+Vercel patterns), released to production.
+1. **Login UX + Lab + Roadmap + UX-040–042 + Project Tracking Overhaul** (2026-02-24)
+   S1-S4: Spam analysis, magic link 24h, invite email rewrite, Lab section, cron fix, /team/roadmap, UX-040 sort desc first. S5: UX-041 URL state (staging). S6: UX-042 release banner (staging), deployment protocol rewrite, UX-039 restoration. S7: UX-042 design refinement (5 iterations, expert review), released to production, flicker fix. S8: Project tracking system design (4-person expert team), VERSIONING.md staleness fix (V2.0 ✅ Live, table format), /document+/closeday skills enhanced (mandatory reconciliation), backlog cleanup (1406→350 lines, future-only).
 
 2. **Critical Production Bug Fixes + Email Deliverability** (2026-02-23)
    7 fixes + deliverability overhaul: UX-039 reverted from main, Totaal sort broken (`total`→`totaal`), source table year inflation, Kolommen+filters (UX-006 revised), Publiek zero results (`regio`→`provincie`). Email: noreply→contact@, plain-text multipart, Reply-To, DMARC rua, SPF -all. Prevention: staging-only registry, Sort Field Contract.
