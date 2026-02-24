@@ -139,6 +139,8 @@ Which do you prefer?
 
 **Documentation happens immediately, never "later".**
 
+**Release banner sync:** When updating `/versiegeschiedenis`, also add a short banner entry to `lib/release-notes.ts` with `date`, `version`, `title`, and `summary`. These are separate files — versiegeschiedenis has detailed descriptions, release-notes has short one-liners for the in-app banner.
+
 ### 3a. Requirements-First Documentation (MANDATORY)
 
 **Every user-facing feature MUST have a formal requirement entry BEFORE implementation starts.**
