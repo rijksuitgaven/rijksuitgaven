@@ -10,6 +10,7 @@ Create a comprehensive daily log for today and update session context. Follow th
 
 1. **Read and verify every relevant file:**
    - `logs/SESSION-CONTEXT.md` - Is status current?
+   - `docs/VERSIONING.md` - Do version statuses match reality? (see Roadmap Reconciliation below)
    - `CLAUDE.md` - Do rules reflect current practices?
    - All files created/modified today - Are they complete?
    - Sprint plan - Does progress match reality?
@@ -90,6 +91,13 @@ If today is the last day of a sprint, run these additional cross-file checks:
 **Numbers alignment:**
 - Typesense doc counts match across `config/typesense-railway.md`, `scripts/typesense/README.md`, `SESSION-CONTEXT.md`
 - Materialized view list consistent in `DATA-UPDATE-RUNBOOK.md` and `DATABASE-DOCUMENTATION.md`
+
+**Roadmap reconciliation (MANDATORY):**
+- Compare SESSION-CONTEXT.md completed items (✅) against `docs/VERSIONING.md` feature statuses
+- Any item ✅ in SESSION-CONTEXT but missing/wrong in VERSIONING.md → present delta to user, update with approval
+- Use status vocabulary: 📋 Planned / 🔨 In Progress / 🧪 On Staging / ✅ Live / ⏳ Deferred
+- If VERSIONING.md was updated → run `node app/scripts/copy-roadmap-data.mjs` to regenerate roadmap data
+- Include `app/src/generated/roadmap-data.ts` in the commit if regenerated
 
 **Feature coverage:**
 - Every new page/route from this sprint appears in `docs/FRONTEND-DOCUMENTATION.md`
