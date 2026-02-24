@@ -295,28 +295,30 @@ export async function GET() {
   }
 
   try {
-    // Read markdown files from repo root (Railway deploys from /app, files are one level up)
-    const repoRoot = process.env.NODE_ENV === 'development'
-      ? path.resolve(process.cwd(), '..')
-      : process.cwd()
-
-    const versioningPath = path.join(repoRoot, 'docs', 'VERSIONING.md')
-    const backlogPath = path.join(repoRoot, '02-requirements', 'backlog.md')
-
-    // Try multiple paths (development vs production layout)
+    // Try multiple paths: build-time copy (data/roadmap/), repo root (..), cwd
     let versioningContent = ''
     let backlogContent = ''
 
-    for (const base of [path.resolve(process.cwd(), '..'), process.cwd()]) {
-      const vPath = path.join(base, 'docs', 'VERSIONING.md')
+    const searchBases = [
+      path.join(process.cwd(), 'data', 'roadmap'),  // prebuild copy (Railway)
+      path.resolve(process.cwd(), '..'),              // repo root (dev)
+      process.cwd(),                                   // fallback
+    ]
+
+    for (const base of searchBases) {
+      const vPath = base.endsWith('roadmap')
+        ? path.join(base, 'VERSIONING.md')
+        : path.join(base, 'docs', 'VERSIONING.md')
       if (fs.existsSync(vPath)) {
         versioningContent = fs.readFileSync(vPath, 'utf-8')
         break
       }
     }
 
-    for (const base of [path.resolve(process.cwd(), '..'), process.cwd()]) {
-      const bPath = path.join(base, '02-requirements', 'backlog.md')
+    for (const base of searchBases) {
+      const bPath = base.endsWith('roadmap')
+        ? path.join(base, 'backlog.md')
+        : path.join(base, '02-requirements', 'backlog.md')
       if (fs.existsSync(bPath)) {
         backlogContent = fs.readFileSync(bPath, 'utf-8')
         break
@@ -324,7 +326,10 @@ export async function GET() {
     }
 
     if (!versioningContent) {
-      return NextResponse.json({ error: 'VERSIONING.md niet gevonden' }, { status: 500 })
+      const tried = searchBases.map(b => b.endsWith('roadmap')
+        ? path.join(b, 'VERSIONING.md')
+        : path.join(b, 'docs', 'VERSIONING.md'))
+      return NextResponse.json({ error: 'VERSIONING.md niet gevonden', tried }, { status: 500 })
     }
 
     const tracks = parseVersioning(versioningContent)
