@@ -24,6 +24,7 @@ Check these files for accuracy and completeness:
 |------|-----------|
 | `logs/SESSION-CONTEXT.md` | Current phase, sprint, pending decisions, blockers |
 | `logs/daily/YYYY-MM-DD.md` | Today's work fully documented |
+| `docs/VERSIONING.md` | Version roadmap reflects shipped features (see Step 3) |
 | `02-requirements/search-requirements.md` | Requirements marked as implemented |
 | `docs/DATABASE-DOCUMENTATION.md` | Schema changes reflected |
 | `scripts/sql/README.md` or headers | Migration scripts documented |
@@ -34,7 +35,50 @@ For each file:
 - Check for conflicts with other documents
 - Ensure no "TBD" items that should be resolved
 
-## Step 3: Verify Against Requirements
+## Step 3: VERSIONING.md Reconciliation (MANDATORY)
+
+**The roadmap page at `/team/roadmap` reads from `docs/VERSIONING.md`. If VERSIONING.md is stale, users see wrong data.**
+
+### Reconciliation Process
+
+1. **Read both sources:**
+   - `logs/SESSION-CONTEXT.md` → Pending Tasks table (items marked ✅)
+   - `docs/VERSIONING.md` → Version features and their status
+
+2. **Find mismatches:** Identify items that are:
+   - ✅ in SESSION-CONTEXT but missing or wrong status in VERSIONING.md
+   - Implemented on staging but shown as "Planned" in VERSIONING.md
+   - Live on production but shown as "On staging" in VERSIONING.md
+   - Missing entirely from VERSIONING.md (new features not yet added)
+
+3. **Present the delta to the user:**
+   ```
+   ## VERSIONING.md Reconciliation
+
+   | Feature | SESSION-CONTEXT | VERSIONING.md | Action Needed |
+   |---------|----------------|---------------|---------------|
+   | [feature] | ✅ Live | 📋 Planned | Update to ✅ Live |
+   | [feature] | ✅ Staging | Missing | Add to V2.X |
+   ```
+
+   If no mismatches: state "VERSIONING.md is in sync — no updates needed."
+
+4. **With user approval, update:**
+   - `docs/VERSIONING.md` — feature status, version assignments
+   - `02-requirements/backlog.md` — mark completed items, remove shipped features
+   - Run `node app/scripts/copy-roadmap-data.mjs` to regenerate `app/src/generated/roadmap-data.ts`
+
+### Status Vocabulary (use consistently)
+
+| Status | Emoji | Meaning |
+|--------|-------|---------|
+| Planned | 📋 | Designed, not started |
+| In Progress | 🔨 | Actively being built |
+| On Staging | 🧪 | Deployed to staging for testing |
+| Live | ✅ | On production |
+| Deferred | ⏳ | Moved to later version |
+
+## Step 4: Verify Against Requirements
 
 ### V1.0 Requirements Check
 Read `02-requirements/search-requirements.md` and verify:
@@ -53,7 +97,7 @@ Read `09-timelines/v2-sprint-plan.md` and verify:
 - [ ] Which deliverables are complete
 - [ ] What remains for current week
 
-## Step 4: Identify Open Items
+## Step 5: Identify Open Items
 
 List any:
 1. **Incomplete features** - Started but not finished
@@ -62,11 +106,11 @@ List any:
 4. **Unclear requirements** - Need clarification
 5. **Blocked items** - Waiting on external factors
 
-## Step 5: Ask Clarifying Questions
+## Step 6: Ask Clarifying Questions
 
 For any open items or unclear points, use the AskUserQuestion tool to get answers before finalizing documentation.
 
-## Step 6: Update SESSION-CONTEXT.md
+## Step 7: Update SESSION-CONTEXT.md
 
 After all documentation is complete, update SESSION-CONTEXT.md with:
 - Current sprint status
@@ -74,6 +118,8 @@ After all documentation is complete, update SESSION-CONTEXT.md with:
 - Pending decisions (if any)
 - Next steps
 
-## Step 7: Commit Documentation
+## Step 8: Commit Documentation
 
 Stage and commit all documentation changes with a clear message.
+
+Include `app/src/generated/roadmap-data.ts` if it was regenerated in Step 3.
