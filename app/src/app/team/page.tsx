@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, FlaskConical } from 'lucide-react'
+import { LAB_PAGES } from './lab/page'
 
 interface Member {
   id: string
@@ -313,6 +314,27 @@ export default function TeamDashboardPage() {
             ) : (
               <p className="text-sm text-green-700">Geen openstaande feedback</p>
             )}
+          </div>
+        </div>
+
+        {/* Lab section */}
+        <div className="bg-white border border-[var(--border)] rounded-lg">
+          <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FlaskConical className="w-4 h-4 text-[var(--navy-medium)]" />
+              <h2 className="text-base font-semibold text-[var(--navy-dark)]">Lab</h2>
+            </div>
+            <Link href="/team/lab" className="text-xs text-[var(--navy-medium)] hover:text-[var(--pink)] transition-colors">
+              Bekijk lab →
+            </Link>
+          </div>
+          <div className="px-5 py-4">
+            <p className="text-sm text-[var(--navy-medium)] mb-3">
+              Testomgeving voor prototypes en design-experimenten. Alleen zichtbaar voor beheerders.
+            </p>
+            <span className="text-sm text-[var(--navy-dark)]">
+              <span className="font-semibold">{LAB_PAGES.length}</span> {LAB_PAGES.length === 1 ? 'pagina' : 'pagina\u2019s'}
+            </span>
           </div>
         </div>
       </div>
