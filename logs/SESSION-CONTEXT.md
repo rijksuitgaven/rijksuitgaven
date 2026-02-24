@@ -54,6 +54,7 @@
 | Lab section (/team/lab) | ✅ Implemented (Feb 24) | Admin-only prototypes: h1-h5 moved from public routes, card grid, dynamic slug, Lab tab+dashboard card |
 | Cron-sequences bearer token | ✅ Fixed (Feb 24) | Hardcoded token not updated after CRON_SECRET rotation. User updated Railway start command |
 | Email spam (Soverin) | ⏳ Diagnosed | Shared SES IP reputation. Recommendation: dedicated Resend IP (~$20/month) |
+| Roadmap page (/team/roadmap) | ✅ Implemented (Feb 24) | Parses VERSIONING.md + backlog.md, 4 track tabs, version cards, feature table, 6 parser fixes. Build-time embed for Railway. |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -66,8 +67,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Login UX + Lab Section + Cron Fix** (2026-02-24)
-   Session 1: Spam header analysis, magic link 1h→24h, expired link error fix, invite email rewrite (5 iterations). Session 2: Lab section — moved h1-h5 prototypes to admin-only /team/lab with card grid, dynamic pages, Lab tab+dashboard card. Removed h3. Cron-sequences fix: bearer token not updated after secret rotation.
+1. **Login UX + Lab + Cron Fix + Roadmap** (2026-02-24)
+   Session 1: Spam analysis, magic link 1h→24h, expired link fix, invite email rewrite. Session 2: Lab section — h1-h5 to /team/lab, card grid, Lab tab+dashboard. Cron fix: bearer token. Session 3: /team/roadmap — parses VERSIONING.md+backlog.md, 4 track tabs, version cards, feature table. Railway fix: build-time embed (committed generated TS). 6 parser accuracy fixes from full audit.
 
 2. **Critical Production Bug Fixes + Email Deliverability** (2026-02-23)
    7 fixes + deliverability overhaul: UX-039 reverted from main, Totaal sort broken (`total`→`totaal`), source table year inflation, Kolommen+filters (UX-006 revised), Publiek zero results (`regio`→`provincie`). Email: noreply→contact@, plain-text multipart, Reply-To, DMARC rua, SPF -all. Prevention: staging-only registry, Sort Field Contract.
@@ -182,6 +183,7 @@ Key recent migrations:
 | Release tracks | 4 tracks: V (end-user), A (admin), M (marketing/launch), D (data). Each has own cadence and audience. |
 | M1.0 Launch Gate | 6 items must complete before DNS switch: SEO, DNS plan, rate limiting, user migration, homepage copy, logo |
 | D-track | Data releases separate from features. D1.0 = Gemeente Haarlemmermeer, D1.1 = Jaarupdate 2025 |
+| Roadmap data | Build-time embed: prebuild generates `src/generated/roadmap-data.ts` from VERSIONING.md+backlog.md. Committed to git (Railway Root Dir=app/ can't access repo root). Regenerate locally after markdown edits. |
 
 ---
 
