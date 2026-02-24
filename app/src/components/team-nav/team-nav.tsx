@@ -30,6 +30,7 @@ export function TeamNav() {
     { href: '/team/mail', label: 'E-mail', exact: false },
     { href: '/team/fouten', label: 'Fouten', exact: false, count: errorCount, countVariant: 'red' },
     { href: '/team/lab', label: 'Lab', exact: false },
+    { href: '/team/roadmap', label: 'Roadmap', exact: false },
   ]
 
   return (
