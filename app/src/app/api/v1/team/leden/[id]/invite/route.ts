@@ -75,8 +75,15 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
                   </td>
                 </tr>
                 <tr>
-                  <td style="font-size: 16px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 28px;">
+                  <td style="font-size: 16px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 12px;">
                     Er is geen wachtwoord. Na inloggen blijft u ingelogd zolang u het platform minstens één keer per 7 dagen bezoekt.
+                  </td>
+                </tr>
+
+                <!-- Renewal -->
+                <tr>
+                  <td style="font-size: 14px; line-height: 22px; color: #8a8a8a; text-align: center; padding-bottom: 28px;">
+                    Link verlopen? Ga naar <a href="${siteUrl}" style="color: #436FA3; text-decoration: none;">${displayHost}</a> en vraag een nieuwe aan.
                   </td>
                 </tr>
 
@@ -95,10 +102,10 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
                   </td>
                 </tr>
 
-                <!-- Expiry + renewal -->
+                <!-- Expiry -->
                 <tr>
                   <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 12px;">
-                    Deze link is 24 uur geldig. Nieuwe link nodig? Ga naar <a href="${siteUrl}" style="color: #436FA3; text-decoration: none;">${displayHost}</a>, klik op <strong>Inloggen</strong> en vul uw e-mailadres in.
+                    Uw persoonlijke inloglink is 24 uur geldig.
                   </td>
                 </tr>
                 <!-- Divider -->
@@ -242,7 +249,7 @@ export async function POST(
   const { error: sendError } = await resend.emails.send({
     from: 'Rijksuitgaven <contact@rijksuitgaven.nl>',
     to: person.email,
-    subject: 'Rijksuitgaven 2.0 Beta — uw toegang',
+    subject: 'Uw inloglink voor Rijksuitgaven 2.0',
     html: buildWelcomeEmail(person.first_name, person.email, activationLink, origin),
     text: [
       'Welkom bij Rijksuitgaven 2.0',
@@ -250,11 +257,14 @@ export async function POST(
       `Beste ${person.first_name},`,
       '',
       'Log in op het nieuwe Rijksuitgaven met de volgende link:',
-      activationLink,
       '',
       'Er is geen wachtwoord. Na inloggen blijft u ingelogd zolang u het platform minstens één keer per 7 dagen bezoekt.',
       '',
-      `Deze link is 24 uur geldig. Nieuwe link nodig? Ga naar ${displayHost}, klik op Inloggen en vul uw e-mailadres in.`,
+      `Link verlopen? Ga naar ${displayHost} en vraag een nieuwe aan.`,
+      '',
+      activationLink,
+      '',
+      'Uw persoonlijke inloglink is 24 uur geldig.',
     ].join('\n'),
   })
 
