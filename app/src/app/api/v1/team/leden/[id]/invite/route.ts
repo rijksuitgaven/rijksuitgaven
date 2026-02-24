@@ -95,6 +95,14 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
                   </td>
                 </tr>
 
+                <!-- No password explanation -->
+                <tr>
+                  <td style="font-size: 14px; line-height: 22px; color: #4a4a4a; text-align: center; padding-bottom: 16px;">
+                    <strong>Geen wachtwoord nodig</strong><br />
+                    Rijksuitgaven werkt met inloglinks. Elke keer dat u wilt inloggen, ontvangt u een link per e-mail. Geen wachtwoord om te onthouden.
+                  </td>
+                </tr>
+
                 <!-- Expiry + renewal -->
                 <tr>
                   <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 12px;">
@@ -257,6 +265,9 @@ export async function POST(
       'De beta van Rijksuitgaven 2.0 is klaar om te testen.',
       'Klik op de volgende link om in te loggen en direct aan de slag te gaan:',
       activationLink,
+      '',
+      'Geen wachtwoord nodig',
+      'Rijksuitgaven werkt met inloglinks. Elke keer dat u wilt inloggen, ontvangt u een link per e-mail. Geen wachtwoord om te onthouden.',
       '',
       `Deze link is 24 uur geldig. Verlopen? Ga naar ${displayHost}, klik op Inloggen en vraag een nieuwe link aan met uw e-mailadres (${person.email}).`,
       '',
