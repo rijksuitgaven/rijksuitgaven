@@ -31,7 +31,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
   {
     date: '2026-02-21',
     version: 'V2.0.1',
-    title: 'Slimmer zoeken',
+    title: 'Slimmer zoeken met meerdere woorden',
     summary: 'Zoek met meerdere woorden, exacte zinnen en wildcards.',
   },
   {
