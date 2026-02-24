@@ -48,14 +48,14 @@ export function ReleaseBanner() {
       role="region"
       aria-label="Update melding"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center gap-3">
         <p className="text-[13px] leading-5 min-w-0" style={{ color: '#0E3261', fontFamily: 'var(--font-body)' }}>
           <span className="font-semibold">Nieuw</span>
           <span className="mx-1.5" style={{ color: 'rgba(67, 111, 163, 0.4)' }}>|</span>
           <span style={{ color: 'rgba(14, 50, 97, 0.8)' }}>
             {description}
           </span>
-          {' '}
+          <span className="mx-1" style={{ color: 'rgba(67, 111, 163, 0.4)' }}>&middot;</span>
           <Link
             href="/versiegeschiedenis"
             className="font-medium hover:underline whitespace-nowrap"
