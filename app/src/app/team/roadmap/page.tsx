@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, Suspense } from 'react'
+import { useState, useEffect, useMemo, useRef, useCallback, Suspense } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -73,6 +73,99 @@ const FEATURE_STATUS_COLOR: Record<FeatureStatus, string> = {
   backlogged: 'text-[var(--navy-medium)] bg-gray-50',
 }
 
+/** Sort version strings by semantic version: V2.0 before V10.0, Backlog last */
+function semverSort(a: string, b: string): number {
+  if (a === 'Backlog') return 1
+  if (b === 'Backlog') return -1
+  const parseVersion = (s: string) => {
+    const match = s.match(/^([A-Z]?)(\d+)\.(\d+)/)
+    if (!match) return { prefix: s, major: 999, minor: 0 }
+    return { prefix: match[1] || '', major: parseInt(match[2]), minor: parseInt(match[3]) }
+  }
+  const pa = parseVersion(a)
+  const pb = parseVersion(b)
+  if (pa.prefix !== pb.prefix) return pa.prefix.localeCompare(pb.prefix)
+  if (pa.major !== pb.major) return pa.major - pb.major
+  return pa.minor - pb.minor
+}
+
+function MultiSelect<T extends string>({
+  options,
+  selected,
+  onChange,
+  allLabel,
+  renderOption,
+}: {
+  options: T[]
+  selected: Set<T>
+  onChange: (next: Set<T>) => void
+  allLabel: string
+  renderOption: (value: T) => string
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  const handleClickOutside = useCallback((e: MouseEvent) => {
+    if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+  }, [])
+
+  useEffect(() => {
+    if (open) document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [open, handleClickOutside])
+
+  const toggle = (value: T) => {
+    const next = new Set(selected)
+    if (next.has(value)) next.delete(value)
+    else next.add(value)
+    onChange(next)
+  }
+
+  const isAll = selected.size === 0
+  const label = isAll
+    ? allLabel
+    : selected.size === 1
+      ? renderOption(Array.from(selected)[0])
+      : `${selected.size} geselecteerd`
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="text-xs border border-[var(--border)] rounded px-2 py-1.5 text-[var(--navy-dark)] bg-white flex items-center gap-1 min-w-[120px] justify-between"
+      >
+        <span className="truncate">{label}</span>
+        <svg className={`w-3 h-3 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 bg-white border border-[var(--border)] rounded-lg shadow-lg z-50 min-w-[180px] py-1">
+          <button
+            onClick={() => { onChange(new Set()); }}
+            className={`w-full text-left px-3 py-1.5 text-xs hover:bg-gray-50 flex items-center gap-2 ${isAll ? 'font-semibold text-[var(--navy-dark)]' : 'text-[var(--navy-medium)]'}`}
+          >
+            {isAll && <span>✓</span>}
+            <span className={isAll ? '' : 'ml-4'}>{allLabel}</span>
+          </button>
+          <div className="border-t border-[var(--border)] my-1" />
+          {options.map(opt => {
+            const checked = selected.has(opt)
+            return (
+              <button
+                key={opt}
+                onClick={() => toggle(opt)}
+                className={`w-full text-left px-3 py-1.5 text-xs hover:bg-gray-50 flex items-center gap-2 ${checked ? 'font-semibold text-[var(--navy-dark)]' : 'text-[var(--navy-medium)]'}`}
+              >
+                {checked && <span>✓</span>}
+                <span className={checked ? '' : 'ml-4'}>{renderOption(opt)}</span>
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ProgressBar({ done, total }: { done: number; total: number }) {
   const pct = total > 0 ? Math.round((done / total) * 100) : 0
   return (
@@ -131,8 +224,8 @@ function RoadmapContent() {
   const router = useRouter()
   const [tracks, setTracks] = useState<Record<TrackKey, TrackData> | null>(null)
   const [loading, setLoading] = useState(true)
-  const [statusFilter, setStatusFilter] = useState<FeatureStatus | 'all'>('all')
-  const [versionFilter, setVersionFilter] = useState<string>('all')
+  const [statusFilters, setStatusFilters] = useState<Set<FeatureStatus>>(new Set())
+  const [versionFilters, setVersionFilters] = useState<Set<string>>(new Set())
 
   const activeTrack = (searchParams.get('track') as TrackKey) || 'v'
 
@@ -152,8 +245,8 @@ function RoadmapContent() {
 
   // Reset filters when switching tracks
   useEffect(() => {
-    setStatusFilter('all')
-    setVersionFilter('all')
+    setStatusFilters(new Set())
+    setVersionFilters(new Set())
   }, [activeTrack])
 
   const currentTrack = tracks?.[activeTrack]
@@ -161,16 +254,16 @@ function RoadmapContent() {
   const filteredFeatures = useMemo(() => {
     if (!currentTrack) return []
     return currentTrack.features.filter(f => {
-      if (statusFilter !== 'all' && f.status !== statusFilter) return false
-      if (versionFilter !== 'all' && f.version !== versionFilter) return false
+      if (statusFilters.size > 0 && !statusFilters.has(f.status)) return false
+      if (versionFilters.size > 0 && !versionFilters.has(f.version)) return false
       return true
     })
-  }, [currentTrack, statusFilter, versionFilter])
+  }, [currentTrack, statusFilters, versionFilters])
 
   const availableVersions = useMemo(() => {
     if (!currentTrack) return []
     const versions = new Set(currentTrack.features.map(f => f.version))
-    return Array.from(versions).sort()
+    return Array.from(versions).sort(semverSort)
   }, [currentTrack])
 
   if (subLoading || loading) {
@@ -252,28 +345,20 @@ function RoadmapContent() {
               </h2>
 
               <div className="flex gap-2">
-                <select
-                  value={versionFilter}
-                  onChange={e => setVersionFilter(e.target.value)}
-                  className="text-xs border border-[var(--border)] rounded px-2 py-1.5 text-[var(--navy-dark)] bg-white"
-                >
-                  <option value="all">Alle versies</option>
-                  {availableVersions.map(v => (
-                    <option key={v} value={v}>{v}</option>
-                  ))}
-                </select>
-                <select
-                  value={statusFilter}
-                  onChange={e => setStatusFilter(e.target.value as FeatureStatus | 'all')}
-                  className="text-xs border border-[var(--border)] rounded px-2 py-1.5 text-[var(--navy-dark)] bg-white"
-                >
-                  <option value="all">Alle statussen</option>
-                  <option value="done">✅ Done</option>
-                  <option value="staging">⏳ Staging</option>
-                  <option value="in_progress">⏳ In progress</option>
-                  <option value="planned">📋 Planned</option>
-                  <option value="backlogged">📋 Backlog</option>
-                </select>
+                <MultiSelect
+                  options={availableVersions}
+                  selected={versionFilters}
+                  onChange={setVersionFilters}
+                  allLabel="Alle versies"
+                  renderOption={v => v}
+                />
+                <MultiSelect
+                  options={['done', 'staging', 'in_progress', 'planned', 'backlogged'] as FeatureStatus[]}
+                  selected={statusFilters}
+                  onChange={setStatusFilters}
+                  allLabel="Alle statussen"
+                  renderOption={v => FEATURE_STATUS_LABEL[v]}
+                />
               </div>
             </div>
 
