@@ -343,7 +343,11 @@ export function DataTable({
   const [yearsExpanded, setYearsExpanded] = useState(false)
 
   // Reset expanded state when data changes (e.g., after filter applied)
-  // UX-041: If initialExpandedPrimary is set, auto-expand matching row
+  useEffect(() => {
+    setExpanded({})
+  }, [data])
+
+  // UX-041: Auto-expand row from URL on first data load only
   const hasAutoExpanded = useRef(false)
   useEffect(() => {
     if (initialExpandedPrimary && data.length > 0 && !hasAutoExpanded.current) {
@@ -351,11 +355,10 @@ export function DataTable({
       if (idx >= 0) {
         setExpanded({ [idx]: true })
         hasAutoExpanded.current = true
-        return
       }
     }
-    setExpanded({})
-  }, [data, initialExpandedPrimary])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data])
   const [isExportingCSV, setIsExportingCSV] = useState(false)
   const [isExportingXLS, setIsExportingXLS] = useState(false)
   const [isStaffelOpen, setIsStaffelOpen] = useState(false)
