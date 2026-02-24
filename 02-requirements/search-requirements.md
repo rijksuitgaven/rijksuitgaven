@@ -1734,47 +1734,6 @@ The current `data_availability` table has incorrect year ranges inherited from i
 
 ---
 
-### UX-041: Full URL State Restoration
-
-**Requirement:** Encode the complete view state in the URL so that shared or bookmarked links restore the exact same view — including sort, page, columns, expanded rows, and all filter values.
-
-**Behavior:**
-- Every state change updates the URL via `router.replace` (no history spam)
-- Opening a URL with state params restores all state on mount
-- Default values are omitted from the URL (clean URLs when nothing is customized)
-- Multiselect filters use repeated params: `regeling=A&regeling=B`
-
-**URL Parameters:**
-
-| Param | Example | Maps to |
-|-------|---------|---------|
-| `q` | `rode kruis` | Search query |
-| `jaar` | `2024` | Year filter |
-| `min_bedrag` | `100000` | Min amount filter |
-| `max_bedrag` | `500000` | Max amount filter |
-| `{filter}` | `regeling=Subsidies&regeling=Bijdragen` | Dynamic filter (repeated for multi) |
-| `sort` | `totaal` | Sort column (backend field name) |
-| `order` | `desc` | Sort direction (`asc` or `desc`) |
-| `page` | `3` | Current page number |
-| `cols` | `regeling,artikel` | Selected extra columns (comma-separated) |
-| `expand` | `Rode Kruis` | Expanded row primary value |
-
-**Defaults (omitted from URL):**
-- `sort=random` (default view)
-- `order=desc` (default sort direction)
-- `page=1`
-- `cols` = module default columns
-
-**Example URLs:**
-- Default: `/instrumenten`
-- Full state: `/instrumenten?q=universiteit&provincie=Noord-Holland&sort=totaal&order=desc&page=2&cols=regeling,artikel&expand=Universiteit+Utrecht`
-
-**Priority:** P1 (High)
-
-**Status:** ✅ Implemented 2026-02-24
-
----
-
 ### UX-039: Vergelijk (Row Pinning)
 
 **Requirement:** Allow users to pin up to 4 rows to the top of the data table for side-by-side comparison while scrolling, sorting, and filtering.
