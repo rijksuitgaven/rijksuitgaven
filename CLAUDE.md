@@ -403,7 +403,6 @@ Answer ALL 5 before executing any `git push`:
 | Feature | Code Markers (grep patterns) | Files |
 |---------|------------------------------|-------|
 | UX-039 Vergelijk/Pin | `RowPinningState`, `PinOff`, `row.pin(`, `MAX_PINNED_ROWS`, `getPinnedData`, `Wis selectie` | `data-table.tsx`, `globals.css` |
-| UX-042 Release Banner | `ReleaseBanner`, `rn-last-seen`, `release-notes` | `app-shell.tsx`, `release-banner.tsx`, `release-notes.ts` |
 
 **Maintaining this registry:**
 - When a feature is deployed staging-only, ADD it here with its code markers
@@ -417,7 +416,7 @@ Answer ALL 5 before executing any `git push`:
 1. Check for staging-only code contamination:
 ```bash
 # Auto-check: grep for ALL staging-only markers in the diff
-git diff origin/main HEAD -- app/src/ | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS|getPinnedData|Wis selectie|ReleaseBanner|rn-last-seen|release-notes"
+git diff origin/main HEAD -- app/src/ | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS|getPinnedData|Wis selectie"
 ```
 If this returns ANY matches, **STOP**. Staging-only code is about to go to production. Revert the offending changes before pushing.
 
