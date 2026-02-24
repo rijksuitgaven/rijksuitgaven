@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
-import { AlertTriangle, FlaskConical } from 'lucide-react'
+import { AlertTriangle, FlaskConical, Map } from 'lucide-react'
 import { LAB_PAGES } from './lab/page'
 
 interface Member {
@@ -335,6 +335,33 @@ export default function TeamDashboardPage() {
             <span className="text-sm text-[var(--navy-dark)]">
               <span className="font-semibold">{LAB_PAGES.length}</span> {LAB_PAGES.length === 1 ? 'pagina' : 'pagina\u2019s'}
             </span>
+          </div>
+        </div>
+
+        {/* Roadmap section */}
+        <div className="bg-white border border-[var(--border)] rounded-lg">
+          <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Map className="w-4 h-4 text-[var(--navy-medium)]" />
+              <h2 className="text-base font-semibold text-[var(--navy-dark)]">Roadmap</h2>
+            </div>
+            <Link href="/team/roadmap" className="text-xs text-[var(--navy-medium)] hover:text-[var(--pink)] transition-colors">
+              Bekijk roadmap →
+            </Link>
+          </div>
+          <div className="px-5 py-4">
+            <p className="text-sm text-[var(--navy-medium)] mb-3">
+              Productplanning en voortgang per releasetrack. Parsed automatisch uit VERSIONING.md en backlog.md.
+            </p>
+            <div className="flex gap-3 text-sm text-[var(--navy-dark)]">
+              <span>V End-user</span>
+              <span className="text-[var(--navy-medium)]">·</span>
+              <span>A Admin</span>
+              <span className="text-[var(--navy-medium)]">·</span>
+              <span>M Launch</span>
+              <span className="text-[var(--navy-medium)]">·</span>
+              <span>D Data</span>
+            </div>
           </div>
         </div>
       </div>

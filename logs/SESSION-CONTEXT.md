@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-23
+**Last Updated:** 2026-02-24
 **Project Phase:** V2.0 Development
 **Current Sprint:** Week 8+ — Pre-Launch Polish & Beta Feedback
 **Beta Status:** V0.9 live at beta.rijksuitgaven.nl (10 testers, launched 2026-02-21)
@@ -51,6 +51,8 @@
 | Magic link expiry 1h→24h | ✅ Fixed (Feb 24) | Supabase OTP 86400s + copy updated in 4 files |
 | Expired link error message | ✅ Fixed (Feb 24) | "activatielink via beheerder" → "inloglink, vul e-mailadres in" |
 | Invite email rewrite | ✅ Fixed (Feb 24) | 5 iterations: stripped copy, correct session info, unified fonts, new subject, expiry above button |
+| Lab section (/team/lab) | ✅ Implemented (Feb 24) | Admin-only prototypes: h1-h5 moved from public routes, card grid, dynamic slug, Lab tab+dashboard card |
+| Cron-sequences bearer token | ✅ Fixed (Feb 24) | Hardcoded token not updated after CRON_SECRET rotation. User updated Railway start command |
 | Email spam (Soverin) | ⏳ Diagnosed | Shared SES IP reputation. Recommendation: dedicated Resend IP (~$20/month) |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
@@ -64,8 +66,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Login UX + Email Deliverability** (2026-02-24)
-   Spam header analysis (Soverin 9-star, shared SES IP). Magic link expiry 1h→24h. Expired link error fixed ("activatielink"→"inloglink"). Invite email fully rewritten: 5 iterations, stripped to 5 lines, correct session behavior, unified 3-level font hierarchy, new subject "Uw inloglink voor Rijksuitgaven 2.0".
+1. **Login UX + Lab Section + Cron Fix** (2026-02-24)
+   Session 1: Spam header analysis, magic link 1h→24h, expired link error fix, invite email rewrite (5 iterations). Session 2: Lab section — moved h1-h5 prototypes to admin-only /team/lab with card grid, dynamic pages, Lab tab+dashboard card. Removed h3. Cron-sequences fix: bearer token not updated after secret rotation.
 
 2. **Critical Production Bug Fixes + Email Deliverability** (2026-02-23)
    7 fixes + deliverability overhaul: UX-039 reverted from main, Totaal sort broken (`total`→`totaal`), source table year inflation, Kolommen+filters (UX-006 revised), Publiek zero results (`regio`→`provincie`). Email: noreply→contact@, plain-text multipart, Reply-To, DMARC rua, SPF -all. Prevention: staging-only registry, Sort Field Contract.
