@@ -57,6 +57,9 @@
 | Roadmap page (/team/roadmap) | ✅ Implemented (Feb 24) | Parses VERSIONING.md + backlog.md, 4 track tabs, version cards, feature table, 6 parser fixes. Build-time embed for Railway. |
 | UX-040: Sort descending first | ✅ Fixed (Feb 24) | SortableHeader direction logic fixed — first click now actually sorts desc. Both environments. |
 | UX-041: Full URL state restoration | ✅ Implemented (Feb 24, staging) | Sort, page, cols, expand, group, multiselect filters in URL. 4 review bugs fixed. Auto-open filters. V2.1 release. |
+| UX-042: In-app release banner | ✅ Implemented (Feb 24, staging) | Dismissible banner for new enhancements since last visit. localStorage tracking. Separate from versiegeschiedenis. |
+| Deployment protocol rewrite | ✅ Done (Feb 24) | 3-scenario decision tree (A/B/C), 5 self-verification questions. Fixes repeated double-push to main. |
+| UX-039 restoration on staging | ✅ Fixed (Feb 24) | Lost during revert-merge cascade. 19 code blocks manually re-applied. |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -69,8 +72,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Login UX + Lab + Cron + Roadmap + UX-040 + UX-041** (2026-02-24)
-   S1-S4: Spam analysis, magic link 24h, invite email rewrite, Lab section, cron fix, /team/roadmap, UX-040 sort desc first. S5: UX-041 URL state restoration (staging only) — sort/page/cols/expand/group/multiselect in URL. Senior review team found 4 bugs (all fixed). Sort direction fix: SortableHeader bypassed sortDescFirst (both envs). Filter auto-open from URL. Grouping dropdown in URL.
+1. **Login UX + Lab + Cron + Roadmap + UX-040–042 + Deployment Fix** (2026-02-24)
+   S1-S4: Spam analysis, magic link 24h, invite email rewrite, Lab section, cron fix, /team/roadmap, UX-040 sort desc first. S5: UX-041 URL state (staging). S6: UX-042 release banner (staging), deployment protocol rewrite (decision tree + 5 verification Qs), UX-039 restoration on staging (lost during revert-merge cascade, 19 blocks re-applied).
 
 2. **Critical Production Bug Fixes + Email Deliverability** (2026-02-23)
    7 fixes + deliverability overhaul: UX-039 reverted from main, Totaal sort broken (`total`→`totaal`), source table year inflation, Kolommen+filters (UX-006 revised), Publiek zero results (`regio`→`provincie`). Email: noreply→contact@, plain-text multipart, Reply-To, DMARC rua, SPF -all. Prevention: staging-only registry, Sort Field Contract.
@@ -223,7 +226,7 @@ Key recent migrations:
 
 ## Notes
 
-- **UX counter:** Next available UX-042
+- **UX counter:** Next available UX-043
 - **Communication:** English with Claude, Dutch (formal u/uw) for user-facing text
 - **Budget:** ~€190/month infrastructure
 - **psql path:** `/usr/local/Cellar/libpq/18.1/bin/psql`
