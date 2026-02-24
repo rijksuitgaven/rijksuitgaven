@@ -9,8 +9,7 @@
 
 import { NextResponse } from 'next/server'
 import { isAdmin } from '@/app/api/_lib/admin'
-import fs from 'fs'
-import path from 'path'
+import { VERSIONING_MD, BACKLOG_MD } from '@/generated/roadmap-data'
 
 type TrackKey = 'v' | 'a' | 'm' | 'd'
 type VersionStatus = 'live' | 'building' | 'staging' | 'planned' | 'in_progress'
@@ -295,47 +294,14 @@ export async function GET() {
   }
 
   try {
-    // Try multiple paths: build-time copy (data/roadmap/), repo root (..), cwd
-    let versioningContent = ''
-    let backlogContent = ''
-
-    const searchBases = [
-      path.join(process.cwd(), 'data', 'roadmap'),  // prebuild copy (Railway)
-      path.resolve(process.cwd(), '..'),              // repo root (dev)
-      process.cwd(),                                   // fallback
-    ]
-
-    for (const base of searchBases) {
-      const vPath = base.endsWith('roadmap')
-        ? path.join(base, 'VERSIONING.md')
-        : path.join(base, 'docs', 'VERSIONING.md')
-      if (fs.existsSync(vPath)) {
-        versioningContent = fs.readFileSync(vPath, 'utf-8')
-        break
-      }
+    if (!VERSIONING_MD) {
+      return NextResponse.json({ error: 'VERSIONING.md niet gevonden (build-time embed leeg)' }, { status: 500 })
     }
 
-    for (const base of searchBases) {
-      const bPath = base.endsWith('roadmap')
-        ? path.join(base, 'backlog.md')
-        : path.join(base, '02-requirements', 'backlog.md')
-      if (fs.existsSync(bPath)) {
-        backlogContent = fs.readFileSync(bPath, 'utf-8')
-        break
-      }
-    }
+    const tracks = parseVersioning(VERSIONING_MD)
 
-    if (!versioningContent) {
-      const tried = searchBases.map(b => b.endsWith('roadmap')
-        ? path.join(b, 'VERSIONING.md')
-        : path.join(b, 'docs', 'VERSIONING.md'))
-      return NextResponse.json({ error: 'VERSIONING.md niet gevonden', tried }, { status: 500 })
-    }
-
-    const tracks = parseVersioning(versioningContent)
-
-    if (backlogContent) {
-      parseBacklog(backlogContent, tracks)
+    if (BACKLOG_MD) {
+      parseBacklog(BACKLOG_MD, tracks)
     }
 
     return NextResponse.json({
