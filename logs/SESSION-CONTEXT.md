@@ -55,6 +55,7 @@
 | Cron-sequences bearer token | ✅ Fixed (Feb 24) | Hardcoded token not updated after CRON_SECRET rotation. User updated Railway start command |
 | Email spam (Soverin) | ⏳ Diagnosed | Shared SES IP reputation. Recommendation: dedicated Resend IP (~$20/month) |
 | Roadmap page (/team/roadmap) | ✅ Implemented (Feb 24) | Parses VERSIONING.md + backlog.md, 4 track tabs, version cards, feature table, 6 parser fixes. Build-time embed for Railway. |
+| UX-040: Sort descending first | ✅ Implemented (Feb 24) | `sortDescFirst: true` — first click sorts high to low. V2.0.2 versiegeschiedenis entry. |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -67,8 +68,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Login UX + Lab + Cron Fix + Roadmap** (2026-02-24)
-   Session 1: Spam analysis, magic link 1h→24h, expired link fix, invite email rewrite. Session 2: Lab section — h1-h5 to /team/lab, card grid, Lab tab+dashboard. Cron fix: bearer token. Session 3: /team/roadmap — parses VERSIONING.md+backlog.md, 4 track tabs, version cards, feature table. Railway fix: build-time embed (committed generated TS). 6 parser accuracy fixes from full audit.
+1. **Login UX + Lab + Cron + Roadmap + UX-040** (2026-02-24)
+   S1: Spam analysis, magic link 1h→24h, expired link fix, invite email rewrite. S2: Lab section — h1-h5 to /team/lab, card grid, Lab tab+dashboard. Cron fix: bearer token. S3: /team/roadmap — parses VERSIONING.md+backlog.md, 4 track tabs, version cards, feature table. Railway fix: build-time embed. 6 parser fixes from audit. S4: UX-040 sort descending first (V2.0.2).
 
 2. **Critical Production Bug Fixes + Email Deliverability** (2026-02-23)
    7 fixes + deliverability overhaul: UX-039 reverted from main, Totaal sort broken (`total`→`totaal`), source table year inflation, Kolommen+filters (UX-006 revised), Publiek zero results (`regio`→`provincie`). Email: noreply→contact@, plain-text multipart, Reply-To, DMARC rua, SPF -all. Prevention: staging-only registry, Sort Field Contract.
@@ -221,7 +222,7 @@ Key recent migrations:
 
 ## Notes
 
-- **UX counter:** Next available UX-040
+- **UX counter:** Next available UX-041
 - **Communication:** English with Claude, Dutch (formal u/uw) for user-facing text
 - **Budget:** ~€190/month infrastructure
 - **psql path:** `/usr/local/Cellar/libpq/18.1/bin/psql`
