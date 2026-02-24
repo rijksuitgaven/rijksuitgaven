@@ -79,20 +79,20 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 
 **Target users:** Journalists, researchers, opposition parties
 
-### V2.1 - Vergelijk & URL State
+### V2.1 - Vergelijk
 
 **Status:** On staging, release ~1 week post-launch
 
 - UX-039: Row pinning (pin up to 4 rows for side-by-side comparison, export selection)
-- UX-041: Full URL state restoration (sort, page, columns, expanded rows, all filters)
 
-### V2.2 - Zoeken
+### V2.2 - Zoeken & URL State
 
 - UX-024: Type-ahead with recent searches (localStorage, reduced debounce, response caching)
 - Fuzzy/typo tolerance (Typesense `num_typos`)
 - Accurate multi-field match reporting ("Ook in" for multi-word searches)
 - Semantic search (Cohere embeddings, ~€1/month)
 - Field-specific search syntax (`leverancier:prorail`) — power users
+- Full URL state restoration (expanded rows, pagination, all filters)
 
 ### V2.3 - Performance
 
@@ -555,7 +555,7 @@ V1 WordPress (legacy) ───────────────────�
 
 V2.0 Search ─────────────────────────────────► CURRENT
   │
-  ├─► V2.1 Vergelijk & URL State → V2.2 Zoeken → V2.3-V2.5 (improvements)
+  ├─► V2.1 Vergelijk → V2.2 Zoeken & URL State → V2.3-V2.5 (improvements)
   │
   ├─► A1.0 Beheer MVP ─► A1.1 Bulk & CRM ─► A1.2 Inzichten ─► A2.0 Subscriptions
   │
@@ -600,8 +600,8 @@ V10.0 European Platform
 |---------|--------|----------|
 | V1 | ✅ Legacy (WordPress) | Superseded by V2 |
 | V2.0 | 🔨 95% Complete (beta live, public launch remaining) | Week 9-11 |
-| V2.1 | 📋 Vergelijk & URL State (on staging) | ~1 week post-launch |
-| V2.2 | 📋 Zoeken | Post-launch |
+| V2.1 | 📋 Vergelijk (on staging) | ~1 week post-launch |
+| V2.2 | 📋 Zoeken & URL State | Post-launch |
 | V2.3 | 📋 Performance | Post-launch |
 | V2.4 | 📋 Data & Integraal | Post-launch |
 | V2.5 | 📋 Polish & Toegankelijkheid + AI | Post-launch |

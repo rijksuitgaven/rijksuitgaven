@@ -183,7 +183,7 @@ Ready to implement?
 
 **Rule:** If it affects what users see or do, it gets a UX-XXX entry. No exceptions. The entry is created BEFORE code, not after.
 
-**Current UX numbers used:** UX-001 through UX-041. Next available: **UX-042**.
+**Current UX numbers used:** UX-001 through UX-040. Next available: **UX-041**.
 
 ### 4. Cross-Module Consistency
 
@@ -369,7 +369,6 @@ git checkout staging && git pull origin staging && git merge main && git push or
 | Feature | Code Markers (grep patterns) | Files |
 |---------|------------------------------|-------|
 | UX-039 Vergelijk/Pin | `RowPinningState`, `PinOff`, `row.pin(`, `MAX_PINNED_ROWS`, `getPinnedData`, `Wis selectie` | `data-table.tsx`, `globals.css` |
-| UX-041 URL State | `initialExpandedPrimary`, `hasAutoExpanded`, `onExpandedChange`, `UX-041` | `data-table.tsx`, `module-page.tsx` |
 
 **Maintaining this registry:**
 - When a feature is deployed staging-only, ADD it here with its code markers
@@ -383,7 +382,7 @@ git checkout staging && git pull origin staging && git merge main && git push or
 1. Check for staging-only code contamination:
 ```bash
 # Auto-check: grep for ALL staging-only markers in the diff
-git diff origin/main HEAD -- app/src/ | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS|getPinnedData|Wis selectie|initialExpandedPrimary|hasAutoExpanded|onExpandedChange"
+git diff origin/main HEAD -- app/src/ | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS|getPinnedData|Wis selectie"
 ```
 If this returns ANY matches, **STOP**. Staging-only code is about to go to production. Revert the offending changes before pushing.
 
@@ -401,7 +400,7 @@ If this shows commits, staging has extra features. **NEVER force-push** in this 
 
 **After ANY push to main, verify no staging-only code leaked:**
 ```bash
-git show origin/main:app/src/components/data-table/data-table.tsx | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS|initialExpandedPrimary|hasAutoExpanded|onExpandedChange"
+git show origin/main:app/src/components/data-table/data-table.tsx | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS"
 ```
 If matches found, **immediately revert and re-push.**
 

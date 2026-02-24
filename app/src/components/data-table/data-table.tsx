@@ -68,8 +68,6 @@ interface DataTableProps {
   searchQuery?: string  // Current search query (for Match column display)
   onExport?: (format: 'csv' | 'xls', rowCount: number) => void  // Analytics callback (UX-032)
   totals?: TotalsData | null  // Aggregated totals for all search results (not just current page)
-  initialExpandedPrimary?: string | null  // UX-041: Auto-expand this row on load (from URL)
-  onExpandedChange?: (primaryValue: string | null) => void  // UX-041: Notify parent of expand/collapse
 }
 
 /**
@@ -333,8 +331,6 @@ export function DataTable({
   searchQuery,
   onExport,
   totals,
-  initialExpandedPrimary,
-  onExpandedChange,
 }: DataTableProps) {
   const { track } = useAnalytics()
   const [sorting, setSorting] = useState<SortingState>([])
@@ -343,19 +339,9 @@ export function DataTable({
   const [yearsExpanded, setYearsExpanded] = useState(false)
 
   // Reset expanded state when data changes (e.g., after filter applied)
-  // UX-041: If initialExpandedPrimary is set, auto-expand matching row
-  const hasAutoExpanded = useRef(false)
   useEffect(() => {
-    if (initialExpandedPrimary && data.length > 0 && !hasAutoExpanded.current) {
-      const idx = data.findIndex(r => r.primary_value === initialExpandedPrimary)
-      if (idx >= 0) {
-        setExpanded({ [idx]: true })
-        hasAutoExpanded.current = true
-        return
-      }
-    }
     setExpanded({})
-  }, [data, initialExpandedPrimary])
+  }, [data])
   const [isExportingCSV, setIsExportingCSV] = useState(false)
   const [isExportingXLS, setIsExportingXLS] = useState(false)
   const [isStaffelOpen, setIsStaffelOpen] = useState(false)
@@ -771,21 +757,7 @@ export function DataTable({
       expanded,
     },
     onSortingChange: setSorting,
-    onExpandedChange: (updater) => {
-      setExpanded(prev => {
-        const next = typeof updater === 'function' ? updater(prev) : updater
-        // UX-041: Notify parent of expanded row for URL state
-        if (onExpandedChange) {
-          const expandedKeys = Object.entries(next as Record<string, boolean>).filter(([, v]) => v).map(([k]) => parseInt(k, 10))
-          if (expandedKeys.length > 0 && data[expandedKeys[0]]) {
-            onExpandedChange(data[expandedKeys[0]].primary_value)
-          } else {
-            onExpandedChange(null)
-          }
-        }
-        return next
-      })
-    },
+    onExpandedChange: setExpanded,
     sortDescFirst: true, // Financial data: show highest values first on initial click
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),

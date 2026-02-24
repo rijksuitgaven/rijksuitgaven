@@ -215,39 +215,23 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const [data, setData] = useState<ModuleDataResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  // UX-041: Initialize sort/page/columns from URL params (full URL state restoration)
-  const [page, setPage] = useState(() => {
-    const p = searchParams.get('page')
-    return p ? Math.max(1, parseInt(p, 10) || 1) : 1
-  })
+  const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(50)
-  const [sortBy, setSortBy] = useState<string>(() => searchParams.get('sort') ?? 'random')
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>(() => {
-    const o = searchParams.get('order')
-    return o === 'asc' ? 'asc' : 'desc'
-  })
-  const [userHasSorted, setUserHasSorted] = useState(() => !!searchParams.get('sort'))
+  const [sortBy, setSortBy] = useState<string>('random')  // Default: random (UX-002)
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+  const [userHasSorted, setUserHasSorted] = useState(false)  // Track if user explicitly sorted
   const [filterExpandTrigger, setFilterExpandTrigger] = useState(0)  // UX-020: auto-expand filter panel
-  // UX-041: Expanded row from URL
-  const [initialExpandedPrimary, setInitialExpandedPrimary] = useState<string | null>(() => searchParams.get('expand'))
   // Selected extra columns state - lifted from DataTable (UX-005)
-  // UX-041: URL cols param overrides localStorage
-  const [selectedColumns, setSelectedColumns] = useState<string[]>(() => {
-    const urlCols = searchParams.get('cols')
-    if (urlCols) return urlCols.split(',').filter(Boolean)
-    return getDefaultColumns(moduleId)
-  })
+  // Initialize with defaults (SSR-safe), then sync from localStorage after hydration
+  const [selectedColumns, setSelectedColumns] = useState<string[]>(() => getDefaultColumns(moduleId))
   const [isHydrated, setIsHydrated] = useState(false)
 
   // Sync columns from localStorage after hydration (SSR-safe pattern)
-  // UX-041: Skip if URL already provided cols
   useEffect(() => {
-    if (!searchParams.get('cols')) {
-      const stored = getStoredColumns(moduleId)
-      setSelectedColumns(stored)
-    }
+    const stored = getStoredColumns(moduleId)
+    setSelectedColumns(stored)
     setIsHydrated(true)
-  }, [moduleId, searchParams])
+  }, [moduleId])
 
   // Initialize filters from URL params (including dynamic filter fields)
   const [filters, setFilters] = useState<FilterValues>(() => {
@@ -259,13 +243,10 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     }
 
     // Parse dynamic filter params (e.g., regeling=value, artikel=value)
-    // UX-041: Support repeated params for multiselect (regeling=A&regeling=B)
-    const standardKeys = ['q', 'jaar', 'min_bedrag', 'max_bedrag', 'sort', 'order', 'page', 'cols', 'expand']
+    const standardKeys = ['q', 'jaar', 'min_bedrag', 'max_bedrag']
     searchParams.forEach((value, key) => {
       if (!standardKeys.includes(key) && value) {
-        if (!baseFilters[key]) {
-          baseFilters[key] = searchParams.getAll(key)
-        }
+        baseFilters[key] = [value]
       }
     })
 
@@ -309,7 +290,6 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     setSortBy('random')
     setUserHasSorted(false)
     setPage(1)
-    setInitialExpandedPrimary(null)
     // End current search session on module switch
     endCurrentSearch('module_switch')
   }, [moduleId, endCurrentSearch])
@@ -321,7 +301,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     }
   }, [endCurrentSearch])
 
-  // UX-041: Update URL with full view state (filters, sort, page, columns, expanded)
+  // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams()
     if (filters.search) params.set('q', filters.search)
@@ -329,37 +309,19 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     if (filters.minBedrag) params.set('min_bedrag', String(filters.minBedrag))
     if (filters.maxBedrag) params.set('max_bedrag', String(filters.maxBedrag))
 
-    // Include dynamic filter params — repeated params for multiselect (UX-041)
+    // Include dynamic filter params (multiselect filters)
     const standardKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag']
     Object.entries(filters).forEach(([key, value]) => {
       if (!standardKeys.includes(key) && Array.isArray(value) && value.length > 0) {
-        value.forEach(v => params.append(key, v))
+        // For multiselect, only include first value in URL (simple link sharing)
+        // Full multi-value would need comma-separated or multiple params
+        params.set(key, value[0])
       }
     })
 
-    // Sort state — omit defaults (random/desc)
-    if (sortBy !== 'random') {
-      params.set('sort', sortBy)
-      if (sortOrder !== 'desc') params.set('order', sortOrder)
-    }
-
-    // Page — omit page=1
-    if (page > 1) params.set('page', String(page))
-
-    // Columns — omit when equal to module defaults
-    const defaults = getDefaultColumns(moduleId)
-    const colsSorted = [...selectedColumns].sort()
-    const defaultsSorted = [...defaults].sort()
-    if (JSON.stringify(colsSorted) !== JSON.stringify(defaultsSorted)) {
-      params.set('cols', selectedColumns.join(','))
-    }
-
-    // Expanded row
-    if (initialExpandedPrimary) params.set('expand', initialExpandedPrimary)
-
     const newUrl = params.toString() ? `/${moduleId}?${params.toString()}` : `/${moduleId}`
     router.replace(newUrl, { scroll: false })
-  }, [filters, router, moduleId, sortBy, sortOrder, page, selectedColumns, initialExpandedPrimary])
+  }, [filters, router, moduleId])
 
   // Determine if this is the default view (no search, no filters)
   // Include multiselect filters (activeFilterColumns) in the check
@@ -567,11 +529,6 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     })
   }, [track, moduleId, filters.search])
 
-  // UX-041: Track expanded row for URL state
-  const handleExpandedChange = useCallback((primaryValue: string | null) => {
-    setInitialExpandedPrimary(primaryValue)
-  }, [])
-
   const handleNavigateToModule = useCallback((targetModule: string, recipient: string) => {
     track('cross_module_nav', moduleId, {
       target_module: targetModule,
@@ -688,8 +645,6 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             }}
             searchQuery={filters.search}
             totals={data?.totals}
-            initialExpandedPrimary={initialExpandedPrimary}
-            onExpandedChange={handleExpandedChange}
           />
         </div>
       </main>

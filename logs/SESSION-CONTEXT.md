@@ -56,7 +56,6 @@
 | Email spam (Soverin) | ⏳ Diagnosed | Shared SES IP reputation. Recommendation: dedicated Resend IP (~$20/month) |
 | Roadmap page (/team/roadmap) | ✅ Implemented (Feb 24) | Parses VERSIONING.md + backlog.md, 4 track tabs, version cards, feature table, 6 parser fixes. Build-time embed for Railway. |
 | UX-040: Sort descending first | ✅ Implemented (Feb 24) | `sortDescFirst: true` — first click sorts high to low. V2.0.2 versiegeschiedenis entry. |
-| UX-041: Full URL state restoration | ✅ Implemented (Feb 24) | Sort, page, columns, expanded rows, multiselect filters in URL. V2.1 release. |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -223,7 +222,7 @@ Key recent migrations:
 
 ## Notes
 
-- **UX counter:** Next available UX-042
+- **UX counter:** Next available UX-041
 - **Communication:** English with Claude, Dutch (formal u/uw) for user-facing text
 - **Budget:** ~€190/month infrastructure
 - **psql path:** `/usr/local/Cellar/libpq/18.1/bin/psql`
