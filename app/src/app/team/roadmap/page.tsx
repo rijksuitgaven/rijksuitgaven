@@ -137,13 +137,15 @@ function RoadmapContent() {
   const activeTrack = (searchParams.get('track') as TrackKey) || 'v'
 
   useEffect(() => {
+    console.log('[Roadmap] useEffect fired:', { subLoading, role })
     if (!subLoading && role === 'admin') {
       fetch('/api/v1/team/roadmap')
         .then(res => res.json())
         .then(data => {
+          console.log('[Roadmap] API response:', JSON.stringify(data).substring(0, 500))
           if (data.tracks) setTracks(data.tracks)
         })
-        .catch(() => {})
+        .catch(err => console.error('[Roadmap] fetch error:', err))
         .finally(() => setLoading(false))
     } else if (!subLoading) {
       setLoading(false)
