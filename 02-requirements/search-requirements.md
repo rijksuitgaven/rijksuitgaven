@@ -1709,6 +1709,31 @@ The current `data_availability` table has incorrect year ranges inherited from i
 
 ---
 
+### UX-040: Default Sort Direction — High to Low
+
+**Requirement:** When a user clicks a column header for the first time, sort descending (highest values first) instead of ascending.
+
+**Behavior:**
+- First click → descending (high to low)
+- Second click → ascending (low to high)
+- Third click → remove sort
+- Applies to all sortable columns (totaal, year columns) across all 7 modules
+
+**Rationale:**
+- Financial data users naturally want to see the biggest amounts first
+- "Who received the most?" is the default mental model
+- Ascending sort is rarely the first intent for monetary values
+
+**Implementation:**
+- TanStack Table `sortDescFirst: true` on table options
+- Single property change, affects all columns globally
+
+**Priority:** P1 (High)
+
+**Status:** ✅ Implemented 2026-02-24
+
+---
+
 ### UX-039: Vergelijk (Row Pinning)
 
 **Requirement:** Allow users to pin up to 4 rows to the top of the data table for side-by-side comparison while scrolling, sorting, and filtering.
