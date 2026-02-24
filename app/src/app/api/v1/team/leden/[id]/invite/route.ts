@@ -75,15 +75,13 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
                   </td>
                 </tr>
                 <tr>
-                  <td style="font-size: 16px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 12px;">
+                  <td style="font-size: 16px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 8px;">
                     Er is geen wachtwoord. Na inloggen blijft u ingelogd zolang u het platform minstens één keer per 7 dagen bezoekt.
                   </td>
                 </tr>
-
-                <!-- Renewal -->
                 <tr>
-                  <td style="font-size: 14px; line-height: 22px; color: #8a8a8a; text-align: center; padding-bottom: 28px;">
-                    Link verlopen? Ga naar <a href="${siteUrl}" style="color: #436FA3; text-decoration: none;">${displayHost}</a> en vraag een nieuwe aan.
+                  <td style="font-size: 16px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 28px;">
+                    Uw persoonlijke inloglink is 24 uur geldig. Link verlopen? Ga naar <a href="${siteUrl}" style="color: #436FA3; text-decoration: none;">${displayHost}</a> en vraag een nieuwe aan.
                   </td>
                 </tr>
 
@@ -99,13 +97,6 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
                         </td>
                       </tr>
                     </table>
-                  </td>
-                </tr>
-
-                <!-- Expiry -->
-                <tr>
-                  <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 12px;">
-                    Uw persoonlijke inloglink is 24 uur geldig.
                   </td>
                 </tr>
                 <!-- Divider -->
@@ -260,11 +251,9 @@ export async function POST(
       '',
       'Er is geen wachtwoord. Na inloggen blijft u ingelogd zolang u het platform minstens één keer per 7 dagen bezoekt.',
       '',
-      `Link verlopen? Ga naar ${displayHost} en vraag een nieuwe aan.`,
+      `Uw persoonlijke inloglink is 24 uur geldig. Link verlopen? Ga naar ${displayHost} en vraag een nieuwe aan.`,
       '',
       activationLink,
-      '',
-      'Uw persoonlijke inloglink is 24 uur geldig.',
     ].join('\n'),
   })
 
