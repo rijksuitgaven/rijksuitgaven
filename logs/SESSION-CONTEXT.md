@@ -66,7 +66,7 @@
 | Roadmap multi-select + sort | ✅ Done (Feb 24) | Multi-select dropdowns, semantic version sort (V2.0 before V10.0) |
 | Roadmap superseded items | ✅ Done (Feb 24) | Removed GitHub Projects + UX refinements from V2.5 (already shipped/replaced) |
 | V5.0 Lab prototype (h6) | ✅ Built (Feb 24) | 6 interactive viz concepts: Pulse, New Money, Movers, Ministry DNA, Treemap, Dependency Radar. recharts+d3. Design doc at `docs/plans/2026-02-24-v5-inzichten-design.md` |
-| Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
+| Onboarding email sequence | ✅ Implemented (Feb 24) | 5 emails implemented. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
