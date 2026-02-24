@@ -11,6 +11,7 @@ const LAB_COMPONENTS: Record<string, React.ComponentType> = {
   h2: dynamic(() => import('@/components/lab/h2')),
   h4: dynamic(() => import('@/components/lab/h4')),
   h5: dynamic(() => import('@/components/lab/h5')),
+  h6: dynamic(() => import('@/components/lab/h6')),
 }
 
 export default function LabSlugPage() {
