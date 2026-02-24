@@ -6,6 +6,7 @@ import { TeamNav } from '@/components/team-nav'
 import { FlaskConical } from 'lucide-react'
 
 export const LAB_PAGES = [
+  { slug: 'h6', title: 'Inzichten Dashboard', description: 'V5.0 prototype: interactieve visualisaties van overheidsuitgaven — trends, patronen en anomalieën' },
   { slug: 'h1', title: 'Geldstroom Sankey', description: 'Sankey-visualisatie van geldstromen tussen ministeries en ontvangers' },
   { slug: 'h2', title: 'Data Table Prototype', description: 'Tabelweergave met 56 ontvangers uit productie-data' },
   { slug: 'h4', title: 'Provincie Kaart', description: 'Interactieve kaart met provinciedata (mock)' },
