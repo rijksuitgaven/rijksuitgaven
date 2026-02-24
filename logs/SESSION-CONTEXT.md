@@ -63,6 +63,9 @@
 | VERSIONING.md staleness fix | ✅ Done (Feb 24) | V2.0 ✅ Live, table format, patches, V2.1 renamed, status vocabulary standardized |
 | /document + /closeday skills | ✅ Done (Feb 24) | Mandatory VERSIONING.md reconciliation step, delta table, status vocabulary |
 | Backlog cleanup | ✅ Done (Feb 24) | 1406→350 lines, future-only, organized by track, source-of-truth pointers |
+| Roadmap multi-select + sort | ✅ Done (Feb 24) | Multi-select dropdowns, semantic version sort (V2.0 before V10.0) |
+| Roadmap superseded items | ✅ Done (Feb 24) | Removed GitHub Projects + UX refinements from V2.5 (already shipped/replaced) |
+| V5.0 Lab prototype (h6) | ✅ Built (Feb 24) | 6 interactive viz concepts: Pulse, New Money, Movers, Ministry DNA, Treemap, Dependency Radar. recharts+d3. Design doc at `docs/plans/2026-02-24-v5-inzichten-design.md` |
 | Onboarding email sequence | ⏳ Ready to implement | 5 emails designed, copy final. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -75,8 +78,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Login UX + Lab + Roadmap + UX-040–042 + Project Tracking Overhaul** (2026-02-24)
-   S1-S4: Spam analysis, magic link 24h, invite email rewrite, Lab section, cron fix, /team/roadmap, UX-040 sort desc first. S5: UX-041 URL state (staging). S6: UX-042 release banner (staging), deployment protocol rewrite, UX-039 restoration. S7: UX-042 design refinement (5 iterations, expert review), released to production, flicker fix. S8: Project tracking system design (4-person expert team), VERSIONING.md staleness fix (V2.0 ✅ Live, table format), /document+/closeday skills enhanced (mandatory reconciliation), backlog cleanup (1406→350 lines, future-only).
+1. **Login UX + Lab + Roadmap + UX-040–042 + Project Tracking + V5.0 Lab** (2026-02-24)
+   S1-S4: Spam analysis, magic link 24h, invite email rewrite, Lab section, cron fix, /team/roadmap, UX-040 sort desc first. S5: UX-041 URL state (staging). S6: UX-042 release banner (staging), deployment protocol rewrite, UX-039 restoration. S7: UX-042 design refinement (5 iterations, expert review), released to production, flicker fix. S8: Project tracking system design (4-person expert team), VERSIONING.md staleness fix (V2.0 ✅ Live, table format), /document+/closeday skills enhanced (mandatory reconciliation), backlog cleanup (1406→350 lines, future-only). S9: Roadmap multi-select+semver sort, superseded items cleanup, V5.0 Inzichten lab prototype (6 visualization concepts: Pulse, New Money, Movers, Ministry DNA, Treemap, Dependency Radar — recharts+d3, expert team design).
 
 2. **Critical Production Bug Fixes + Email Deliverability** (2026-02-23)
    7 fixes + deliverability overhaul: UX-039 reverted from main, Totaal sort broken (`total`→`totaal`), source table year inflation, Kolommen+filters (UX-006 revised), Publiek zero results (`regio`→`provincie`). Email: noreply→contact@, plain-text multipart, Reply-To, DMARC rua, SPF -all. Prevention: staging-only registry, Sort Field Contract.
