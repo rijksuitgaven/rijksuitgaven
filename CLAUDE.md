@@ -139,8 +139,6 @@ Which do you prefer?
 
 **Documentation happens immediately, never "later".**
 
-**Release banner sync:** When updating `/versiegeschiedenis`, also add a short banner entry to `lib/release-notes.ts` with `date`, `version`, `title`, and `summary`. These are separate files — versiegeschiedenis has detailed descriptions, release-notes has short one-liners for the in-app banner.
-
 ### 3a. Requirements-First Documentation (MANDATORY)
 
 **Every user-facing feature MUST have a formal requirement entry BEFORE implementation starts.**
@@ -327,42 +325,76 @@ Overwriting staging destroys those features.
 **Always MERGE main into staging** so staging keeps its extra features and gets
 main's new code too.
 
-#### What Goes Where
+#### Deployment Decision Tree (MANDATORY — Read Before ANY Push)
 
-| Change Type | Deploy Target | Process |
-|-------------|--------------|---------|
-| **Admin features** (`/team/*`) | Main + Staging | Push to main, then merge main into staging |
-| **Small fixes** (bugs, typos) | Ask user | State the fix, ask "Main, staging, or both?" |
-| **New user-facing features** | Staging ONLY | Commit on main, push to staging via merge, revert on main |
-| **SQL migrations** | Execute BEFORE code | Run on Supabase first, then push code |
+**STOP. Answer: Does this code belong on production?**
 
-#### User-Facing Feature Release Process
+**Railway auto-deploys on every push.** Every `git push origin main` triggers a production build. There is NO way to push to main without a build. Plan accordingly.
 
-New features for end users follow a **batch release** workflow:
+---
 
-1. Commit on main, merge into staging (staging gets the feature)
-2. Revert the commit on main (main stays clean)
-3. User tests on staging
-4. Features accumulate on staging until user approves a batch release
-5. Batch release: cherry-pick approved features onto main, push main
+**A) BOTH ENVIRONMENTS** (bug fixes, admin features, SQL-then-code)
 
-#### Commands Reference
+Use for: Admin `/team/*` features, bug fixes, approved batch releases.
 
 ```bash
-# Admin feature or approved release → both environments
 git push origin main
-git checkout staging && git pull origin staging && git merge main && git push origin staging && git checkout main
-
-# Staging-only (new user-facing feature already committed on main)
-git push origin main:staging
-# Then revert the feature commit on main:
-git revert HEAD && git push origin main
-
-# Production-only (hotfix)
-git push origin main
-# Then merge into staging so staging stays up to date:
 git checkout staging && git pull origin staging && git merge main && git push origin staging && git checkout main
 ```
+
+Result: 1 production build + 1 staging build. Both environments updated.
+
+---
+
+**B) STAGING ONLY** (new user-facing feature for testing)
+
+**ABSOLUTE RULE: `git push origin main` must NEVER appear in this sequence.**
+The feature is committed locally but NEVER pushed to origin/main.
+
+```bash
+# Feature is committed on local main. Do NOT push main.
+git checkout staging && git pull origin staging
+git merge main && git push origin staging
+git checkout main
+git revert HEAD --no-edit
+# Do NOT push main. Nothing changed on origin/main. Zero production builds.
+```
+
+Result: 0 production builds + 1 staging build. Feature never exists on origin/main.
+
+**Why the revert?** Local main must stay clean for future work. The revert removes the feature from local main. But since main was never pushed, the revert is local-only too.
+
+---
+
+**C) BATCH RELEASE** (approved staging features → production)
+
+Use when user approves staging-only features for production release.
+
+```bash
+git cherry-pick <commit-hash-1> <commit-hash-2>   # Feature commits onto main
+git push origin main
+git checkout staging && git pull origin staging && git merge main && git push origin staging && git checkout main
+```
+
+Result: 1 production build + 1 staging build. Remove released features from Staging-Only Registry.
+
+---
+
+**SQL migrations** always execute BEFORE code: run on Supabase first, then push code.
+
+#### Self-Verification Questions (MANDATORY — Before ANY Push)
+
+Answer ALL 5 before executing any `git push`:
+
+| # | Question | Staging-only answer | Both-environments answer |
+|---|----------|-------------------|------------------------|
+| 1 | Am I about to push to main? Does this code belong on production? | NO push to main | YES push to main |
+| 2 | How many `git push` commands in my plan? | Exactly 1 (staging) | Exactly 2 (main + staging) |
+| 3 | After execution, will `git log origin/main --oneline -1` show the feature? | NO | YES |
+| 4 | Does my plan include `main:staging` or `--force`? | NO (both forbidden) | NO (both forbidden) |
+| 5 | How many Railway production builds will trigger? | 0 | 1 |
+
+**If any answer is wrong, STOP and fix the plan before executing.**
 
 #### Staging-Only Feature Registry
 
