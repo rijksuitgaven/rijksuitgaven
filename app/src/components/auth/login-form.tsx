@@ -22,7 +22,7 @@ export function LoginForm() {
         no_code: 'De inloglink is ongeldig. Probeer opnieuw in te loggen.',
         cross_device: 'De inloglink moet op hetzelfde apparaat worden geopend als waar u deze hebt aangevraagd.',
         exchange_failed: 'De inloglink is verlopen of al gebruikt. Vraag een nieuwe aan.',
-        invalid_link: 'De activatielink is verlopen of al gebruikt. Vraag een nieuwe aan via uw beheerder.',
+        invalid_link: 'Uw inloglink is verlopen of al gebruikt. Vul uw e-mailadres in voor een nieuwe link.',
       }
       setErrorMessage(errorMessages[error] || 'Er ging iets mis bij het inloggen.')
       setState('error')
