@@ -71,12 +71,12 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
                 </tr>
                 <tr>
                   <td style="font-size: 16px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 8px;">
-                    De beta van Rijksuitgaven 2.0 is klaar om te testen.
+                    Log in op het nieuwe Rijksuitgaven met de knop hieronder.
                   </td>
                 </tr>
                 <tr>
                   <td style="font-size: 16px; line-height: 24px; color: #4a4a4a; text-align: center; padding-bottom: 28px;">
-                    Klik hieronder om in te loggen en direct aan de slag te gaan.
+                    Er is geen wachtwoord. Na inloggen blijft u ingelogd zolang u het platform minstens één keer per 7 dagen bezoekt.
                   </td>
                 </tr>
 
@@ -95,23 +95,10 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
                   </td>
                 </tr>
 
-                <!-- No password explanation -->
-                <tr>
-                  <td style="font-size: 14px; line-height: 22px; color: #4a4a4a; text-align: center; padding-bottom: 16px;">
-                    <strong>Geen wachtwoord nodig</strong><br />
-                    Rijksuitgaven werkt met inloglinks. Elke keer dat u wilt inloggen, ontvangt u een link per e-mail. Geen wachtwoord om te onthouden.
-                  </td>
-                </tr>
-
                 <!-- Expiry + renewal -->
                 <tr>
                   <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 12px;">
-                    Deze link is 24 uur geldig. Verlopen? Ga naar <a href="${siteUrl}" style="color: #436FA3; text-decoration: none;">${displayHost}</a>, klik op <strong>Inloggen</strong> en vraag een nieuwe link aan met uw e-mailadres (${email}).
-                  </td>
-                </tr>
-                <tr>
-                  <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 12px;">
-                    Rijksuitgaven is geoptimaliseerd voor desktop en laptop.
+                    Deze link is 24 uur geldig. Nieuwe link nodig? Ga naar <a href="${siteUrl}" style="color: #436FA3; text-decoration: none;">${displayHost}</a>, klik op <strong>Inloggen</strong> en vul uw e-mailadres in.
                   </td>
                 </tr>
                 <!-- Divider -->
@@ -262,18 +249,12 @@ export async function POST(
       '',
       `Beste ${person.first_name},`,
       '',
-      'De beta van Rijksuitgaven 2.0 is klaar om te testen.',
-      'Klik op de volgende link om in te loggen en direct aan de slag te gaan:',
+      'Log in op het nieuwe Rijksuitgaven met de volgende link:',
       activationLink,
       '',
-      'Geen wachtwoord nodig',
-      'Rijksuitgaven werkt met inloglinks. Elke keer dat u wilt inloggen, ontvangt u een link per e-mail. Geen wachtwoord om te onthouden.',
+      'Er is geen wachtwoord. Na inloggen blijft u ingelogd zolang u het platform minstens één keer per 7 dagen bezoekt.',
       '',
-      `Deze link is 24 uur geldig. Verlopen? Ga naar ${displayHost}, klik op Inloggen en vraag een nieuwe link aan met uw e-mailadres (${person.email}).`,
-      '',
-      'Rijksuitgaven is geoptimaliseerd voor desktop en laptop.',
-      '',
-      'Vragen? Neem contact op met ons supportteam: contact@rijksuitgaven.nl',
+      `Deze link is 24 uur geldig. Nieuwe link nodig? Ga naar ${displayHost}, klik op Inloggen en vul uw e-mailadres in.`,
     ].join('\n'),
   })
 
