@@ -20,6 +20,9 @@
 # production
 /build
 
+# build-time data copies
+/data/roadmap/
+
 # misc
 .DS_Store
 *.pem
