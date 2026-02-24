@@ -58,8 +58,8 @@ export function ReleaseBanner() {
           <span className="mx-1" style={{ color: 'rgba(67, 111, 163, 0.4)' }}>&middot;</span>
           <Link
             href="/versiegeschiedenis"
-            className="font-medium hover:underline whitespace-nowrap"
-            style={{ color: '#D4286B' }}
+            className="font-semibold hover:underline whitespace-nowrap"
+            style={{ color: '#0E3261' }}
           >
             Bekijk alles &rarr;
           </Link>
