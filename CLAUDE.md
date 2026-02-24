@@ -139,6 +139,8 @@ Which do you prefer?
 
 **Documentation happens immediately, never "later".**
 
+**Release banner sync:** When updating `/versiegeschiedenis`, also add a short banner entry to `lib/release-notes.ts` with `date`, `version`, `title`, and `summary`. These are separate files — versiegeschiedenis has detailed descriptions, release-notes has short one-liners for the in-app banner.
+
 ### 3a. Requirements-First Documentation (MANDATORY)
 
 **Every user-facing feature MUST have a formal requirement entry BEFORE implementation starts.**
@@ -369,6 +371,7 @@ git checkout staging && git pull origin staging && git merge main && git push or
 | Feature | Code Markers (grep patterns) | Files |
 |---------|------------------------------|-------|
 | UX-039 Vergelijk/Pin | `RowPinningState`, `PinOff`, `row.pin(`, `MAX_PINNED_ROWS`, `getPinnedData`, `Wis selectie` | `data-table.tsx`, `globals.css` |
+| UX-042 Release Banner | `ReleaseBanner`, `rn-last-seen`, `release-notes` | `app-shell.tsx`, `release-banner.tsx`, `release-notes.ts` |
 
 **Maintaining this registry:**
 - When a feature is deployed staging-only, ADD it here with its code markers
@@ -382,7 +385,7 @@ git checkout staging && git pull origin staging && git merge main && git push or
 1. Check for staging-only code contamination:
 ```bash
 # Auto-check: grep for ALL staging-only markers in the diff
-git diff origin/main HEAD -- app/src/ | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS|getPinnedData|Wis selectie"
+git diff origin/main HEAD -- app/src/ | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS|getPinnedData|Wis selectie|ReleaseBanner|rn-last-seen|release-notes"
 ```
 If this returns ANY matches, **STOP**. Staging-only code is about to go to production. Revert the offending changes before pushing.
 
@@ -401,6 +404,7 @@ If this shows commits, staging has extra features. **NEVER force-push** in this 
 **After ANY push to main, verify no staging-only code leaked:**
 ```bash
 git show origin/main:app/src/components/data-table/data-table.tsx | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS"
+git show origin/main:app/src/components/app-shell/app-shell.tsx | grep -iE "ReleaseBanner|release-banner"
 ```
 If matches found, **immediately revert and re-push.**
 
