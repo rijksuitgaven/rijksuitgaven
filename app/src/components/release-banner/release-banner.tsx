@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { X } from 'lucide-react'
 import { RELEASE_NOTES } from '@/lib/release-notes'
 
 const STORAGE_KEY = 'rn-last-seen'
@@ -30,55 +31,57 @@ export function ReleaseBanner() {
   const visibleTitles = unseen.slice(0, MAX_VISIBLE_TITLES).map(n => n.title)
   const remaining = unseen.length - MAX_VISIBLE_TITLES
 
+  // Build description text based on item count
+  let description: string
+  if (unseen.length === 1) {
+    description = unseen[0].title
+  } else if (unseen.length <= 3) {
+    description = visibleTitles.join(' · ') + (remaining > 0 ? ` en ${remaining} meer` : '')
+  } else {
+    description = `${unseen.length} verbeteringen sinds uw vorige bezoek`
+  }
+
   return (
-    <div style={{ backgroundColor: '#E1EAF2', borderBottom: '1px solid #8DBADC' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2">
-        <div className="flex items-start gap-2">
-          <div className="text-sm min-w-0" style={{ color: '#0E3261' }}>
-            {unseen.length === 1 ? (
-              <p className="flex items-center flex-wrap gap-x-1">
-                <span style={{ color: '#D4286B' }}>✦</span>
-                <span className="font-medium">Nieuw:</span>
-                <Link
-                  href="/versiegeschiedenis"
-                  className="underline hover:no-underline"
-                  style={{ color: '#D4286B' }}
-                >
-                  {unseen[0].title}
-                </Link>
-              </p>
-            ) : (
-              <p className="flex items-center flex-wrap gap-x-1">
-                <span style={{ color: '#D4286B' }}>✦</span>
-                <span className="font-medium">Nieuw sinds uw laatste bezoek</span>
-                <span className="hidden sm:inline" style={{ color: '#8DBADC' }}>—</span>
-                <span>
-                  {visibleTitles.join(' · ')}
-                  {remaining > 0 && (
-                    <span style={{ color: '#436FA3' }}> en {remaining} meer</span>
-                  )}
-                </span>
-                <Link
-                  href="/versiegeschiedenis"
-                  className="font-medium underline hover:no-underline whitespace-nowrap"
-                  style={{ color: '#D4286B' }}
-                >
-                  Bekijk alles &rarr;
-                </Link>
-              </p>
-            )}
-          </div>
-          <button
-            onClick={handleDismiss}
-            className="shrink-0 p-1.5 rounded transition-colors hover:bg-white/50"
-            style={{ color: '#436FA3' }}
-            aria-label="Sluiten"
+    <div
+      className="border-b"
+      style={{ backgroundColor: 'rgba(225, 234, 242, 0.6)', borderColor: 'rgba(67, 111, 163, 0.15)' }}
+      role="region"
+      aria-label="Update melding"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between gap-4">
+        <p className="text-[13px] leading-5 min-w-0" style={{ color: '#0E3261', fontFamily: 'var(--font-body)' }}>
+          <span className="font-semibold">Nieuw</span>
+          <span className="mx-1.5" style={{ color: 'rgba(67, 111, 163, 0.4)' }}>|</span>
+          <span style={{ color: 'rgba(14, 50, 97, 0.8)' }}>
+            {description}
+          </span>
+          {' '}
+          <Link
+            href="/versiegeschiedenis"
+            className="font-medium hover:underline whitespace-nowrap"
+            style={{ color: '#D4286B' }}
           >
-            <svg viewBox="0 0 20 20" fill="currentColor" className="w-4.5 h-4.5" aria-hidden="true">
-              <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
-            </svg>
-          </button>
-        </div>
+            Bekijk alles &rarr;
+          </Link>
+        </p>
+        <button
+          onClick={handleDismiss}
+          className="shrink-0 p-2 rounded transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+          style={{
+            color: 'rgba(67, 111, 163, 0.5)',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.color = '#0E3261'
+            e.currentTarget.style.backgroundColor = 'rgba(14, 50, 97, 0.07)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.color = 'rgba(67, 111, 163, 0.5)'
+            e.currentTarget.style.backgroundColor = 'transparent'
+          }}
+          aria-label="Sluiten"
+        >
+          <X size={16} aria-hidden="true" />
+        </button>
       </div>
     </div>
   )
