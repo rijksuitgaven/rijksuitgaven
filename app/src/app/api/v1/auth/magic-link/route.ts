@@ -101,7 +101,7 @@ function buildMagicLinkEmail(actionLink: string, siteUrl: string): string {
                 <!-- Expiry notice -->
                 <tr>
                   <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 28px;">
-                    Deze link is een uur geldig.
+                    Deze link is 24 uur geldig.
                   </td>
                 </tr>
 
@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
         'Klik op de volgende link om in te loggen:',
         magicLink,
         '',
-        'Deze link is een uur geldig.',
+        'Deze link is 24 uur geldig.',
         '',
         'Als u dit niet heeft aangevraagd, kunt u deze e-mail negeren.',
         `Lukt het niet? Neem contact op met ons supportteam: contact@${origin.replace(/^https?:\/\//, '')}`,

@@ -98,7 +98,7 @@ function buildWelcomeEmail(firstName: string, email: string, actionLink: string,
                 <!-- Expiry + renewal -->
                 <tr>
                   <td style="font-size: 13px; line-height: 20px; color: #8a8a8a; text-align: center; padding-bottom: 12px;">
-                    Deze link is een uur geldig. Verlopen? Ga naar <a href="${siteUrl}" style="color: #436FA3; text-decoration: none;">${displayHost}</a>, klik op <strong>Inloggen</strong> en vraag een nieuwe link aan met uw e-mailadres (${email}).
+                    Deze link is 24 uur geldig. Verlopen? Ga naar <a href="${siteUrl}" style="color: #436FA3; text-decoration: none;">${displayHost}</a>, klik op <strong>Inloggen</strong> en vraag een nieuwe link aan met uw e-mailadres (${email}).
                   </td>
                 </tr>
                 <tr>
@@ -258,7 +258,7 @@ export async function POST(
       'Klik op de volgende link om in te loggen en direct aan de slag te gaan:',
       activationLink,
       '',
-      `Deze link is een uur geldig. Verlopen? Ga naar ${displayHost}, klik op Inloggen en vraag een nieuwe link aan met uw e-mailadres (${person.email}).`,
+      `Deze link is 24 uur geldig. Verlopen? Ga naar ${displayHost}, klik op Inloggen en vraag een nieuwe link aan met uw e-mailadres (${person.email}).`,
       '',
       'Rijksuitgaven is geoptimaliseerd voor desktop en laptop.',
       '',
