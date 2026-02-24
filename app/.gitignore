@@ -20,8 +20,8 @@
 # production
 /build
 
-# build-time generated
-/src/generated/
+# build-time generated (roadmap-data.ts is committed — Railway can't access repo root files)
+# /src/generated/
 
 # misc
 .DS_Store
