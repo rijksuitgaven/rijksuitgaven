@@ -20,13 +20,13 @@ export async function GET(request: NextRequest) {
   const year = searchParams.get('year') || '2024'
 
   const supabase = createAdminClient()
-  const yearCol = year === 'totaal' ? 'totaal' : `"${year}"`
+  const yearColumns = YEARS.map(y => `"${y}"`).join(', ')
 
   try {
     // Fetch from instrumenten (has begrotingsnaam)
     const { data: instrData, error: instrErr } = await supabase
       .from('instrumenten_aggregated')
-      .select(`begrotingsnaam, ${yearCol}, totaal`)
+      .select(`begrotingsnaam, ${yearColumns}, totaal`)
       .gt('totaal', 0)
       .limit(50000)
 
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     // Fetch from apparaat (has begrotingsnaam)
     const { data: appData, error: appErr } = await supabase
       .from('apparaat_aggregated')
-      .select(`begrotingsnaam, ${yearCol}, totaal`)
+      .select(`begrotingsnaam, ${yearColumns}, totaal`)
       .gt('totaal', 0)
       .limit(50000)
 
@@ -45,18 +45,19 @@ export async function GET(request: NextRequest) {
     const appRows = (appData || []) as unknown as Record<string, unknown>[]
 
     // Aggregate by ministry
+    const yearKey = year === 'totaal' ? 'totaal' : year
     const ministries: Record<string, { instrumenten: number; apparaat: number; inkoop: number }> = {}
 
     for (const row of instrRows) {
       const name = String(row.begrotingsnaam || 'Onbekend')
-      const amount = Number(row[year === 'totaal' ? 'totaal' : year]) || 0
+      const amount = Number(row[yearKey]) || 0
       if (!ministries[name]) ministries[name] = { instrumenten: 0, apparaat: 0, inkoop: 0 }
       ministries[name].instrumenten += Math.max(0, amount)
     }
 
     for (const row of appRows) {
       const name = String(row.begrotingsnaam || 'Onbekend')
-      const amount = Number(row[year === 'totaal' ? 'totaal' : year]) || 0
+      const amount = Number(row[yearKey]) || 0
       if (!ministries[name]) ministries[name] = { instrumenten: 0, apparaat: 0, inkoop: 0 }
       ministries[name].apparaat += Math.max(0, amount)
     }

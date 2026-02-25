@@ -53,13 +53,18 @@ export default function MinistryStructure() {
   const [viewMode, setViewMode] = useState<'absolute' | 'proportional'>('absolute')
   const [data, setData] = useState<StructureData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setLoading(true)
+    setError(null)
     fetch(`/api/v1/inzichten/ministry-structure?year=${year}`)
       .then(res => res.json())
-      .then(d => { if (!d.error) setData(d) })
-      .catch(() => {})
+      .then(d => {
+        if (d.error) { setError(d.error); setData(null) }
+        else setData(d)
+      })
+      .catch(err => setError(err.message))
       .finally(() => setLoading(false))
   }, [year])
 
@@ -126,6 +131,10 @@ export default function MinistryStructure() {
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <p className="text-sm text-[var(--navy-medium)]">Laden...</p>
+        </div>
+      ) : error ? (
+        <div className="flex items-center justify-center h-64">
+          <p className="text-sm text-red-500">Fout: {error}</p>
         </div>
       ) : data ? (
         <>
