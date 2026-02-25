@@ -27,6 +27,7 @@ const MinistryStructure = lazy(() => import('./ministry-structure'))
 const SpendingPerCapita = lazy(() => import('./spending-per-capita'))
 const RegelingProfile = lazy(() => import('./regeling-profile'))
 const HeadToHead = lazy(() => import('./head-to-head'))
+const TopTabellen = lazy(() => import('./top-tabellen'))
 
 // ─── Constants ────────────────────────────────────────────────────
 const YEARS = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
@@ -72,6 +73,7 @@ const TABS = [
   { id: 'regeling', label: 'Regeling', description: 'Regeling-profiel' },
   { id: 'leaderboard', label: 'Leaderboard', description: 'Top ontvangers' },
   { id: 'head-to-head', label: 'Head-to-Head', description: 'Vergelijk organisaties' },
+  { id: 'top-tabellen', label: 'Top Tabellen', description: 'Ranglijsten per dimensie' },
 ] as const
 
 type TabId = typeof TABS[number]['id']
@@ -273,6 +275,7 @@ function ConceptCards({ onNavigate }: { onNavigate: (tab: TabId) => void }) {
     { tab: 'regeling' as TabId, title: 'Regeling Profiel', desc: 'Dompel je onder in één regeling: verdeling, concentratie, ontvangers.', icon: '📋' },
     { tab: 'leaderboard' as TabId, title: 'Leaderboard', desc: 'Wie ontvangt het meeste? De top ontvangers per module en jaar.', icon: '🏆' },
     { tab: 'head-to-head' as TabId, title: 'Head-to-Head', desc: 'Vergelijk 2-3 organisaties op 6 dimensies in een radar chart.', icon: '⚔️' },
+    { tab: 'top-tabellen' as TabId, title: 'Top Tabellen', desc: 'Klassieke ranglijsten: per begroting, ontvanger, instrument of regeling.', icon: '📑' },
   ]
 
   return (
@@ -532,6 +535,11 @@ export default function InzichtenDashboard() {
       {activeTab === 'head-to-head' && (
         <Suspense fallback={<ConceptLoading />}>
           <HeadToHead />
+        </Suspense>
+      )}
+      {activeTab === 'top-tabellen' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <TopTabellen />
         </Suspense>
       )}
     </div>
