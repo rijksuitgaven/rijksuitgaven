@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
 
         // Skip if base is near zero or change is below threshold
         if (Math.abs(fromVal) < 1000 || Math.abs(absChange) < minChange) {
-          return { pair: pair.label, pct_change: null, abs_change: absChange, from: fromVal, to: toVal }
+          return { pair: pair.label, pct_change: 0, absolute_change: absChange, from: fromVal, to: toVal }
         }
 
         const pctChange = ((toVal - fromVal) / Math.abs(fromVal)) * 100
@@ -92,19 +92,36 @@ export async function GET(request: NextRequest) {
         return {
           pair: pair.label,
           pct_change: Math.round(capped * 10) / 10,
-          abs_change: Math.round(absChange),
+          absolute_change: Math.round(absChange),
           from: fromVal,
           to: toVal,
         }
       })
+
+      // Compute avg_change and volatility from non-zero pct_change values
+      const nonZeroChanges = changes.filter(c => c.pct_change !== 0).map(c => c.pct_change)
+      const avg_change = nonZeroChanges.length > 0
+        ? Math.round((nonZeroChanges.reduce((s, v) => s + v, 0) / nonZeroChanges.length) * 10) / 10
+        : 0
+      // Volatility = standard deviation of pct_change values
+      const volatility = nonZeroChanges.length > 1
+        ? Math.round(Math.sqrt(nonZeroChanges.reduce((s, v) => s + (v - avg_change) ** 2, 0) / nonZeroChanges.length) * 10) / 10
+        : 0
 
       return {
         name,
         total: data.totaal,
         latest: data['2024'],
         changes,
+        avg_change,
+        volatility,
       }
     })
+
+    // Compute summary stats
+    const allAvgChanges = entities.map(e => e.avg_change)
+    const positiveChanges = allAvgChanges.filter(v => v > 0)
+    const negativeChanges = allAvgChanges.filter(v => v < 0)
 
     return NextResponse.json({
       module,
@@ -112,6 +129,15 @@ export async function GET(request: NextRequest) {
       top,
       year_pairs: YEAR_PAIRS.map(p => p.label),
       entities,
+      summary: {
+        total_entities: entities.length,
+        avg_positive: positiveChanges.length > 0
+          ? Math.round((positiveChanges.reduce((s, v) => s + v, 0) / positiveChanges.length) * 10) / 10
+          : 0,
+        avg_negative: negativeChanges.length > 0
+          ? Math.round((negativeChanges.reduce((s, v) => s + v, 0) / negativeChanges.length) * 10) / 10
+          : 0,
+      },
       data_notes: {
         last_updated: new Date().toISOString().split('T')[0],
         scope: `${config.view}`,
