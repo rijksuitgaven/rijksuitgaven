@@ -60,15 +60,20 @@ export default function SpendingVelocity() {
   const [topN, setTopN] = useState(20)
   const [data, setData] = useState<VelocityData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<'volatility' | 'avg'>('volatility')
 
   useEffect(() => {
     setLoading(true)
+    setError(null)
     const params = new URLSearchParams({ module, level, top: String(topN) })
     fetch(`/api/v1/inzichten/spending-velocity?${params}`)
       .then(res => res.json())
-      .then(d => { if (!d.error) setData(d) })
-      .catch(() => {})
+      .then(d => {
+        if (d.error) { setError(d.error); setData(null) }
+        else setData(d)
+      })
+      .catch(err => setError(err.message))
       .finally(() => setLoading(false))
   }, [module, level, topN])
 
@@ -143,6 +148,10 @@ export default function SpendingVelocity() {
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <p className="text-sm text-[var(--navy-medium)]">Laden...</p>
+        </div>
+      ) : error ? (
+        <div className="flex items-center justify-center h-64">
+          <p className="text-sm text-red-500">Fout: {error}</p>
         </div>
       ) : data ? (
         <>
