@@ -333,6 +333,9 @@ Dataset additions, year updates, and data corrections. New data sources expand c
 
 ### V5.0 - Self-Service BI
 
+**Lab prototypes (9 concepts at `/team/lab/h6`):**
+Concentration Index (Gini/Lorenz), Anomaly Detector, Money Flow (Sankey), Spending Pulse, New Money, The Movers, Ministry DNA, Spending Landscape (Treemap), Dependency Radar. Design doc: `docs/plans/2026-02-24-v5-inzichten-design.md`.
+
 **Features:**
 - Custom dashboard builder
 - Trend analysis tools

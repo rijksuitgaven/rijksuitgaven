@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-24
+**Last Updated:** 2026-02-25
 **Project Phase:** V2.0 Development
 **Current Sprint:** Week 8+ — Pre-Launch Polish & Beta Feedback
 **Beta Status:** V0.9 live at beta.rijksuitgaven.nl (10 testers, launched 2026-02-21)
@@ -65,7 +65,7 @@
 | Backlog cleanup | ✅ Done (Feb 24) | 1406→350 lines, future-only, organized by track, source-of-truth pointers |
 | Roadmap multi-select + sort | ✅ Done (Feb 24) | Multi-select dropdowns, semantic version sort (V2.0 before V10.0) |
 | Roadmap superseded items | ✅ Done (Feb 24) | Removed GitHub Projects + UX refinements from V2.5 (already shipped/replaced) |
-| V5.0 Lab prototype (h6) | ✅ Built (Feb 24) | 6 interactive viz concepts: Pulse, New Money, Movers, Ministry DNA, Treemap, Dependency Radar. recharts+d3. Design doc at `docs/plans/2026-02-24-v5-inzichten-design.md` |
+| V5.0 Lab prototype (h6) | ✅ Built (Feb 24-25) | 9 interactive viz concepts: Pulse, New Money, Movers, Ministry DNA, Treemap, Dependency Radar, Concentration Index, Anomaly Detector, Money Flow (Sankey). Recharts+D3. Design doc at `docs/plans/2026-02-24-v5-inzichten-design.md` |
 | Onboarding email sequence | ✅ Implemented (Feb 24) | 5 emails implemented. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -78,23 +78,20 @@
 
 ## Recent Work (Last 5)
 
-1. **Login UX + Lab + Roadmap + UX-040–042 + Project Tracking + V5.0 Lab** (2026-02-24)
+1. **V5.0 Inzichten Lab Expansion — 3 New Concepts** (2026-02-25)
+   Brainstormed 3 new viz concepts (Concentration Index, Anomaly Detector, Money Flow Sankey). Built 3 BFF routes + 3 frontend components. Lab now has 9 concepts total. Design doc updated. Pushed to both environments.
+
+2. **Login UX + Lab + Roadmap + UX-040–042 + Project Tracking + V5.0 Lab** (2026-02-24)
    S1-S4: Spam analysis, magic link 24h, invite email rewrite, Lab section, cron fix, /team/roadmap, UX-040 sort desc first. S5: UX-041 URL state (staging). S6: UX-042 release banner (staging), deployment protocol rewrite, UX-039 restoration. S7: UX-042 design refinement (5 iterations, expert review), released to production, flicker fix. S8: Project tracking system design (4-person expert team), VERSIONING.md staleness fix (V2.0 ✅ Live, table format), /document+/closeday skills enhanced (mandatory reconciliation), backlog cleanup (1406→350 lines, future-only). S9: Roadmap multi-select+semver sort, superseded items cleanup, V5.0 Inzichten lab prototype (6 visualization concepts: Pulse, New Money, Movers, Ministry DNA, Treemap, Dependency Radar — recharts+d3, expert team design).
 
-2. **Critical Production Bug Fixes + Email Deliverability** (2026-02-23)
+3. **Critical Production Bug Fixes + Email Deliverability** (2026-02-23)
    7 fixes + deliverability overhaul: UX-039 reverted from main, Totaal sort broken (`total`→`totaal`), source table year inflation, Kolommen+filters (UX-006 revised), Publiek zero results (`regio`→`provincie`). Email: noreply→contact@, plain-text multipart, Reply-To, DMARC rua, SPF -all. Prevention: staging-only registry, Sort Field Contract.
 
-2. **4 Release Tracks (VERSIONING restructure)** (2026-02-22)
+4. **4 Release Tracks (VERSIONING restructure)** (2026-02-22)
    VERSIONING.md restructured with 4 release tracks: V (end-user), A (admin), M (marketing/launch), D (data). URL state restoration moved to V2.2. M1.0 Lancering = launch gate (6 items before DNS switch). D1.0 = Gemeente Haarlemmermeer. V2.x renumbered (eliminated V2.4 Homepage, V2.7).
 
-3. **Cron Fix + A-track Status** (2026-02-22)
+5. **Cron Fix + A-track Status** (2026-02-22)
    A-track per-feature status tracking in VERSIONING.md, UTM builder added to A1.0. Railway cron-sequences crash fixed: `$CRON_SECRET` not expanded in Docker exec-form, hardcoded value. Schedule corrected to weekday hours. Secret rotated.
-
-4. **Email System Polish** (2026-02-22)
-   Template fixes: list spacing, duplicate footer, heading left-align+spacing, auto-greeting removed. Editor: autolink disabled, unlink button. Test email: editable recipient address. Segment bug: active subscription determines leden (not pipeline_stage). Onboarding Mail 1 copy updated. CLAUDE.md Rule 0: never act without approval.
-
-5. **Campaign Detail View Upgrade** (2026-02-22)
-   Team brainstorm analyzed old email system screenshots → P0+P1 implementation. KPI summary bar (5 metrics with %), campaign header card, recipient filter toggles, sort controls, single-line recipient format, last_name in API.
 
 ---
 
