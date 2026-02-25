@@ -333,8 +333,8 @@ Dataset additions, year updates, and data corrections. New data sources expand c
 
 ### V5.0 - Self-Service BI
 
-**Lab prototypes (22 concepts at `/team/lab/h6`):**
-Across 7 analytical domains — Composition (Share Shift, Sunburst with click-to-zoom), Trend (Growth Comparator, Spending Velocity heatmap with volatility metrics), Variance (Pattern Deviation), Outlier (Spending Spectrum), Flow (Reverse Flow), Efficiency (Ministry Cost Structure, Per Capita, Regeling Profile with Gini), Ranking (Leaderboard, Head-to-Head radar, Top Tabellen with position changes). Plus 9 foundation concepts: Spending Pulse, New Money, The Movers, Ministry DNA, Spending Landscape (Treemap), Dependency Radar, Concentration Index (Gini/Lorenz), Anomaly Detector, Money Flow (Sankey). Design doc: `docs/plans/2026-02-25-v5-comprehensive-design.md`.
+**Lab prototypes (28 concepts at `/team/lab/h6`):**
+Across 7 analytical domains — Composition (Share Shift, Sunburst with click-to-zoom), Trend (Growth Comparator, Spending Velocity heatmap), Variance (Pattern Deviation), Outlier (Spending Spectrum), Flow (Reverse Flow), Efficiency (Ministry Cost Structure, Per Capita, Regeling Profile), Ranking (Leaderboard, Head-to-Head, Top Tabellen). Plus 9 foundation concepts (Pulse, New Money, Movers, Ministry DNA, Treemap, Dependency Radar, Concentration Index, Anomaly Detector, Money Flow Sankey). Plus 6 novel graph types: Chord Diagram (bilateral ministry↔recipient flows), Bump Chart (ranking changes over time), Alluvial (4-stage money path: Ministerie→Instrument→Regeling→Ontvanger), Network Graph (force-directed spending relationships), Beeswarm (every recipient as dot on log scale), Marimekko (ministry size × recipient composition). All custom SVG, zero external chart dependencies. Design doc: `docs/plans/2026-02-25-v5-comprehensive-design.md`.
 
 **Features:**
 - Custom dashboard builder

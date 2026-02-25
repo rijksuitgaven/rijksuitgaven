@@ -65,7 +65,7 @@
 | Backlog cleanup | ✅ Done (Feb 24) | 1406→350 lines, future-only, organized by track, source-of-truth pointers |
 | Roadmap multi-select + sort | ✅ Done (Feb 24) | Multi-select dropdowns, semantic version sort (V2.0 before V10.0) |
 | Roadmap superseded items | ✅ Done (Feb 24) | Removed GitHub Projects + UX refinements from V2.5 (already shipped/replaced) |
-| V5.0 Lab prototype (h6) | ✅ Built (Feb 24-25) | 22 interactive viz concepts across 7 analytical domains + classic tables. Includes Top Tabellen, Sunburst with click-to-zoom navigation. 3 bug fixes: Ministry Cost Structure (year column select), Spending Velocity (BFF/frontend alignment), Sunburst zoom. Recharts+D3+SVG. Design doc at `docs/plans/2026-02-25-v5-comprehensive-design.md` |
+| V5.0 Lab prototype (h6) | ✅ Built (Feb 24-25) | 28 interactive viz concepts: 7 analytical domains (22 concepts) + 6 novel graph types (chord, bump, alluvial, network, beeswarm, marimekko). All custom SVG, zero extra deps. 3 bug fixes. Sunburst zoom. RLS migration 073. Design doc at `docs/plans/2026-02-25-v5-comprehensive-design.md`. Next: brainstorm bottom-up network (ontvanger → sources → peers). |
 | Onboarding email sequence | ✅ Implemented (Feb 24) | 5 emails implemented. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -78,8 +78,8 @@
 
 ## Recent Work (Last 5)
 
-1. **V5.0 Inzichten — Full 22-Concept Visualization Suite + Bug Fixes** (2026-02-25)
-   Designed comprehensive 7-domain framework (Composition, Trend, Variance, Outlier, Flow, Efficiency, Ranking). Built 13 new concepts (10-22) on top of 9 existing. Includes Top Tabellen (Concept 22): classic ranked tables. 3 bug fixes: Ministry Cost Structure (year column select), Spending Velocity (BFF/frontend response alignment — added avg_change, volatility, summary), Sunburst zoom (click-to-zoom with breadcrumb trail, center back button). Comprehensive design doc. Pushed to both environments.
+1. **V5.0 Inzichten — 28-Concept Visualization Suite** (2026-02-25)
+   7-domain framework (22 concepts) + 6 novel graph types: Chord Diagram (bilateral flows), Bump Chart (rankings over time), Alluvial (4-stage money path), Network Graph (force-directed), Beeswarm (every recipient as dot), Marimekko (size × composition). All custom SVG. 3 bug fixes (Ministry Structure, Velocity, Sunburst zoom). RLS migration 073. Next brainstorm: bottom-up network starting from ontvanger.
 
 2. **Login UX + Lab + Roadmap + UX-040–042 + Project Tracking + V5.0 Lab** (2026-02-24)
    S1-S4: Spam analysis, magic link 24h, invite email rewrite, Lab section, cron fix, /team/roadmap, UX-040 sort desc first. S5: UX-041 URL state (staging). S6: UX-042 release banner (staging), deployment protocol rewrite, UX-039 restoration. S7: UX-042 design refinement (5 iterations, expert review), released to production, flicker fix. S8: Project tracking system design (4-person expert team), VERSIONING.md staleness fix (V2.0 ✅ Live, table format), /document+/closeday skills enhanced (mandatory reconciliation), backlog cleanup (1406→350 lines, future-only). S9: Roadmap multi-select+semver sort, superseded items cleanup, V5.0 Inzichten lab prototype (6 visualization concepts: Pulse, New Money, Movers, Ministry DNA, Treemap, Dependency Radar — recharts+d3, expert team design).
