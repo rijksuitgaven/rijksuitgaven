@@ -147,9 +147,9 @@
 
 ## Executed SQL Migrations
 
-Last migration: **072-campaign-conditions.sql** (2026-02-22)
+Last migration: **073-rls-campaigns-media.sql** (2026-02-25)
 
-Full list: 001 → 072. See `SESSION-CONTEXT-ARCHIVE.md` for complete execution log.
+Full list: 001 → 073. See `SESSION-CONTEXT-ARCHIVE.md` for complete execution log.
 
 Key recent migrations:
 | # | Description | Date |
