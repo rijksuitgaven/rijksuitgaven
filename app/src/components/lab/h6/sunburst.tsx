@@ -110,15 +110,26 @@ function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
   }
 }
 
+function findNode(node: TreeNode, name: string): TreeNode | null {
+  if (node.name === name) return node
+  for (const child of node.children || []) {
+    const found = findNode(child, name)
+    if (found) return found
+  }
+  return null
+}
+
 export default function Sunburst() {
   const [year, setYear] = useState('2024')
   const [data, setData] = useState<SunburstData | null>(null)
   const [loading, setLoading] = useState(true)
   const [hovered, setHovered] = useState<ArcData | null>(null)
+  const [zoomPath, setZoomPath] = useState<string[]>([]) // stack of node names we've zoomed into
   const svgRef = useRef<SVGSVGElement>(null)
 
   useEffect(() => {
     setLoading(true)
+    setZoomPath([])
     fetch(`/api/v1/inzichten/sunburst?year=${year}`)
       .then(res => res.json())
       .then(d => { if (!d.error) setData(d) })
@@ -126,15 +137,40 @@ export default function Sunburst() {
       .finally(() => setLoading(false))
   }, [year])
 
+  // Resolve current zoom root node
+  const zoomRoot = (() => {
+    if (!data || zoomPath.length === 0) return data?.tree ?? null
+    let node: TreeNode | null = data.tree
+    for (const name of zoomPath) {
+      node = node ? findNode(node, name) : null
+    }
+    return node
+  })()
+
   const arcs = (() => {
-    if (!data) return []
-    const flat = flattenTree(data.tree, 0, 0, 360, 0)
-    // Set percentage
+    if (!zoomRoot) return []
+    const flat = flattenTree(zoomRoot, 0, 0, 360, 0)
+    const rootTotal = zoomRoot.value
     return flat.map(a => ({
       ...a,
-      percentage: data.total > 0 ? Math.round((a.value / data.total) * 1000) / 10 : 0,
+      percentage: rootTotal > 0 ? Math.round((a.value / rootTotal) * 1000) / 10 : 0,
     }))
   })()
+
+  const handleArcClick = useCallback((arc: ArcData) => {
+    // Only zoom if the arc has children (check in tree)
+    if (!zoomRoot) return
+    const targetNode = findNode(zoomRoot, arc.name)
+    if (targetNode?.children && targetNode.children.length > 0) {
+      setZoomPath(prev => [...prev, arc.name])
+      setHovered(null)
+    }
+  }, [zoomRoot])
+
+  const handleZoomOut = useCallback(() => {
+    setZoomPath(prev => prev.slice(0, -1))
+    setHovered(null)
+  }, [])
 
   const SIZE = 500
   const CX = SIZE / 2
@@ -174,17 +210,62 @@ export default function Sunburst() {
         </div>
       ) : data ? (
         <>
+          {/* Breadcrumb */}
+          {zoomPath.length > 0 && (
+            <div className="flex items-center gap-1 text-xs">
+              <button
+                onClick={() => setZoomPath([])}
+                className="text-[var(--pink)] hover:underline"
+              >
+                Rijksoverheid
+              </button>
+              {zoomPath.map((name, idx) => (
+                <span key={name} className="flex items-center gap-1">
+                  <span className="text-[var(--navy-medium)]">›</span>
+                  <button
+                    onClick={() => setZoomPath(prev => prev.slice(0, idx + 1))}
+                    className={idx === zoomPath.length - 1 ? 'text-[var(--navy-dark)] font-medium' : 'text-[var(--pink)] hover:underline'}
+                  >
+                    {name.length > 30 ? name.slice(0, 28) + '...' : name}
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+
           {/* Sunburst SVG */}
           <div className="bg-white border border-[var(--border)] rounded-lg p-5">
             <div className="flex flex-col lg:flex-row gap-6">
               <div className="flex-shrink-0 mx-auto">
                 <svg ref={svgRef} width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
+                  {/* Center circle — click to zoom out */}
+                  <circle
+                    cx={CX}
+                    cy={CY}
+                    r={INNER_R - 2}
+                    fill="white"
+                    onClick={zoomPath.length > 0 ? handleZoomOut : undefined}
+                    style={{ cursor: zoomPath.length > 0 ? 'pointer' : 'default' }}
+                  />
                   {/* Center label */}
-                  <text x={CX} y={CY - 8} textAnchor="middle" fontSize={11} fill={NAVY_DARK} fontWeight="bold">
-                    {hovered ? (hovered.name.length > 18 ? hovered.name.slice(0, 16) + '...' : hovered.name) : 'Rijksoverheid'}
+                  <text
+                    x={CX}
+                    y={CY - (hovered ? 8 : 4)}
+                    textAnchor="middle"
+                    fontSize={11}
+                    fill={zoomPath.length > 0 ? PINK : NAVY_DARK}
+                    fontWeight="bold"
+                    onClick={zoomPath.length > 0 ? handleZoomOut : undefined}
+                    style={{ cursor: zoomPath.length > 0 ? 'pointer' : 'default' }}
+                  >
+                    {hovered
+                      ? (hovered.name.length > 18 ? hovered.name.slice(0, 16) + '...' : hovered.name)
+                      : zoomPath.length > 0
+                        ? '‹ Terug'
+                        : 'Rijksoverheid'}
                   </text>
                   <text x={CX} y={CY + 8} textAnchor="middle" fontSize={10} fill={NAVY_MEDIUM}>
-                    {hovered ? formatEuro(hovered.value) : formatEuro(data.total)}
+                    {hovered ? formatEuro(hovered.value) : zoomRoot ? formatEuro(zoomRoot.value) : ''}
                   </text>
                   {hovered && (
                     <text x={CX} y={CY + 22} textAnchor="middle" fontSize={9} fill={NAVY_MEDIUM}>
@@ -211,6 +292,7 @@ export default function Sunburst() {
                         strokeWidth={1}
                         onMouseEnter={() => setHovered(arc)}
                         onMouseLeave={() => setHovered(null)}
+                        onClick={() => handleArcClick(arc)}
                         style={{ cursor: 'pointer', transition: 'fill-opacity 0.15s' }}
                       />
                     )
@@ -221,33 +303,39 @@ export default function Sunburst() {
               {/* Legend + hover detail */}
               <div className="flex-1 min-w-[200px]">
                 <h3 className="text-xs font-semibold text-[var(--navy-dark)] mb-2">
-                  Ministeries ({data.ministry_count})
+                  {zoomPath.length === 0 ? `Ministeries (${data.ministry_count})` : `${zoomRoot?.name ?? ''} (${zoomRoot?.children?.length ?? 0})`}
                 </h3>
                 <div className="space-y-1 max-h-[400px] overflow-y-auto">
-                  {data.tree.children?.map((ministry, idx) => (
+                  {(zoomRoot?.children ?? []).map((child, idx) => (
                     <div
-                      key={ministry.name}
-                      className="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-50 cursor-default"
+                      key={child.name}
+                      className="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-50 cursor-pointer"
                       onMouseEnter={() => setHovered({
-                        name: ministry.name,
-                        value: ministry.value,
+                        name: child.name,
+                        value: child.value,
                         depth: 1,
                         startAngle: 0,
                         endAngle: 0,
                         color: MINISTRY_COLORS[idx % MINISTRY_COLORS.length],
-                        percentage: data.total > 0 ? Math.round((ministry.value / data.total) * 1000) / 10 : 0,
+                        percentage: zoomRoot && zoomRoot.value > 0 ? Math.round((child.value / zoomRoot.value) * 1000) / 10 : 0,
                       })}
                       onMouseLeave={() => setHovered(null)}
+                      onClick={() => {
+                        if (child.children && child.children.length > 0) {
+                          setZoomPath(prev => [...prev, child.name])
+                          setHovered(null)
+                        }
+                      }}
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <div
                           className="w-3 h-3 rounded-sm flex-shrink-0"
                           style={{ backgroundColor: MINISTRY_COLORS[idx % MINISTRY_COLORS.length] }}
                         />
-                        <span className="text-xs text-[var(--navy-dark)] truncate">{ministry.name}</span>
+                        <span className="text-xs text-[var(--navy-dark)] truncate">{child.name}</span>
                       </div>
                       <span className="text-xs tabular-nums text-[var(--navy-medium)] whitespace-nowrap ml-2">
-                        {formatEuro(ministry.value)}
+                        {formatEuro(child.value)}
                       </span>
                     </div>
                   ))}
