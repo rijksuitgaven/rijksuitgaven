@@ -28,6 +28,12 @@ const SpendingPerCapita = lazy(() => import('./spending-per-capita'))
 const RegelingProfile = lazy(() => import('./regeling-profile'))
 const HeadToHead = lazy(() => import('./head-to-head'))
 const TopTabellen = lazy(() => import('./top-tabellen'))
+const ChordDiagram = lazy(() => import('./chord-diagram'))
+const BumpChartView = lazy(() => import('./bump-chart'))
+const AlluvialView = lazy(() => import('./alluvial'))
+const NetworkGraphView = lazy(() => import('./network-graph'))
+const BeeswarmView = lazy(() => import('./beeswarm'))
+const MarimekkoView = lazy(() => import('./marimekko'))
 
 // ─── Constants ────────────────────────────────────────────────────
 const YEARS = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
@@ -74,6 +80,12 @@ const TABS = [
   { id: 'leaderboard', label: 'Leaderboard', description: 'Top ontvangers' },
   { id: 'head-to-head', label: 'Head-to-Head', description: 'Vergelijk organisaties' },
   { id: 'top-tabellen', label: 'Top Tabellen', description: 'Ranglijsten per dimensie' },
+  { id: 'chord', label: 'Chord', description: 'Bilaterale geldstromen' },
+  { id: 'bump', label: 'Bump Chart', description: 'Rankings door de tijd' },
+  { id: 'alluvial', label: 'Alluvial', description: 'Pad van het geld' },
+  { id: 'network', label: 'Netwerk', description: 'Bestedingsnetwerk' },
+  { id: 'beeswarm', label: 'Beeswarm', description: 'Elke ontvanger als punt' },
+  { id: 'marimekko', label: 'Marimekko', description: 'Grootte × samenstelling' },
 ] as const
 
 type TabId = typeof TABS[number]['id']
@@ -276,6 +288,12 @@ function ConceptCards({ onNavigate }: { onNavigate: (tab: TabId) => void }) {
     { tab: 'leaderboard' as TabId, title: 'Leaderboard', desc: 'Wie ontvangt het meeste? De top ontvangers per module en jaar.', icon: '🏆' },
     { tab: 'head-to-head' as TabId, title: 'Head-to-Head', desc: 'Vergelijk 2-3 organisaties op 6 dimensies in een radar chart.', icon: '⚔️' },
     { tab: 'top-tabellen' as TabId, title: 'Top Tabellen', desc: 'Klassieke ranglijsten: per begroting, ontvanger, instrument of regeling.', icon: '📑' },
+    { tab: 'chord' as TabId, title: 'Chord Diagram', desc: 'Wie financiert wie? Bilaterale geldstromen tussen ministeries en ontvangers.', icon: '🎵' },
+    { tab: 'bump' as TabId, title: 'Bump Chart', desc: 'Wie stijgt, wie daalt? Rankings door de jaren heen.', icon: '🏁' },
+    { tab: 'alluvial' as TabId, title: 'Het Pad van het Geld', desc: 'Volg het geld door 4 niveaus: Ministerie → Instrument → Regeling → Ontvanger.', icon: '🌊' },
+    { tab: 'network' as TabId, title: 'Bestedingsnetwerk', desc: 'Hoe zijn ministeries en ontvangers verbonden? Force-directed netwerk.', icon: '🕸️' },
+    { tab: 'beeswarm' as TabId, title: 'Beeswarm', desc: 'Elke ontvanger als punt. Van €1K tot €1B+ — ongelijkheid zichtbaar gemaakt.', icon: '🐝' },
+    { tab: 'marimekko' as TabId, title: 'Marimekko', desc: 'Wie krijgt wat, en hoe groot? Breedte = ministeriegrootte, hoogte = samenstelling.', icon: '🧱' },
   ]
 
   return (
@@ -540,6 +558,36 @@ export default function InzichtenDashboard() {
       {activeTab === 'top-tabellen' && (
         <Suspense fallback={<ConceptLoading />}>
           <TopTabellen />
+        </Suspense>
+      )}
+      {activeTab === 'chord' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <ChordDiagram />
+        </Suspense>
+      )}
+      {activeTab === 'bump' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <BumpChartView />
+        </Suspense>
+      )}
+      {activeTab === 'alluvial' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <AlluvialView />
+        </Suspense>
+      )}
+      {activeTab === 'network' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <NetworkGraphView />
+        </Suspense>
+      )}
+      {activeTab === 'beeswarm' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <BeeswarmView />
+        </Suspense>
+      )}
+      {activeTab === 'marimekko' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <MarimekkoView />
         </Suspense>
       )}
     </div>
