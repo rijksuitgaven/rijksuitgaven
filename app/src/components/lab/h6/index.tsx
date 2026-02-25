@@ -12,6 +12,9 @@ const Movers = lazy(() => import('./movers'))
 const MinistryDNA = lazy(() => import('./ministry-dna'))
 const SpendingLandscape = lazy(() => import('./spending-landscape'))
 const DependencyRadar = lazy(() => import('./dependency-radar'))
+const Concentration = lazy(() => import('./concentration'))
+const Anomalies = lazy(() => import('./anomalies'))
+const MoneyFlow = lazy(() => import('./money-flow'))
 
 // ─── Constants ────────────────────────────────────────────────────
 const YEARS = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
@@ -42,6 +45,9 @@ const TABS = [
   { id: 'ministry-dna', label: 'Ministry DNA', description: 'Ministerie-analyse' },
   { id: 'treemap', label: 'Landscape', description: 'Uitgavenstructuur' },
   { id: 'radar', label: 'Radar', description: 'Cross-module analyse' },
+  { id: 'concentration', label: 'Concentratie', description: 'Ongelijkheid & Gini' },
+  { id: 'anomalies', label: 'Anomalieën', description: 'Dramatische veranderingen' },
+  { id: 'money-flow', label: 'Money Flow', description: 'Sankey geldstromen' },
 ] as const
 
 type TabId = typeof TABS[number]['id']
@@ -228,6 +234,9 @@ function ConceptCards({ onNavigate }: { onNavigate: (tab: TabId) => void }) {
     { tab: 'ministry-dna' as TabId, title: 'Ministry DNA', desc: 'Vergelijk structurele uitgavenpatronen van alle ministeries', icon: '🧬' },
     { tab: 'treemap' as TabId, title: 'Spending Landscape', desc: 'Ontdek de hiërarchie van overheidsuitgaven: ministerie → regeling → instrument', icon: '🗺' },
     { tab: 'radar' as TabId, title: 'Dependency Radar', desc: 'Welke organisaties ontvangen geld via meerdere databronnen?', icon: '📡' },
+    { tab: 'concentration' as TabId, title: 'Concentration Index', desc: 'Wordt de koek eerlijker verdeeld, of krijgen steeds minder organisaties meer?', icon: '⚖️' },
+    { tab: 'anomalies' as TabId, title: 'Anomaly Detector', desc: 'Wat is er dramatisch veranderd? Explosieve groei, verdwijningen en uitschieters.', icon: '🔍' },
+    { tab: 'money-flow' as TabId, title: 'Money Flow', desc: 'Volg het geld van ministerie via regeling naar de ontvangers.', icon: '💸' },
   ]
 
   return (
@@ -412,6 +421,21 @@ export default function InzichtenDashboard() {
       {activeTab === 'radar' && (
         <Suspense fallback={<ConceptLoading />}>
           <DependencyRadar />
+        </Suspense>
+      )}
+      {activeTab === 'concentration' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <Concentration />
+        </Suspense>
+      )}
+      {activeTab === 'anomalies' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <Anomalies />
+        </Suspense>
+      )}
+      {activeTab === 'money-flow' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <MoneyFlow />
         </Suspense>
       )}
     </div>
