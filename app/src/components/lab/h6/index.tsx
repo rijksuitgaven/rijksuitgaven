@@ -15,6 +15,18 @@ const DependencyRadar = lazy(() => import('./dependency-radar'))
 const Concentration = lazy(() => import('./concentration'))
 const Anomalies = lazy(() => import('./anomalies'))
 const MoneyFlow = lazy(() => import('./money-flow'))
+const ShareShift = lazy(() => import('./share-shift'))
+const GrowthComparator = lazy(() => import('./growth-comparator'))
+const SpendingSpectrum = lazy(() => import('./spending-spectrum'))
+const LeaderboardView = lazy(() => import('./leaderboard'))
+const SunburstView = lazy(() => import('./sunburst'))
+const SpendingVelocity = lazy(() => import('./spending-velocity'))
+const PatternDeviation = lazy(() => import('./pattern-deviation'))
+const ReverseFlow = lazy(() => import('./reverse-flow'))
+const MinistryStructure = lazy(() => import('./ministry-structure'))
+const SpendingPerCapita = lazy(() => import('./spending-per-capita'))
+const RegelingProfile = lazy(() => import('./regeling-profile'))
+const HeadToHead = lazy(() => import('./head-to-head'))
 
 // ─── Constants ────────────────────────────────────────────────────
 const YEARS = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
@@ -48,6 +60,18 @@ const TABS = [
   { id: 'concentration', label: 'Concentratie', description: 'Ongelijkheid & Gini' },
   { id: 'anomalies', label: 'Anomalieën', description: 'Dramatische veranderingen' },
   { id: 'money-flow', label: 'Money Flow', description: 'Sankey geldstromen' },
+  { id: 'share-shift', label: 'Share Shift', description: 'Aandeel ministeries' },
+  { id: 'sunburst', label: 'Sunburst', description: 'Hiërarchische verdeling' },
+  { id: 'growth', label: 'Growth', description: 'Groei vergelijken' },
+  { id: 'velocity', label: 'Velocity', description: 'YoY veranderingen' },
+  { id: 'deviation', label: 'Afwijking', description: 'Patroon afwijkingen' },
+  { id: 'spectrum', label: 'Spectrum', description: 'Verdeling & schaal' },
+  { id: 'reverse-flow', label: 'Reverse Flow', description: 'Ontvanger → bron' },
+  { id: 'ministry-cost', label: 'Kostenstructuur', description: 'Instrumenten vs apparaat' },
+  { id: 'per-capita', label: 'Per Capita', description: 'Uitgaven per inwoner' },
+  { id: 'regeling', label: 'Regeling', description: 'Regeling-profiel' },
+  { id: 'leaderboard', label: 'Leaderboard', description: 'Top ontvangers' },
+  { id: 'head-to-head', label: 'Head-to-Head', description: 'Vergelijk organisaties' },
 ] as const
 
 type TabId = typeof TABS[number]['id']
@@ -237,6 +261,18 @@ function ConceptCards({ onNavigate }: { onNavigate: (tab: TabId) => void }) {
     { tab: 'concentration' as TabId, title: 'Concentration Index', desc: 'Wordt de koek eerlijker verdeeld, of krijgen steeds minder organisaties meer?', icon: '⚖️' },
     { tab: 'anomalies' as TabId, title: 'Anomaly Detector', desc: 'Wat is er dramatisch veranderd? Explosieve groei, verdwijningen en uitschieters.', icon: '🔍' },
     { tab: 'money-flow' as TabId, title: 'Money Flow', desc: 'Volg het geld van ministerie via regeling naar de ontvangers.', icon: '💸' },
+    { tab: 'share-shift' as TabId, title: 'Share Shift', desc: 'Hoe verschuift het aandeel van ministeries door de jaren?', icon: '📊' },
+    { tab: 'sunburst' as TabId, title: 'Sunburst', desc: 'Zoom in op de hiërarchie: ministerie → regeling → ontvanger.', icon: '🎯' },
+    { tab: 'growth' as TabId, title: 'Growth Comparator', desc: 'Vergelijk groeisnelheden ongeacht schaal — alles start op index 100.', icon: '📐' },
+    { tab: 'velocity' as TabId, title: 'Spending Velocity', desc: 'Hoe snel veranderen uitgaven? Jaar-op-jaar als heatmap.', icon: '⚡' },
+    { tab: 'deviation' as TabId, title: 'Patroon Afwijking', desc: 'Waar wijkt de werkelijkheid af van het historisch patroon?', icon: '📉' },
+    { tab: 'spectrum' as TabId, title: 'Spending Spectrum', desc: 'Hoe is het geld verdeeld? Van €1K tot €1B+ in één overzicht.', icon: '🌈' },
+    { tab: 'reverse-flow' as TabId, title: 'Reverse Flow', desc: 'Volg het geld terug: van ontvanger naar alle databronnen.', icon: '🔄' },
+    { tab: 'ministry-cost' as TabId, title: 'Kostenstructuur', desc: 'Instrumenten vs apparaat: hoe verdelen ministeries hun budget?', icon: '🏛' },
+    { tab: 'per-capita' as TabId, title: 'Per Capita', desc: 'Overheidsuitgaven per inwoner, per provincie.', icon: '👤' },
+    { tab: 'regeling' as TabId, title: 'Regeling Profiel', desc: 'Dompel je onder in één regeling: verdeling, concentratie, ontvangers.', icon: '📋' },
+    { tab: 'leaderboard' as TabId, title: 'Leaderboard', desc: 'Wie ontvangt het meeste? De top ontvangers per module en jaar.', icon: '🏆' },
+    { tab: 'head-to-head' as TabId, title: 'Head-to-Head', desc: 'Vergelijk 2-3 organisaties op 6 dimensies in een radar chart.', icon: '⚔️' },
   ]
 
   return (
@@ -436,6 +472,66 @@ export default function InzichtenDashboard() {
       {activeTab === 'money-flow' && (
         <Suspense fallback={<ConceptLoading />}>
           <MoneyFlow />
+        </Suspense>
+      )}
+      {activeTab === 'share-shift' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <ShareShift />
+        </Suspense>
+      )}
+      {activeTab === 'sunburst' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <SunburstView />
+        </Suspense>
+      )}
+      {activeTab === 'growth' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <GrowthComparator />
+        </Suspense>
+      )}
+      {activeTab === 'velocity' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <SpendingVelocity />
+        </Suspense>
+      )}
+      {activeTab === 'deviation' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <PatternDeviation />
+        </Suspense>
+      )}
+      {activeTab === 'spectrum' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <SpendingSpectrum />
+        </Suspense>
+      )}
+      {activeTab === 'reverse-flow' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <ReverseFlow />
+        </Suspense>
+      )}
+      {activeTab === 'ministry-cost' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <MinistryStructure />
+        </Suspense>
+      )}
+      {activeTab === 'per-capita' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <SpendingPerCapita />
+        </Suspense>
+      )}
+      {activeTab === 'regeling' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <RegelingProfile />
+        </Suspense>
+      )}
+      {activeTab === 'leaderboard' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <LeaderboardView />
+        </Suspense>
+      )}
+      {activeTab === 'head-to-head' && (
+        <Suspense fallback={<ConceptLoading />}>
+          <HeadToHead />
         </Suspense>
       )}
     </div>
