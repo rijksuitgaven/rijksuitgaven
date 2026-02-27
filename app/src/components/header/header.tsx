@@ -17,7 +17,7 @@ function useHardNavigation() {
 
 // Ontvangers modules (recipient-based data)
 const ONTVANGERS_MODULES = [
-  { id: 'integraal', name: 'Zoek in alle', isSearch: true },
+  { id: 'integraal', name: 'Doorzoek ontvangers', isSearch: true },
   { id: 'instrumenten', name: 'Financiële instrumenten' },
   { id: 'provincie', name: 'Provinciale subsidieregisters' },
   { id: 'gemeente', name: 'Gemeentelijke subsidieregisters' },

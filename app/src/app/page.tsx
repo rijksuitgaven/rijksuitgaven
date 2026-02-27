@@ -83,7 +83,7 @@ function ModuleHub() {
       <section className="border-b border-[var(--border)] bg-[var(--gray-light)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <p className="text-xl text-[var(--navy-dark)]">
-            Doorzoek en vergelijk rijksoverheidsuitgaven vanaf 2016.
+            Doorzoek en vergelijk overheidsbestedingen vanaf 2016
           </p>
         </div>
       </section>

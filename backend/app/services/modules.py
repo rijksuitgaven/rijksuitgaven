@@ -2532,8 +2532,8 @@ async def get_module_stats(module: str) -> dict:
 
     # Format total in Dutch style: "X miljard" or "X miljoen"
     if total >= 1_000_000_000_000:
-        # Trillion
-        formatted = f"{total / 1_000_000_000_000:.2f} biljoen".replace(".", ",")
+        # Always use miljard, never biljoen
+        formatted = f"{total / 1_000_000_000:,.0f} miljard".replace(",", ".")
     elif total >= 1_000_000_000:
         # Billion
         formatted = f"{total / 1_000_000_000:.0f} miljard"
