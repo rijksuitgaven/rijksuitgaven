@@ -557,7 +557,7 @@ export function DataTable({
       cols.push({
         id: 'matched',
         header: () => (
-          <span className="text-sm font-semibold text-white">Ook in</span>
+          <span className="text-sm font-semibold text-white">Komt ook voor in</span>
         ),
         cell: ({ row }) => {
           const matchedField = row.original.matchedField
@@ -636,7 +636,7 @@ export function DataTable({
                       className="text-xs text-[var(--navy-medium)] mt-0.5 cursor-pointer"
                       style={{ fontSize: '12px' }}
                     >
-                      +{count - 1} meer
+                      +{count - 1} {count - 1 === 1 ? 'resultaat' : 'resultaten'}
                     </button>
                   )}
                 </div>
@@ -819,7 +819,7 @@ export function DataTable({
                 <div className="px-4 pt-4 pb-4 space-y-3">
                   <div className="flex gap-3">
                     <Search className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
-                    <p className="text-sm text-white/80">Zoek op meerdere woorden, gebruik <strong>&ldquo;aanhalingstekens&rdquo;</strong> voor een exacte woordgroep, of een <strong>sterretje*</strong> voor alles dat begint met&hellip; De kolom &ldquo;Ook in&rdquo; toont waar de zoekterm ook voorkomt.</p>
+                    <p className="text-sm text-white/80">Zoek op meerdere woorden, gebruik <strong>&ldquo;aanhalingstekens&rdquo;</strong> voor een exacte woordgroep, of een <strong>sterretje*</strong> voor alles dat begint met&hellip; De kolom &ldquo;Komt ook voor in&rdquo; toont waar de zoekterm ook voorkomt.</p>
                   </div>
                   <div className="flex gap-3">
                     <ChevronRight className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />

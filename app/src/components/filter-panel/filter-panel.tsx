@@ -730,7 +730,7 @@ export function FilterPanel({
 
     if (module === 'integraal') {
       // Integraal: show count + "in alle modules" for cross-module discovery
-      return `Zoek in ${countFormatted} ${config.fields} in alle modules (€${moduleStats.total_formatted})`
+      return `Doorzoek ${countFormatted} ${config.fields} in alle modules (€${moduleStats.total_formatted})`
     }
 
     // Other modules: emphasize searchable fields + EUR scale

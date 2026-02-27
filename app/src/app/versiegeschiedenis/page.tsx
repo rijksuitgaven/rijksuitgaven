@@ -110,7 +110,7 @@ export default function VersiegeschiedenisPage() {
                 <strong>Integraal doorzoeken:</strong> Doorzoek alle databronnen in één keer. U ziet per ontvanger in welke bronnen deze voorkomt en hoeveel betalingen er zijn.
               </li>
               <li>
-                <strong>Zie waar uw zoekterm ook voorkomt:</strong> De &quot;Ook in&quot; kolom toont of uw zoekterm ook in een regeling, omschrijving of ander veld staat. Zo ontdekt u verbanden die u anders zou missen.
+                <strong>Zie waar uw zoekterm ook voorkomt:</strong> De &quot;Komt ook voor in&quot; kolom toont of uw zoekterm ook in een regeling, omschrijving of ander veld staat. Zo ontdekt u verbanden die u anders zou missen.
               </li>
             </ul>
 
