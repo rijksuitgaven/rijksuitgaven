@@ -70,6 +70,7 @@
 | Search-scoped results (V2.0.3) | ✅ Implemented (Feb 27) | Secondary matches show filtered amounts, expanded rows respect search+filters. 2 hotfixes: Pydantic model + primary_only_keys init. 17/17 tests pass. Design doc `docs/plans/2026-02-27-search-scoped-results.md` |
 | UI copy improvements (V2.0.3) | ✅ Implemented (Feb 27) | 6 text changes: overheidsbestedingen, Komt ook voor in, miljard, Doorzoek ontvangers, pluralization |
 | Feedback button above cookie banner | ✅ Fixed (Feb 27) | Dynamic positioning via localStorage check + custom event. Smooth transition on dismiss. |
+| Google search icon UX | ✅ Fixed (Feb 27) | Branded navy G SVG, hidden by default, row-hover reveal (60%), direct-hover full. Expand column 40→32px tighter spacing. |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
@@ -81,8 +82,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Search-Scoped Results + UI Copy + Feedback Fix (V2.0.3)** (2026-02-27)
-   Bug fix: secondary search matches (RVO via "Bijdrage aan Deltares") now show filtered amounts, not full aggregated totals. Hybrid query routing. Expanded rows scoped to search+filters. 2 hotfixes (Pydantic model, primary_only_keys). 6 UI copy improvements. Feedback button dynamic positioning above cookie banner.
+1. **Search-Scoped Results + UI Polish (V2.0.3)** (2026-02-27)
+   Bug fix: secondary search matches show filtered amounts. 2 hotfixes. 6 UI copy improvements. Feedback button dynamic positioning. Google G icon UX: branded SVG, hidden by default, row-hover reveal. Expand column tightened 40→32px.
 
 2. **V5.0 Inzichten — 28-Concept Visualization Suite** (2026-02-25)
    7-domain framework (22 concepts) + 6 novel graph types. All custom SVG, zero external deps. RLS migration 073.
