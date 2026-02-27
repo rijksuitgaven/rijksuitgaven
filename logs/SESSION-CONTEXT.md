@@ -67,7 +67,7 @@
 | Roadmap superseded items | ✅ Done (Feb 24) | Removed GitHub Projects + UX refinements from V2.5 (already shipped/replaced) |
 | V5.0 Lab prototype (h6) | ✅ Built (Feb 24-25) | 28 interactive viz concepts: 7 analytical domains (22 concepts) + 6 novel graph types (chord, bump, alluvial, network, beeswarm, marimekko). All custom SVG, zero extra deps. 3 bug fixes. Sunburst zoom. RLS migration 073. Design doc at `docs/plans/2026-02-25-v5-comprehensive-design.md`. Next: brainstorm bottom-up network (ontvanger → sources → peers). |
 | Onboarding email sequence | ✅ Implemented (Feb 24) | 5 emails implemented. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
-| Search-scoped results (V2.0.3) | ✅ Implemented (Feb 27) | Secondary matches show filtered amounts, expanded rows respect search+filters. Design doc `docs/plans/2026-02-27-search-scoped-results.md` |
+| Search-scoped results (V2.0.3) | ✅ Implemented (Feb 27) | Secondary matches show filtered amounts, expanded rows respect search+filters. 2 hotfixes: Pydantic model + primary_only_keys init. 17/17 tests pass. Design doc `docs/plans/2026-02-27-search-scoped-results.md` |
 | UI copy improvements (V2.0.3) | ✅ Implemented (Feb 27) | 6 text changes: overheidsbestedingen, Komt ook voor in, miljard, Doorzoek ontvangers, pluralization |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -94,9 +94,6 @@
 
 4. **4 Release Tracks (VERSIONING restructure)** (2026-02-22)
    VERSIONING.md restructured with 4 release tracks: V (end-user), A (admin), M (marketing/launch), D (data). URL state restoration moved to V2.2. M1.0 Lancering = launch gate (6 items before DNS switch). D1.0 = Gemeente Haarlemmermeer. V2.x renumbered (eliminated V2.4 Homepage, V2.7).
-
-5. **4 Release Tracks (VERSIONING restructure)** (2026-02-22)
-   VERSIONING.md restructured with 4 release tracks: V (end-user), A (admin), M (marketing/launch), D (data).
 
 ---
 
