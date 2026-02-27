@@ -15,7 +15,7 @@
 
 | Track | Current | Status |
 |-------|---------|--------|
-| **V** (End-user) | V2.0 Search Platform | 🔨 Building |
+| **V** (End-user) | V2.0 Search Platform | ✅ Live (beta) |
 | **A** (Admin) | A1.0 Beheer MVP | ✅ Live |
 | **M** (Marketing) | M1.0 Lancering | 📋 Planned |
 | **D** (Data) | D1.0 Gemeente Uitbreiding | 📋 Planned |
@@ -81,20 +81,17 @@
 
 ## Recent Work (Last 5)
 
-1. **Search-Scoped Results + UI Copy (V2.0.3)** (2026-02-27)
-   Bug fix: secondary search matches (RVO found via "Bijdrage aan Deltares" regeling) now show filtered amounts instead of full aggregated totals. Hybrid query routing: primary matches→aggregated view, secondary→source table with search filter. Expanded rows also scoped to search terms + active filters. 6 UI copy improvements: overheidsbestedingen, "Komt ook voor in", miljard, Doorzoek ontvangers, pluralization.
+1. **Search-Scoped Results + UI Copy + Feedback Fix (V2.0.3)** (2026-02-27)
+   Bug fix: secondary search matches (RVO via "Bijdrage aan Deltares") now show filtered amounts, not full aggregated totals. Hybrid query routing. Expanded rows scoped to search+filters. 2 hotfixes (Pydantic model, primary_only_keys). 6 UI copy improvements. Feedback button dynamic positioning above cookie banner.
 
 2. **V5.0 Inzichten — 28-Concept Visualization Suite** (2026-02-25)
-   7-domain framework (22 concepts) + 6 novel graph types: Chord Diagram (bilateral flows), Bump Chart (rankings over time), Alluvial (4-stage money path), Network Graph (force-directed), Beeswarm (every recipient as dot), Marimekko (size × composition). All custom SVG. 3 bug fixes (Ministry Structure, Velocity, Sunburst zoom). RLS migration 073. Next brainstorm: bottom-up network starting from ontvanger.
+   7-domain framework (22 concepts) + 6 novel graph types. All custom SVG, zero external deps. RLS migration 073.
 
-2. **Login UX + Lab + Roadmap + UX-040–042 + Project Tracking + V5.0 Lab** (2026-02-24)
-   S1-S4: Spam analysis, magic link 24h, invite email rewrite, Lab section, cron fix, /team/roadmap, UX-040 sort desc first. S5: UX-041 URL state (staging). S6: UX-042 release banner (staging), deployment protocol rewrite, UX-039 restoration. S7: UX-042 design refinement (5 iterations, expert review), released to production, flicker fix. S8: Project tracking system design (4-person expert team), VERSIONING.md staleness fix (V2.0 ✅ Live, table format), /document+/closeday skills enhanced (mandatory reconciliation), backlog cleanup (1406→350 lines, future-only). S9: Roadmap multi-select+semver sort, superseded items cleanup, V5.0 Inzichten lab prototype (6 visualization concepts: Pulse, New Money, Movers, Ministry DNA, Treemap, Dependency Radar — recharts+d3, expert team design).
+3. **Login UX + Lab + Roadmap + UX-040–042 + V5.0 Lab** (2026-02-24)
+   Magic link 24h, invite email rewrite, Lab section, /team/roadmap, UX-040–042, deployment protocol rewrite, backlog cleanup, V5.0 prototype.
 
-3. **Critical Production Bug Fixes + Email Deliverability** (2026-02-23)
-   7 fixes + deliverability overhaul: UX-039 reverted from main, Totaal sort broken (`total`→`totaal`), source table year inflation, Kolommen+filters (UX-006 revised), Publiek zero results (`regio`→`provincie`). Email: noreply→contact@, plain-text multipart, Reply-To, DMARC rua, SPF -all. Prevention: staging-only registry, Sort Field Contract.
-
-4. **4 Release Tracks (VERSIONING restructure)** (2026-02-22)
-   VERSIONING.md restructured with 4 release tracks: V (end-user), A (admin), M (marketing/launch), D (data). URL state restoration moved to V2.2. M1.0 Lancering = launch gate (6 items before DNS switch). D1.0 = Gemeente Haarlemmermeer. V2.x renumbered (eliminated V2.4 Homepage, V2.7).
+4. **Critical Production Bug Fixes + Email Deliverability** (2026-02-23)
+   7 fixes + deliverability overhaul. Prevention: staging-only registry, Sort Field Contract.
 
 ---
 
