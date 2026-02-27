@@ -166,6 +166,8 @@ interface ExpandedRowProps {
   availableYears: number[]
   extraColumnsCount?: number
   isSearching?: boolean
+  searchQuery?: string           // Search term for secondary match scoping
+  activeFilters?: Record<string, string[]>  // Active multiselect filters for filter-scoped expansion
   onFilterLinkClick?: (field: string, value: string) => void
   initialGrouping?: string  // Pre-select grouping when opened via "+N meer" click
 }
@@ -180,6 +182,8 @@ export function ExpandedRow({
   availableYears,
   extraColumnsCount = 0,
   isSearching = false,
+  searchQuery,
+  activeFilters,
   onFilterLinkClick,
   initialGrouping,
 }: ExpandedRowProps) {
@@ -249,7 +253,30 @@ export function ExpandedRow({
       try {
         // Double-encode to preserve %2F through Next.js routing (slashes in kostensoort like "Vaklit/abonn/overig")
         const encodedValue = encodeURIComponent(encodeURIComponent(row.primary_value))
-        const url = `${API_BASE_URL}/api/v1/modules/${module}/${encodedValue}/details?group_by=${grouping}`
+
+        // Build scoped URL: search term (for secondary matches) + active filters
+        let detailUrl = `${API_BASE_URL}/api/v1/modules/${module}/${encodedValue}/details?group_by=${grouping}`
+
+        // If this row is a secondary match (amounts from filtered source table),
+        // scope detail query to search term. Note: primary matches can also have
+        // matchedField set (after enrichment for "Komt ook voor in" display),
+        // but their amounts are full aggregated totals — don't filter their details.
+        if (row.isSecondaryMatch && searchQuery) {
+          detailUrl += `&q=${encodeURIComponent(searchQuery)}`
+        }
+
+        // Always pass active multiselect filters (scopes detail rows to match parent)
+        if (activeFilters) {
+          for (const [field, values] of Object.entries(activeFilters)) {
+            if (Array.isArray(values) && values.length > 0) {
+              for (const v of values) {
+                detailUrl += `&${encodeURIComponent(field)}=${encodeURIComponent(v)}`
+              }
+            }
+          }
+        }
+
+        const url = detailUrl
 
         const response = await fetch(url, { signal: abortController.signal })
         if (!response.ok) {
@@ -277,7 +304,8 @@ export function ExpandedRow({
     return () => {
       abortController.abort()
     }
-  }, [row.primary_value, module, grouping])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [row.primary_value, module, grouping, searchQuery, JSON.stringify(activeFilters)])
 
   // Loading state
   if (isLoading) {

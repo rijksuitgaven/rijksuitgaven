@@ -557,6 +557,19 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
 
   const isSearching = Boolean(filters.search && filters.search.trim().length > 0)
 
+  // Extract active multiselect filters for expanded row scoping
+  const activeMultiselectFilters = useMemo(() => {
+    const result: Record<string, string[]> = {}
+    const nonFilterKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag']
+    for (const [key, value] of Object.entries(filters)) {
+      if (nonFilterKeys.includes(key)) continue
+      if (Array.isArray(value) && value.length > 0) {
+        result[key] = value
+      }
+    }
+    return Object.keys(result).length > 0 ? result : undefined
+  }, [filters])
+
   const renderExpandedRow = useCallback((row: RecipientRow, initialGrouping?: string) => (
     <ExpandedRow
       row={row}
@@ -564,10 +577,12 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
       availableYears={data?.availableYears ?? []}
       extraColumnsCount={effectiveColumns.length}
       isSearching={isSearching}
+      searchQuery={isSearching ? filters.search : undefined}
+      activeFilters={activeMultiselectFilters}
       onFilterLinkClick={handleFilterLinkClick}
       initialGrouping={initialGrouping}
     />
-  ), [moduleId, data?.availableYears, effectiveColumns.length, isSearching, handleFilterLinkClick])
+  ), [moduleId, data?.availableYears, effectiveColumns.length, isSearching, filters.search, activeMultiselectFilters, handleFilterLinkClick])
 
   if (error) {
     return (

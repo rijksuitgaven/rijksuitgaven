@@ -992,6 +992,10 @@ async def _get_from_aggregated_view(
     # ==========================================================================
     typesense_primary_keys: list[str] = []
     typesense_matched_info: dict[str, tuple[str | None, str | None]] = {}
+    # Search-scoped results: secondary matches (matched on regeling/artikel/etc. NOT on name)
+    # get accurate filtered amounts from source table instead of inflated aggregated totals.
+    # INVARIANT: primary field is ALWAYS first in TYPESENSE_SEARCHABLE_FIELDS — do NOT reorder.
+    secondary_only_keys: list[str] = []
     if search:
         # Get Typesense collection for this module
         collection = TYPESENSE_COLLECTIONS.get(config["table"])
@@ -1006,10 +1010,26 @@ async def _get_from_aggregated_view(
             )
 
             if typesense_primary_keys:
-                # Use IN clause with array (much faster than regex)
-                where_clauses.append(f"{primary} = ANY(${param_idx})")
-                params.append(typesense_primary_keys)
-                param_idx += 1
+                # Split: primary matches use aggregated view, secondary matches use source table
+                # Primary matches = name contains search term → full aggregated totals are correct
+                # Secondary matches = regeling/artikel/etc. contains search term → need filtered amounts
+                primary_only_keys = [k for k in typesense_primary_keys if k not in typesense_matched_info]
+                secondary_only_keys = [k for k in typesense_primary_keys if k in typesense_matched_info]
+
+                if primary_only_keys:
+                    # Use IN clause with array for primary matches (aggregated view)
+                    where_clauses.append(f"{primary} = ANY(${param_idx})")
+                    params.append(primary_only_keys)
+                    param_idx += 1
+                elif not secondary_only_keys:
+                    # No matches at all — shouldn't happen but be safe
+                    where_clauses.append("FALSE")
+
+                if secondary_only_keys:
+                    logger.info(
+                        f"Search-scoped: {len(primary_only_keys)} primary matches (aggregated), "
+                        f"{len(secondary_only_keys)} secondary matches (source table filtered)"
+                    )
             else:
                 # Typesense returned empty - fall back to regex search on primary field only
                 # This happens when Typesense not configured or no word-boundary matches found
@@ -1124,21 +1144,40 @@ async def _get_from_aggregated_view(
     count_where_sql = f"WHERE {' AND '.join(count_where)}" if count_where else ""
     count_params = count_params_snapshot
 
+    # When secondary matches exist, we need ALL primary rows for in-memory merge + pagination.
+    # Otherwise, use SQL LIMIT/OFFSET as before for performance.
+    needs_python_pagination = bool(secondary_only_keys)
+
     # Main query from aggregated view (or subquery for entity default view)
-    query = f"""
-        SELECT
-            {primary} AS primary_value,
-            "2016" AS y2016, "2017" AS y2017, "2018" AS y2018,
-            "2019" AS y2019, "2020" AS y2020, "2021" AS y2021,
-            "2022" AS y2022, "2023" AS y2023, "2024" AS y2024,
-            totaal,
-            row_count{extra_columns_select}{relevance_select}
-        FROM {from_clause}
-        {where_sql}
-        {sort_clause}
-        LIMIT ${param_idx} OFFSET ${param_idx + 1}
-    """
-    params.extend([limit, offset])
+    if needs_python_pagination:
+        # Fetch all primary matches (no SQL pagination — merge + paginate in Python)
+        query = f"""
+            SELECT
+                {primary} AS primary_value,
+                "2016" AS y2016, "2017" AS y2017, "2018" AS y2018,
+                "2019" AS y2019, "2020" AS y2020, "2021" AS y2021,
+                "2022" AS y2022, "2023" AS y2023, "2024" AS y2024,
+                totaal,
+                row_count{extra_columns_select}{relevance_select}
+            FROM {from_clause}
+            {where_sql}
+            {sort_clause}
+        """
+    else:
+        query = f"""
+            SELECT
+                {primary} AS primary_value,
+                "2016" AS y2016, "2017" AS y2017, "2018" AS y2018,
+                "2019" AS y2019, "2020" AS y2020, "2021" AS y2021,
+                "2022" AS y2022, "2023" AS y2023, "2024" AS y2024,
+                totaal,
+                row_count{extra_columns_select}{relevance_select}
+            FROM {from_clause}
+            {where_sql}
+            {sort_clause}
+            LIMIT ${param_idx} OFFSET ${param_idx + 1}
+        """
+        params.extend([limit, offset])
 
     # Count query (without random threshold for accurate total)
     count_query = f"SELECT COUNT(*) FROM {from_clause} {count_where_sql}"
@@ -1154,38 +1193,102 @@ async def _get_from_aggregated_view(
         {count_where_sql}
     """
 
+    # ==========================================================================
+    # SECONDARY MATCHES: Source table query with search filter
+    # ==========================================================================
+    # For secondary matches (matched on regeling/artikel/etc., NOT on name),
+    # query the source table with the search term as filter so amounts only
+    # reflect rows where the search term actually appears.
+    # This runs in PARALLEL with the aggregated view query for primary matches.
+    # ==========================================================================
+    secondary_query_coro = None
+    if secondary_only_keys and search:
+        table = config["table"]
+        year_field = config["year_field"]
+        amount_field = config["amount_field"]
+        multiplier = config.get("amount_multiplier", 1)
+        search_fields = config.get("search_fields", [primary])
+        # Secondary fields only (exclude primary — we're filtering by search in non-name fields)
+        other_fields = [f for f in search_fields if f != primary]
+
+        if other_fields:
+            # Build search condition
+            _, sec_pattern = build_search_condition(other_fields[0], 2, search)
+            sec_search_conditions = " OR ".join([f"{f} ~* $2" for f in other_fields])
+
+            sec_year_columns = ", ".join([
+                f"COALESCE(SUM(CASE WHEN {year_field} = {year} THEN {amount_field} END), 0) * {multiplier} AS \"y{year}\""
+                for year in YEARS
+            ])
+
+            sec_query = f"""
+                SELECT
+                    {primary} AS primary_value,
+                    {sec_year_columns},
+                    COALESCE(SUM(CASE WHEN {year_field} BETWEEN {YEARS[0]} AND {YEARS[-1]} THEN {amount_field} END), 0) * {multiplier} AS totaal,
+                    COUNT(*) AS row_count
+                FROM {table}
+                WHERE {primary} = ANY($1)
+                  AND ({sec_search_conditions})
+                GROUP BY {primary}
+            """
+            secondary_query_coro = fetch_all(sec_query, secondary_only_keys, sec_pattern)
+
     # Execute queries in PARALLEL for performance (750ms → ~250ms)
     # Previously sequential: rows, then count, then totals = 3x latency
     try:
         # Build list of coroutines to run
-        coros = [
-            fetch_all(query, *params),
-            fetch_val(count_query, *count_params) if count_params else fetch_val(count_query),
-        ]
+        # Run primary query only if we have primary keys to fetch, OR if not searching (browsing mode).
+        # When ALL Typesense matches are secondary (primary_only_keys is empty), skip the primary query
+        # entirely — even if year/amount WHERE clauses exist — to avoid returning unrelated rows.
+        has_primary_query = bool(primary_only_keys) or not search
+        coros = []
+        coro_labels = []
+
+        if has_primary_query:
+            coros.append(fetch_all(query, *params))
+            coro_labels.append("primary")
+            coros.append(fetch_val(count_query, *count_params) if count_params else fetch_val(count_query))
+            coro_labels.append("count")
 
         # Add totals query only when user actively searches/filters (not min_years alone)
         run_totals = bool(search or jaar or min_bedrag is not None or max_bedrag is not None or has_entity_filter)
-        if run_totals:
+        if run_totals and has_primary_query:
             coros.append(
                 fetch_all(totals_query, *count_params) if count_params else fetch_all(totals_query)
             )
+            coro_labels.append("totals")
+
+        # Add secondary query if we have secondary matches
+        if secondary_query_coro:
+            coros.append(secondary_query_coro)
+            coro_labels.append("secondary")
 
         # Run all queries in parallel
         results = await asyncio.gather(*coros)
 
-        rows = results[0]
-        total = results[1]
+        # Extract results by label
+        result_map = dict(zip(coro_labels, results))
 
-        # Extract totals if we ran that query
+        primary_rows = result_map.get("primary", [])
+        primary_count = result_map.get("count", 0)
+        secondary_rows = result_map.get("secondary", [])
+
+        # Extract totals from primary query (we'll recompute after merge if needed)
         totals = None
-        if run_totals and len(results) > 2:
-            totals_row = results[2]
+        if "totals" in result_map:
+            totals_row = result_map["totals"]
             if totals_row:
                 r = totals_row[0]
-                totals = {
+                primary_totals = {
                     "years": {year: int(r.get(f"sum_{year}", 0) or 0) for year in YEARS},
                     "totaal": int(r.get("sum_totaal", 0) or 0),
                 }
+            else:
+                primary_totals = None
+        else:
+            primary_totals = None
+
     except Exception as e:
         # Log error without exposing SQL query or params (security)
         logger.error(f"Query failed for {module}: {type(e).__name__}: {e}", exc_info=True)
@@ -1204,9 +1307,11 @@ async def _get_from_aggregated_view(
             search=search,
         )
 
-    # Transform rows
-    result = []
-    for row in rows:
+    # ==========================================================================
+    # MERGE primary + secondary results
+    # ==========================================================================
+    def transform_row(row: dict, is_secondary: bool = False) -> dict:
+        """Transform a database row into API response format."""
         years_dict = {year: int(row.get(f"y{year}", 0) or 0) for year in YEARS}
         row_data = {
             "primary_value": row["primary_value"],
@@ -1214,29 +1319,95 @@ async def _get_from_aggregated_view(
             "totaal": int(row["totaal"] or 0),
             "row_count": row["row_count"],
         }
-        # Add extra columns if requested (from view columns)
-        if columns and not search:
+        # Add extra columns if requested (from view columns) — only for non-search primary rows
+        if columns and not search and not is_secondary:
             extra_cols = {}
             extra_counts = {}
             for col in columns:
                 val = row.get(f"extra_{col}")
-                # Cast to string (staffel is INTEGER, API expects strings)
                 extra_cols[col] = str(val) if val is not None else None
-                # Read count from view (column_count columns added in 019a-f migrations)
                 count = row.get(f"extra_{col}_count", 1)
                 extra_counts[col] = int(count) if count is not None else 1
             row_data["extra_columns"] = extra_cols
             row_data["extra_column_counts"] = extra_counts
 
-        # Add matched field info for "Ook in" column
-        # Populated when match found in a secondary field (via Typesense + SQL enrichment)
+        # Add matched field info for "Komt ook voor in" column
         if search:
-            # Look up by exact primary_value (case-sensitive match from Typesense)
             matched = typesense_matched_info.get(row["primary_value"], (None, None))
             row_data["matched_field"] = matched[0]
             row_data["matched_value"] = matched[1]
+            # Mark whether this row's amounts come from filtered source table (secondary match)
+            # vs full aggregated view (primary match). Primary matches can also have matchedField
+            # after enrichment (for "Komt ook voor in" display), but their amounts are NOT filtered.
+            row_data["is_secondary_match"] = is_secondary
 
-        result.append(row_data)
+        return row_data
+
+    # Transform primary rows (from aggregated view)
+    result = [transform_row(row) for row in primary_rows]
+
+    # Transform and append secondary rows (from source table with filtered amounts)
+    secondary_result = [transform_row(row, is_secondary=True) for row in secondary_rows]
+
+    # Apply year/amount filters to secondary results in Python
+    # (Primary query applies these in SQL WHERE; secondary query doesn't have them)
+    if secondary_result and jaar:
+        secondary_result = [r for r in secondary_result if r["years"].get(jaar, 0) > 0]
+    if secondary_result and min_bedrag is not None:
+        secondary_result = [r for r in secondary_result if r["totaal"] >= min_bedrag]
+    if secondary_result and max_bedrag is not None:
+        secondary_result = [r for r in secondary_result if r["totaal"] <= max_bedrag]
+
+    if secondary_result:
+        # Merge: primary results first, then secondary results
+        result.extend(secondary_result)
+
+        # Compute relevance scores for sorting the merged set
+        if search:
+            parsed_rel = parse_search_query(search)
+            clean_search_lower = parsed_rel.raw.lower()
+            for row_data in result:
+                pv = row_data["primary_value"]
+                pv_upper = pv.upper() if pv else ""
+                clean_upper = clean_search_lower.upper()
+                if pv_upper == clean_upper:
+                    row_data["_relevance"] = 1  # Exact match on name
+                elif clean_search_lower in (pv.lower() if pv else ""):
+                    row_data["_relevance"] = 2  # Name contains search term
+                else:
+                    row_data["_relevance"] = 3  # Secondary field match only
+
+            # Sort by relevance, then by totaal descending
+            result.sort(key=lambda r: (r.get("_relevance", 3), -r.get("totaal", 0)))
+
+            # Remove internal sort key
+            for row_data in result:
+                row_data.pop("_relevance", None)
+
+        # Total count = primary SQL count + secondary Python-filtered count
+        # primary_count comes from SQL COUNT (respects year/amount filters)
+        # secondary_result is already Python-filtered for year/amount
+        total = (primary_count or 0) + len(secondary_result)
+
+        # Recompute totals from merged set (primary totals don't include secondary)
+        if run_totals:
+            merged_totals_years = {year: 0 for year in YEARS}
+            merged_totals_sum = 0
+            for row_data in result:
+                for year in YEARS:
+                    merged_totals_years[year] += row_data["years"].get(year, 0)
+                merged_totals_sum += row_data["totaal"]
+            totals = {
+                "years": merged_totals_years,
+                "totaal": merged_totals_sum,
+            }
+
+        # Apply pagination in Python (both queries returned full sets)
+        result = result[offset:offset + limit]
+    else:
+        # No secondary matches — use primary results as-is (already paginated by SQL)
+        total = primary_count or 0
+        totals = primary_totals
 
     return result, total or 0, totals
 
@@ -1537,11 +1708,18 @@ async def get_row_details(
     primary_value: str,
     group_by: Optional[str] = None,
     jaar: Optional[int] = None,
+    search: Optional[str] = None,
+    filter_fields: Optional[dict[str, list[str]]] = None,
 ) -> list[dict]:
     """
     Get detail rows for a specific recipient/primary value.
 
     Used when expanding a row to see the underlying line items.
+
+    When `search` is provided (secondary match expansion): only return detail rows
+    where secondary fields (regeling, artikel, etc.) match the search term.
+    When `filter_fields` is provided (filter-scoped expansion): only return detail rows
+    matching the active multiselect filters.
     """
     if module not in MODULE_CONFIG:
         raise ValueError(f"Unknown module: {module}")
@@ -1587,10 +1765,36 @@ async def get_row_details(
     # IMPORTANT: The index on normalize_recipient(primary_field) makes this fast
     where_clauses = [f"normalize_recipient({primary}) = normalize_recipient($1)"]
     params = [primary_value]
+    param_idx = 2
 
     if jaar:
-        where_clauses.append(f"{year_field} = $2")
+        where_clauses.append(f"{year_field} = ${param_idx}")
         params.append(jaar)
+        param_idx += 1
+
+    # Search scoping: when expanding a secondary match, only show detail rows
+    # where secondary fields (regeling, artikel, etc.) match the search term.
+    if search:
+        search_fields = config.get("search_fields", [primary])
+        other_fields = [f for f in search_fields if f != primary]
+        if other_fields:
+            _, sec_pattern = build_search_condition(other_fields[0], param_idx, search)
+            sec_conditions = " OR ".join([f"{f} ~* ${param_idx}" for f in other_fields])
+            where_clauses.append(f"({sec_conditions})")
+            params.append(sec_pattern)
+            param_idx += 1
+
+    # Filter scoping: when multiselect filters are active, only show detail rows
+    # matching the active filters (e.g., regeling='Bijdrage aan Deltares').
+    if filter_fields:
+        valid_filter_fields = config.get("filter_fields", [])
+        for field, values in filter_fields.items():
+            if field in valid_filter_fields and values:
+                validate_identifier(field, ALLOWED_COLUMNS, "column")
+                placeholders = ", ".join([f"${param_idx + i}" for i in range(len(values))])
+                where_clauses.append(f"{field}::text IN ({placeholders})")
+                params.extend(values)
+                param_idx += len(values)
 
     where_sql = f"WHERE {' AND '.join(where_clauses)}"
 
