@@ -69,6 +69,7 @@
 | Onboarding email sequence | ✅ Implemented (Feb 24) | 5 emails implemented. See `docs/plans/2026-02-22-onboarding-email-sequence.md` |
 | Search-scoped results (V2.0.3) | ✅ Implemented (Feb 27) | Secondary matches show filtered amounts, expanded rows respect search+filters. 2 hotfixes: Pydantic model + primary_only_keys init. 17/17 tests pass. Design doc `docs/plans/2026-02-27-search-scoped-results.md` |
 | UI copy improvements (V2.0.3) | ✅ Implemented (Feb 27) | 6 text changes: overheidsbestedingen, Komt ook voor in, miljard, Doorzoek ontvangers, pluralization |
+| Feedback button above cookie banner | ✅ Fixed (Feb 27) | Dynamic positioning via localStorage check + custom event. Smooth transition on dismiss. |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
