@@ -50,6 +50,8 @@ function getElementLabel(el: Element): string {
   return labels[tag] || tag
 }
 
+const COOKIE_BANNER_KEY = 'cookie-banner-dismissed'
+
 export function FeedbackButton() {
   const { isLoggedIn, userEmail } = useAuth()
   const { track } = useAnalytics()
@@ -59,6 +61,26 @@ export function FeedbackButton() {
   const [marked, setMarked] = useState<MarkedElement | null>(null)
   const [screenshotError, setScreenshotError] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
+
+  // Cookie banner awareness — push feedback button up when banner is visible
+  const [cookieBannerVisible, setCookieBannerVisible] = useState(false)
+
+  useEffect(() => {
+    try {
+      setCookieBannerVisible(!localStorage.getItem(COOKIE_BANNER_KEY))
+    } catch {
+      setCookieBannerVisible(false)
+    }
+    const handleChange = () => {
+      try {
+        setCookieBannerVisible(!localStorage.getItem(COOKIE_BANNER_KEY))
+      } catch {
+        setCookieBannerVisible(false)
+      }
+    }
+    window.addEventListener('cookie-banner-change', handleChange)
+    return () => window.removeEventListener('cookie-banner-change', handleChange)
+  }, [])
 
   // Element highlighting state
   const [highlightRect, setHighlightRect] = useState<DOMRect | null>(null)
@@ -317,7 +339,7 @@ export function FeedbackButton() {
 
       {/* Feedback form panel */}
       {(state === 'form' || state === 'sending') && (
-        <div className="fixed bottom-20 right-5 z-50 w-[360px] bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out">
+        <div className={`fixed right-5 z-50 w-[360px] bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden transition-all duration-300 ease-in-out ${cookieBannerVisible ? 'bottom-[7.5rem]' : 'bottom-20'}`}>
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
             <span className="text-base font-semibold text-[#0E3261]">Feedback</span>
@@ -443,7 +465,7 @@ export function FeedbackButton() {
 
       {/* Success state */}
       {state === 'success' && (
-        <div className="fixed bottom-20 right-5 z-50 bg-white rounded-lg shadow-2xl border border-gray-200 px-6 py-4 flex items-center gap-3">
+        <div className={`fixed right-5 z-50 bg-white rounded-lg shadow-2xl border border-gray-200 px-6 py-4 flex items-center gap-3 transition-all duration-300 ${cookieBannerVisible ? 'bottom-[7.5rem]' : 'bottom-20'}`}>
           <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
             <Check className="w-5 h-5 text-green-600" />
           </div>
@@ -455,7 +477,7 @@ export function FeedbackButton() {
       {state === 'idle' && (
         <button
           onClick={handleOpen}
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 bg-[#0E3261] text-white text-sm font-medium rounded-full shadow-lg hover:bg-[#0a2750] transition-colors"
+          className={`fixed right-5 z-50 flex items-center gap-2 px-4 py-2.5 bg-[#0E3261] text-white text-sm font-medium rounded-full shadow-lg hover:bg-[#0a2750] transition-all duration-300 ${cookieBannerVisible ? 'bottom-16' : 'bottom-5'}`}
         >
           <MessageSquare className="w-4 h-4" />
           Feedback

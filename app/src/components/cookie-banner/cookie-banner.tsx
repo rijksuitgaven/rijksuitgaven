@@ -31,6 +31,8 @@ export function CookieBanner() {
       // Ignore storage errors - banner will just reappear on next visit
     }
     setVisible(false)
+    // Notify other components (e.g. FeedbackButton) that banner is gone
+    window.dispatchEvent(new Event('cookie-banner-change'))
   }
 
   // Don't render during SSR (null) or when dismissed (false)
