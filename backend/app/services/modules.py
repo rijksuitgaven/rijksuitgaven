@@ -995,6 +995,7 @@ async def _get_from_aggregated_view(
     # Search-scoped results: secondary matches (matched on regeling/artikel/etc. NOT on name)
     # get accurate filtered amounts from source table instead of inflated aggregated totals.
     # INVARIANT: primary field is ALWAYS first in TYPESENSE_SEARCHABLE_FIELDS — do NOT reorder.
+    primary_only_keys: list[str] = []
     secondary_only_keys: list[str] = []
     if search:
         # Get Typesense collection for this module
