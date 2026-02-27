@@ -35,7 +35,7 @@ const COLLAPSED_YEARS_END = 2020
 const MAX_EXPORT_ROWS = 500
 
 // Sticky column offset for primary column (in pixels)
-const STICKY_PRIMARY_OFFSET_PX = 40
+const STICKY_PRIMARY_OFFSET_PX = 32
 
 // Column meta type for sticky columns
 interface ColumnMeta {
@@ -480,7 +480,7 @@ export function DataTable({
             )}
           </button>
         ),
-        size: 40,
+        size: 32,
       },
       // Primary column (Ontvanger) - sticky on mobile
       {
@@ -518,9 +518,9 @@ export function DataTable({
                     e.stopPropagation()
                     track('external_link', moduleId, { recipient: row.original.primary_value, origin: 'data_table' })
                   }}
-                  className="flex-shrink-0 ml-1 text-[var(--navy-medium)] hover:text-[var(--pink)] transition-colors"
+                  className="flex-shrink-0 ml-2 opacity-40 hover:opacity-100 text-[var(--navy-medium)] hover:text-[var(--pink)] transition-all"
                 >
-                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
@@ -903,6 +903,7 @@ export function DataTable({
                       key={header.id}
                       className={cn(
                         'px-3 py-2.5 text-sm font-semibold text-white',
+                        isFirst && 'px-1', // Tighter padding on expand column
                         isYearOrTotal ? 'text-right' : 'text-left',
                         isSticky && 'sticky left-0 bg-[var(--navy-dark)] z-10',
                         headerIndex === 1 && `sticky bg-[var(--navy-dark)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]`,
@@ -971,6 +972,7 @@ export function DataTable({
                           key={cell.id}
                           className={cn(
                             'px-3 py-2 border-b border-[var(--border)] transition-colors',
+                            cellIndex === 0 && 'px-1', // Tighter padding on expand column
                             isYearOrTotal ? 'text-right' : 'text-left',
                             isSticky && 'sticky left-0 bg-white group-hover:bg-[var(--gray-light)] z-10',
                             cellIndex === 1 && 'sticky bg-white group-hover:bg-[var(--gray-light)] z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]',
@@ -1000,7 +1002,7 @@ export function DataTable({
                 {/* Expand column placeholder */}
                 <td className="px-2 py-2 border-b border-[var(--border)]"></td>
                 {/* Primary column - show "Totaal (X ontvangers)" */}
-                <td className="px-3 py-2 border-b border-[var(--border)] sticky left-[40px] bg-[var(--navy-dark)] z-10">
+                <td className="px-3 py-2 border-b border-[var(--border)] sticky bg-[var(--navy-dark)] z-10" style={{ left: `${STICKY_PRIMARY_OFFSET_PX}px` }}>
                   <div className="flex flex-col">
                     <span>Totaal</span>
                     <span className="text-xs font-normal opacity-75">{totalRows.toLocaleString('nl-NL')} {primaryColumnName.toLowerCase()}{totalRows !== 1 ? 's' : ''}</span>
