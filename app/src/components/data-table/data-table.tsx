@@ -518,7 +518,7 @@ export function DataTable({
                     e.stopPropagation()
                     track('external_link', moduleId, { recipient: row.original.primary_value, origin: 'data_table' })
                   }}
-                  className="flex-shrink-0 ml-2 opacity-40 hover:opacity-100 text-[var(--navy-medium)] hover:text-[var(--pink)] transition-all"
+                  className="flex-shrink-0 ml-2 opacity-0 group-hover:opacity-60 hover:!opacity-100 text-[var(--navy-medium)] hover:text-[var(--pink)] transition-all"
                 >
                   <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
