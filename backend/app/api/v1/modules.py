@@ -15,7 +15,7 @@ from typing import Optional
 from enum import Enum
 import time
 
-from fastapi import APIRouter, Query, HTTPException, Path
+from fastapi import APIRouter, Query, HTTPException, Path, Request
 
 logger = logging.getLogger(__name__)
 from pydantic import BaseModel, Field
@@ -426,10 +426,12 @@ async def get_module(
 
 @router.get("/{module}/{primary_value}/details", response_model=DetailResponse)
 async def get_details(
+    request: Request,
     module: ModuleName,
     primary_value: str,
     group_by: Optional[str] = Query(None, description="Group by field (e.g., regeling, artikel)"),
     jaar: Optional[int] = Query(None, ge=2016, le=2025, description="Filter by year"),
+    q: Optional[str] = Query(None, max_length=200, description="Search term for scoped expansion (secondary matches)"),
 ):
     """
     Get expanded details for a specific row.
@@ -439,11 +441,32 @@ async def get_details(
 
     Used when user clicks to expand a row in the table.
 
+    Optional scoping parameters (for search-scoped and filter-scoped expansion):
+    - **q**: Search term — only return detail rows where secondary fields match
+    - **filter params**: e.g., regeling=X&artikel=Y — only return matching detail rows
+
     For integraal: shows breakdown by module (which modules, amounts per module).
     """
     # Validate primary_value length (prevent excessive query cost)
     if not primary_value or len(primary_value) > 500:
         raise HTTPException(status_code=400, detail="Ongeldige parameter")
+
+    # Validate search length
+    if q and len(q.strip()) == 0:
+        q = None
+
+    # Extract filter fields from query params (same format as main endpoint)
+    filter_fields: dict[str, list[str]] = {}
+    if module != ModuleName.integraal:
+        config = MODULE_CONFIG[module.value]
+        valid_filter_fields = config.get("filter_fields", [])
+        for field in valid_filter_fields:
+            values = request.query_params.getlist(field)
+            if values:
+                # Limit values per field (same as main endpoint security limit)
+                if len(values) > 100:
+                    raise HTTPException(status_code=400, detail="Ongeldige parameter")
+                filter_fields[field] = values
 
     try:
         if module == ModuleName.integraal:
@@ -458,6 +481,8 @@ async def get_details(
                 primary_value=primary_value,
                 group_by=group_by,
                 jaar=jaar,
+                search=q,
+                filter_fields=filter_fields if filter_fields else None,
             )
 
         return DetailResponse(

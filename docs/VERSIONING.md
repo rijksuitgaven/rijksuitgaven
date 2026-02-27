@@ -86,6 +86,7 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 
 | Patch | Date | Changes |
 |-------|------|---------|
+| V2.0.3 | 2026-02-27 | Search-scoped results (secondary matches show filtered amounts), UI copy improvements |
 | V2.0.2 | 2026-02-24 | UX-040 sort desc first, UX-042 release banner |
 | V2.0.1 | 2026-02-21 | Multi-word AND search, exact phrase, wildcard stripping |
 
