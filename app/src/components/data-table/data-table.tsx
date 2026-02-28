@@ -39,6 +39,7 @@ const MAX_PINNED_ROWS = 5
 
 // Sticky column offset for primary column (in pixels)
 const STICKY_PRIMARY_OFFSET_PX = 32
+const STICKY_PRIMARY_OFFSET_PINNED_PX = 56 // Extra width when pinned rows exist (unpin + chevron)
 
 // Column meta type for sticky columns
 interface ColumnMeta {
@@ -1197,8 +1198,8 @@ export function DataTable({
                               isTotaal && 'sticky right-0 bg-blue-100/60 font-semibold z-10 border-l border-[var(--border)]'
                             )}
                             style={{
-                              width: cell.column.getSize(),
-                              left: cellIndex === 1 ? `${STICKY_PRIMARY_OFFSET_PX}px` : undefined
+                              width: cellIndex === 0 ? STICKY_PRIMARY_OFFSET_PINNED_PX : cell.column.getSize(),
+                              left: cellIndex === 1 ? `${STICKY_PRIMARY_OFFSET_PINNED_PX}px` : undefined
                             }}
                           >
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
