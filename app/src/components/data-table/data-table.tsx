@@ -517,7 +517,10 @@ export function DataTable({
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <button
-                      onClick={() => row.pin(false)}
+                      onClick={() => setRowPinning(prev => ({
+                        ...prev,
+                        top: (prev.top ?? []).filter(id => id !== row.id),
+                      }))}
                       className="p-1 hover:bg-[var(--pink)]/10 rounded transition-colors"
                       aria-label="Verwijder uit vergelijking"
                     >
