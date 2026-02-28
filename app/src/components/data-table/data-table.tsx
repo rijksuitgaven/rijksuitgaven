@@ -35,7 +35,7 @@ const COLLAPSED_YEARS_START = 2016
 const COLLAPSED_YEARS_END = 2020
 
 const MAX_EXPORT_ROWS = 500
-const MAX_PINNED_ROWS = 4
+const MAX_PINNED_ROWS = 5
 
 // Sticky column offset for primary column (in pixels)
 const STICKY_PRIMARY_OFFSET_PX = 32
