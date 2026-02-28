@@ -339,47 +339,55 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     }
   }, [endCurrentSearch])
 
-  // UX-041: Update URL with full view state (filters, sort, page, columns, expanded)
+  // UX-041: Update URL with full view state (debounced push to preserve back button)
+  const urlUpdateTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
-    const params = new URLSearchParams()
-    if (filters.search) params.set('q', filters.search)
-    if (filters.jaar) params.set('jaar', String(filters.jaar))
-    if (filters.minBedrag) params.set('min_bedrag', String(filters.minBedrag))
-    if (filters.maxBedrag) params.set('max_bedrag', String(filters.maxBedrag))
+    if (urlUpdateTimer.current) clearTimeout(urlUpdateTimer.current)
+    urlUpdateTimer.current = setTimeout(() => {
+      const params = new URLSearchParams()
+      if (filters.search) params.set('q', filters.search)
+      if (filters.jaar) params.set('jaar', String(filters.jaar))
+      if (filters.minBedrag) params.set('min_bedrag', String(filters.minBedrag))
+      if (filters.maxBedrag) params.set('max_bedrag', String(filters.maxBedrag))
 
-    // Include dynamic filter params — repeated params for multiselect (UX-041)
-    const standardKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag']
-    Object.entries(filters).forEach(([key, value]) => {
-      if (!standardKeys.includes(key) && Array.isArray(value) && value.length > 0) {
-        value.forEach(v => params.append(key, v))
+      // Include dynamic filter params — repeated params for multiselect (UX-041)
+      const standardKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag']
+      Object.entries(filters).forEach(([key, value]) => {
+        if (!standardKeys.includes(key) && Array.isArray(value) && value.length > 0) {
+          value.forEach(v => params.append(key, v))
+        }
+      })
+
+      // Sort state — omit defaults (random/desc)
+      if (sortBy !== 'random') {
+        params.set('sort', sortBy)
+        if (sortOrder !== 'desc') params.set('order', sortOrder)
       }
-    })
 
-    // Sort state — omit defaults (random/desc)
-    if (sortBy !== 'random') {
-      params.set('sort', sortBy)
-      if (sortOrder !== 'desc') params.set('order', sortOrder)
-    }
+      // Page — omit page=1
+      if (page > 1) params.set('page', String(page))
 
-    // Page — omit page=1
-    if (page > 1) params.set('page', String(page))
+      // Columns — omit when equal to module defaults
+      const defaults = getDefaultColumns(moduleId)
+      const colsSorted = [...selectedColumns].sort()
+      const defaultsSorted = [...defaults].sort()
+      if (JSON.stringify(colsSorted) !== JSON.stringify(defaultsSorted)) {
+        params.set('cols', selectedColumns.join(','))
+      }
 
-    // Columns — omit when equal to module defaults
-    const defaults = getDefaultColumns(moduleId)
-    const colsSorted = [...selectedColumns].sort()
-    const defaultsSorted = [...defaults].sort()
-    if (JSON.stringify(colsSorted) !== JSON.stringify(defaultsSorted)) {
-      params.set('cols', selectedColumns.join(','))
-    }
+      // Expanded row + grouping (read from ref to avoid re-render cycle)
+      if (expandedPrimaryRef.current) {
+        params.set('expand', expandedPrimaryRef.current)
+        if (expandGroupingRef.current) params.set('group', expandGroupingRef.current)
+      }
 
-    // Expanded row + grouping (read from ref to avoid re-render cycle)
-    if (expandedPrimaryRef.current) {
-      params.set('expand', expandedPrimaryRef.current)
-      if (expandGroupingRef.current) params.set('group', expandGroupingRef.current)
-    }
-
-    const newUrl = params.toString() ? `/${moduleId}?${params.toString()}` : `/${moduleId}`
-    router.replace(newUrl, { scroll: false })
+      const newUrl = params.toString() ? `/${moduleId}?${params.toString()}` : `/${moduleId}`
+      // Skip if URL hasn't changed
+      const currentUrl = window.location.pathname + window.location.search
+      if (newUrl === currentUrl) return
+      router.push(newUrl, { scroll: false })
+    }, 500)
+    return () => { if (urlUpdateTimer.current) clearTimeout(urlUpdateTimer.current) }
   }, [filters, router, moduleId, sortBy, sortOrder, page, selectedColumns])
 
   // Determine if this is the default view (no search, no filters)
