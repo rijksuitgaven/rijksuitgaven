@@ -336,152 +336,72 @@ Senior specialist (10+ years equivalent) in all disciplines. Never ask technical
 | Performance | <100ms search, <1s page load |
 | Railway deploy | ~2 minutes after push to main |
 
-### Staging & Deployment Protocol (MANDATORY)
+### Deployment Protocol (MANDATORY)
 
-**Two environments exist. Staging may contain features that main does not.**
+**Single environment. Feature branches for unreleased work.**
 
 | Environment | Branch | URL |
 |-------------|--------|-----|
 | Production | `main` | beta.rijksuitgaven.nl |
-| Staging | `staging` | frontend-staging-production-ce7d.up.railway.app |
+| Local dev | feature branches | http://localhost:3000 |
+
+**Railway auto-deploys on every push to `main`.** There is NO way to push to main without triggering a production build. Plan accordingly.
 
 #### Deployment Decision Gate (EVERY PUSH)
 
 **Before ANY push, Claude must state:**
 
 ```
-**Deploy to:** [target] — [reason]
+**Deploy to:** production — [reason]
 ```
 
 Then WAIT for user approval. Never push without explicit confirmation.
 
-#### CRITICAL: Never Overwrite Staging
+#### Workflow
 
-**NEVER use `--force` or `main:staging` to push to staging.** Staging may contain
-features being tested that are not yet on main (e.g., UX-039 Vergelijk/Pin).
-Overwriting staging destroys those features.
-
-**Always MERGE main into staging** so staging keeps its extra features and gets
-main's new code too.
-
-#### Deployment Decision Tree (MANDATORY — Read Before ANY Push)
-
-**STOP. Answer: Does this code belong on production?**
-
-**Railway auto-deploys on every push.** Every `git push origin main` triggers a production build. There is NO way to push to main without a build. Plan accordingly.
-
----
-
-**A) BOTH ENVIRONMENTS** (bug fixes, admin features, SQL-then-code)
-
-Use for: Admin `/team/*` features, bug fixes, approved batch releases.
+**A) Bug fix / admin feature (Vx.x.x) — ready for production:**
 
 ```bash
-git push origin main
-git checkout staging && git pull origin staging && git merge main && git push origin staging && git checkout main
+# Build and test on localhost
+git commit -m "Fix: ..."
+git push origin main          # → production build
 ```
 
-Result: 1 production build + 1 staging build. Both environments updated.
-
----
-
-**B) STAGING ONLY** (new user-facing feature for testing)
-
-**ABSOLUTE RULE: `git push origin main` must NEVER appear in this sequence.**
-The feature is committed locally but NEVER pushed to origin/main.
+**B) New feature (Vx.x) — NOT ready for production:**
 
 ```bash
-# Feature is committed on local main. Do NOT push main.
-git checkout staging && git pull origin staging
-git merge main && git push origin staging
+git checkout -b feature/ux-XXX
+# Build, commit, test on localhost
+# Feature stays on this branch — NEVER on main
+```
+
+**Hotfix while feature is in progress:**
+```bash
+git stash                     # park feature work
 git checkout main
-git revert HEAD --no-edit
-# Do NOT push main. Nothing changed on origin/main. Zero production builds.
+# fix, commit, push
+git checkout feature/ux-XXX
+git stash pop                 # resume feature
 ```
 
-Result: 0 production builds + 1 staging build. Feature never exists on origin/main.
-
-**Why the revert?** Local main must stay clean for future work. The revert removes the feature from local main. But since main was never pushed, the revert is local-only too.
-
----
-
-**C) BATCH RELEASE** (approved staging features → production)
-
-Use when user approves staging-only features for production release.
+**C) Ship approved feature:**
 
 ```bash
-git cherry-pick <commit-hash-1> <commit-hash-2>   # Feature commits onto main
-git push origin main
-git checkout staging && git pull origin staging && git merge main && git push origin staging && git checkout main
+git checkout main
+git merge feature/ux-XXX
+git push origin main          # → production build
+git branch -d feature/ux-XXX  # cleanup
 ```
-
-Result: 1 production build + 1 staging build. Remove released features from Staging-Only Registry.
-
----
 
 **SQL migrations** always execute BEFORE code: run on Supabase first, then push code.
 
-#### Self-Verification Questions (MANDATORY — Before ANY Push)
+#### Active Feature Branches
 
-Answer ALL 5 before executing any `git push`:
+| Branch | Feature | Status |
+|--------|---------|--------|
+| `feature/ux-039-041` | Vergelijk/Pin + URL State | Testing on localhost |
 
-| # | Question | Staging-only answer | Both-environments answer |
-|---|----------|-------------------|------------------------|
-| 1 | Am I about to push to main? Does this code belong on production? | NO push to main | YES push to main |
-| 2 | How many `git push` commands in my plan? | Exactly 1 (staging) | Exactly 2 (main + staging) |
-| 3 | After execution, will `git log origin/main --oneline -1` show the feature? | NO | YES |
-| 4 | Does my plan include `main:staging` or `--force`? | NO (both forbidden) | NO (both forbidden) |
-| 5 | How many Railway production builds will trigger? | 0 | 1 |
-
-**If any answer is wrong, STOP and fix the plan before executing.**
-
-#### Staging-Only Feature Registry
-
-**These features exist on staging but MUST NOT be on main.** Every feature here was deliberately kept off production. Committing any of this code to main is a production incident.
-
-| Feature | Code Markers (grep patterns) | Files |
-|---------|------------------------------|-------|
-| UX-039 Vergelijk/Pin | `RowPinningState`, `PinOff`, `row.pin(`, `MAX_PINNED_ROWS`, `getPinnedData`, `Wis selectie`, `pinnedRowsCache`, `STICKY_PRIMARY_OFFSET_PINNED_PX`, `isPinned` | `data-table.tsx`, `expanded-row.tsx`, `module-page.tsx`, `globals.css` |
-| UX-041 URL State | `initialExpandedPrimary`, `expandedPrimaryRef`, `isFirstMount`, `onGroupingChange`, `onExpandedChange`, `urlHadCols`, `handleExpandedChange`, `handleGroupingChange` | `data-table.tsx`, `module-page.tsx` |
-
-**Maintaining this registry:**
-- When a feature is deployed staging-only, ADD it here with its code markers
-- When a feature is approved for production (batch release), REMOVE it from this registry
-- If you see code matching these markers on main, it's a bug — revert immediately
-
-#### Pre-Push Checklist (MANDATORY)
-
-**Before pushing to main:**
-
-1. Check for staging-only code contamination:
-```bash
-# Auto-check: grep for ALL staging-only markers in the diff
-git diff origin/main HEAD -- app/src/ | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS|getPinnedData|Wis selectie|initialExpandedPrimary|expandedPrimaryRef|isFirstMount|onGroupingChange|handleGroupingChange"
-```
-If this returns ANY matches, **STOP**. Staging-only code is about to go to production. Revert the offending changes before pushing.
-
-2. Verify commit content matches intent — a commit message saying "staging only" on the main branch is a contradiction. If the feature is staging-only, the main branch must have it **reverted**.
-
-**Before pushing to staging:**
-
-3. Check if staging has diverged from main:
-```bash
-git log origin/staging --not origin/main --oneline
-```
-If this shows commits, staging has extra features. **NEVER force-push** in this case.
-
-#### Post-Push Verification (MANDATORY)
-
-**After ANY push to main, verify no staging-only code leaked:**
-```bash
-git show origin/main:app/src/components/data-table/data-table.tsx | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS|initialExpandedPrimary|expandedPrimaryRef|isFirstMount"
-git show origin/main:app/src/components/module-page/module-page.tsx | grep -iE "onGroupingChange|handleGroupingChange|initialExpandedPrimary|onExpandedChange"
-```
-If matches found, **immediately revert and re-push.**
-
-**When adding new staging-only features:** Update the registry table AND the grep patterns in both pre-push and post-push checks above.
-
-**Full process doc:** `docs/plans/2026-02-21-staging-environment.md`
+**Rule:** Nothing reaches production unless the user explicitly says "ship it".
 
 ---
 
