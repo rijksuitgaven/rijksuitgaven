@@ -353,6 +353,35 @@ export function DataTable({
   // Number of currently pinned rows
   const pinnedCount = rowPinning.top?.length ?? 0
 
+  // Cache pinned row data so they survive search/filter changes (server-side pagination)
+  const pinnedRowsCache = useRef<Map<string, RecipientRow>>(new Map())
+
+  // Update cache: add newly pinned rows, remove unpinned ones
+  useEffect(() => {
+    const pinnedIds = new Set(rowPinning.top ?? [])
+    // Add any pinned rows from current data to cache
+    for (const row of data) {
+      if (pinnedIds.has(row.primary_value)) {
+        pinnedRowsCache.current.set(row.primary_value, row)
+      }
+    }
+    // Remove rows that are no longer pinned
+    for (const key of pinnedRowsCache.current.keys()) {
+      if (!pinnedIds.has(key)) {
+        pinnedRowsCache.current.delete(key)
+      }
+    }
+  }, [rowPinning.top, data])
+
+  // Merge cached pinned rows into data so TanStack always has them in its row model
+  const tableData = useMemo(() => {
+    const dataIds = new Set(data.map(r => r.primary_value))
+    const missingPinned = (rowPinning.top ?? [])
+      .map(id => pinnedRowsCache.current.get(id))
+      .filter((r): r is RecipientRow => r != null && !dataIds.has(r.primary_value))
+    return missingPinned.length > 0 ? [...missingPinned, ...data] : data
+  }, [data, rowPinning.top])
+
   // Reset expanded state when data changes — but preserve expanded state for pinned rows
   useEffect(() => {
     setExpanded(prev => {
@@ -462,9 +491,10 @@ export function DataTable({
 
   // Get pinned row data for export selection (UX-039)
   const getPinnedData = useCallback((): RecipientRow[] => {
-    const pinnedIds = new Set(rowPinning.top ?? [])
-    return data.filter(row => pinnedIds.has(row.primary_value))
-  }, [data, rowPinning])
+    return (rowPinning.top ?? [])
+      .map(id => pinnedRowsCache.current.get(id))
+      .filter((r): r is RecipientRow => r != null)
+  }, [rowPinning])
 
   // CSV Export handler (UX-039: selectionOnly for pinned rows)
   const handleExportCSV = (selectionOnly = false) => {
@@ -548,7 +578,7 @@ export function DataTable({
                       onRowExpand(row.original.primary_value)
                     }
                   }}
-                  className="flex-1 p-1 cursor-pointer hover:bg-[var(--gray-light)] rounded transition-colors group/expand flex items-center justify-center"
+                  className="flex-1 p-1 cursor-pointer hover:bg-[var(--gray-light)] rounded transition-colors group/expand flex items-center"
                   aria-expanded={row.getIsExpanded()}
                   aria-label={row.getIsExpanded() ? 'Rij inklappen' : 'Rij uitklappen'}
                 >
@@ -890,7 +920,7 @@ export function DataTable({
   }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onFilterLinkClick, selectedColumns, moduleId, searchQuery, pinnedCount]) // pinnedCount: cell renderers use it for max-pin checks
 
   const table = useReactTable({
-    data,
+    data: tableData,
     columns,
     state: {
       sorting,
