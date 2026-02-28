@@ -513,30 +513,42 @@ export function DataTable({
         cell: ({ row }) => {
           const isPinned = row.getIsPinned()
 
-          // Pinned rows show unpin icon instead of expand
+          // Pinned rows show unpin icon + expand chevron
           if (isPinned) {
             return (
-              <Tooltip.Provider delayDuration={0}>
-                <Tooltip.Root>
-                  <Tooltip.Trigger asChild>
-                    <button
-                      onClick={() => setRowPinning(prev => ({
-                        ...prev,
-                        top: (prev.top ?? []).filter(id => id !== row.id),
-                      }))}
-                      className="p-1 hover:bg-[var(--pink)]/10 rounded transition-colors"
-                      aria-label="Verwijder uit vergelijking"
-                    >
-                      <PinOff className="h-4 w-4 text-[var(--pink)]" aria-hidden="true" />
-                    </button>
-                  </Tooltip.Trigger>
-                  <Tooltip.Portal>
-                    <Tooltip.Content className="px-[10px] py-[6px] bg-[var(--navy-dark,#1e3a5f)] text-white text-[13px] font-normal leading-[1.4] rounded whitespace-nowrap z-[9999]" sideOffset={6}>
-                      Verwijder
-                    </Tooltip.Content>
-                  </Tooltip.Portal>
-                </Tooltip.Root>
-              </Tooltip.Provider>
+              <div className="flex items-center">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setRowPinning(prev => ({
+                      ...prev,
+                      top: (prev.top ?? []).filter(id => id !== row.id),
+                    }))
+                  }}
+                  className="p-1 hover:bg-[var(--pink)]/10 rounded transition-colors"
+                  aria-label="Verwijder uit vergelijking"
+                >
+                  <PinOff className="h-4 w-4 text-[var(--pink)]" aria-hidden="true" />
+                </button>
+                <button
+                  onClick={() => {
+                    delete expandGroupingRef.current[row.original.primary_value]
+                    row.toggleExpanded()
+                    if (!row.getIsExpanded() && onRowExpand) {
+                      onRowExpand(row.original.primary_value)
+                    }
+                  }}
+                  className="p-1 cursor-pointer hover:bg-[var(--gray-light)] rounded transition-colors group/expand"
+                  aria-expanded={row.getIsExpanded()}
+                  aria-label={row.getIsExpanded() ? 'Rij inklappen' : 'Rij uitklappen'}
+                >
+                  {row.getIsExpanded() ? (
+                    <ChevronDown className="h-4 w-4 text-[var(--navy-medium)] group-hover/expand:text-[var(--pink)]" aria-hidden="true" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-[var(--navy-medium)] group-hover/expand:text-[var(--pink)]" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
             )
           }
 
@@ -1125,7 +1137,10 @@ export function DataTable({
                 {/* Pinned rows (UX-039) — always visible at top */}
                 {table.getTopRows().map((row) => (
                   <Fragment key={row.id}>
-                    <tr className="group bg-blue-50/60 border-l-2 border-l-[var(--pink)] hover:bg-blue-50/80 transition-colors">
+                    <tr className={cn(
+                      'group bg-blue-50/60 border-l-2 border-l-[var(--pink)] hover:bg-blue-50/80 transition-colors',
+                      row.getIsExpanded() && 'bg-blue-50/80'
+                    )}>
                       {row.getVisibleCells().map((cell, cellIndex) => {
                         const isSticky = (cell.column.columnDef.meta as ColumnMeta | undefined)?.sticky || cellIndex === 0 || cellIndex === 1
                         const isTotaal = cell.column.id === 'total'
@@ -1151,6 +1166,8 @@ export function DataTable({
                         )
                       })}
                     </tr>
+                    {/* Expanded row content for pinned rows */}
+                    {row.getIsExpanded() && renderExpandedRow && renderExpandedRow(row.original, expandGroupingRef.current[row.original.primary_value])}
                   </Fragment>
                 ))}
                 {/* Separator between pinned and unpinned rows */}
