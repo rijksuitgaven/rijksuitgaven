@@ -81,11 +81,13 @@ for sort_field in "totaal" "y2024"; do
     fi
 done
 
-# Primary sort uses asc (alphabetical name ordering)
-if fetch_ok "$API_BASE/api/v1/modules/instrumenten?limit=3&sort_by=primary&sort_order=asc" "REG-002: sort_by=primary (asc)"; then
-    row_count=$(echo "$RESPONSE" | jq '.data | length' 2>/dev/null)
-    assert_gt0 "$row_count" "REG-002: sort_by=primary returns data"
-fi
+# Primary sort: both asc and desc must work (NULL rows exist in some modules)
+for dir in "asc" "desc"; do
+    if fetch_ok "$API_BASE/api/v1/modules/instrumenten?limit=3&sort_by=primary&sort_order=${dir}" "REG-002: sort_by=primary ($dir)"; then
+        row_count=$(echo "$RESPONSE" | jq '.data | length' 2>/dev/null)
+        assert_gt0 "$row_count" "REG-002: sort_by=primary $dir returns data"
+    fi
+done
 
 # Invalid sort field should return 400
 assert_status "$API_BASE/api/v1/modules/instrumenten?limit=3&sort_by=INVALID" "400" "REG-002: invalid sort_by returns 400"
