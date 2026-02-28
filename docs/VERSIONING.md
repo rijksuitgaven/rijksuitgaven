@@ -2,7 +2,7 @@
 
 **Project:** Rijksuitgaven.nl
 **Created:** 2026-01-30
-**Updated:** 2026-02-24
+**Updated:** 2026-02-28
 **Status:** Active
 
 ---
@@ -698,4 +698,4 @@ V10.0 European Platform
 ---
 
 **Document maintained by:** Product Owner
-**Last updated:** 2026-02-25
+**Last updated:** 2026-02-28
