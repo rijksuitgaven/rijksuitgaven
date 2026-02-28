@@ -82,22 +82,42 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 | UX-040: Sort descending first (first click sorts high-to-low) | ✅ Live |
 | UX-042: In-app release banner (dismissible notification for new features) | ✅ Live |
 
+### V2.1 - Slimmer Zoeken
+
+**Status:** ✅ Live (21 februari 2026)
+
+- Multi-word AND search (words in any order)
+- Exact phrase search (`"rode kruis"`)
+- Wildcard syntax (`prorail*`)
+
+### V2.2 - Sorteren & Meldingen
+
+**Status:** ✅ Live (24 februari 2026)
+
+- UX-040: Sort descending first (first click sorts high-to-low)
+- UX-042: In-app release banner (dismissible notification for new features)
+
+### V2.3 - Zoekresultaten & Tekst
+
+**Status:** ✅ Live (27 februari 2026)
+
+- Search-scoped results (secondary matches show filtered amounts, not inflated totals)
+- UI copy improvements (6 text changes)
+
 #### Patches
 
 | Patch | Date | Changes |
 |-------|------|---------|
-| V2.0.3 | 2026-02-27 | Search-scoped results (secondary matches show filtered amounts), UI copy improvements |
-| V2.0.2 | 2026-02-24 | UX-040 sort desc first, UX-042 release banner |
-| V2.0.1 | 2026-02-21 | Multi-word AND search, exact phrase, wildcard stripping |
+| V2.3.1 | 2026-02-28 | Fix: word boundary matching on special chars, NULLS LAST sort fix |
 
-### V2.1 - Vergelijk & URL State
+### V2.4 - Vergelijk & URL State
 
 **Status:** 🧪 On staging
 
 - UX-039: Row pinning (pin up to 4 rows for side-by-side comparison, export selection)
 - UX-041: Full URL state restoration (sort, page, columns, expand, group, multiselect filters in URL)
 
-### V2.2 - Zoeken
+### V2.5 - Zoeken
 
 **Status:** 📋 Planned
 
@@ -107,18 +127,18 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 - Semantic search (Cohere embeddings, ~€1/month)
 - Field-specific search syntax (`leverancier:prorail`) — power users
 
-### V2.3 - Performance
+### V2.6 - Performance
 
 - Filter performance: Typesense facets (~10ms vs 300-900ms PostgreSQL)
 - Railway private networking (Typesense egress savings)
 
-### V2.4 - Data & Integraal
+### V2.7 - Data & Integraal
 
 - Integraal cross-module data completeness (regelingen in integraal view)
 - Integraal view redesign (brainstorm — module-specific columns)
 - Data provenance / freshness indicator ("Data bijgewerkt: [date]")
 
-### V2.5 - Polish & Toegankelijkheid
+### V2.8 - Polish & Toegankelijkheid
 
 - Accessibility: colorblind anomaly indicator (pattern/dot overlay)
 - xlsx package replacement (ExcelJS — CVE cleanup)
@@ -568,7 +588,7 @@ V1 WordPress (legacy) ───────────────────�
 
 V2.0 Search ─────────────────────────────────► ✅ LIVE
   │
-  ├─► V2.1 Vergelijk & URL State → V2.2 Zoeken → V2.3-V2.5 (improvements)
+  ├─► V2.1-V2.3 (shipped) → V2.4 Vergelijk → V2.5 Zoeken → V2.6-V2.8 (improvements)
   │
   ├─► A1.0 Beheer MVP ─► A1.1 Bulk & CRM ─► A1.2 Inzichten ─► A2.0 Subscriptions
   │
@@ -613,11 +633,14 @@ V10.0 European Platform
 |---------|--------|----------|
 | V1 | ✅ Legacy (WordPress) | Superseded by V2 |
 | V2.0 | ✅ Live (beta, public launch via M1.0) | Week 9 |
-| V2.1 | 🧪 Vergelijk & URL State (on staging) | ~1 week post-launch |
-| V2.2 | 📋 Zoeken | Post-launch |
-| V2.3 | 📋 Performance | Post-launch |
-| V2.4 | 📋 Data & Integraal | Post-launch |
-| V2.5 | 📋 Polish & Toegankelijkheid + AI | Post-launch |
+| V2.1 | ✅ Slimmer Zoeken | Feb 21 |
+| V2.2 | ✅ Sorteren & Meldingen | Feb 24 |
+| V2.3 | ✅ Zoekresultaten & Tekst | Feb 27 |
+| V2.4 | 🧪 Vergelijk & URL State (on staging) | ~1 week post-launch |
+| V2.5 | 📋 Zoeken | Post-launch |
+| V2.6 | 📋 Performance | Post-launch |
+| V2.7 | 📋 Data & Integraal | Post-launch |
+| V2.8 | 📋 Polish & Toegankelijkheid + AI | Post-launch |
 | V3.0 | 📋 Planned | Post V2.0 launch |
 | V4.0 | 📋 Planned | Q1-Q2 2026 |
 | V5.0 | 📋 Planned | Q2 2026 |

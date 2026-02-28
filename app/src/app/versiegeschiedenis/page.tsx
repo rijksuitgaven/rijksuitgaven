@@ -25,11 +25,32 @@ export default function VersiegeschiedenisPage() {
 
         <article className="prose prose-slate max-w-none">
 
-          {/* V2.0.2 */}
+          {/* V2.3 */}
           <section className="mb-12">
             <div className="flex items-baseline gap-3 mb-4">
               <h2 className="text-xl font-semibold text-[var(--navy-dark)] m-0" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
-                V2.0.2
+                V2.3
+              </h2>
+              <span className="text-sm text-[var(--muted-foreground)]">27 februari 2026</span>
+            </div>
+
+            <h3 className="text-lg font-semibold text-[var(--navy-dark)] mb-3" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
+              Nauwkeurigere zoekresultaten
+            </h3>
+            <ul className="list-disc pl-6 text-[var(--foreground)] space-y-3">
+              <li>
+                <strong>Gefilterde bedragen bij zoekresultaten:</strong> Zoekt u op een regeling of artikel? De bedragen tonen nu precies wat bij die zoekterm hoort. Zo ziet u direct de relevante omvang per ontvanger.
+              </li>
+            </ul>
+          </section>
+
+          <hr className="border-[var(--border)] my-8" />
+
+          {/* V2.2 */}
+          <section className="mb-12">
+            <div className="flex items-baseline gap-3 mb-4">
+              <h2 className="text-xl font-semibold text-[var(--navy-dark)] m-0" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
+                V2.2
               </h2>
               <span className="text-sm text-[var(--muted-foreground)]">24 februari 2026</span>
             </div>
@@ -49,11 +70,11 @@ export default function VersiegeschiedenisPage() {
 
           <hr className="border-[var(--border)] my-8" />
 
-          {/* V2.0.1 */}
+          {/* V2.1 */}
           <section className="mb-12">
             <div className="flex items-baseline gap-3 mb-4">
               <h2 className="text-xl font-semibold text-[var(--navy-dark)] m-0" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
-                V2.0.1
+                V2.1
               </h2>
               <span className="text-sm text-[var(--muted-foreground)]">21 februari 2026</span>
             </div>
