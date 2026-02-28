@@ -37,7 +37,6 @@ const ALLOWED_HOSTS = new Set([
   'rijksuitgaven.nl',
   'www.rijksuitgaven.nl',
   'beta.rijksuitgaven.nl',
-  'frontend-staging-production-ce7d.up.railway.app',
   'localhost:3000',
   'localhost:3001',
 ])

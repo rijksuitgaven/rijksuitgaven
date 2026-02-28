@@ -42,8 +42,8 @@ BFF_SECRET=<secret> ./scripts/tests/run.sh all
 # Against local backend
 BFF_SECRET=<secret> API_BASE=http://localhost:8000 ./scripts/tests/run.sh smoke
 
-# Against staging
-BFF_SECRET=<secret> API_BASE=https://frontend-staging-production-ce7d.up.railway.app ./scripts/tests/run.sh smoke
+# Against localhost (full dev environment)
+BFF_SECRET=<secret> API_BASE=http://localhost:3000 ./scripts/tests/run.sh smoke
 ```
 
 ### Authentication
