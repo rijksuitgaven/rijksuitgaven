@@ -442,6 +442,7 @@ Answer ALL 5 before executing any `git push`:
 | Feature | Code Markers (grep patterns) | Files |
 |---------|------------------------------|-------|
 | UX-039 Vergelijk/Pin | `RowPinningState`, `PinOff`, `row.pin(`, `MAX_PINNED_ROWS`, `getPinnedData`, `Wis selectie`, `pinnedRowsCache`, `STICKY_PRIMARY_OFFSET_PINNED_PX`, `isPinned` | `data-table.tsx`, `expanded-row.tsx`, `module-page.tsx`, `globals.css` |
+| UX-041 URL State | `initialExpandedPrimary`, `expandedPrimaryRef`, `isFirstMount`, `onGroupingChange`, `onExpandedChange`, `urlHadCols`, `handleExpandedChange`, `handleGroupingChange` | `data-table.tsx`, `module-page.tsx` |
 
 **Maintaining this registry:**
 - When a feature is deployed staging-only, ADD it here with its code markers
@@ -455,7 +456,7 @@ Answer ALL 5 before executing any `git push`:
 1. Check for staging-only code contamination:
 ```bash
 # Auto-check: grep for ALL staging-only markers in the diff
-git diff origin/main HEAD -- app/src/ | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS|getPinnedData|Wis selectie"
+git diff origin/main HEAD -- app/src/ | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS|getPinnedData|Wis selectie|initialExpandedPrimary|expandedPrimaryRef|isFirstMount|onGroupingChange|handleGroupingChange"
 ```
 If this returns ANY matches, **STOP**. Staging-only code is about to go to production. Revert the offending changes before pushing.
 
@@ -473,8 +474,8 @@ If this shows commits, staging has extra features. **NEVER force-push** in this 
 
 **After ANY push to main, verify no staging-only code leaked:**
 ```bash
-git show origin/main:app/src/components/data-table/data-table.tsx | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS"
-git show origin/main:app/src/components/app-shell/app-shell.tsx | grep -iE "ReleaseBanner|release-banner"
+git show origin/main:app/src/components/data-table/data-table.tsx | grep -iE "RowPinningState|PinOff|row\.pin\(|MAX_PINNED_ROWS|initialExpandedPrimary|expandedPrimaryRef|isFirstMount"
+git show origin/main:app/src/components/module-page/module-page.tsx | grep -iE "onGroupingChange|handleGroupingChange|initialExpandedPrimary|onExpandedChange"
 ```
 If matches found, **immediately revert and re-push.**
 
