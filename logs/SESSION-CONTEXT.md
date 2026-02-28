@@ -32,7 +32,7 @@
 | Search enhancements | ✅ Implemented (Feb 21) | Multi-word AND, exact phrase `"..."`, wildcard stripping |
 | /versiegeschiedenis page | ✅ Implemented (Feb 21) | Benefit-oriented changelog + V2.x roadmap |
 | Staffel popover fix | ✅ Fixed (Feb 21) | Shows all 14 staffels (0-13) |
-| UX-039 Vergelijk (row pinning) | ⏳ On staging only | Pin up to 4 rows, export selection. Reverted from main 2026-02-22 |
+| UX-039 Vergelijk (row pinning) | 🧪 On staging | Pin up to 5 rows, export selection, expand+pink border. 10 bug fixes (Feb 28). Reverted from main 2026-02-22 |
 | Email Media Library | ✅ Live (both) | Sharp processing, DB tracking, media picker, media tab. Admin feature |
 | Email deliverability (SPF fix) | ✅ Done (DNS) | Replaced broken self-referencing SPF with correct Resend + ZXCS includes |
 | Campaign features (13) | ✅ Implemented (Feb 22) | 6 phases: webhook, pre-send, analytics, engagement, sequences, preferences |
@@ -88,8 +88,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Bug Fixes + Test Framework + Version Renumber** (2026-02-28)
-   7 commits: word boundary fix, NULLS LAST sort fix, test framework (32/32 pass), version renumber V2.0.x→V2.x, browser back button fix (router.replace→push), login email copy. All pushed to both environments.
+1. **Bug Fixes + Test Framework + UX-039 Pin Fix** (2026-02-28)
+   20 commits total. Production: word boundary fix, NULLS LAST sort fix, test framework (32/32 pass), version renumber V2.0.x→V2.x, browser back button fix, login email copy. Staging: 10 UX-039 pin/expand fixes (pinnedRowsCache, parseInt→string, sticky offset, isPinned border, max 5 rows).
 
 2. **Search-Scoped Results + UI Polish (V2.3)** (2026-02-27)
    Bug fix: secondary search matches show filtered amounts. 2 hotfixes. 6 UI copy improvements. Feedback button dynamic positioning. Google G icon UX: branded SVG, hidden by default, row-hover reveal. Expand column tightened 40→32px.

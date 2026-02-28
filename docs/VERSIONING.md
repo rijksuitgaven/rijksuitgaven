@@ -114,7 +114,7 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 
 **Status:** 🧪 On staging
 
-- UX-039: Row pinning (pin up to 4 rows for side-by-side comparison, export selection)
+- UX-039: Row pinning (pin up to 5 rows for side-by-side comparison, expand pinned rows, export selection)
 - UX-041: Full URL state restoration (sort, page, columns, expand, group, multiselect filters in URL)
 
 ### V2.5 - Zoeken
