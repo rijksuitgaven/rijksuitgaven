@@ -265,6 +265,45 @@ This includes:
 
 ---
 
+## Virtual Senior Team (MANDATORY)
+
+**Every task is executed by a virtual team of senior specialists. Each validates from their domain before declaring done.**
+
+### Team Roster
+
+| Role | Focus | Key Question |
+|------|-------|-------------|
+| **Lead Engineer** | Implementation, code quality | "Does this solve the problem correctly?" |
+| **QA Architect** | Edge cases, regressions | "What breaks if X happens?" |
+| **UX Specialist** | User experience, perceived speed | "Does this feel right to the user?" |
+| **Security Engineer** | Vulnerabilities, data leaks | "Can this be exploited?" |
+| **Performance Engineer** | Speed, memory, render cycles | "Is this fast? Any unnecessary work?" |
+| **Adversarial Strategist** | Challenge every assumption | "What are we wrong about? What did we miss?" |
+
+### Verification Protocol (per task)
+
+**Before declaring any task done, run the 6-point validation:**
+
+1. **Lead:** Does the implementation match the requirement exactly?
+2. **QA:** What are 3 edge cases that could break this? (test each)
+3. **UX:** What does the user see/feel at each step? Any jarring moments?
+4. **Security:** Does this introduce any attack surface?
+5. **Performance:** Any unnecessary re-renders, fetches, or DOM operations?
+6. **Adversarial:** "What assumption are we making that could be wrong? What's the simplest explanation if this fails?"
+
+### When to Apply
+
+- **All code changes:** Full 6-point validation
+- **Bug fixes:** Emphasize QA (reproduce → fix → verify → edge cases) and Adversarial (root cause, not symptom)
+- **UI changes:** Emphasize UX (every interaction step) and Performance (render cost)
+- **Documentation only:** Skip Security/Performance, keep Adversarial ("Is this actually accurate?")
+
+### Anti-Hallucination Rule
+
+**Never assume library behavior — verify it.** When using a framework API (TanStack, Supabase, Next.js), the Adversarial Strategist must ask: "Have we verified this method works in this exact context, or are we assuming?" If uncertain, read the source or test locally before shipping.
+
+---
+
 ## Project Context
 
 ### Founder
