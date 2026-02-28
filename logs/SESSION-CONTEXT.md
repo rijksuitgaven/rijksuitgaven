@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-02-27
+**Last Updated:** 2026-02-28
 **Project Phase:** V2.0 Development
 **Current Sprint:** Week 9+ — Pre-Launch Polish & Beta Feedback
 **Beta Status:** V0.9 live at beta.rijksuitgaven.nl (10 testers, launched 2026-02-21)
@@ -15,7 +15,7 @@
 
 | Track | Current | Status |
 |-------|---------|--------|
-| **V** (End-user) | V2.0 Search Platform | ✅ Live (beta) |
+| **V** (End-user) | V2.3 Search Platform | ✅ Live (beta) |
 | **A** (Admin) | A1.0 Beheer MVP | ✅ Live |
 | **M** (Marketing) | M1.0 Lancering | 📋 Planned |
 | **D** (Data) | D1.0 Gemeente Uitbreiding | 📋 Planned |
@@ -71,6 +71,12 @@
 | UI copy improvements (V2.0.3) | ✅ Implemented (Feb 27) | 6 text changes: overheidsbestedingen, Komt ook voor in, miljard, Doorzoek ontvangers, pluralization |
 | Feedback button above cookie banner | ✅ Fixed (Feb 27) | Dynamic positioning via localStorage check + custom event. Smooth transition on dismiss. |
 | Google search icon UX | ✅ Fixed (Feb 27) | Branded navy G SVG, hidden by default, row-hover reveal (60%), direct-hover full. Expand column 40→32px tighter spacing. |
+| Word boundary + fallback gate bug | ✅ Fixed (Feb 28) | `is_word_boundary_match` fails on special chars + `has_primary_query` False in fallback. Commit `c91eecd` |
+| Test framework (smoke + regression) | ✅ Built (Feb 28) | `scripts/tests/` — 6 regression tests, smoke test, shared lib with auth. 32/32 pass. Commit `3923e16` |
+| sort_by=primary desc NULL rows | ✅ Fixed (Feb 28) | NULLS LAST on 3 sort clauses in modules.py. 4/6 modules affected. Commit `3d85b42` |
+| Version renumbering V2.0.x → V2.x | ✅ Done (Feb 28) | Features were mislabeled as patches. V2.0.1→V2.1, V2.0.2→V2.2, V2.0.3→V2.3. 3 files updated. Commit `941dc31` |
+| Browser back button broken | ✅ Fixed (Feb 28) | `router.replace` → debounced `router.push` (500ms). Staging merge conflict resolved. Commit `c4ca6ca` |
+| Login email session duration | ✅ Fixed (Feb 28) | Added "Na inloggen blijft u ingelogd..." to magic link email (HTML+text). Commit `c83152e` |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
@@ -82,7 +88,10 @@
 
 ## Recent Work (Last 5)
 
-1. **Search-Scoped Results + UI Polish (V2.0.3)** (2026-02-27)
+1. **Bug Fixes + Test Framework + Version Renumber** (2026-02-28)
+   7 commits: word boundary fix, NULLS LAST sort fix, test framework (32/32 pass), version renumber V2.0.x→V2.x, browser back button fix (router.replace→push), login email copy. All pushed to both environments.
+
+2. **Search-Scoped Results + UI Polish (V2.3)** (2026-02-27)
    Bug fix: secondary search matches show filtered amounts. 2 hotfixes. 6 UI copy improvements. Feedback button dynamic positioning. Google G icon UX: branded SVG, hidden by default, row-hover reveal. Expand column tightened 40→32px.
 
 2. **V5.0 Inzichten — 28-Concept Visualization Suite** (2026-02-25)
