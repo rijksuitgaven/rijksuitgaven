@@ -526,7 +526,7 @@ export function DataTable({
           // Pinned rows show unpin icon + expand chevron
           if (isPinned) {
             return (
-              <div className="flex items-center">
+              <div className="flex items-center w-full">
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
@@ -535,7 +535,7 @@ export function DataTable({
                       top: (prev.top ?? []).filter(id => id !== row.id),
                     }))
                   }}
-                  className="p-1 hover:bg-[var(--pink)]/10 rounded transition-colors"
+                  className="p-1 shrink-0 hover:bg-[var(--pink)]/10 rounded transition-colors"
                   aria-label="Verwijder uit vergelijking"
                 >
                   <PinOff className="h-4 w-4 text-[var(--pink)]" aria-hidden="true" />
@@ -548,7 +548,7 @@ export function DataTable({
                       onRowExpand(row.original.primary_value)
                     }
                   }}
-                  className="p-1 cursor-pointer hover:bg-[var(--gray-light)] rounded transition-colors group/expand"
+                  className="flex-1 p-1 cursor-pointer hover:bg-[var(--gray-light)] rounded transition-colors group/expand flex items-center justify-center"
                   aria-expanded={row.getIsExpanded()}
                   aria-label={row.getIsExpanded() ? 'Rij inklappen' : 'Rij uitklappen'}
                 >
