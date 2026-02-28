@@ -32,7 +32,7 @@
 | Search enhancements | ✅ Implemented (Feb 21) | Multi-word AND, exact phrase `"..."`, wildcard stripping |
 | /versiegeschiedenis page | ✅ Implemented (Feb 21) | Benefit-oriented changelog + V2.x roadmap |
 | Staffel popover fix | ✅ Fixed (Feb 21) | Shows all 14 staffels (0-13) |
-| UX-039 Vergelijk (row pinning) | 🧪 On staging | Pin up to 5 rows, export selection, expand+pink border. 10 bug fixes (Feb 28). Reverted from main 2026-02-22 |
+| UX-039 Vergelijk (row pinning) | 🔨 On feature branch | Pin up to 5 rows, export selection, expand+pink border. 10 bug fixes (Feb 28). Branch: `feature/ux-039-041` |
 | Email Media Library | ✅ Live (both) | Sharp processing, DB tracking, media picker, media tab. Admin feature |
 | Email deliverability (SPF fix) | ✅ Done (DNS) | Replaced broken self-referencing SPF with correct Resend + ZXCS includes |
 | Campaign features (13) | ✅ Implemented (Feb 22) | 6 phases: webhook, pre-send, analytics, engagement, sequences, preferences |
@@ -88,8 +88,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Bug Fixes + Test Framework + UX-039 Pin Fix** (2026-02-28)
-   20 commits total. Production: word boundary fix, NULLS LAST sort fix, test framework (32/32 pass), version renumber V2.0.x→V2.x, browser back button fix, login email copy. Staging: 10 UX-039 pin/expand fixes (pinnedRowsCache, parseInt→string, sticky offset, isPinned border, max 5 rows).
+1. **Bug Fixes + UX-039 Pin Fix + Staging Elimination** (2026-02-28)
+   21 commits across 3 sessions. Production: word boundary fix, NULLS LAST, test framework (32/32), version renumber, back button, login email. UX-039: 10 pin/expand fixes. Infra: eliminated staging environment — localhost as full dev/test (added env vars), deleted staging branch+service, feature branch workflow.
 
 2. **Search-Scoped Results + UI Polish (V2.3)** (2026-02-27)
    Bug fix: secondary search matches show filtered amounts. 2 hotfixes. 6 UI copy improvements. Feedback button dynamic positioning. Google G icon UX: branded SVG, hidden by default, row-hover reveal. Expand column tightened 40→32px.
@@ -124,8 +124,7 @@
 | **Production URL** | `https://beta.rijksuitgaven.nl` |
 | **Railway URL** | `https://rijksuitgaven-production.up.railway.app` |
 | **CNAME Target** | `j65ghs38.up.railway.app` |
-| **Staging URL** | `https://frontend-staging-production-ce7d.up.railway.app` |
-| **Staging Branch** | `staging` |
+| **Local Dev** | `http://localhost:3000` (feature branches) |
 | **Cron Service** | `curlimages/curl` Docker on Railway, schedule `0 7-16 * * 1-5` |
 | **Cron URL** | `POST https://beta.rijksuitgaven.nl/api/v1/cron/sequences` |
 | **Env Var** | `CRON_SECRET` on frontend + cron service |
@@ -188,7 +187,7 @@ Key recent migrations:
 | Auth | Magic Link only (Supabase Auth + PKCE + Resend) |
 | All transactional email | Bypasses Supabase → Resend with branded templates. From: contact@rijksuitgaven.nl. Multipart (HTML+text). |
 | Export limit | 500 rows always |
-| Staging workflow | Admin→both, fixes→ask, user features→staging only. Batch release. SQL before code. |
+| Deployment workflow | Feature branches + localhost testing. Hotfixes straight to main. SQL before code. |
 | Legal entity | Rijksuitgaven.nl (KVK 96257008) |
 | Formal Dutch | u/uw in all user-facing text |
 | Typography | IBM Plex Sans (public) + Condensed (data pages) |
@@ -232,7 +231,7 @@ Key recent migrations:
 | Frontend docs | `docs/FRONTEND-DOCUMENTATION.md` |
 | Database docs | `scripts/sql/DATABASE-DOCUMENTATION.md` |
 | Backlog | `02-requirements/backlog.md` |
-| Staging setup | `docs/plans/2026-02-21-staging-environment.md` |
+| Deploy workflow | `CLAUDE.md` → Deployment Protocol section |
 | Data update runbook | `scripts/data/DATA-UPDATE-RUNBOOK.md` |
 
 ---

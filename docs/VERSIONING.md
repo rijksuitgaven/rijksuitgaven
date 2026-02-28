@@ -112,7 +112,7 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 
 ### V2.4 - Vergelijk & URL State
 
-**Status:** 🧪 On staging
+**Status:** 🔨 Testing (feature branch `feature/ux-039-041`)
 
 - UX-039: Row pinning (pin up to 5 rows for side-by-side comparison, expand pinned rows, export selection)
 - UX-041: Full URL state restoration (sort, page, columns, expand, group, multiselect filters in URL)
@@ -636,7 +636,7 @@ V10.0 European Platform
 | V2.1 | ✅ Slimmer Zoeken | Feb 21 |
 | V2.2 | ✅ Sorteren & Meldingen | Feb 24 |
 | V2.3 | ✅ Zoekresultaten & Tekst | Feb 27 |
-| V2.4 | 🧪 Vergelijk & URL State (on staging) | ~1 week post-launch |
+| V2.4 | 🔨 Vergelijk & URL State (feature branch) | ~1 week post-launch |
 | V2.5 | 📋 Zoeken | Post-launch |
 | V2.6 | 📋 Performance | Post-launch |
 | V2.7 | 📋 Data & Integraal | Post-launch |
