@@ -877,7 +877,7 @@ export function DataTable({
     })
 
     return cols
-  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onFilterLinkClick, selectedColumns, moduleId, searchQuery]) // collapsedYears and visibleYears are now stable memoized refs
+  }, [availableYears, yearsExpanded, collapsedYears, visibleYears, primaryColumnName, onSortChange, onRowExpand, onFilterLinkClick, selectedColumns, moduleId, searchQuery, pinnedCount]) // pinnedCount: cell renderers use it for max-pin checks
 
   const table = useReactTable({
     data,
