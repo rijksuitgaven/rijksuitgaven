@@ -1144,7 +1144,7 @@ async def _get_from_aggregated_view(
             # Reject any other sort_by values (could be SQL injection attempt)
             raise ValueError(f"Invalid sort_by value: {sort_by}")
         sort_direction = "DESC" if sort_order == "desc" else "ASC"
-        sort_clause = f"ORDER BY {sort_field} {sort_direction}"
+        sort_clause = f"ORDER BY {sort_field} {sort_direction} NULLS LAST"
 
     # Rebuild where_sql after potential random_order addition
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
@@ -1602,7 +1602,7 @@ async def _get_from_source_table(
             # Reject any other sort_by values (could be SQL injection attempt)
             raise ValueError(f"Invalid sort_by value: {sort_by}")
         sort_direction = "DESC" if sort_order == "desc" else "ASC"
-        sort_clause = f"ORDER BY {sort_field} {sort_direction}"
+        sort_clause = f"ORDER BY {sort_field} {sort_direction} NULLS LAST"
 
     # Main query with aggregation
     query = f"""
@@ -2050,7 +2050,7 @@ async def get_integraal_data(
             # Reject any other sort_by values (could be SQL injection attempt)
             raise ValueError(f"Invalid sort_by value: {sort_by}")
         sort_direction = "DESC" if sort_order == "desc" else "ASC"
-        sort_clause = f"ORDER BY {sort_field} {sort_direction}"
+        sort_clause = f"ORDER BY {sort_field} {sort_direction} NULLS LAST"
 
     # Rebuild where_sql after potential random_order addition
     where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
