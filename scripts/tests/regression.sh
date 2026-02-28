@@ -74,12 +74,18 @@ fi
 print_section "REG-002: Sort field validation"
 
 # Valid sort fields should return 200 with data
-for sort_field in "totaal" "primary" "y2024"; do
+for sort_field in "totaal" "y2024"; do
     if fetch_ok "$API_BASE/api/v1/modules/instrumenten?limit=3&sort_by=${sort_field}" "REG-002: sort_by=$sort_field"; then
         row_count=$(echo "$RESPONSE" | jq '.data | length' 2>/dev/null)
         assert_gt0 "$row_count" "REG-002: sort_by=$sort_field returns data"
     fi
 done
+
+# Primary sort uses asc (alphabetical name ordering)
+if fetch_ok "$API_BASE/api/v1/modules/instrumenten?limit=3&sort_by=primary&sort_order=asc" "REG-002: sort_by=primary (asc)"; then
+    row_count=$(echo "$RESPONSE" | jq '.data | length' 2>/dev/null)
+    assert_gt0 "$row_count" "REG-002: sort_by=primary returns data"
+fi
 
 # Invalid sort field should return 400
 assert_status "$API_BASE/api/v1/modules/instrumenten?limit=3&sort_by=INVALID" "400" "REG-002: invalid sort_by returns 400"
