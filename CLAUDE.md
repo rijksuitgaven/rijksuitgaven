@@ -441,7 +441,7 @@ Answer ALL 5 before executing any `git push`:
 
 | Feature | Code Markers (grep patterns) | Files |
 |---------|------------------------------|-------|
-| UX-039 Vergelijk/Pin | `RowPinningState`, `PinOff`, `row.pin(`, `MAX_PINNED_ROWS`, `getPinnedData`, `Wis selectie` | `data-table.tsx`, `globals.css` |
+| UX-039 Vergelijk/Pin | `RowPinningState`, `PinOff`, `row.pin(`, `MAX_PINNED_ROWS`, `getPinnedData`, `Wis selectie`, `pinnedRowsCache`, `STICKY_PRIMARY_OFFSET_PINNED_PX`, `isPinned` | `data-table.tsx`, `expanded-row.tsx`, `module-page.tsx`, `globals.css` |
 
 **Maintaining this registry:**
 - When a feature is deployed staging-only, ADD it here with its code markers
