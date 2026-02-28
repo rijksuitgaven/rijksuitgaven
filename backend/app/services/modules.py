@@ -295,9 +295,15 @@ def is_word_boundary_match(search: str, text: str) -> bool:
         return False
 
     # ALL terms must match (AND logic)
+    # Use adaptive word boundaries: only add \b where term starts/ends with
+    # a word character. Terms ending in "(", ")", "-", "." etc. can't have
+    # a trailing \b (no word→non-word transition). Matches build_search_condition
+    # which already does this correctly for PostgreSQL \y boundaries.
     for term in parsed.phrases + parsed.words:
         escaped = re.escape(term)
-        if not re.search(rf'\b{escaped}\b', text, re.IGNORECASE):
+        prefix = r'\b' if re.match(r'\w', term) else ''
+        suffix = r'\b' if re.search(r'\w$', term) else ''
+        if not re.search(f'{prefix}{escaped}{suffix}', text, re.IGNORECASE):
             return False
     return True
 
@@ -997,6 +1003,7 @@ async def _get_from_aggregated_view(
     # INVARIANT: primary field is ALWAYS first in TYPESENSE_SEARCHABLE_FIELDS — do NOT reorder.
     primary_only_keys: list[str] = []
     secondary_only_keys: list[str] = []
+    using_regex_fallback = False
     if search:
         # Get Typesense collection for this module
         collection = TYPESENSE_COLLECTIONS.get(config["table"])
@@ -1036,6 +1043,7 @@ async def _get_from_aggregated_view(
                 # This happens when Typesense not configured or no word-boundary matches found
                 # Note: Only search primary field to avoid issues with secondary columns
                 logger.info(f"Typesense returned 0 results for '{search}', falling back to regex on {primary}")
+                using_regex_fallback = True
                 _, pattern = build_search_condition(primary, param_idx, search)
                 where_clauses.append(f"{primary} ~* ${param_idx}")
                 params.append(pattern)
@@ -1043,6 +1051,7 @@ async def _get_from_aggregated_view(
         else:
             # Fallback: regex search if Typesense collection not mapped
             # Only search primary field for simplicity and reliability
+            using_regex_fallback = True
             _, pattern = build_search_condition(primary, param_idx, search)
             where_clauses.append(f"{primary} ~* ${param_idx}")
             params.append(pattern)
@@ -1239,10 +1248,11 @@ async def _get_from_aggregated_view(
     # Previously sequential: rows, then count, then totals = 3x latency
     try:
         # Build list of coroutines to run
-        # Run primary query only if we have primary keys to fetch, OR if not searching (browsing mode).
+        # Run primary query only if we have primary keys to fetch, OR if not searching (browsing mode),
+        # OR if using regex fallback (Typesense returned 0 word-boundary matches but regex WHERE is set).
         # When ALL Typesense matches are secondary (primary_only_keys is empty), skip the primary query
         # entirely — even if year/amount WHERE clauses exist — to avoid returning unrelated rows.
-        has_primary_query = bool(primary_only_keys) or not search
+        has_primary_query = bool(primary_only_keys) or not search or using_regex_fallback
         coros = []
         coro_labels = []
 
