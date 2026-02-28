@@ -578,14 +578,14 @@ export function DataTable({
                       onRowExpand(row.original.primary_value)
                     }
                   }}
-                  className="flex-1 p-1 cursor-pointer hover:bg-[var(--gray-light)] rounded transition-colors group/expand flex items-center"
+                  className="p-1 cursor-pointer hover:bg-blue-100/80 rounded transition-colors"
                   aria-expanded={row.getIsExpanded()}
                   aria-label={row.getIsExpanded() ? 'Rij inklappen' : 'Rij uitklappen'}
                 >
                   {row.getIsExpanded() ? (
-                    <ChevronDown className="h-4 w-4 text-[var(--navy-medium)] group-hover/expand:text-[var(--pink)]" aria-hidden="true" />
+                    <ChevronDown className="h-4 w-4 text-[var(--pink)]" aria-hidden="true" />
                   ) : (
-                    <ChevronRight className="h-4 w-4 text-[var(--navy-medium)] group-hover/expand:text-[var(--pink)]" aria-hidden="true" />
+                    <ChevronRight className="h-4 w-4 text-[var(--pink)]" aria-hidden="true" />
                   )}
                 </button>
               </div>
