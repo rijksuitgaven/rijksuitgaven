@@ -301,26 +301,32 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     }
   }, [endCurrentSearch])
 
-  // Update URL when filters change
+  // Update URL when filters change (debounced push to preserve back button)
+  const urlUpdateTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
-    const params = new URLSearchParams()
-    if (filters.search) params.set('q', filters.search)
-    if (filters.jaar) params.set('jaar', String(filters.jaar))
-    if (filters.minBedrag) params.set('min_bedrag', String(filters.minBedrag))
-    if (filters.maxBedrag) params.set('max_bedrag', String(filters.maxBedrag))
+    if (urlUpdateTimer.current) clearTimeout(urlUpdateTimer.current)
+    urlUpdateTimer.current = setTimeout(() => {
+      const params = new URLSearchParams()
+      if (filters.search) params.set('q', filters.search)
+      if (filters.jaar) params.set('jaar', String(filters.jaar))
+      if (filters.minBedrag) params.set('min_bedrag', String(filters.minBedrag))
+      if (filters.maxBedrag) params.set('max_bedrag', String(filters.maxBedrag))
 
-    // Include dynamic filter params (multiselect filters)
-    const standardKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag']
-    Object.entries(filters).forEach(([key, value]) => {
-      if (!standardKeys.includes(key) && Array.isArray(value) && value.length > 0) {
-        // For multiselect, only include first value in URL (simple link sharing)
-        // Full multi-value would need comma-separated or multiple params
-        params.set(key, value[0])
-      }
-    })
+      // Include dynamic filter params (multiselect filters)
+      const standardKeys = ['search', 'jaar', 'minBedrag', 'maxBedrag']
+      Object.entries(filters).forEach(([key, value]) => {
+        if (!standardKeys.includes(key) && Array.isArray(value) && value.length > 0) {
+          params.set(key, value[0])
+        }
+      })
 
-    const newUrl = params.toString() ? `/${moduleId}?${params.toString()}` : `/${moduleId}`
-    router.replace(newUrl, { scroll: false })
+      const newUrl = params.toString() ? `/${moduleId}?${params.toString()}` : `/${moduleId}`
+      // Skip if URL hasn't changed
+      const currentUrl = window.location.pathname + window.location.search
+      if (newUrl === currentUrl) return
+      router.push(newUrl, { scroll: false })
+    }, 500)
+    return () => { if (urlUpdateTimer.current) clearTimeout(urlUpdateTimer.current) }
   }, [filters, router, moduleId])
 
   // Determine if this is the default view (no search, no filters)
