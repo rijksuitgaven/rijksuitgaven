@@ -229,13 +229,85 @@ These findings apply to ALL visualizations and informed every design decision:
 4. Ministry DNA (rich but needs source table queries)
 5. Spending Landscape (D3 treemap)
 6. Dependency Radar (D3 radial)
+7. Concentration Index (Gini + Lorenz curve)
+8. Anomaly Detector (YoY scatter plot)
+9. Money Flow (Sankey diagram)
 
-**Total estimated effort: 34-40 hours.**
+**Total estimated effort: 50-58 hours.**
+
+---
+
+## Concepts 7-9 (Added 2026-02-25)
+
+### Concept 7: Concentration Index
+
+**One-line:** Track whether spending is concentrating among fewer recipients or spreading wider.
+
+**Question:** "Wordt de koek eerlijker verdeeld, of krijgen steeds minder organisaties steeds meer?"
+
+**Data:** Any `*_aggregated` view. Per year: sort by amount, compute cumulative shares.
+
+**Three metrics:**
+1. **Top-N share** — % of total to top 10/50/100 recipients, tracked over 9 years
+2. **Gini coefficient** — 0=equal, 1=concentrated. Per module per year.
+3. **Lorenz curve** — Cumulative % recipients vs cumulative % amount
+
+**Interaction:** Module selector, year selector for Lorenz, Top-N toggle (10/50/100)
+
+**Layout:** 3 KPI cards → Lorenz curve (hero) → Top-N share bar trend → Gini trend line
+
+**Tech:** Recharts (AreaChart, BarChart, LineChart). BFF: `GET /api/v1/inzichten/concentration?module=instrumenten&lorenz_year=2024`
+
+**Adversarial:** Negative amounts excluded from Gini. 2024 asterisk. Module-scoped label.
+
+---
+
+### Concept 8: Anomaly Detector
+
+**One-line:** Surface dramatic year-over-year changes: explosive growth, disappearances, outliers.
+
+**Question:** "Wat is er dramatisch veranderd dit jaar dat niemand opvalt?"
+
+**Data:** `universal_search`. Compare year N-1 vs year N per recipient.
+
+**Four anomaly types (severity-tagged):**
+1. **Explosieve groei** — >500% increase AND >€1M
+2. **Scherpe daling** — >80% decrease AND was >€1M
+3. **Nieuw & groot** — First appearance above threshold
+4. **Verdwenen** — Was above threshold, now €0
+
+**Interaction:** Year pair selector, severity toggles, amount threshold, scatter/table view
+
+**Layout:** 4 summary cards → Bubble scatterplot (x=amount, y=%change, size=EUR change, color=type) → Table fallback → Detail panel
+
+**Tech:** Recharts (ScatterChart with ZAxis for bubble size). BFF: `GET /api/v1/inzichten/anomalies?year_from=2023&year_to=2024&min_amount=1000000`
+
+**Adversarial:** "Verschijning" not "nieuw". Threshold prevents noise. 2024 asterisk.
+
+---
+
+### Concept 9: Money Flow (Sankey)
+
+**One-line:** Visual flow diagram showing how money moves from ministries through regulations to recipients.
+
+**Question:** "Via welke regelingen komt het geld bij welke ontvangers?"
+
+**Data:** `instrumenten_aggregated` (begrotingsnaam → regeling → ontvanger).
+
+**Three-level flow:** Ministry → Regeling → Ontvanger (depth configurable: 2 or 3 levels)
+
+**Interaction:** Year selector, depth toggle (2/3 levels), ministry filter, top-N slider (5/10/15)
+
+**Layout:** Controls → Sankey diagram (full width) → Legend → Provenance
+
+**Tech:** Recharts Sankey (built-in). BFF: `GET /api/v1/inzichten/money-flow?year=2024&ministry=all&top=10&depth=3`
+
+**Adversarial:** "Overig" nodes prevent misleading completeness. Only positive amounts. ×1000 normalization in view. Module-scoped label.
 
 ---
 
 ## Tech Stack
-- **Recharts** — Concepts 1-4 (standard charts)
+- **Recharts** — Concepts 1-4, 7-9 (standard charts + Sankey)
 - **D3** — Concepts 5-6 (treemap, radial layout)
 - **React** — All components
 - **IBM Plex Sans Condensed** — Data typography
