@@ -171,6 +171,7 @@ interface ExpandedRowProps {
   onFilterLinkClick?: (field: string, value: string) => void
   initialGrouping?: string  // Pre-select grouping when opened via "+N meer" click
   onGroupingChange?: (grouping: string) => void  // UX-041: Notify parent of grouping change for URL state
+  isPinned?: boolean  // UX-039: Pink left border for pinned row expanded content
 }
 
 /**
@@ -188,6 +189,7 @@ export function ExpandedRow({
   onFilterLinkClick,
   initialGrouping,
   onGroupingChange,
+  isPinned = false,
 }: ExpandedRowProps) {
   const { track } = useAnalytics()
   const defaultGrouping = GROUPABLE_FIELDS[module]?.[0]?.value ?? 'regeling'
@@ -312,7 +314,7 @@ export function ExpandedRow({
   // Loading state
   if (isLoading) {
     return (
-      <tr className="bg-[var(--gray-light)]">
+      <tr className={cn("bg-[var(--gray-light)]", isPinned && "border-l-2 border-l-[var(--pink)]")}>
         <td colSpan={contentColSpan + (!yearsExpanded && collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
           <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]" role="status" aria-live="polite">
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -326,7 +328,7 @@ export function ExpandedRow({
   // Error state
   if (error) {
     return (
-      <tr className="bg-[var(--gray-light)]">
+      <tr className={cn("bg-[var(--gray-light)]", isPinned && "border-l-2 border-l-[var(--pink)]")}>
         <td colSpan={contentColSpan + (!yearsExpanded && collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
           <ErrorReport variant="inline" />
         </td>
@@ -337,7 +339,7 @@ export function ExpandedRow({
   // Empty state
   if (details.length === 0) {
     return (
-      <tr className="bg-[var(--gray-light)]">
+      <tr className={cn("bg-[var(--gray-light)]", isPinned && "border-l-2 border-l-[var(--pink)]")}>
         <td colSpan={contentColSpan + (!yearsExpanded && collapsedYears.length > 0 ? 1 : 0) + visibleYears.length + 1} className="px-3 py-4 border-b border-[var(--border)]">
           <div className="text-sm text-[var(--muted-foreground)]">Geen details beschikbaar</div>
         </td>
@@ -348,7 +350,7 @@ export function ExpandedRow({
   return (
     <Fragment>
       {/* Header row with dropdown and year headers */}
-      <tr className="bg-[var(--gray-light)]">
+      <tr className={cn("bg-[var(--gray-light)]", isPinned && "border-l-2 border-l-[var(--pink)]")}>
         {/* Content columns: dropdown + count */}
         <td colSpan={contentColSpan} className="px-3 py-2 border-b border-[var(--border)]">
           <div className="flex items-center gap-3">
@@ -415,7 +417,7 @@ export function ExpandedRow({
         const isLast = index === details.length - 1
 
         return (
-          <tr key={`${detail.group_value}-${index}`} className="bg-[var(--gray-light)] hover:bg-[var(--gray-light)]/80 transition-colors">
+          <tr key={`${detail.group_value}-${index}`} className={cn("bg-[var(--gray-light)] hover:bg-[var(--gray-light)]/80 transition-colors", isPinned && "border-l-2 border-l-[var(--pink)]")}>
             {/* Content cell with tree branch */}
             <td colSpan={contentColSpan} className="px-3 py-2.5 border-b border-[var(--border)]">
               <div className="flex items-center gap-2" data-tooltip={detail.group_value || undefined}>

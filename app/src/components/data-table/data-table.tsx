@@ -64,7 +64,7 @@ interface DataTableProps {
   onSortChange?: (column: string, direction: 'asc' | 'desc') => void
   onRowExpand?: (primaryValue: string) => void
   onFilterLinkClick?: (field: string, value: string) => void // Click on extra column value to filter
-  renderExpandedRow?: (row: RecipientRow, initialGrouping?: string) => React.ReactNode
+  renderExpandedRow?: (row: RecipientRow, initialGrouping?: string, isPinned?: boolean) => React.ReactNode
   moduleId?: string // For export filename
   selectedColumns?: string[]  // Selected extra columns (UX-005)
   onColumnsChange?: (columns: string[]) => void  // Callback for column selection changes
@@ -353,9 +353,19 @@ export function DataTable({
   // Number of currently pinned rows
   const pinnedCount = rowPinning.top?.length ?? 0
 
-  // Reset expanded state when data changes (e.g., after filter applied)
+  // Reset expanded state when data changes — but preserve expanded state for pinned rows
   useEffect(() => {
-    setExpanded({})
+    setExpanded(prev => {
+      const pinnedIds = new Set(rowPinning.top ?? [])
+      const preserved: Record<string, boolean> = {}
+      for (const [key, val] of Object.entries(prev as Record<string, boolean>)) {
+        if (val && pinnedIds.has(key)) {
+          preserved[key] = true
+        }
+      }
+      return preserved
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   // Clear pins when module changes
@@ -367,9 +377,9 @@ export function DataTable({
   const hasAutoExpanded = useRef(false)
   useEffect(() => {
     if (initialExpandedPrimary && data.length > 0 && !hasAutoExpanded.current) {
-      const idx = data.findIndex(r => r.primary_value === initialExpandedPrimary)
-      if (idx >= 0) {
-        setExpanded({ [idx]: true })
+      const found = data.find(r => r.primary_value === initialExpandedPrimary)
+      if (found) {
+        setExpanded({ [found.primary_value]: true })
         // Set initial grouping if provided via URL
         if (initialExpandGrouping) {
           expandGroupingRef.current[initialExpandedPrimary] = initialExpandGrouping
@@ -893,9 +903,9 @@ export function DataTable({
         const next = typeof updater === 'function' ? updater(prev) : updater
         // UX-041: Notify parent of expanded row + grouping for URL state
         if (onExpandedChange) {
-          const expandedKeys = Object.entries(next as Record<string, boolean>).filter(([, v]) => v).map(([k]) => parseInt(k, 10))
-          if (expandedKeys.length > 0 && data[expandedKeys[0]]) {
-            const pv = data[expandedKeys[0]].primary_value
+          const expandedKeys = Object.entries(next as Record<string, boolean>).filter(([, v]) => v).map(([k]) => k)
+          if (expandedKeys.length > 0) {
+            const pv = expandedKeys[0]
             onExpandedChange(pv, expandGroupingRef.current[pv] || null)
           } else {
             onExpandedChange(null)
@@ -1135,7 +1145,7 @@ export function DataTable({
             ) : (
               <>
                 {/* Pinned rows (UX-039) — always visible at top */}
-                {table.getTopRows().map((row) => (
+                {table.getTopRows().filter(row => (rowPinning.top ?? []).includes(row.id)).map((row) => (
                   <Fragment key={row.id}>
                     <tr className={cn(
                       'group bg-blue-50/60 border-l-2 border-l-[var(--pink)] hover:bg-blue-50/80 transition-colors',
@@ -1167,7 +1177,7 @@ export function DataTable({
                       })}
                     </tr>
                     {/* Expanded row content for pinned rows */}
-                    {row.getIsExpanded() && renderExpandedRow && renderExpandedRow(row.original, expandGroupingRef.current[row.original.primary_value])}
+                    {row.getIsExpanded() && renderExpandedRow && renderExpandedRow(row.original, expandGroupingRef.current[row.original.primary_value], true)}
                   </Fragment>
                 ))}
                 {/* Separator between pinned and unpinned rows */}

@@ -666,7 +666,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     return Object.keys(result).length > 0 ? result : undefined
   }, [filters])
 
-  const renderExpandedRow = useCallback((row: RecipientRow, initialGrouping?: string) => (
+  const renderExpandedRow = useCallback((row: RecipientRow, initialGrouping?: string, isPinned?: boolean) => (
     <ExpandedRow
       row={row}
       module={moduleId}
@@ -678,6 +678,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
       onFilterLinkClick={handleFilterLinkClick}
       initialGrouping={initialGrouping}
       onGroupingChange={handleGroupingChange}
+      isPinned={isPinned}
     />
   ), [moduleId, data?.availableYears, effectiveColumns.length, isSearching, filters.search, activeMultiselectFilters, handleFilterLinkClick, handleGroupingChange])
 
