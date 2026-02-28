@@ -447,6 +447,9 @@ export function DataTable({
     }
   }, [])
 
+  // Set of row IDs in current data — used to filter phantom rows from keepPinnedRows
+  const dataIdSet = useMemo(() => new Set(data.map(r => r.primary_value)), [data])
+
   // Get pinned row data for export selection (UX-039)
   const getPinnedData = useCallback((): RecipientRow[] => {
     const pinnedIds = new Set(rowPinning.top ?? [])
@@ -1156,8 +1159,8 @@ export function DataTable({
                     <td colSpan={columns.length} className="h-0 border-b-2 border-[var(--pink)]/30 p-0" />
                   </tr>
                 )}
-                {/* Regular (unpinned) rows */}
-                {table.getCenterRows().map((row) => (
+                {/* Regular (unpinned) rows — filter out phantom rows from keepPinnedRows when searching */}
+                {table.getCenterRows().filter(row => dataIdSet.has(row.id)).map((row) => (
                   <Fragment key={row.id}>
                     <tr
                       className={cn(
