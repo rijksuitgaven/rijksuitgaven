@@ -1,23 +1,16 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef, useCallback, Suspense } from 'react'
+import { useState, useEffect, useMemo, Suspense } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
 
+/* ── Types ────────────────────────────────────────────── */
+
 type TrackKey = 'v' | 'a' | 'm' | 'd'
 type VersionStatus = 'live' | 'building' | 'staging' | 'planned' | 'in_progress'
 type FeatureStatus = 'done' | 'staging' | 'in_progress' | 'planned' | 'backlogged'
-
-interface Version {
-  id: string
-  name: string
-  status: VersionStatus
-  features_total: number
-  features_done: number
-  timeline?: string
-}
 
 interface Feature {
   id: string | null
@@ -27,26 +20,49 @@ interface Feature {
   source: 'versioning' | 'backlog'
 }
 
+interface Version {
+  id: string
+  name: string
+  status: VersionStatus
+  features_total: number
+  features_done: number
+  features: Feature[]
+  timeline?: string
+  objective?: string
+  objectiveClear: boolean
+  children: Version[]
+}
+
 interface TrackData {
   key: TrackKey
   name: string
-  versions: Version[]
-  features: Feature[]
+  releases: Version[]
+  backlog: Feature[]
 }
 
+/* ── Constants ────────────────────────────────────────── */
+
 const TRACK_TABS: { key: TrackKey; label: string; description: string }[] = [
-  { key: 'v', label: 'V End-user', description: 'Zoekplatform en gebruikersfuncties' },
-  { key: 'a', label: 'A Admin', description: 'Beheer, CRM en interne tooling' },
-  { key: 'm', label: 'M Launch', description: 'Marketing, SEO en lanceringsinfrastructuur' },
-  { key: 'd', label: 'D Data', description: 'Datasets, jaarupdates en datacorrecties' },
+  { key: 'v', label: 'End-user', description: 'Zoekplatform en gebruikersfuncties' },
+  { key: 'a', label: 'Admin', description: 'Beheer, CRM en interne tooling' },
+  { key: 'm', label: 'Launch', description: 'Marketing, SEO en lanceringsinfrastructuur' },
+  { key: 'd', label: 'Data', description: 'Datasets, jaarupdates en datacorrecties' },
 ]
 
-const STATUS_EMOJI: Record<VersionStatus, string> = {
-  live: '✅',
-  building: '🔨',
-  staging: '⏳',
-  in_progress: '⏳',
-  planned: '📋',
+const STATUS_COLOR: Record<VersionStatus, string> = {
+  live: '#16a34a',
+  building: '#2563eb',
+  staging: '#d97706',
+  in_progress: '#2563eb',
+  planned: '#9ca3af',
+}
+
+const STATUS_BG: Record<VersionStatus, string> = {
+  live: 'bg-green-50 text-green-700 border-green-200',
+  building: 'bg-blue-50 text-blue-700 border-blue-200',
+  staging: 'bg-amber-50 text-amber-700 border-amber-200',
+  in_progress: 'bg-blue-50 text-blue-700 border-blue-200',
+  planned: 'bg-gray-50 text-gray-500 border-gray-200',
 }
 
 const STATUS_LABEL: Record<VersionStatus, string> = {
@@ -57,166 +73,313 @@ const STATUS_LABEL: Record<VersionStatus, string> = {
   planned: 'Planned',
 }
 
-const FEATURE_STATUS_LABEL: Record<FeatureStatus, string> = {
-  done: '✅ Done',
-  staging: '⏳ Staging',
-  in_progress: '⏳ In progress',
-  planned: '📋 Planned',
-  backlogged: '📋 Backlog',
+const FEATURE_STATUS_DOT: Record<FeatureStatus, { color: string; icon: string }> = {
+  done: { color: '#16a34a', icon: '●' },
+  staging: { color: '#d97706', icon: '◐' },
+  in_progress: { color: '#2563eb', icon: '◐' },
+  planned: { color: '#d1d5db', icon: '○' },
+  backlogged: { color: '#d1d5db', icon: '○' },
 }
 
-const FEATURE_STATUS_COLOR: Record<FeatureStatus, string> = {
-  done: 'text-green-700 bg-green-50',
-  staging: 'text-amber-700 bg-amber-50',
-  in_progress: 'text-blue-700 bg-blue-50',
-  planned: 'text-[var(--navy-medium)] bg-gray-50',
-  backlogged: 'text-[var(--navy-medium)] bg-gray-50',
-}
+/* ── Sub-components ───────────────────────────────────── */
 
-/** Sort version strings by semantic version: V2.0 before V10.0, Backlog last */
-function semverSort(a: string, b: string): number {
-  if (a === 'Backlog') return 1
-  if (b === 'Backlog') return -1
-  const parseVersion = (s: string) => {
-    const match = s.match(/^([A-Z]?)(\d+)\.(\d+)/)
-    if (!match) return { prefix: s, major: 999, minor: 0 }
-    return { prefix: match[1] || '', major: parseInt(match[2]), minor: parseInt(match[3]) }
-  }
-  const pa = parseVersion(a)
-  const pb = parseVersion(b)
-  if (pa.prefix !== pb.prefix) return pa.prefix.localeCompare(pb.prefix)
-  if (pa.major !== pb.major) return pa.major - pb.major
-  return pa.minor - pb.minor
-}
-
-function MultiSelect<T extends string>({
-  options,
-  selected,
-  onChange,
-  allLabel,
-  renderOption,
-}: {
-  options: T[]
-  selected: Set<T>
-  onChange: (next: Set<T>) => void
-  allLabel: string
-  renderOption: (value: T) => string
-}) {
-  const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  const handleClickOutside = useCallback((e: MouseEvent) => {
-    if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
-  }, [])
-
-  useEffect(() => {
-    if (open) document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [open, handleClickOutside])
-
-  const toggle = (value: T) => {
-    const next = new Set(selected)
-    if (next.has(value)) next.delete(value)
-    else next.add(value)
-    onChange(next)
-  }
-
-  const isAll = selected.size === 0
-  const label = isAll
-    ? allLabel
-    : selected.size === 1
-      ? renderOption(Array.from(selected)[0])
-      : `${selected.size} geselecteerd`
-
-  return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="text-xs border border-[var(--border)] rounded px-2 py-1.5 text-[var(--navy-dark)] bg-white flex items-center gap-1 min-w-[120px] justify-between"
-      >
-        <span className="truncate">{label}</span>
-        <svg className={`w-3 h-3 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-      </button>
-      {open && (
-        <div className="absolute right-0 top-full mt-1 bg-white border border-[var(--border)] rounded-lg shadow-lg z-50 min-w-[180px] py-1">
-          <button
-            onClick={() => { onChange(new Set()); }}
-            className={`w-full text-left px-3 py-1.5 text-xs hover:bg-gray-50 flex items-center gap-2 ${isAll ? 'font-semibold text-[var(--navy-dark)]' : 'text-[var(--navy-medium)]'}`}
-          >
-            {isAll && <span>✓</span>}
-            <span className={isAll ? '' : 'ml-4'}>{allLabel}</span>
-          </button>
-          <div className="border-t border-[var(--border)] my-1" />
-          {options.map(opt => {
-            const checked = selected.has(opt)
-            return (
-              <button
-                key={opt}
-                onClick={() => toggle(opt)}
-                className={`w-full text-left px-3 py-1.5 text-xs hover:bg-gray-50 flex items-center gap-2 ${checked ? 'font-semibold text-[var(--navy-dark)]' : 'text-[var(--navy-medium)]'}`}
-              >
-                {checked && <span>✓</span>}
-                <span className={checked ? '' : 'ml-4'}>{renderOption(opt)}</span>
-              </button>
-            )
-          })}
-        </div>
-      )}
-    </div>
-  )
-}
-
-function ProgressBar({ done, total }: { done: number; total: number }) {
+function ProgressBar({ done, total, height = 6 }: { done: number; total: number; height?: number }) {
   const pct = total > 0 ? Math.round((done / total) * 100) : 0
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+    <div className="flex items-center gap-2.5">
+      <div
+        className="flex-1 rounded-full overflow-hidden"
+        style={{ height, backgroundColor: 'var(--border)' }}
+      >
         <div
-          className="h-full rounded-full transition-all"
+          className="h-full rounded-full transition-all duration-500 ease-out"
           style={{
             width: `${pct}%`,
             backgroundColor: pct === 100 ? '#16a34a' : 'var(--pink)',
           }}
         />
       </div>
-      <span className="text-xs text-[var(--navy-medium)] tabular-nums w-8 text-right">{pct}%</span>
+      <span className="text-xs tabular-nums text-[var(--navy-medium)] w-[32px] text-right">
+        {pct}%
+      </span>
     </div>
   )
 }
 
-function VersionCard({ version }: { version: Version }) {
+function StatusBadge({ status }: { status: VersionStatus }) {
   return (
-    <div className="bg-white border border-[var(--border)] rounded-lg p-4">
-      <div className="flex items-start justify-between mb-2">
-        <div>
-          <h3 className="text-sm font-semibold text-[var(--navy-dark)]">
-            {version.id} {version.name}
-          </h3>
-          {version.timeline && (
-            <p className="text-xs text-[var(--navy-medium)] mt-0.5">{version.timeline}</p>
-          )}
-        </div>
-        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-50 text-[var(--navy-medium)]">
-          {STATUS_EMOJI[version.status]} {STATUS_LABEL[version.status]}
+    <span className={`inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full border ${STATUS_BG[status]}`}>
+      <span
+        className="w-1.5 h-1.5 rounded-full mr-1.5"
+        style={{ backgroundColor: STATUS_COLOR[status] }}
+      />
+      {STATUS_LABEL[status]}
+    </span>
+  )
+}
+
+function FeatureRow({ feature }: { feature: Feature }) {
+  const dot = FEATURE_STATUS_DOT[feature.status]
+  return (
+    <div className="flex items-center gap-3 py-1.5 px-3 text-[13px] group hover:bg-gray-50/80 rounded">
+      <span style={{ color: dot.color }} className="text-xs w-3 text-center shrink-0">
+        {dot.icon}
+      </span>
+      <span className="text-[var(--navy-medium)] font-mono text-[11px] w-[52px] shrink-0">
+        {feature.id || '—'}
+      </span>
+      <span className="text-[var(--navy-dark)] flex-1 truncate">
+        {feature.title}
+      </span>
+    </div>
+  )
+}
+
+function SubReleaseRow({ version }: { version: Version }) {
+  const [expanded, setExpanded] = useState(false)
+  const pct = version.features_total > 0
+    ? Math.round((version.features_done / version.features_total) * 100)
+    : 0
+
+  // Status dot
+  let dotIcon = '○'
+  let dotColor = '#d1d5db'
+  if (version.status === 'live') { dotIcon = '●'; dotColor = '#16a34a' }
+  else if (version.status === 'building' || version.status === 'in_progress') { dotIcon = '◐'; dotColor = '#2563eb' }
+  else if (version.status === 'staging') { dotIcon = '◐'; dotColor = '#d97706' }
+
+  const hasFeatures = version.features.length > 0
+
+  return (
+    <div>
+      <button
+        onClick={() => hasFeatures && setExpanded(e => !e)}
+        className={`w-full flex items-center gap-3 py-2 px-3 text-left rounded-md transition-colors ${
+          hasFeatures ? 'hover:bg-gray-50 cursor-pointer' : 'cursor-default'
+        } ${expanded ? 'bg-gray-50/60' : ''}`}
+      >
+        {/* Expand chevron */}
+        <span className={`w-3 text-[10px] text-[var(--navy-medium)] shrink-0 transition-transform ${expanded ? 'rotate-90' : ''} ${!hasFeatures ? 'opacity-0' : ''}`}>
+          ▶
         </span>
-      </div>
-      {version.features_total > 0 && (
-        <>
-          <ProgressBar done={version.features_done} total={version.features_total} />
-          <p className="text-xs text-[var(--navy-medium)] mt-1.5">
-            <span className="font-semibold">{version.features_total}</span> features
-            {version.features_done > 0 && (
-              <> · <span className="text-green-700 font-semibold">{version.features_done}</span> done</>
-            )}
-            {version.features_total - version.features_done > 0 && (
-              <> · <span className="font-semibold">{version.features_total - version.features_done}</span> remaining</>
-            )}
-          </p>
-        </>
+
+        {/* Status dot */}
+        <span style={{ color: dotColor }} className="text-xs shrink-0">
+          {dotIcon}
+        </span>
+
+        {/* Version ID */}
+        <span className="text-[13px] font-mono font-semibold text-[var(--navy-dark)] w-[48px] shrink-0">
+          {version.id}
+        </span>
+
+        {/* Name */}
+        <span className="text-[13px] text-[var(--navy-dark)] flex-1 truncate">
+          {version.name}
+        </span>
+
+        {/* Status badge */}
+        <StatusBadge status={version.status} />
+
+        {/* Progress */}
+        <span className="text-[11px] tabular-nums text-[var(--navy-medium)] w-[36px] text-right shrink-0">
+          {version.features_done}/{version.features_total}
+        </span>
+
+        {/* Mini bar */}
+        <div className="w-[60px] shrink-0">
+          <div
+            className="h-1 rounded-full overflow-hidden"
+            style={{ backgroundColor: 'var(--border)' }}
+          >
+            <div
+              className="h-full rounded-full"
+              style={{
+                width: `${pct}%`,
+                backgroundColor: pct === 100 ? '#16a34a' : 'var(--pink)',
+              }}
+            />
+          </div>
+        </div>
+      </button>
+
+      {/* Expanded features */}
+      {expanded && hasFeatures && (
+        <div className="ml-[22px] pl-3 border-l-2 border-gray-100 mb-1">
+          {version.features.map((f, i) => (
+            <FeatureRow key={`${f.version}-${i}`} feature={f} />
+          ))}
+        </div>
       )}
     </div>
   )
 }
+
+function InitiativeCard({ release }: { release: Version }) {
+  const [expanded, setExpanded] = useState(
+    release.status === 'live' || release.status === 'building' || release.status === 'in_progress'
+  )
+
+  const borderColor = STATUS_COLOR[release.status]
+  const hasChildren = release.children.length > 0 || release.features.length > 0
+
+  return (
+    <div
+      className="rounded-lg border border-[var(--border)] bg-white transition-shadow hover:shadow-sm"
+      style={{ borderLeftWidth: 3, borderLeftColor: borderColor }}
+    >
+      {/* Header — always visible */}
+      <button
+        onClick={() => setExpanded(e => !e)}
+        className="w-full text-left px-5 py-4 flex items-start gap-3 cursor-pointer"
+      >
+        {/* Expand chevron */}
+        <span className={`mt-0.5 text-xs text-[var(--navy-medium)] transition-transform shrink-0 ${expanded ? 'rotate-90' : ''}`}>
+          ▶
+        </span>
+
+        <div className="flex-1 min-w-0">
+          {/* Title row */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <h3 className="text-[15px] font-semibold text-[var(--navy-dark)]">
+              {release.id}
+              <span className="ml-2 font-medium">{release.name}</span>
+            </h3>
+            <StatusBadge status={release.status} />
+            {release.timeline && (
+              <span className="text-[11px] text-[var(--navy-medium)]">{release.timeline}</span>
+            )}
+          </div>
+
+          {/* Objective */}
+          {release.objective && (
+            <p className="text-[13px] text-[var(--navy-medium)] mt-1.5 leading-relaxed">
+              {release.objective}
+            </p>
+          )}
+
+          {/* Objective warning */}
+          {!release.objectiveClear && (
+            <div className="mt-2 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+              <span className="text-amber-600 text-sm mt-px">⚠</span>
+              <div>
+                <p className="text-[13px] font-medium text-amber-800">Doel nog niet helder</p>
+                <p className="text-[12px] text-amber-700 mt-0.5">
+                  Definieer het doel voordat u aan deze release begint.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Progress bar */}
+          {release.features_total > 0 && (
+            <div className="mt-3">
+              <ProgressBar done={release.features_done} total={release.features_total} />
+              <div className="flex items-center gap-3 mt-1.5">
+                <span className="text-[11px] text-[var(--navy-medium)]">
+                  <span className="font-semibold">{release.features_total}</span> features
+                </span>
+                {release.features_done > 0 && (
+                  <span className="text-[11px] text-green-700">
+                    <span className="font-semibold">{release.features_done}</span> done
+                  </span>
+                )}
+                {release.features_total - release.features_done > 0 && (
+                  <span className="text-[11px] text-[var(--navy-medium)]">
+                    <span className="font-semibold">{release.features_total - release.features_done}</span> remaining
+                  </span>
+                )}
+                {hasChildren && !expanded && (
+                  <span className="text-[11px] text-[var(--navy-medium)]">
+                    · {release.children.length} sub-release{release.children.length !== 1 ? 's' : ''}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </button>
+
+      {/* Expanded content */}
+      {expanded && (
+        <div className="border-t border-[var(--border)]">
+          {/* Sub-releases */}
+          {release.children.length > 0 && (
+            <div className="px-3 py-2">
+              {release.children.map(child => (
+                <SubReleaseRow key={child.id} version={child} />
+              ))}
+            </div>
+          )}
+
+          {/* Direct features (for versions without sub-releases) */}
+          {release.children.length === 0 && release.features.length > 0 && (
+            <div className="px-3 py-2">
+              {release.features.map((f, i) => (
+                <FeatureRow key={`${f.version}-${i}`} feature={f} />
+              ))}
+            </div>
+          )}
+
+          {/* No features */}
+          {release.children.length === 0 && release.features.length === 0 && (
+            <div className="px-5 py-4">
+              <p className="text-[13px] text-[var(--navy-medium)] italic">
+                Nog geen features gedefinieerd.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function BacklogSection({ items }: { items: Feature[] }) {
+  const [expanded, setExpanded] = useState(false)
+
+  if (items.length === 0) return null
+
+  return (
+    <div className="mt-6">
+      {/* Separator */}
+      <div className="flex items-center gap-3 mb-3">
+        <div className="flex-1 h-px bg-[var(--border)]" />
+        <span className="text-[11px] font-medium text-[var(--navy-medium)] uppercase tracking-wider">
+          Backlog
+        </span>
+        <div className="flex-1 h-px bg-[var(--border)]" />
+      </div>
+
+      <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50/40">
+        <button
+          onClick={() => setExpanded(e => !e)}
+          className="w-full text-left px-5 py-3.5 flex items-center gap-3 cursor-pointer hover:bg-gray-50/80 rounded-lg"
+        >
+          <span className={`text-xs text-[var(--navy-medium)] transition-transform ${expanded ? 'rotate-90' : ''}`}>
+            ▶
+          </span>
+          <span className="text-[13px] font-medium text-[var(--navy-medium)]">
+            Niet toegewezen aan een release
+          </span>
+          <span className="text-[11px] text-[var(--navy-medium)] bg-gray-200/60 px-2 py-0.5 rounded-full tabular-nums">
+            {items.length}
+          </span>
+        </button>
+
+        {expanded && (
+          <div className="px-3 pb-3 border-t border-gray-200/60">
+            {items.map((f, i) => (
+              <FeatureRow key={`backlog-${i}`} feature={f} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ── Main content ─────────────────────────────────────── */
 
 function RoadmapContent() {
   const { role, loading: subLoading } = useSubscription()
@@ -224,8 +387,6 @@ function RoadmapContent() {
   const router = useRouter()
   const [tracks, setTracks] = useState<Record<TrackKey, TrackData> | null>(null)
   const [loading, setLoading] = useState(true)
-  const [statusFilters, setStatusFilters] = useState<Set<FeatureStatus>>(new Set())
-  const [versionFilters, setVersionFilters] = useState<Set<string>>(new Set())
 
   const activeTrack = (searchParams.get('track') as TrackKey) || 'v'
 
@@ -243,27 +404,20 @@ function RoadmapContent() {
     }
   }, [subLoading, role])
 
-  // Reset filters when switching tracks
-  useEffect(() => {
-    setStatusFilters(new Set())
-    setVersionFilters(new Set())
-  }, [activeTrack])
-
   const currentTrack = tracks?.[activeTrack]
 
-  const filteredFeatures = useMemo(() => {
-    if (!currentTrack) return []
-    return currentTrack.features.filter(f => {
-      if (statusFilters.size > 0 && !statusFilters.has(f.status)) return false
-      if (versionFilters.size > 0 && !versionFilters.has(f.version)) return false
-      return true
-    })
-  }, [currentTrack, statusFilters, versionFilters])
-
-  const availableVersions = useMemo(() => {
-    if (!currentTrack) return []
-    const versions = new Set(currentTrack.features.map(f => f.version))
-    return Array.from(versions).sort(semverSort)
+  // Aggregate stats for the track
+  const trackStats = useMemo(() => {
+    if (!currentTrack) return { total: 0, done: 0, releases: 0, live: 0 }
+    let total = 0
+    let done = 0
+    let live = 0
+    for (const r of currentTrack.releases) {
+      total += r.features_total
+      done += r.features_done
+      if (r.status === 'live') live++
+    }
+    return { total, done, releases: currentTrack.releases.length, live }
   }, [currentTrack])
 
   if (subLoading || loading) {
@@ -287,14 +441,14 @@ function RoadmapContent() {
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8" style={{ fontFamily: 'var(--font-condensed), sans-serif' }}>
+    <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8" style={{ fontFamily: 'var(--font-condensed), sans-serif' }}>
       <TeamNav />
 
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-lg font-semibold text-[var(--navy-dark)] mb-1">Roadmap</h1>
-        <p className="text-sm text-[var(--navy-medium)]">
-          Productplanning en voortgang per releasetrack.
+        <h1 className="text-lg font-semibold text-[var(--navy-dark)] mb-0.5">Roadmap</h1>
+        <p className="text-[13px] text-[var(--navy-medium)]">
+          Releases, voortgang en doelen per track.
         </p>
       </div>
 
@@ -306,12 +460,13 @@ function RoadmapContent() {
             <button
               key={tab.key}
               onClick={() => router.push(`/team/roadmap?track=${tab.key}`)}
-              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              className={`px-4 py-2.5 text-[13px] font-medium border-b-2 transition-colors ${
                 isActive
                   ? 'border-[var(--navy-dark)] text-[var(--navy-dark)]'
                   : 'border-transparent text-[var(--navy-medium)] hover:text-[var(--navy-dark)] hover:border-gray-300'
               }`}
             >
+              <span className="font-semibold mr-1">{tab.key.toUpperCase()}</span>
               {tab.label}
             </button>
           )
@@ -320,90 +475,36 @@ function RoadmapContent() {
 
       {currentTrack && (
         <>
-          {/* Track description */}
-          <p className="text-sm text-[var(--navy-medium)] mb-4">
-            {TRACK_TABS.find(t => t.key === activeTrack)?.description}
-          </p>
-
-          {/* Version cards */}
-          {currentTrack.versions.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
-              {currentTrack.versions.map(version => (
-                <VersionCard key={version.id} version={version} />
-              ))}
-            </div>
-          )}
-
-          {/* Features section */}
-          <div className="bg-white border border-[var(--border)] rounded-lg">
-            <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between flex-wrap gap-3">
-              <h2 className="text-base font-semibold text-[var(--navy-dark)]">
-                Features
-                <span className="ml-2 text-sm font-normal text-[var(--navy-medium)]">
-                  {filteredFeatures.length} {filteredFeatures.length === 1 ? 'item' : 'items'}
-                </span>
-              </h2>
-
-              <div className="flex gap-2">
-                <MultiSelect
-                  options={availableVersions}
-                  selected={versionFilters}
-                  onChange={setVersionFilters}
-                  allLabel="Alle versies"
-                  renderOption={v => v}
-                />
-                <MultiSelect
-                  options={['done', 'staging', 'in_progress', 'planned', 'backlogged'] as FeatureStatus[]}
-                  selected={statusFilters}
-                  onChange={setStatusFilters}
-                  allLabel="Alle statussen"
-                  renderOption={v => FEATURE_STATUS_LABEL[v]}
-                />
-              </div>
-            </div>
-
-            {filteredFeatures.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-[var(--border)]">
-                      <th className="text-left px-5 py-2.5 font-medium text-[var(--navy-medium)] w-20">ID</th>
-                      <th className="text-left px-5 py-2.5 font-medium text-[var(--navy-medium)]">Feature</th>
-                      <th className="text-left px-5 py-2.5 font-medium text-[var(--navy-medium)] w-24">Versie</th>
-                      <th className="text-left px-5 py-2.5 font-medium text-[var(--navy-medium)] w-28">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredFeatures.map((feature, i) => (
-                      <tr
-                        key={`${feature.version}-${feature.title}-${i}`}
-                        className="border-b border-[var(--border)] last:border-0 hover:bg-gray-50/50"
-                      >
-                        <td className="px-5 py-2.5 text-xs font-mono text-[var(--navy-medium)]">
-                          {feature.id || '—'}
-                        </td>
-                        <td className="px-5 py-2.5 text-[var(--navy-dark)]">
-                          {feature.title}
-                        </td>
-                        <td className="px-5 py-2.5 text-xs font-mono text-[var(--navy-medium)]">
-                          {feature.version}
-                        </td>
-                        <td className="px-5 py-2.5">
-                          <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${FEATURE_STATUS_COLOR[feature.status]}`}>
-                            {FEATURE_STATUS_LABEL[feature.status]}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="px-5 py-8 text-center">
-                <p className="text-sm text-[var(--navy-medium)]">Geen features gevonden met deze filters.</p>
+          {/* Track summary bar */}
+          <div className="flex items-center gap-6 mb-5 text-[12px] text-[var(--navy-medium)]">
+            <span>
+              <span className="font-semibold text-[var(--navy-dark)]">{trackStats.releases}</span> releases
+            </span>
+            <span>
+              <span className="font-semibold text-[var(--navy-dark)]">{trackStats.total}</span> features
+            </span>
+            <span>
+              <span className="font-semibold text-green-700">{trackStats.done}</span> done
+            </span>
+            <span>
+              <span className="font-semibold text-[var(--navy-dark)]">{trackStats.live}</span> live
+            </span>
+            {trackStats.total > 0 && (
+              <div className="flex-1 max-w-[200px]">
+                <ProgressBar done={trackStats.done} total={trackStats.total} height={4} />
               </div>
             )}
           </div>
+
+          {/* Initiative cards */}
+          <div className="space-y-3">
+            {currentTrack.releases.map(release => (
+              <InitiativeCard key={release.id} release={release} />
+            ))}
+          </div>
+
+          {/* Backlog section */}
+          <BacklogSection items={currentTrack.backlog} />
         </>
       )}
     </main>

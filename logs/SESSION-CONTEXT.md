@@ -1,8 +1,8 @@
 # Session Context
 
-**Last Updated:** 2026-02-28
+**Last Updated:** 2026-03-01
 **Project Phase:** V2.0 Development
-**Current Sprint:** Week 9+ — Pre-Launch Polish & Beta Feedback
+**Current Sprint:** Week 10 — Pre-Launch Polish & M1.0 Launch Gate
 **Beta Status:** V0.9 live at beta.rijksuitgaven.nl (10 testers, launched 2026-02-21)
 
 > **Full history:** `logs/SESSION-CONTEXT-ARCHIVE.md` (archived 2026-02-22)
@@ -54,7 +54,7 @@
 | Lab section (/team/lab) | ✅ Implemented (Feb 24) | Admin-only prototypes: h1-h5 moved from public routes, card grid, dynamic slug, Lab tab+dashboard card |
 | Cron-sequences bearer token | ✅ Fixed (Feb 24) | Hardcoded token not updated after CRON_SECRET rotation. User updated Railway start command |
 | Email spam (Soverin) | ⏳ Diagnosed | Shared SES IP reputation. Recommendation: dedicated Resend IP (~$20/month) |
-| Roadmap page (/team/roadmap) | ✅ Implemented (Feb 24) | Parses VERSIONING.md + backlog.md, 4 track tabs, version cards, feature table, 6 parser fixes. Build-time embed for Railway. |
+| Roadmap page (/team/roadmap) | ✅ Redesigned (Mar 1) | Linear-grade initiative stack: hierarchical data, objectives from VERSIONING.md, collapsible cards, sub-release rows with expand-to-features, backlog section, amber "unclear objective" banner. |
 | UX-040: Sort descending first | ✅ Fixed (Feb 24) | SortableHeader direction logic fixed — first click now actually sorts desc. Both environments. |
 | UX-041: Full URL state restoration | ✅ Implemented (Feb 24, staging) | Sort, page, cols, expand, group, multiselect filters in URL. 4 review bugs fixed. Auto-open filters. V2.1 release. |
 | UX-042: In-app release banner | ✅ Live (Feb 24, both) | Dismissible banner, expert-reviewed design (Primer+Stripe+Vercel). Brand colors, uniform 13px, bordered dismiss, no icon. Flicker fix: sync localStorage init. |
@@ -88,7 +88,10 @@
 
 ## Recent Work (Last 5)
 
-1. **Bug Fixes + UX-039 Pin Fix + Staging Elimination** (2026-02-28)
+1. **Roadmap Redesign — Linear-Grade Initiative Stack** (2026-03-01)
+   Complete rewrite of /team/roadmap. Hierarchical parser (initiatives → sub-releases → features), objectives from VERSIONING.md, collapsible cards, progress bars, amber banner for unclear goals, backlog section. Bug fix: V3.0+ now visible as sub-releases.
+
+2. **Bug Fixes + UX-039 Pin Fix + Staging Elimination** (2026-02-28)
    21 commits across 3 sessions. Production: word boundary fix, NULLS LAST, test framework (32/32), version renumber, back button, login email. UX-039: 10 pin/expand fixes. Infra: eliminated staging environment — localhost as full dev/test (added env vars), deleted staging branch+service, feature branch workflow.
 
 2. **Search-Scoped Results + UI Polish (V2.3)** (2026-02-27)
