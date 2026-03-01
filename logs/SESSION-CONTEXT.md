@@ -54,7 +54,7 @@
 | Lab section (/team/lab) | ✅ Implemented (Feb 24) | Admin-only prototypes: h1-h5 moved from public routes, card grid, dynamic slug, Lab tab+dashboard card |
 | Cron-sequences bearer token | ✅ Fixed (Feb 24) | Hardcoded token not updated after CRON_SECRET rotation. User updated Railway start command |
 | Email spam (Soverin) | ⏳ Diagnosed | Shared SES IP reputation. Recommendation: dedicated Resend IP (~$20/month) |
-| Roadmap page (/team/roadmap) | ✅ Redesigned (Mar 1) | Linear-grade initiative stack: hierarchical data, objectives from VERSIONING.md, collapsible cards, sub-release rows with expand-to-features, backlog section, amber "unclear objective" banner. |
+| Roadmap page (/team/roadmap) | ✅ Redesigned (Mar 1) | Linear-grade initiative stack: hierarchical data, objectives from VERSIONING.md, collapsible cards, sub-release rows with expand-to-features, backlog section, amber "unclear objective" banner. 2 bug fixes: V3.0+ hierarchy + A/M/D parent features. |
 | UX-040: Sort descending first | ✅ Fixed (Feb 24) | SortableHeader direction logic fixed — first click now actually sorts desc. Both environments. |
 | UX-041: Full URL state restoration | ✅ Implemented (Feb 24, staging) | Sort, page, cols, expand, group, multiselect filters in URL. 4 review bugs fixed. Auto-open filters. V2.1 release. |
 | UX-042: In-app release banner | ✅ Live (Feb 24, both) | Dismissible banner, expert-reviewed design (Primer+Stripe+Vercel). Brand colors, uniform 13px, bordered dismiss, no icon. Flicker fix: sync localStorage init. |
@@ -89,7 +89,7 @@
 ## Recent Work (Last 5)
 
 1. **Roadmap Redesign — Linear-Grade Initiative Stack** (2026-03-01)
-   Complete rewrite of /team/roadmap. Hierarchical parser (initiatives → sub-releases → features), objectives from VERSIONING.md, collapsible cards, progress bars, amber banner for unclear goals, backlog section. Bug fix: V3.0+ now visible as sub-releases.
+   Complete rewrite of /team/roadmap. Hierarchical parser (initiatives → sub-releases → features), objectives from VERSIONING.md, collapsible cards, progress bars, amber banner for unclear goals, backlog section. 2 bug fixes: V3.0+ hierarchy, A/M/D parent features visible alongside children.
 
 2. **Bug Fixes + UX-039 Pin Fix + Staging Elimination** (2026-02-28)
    21 commits across 3 sessions. Production: word boundary fix, NULLS LAST, test framework (32/32), version renumber, back button, login email. UX-039: 10 pin/expand fixes. Infra: eliminated staging environment — localhost as full dev/test (added env vars), deleted staging branch+service, feature branch workflow.

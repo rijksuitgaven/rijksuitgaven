@@ -303,9 +303,13 @@ function InitiativeCard({ release }: { release: Version }) {
       {/* Expanded content */}
       {expanded && (
         <div className="border-t border-[var(--border)]">
-          {/* Sub-releases */}
+          {/* Sub-releases (including parent's own features as first row when it has children) */}
           {release.children.length > 0 && (
             <div className="px-3 py-2">
+              {/* Parent's own features rendered as a sub-release row */}
+              {release.features.length > 0 && (
+                <SubReleaseRow key={release.id} version={release} />
+              )}
               {release.children.map(child => (
                 <SubReleaseRow key={child.id} version={child} />
               ))}
