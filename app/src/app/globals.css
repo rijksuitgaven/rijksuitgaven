@@ -64,9 +64,9 @@
   --warning-bg: rgba(255, 200, 87, 0.15);
   --error: #E30101;
 
-  /* Trend Anomaly (10%+ change) */
-  --trend-anomaly-bg: rgba(227, 1, 1, 0.1);
-  --trend-anomaly-border: rgba(227, 1, 1, 0.3);
+  /* Trend Anomaly (50%+ change) */
+  --trend-anomaly-bg: rgba(14, 50, 97, 0.08);
+  --trend-anomaly-border: rgba(14, 50, 97, 0.2);
 
   /* Totaal column highlight */
   --totaal-bg: #D0DEEA;
@@ -324,6 +324,15 @@
 [data-tooltip-center]:hover::after {
   opacity: 1;
   visibility: visible;
+}
+
+/* Trend-colored tooltips for YoY anomalies */
+[data-trend="negative"][data-tooltip-center]::after {
+  background: #E30101;
+}
+
+[data-trend="positive"][data-tooltip-center]::after {
+  background: #2C7A3D;
 }
 
 /* Tiptap WYSIWYG editor — email composer */
