@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { email, first_name, last_name, organization, phone, source, notes } = body as {
+  const { email, first_name, last_name, organization, phone, source, notes, pipeline_stage } = body as {
     email?: string
     first_name?: string
     last_name?: string
@@ -79,7 +79,11 @@ export async function POST(request: NextRequest) {
     phone?: string
     source?: string
     notes?: string
+    pipeline_stage?: string
   }
+
+  const validStages = ['nieuw', 'in_gesprek', 'gewonnen', 'afgesloten', 'verloren', 'ex_klant']
+  const stage = pipeline_stage && validStages.includes(pipeline_stage) ? pipeline_stage : 'nieuw'
 
   if (!email) {
     return NextResponse.json({ error: 'E-mailadres is verplicht' }, { status: 400 })
@@ -109,6 +113,7 @@ export async function POST(request: NextRequest) {
       phone: phone || null,
       source: source || null,
       notes: notes || null,
+      pipeline_stage: stage,
     })
     .select()
     .single()
