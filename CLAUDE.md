@@ -263,6 +263,72 @@ This includes:
 
 **Rule:** If it existed before and won't exist after, get approval first.
 
+### 7. Branch Discipline (No Feature Left Behind)
+
+**Feature branches have caused repeated incidents: broken merges, lost features, 5-week-old branches with 140 commits. These rules prevent that.**
+
+#### Branch Lifetime Rules
+
+| Feature size | Strategy | Max lifetime |
+|-------------|----------|-------------|
+| Small (1-3 days) | Work directly on main, test on localhost | N/A |
+| Medium (4-7 days) | Short-lived feature branch | **7 days max** |
+| Risky/experimental | Feature flag on main | N/A (code always on main) |
+
+**A branch older than 7 days is a blocker.** At `/startday`, check branch age. If >7 days: escalate, break down, or merge.
+
+#### Daily Branch Sync (MANDATORY for active branches)
+
+**Every session that touches a feature branch MUST start with:**
+```bash
+git checkout feature/ux-XXX
+git merge main                    # bring main changes into branch
+# resolve any conflicts immediately
+npm run build                     # verify it compiles
+```
+
+**Never let a feature branch fall behind main.** The longer you wait, the scarier the merge.
+
+#### Pre-Merge Gate (MANDATORY — 6 checks before ANY merge to main)
+
+```
+## Pre-Merge Gate — [branch name]
+
+| # | Check | Status |
+|---|-------|--------|
+| 1 | `git merge main` into feature branch — conflicts resolved | ⬜ |
+| 2 | `npm run build` — zero errors | ⬜ |
+| 3 | Manual test on localhost — all affected features verified | ⬜ |
+| 4 | `./scripts/test-all-modules.sh all` — all modules pass | ⬜ |
+| 5 | Feature inventory: list EVERY feature on the branch | ⬜ |
+| 6 | Regression check: nothing from main was lost in the merge | ⬜ |
+
+All 6 must pass. No exceptions. No "it's probably fine."
+```
+
+**After merge:** Delete the branch immediately. No lingering branches.
+
+#### Branch State in SESSION-CONTEXT.md
+
+The Active Feature Branches table MUST include:
+
+```
+| Branch | Last synced with main | Age | Features | Build status |
+|--------|----------------------|-----|----------|-------------|
+```
+
+Updated every session. "Testing on localhost" is NOT a valid status — be specific.
+
+#### Incident History (why this rule exists)
+
+| Date | Incident | Cost |
+|------|----------|------|
+| Feb 23 | UX-039 merged to main, broke production, reverted | Hours of debugging |
+| Feb 24 | 19 code blocks manually re-applied to restore features | Half a session |
+| Mar 2 | 5-week branch, 140 commits, 12 commits behind main | User cannot see features on localhost |
+
+**Rule:** Never again. Short branches, daily sync, mandatory gate.
+
 ---
 
 ## Virtual Senior Team (MANDATORY)
@@ -373,6 +439,8 @@ git push origin main          # → production build
 git checkout -b feature/ux-XXX
 # Build, commit, test on localhost
 # Feature stays on this branch — NEVER on main
+# Sync with main DAILY (see Rule 7)
+# Max 7 days — then merge or break down
 ```
 
 **Hotfix while feature is in progress:**
@@ -382,26 +450,36 @@ git checkout main
 # fix, commit, push
 git checkout feature/ux-XXX
 git stash pop                 # resume feature
+git merge main                # sync immediately
 ```
 
-**C) Ship approved feature:**
+**C) Ship approved feature (Pre-Merge Gate REQUIRED — see Rule 7):**
 
 ```bash
+# 1. Sync and test on feature branch FIRST
+git checkout feature/ux-XXX
+git merge main                # resolve conflicts
+npm run build                 # must compile
+# manual test on localhost
+# run test suite
+
+# 2. Only then merge to main
 git checkout main
 git merge feature/ux-XXX
 git push origin main          # → production build
-git branch -d feature/ux-XXX  # cleanup
+git branch -d feature/ux-XXX  # cleanup — immediately, no lingering
 ```
 
 **SQL migrations** always execute BEFORE code: run on Supabase first, then push code.
 
 #### Active Feature Branches
 
-| Branch | Feature | Status |
-|--------|---------|--------|
-| `feature/ux-039-041` | Vergelijk/Pin + URL State | Testing on localhost |
+| Branch | Last synced with main | Age | Features | Build status |
+|--------|----------------------|-----|----------|-------------|
+| `feature/ux-039-041` | `a6f57cd` (Feb 28) | 5 weeks | UX-039 pin, UX-041 URL state | Needs sync + build test |
 
 **Rule:** Nothing reaches production unless the user explicitly says "ship it".
+**Rule:** Branches >7 days old are blockers. Escalate at `/startday`.
 
 ---
 
