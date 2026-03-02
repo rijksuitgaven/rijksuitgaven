@@ -1,0 +1,590 @@
+module,entity,year,format,batch
+instrumenten,Sociale Verzekeringsbank,2024,scale_shock,batch-001
+instrumenten,TenneT Holding B.V.,2024,scale_shock,batch-001
+gemeente,Amsterdam vs Den Haag,2018-2024,comparison,batch-001
+provincie,Noord-Brabant,2018-2024,comparison,batch-001
+gemeente,OBA vs Stedelijk vs Opera,2018-2024,comparison,batch-001
+instrumenten,Politie,2023,scale_shock,batch-001
+inkoop,Pels Rijcken,2018-2024,concentration,batch-001
+inkoop,Shuttel B.V.,2018-2024,category_reveal,batch-001
+publiek,RMA Healthcare,2018-2024,concentration,batch-001
+provincie,Arriva,2018-2024,concentration,batch-001
+instrumenten,Universiteit Utrecht,2016-2024,scale_shock,batch-001
+instrumenten,BNI-afdrachten,2021,curiosity,batch-001
+instrumenten,Zorginstituut Nederland,2023,scale_shock,batch-001
+gemeente,Stichting WIJ Groningen,2018-2024,scale_shock,batch-001
+instrumenten,Universiteiten top 3,2016-2024,comparison,batch-001
+inkoop,Boskalis,2018-2024,category_reveal,batch-001
+inkoop,Heijmans Infra,2018-2024,concentration,batch-001
+instrumenten,EBN B.V.,2022,scale_shock,batch-001
+inkoop,PostNL,2018-2024,category_reveal,batch-001
+inkoop,IBM + Capgemini,2018-2024,comparison,batch-001
+provincie,Gelderland,2018-2024,comparison,batch-001
+apparaat,Salarissen,2016-2024,scale_shock,batch-001
+gemeente,HVO-Querido,2018-2024,concentration,batch-001
+apparaat,Uitzendkrachten,2016-2024,curiosity,batch-001
+inkoop,Fivoor,2018-2024,category_reveal,batch-001
+gemeente,Almere vs Tilburg,2018-2024,comparison,batch-001
+publiek,Slaapschepen,2018-2024,category_reveal,batch-001
+instrumenten,TU Delft,2016-2024,scale_shock,batch-001
+instrumenten,DJI,2019,scale_shock,batch-001
+gemeente,Opera + Concertgebouw,2018-2024,curiosity,batch-001
+instrumenten,ProRail,2016-2024,scale_shock,batch-001
+gemeente,Leger des Heils,2018-2024,comparison,batch-001
+inkoop,Vattenfall,2018-2024,category_reveal,batch-001
+provincie,Limburg vs Overijssel,2018-2024,comparison,batch-001
+instrumenten,UWV,2024,scale_shock,batch-001
+instrumenten,UNICEF,2023,scale_shock,batch-001
+provincie,Groen Ontwikkelfonds Brabant,2018-2024,concentration,batch-001
+apparaat,Wagenpark,2016-2024,curiosity,batch-001
+gemeente,Stedelijk Museum,2018-2024,concentration,batch-001
+instrumenten,COA,2018-2022,scale_shock,batch-001
+inkoop,Infraspeed,2018-2024,concentration,batch-001
+instrumenten,HvA,2016-2024,scale_shock,batch-001
+gemeente,Sportbedrijf Arnhem,2018-2024,concentration,batch-001
+apparaat,ICT-advisering,2016-2024,category_reveal,batch-001
+provincie,Qbuzz,2018-2024,concentration,batch-001
+instrumenten,Zorgtoeslag,2016-2024,curiosity,batch-001
+instrumenten,Belastingdienst/Toeslagen,2024,scale_shock,batch-001
+provincie,Gemeente Amsterdam,2018-2024,concentration,batch-001
+inkoop,Consultancies,2018-2024,category_reveal,batch-001
+gemeente,DOCK,2018-2024,concentration,batch-001
+instrumenten,ESA,2018,curiosity,batch-001
+instrumenten,RVB Defensie,2018,scale_shock,batch-001
+instrumenten,EUR,2016-2024,scale_shock,batch-001
+gemeente,Nieuwe Veste,2018-2024,concentration,batch-001
+provincie,Natuurmonumenten,2018-2024,concentration,batch-001
+gemeente,Sociale Wijkteams Amersfoort,2018-2024,concentration,batch-001
+instrumenten,Huurtoeslag,2016-2024,curiosity,batch-001
+instrumenten,TNO,2020,scale_shock,batch-001
+publiek,Le Cocq Holding,2018-2024,concentration,batch-001
+gemeente,Het Nationale Theater,2018-2024,concentration,batch-001
+provincie,Staatsbosbeheer Gelderland,2018-2024,concentration,batch-001
+gemeente,Breda vs Amersfoort vs Arnhem,2018-2024,comparison,batch-001
+provincie,Enexis,2018-2024,scale_shock,batch-001
+inkoop,Mediq,2018-2024,category_reveal,batch-001
+instrumenten,CBS,2016,curiosity,batch-001
+instrumenten,Hanzehogeschool,2016-2024,scale_shock,batch-001
+provincie,Utrecht vs Noord-Holland,2018-2024,comparison,batch-001
+gemeente,Arkin,2018-2024,concentration,batch-001
+inkoop,Leaseplan,2018-2024,category_reveal,batch-001
+instrumenten,Universiteit Twente,2016-2024,scale_shock,batch-001
+gemeente,Groningen vs Haarlem vs Utrecht,2018-2024,comparison,batch-001
+publiek,PGGM,2018-2024,concentration,batch-001
+apparaat,Toelagen,2016-2024,category_reveal,batch-001
+gemeente,Veilig Thuis,2018-2024,concentration,batch-001
+instrumenten,Invoerrechten,2022,curiosity,batch-001
+provincie,Hermes,2018-2024,concentration,batch-001
+instrumenten,TU Eindhoven,2016-2024,scale_shock,batch-001
+gemeente,Combiwel,2018-2024,comparison,batch-001
+instrumenten,Hogeschool Rotterdam,2016-2024,scale_shock,batch-001
+inkoop,Dura Vermeer,2018-2024,category_reveal,batch-001
+gemeente,De Regenboog Groep,2018-2024,concentration,batch-001
+provincie,Overijssel vs Friesland,2018-2024,comparison,batch-001
+instrumenten,Gemeente Oldambt,2023,scale_shock,batch-001
+gemeente,SEZO,2018-2024,curiosity,batch-001
+inkoop,Protinus IT,2018-2024,concentration,batch-001
+instrumenten,Hogeschool Utrecht,2016-2024,scale_shock,batch-001
+gemeente,GGD Flevoland,2018-2024,concentration,batch-001
+inkoop,Stichting Open Nederland,2018-2024,concentration,batch-001
+inkoop,Gebouwen en terreinen,2018-2024,curiosity,batch-001
+instrumenten,Universiteit Maastricht,2016-2024,scale_shock,batch-001
+gemeente,ROC Mondriaan,2018-2024,concentration,batch-001
+provincie,Zeeland vs Drenthe,2018-2024,comparison,batch-001
+apparaat,Pensioenen,2016-2024,category_reveal,batch-001
+publiek,Trigion,2018-2024,concentration,batch-001
+instrumenten,Invest-NL,2024,scale_shock,batch-001
+gemeente,Kunstmuseum vs Amsterdam Museum,2018-2024,comparison,batch-001
+publiek,A&O Hostel,2018-2024,concentration,batch-001
+publiek,Valk Exclusief,2018-2024,concentration,batch-001
+provincie,Connexxion,2018-2024,concentration,batch-001
+instrumenten,HAN,2016-2024,scale_shock,batch-001
+instrumenten,Gemeente Rotterdam,2020-2021,scale_shock,batch-002
+instrumenten,Rode Kruis,2019-2023,scale_shock,batch-002
+instrumenten,KLM,2020,scale_shock,batch-002
+instrumenten,NS Reizigers,2023-2024,scale_shock,batch-002
+instrumenten,RIVM,2021-2024,scale_shock,batch-002
+instrumenten,Wageningen University,2017-2024,scale_shock,batch-002
+instrumenten,Koninklijke Bibliotheek,2016-2024,scale_shock,batch-002
+instrumenten,Rijksmuseum,2017-2024,scale_shock,batch-002
+instrumenten,Radboud Universiteit,2023-2024,scale_shock,batch-002
+instrumenten,VU Amsterdam,2022-2023,scale_shock,batch-002
+instrumenten,Gemeente Amsterdam instr,2020-2021,scale_shock,batch-002
+instrumenten,Gemeente Utrecht instr,2020-2021,scale_shock,batch-002
+instrumenten,CAK,2022-2023,scale_shock,batch-002
+instrumenten,World Bank,2017-2018,scale_shock,batch-002
+instrumenten,NWO,2016-2017,scale_shock,batch-002
+instrumenten,Wageningen Research,2018-2020,scale_shock,batch-002
+instrumenten,Gemeente Den Haag instr,2020-2023,scale_shock,batch-002
+gemeente,Amsterdam vs Den Haag totaal,2018-2024,comparison,batch-002
+gemeente,Almere vs Tilburg ontvangers,2018-2024,comparison,batch-002
+gemeente,Artis,2018-2024,concentration,batch-002
+gemeente,Internationaal Theater Amsterdam,2018-2024,concentration,batch-002
+gemeente,Sportservice Amsterdam,2018-2024,concentration,batch-002
+gemeente,Bibliotheek Almere,2018-2024,concentration,batch-002
+gemeente,Chasse Theater,2018-2024,concentration,batch-002
+gemeente,Groninger Museum,2018-2024,concentration,batch-002
+gemeente,Nederlands Dans Theater,2018-2024,concentration,batch-002
+gemeente,Frans Hals Museum,2018-2024,concentration,batch-002
+gemeente,Swazoom,2018-2024,concentration,batch-002
+gemeente,De Flint,2018-2024,concentration,batch-002
+gemeente,Museon,2018-2024,concentration,batch-002
+gemeente,Groningen vs Almere,2018-2024,comparison,batch-002
+gemeente,Gemeente ontvangeraantallen,2018-2024,comparison,batch-002
+gemeente,Bijlmer Parktheater,2018-2024,curiosity,batch-002
+gemeente,Amsterdam Museum,2018-2024,concentration,batch-002
+gemeente,Bibliotheek Haarlem,2018-2024,concentration,batch-002
+gemeente,Jeugdfonds Sport Cultuur,2018-2024,curiosity,batch-002
+gemeente,Stedelijk Museum Breda,2018-2024,concentration,batch-002
+gemeente,Arnhem vs Haarlem vs Utrecht,2018-2024,comparison,batch-002
+inkoop,BAM Bouw en Techniek,2018-2024,category_reveal,batch-002
+inkoop,Vattenfall Sales Defensie,2018-2024,category_reveal,batch-002
+inkoop,Heijmans Utiliteit,2018-2024,concentration,batch-002
+inkoop,Synlab Belgium,2018-2024,category_reveal,batch-002
+inkoop,NS Reizigers inkoop,2018-2024,category_reveal,batch-002
+inkoop,Pompestichting,2018-2024,category_reveal,batch-002
+inkoop,GGzE,2018-2024,category_reveal,batch-002
+inkoop,De Rooyse Wissel,2018-2024,concentration,batch-002
+inkoop,Komfort,2018-2024,category_reveal,batch-002
+inkoop,MEET Strukton,2018-2024,category_reveal,batch-002
+inkoop,Mourik Infra,2018-2024,category_reveal,batch-002
+inkoop,Representatie categorie,2018-2024,curiosity,batch-002
+inkoop,Studie categorie,2018-2024,category_reveal,batch-002
+inkoop,VenJ categorie,2018-2024,curiosity,batch-002
+inkoop,Reis categorie,2018-2024,category_reveal,batch-002
+apparaat,Defensie totaal,2016-2024,scale_shock,batch-002
+apparaat,Financien totaal,2016-2024,scale_shock,batch-002
+apparaat,Defensie vs Financien salaris,2016-2024,comparison,batch-002
+apparaat,Defensie pensioenen,2016-2024,category_reveal,batch-002
+apparaat,IenW uitzendkrachten,2016-2024,category_reveal,batch-002
+apparaat,Financien ICT,2016-2024,category_reveal,batch-002
+apparaat,BuZa salarissen,2016-2024,scale_shock,batch-002
+apparaat,BZK salarissen,2016-2024,comparison,batch-002
+apparaat,Defensie toelagen,2016-2024,category_reveal,batch-002
+apparaat,Defensie schoonmaak,2016-2024,curiosity,batch-002
+apparaat,OCW vs Defensie,2016-2024,comparison,batch-002
+provincie,Noordbrabants Landschap,2018-2024,concentration,batch-002
+provincie,ProRail Noord-Brabant,2018-2024,scale_shock,batch-002
+provincie,Keolis,2018-2024,concentration,batch-002
+provincie,Gasunie,2018-2024,scale_shock,batch-002
+provincie,Brabant C Fonds,2018-2024,concentration,batch-002
+provincie,Gemeente Nijmegen prov,2018-2024,concentration,batch-002
+provincie,Safari Resort,2018-2024,scale_shock,batch-002
+provincie,Waterschap De Dommel,2018-2024,concentration,batch-002
+provincie,Gemeente Leiden prov,2018-2024,concentration,batch-002
+provincie,Zeeuwse Landschap,2018-2024,concentration,batch-002
+provincie,Landschap Overijssel,2018-2024,concentration,batch-002
+provincie,Zuid-Holland groei,2019-2023,scale_shock,batch-002
+provincie,Friesland groei,2020-2023,scale_shock,batch-002
+provincie,Noord-Brabant YoY,2020-2021,comparison,batch-002
+provincie,Natuurmonumenten twee prov,2018-2024,comparison,batch-002
+provincie,Maastricht University prov,2018-2024,concentration,batch-002
+publiek,Start People,2018-2024,concentration,batch-002
+publiek,Gemeente Nijmegen publiek,2018-2024,concentration,batch-002
+publiek,Strukton WorkSphere,2018-2024,concentration,batch-002
+publiek,Jan Snel Livings,2018-2024,concentration,batch-002
+publiek,Umami Catering,2018-2024,category_reveal,batch-002
+publiek,Menzis COA,2018-2024,category_reveal,batch-002
+publiek,Belastingdienst publiek,2018-2024,concentration,batch-002
+publiek,Gemeente Rotterdam publiek,2018-2024,concentration,batch-002
+publiek,Rijksvastgoedbedrijf publiek,2018-2024,concentration,batch-002
+gemeente,Amsterdam Museum curiosity,2018-2024,curiosity,batch-002
+inkoop,Representatie curiosity,2018-2024,curiosity,batch-002
+gemeente,Amsterdam sport totaal,2018-2024,curiosity,batch-002
+instrumenten,RIVM curiosity,2018-2021,curiosity,batch-002
+apparaat,Defensie toelagen curiosity,2016-2024,curiosity,batch-002
+gemeente,Topsport Amsterdam,2018-2024,concentration,batch-002
+gemeente,Haags Historisch Museum,2018-2024,concentration,batch-002
+gemeente,UvA gemeente,2018-2024,concentration,batch-002
+instrumenten,NWO 2024,2024,scale_shock,batch-002
+provincie,Oost-Nederland,2018-2024,concentration,batch-002
+provincie,Eindhoven Airport,2018-2024,scale_shock,batch-002
+gemeente,Holland Festival,2018-2024,concentration,batch-003
+inkoop,Capgemini DEF,2018-2024,category_reveal,batch-003
+gemeente,Hoeveel ontving het Holland Fe,2018-2024,curiosity,batch-003
+apparaat,Hoeveel besteedde Defensie aan,2016-2024,curiosity,batch-003
+apparaat,Hoeveel besteedde Defensie aan,2016-2024,curiosity,batch-003
+instrumenten,Gemeente Tilburg,2024,scale_shock,batch-003
+publiek,Huurman publiek,2018-2024,concentration,batch-003
+instrumenten,Stichting Lucas Onderwijs,2024,scale_shock,batch-003
+apparaat,Defensie benodigdheden,2016-2024,category_reveal,batch-003
+instrumenten,WFP,2024,scale_shock,batch-003
+apparaat,Hoeveel besteedde het Rijk aan,2016-2024,curiosity,batch-003
+instrumenten,SVB YoY 2021,2021-2022,scale_shock,batch-003
+instrumenten,Gemeente Stadskanaal,2024,scale_shock,batch-003
+instrumenten,Gemeente Arnhem vs Gemeente Nijmegen,2016-2024,comparison,batch-003
+gemeente,Muziekschool Amsterdam Noord,2018-2024,concentration,batch-003
+inkoop,Representatie,2018-2024,curiosity,batch-003
+provincie,Hoeveel ontving het Noordbraba,2018-2024,curiosity,batch-003
+instrumenten,Gemeente Leiden,2024,scale_shock,batch-003
+gemeente,Aanpak Overlast Amsterdam,2018-2024,concentration,batch-003
+gemeente,Haarlem Effect,2018-2024,concentration,batch-003
+instrumenten,Ons Middelbaar Onderwijs,2024,scale_shock,batch-003
+instrumenten,Hoeveel ontving de KvK van het,2016-2024,curiosity,batch-003
+instrumenten,Hoeveel ging er naar DUO?,2016-2024,curiosity,batch-003
+gemeente,De Toneelschuur,2018-2024,concentration,batch-003
+provincie,Brabant Startup,2018-2024,concentration,batch-003
+provincie,LIOF,2018-2024,concentration,batch-003
+gemeente,Openbare Bibliotheek Almere,2018-2024,concentration,batch-003
+publiek,Yacht publiek,2018-2024,category_reveal,batch-003
+instrumenten,Hoeveel gaf Nederland aan de E,2016-2024,curiosity,batch-003
+provincie,HZ Zeeland,2018-2024,scale_shock,batch-003
+inkoop,Shuttel multi,2018-2024,concentration,batch-003
+provincie,Erfgoed Brabant,2018-2024,concentration,batch-003
+instrumenten,Hoeveel ontving het Groenfonds,2016-2024,curiosity,batch-003
+instrumenten,Fontys vs Avans,2016-2024,comparison,batch-003
+instrumenten,Gemeente Berkelland,2024,scale_shock,batch-003
+provincie,Hoeveel ontving het Zeeuwse La,2018-2024,curiosity,batch-003
+provincie,Hoge Veluwe,2018-2024,concentration,batch-003
+instrumenten,Provincie Limburg YoY 2023,2023-2024,scale_shock,batch-003
+apparaat,JenV SSO,2016-2024,category_reveal,batch-003
+inkoop,Studie cat,2018-2024,curiosity,batch-003
+apparaat,JenV ICT,2016-2024,scale_shock,batch-003
+provincie,Qbuzz vs Arriva,2018-2024,comparison,batch-003
+gemeente,Stichting Lucas Onderwijs,2018-2024,concentration,batch-003
+gemeente,Hoeveel ontving Stichting WIJK,2018-2024,curiosity,batch-003
+inkoop,Safire,2018-2024,concentration,batch-003
+apparaat,Defensie gebouwen,2016-2024,scale_shock,batch-003
+instrumenten,NHL Stenden Hogeschool,2024,scale_shock,batch-003
+instrumenten,Defensie Materieel Organisatie,2016,scale_shock,batch-003
+gemeente,Buurtteam Amsterdam Zuid,2018-2024,concentration,batch-003
+publiek,Slaapschepen2,2018-2024,scale_shock,batch-003
+inkoop,Ordina EZK,2018-2024,category_reveal,batch-003
+apparaat,VWS salaris,2016-2024,scale_shock,batch-003
+provincie,Hoeveel ontving het Bonnefante,2018-2024,curiosity,batch-003
+inkoop,Consumptief,2018-2024,curiosity,batch-003
+gemeente,Stichting Doras,2018-2024,concentration,batch-003
+provincie,OOST NL,2018-2024,concentration,batch-003
+instrumenten,Provincie Gelderland,2024,scale_shock,batch-003
+gemeente,Hoeveel ontving Combiwel van A,2018-2024,curiosity,batch-003
+inkoop,VIOS BZK,2018-2024,concentration,batch-003
+apparaat,Defensie inhuur,2016-2024,category_reveal,batch-003
+gemeente,Hoeveel ontving amsterdam&part,2018-2024,curiosity,batch-003
+instrumenten,Gemeente Den Helder,2024,scale_shock,batch-003
+instrumenten,DJI YoY 2016,2016-2017,scale_shock,batch-003
+inkoop,Protinus JenV,2018-2024,concentration,batch-003
+apparaat,JenV vs BuZa,2016-2024,comparison,batch-003
+instrumenten,Gemeente Dordrecht,2024,scale_shock,batch-003
+gemeente,SMO Traverse,2018-2024,concentration,batch-003
+publiek,RVB publiek2,2018-2024,concentration,batch-003
+instrumenten,Gemeente Nijmegen YoY 2022,2022-2023,scale_shock,batch-003
+instrumenten,Politieacademie,2024,scale_shock,batch-003
+provincie,Dordrecht prov,2018-2024,concentration,batch-003
+gemeente,Groninger Museum vs Stedelijk Museum Breda,2018-2024,comparison,batch-003
+instrumenten,Maastricht University,2022,scale_shock,batch-003
+instrumenten,Gemeente Land van Cuijk YoY 2023,2023-2024,scale_shock,batch-003
+gemeente,Opera & Ballet Amsterdam vs Groninger Forum,2018-2024,comparison,batch-003
+instrumenten,Hoeveel ontving de IBRD/Wereld,2016-2024,curiosity,batch-003
+apparaat,Hoeveel besteedde Financiën aa,2016-2024,curiosity,batch-003
+apparaat,BZK salaris,2016-2024,scale_shock,batch-003
+instrumenten,Stichting Lucas Onderwijs YoY 2021,2021-2022,scale_shock,batch-003
+apparaat,Defensie geschenken,2016-2024,scale_shock,batch-003
+gemeente,GGZ Breburg groep,2018-2024,concentration,batch-003
+instrumenten,Stichting Fontys,2024,scale_shock,batch-003
+instrumenten,Gemeente Almere YoY 2021,2021-2022,scale_shock,batch-003
+inkoop,Breijer,2018-2024,category_reveal,batch-003
+inkoop,Paleis Het Loo,2018-2024,category_reveal,batch-003
+inkoop,Reis cat,2018-2024,curiosity,batch-003
+instrumenten,Gemeente Zwolle YoY 2023,2023-2024,scale_shock,batch-003
+inkoop,Evenementen,2018-2024,curiosity,batch-003
+instrumenten,Gemeente Stadskanaal vs Gemeente Meppel,2016-2024,comparison,batch-003
+instrumenten,De IND,2024,scale_shock,batch-003
+instrumenten,NVWA vs RIVM,2016-2024,comparison,batch-003
+provincie,Rijnbrink,2018-2024,concentration,batch-003
+provincie,Landschap NH,2018-2024,concentration,batch-003
+instrumenten,Belastingdienst YoY 2020,2020-2021,scale_shock,batch-003
+instrumenten,Gemeente Hilversum vs Gemeente Vlissingen,2016-2024,comparison,batch-003
+instrumenten,NWO YoY 2018,2018-2019,scale_shock,batch-003
+instrumenten,Hoeveel ontving het WFP van Ne,2016-2024,curiosity,batch-003
+instrumenten,Gemeente Hilversum,2024,scale_shock,batch-003
+inkoop,Sandd,2018-2024,category_reveal,batch-003
+apparaat,DEF vs FIN salaris,2016-2024,comparison,batch-003
+publiek,Asito publiek,2018-2024,category_reveal,batch-004
+gemeente,Samenwerking Bijzondere Noden,2018-2024,concentration,batch-004
+apparaat,OCW salaris,2016-2024,scale_shock,batch-004
+apparaat,Defensie opleiding,2016-2024,category_reveal,batch-004
+instrumenten,Gemeente Zaanstad vs Gemeente Leiden,2016-2024,comparison,batch-004
+instrumenten,Saxion vs Zuyd Hogeschool,2016-2024,comparison,batch-004
+gemeente,Amersfoort in C,2018-2024,concentration,batch-004
+provincie,Emmen prov,2018-2024,concentration,batch-004
+gemeente,Patronaat,2018-2024,concentration,batch-004
+provincie,SBB Gelderland,2018-2024,scale_shock,batch-004
+instrumenten,Hoeveel ontving de Reclasserin,2016-2024,curiosity,batch-004
+inkoop,ARCADIS IenW,2018-2024,category_reveal,batch-004
+inkoop,Computacenter,2018-2024,concentration,batch-004
+gemeente,Stichting Impuls,2018-2024,concentration,batch-004
+inkoop,ENGIE BZK,2018-2024,category_reveal,batch-004
+instrumenten,Raad voor de Rechtspraak,2023,scale_shock,batch-004
+inkoop,Communicatie cat,2018-2024,scale_shock,batch-004
+gemeente,Hoeveel ontving de Kessler Sti,2018-2024,curiosity,batch-004
+gemeente,Groninger Forum,2018-2024,concentration,batch-004
+inkoop,Leaseplan IenW,2018-2024,category_reveal,batch-004
+gemeente,Streetcornerwork,2018-2024,concentration,batch-004
+inkoop,Compass JenV,2018-2024,category_reveal,batch-004
+publiek,Wageningen publiek,2018-2024,concentration,batch-004
+provincie,Den Bosch prov,2018-2024,concentration,batch-004
+publiek,RMA Healthcare2,2018-2024,scale_shock,batch-004
+publiek,Hoeveel contracten had BAM Bou,2018-2024,curiosity,batch-004
+gemeente,MOOI Den Haag,2018-2024,concentration,batch-004
+instrumenten,Hoeveel ontving het Deltafonds,2016-2024,curiosity,batch-004
+instrumenten,Zuyd Hogeschool,2024,scale_shock,batch-004
+gemeente,Hoeveel gaf Amsterdam aan over,2018-2024,curiosity,batch-004
+instrumenten,Hoeveel ontving Stichting Leze,2016-2024,curiosity,batch-004
+inkoop,Inrichting cat,2018-2024,curiosity,batch-004
+publiek,Inofec publiek,2018-2024,category_reveal,batch-004
+inkoop,DC Sligro,2018-2024,category_reveal,batch-004
+provincie,Natmon Limburg,2018-2024,concentration,batch-004
+publiek,Hoeveel contracten had Wagenin,2018-2024,curiosity,batch-004
+apparaat,Hoeveel besteedde I&W aan het ,2016-2024,curiosity,batch-004
+gemeente,ContourdeTwern,2018-2024,concentration,batch-004
+publiek,IVM publiek,2018-2024,category_reveal,batch-004
+gemeente,Hoeveel ontving Sail Amsterdam,2018-2024,curiosity,batch-004
+instrumenten,Gemeente Heerlen,2024,scale_shock,batch-004
+provincie,Waterschapsbank,2018-2024,scale_shock,batch-004
+instrumenten,Hoeveel ging er naar het Commi,2016-2024,curiosity,batch-004
+instrumenten,Gemeente Leeuwarden,2024,scale_shock,batch-004
+publiek,Facilicom publiek,2018-2024,concentration,batch-004
+provincie,Boerennatuur Veluwe,2018-2024,scale_shock,batch-004
+instrumenten,Hoeveel ontving TNO van het Ri,2016-2024,curiosity,batch-004
+inkoop,Philips VWS,2018-2024,category_reveal,batch-004
+instrumenten,Prov. Noord-Brabant vs Prov. Gelderland,2016-2024,comparison,batch-004
+publiek,TUe publiek,2018-2024,concentration,batch-004
+gemeente,INLIA Groningen,2018-2024,concentration,batch-004
+apparaat,BuZa vastgoed,2016-2024,category_reveal,batch-004
+instrumenten,Centraal Justitieel Incassobureau,2024,scale_shock,batch-004
+instrumenten,Hoeveel ontving de Raad voor d,2016-2024,curiosity,batch-004
+gemeente,Veilig Thuis Gelderland,2018-2024,concentration,batch-004
+instrumenten,Stichting Groenfonds,2016,scale_shock,batch-004
+inkoop,SoftwareONE,2018-2024,category_reveal,batch-004
+gemeente,Combiwel Amsterdam,2018-2024,concentration,batch-004
+gemeente,VluchtelingenWerk Nederland,2018-2024,concentration,batch-004
+apparaat,Hoeveel besteedde Defensie aan,2016-2024,curiosity,batch-004
+inkoop,Vattenfall JenV,2018-2024,category_reveal,batch-004
+inkoop,Boskalis IenW,2018-2024,scale_shock,batch-004
+publiek,Start People2,2018-2024,concentration,batch-004
+apparaat,IenW vs FIN uitzend,2016-2024,comparison,batch-004
+instrumenten,Life Sciences & Health,2024,scale_shock,batch-004
+gemeente,Weekend Academie,2018-2024,concentration,batch-004
+provincie,Qbuzz ZH,2018-2024,scale_shock,batch-004
+instrumenten,Gemeente Eindhoven vs Gemeente Enschede,2016-2024,comparison,batch-004
+instrumenten,Commissariaat voor de Media,2024,scale_shock,batch-004
+apparaat,AIVD,2016-2024,scale_shock,batch-004
+apparaat,EZK vs SZW,2016-2024,comparison,batch-004
+publiek,Eneco publiek,2018-2024,category_reveal,batch-004
+publiek,Trigion2,2018-2024,scale_shock,batch-004
+instrumenten,Nationaal Restauratiefonds,2024,scale_shock,batch-004
+apparaat,Financien uitzend,2016-2024,scale_shock,batch-004
+apparaat,Defensie toelagen2,2016-2024,scale_shock,batch-004
+inkoop,KPN BZK,2018-2024,concentration,batch-004
+apparaat,IenW toelagen,2016-2024,category_reveal,batch-004
+gemeente,Nationale Opera & Ballet,2018-2024,concentration,batch-004
+apparaat,BuZa toelagen,2016-2024,category_reveal,batch-004
+apparaat,AZ salarissen,2016-2024,scale_shock,batch-004
+instrumenten,Gemeente Leeuwarden vs Gemeente Zwolle,2016-2024,comparison,batch-004
+publiek,Protinus publiek,2018-2024,concentration,batch-004
+apparaat,BuZa uitzend,2016-2024,category_reveal,batch-004
+provincie,Spectrum GLD,2018-2024,concentration,batch-004
+instrumenten,Hoeveel ontving CITO van het R,2016-2024,curiosity,batch-004
+gemeente,Theaters Diligentia en PePijn,2018-2024,concentration,batch-004
+apparaat,Defensie woonwerk,2016-2024,category_reveal,batch-004
+inkoop,Eviden JenV,2018-2024,category_reveal,batch-004
+provincie,Impuls Zeeland,2018-2024,concentration,batch-004
+gemeente,Bibliotheken Eemland,2018-2024,concentration,batch-004
+instrumenten,Hoeveel ontving UNOCHA van Ned,2016-2024,curiosity,batch-004
+publiek,Radboud publiek,2018-2024,concentration,batch-004
+gemeente,Haarlem vs Utrecht,2018-2024,comparison,batch-004
+provincie,Gasunie ZH,2018-2024,scale_shock,batch-004
+provincie,Hoeveel ontving Staatsbosbehee,2018-2024,curiosity,batch-004
+provincie,Enexis NB,2018-2024,scale_shock,batch-004
+provincie,Waterschap RenIJ,2018-2024,concentration,batch-004
+inkoop,Veolia BZK,2018-2024,concentration,batch-004
+inkoop,BAM IenW,2018-2024,scale_shock,batch-004
+apparaat,Hoeveel besteedde I&W aan uitz,2016-2024,curiosity,batch-005
+gemeente,Residentie Orkest,2018-2024,concentration,batch-005
+inkoop,ICT uitbesteding,2018-2024,curiosity,batch-005
+instrumenten,Gemeente Rotterdam YoY 2023,2023-2024,scale_shock,batch-005
+instrumenten,Gemeente Kerkrade,2024,scale_shock,batch-005
+publiek,Hoeveel contracten had Strijbo,2018-2024,curiosity,batch-005
+instrumenten,Hoeveel ontving COVA van het R,2016-2024,curiosity,batch-005
+gemeente,Scholen In De Kunst,2018-2024,concentration,batch-005
+inkoop,Virtu Secure,2018-2024,concentration,batch-005
+gemeente,Hoeveel ontving het Groninger ,2018-2024,curiosity,batch-005
+apparaat,Financien opleiding,2016-2024,category_reveal,batch-005
+provincie,Zaanstad prov,2018-2024,concentration,batch-005
+instrumenten,Reclassering Nederland,2023,scale_shock,batch-005
+inkoop,Deltares,2018-2024,category_reveal,batch-005
+gemeente,Stichting WIJKZ,2018-2024,concentration,batch-005
+gemeente,Chasse Theater Breda vs De Flint Amersfoort,2018-2024,comparison,batch-005
+instrumenten,UNDP,2024,scale_shock,batch-005
+gemeente,Stichting Eigenwijks,2018-2024,concentration,batch-005
+inkoop,Wagenpark cat,2018-2024,curiosity,batch-005
+apparaat,Defensie reis,2016-2024,scale_shock,batch-005
+instrumenten,Stichting Saxion,2024,scale_shock,batch-005
+instrumenten,Oxxio Nederland,2022,scale_shock,batch-005
+publiek,Jan Snel2,2018-2024,scale_shock,batch-005
+inkoop,Capgemini AZ,2018-2024,category_reveal,batch-005
+inkoop,Gom Defensie,2018-2024,category_reveal,batch-005
+inkoop,PostNL FIN,2018-2024,concentration,batch-005
+instrumenten,UNICEF vs UNDP,2016-2024,comparison,batch-005
+inkoop,Vepa DEF,2018-2024,category_reveal,batch-005
+provincie,Marketingoost,2018-2024,concentration,batch-005
+instrumenten,Essent Retail Energie,2023,scale_shock,batch-005
+provincie,Agr Natuur Drenthe,2018-2024,concentration,batch-005
+instrumenten,Gemeente Amsterdam YoY 2023,2023-2024,scale_shock,batch-005
+gemeente,Gemeentemuseum Den Haag,2018-2024,concentration,batch-005
+instrumenten,Gemeente Groningen,2024,scale_shock,batch-005
+provincie,Natmon LIM vs ZLD,2018-2024,comparison,batch-005
+provincie,ZH Landschap,2018-2024,concentration,batch-005
+provincie,Brabant Sport,2018-2024,concentration,batch-005
+gemeente,Hoeveel ontving VluchtelingenW,2018-2024,curiosity,batch-005
+inkoop,Gebouwen,2018-2024,curiosity,batch-005
+provincie,Omroep Gelderland,2018-2024,concentration,batch-005
+instrumenten,Gemeente Terneuzen,2024,scale_shock,batch-005
+provincie,SBB GLD vs FRL,2018-2024,comparison,batch-005
+instrumenten,Gemeente Deventer vs Gemeente Weert,2016-2024,comparison,batch-005
+instrumenten,Gemeente Deventer,2024,scale_shock,batch-005
+publiek,Meetingselect pub,2018-2024,category_reveal,batch-005
+gemeente,Hulp bij Prostitutie,2018-2024,concentration,batch-005
+instrumenten,CITO,2016,scale_shock,batch-005
+instrumenten,Prov. Groningen vs Prov. Limburg,2016-2024,comparison,batch-005
+inkoop,SPIE BZK,2018-2024,scale_shock,batch-005
+publiek,Gom publiek,2018-2024,category_reveal,batch-005
+instrumenten,Gemeente Eindhoven,2024,scale_shock,batch-005
+provincie,Arriva ZH,2018-2024,scale_shock,batch-005
+instrumenten,Belastingdienst/Toeslagen YoY 2022,2022-2023,scale_shock,batch-005
+inkoop,Fivoor max,2018-2024,scale_shock,batch-005
+provincie,UTwente prov,2018-2024,concentration,batch-005
+publiek,Hoeveel contracten had Slaapsc,2018-2024,curiosity,batch-005
+publiek,Deloitte publiek,2018-2024,category_reveal,batch-005
+provincie,World Food Center,2018-2024,scale_shock,batch-005
+instrumenten,Invest International,2024,scale_shock,batch-005
+instrumenten,Eneco Consumenten,2022,scale_shock,batch-005
+gemeente,Amsterdam Economic Board,2018-2024,concentration,batch-005
+apparaat,Financien telecom,2016-2024,category_reveal,batch-005
+inkoop,DEF benodigdheden,2018-2024,curiosity,batch-005
+gemeente,Hoeveel ontving de Nationale O,2018-2024,curiosity,batch-005
+gemeente,Hoeveel ontving MOOI van Den H,2018-2024,curiosity,batch-005
+instrumenten,Rijkswaterstaat,2024,scale_shock,batch-005
+publiek,Hegeman publiek,2018-2024,concentration,batch-005
+publiek,Munckhof publiek,2018-2024,concentration,batch-005
+instrumenten,Gemeente Capelle a/d IJssel YoY 2021,2021-2022,scale_shock,batch-005
+instrumenten,IBRD/Wereldbank,2022,scale_shock,batch-005
+instrumenten,Deltion College,2024,scale_shock,batch-005
+instrumenten,Stichting VU,2024,scale_shock,batch-005
+inkoop,Unica BZK,2018-2024,concentration,batch-005
+apparaat,Defensie hardware,2016-2024,scale_shock,batch-005
+instrumenten,Gemeente Alkmaar YoY 2023,2023-2024,scale_shock,batch-005
+provincie,Philharmonie Zuid,2018-2024,concentration,batch-005
+provincie,InvestNL NB,2018-2024,scale_shock,batch-005
+gemeente,Hoeveel ontving het Sportbedri,2018-2024,curiosity,batch-005
+inkoop,Biosynex,2018-2024,scale_shock,batch-005
+gemeente,Sail Amsterdam,2018-2024,concentration,batch-005
+apparaat,IenW salaris,2016-2024,scale_shock,batch-005
+publiek,Strijbosch publiek,2018-2024,concentration,batch-005
+gemeente,Stichting IMW Breda,2018-2024,concentration,batch-005
+publiek,Hoeveel contracten had TU Eind,2018-2024,curiosity,batch-005
+provincie,Hoeveel ontving het Drents Mus,2018-2024,curiosity,batch-005
+instrumenten,Gemeente Dronten YoY 2023,2023-2024,scale_shock,batch-005
+inkoop,Centralpoint,2018-2024,category_reveal,batch-005
+gemeente,Hoeveel ontving het Chasse The,2018-2024,curiosity,batch-005
+inkoop,HeadFirst IenW,2018-2024,category_reveal,batch-005
+apparaat,Hoeveel besteedde BuZa aan toe,2016-2024,curiosity,batch-005
+provincie,Cultuur Oost,2018-2024,concentration,batch-005
+apparaat,BuZa salaris,2016-2024,scale_shock,batch-005
+instrumenten,Hoeveel ontving het CBS van he,2016-2024,curiosity,batch-005
+gemeente,DOCK Utrecht,2018-2024,concentration,batch-005
+inkoop,Capgemini BZK,2018-2024,category_reveal,batch-005
+gemeente,Stichting Mommerskwartier,2018-2024,concentration,batch-005
+publiek,Pels Rijcken pub,2018-2024,concentration,batch-005
+instrumenten,Hoeveel ontving Invest Interna,2016-2024,curiosity,batch-005
+instrumenten,Provincie Noord-Brabant,2022,scale_shock,batch-005
+publiek,Strukton2,2018-2024,concentration,batch-005
+apparaat,Financien juridisch,2016-2024,category_reveal,batch-006
+publiek,NS publiek,2018-2024,concentration,batch-006
+inkoop,Gispen BZK,2018-2024,category_reveal,batch-006
+publiek,Hoeveel contracten had Duinrel,2018-2024,curiosity,batch-006
+publiek,Hoeveel contracten had Jan Sne,2018-2024,curiosity,batch-006
+apparaat,Defensie salaris,2016-2024,scale_shock,batch-006
+instrumenten,Gemeente Heerlen vs Gemeente Venlo,2016-2024,comparison,batch-006
+provincie,Bonnefanten,2018-2024,concentration,batch-006
+instrumenten,Gemeente Zoetermeer,2024,scale_shock,batch-006
+gemeente,SRO Amersfoort,2018-2024,concentration,batch-006
+instrumenten,Hoeveel ontving Rijkswaterstaa,2016-2024,curiosity,batch-006
+gemeente,Tilburg vs Breda,2018-2024,comparison,batch-006
+gemeente,Stichting Doras vs ContourdeTwern,2018-2024,comparison,batch-006
+instrumenten,SVB YoY 2022,2022-2023,scale_shock,batch-006
+gemeente,Bibliotheek Almere vs Bibliotheken Eemland,2018-2024,comparison,batch-006
+provincie,UCR Zeeland,2018-2024,scale_shock,batch-006
+inkoop,DXC JenV,2018-2024,category_reveal,batch-006
+publiek,Mondial Movers,2018-2024,category_reveal,batch-006
+provincie,Hoeveel ontving Gemeente Emmen,2018-2024,curiosity,batch-006
+instrumenten,Gemeente Nieuwegein,2024,scale_shock,batch-006
+publiek,Duinrell publiek,2018-2024,category_reveal,batch-006
+provincie,OVbureau Drenthe,2018-2024,scale_shock,batch-006
+gemeente,amsterdam&partners,2018-2024,concentration,batch-006
+instrumenten,Hoeveel ontving de Politieacad,2016-2024,curiosity,batch-006
+instrumenten,Stichting Avans,2024,scale_shock,batch-006
+instrumenten,Gemeente Zaanstad,2024,scale_shock,batch-006
+instrumenten,Gemeente Kerkrade vs Gemeente Venray,2016-2024,comparison,batch-006
+apparaat,OCW vs BZK,2016-2024,comparison,batch-006
+gemeente,Sportbedrijf Arnhem vs Sociale Wijkteams Amersfoort,2018-2024,comparison,batch-006
+provincie,Deventer prov,2018-2024,concentration,batch-006
+provincie,Limburgs Museum,2018-2024,concentration,batch-006
+gemeente,Kessler Stichting,2018-2024,concentration,batch-006
+apparaat,Financien accountancy,2016-2024,category_reveal,batch-006
+instrumenten,Gemeente Vlissingen,2024,scale_shock,batch-006
+gemeente,Hoeveel ontving Stichting Nieu,2018-2024,curiosity,batch-006
+instrumenten,Gemeente Breda YoY 2022,2022-2023,scale_shock,batch-006
+apparaat,Financien salaris,2016-2024,scale_shock,batch-006
+inkoop,Insight BZK,2018-2024,category_reveal,batch-006
+instrumenten,UNOCHA,2024,scale_shock,batch-006
+gemeente,Joods Maatschappelijk Werk,2018-2024,concentration,batch-006
+provincie,Syntus,2018-2024,concentration,batch-006
+gemeente,IJscomplex Jaap Eden,2018-2024,concentration,batch-006
+gemeente,DOCK Amsterdam vs DOCK Utrecht,2018-2024,comparison,batch-006
+instrumenten,Stichting Conexus,2024,scale_shock,batch-006
+gemeente,Hoeveel ontving GGZ Breburg va,2018-2024,curiosity,batch-006
+publiek,Umami2,2018-2024,category_reveal,batch-006
+publiek,Via Jeugd publiek,2018-2024,concentration,batch-006
+gemeente,Samen Veilig Midden-NL,2018-2024,concentration,batch-006
+instrumenten,Hoeveel ontving de Studentenka,2016-2024,curiosity,batch-006
+instrumenten,RVO YoY 2019,2019-2020,scale_shock,batch-006
+publiek,Le Cocq2,2018-2024,scale_shock,batch-006
+gemeente,Speeltuinen in Noord,2018-2024,concentration,batch-006
+publiek,CSU publiek,2018-2024,category_reveal,batch-006
+provincie,Hoeveel ontving OOST NL van Ge,2018-2024,curiosity,batch-006
+instrumenten,Universiteit van Amsterdam YoY 2022,2022-2023,scale_shock,batch-006
+instrumenten,Vattenfall Sales Nederland,2024,scale_shock,batch-006
+apparaat,Hoeveel besteedde Financiën aa,2016-2024,curiosity,batch-006
+inkoop,Nuffic BuZa,2018-2024,category_reveal,batch-006
+instrumenten,Hoeveel ontving Fontys in nege,2016-2024,curiosity,batch-006
+inkoop,Orange BuZa,2018-2024,category_reveal,batch-006
+publiek,EY publiek,2018-2024,category_reveal,batch-006
+provincie,Hoeveel ontving Rijnbrink van ,2018-2024,curiosity,batch-006
+provincie,SBB Friesland,2018-2024,scale_shock,batch-006
+publiek,Jumbo publiek,2018-2024,category_reveal,batch-006
+instrumenten,Hoeveel ontving UNDP van Neder,2016-2024,curiosity,batch-006
+apparaat,IenW wagenpark,2016-2024,category_reveal,batch-006
+instrumenten,Stichting BOOR,2024,scale_shock,batch-006
+provincie,Drents Museum,2018-2024,concentration,batch-006
+inkoop,Solvinity,2018-2024,category_reveal,batch-006
+instrumenten,Hoeveel ontving Gemeente Leide,2016-2024,curiosity,batch-006
+instrumenten,Hoeveel ontving het Nationaal ,2016-2024,curiosity,batch-006
+instrumenten,COVA,2020,scale_shock,batch-006
+instrumenten,DUO,2024,scale_shock,batch-006
+instrumenten,Kamer van Koophandel,2024,scale_shock,batch-006
+inkoop,Duo2,2018-2024,concentration,batch-006
+apparaat,Hoeveel besteedde Defensie aan,2016-2024,curiosity,batch-006
+instrumenten,NVWA,2019,scale_shock,batch-006
+apparaat,IenW uitzend,2016-2024,scale_shock,batch-006
+publiek,Hoeveel contracten had Start P,2018-2024,curiosity,batch-006
+provincie,WUR prov,2018-2024,concentration,batch-006
+instrumenten,Gemeente Weert,2024,scale_shock,batch-006
+publiek,BAM publiek,2018-2024,concentration,batch-006
+instrumenten,Gemeente Stichtse Vecht YoY 2023,2023-2024,scale_shock,batch-006
+instrumenten,Hoeveel ontving de NVWA van he,2016-2024,curiosity,batch-006
+gemeente,Stichting Nieuwe Veste,2018-2024,concentration,batch-006
+gemeente,Vrijwillig & Co,2018-2024,concentration,batch-006
+publiek,De Meeuw publiek,2018-2024,category_reveal,batch-006
+instrumenten,Stichting Carmelcollege,2024,scale_shock,batch-006
+instrumenten,Stichting Lezen,2024,scale_shock,batch-006

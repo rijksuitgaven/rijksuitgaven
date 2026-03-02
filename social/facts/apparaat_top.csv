@@ -1,0 +1,102 @@
+fact_id,module,entity,artikel,detail,metric,value,y2016,y2017,y2018,y2019,y2020,y2021,y2022,y2023,y2024,row_count,query_ref,verified_at
+APP-TOP-001,apparaat,"Salaris, vakantie en eindejaarsuitkering",Apparaat,Eigen personeel,total_amount,56059259000,6475180000,6572719000,6915633000,7384604000,7168039000,8119754000,4025727000,9397603000,0,248,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-002,apparaat,"Salaris, vakantie- en eindejaarsuitkering ",Apparaat,Eigen personeel,total_amount,6382639000,0,0,0,0,0,0,0,0,6382639000,24,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-003,apparaat,Pensioenen en uitkeringen,Apparaat Kerndepartement,Uitkeringen,total_amount,5205610000,0,0,1410971000,1320846000,1246974000,1226819000,0,0,0,4,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-004,apparaat,"Toelagen, toeslagen en vergoedingen",Apparaat,Eigen personeel,total_amount,4708424000,593154000,602974000,444044000,482094000,546773000,585900000,202985000,630874000,619626000,297,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-005,apparaat,Bijdrage SSO,Apparaat,Bijdrage SSO's,total_amount,4430248000,662638000,496665000,541179000,379405000,434623000,455386000,310043000,561137000,589172000,120,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-006,apparaat,Uitzendkrachten,Apparaat,Externe inhuur,total_amount,3729889000,410648000,360569000,334089000,374105000,393032000,383905000,393415000,507620000,572506000,277,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-007,apparaat,Sociale lasten en bijdrage zorgverzekeringswet,Apparaat,Eigen personeel,total_amount,3627717000,555648000,567027000,576702000,173766000,139084000,229378000,189001000,306453000,890658000,137,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-008,apparaat,Advisering opdrachtgevers over automatiseringsvraagstukken,Apparaat,Externe inhuur,total_amount,3378715000,210164000,183804000,221940000,350304000,359785000,431244000,446218000,619864000,555392000,228,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-009,apparaat,Sociale lasten enbijdrage zorgverzekeringswet,Straffen en Beschermen,Eigen personeel,total_amount,3207572000,52050000,50473000,58722000,591600000,542784000,658018000,620900000,633025000,0,53,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-010,apparaat,Pensioenpremies,Apparaat,Eigen personeel,total_amount,2736353000,192057000,244857000,267788000,298796000,214940000,353333000,317279000,432546000,414757000,151,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-011,apparaat,"Salaris, Individueel Keuzebudget",Apparaat Kerndepartement,Eigen Personeel,total_amount,2568645000,0,0,0,0,0,0,0,0,2568645000,5,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-012,apparaat,Bijdrage SSO's,Centraal Apparaat,Bijdrage SSO,total_amount,2187349000,0,184980000,210219000,229959000,267891000,288537000,292018000,332527000,381218000,15,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-013,apparaat,Salarissen,Apparaatuitgaven,Eigen personeel (R),total_amount,1828290000,0,0,0,0,386077000,424126000,477262000,540825000,0,26,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-014,apparaat,Pensioenen,Kerndepartement,Uitkeringen,total_amount,1759188000,0,1265223000,0,0,0,0,0,493965000,0,2,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-015,apparaat,schoonmaak en nuts,Landmacht,overige materiele exploitatie,total_amount,1694987000,0,0,0,0,0,0,0,0,1694987000,8,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-016,apparaat,"Wachtgelden, inactiviteitswedden en SBK-gelden",Pensioenen en uitkeringen,,total_amount,1449943000,1449943000,0,0,0,0,0,0,0,0,2,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-017,apparaat,Verwerven en afstoten,Apparaat,Overige materiële uitgaven,total_amount,1445091000,86664000,114280000,162136000,248346000,220596000,181139000,213225000,213174000,5531000,170,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-018,apparaat,"Uitkeringen, pensioenen en wachtgelden",Kerndepartement,Uitkeringen,total_amount,1437780000,0,0,0,0,0,0,0,0,1437780000,1,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-019,apparaat,Gebruik en onderhoud van gebouw en terreinen,Apparaat,Overige materiële uitgaven,total_amount,1423747000,69145000,71611000,274306000,320190000,481581000,62407000,72762000,71745000,0,173,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-020,apparaat,Wagenpark,Apparaat,Overige materiële uitgaven,total_amount,1365057000,170464000,175357000,185542000,186301000,149061000,153098000,98742000,105276000,141216000,206,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-021,apparaat,BZK specifiek,Apparaat,Eigen Personeel,total_amount,1359507000,32433000,233766000,286962000,320460000,348048000,23482000,30793000,43333000,40230000,35,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-022,apparaat,Reis- en verblijfskosten,Apparaatuitgaven,Eigen personeel,total_amount,1354970000,169589000,165287000,273613000,225047000,96456000,92963000,92218000,239797000,0,319,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-023,apparaat,Studie en opleiding,Apparaat,Eigen personeel,total_amount,1344079000,164972000,147770000,184768000,179182000,141278000,182669000,83985000,202482000,56973000,244,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-024,apparaat,Bijdrage aan SSO,Agentschap KNMI,Bijdrage SSO,total_amount,1241018000,131167000,139752000,124026000,138185000,127747000,127894000,139776000,157783000,154688000,40,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-025,apparaat,Benodigdheden en hulpmiddelen,Apparaat,Eigen personeel,total_amount,1078230000,172108000,211686000,333415000,213228000,45783000,19990000,17371000,41996000,22653000,317,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-026,apparaat,Relatiegeschenken (niet voor eigen personeel),Apparaat,overige materiele exploitatie,total_amount,1068894000,12438000,7768000,5523000,3586000,4211000,3598000,1047000,486621000,544102000,201,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-027,apparaat,Aan externe partijen uitbestede ICT-dienstverlening,Apparaatsuitgaven kerndepartement,ICT,total_amount,975663000,75056000,101669000,116266000,117080000,134303000,158127000,132278000,140884000,0,149,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-028,apparaat,Onkostenvergoedingen waaronder Woon-werkverkeer,Marine,Eigen personeel,total_amount,732631000,0,0,0,179922000,173594000,177327000,0,123249000,78539000,33,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-029,apparaat,Beheer en onderhoud infrastructuur,Apparaat,ICT,total_amount,726090000,139219000,123189000,140715000,53282000,58128000,82343000,62586000,66628000,0,158,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-030,apparaat,"Accountancy, financiën en administratieve organisatie",Apparaat,Externe inhuur,total_amount,719287000,11591000,352000,17225000,30647000,49289000,106242000,142638000,173871000,187432000,160,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-031,apparaat,Uitkeringen,Kerndepartement,Uitkeringen,total_amount,707620000,0,0,0,0,0,0,0,707620000,0,1,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-032,apparaat,SALARISSEN,Apparaatuitgaven,Eigen Personeel,total_amount,625308000,0,0,0,0,0,0,0,0,625308000,52,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-033,apparaat,Juridisch advies,Apparaat,Externe inhuur,total_amount,609727000,6726000,6048000,8506000,11499000,21487000,62880000,121141000,161327000,210113000,185,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-034,apparaat,Hardware,Apparaatuitgaven,ICT (R),total_amount,605215000,0,0,164907000,181116000,246413000,0,4958000,7821000,0,34,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-035,apparaat,Vergoedingen voor inbesteding personeel,Apparaat,Eigen personeel,total_amount,571040000,40076000,45752000,56352000,59344000,74431000,89272000,78742000,112171000,14900000,187,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-036,apparaat,Inrichting gebouwen,Apparaat,Overig materieel,total_amount,518402000,48715000,41806000,49679000,43910000,78594000,100743000,70833000,72171000,11951000,206,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-037,apparaat,Verbruik van energie en water,Apparaat,Overige materiële uitgaven,total_amount,514697000,75444000,68244000,59826000,106965000,112891000,14133000,15936000,34794000,26464000,156,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-038,apparaat,Consumptieve diensten,Apparaat,Overig materieel,total_amount,491604000,56184000,57386000,71312000,52025000,49459000,49150000,17455000,118775000,19858000,240,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-039,apparaat,BZK Specifiek,Centraal Apparaat,Inhuur externen,total_amount,480681000,0,8846000,0,0,0,359761000,50998000,28450000,32626000,21,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-040,apparaat,Bijdrage sso's,Apparaatuitgaven,Bijdrage SSO's,total_amount,448660000,0,0,0,45474000,95233000,109902000,59508000,138543000,0,13,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-041,apparaat,Bijdragen aan baten-lastendiensten,Apparaat,Overige materiële uitgaven,total_amount,439428000,24533000,25322000,44270000,96458000,47804000,50440000,66106000,84495000,0,19,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-042,apparaat,Uitgaven sociaal flankerend beleid,Apparaat,Eigen Personeel,total_amount,422791000,131955000,65267000,57225000,69071000,87481000,2012000,2804000,2395000,4581000,109,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-043,apparaat,Gratificaties,Apparaat,Eigen personeel,total_amount,403469000,78031000,77505000,17804000,27363000,32474000,31331000,63894000,35733000,39334000,188,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-044,apparaat,Wachtgelden en SBK gelden,Apparaat Kerndepartement,Wachtgelden,total_amount,401273000,0,150361000,132890000,118022000,0,0,0,0,0,4,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-045,apparaat,Spraak en Data Verbindingen,Apparaat,ICT,total_amount,395041000,79188000,54953000,55187000,31682000,40497000,21153000,31139000,42107000,39135000,193,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-046,apparaat,"Salaris, vakantie- en eindejaarsuitkering",Apparaat,eigen personeel,total_amount,390780000,0,0,0,0,0,0,0,0,390780000,4,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-047,apparaat,Bijdrage SSO SSC-ICT (BZK),Apparaat,ICT,total_amount,386747000,0,0,0,0,0,41060000,102098000,122882000,120707000,13,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-048,apparaat,Inbesteding,Eenheid van het algemeen regeringsbeleid,overige materiële uitgaven,total_amount,380420000,55698000,79793000,99424000,22043000,27300000,22260000,12356000,10981000,50565000,62,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-049,apparaat,Risicobeheersen,Apparaat,Overige materiële uitgaven,total_amount,367366000,40409000,41541000,57291000,51462000,43024000,36208000,40450000,35861000,21120000,197,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-050,apparaat,"Instroom, doorstroom en uitstroom van personeel",Apparaat,Eigen personeel,total_amount,358802000,39308000,36966000,49572000,53526000,48691000,42844000,11522000,55829000,20544000,231,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-051,apparaat,Onkostenvergoedingen waaronder Woon-werkverkeer (ook collectieve inkoop OV kaarten),Apparaat,Eigen personeel,total_amount,356367000,75901000,57124000,56249000,42155000,25922000,13231000,22842000,26980000,35963000,137,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-052,apparaat,Schoonmaakkosten,Apparaat,Overig materieel,total_amount,356190000,57632000,60691000,58510000,32968000,24607000,20789000,39498000,61495000,0,162,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-053,apparaat,Uitbesteden beleidsadvies,Apparaat,Overige materiële uitgaven,total_amount,354612000,50783000,28161000,25640000,34465000,64523000,61738000,37579000,51723000,0,122,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-054,apparaat,Aanschaf hardware,Apparaat,ICT,total_amount,340505000,37576000,64230000,117160000,16789000,16802000,24937000,39470000,23541000,0,200,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-055,apparaat,Afdracht werkkostenregeling,Defensie Ondersteuningscommando,Overige personele exploitatie,total_amount,332701000,0,0,0,59259000,51240000,121501000,0,100701000,0,4,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-056,apparaat,Personele exploitatie overig,Defensie Ondersteuningscommando,Overige personele exploitatie,total_amount,330744000,18919000,74541000,103965000,52723000,32448000,32345000,0,15803000,0,62,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-057,apparaat,"Vakliteratuur, abonnementen en overige informatie",Apparaat,Overig materieel,total_amount,327330000,42183000,50595000,50511000,9948000,53374000,41563000,13065000,15462000,50629000,242,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-058,apparaat,Representatie voor eigen personeel,Apparaat,Eigen personeel,total_amount,326541000,12198000,12280000,13796000,32306000,17344000,19343000,17778000,122857000,78639000,262,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-059,apparaat,Soc.lstn/bijdr zvw,Apparaatuitgaven,PERSONEEL,total_amount,316397000,0,0,0,51843000,58491000,66685000,32333000,107045000,0,12,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-060,apparaat,Aanschaf programmatuur & software,Apparaat,ICT,total_amount,290392000,40738000,46879000,45290000,22029000,16879000,24059000,36300000,26002000,32216000,118,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-061,apparaat,Verbruik van energie en water overig,Defensie Materieel Organisatie,overige materiele exploitatie,total_amount,277945000,0,0,0,0,0,101594000,0,176351000,0,2,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-062,apparaat,Beheer en onderhoud hardware,Apparaatsuitgaven kerndepartement,ICT,total_amount,266691000,54146000,47550000,64710000,35420000,14025000,15551000,18803000,16486000,0,120,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-063,apparaat,Advisering en eventueel explorerend onderzoek,Apparaat,Externe inhuur,total_amount,249601000,15973000,13240000,8175000,18764000,21576000,30511000,69831000,71531000,0,128,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-064,apparaat,Bijdrage SSO`s,Centraal apparaat,,total_amount,244798000,244798000,0,0,0,0,0,0,0,0,1,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-065,apparaat,Inbesteding SSO,Apparaatuitgaven,Bijdrage SSO's,total_amount,243483000,53443000,59214000,70433000,60393000,0,0,0,0,0,6,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-066,apparaat,"Bovenwettelijke uitkering, wachtgelden",Apparaat,Overige personele uitgaven,total_amount,235288000,25407000,24719000,26502000,22150000,22395000,21000000,19950000,27475000,45690000,96,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-067,apparaat,Verwerven en afstoten ,Apparaat,Overige materiële uitgaven,total_amount,235226000,0,0,0,0,0,0,0,0,235226000,15,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-068,apparaat,Diversen communicatie,Apparaat,Overige materiële uitgaven,total_amount,229290000,17593000,27989000,29371000,26195000,21755000,20018000,25132000,33415000,27822000,223,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-069,apparaat,BZK-specifiek,Centraal apparaat,,total_amount,218602000,218602000,0,0,0,0,0,0,0,0,3,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-070,apparaat,Organisatie- en formatieadvies,Apparaat,Externe inhuur,total_amount,217697000,10856000,9932000,10560000,14511000,23265000,25471000,32087000,41716000,49299000,175,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-071,apparaat,Bijdrage SSO RVB; Gebruik en onderhoud gebouw en terreinen,Ondersteuning operationele eenheden,,total_amount,216632000,0,216632000,0,0,0,0,0,0,0,1,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-072,apparaat,Interim management,Apparaat,Externe inhuur,total_amount,213795000,5573000,8849000,13106000,23927000,27854000,29801000,32980000,71705000,0,140,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-073,apparaat,personele exploitatie overig,Defensie Materieel Organisatie,Overige personele exploitatie,total_amount,203016000,0,0,0,0,0,0,0,0,203016000,15,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-074,apparaat,Sociale lasten en,Apparaat kerndepartement,,total_amount,200745000,65382000,65223000,70140000,0,0,0,0,0,0,12,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-075,apparaat,UITZENDKRACHTEN,Landmacht,Externe inhuur,total_amount,199637000,0,0,0,0,0,0,0,0,199637000,9,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-076,apparaat,Opleidingen,Marine,Overige personele exploitatie,total_amount,195299000,0,0,0,0,16000,0,0,0,195283000,16,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-077,apparaat,"Sociale lasten en 
+bijdrage zorgverzekeringswet",Agentschap KNMI,Eigen personeel,total_amount,194711000,0,0,0,0,0,0,0,0,194711000,6,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-078,apparaat,Communicatieadvies,Apparaat,Externe inhuur,total_amount,188764000,6987000,9010000,10929000,20195000,24806000,39145000,33989000,43703000,0,168,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-079,apparaat,Eindheffing loonbelasting,Apparaat,Eigen Personeel,total_amount,187929000,20252000,20709000,23062000,16582000,15615000,16791000,18972000,24326000,31620000,61,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-080,apparaat,"Bijdrage SSO DMO OPS; Aanschaf, beheer en onderhoud infrastructuur",Ondersteuning operationele eenheden,,total_amount,184995000,0,184995000,0,0,0,0,0,0,0,1,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-081,apparaat,Inbesteding materieel,Apparaatuitgaven,Overige materiele uitgaven,total_amount,179716000,21670000,27447000,21690000,25768000,18077000,14178000,16415000,19644000,14827000,60,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-082,apparaat,Geneeskundige verzorging,Defensie Ondersteuningscommando,overige materiele exploitatie,total_amount,176090000,0,0,14556000,29032000,46165000,37276000,0,0,49061000,12,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-083,apparaat,"Post-, Koeriers- en transportdiensten",Apparaat,Overige materiële uitgaven,total_amount,175283000,44292000,42582000,42019000,8225000,7139000,7243000,8776000,6931000,8076000,121,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-084,apparaat,Huisvesting,Bestuurstaf,Overig materieel,total_amount,174968000,2758000,2424000,0,0,0,0,167835000,1951000,0,10,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-085,apparaat,reis en verblijfkosten,Defensie Ondersteuningscommando,Overige personele exploitatie,total_amount,173948000,0,0,0,0,0,0,0,0,173948000,14,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-086,apparaat,BHV middelen,Apparaat,Eigen Personeel,total_amount,170873000,10582000,9299000,14338000,25221000,19331000,25675000,18141000,48286000,0,179,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-087,apparaat,RVB / Gebruik en onderhoud gebouw en terreinen,Ondersteuning operationele eenheden,,total_amount,167786000,167786000,0,0,0,0,0,0,0,0,1,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-088,apparaat,Advies,Apparaatuitgaven,Externe inhuur,total_amount,160187000,0,0,0,5451000,5952000,7828000,71713000,69243000,0,22,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-089,apparaat,Salarissen personeel,APPARAAT,PERSONEEL,total_amount,155438000,0,0,0,155438000,0,0,0,0,0,1,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-090,apparaat,Reis- en Verblijfkosten,Apparaat,Eigen personeel,total_amount,149378000,0,0,0,0,0,0,0,0,149378000,25,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-091,apparaat,BIJDRAGE SSO'S,Apparaatuitgaven,Bijdrage SSO's,total_amount,142286000,0,0,0,0,0,0,0,0,142286000,29,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-092,apparaat,Uitbesteding capaciteit organisatie- en formatieadvies,Agentschap KNMI,Overig materieel,total_amount,141268000,21191000,10426000,12590000,14145000,17985000,12306000,21604000,14137000,16884000,39,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-093,apparaat,Advisering automatiseringsvraagstukken,Defensie Ondersteuningscommando,Externe inhuur,total_amount,140561000,0,0,0,0,0,0,0,888000,139673000,11,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-094,apparaat,Definities conform P-direkt,Apparaat,Eigen Personeel,total_amount,140508000,0,0,0,0,0,30964000,32787000,36469000,40288000,4,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-095,apparaat,Beleidsadvies,Apparaat,Externe inhuur,total_amount,135417000,1396000,2671000,10147000,7365000,24296000,53044000,6275000,16712000,13511000,59,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-096,apparaat,Studie en opleiding (Vliegeropleidingen),Koninklijke Luchtmacht,Overige personele exploitatie,total_amount,133809000,0,0,0,0,60814000,72995000,0,0,0,2,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-097,apparaat,Bijdragen aan SSO's,Apparaat,bijdrage SSO's,total_amount,129402000,0,0,0,64972000,53144000,0,0,0,11286000,6,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-098,apparaat,Uitbesteden organisatie- en formatieadviesopdrachten,Apparaat,Overig materieel,total_amount,119514000,8556000,10286000,42421000,4552000,13929000,8473000,6398000,18267000,6632000,92,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-099,apparaat,SOC.LSTN/BIJDR ZVW,Apparaatuitgaven,Eigen Personeel,total_amount,117351000,0,0,0,0,0,0,0,0,117351000,8,Q-APP-01,2026-03-02T19:28:34Z
+APP-TOP-100,apparaat,Uitbesteden accountancy en financiën,Apparaat,Overig materieel,total_amount,114124000,93993000,1000,3297000,3197000,2126000,3555000,2193000,3477000,2285000,49,Q-APP-01,2026-03-02T19:28:34Z

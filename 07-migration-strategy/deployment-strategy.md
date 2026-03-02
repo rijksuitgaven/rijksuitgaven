@@ -10,9 +10,9 @@
 | Aspect | Decision |
 |--------|----------|
 | Production domain | rijksuitgaven.nl |
-| Staging domain | beta.rijksuitgaven.nl |
-| Staging protection | Magic Link (Supabase Auth) |
-| Beta testers | 5 people total |
+| Beta domain | beta.rijksuitgaven.nl |
+| Beta protection | Magic Link (Supabase Auth) |
+| Beta testers | 10 people (launched 2026-02-21) |
 | Cutover approach | Hard switch (DNS) |
 | Rollback plan | None - thorough testing before switch |
 
@@ -50,32 +50,18 @@ rijksuitgaven.nl
 
 | Site | URL | Purpose | Access |
 |------|-----|---------|--------|
-| Production | rijksuitgaven.nl | Live service for 50 paying users | Public (with login) |
-| Staging | beta.rijksuitgaven.nl | Development and testing | Magic Link only |
+| Production (beta) | beta.rijksuitgaven.nl | Live service for beta testers | Magic Link only |
+| Production (future) | rijksuitgaven.nl | Public launch (after M1.0) | Public (with login) |
+| Local dev | localhost:3000 | Development and testing | Magic Link (localhost) |
 
-### Staging Setup (Week 1)
+### Development Setup (Updated 2026-02-28)
 
-1. **Custom Domain:** Add `beta.rijksuitgaven.nl` in Railway dashboard → Railway provides CNAME target
-2. **DNS:** Add CNAME record `beta` → Railway-provided target (e.g., `j65ghs38.up.railway.app`)
-2. **Auth:** Supabase Magic Link required to access any page
-3. **Data:** Copy of production data (refreshed as needed)
-4. **Users:** Only founder + invited beta testers
+**No separate staging environment.** Localhost serves as the full dev/test environment.
 
-### Staging Access Control (Decided 2026-01-21)
-
-```
-beta.rijksuitgaven.nl/*
-    │
-    ├── Not logged in → Redirect to login page
-    │                   "This is a beta preview."
-    │
-    └── Logged in (Magic Link) → Full access
-        └── Only manually created accounts can log in
-```
-
-**Method:** Disable public signup in Supabase Auth settings. Manually create accounts for:
-- Founder (you)
-- 5 beta testers (add their emails in Supabase dashboard)
+1. **Feature branches** for unreleased work (never on main)
+2. **Localhost testing** with full auth (RESEND_API_KEY + SUPABASE_SERVICE_ROLE_KEY in .env.local)
+3. **Hotfixes** go straight to main
+4. **Push to main** auto-deploys to production via Railway
 
 **Supabase setup:**
 1. Auth → Settings → Disable "Enable email signup"

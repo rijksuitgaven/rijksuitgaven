@@ -246,6 +246,8 @@ function AmountCell({
   const percentChange = isFirstYear ? null : calculateYoYChange(amount, previousAmount)
   const hasAnomaly = isAnomaly(percentChange)
 
+  const trend = percentChange !== null ? (percentChange >= 0 ? 'positive' : 'negative') : undefined
+
   return (
     <div
       className={cn(
@@ -254,6 +256,7 @@ function AmountCell({
         hasAnomaly && 'bg-[var(--trend-anomaly-bg)] rounded-sm -mx-2 px-2'
       )}
       data-tooltip-center={percentChange !== null ? `${formatPercentage(percentChange)} vs vorig jaar` : undefined}
+      data-trend={trend}
     >
       {formatted}
     </div>
@@ -1027,7 +1030,7 @@ export function DataTable({
                   </div>
                   <div className="flex gap-3">
                     <AlertTriangle className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
-                    <p className="text-sm text-white/80">Rood gemarkeerd = 50%+ mutatie t.o.v. vorig jaar. Hover voor het percentage.</p>
+                    <p className="text-sm text-white/80">Gemarkeerd = 50%+ mutatie t.o.v. vorig jaar. Hover voor het percentage.</p>
                   </div>
                   <div className="flex gap-3">
                     <SlidersHorizontal className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />

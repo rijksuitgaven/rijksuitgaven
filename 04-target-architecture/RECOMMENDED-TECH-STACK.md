@@ -719,11 +719,9 @@ V6 Buffer:                 €10-68 ✅
 
 ### Git Strategy
 ```
-main (production)
+main (production → auto-deploys to Railway)
   ↑
-  └─ staging (for testing)
-       ↑
-       └─ feature branches
+  └─ feature branches (test on localhost)
 ```
 
 ### Deployment Pipeline (Automated)

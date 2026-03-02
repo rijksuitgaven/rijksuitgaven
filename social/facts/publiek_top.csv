@@ -1,0 +1,151 @@
+fact_id,module,entity,source,metric,contract_count,years_with_data,totaal,query_ref,verified_at
+PUB-TOP-001,publiek,Anoniem,COA,contract_count,1335,7,14351335,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-002,publiek,Aanvrager geen rechtspersoon,RVO,contract_count,1169,8,33475755,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-003,publiek,Radboudumc,ZonMW,contract_count,367,7,130188940,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-004,publiek,AMC Medical Research BV,ZonMW,contract_count,333,7,134124431,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-005,publiek,Erasmus MC (UMCR),ZonMW,contract_count,305,7,138619293,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-006,publiek,UMC Utrecht (UMCU),ZonMW,contract_count,265,7,104348987,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-007,publiek,"Amsterdam UMC, locatie VUmc",ZonMW,contract_count,261,7,108772498,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-008,publiek,Universiteit Maastricht,ZonMW,contract_count,251,7,77515811,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-009,publiek,Technische Universiteit Delft,NWO,contract_count,249,7,79820824,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-010,publiek,AZL/LUMC p/a Projectenbureau Leiden,ZonMW,contract_count,231,7,111644354,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-011,publiek,UMCG,ZonMW,contract_count,216,7,97448371,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-012,publiek,TNO,RVO,contract_count,207,5,72805941,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-013,publiek,Technische Universiteit Delft,RVO,contract_count,173,6,46650795,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-014,publiek,Universiteit Twente,RVO,contract_count,149,6,38837879,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-015,publiek,Technische Universiteit Eindhoven,RVO,contract_count,147,6,46511075,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-016,publiek,Universiteit Utrecht,NWO,contract_count,145,7,33893588,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-017,publiek,Technische Universiteit Eindhoven - Eindhoven University of Technology,NWO,contract_count,140,7,32127524,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-018,publiek,Wageningen University & Research,NWO,contract_count,129,7,31985870,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-019,publiek,Universiteit Twente,NWO,contract_count,114,7,43018481,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-020,publiek,Deltares,RVO,contract_count,107,4,12783013,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-021,publiek,Wageningen Universiteit/ Wageningen University,RVO,contract_count,103,6,42954208,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-022,publiek,Radboud Universiteit Nijmegen,NWO,contract_count,103,7,16980568,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-023,publiek,Nederlandse Organisatie voor toegepast-natuurwetenschappelijk onderzoek TNO,RVO,contract_count,101,3,29883027,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-024,publiek,Universiteit van Amsterdam,NWO,contract_count,97,7,12642838,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-025,publiek,De Ridder,COA,contract_count,91,7,28675091,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-026,publiek,MARIN,RVO,contract_count,90,4,11531275,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-027,publiek,Onbekend,RVO,contract_count,84,5,58369269,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-028,publiek,Rijksuniversiteit Groningen,NWO,contract_count,83,7,20802849,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-029,publiek,Lasaulec B.V.,COA,contract_count,82,6,3925081,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-030,publiek,Praktijk voor Fysiotherapie,RVO,contract_count,81,0,0,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-031,publiek,Universiteit Leiden,NWO,contract_count,79,7,29706858,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-032,publiek,King Nederland B.V.,COA,contract_count,77,7,14290077,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-033,publiek,Jan Snel Livings BV,COA,contract_count,77,7,78125075,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-034,publiek,TNO Accounts Receivable,ZonMW,contract_count,76,7,16996141,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-035,publiek,Universiteit Utrecht,RVO,contract_count,76,6,22599881,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-036,publiek,Universitair Medisch Centrum Utrecht,RVO,contract_count,71,6,33044026,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-037,publiek,Strijbosch B.V.,COA,contract_count,71,6,32200071,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-038,publiek,Huisartsenpraktijk,RVO,contract_count,69,0,0,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-039,publiek,Vrije Universiteit Amsterdam,NWO,contract_count,69,7,9356981,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-040,publiek,Vrije Universiteit Amsterdam,ZonMW,contract_count,65,7,19846308,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-041,publiek,BOL.COM,COA,contract_count,64,5,345064,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-042,publiek,Anoniem Anoniem,COA,contract_count,63,5,390063,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-043,publiek,Universitair Medisch Centrum Utrecht,NWO,contract_count,63,7,18804411,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-044,publiek,Stichting Materials innovation institute (M2i),RVO,contract_count,62,5,11847844,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-045,publiek,Slaapschepen B.V.,COA,contract_count,61,4,42840059,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-046,publiek,Poiesz Supermarkten BV,COA,contract_count,58,7,435057,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-047,publiek,De Meeuw Oirschot B.V.,COA,contract_count,57,7,8465057,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-048,publiek,POL Heteren B.V.,COA,contract_count,56,7,1830056,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-049,publiek,NWO-institutenorganisatie,NWO,contract_count,55,8,10858566,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-050,publiek,Hogeschool van Arnhem en Nijmegen,ZonMW,contract_count,55,7,8587541,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-051,publiek,Stichting Nationaal Lucht  en Ruimtevaartlaboratorium (NLR),RVO,contract_count,54,4,12352462,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-052,publiek,Bouwbedrijf Huurman Leiden BV,COA,contract_count,52,7,79070052,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-053,publiek,Jumbo Supermarkten BV,COA,contract_count,52,7,645052,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-054,publiek,Universitair Medisch Centrum Groningen UMCG,RVO,contract_count,52,4,11465044,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-055,publiek,Erasmus Universiteit Rotterdam,ZonMW,contract_count,51,6,12711768,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-056,publiek,Start People B.V.,COA,contract_count,51,7,405455049,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-057,publiek,NIVEL,ZonMW,contract_count,50,7,13477951,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-058,publiek,Universiteit Utrecht,ZonMW,contract_count,50,7,21587059,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-059,publiek,BAM Bouw en Techniek B.V.,COA,contract_count,50,7,88855050,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-060,publiek,St. Chr. Hogeschool Windesheim,ZonMW,contract_count,50,7,6782937,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-061,publiek,Hogeschool Utrecht,ZonMW,contract_count,50,7,6265083,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-062,publiek,Fuego,COA,contract_count,49,4,1350049,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-063,publiek,St Universiteit van Tilburg,ZonMW,contract_count,48,7,16016813,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-064,publiek,Universiteit Maastricht,RVO,contract_count,47,6,13406846,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-065,publiek,KWR Water,RVO,contract_count,46,4,7582328,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-066,publiek,Stg KU - Radboud Universiteit,ZonMW,contract_count,46,7,13601385,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-067,publiek,Stichting VU VUmc,RVO,contract_count,45,4,9656248,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-068,publiek,Trans River Line BV,COA,contract_count,44,4,20660044,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-069,publiek,Dienst Justitiele Inrichtingen,COA,contract_count,44,7,22710044,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-070,publiek,Strukton WorkSphere,COA,contract_count,44,7,70440043,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-071,publiek,Erasmus MC,NWO,contract_count,43,6,8358622,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-072,publiek,Amsterdam UMC - Locatie AMC,NWO,contract_count,43,6,7742006,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-073,publiek,Gispen Nederland B.V.,COA,contract_count,43,7,18305043,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-074,publiek,Supermarkt Hesselberth BV,COA,contract_count,42,7,205041,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-075,publiek,Kenter B.V.,COA,contract_count,42,7,1585040,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-076,publiek,Facilicom Solutions B.V.,COA,contract_count,40,6,44845040,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-077,publiek,Stichting Deltares,RVO,contract_count,40,3,4118961,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-078,publiek,Academisch Medisch Centrum (AMC),RVO,contract_count,40,4,16046945,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-079,publiek,Rijksvastgoedbedrijf,COA,contract_count,40,7,143585038,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-080,publiek,Gemeente Amsterdam,COA,contract_count,39,7,9120038,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-081,publiek,XONAR,COA,contract_count,39,7,21410039,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-082,publiek,KG & ROLF,COA,contract_count,39,5,540039,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-083,publiek,Gemeente Nijmegen,COA,contract_count,38,7,121335038,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-084,publiek,Protinus IT B.V.,COA,contract_count,38,7,30170038,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-085,publiek,Leids Universitair Medisch Centrum,NWO,contract_count,38,7,8305980,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-086,publiek,Radboud universitair medisch centrum,NWO,contract_count,38,7,8257590,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-087,publiek,Global Talk Netherlands,COA,contract_count,37,1,7680037,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-088,publiek,HumanCapitalCare B.V.,COA,contract_count,37,7,10200037,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-089,publiek,Ministerie van VWS (RIVM),ZonMW,contract_count,37,7,15243245,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-090,publiek,Xerox Nederland B.V.,COA,contract_count,36,7,7275036,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-091,publiek,Hogeschool Rotterdam,ZonMW,contract_count,36,7,3908550,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-092,publiek,Vrije Universiteit Amsterdam (VUA) Faculteit ALW,ZonMW,contract_count,36,7,16866728,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-093,publiek,Van Zijl Supermarkt B.V.,COA,contract_count,35,5,200035,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-094,publiek,Liander,COA,contract_count,35,6,5880034,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-095,publiek,Maastricht University,NWO,contract_count,35,7,5336160,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-096,publiek,Stichting Via Jeugd,COA,contract_count,34,4,4730034,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-097,publiek,Van Hoeckel Partner in Foodcar,COA,contract_count,34,5,2450034,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-098,publiek,Manutan B.V,COA,contract_count,33,7,165033,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-099,publiek,Jean Heybroek BV,COA,contract_count,33,7,625033,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-100,publiek,Hegeman VNO Bouw B.V.,COA,contract_count,33,7,73925032,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-101,publiek,Leussink Retail Groep B.V.,COA,contract_count,33,7,165033,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-102,publiek,Gemeente Waadhoeke,COA,contract_count,33,7,1150032,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-103,publiek,Breur Ijzerhandel B.V.,COA,contract_count,33,4,10690033,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-104,publiek,Jos ten Berg B.V.,COA,contract_count,32,4,1310032,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-105,publiek,Plus Joffrey ter Horst,COA,contract_count,32,7,185032,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-106,publiek,Sligro Food Group Nederland B.,COA,contract_count,32,3,7920030,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-107,publiek,De Strip BV,COA,contract_count,32,3,35680032,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-108,publiek,Erasmus Universitair Medisch Centrum Rotterdam,RVO,contract_count,32,4,12985000,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-109,publiek,Stichting Wageningen Research,RVO,contract_count,32,2,13732432,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-110,publiek,Slaapschepen Public B.V.,COA,contract_count,31,3,180985031,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-111,publiek,Munckhof Taxi BV (voorheen 601,COA,contract_count,31,7,97960031,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-112,publiek,SKMS 2,ZonMW,contract_count,31,5,76901002,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-113,publiek,Le Cocq Holding Didam II B.V.,COA,contract_count,31,2,357195030,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-114,publiek,Zeelandhallen Exploitatie BV,COA,contract_count,31,5,17870031,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-115,publiek,Trimbos-Instituut,ZonMW,contract_count,31,7,7701926,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-116,publiek,TOA Oegstgeest B.V.,COA,contract_count,31,4,12245031,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-117,publiek,Lobbes Speelgoed BV,COA,contract_count,31,7,150030,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-118,publiek,Directbouw b.v.,COA,contract_count,30,7,13355030,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-119,publiek,Het Nederlandse Rode Kruis,COA,contract_count,30,4,13135030,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-120,publiek,Arcadis Nederland B.V.,COA,contract_count,30,7,17675029,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-121,publiek,IP Groep,COA,contract_count,30,4,13825029,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-122,publiek,RMA Healthcare,COA,contract_count,30,7,1079105030,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-123,publiek,Heemskerk Sports & Games BV,COA,contract_count,30,7,515030,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-124,publiek,Solvinity,COA,contract_count,29,7,2770029,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-125,publiek,Centraal Justitieel Incasso Bu,COA,contract_count,29,7,125025,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-126,publiek,Universiteit Twente (UT),ZonMW,contract_count,29,7,7511263,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-127,publiek,KG& ROLF,COA,contract_count,29,2,365029,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-128,publiek,Plus Siemonsma,COA,contract_count,29,7,145029,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-129,publiek,Universiteit van Amsterdam,ZonMW,contract_count,29,7,7240642,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-130,publiek,Civil Management,COA,contract_count,28,7,2925027,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-131,publiek,PLUS Alfring Baalderveld,COA,contract_count,28,7,140028,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-132,publiek,Erasmus Universitair Medisch Centrum Rotterdam (Erasmus MC),RVO,contract_count,28,2,13288990,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-133,publiek,Snelwenskaart.nl,COA,contract_count,28,6,190028,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-134,publiek,SPIE Building Solutions B.V.,COA,contract_count,28,2,97130028,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-135,publiek,H. Offerein Supermarkt B.V.,COA,contract_count,28,7,140028,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-136,publiek,De Betteld,COA,contract_count,27,3,2625027,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-137,publiek,Gemeente Westerwolde,COA,contract_count,27,7,6270024,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-138,publiek,BMWSR B.V.,COA,contract_count,27,4,5780027,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-139,publiek,GGD Amsterdam,ZonMW,contract_count,27,7,6550003,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-140,publiek,Yadeborg,COA,contract_count,27,4,10185027,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-141,publiek,Le Cocq Holding Didam B.V.,COA,contract_count,27,1,257990025,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-142,publiek,Leids Universitair Medisch Centrum LUMC,RVO,contract_count,27,4,5014951,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-143,publiek,Gemeente Tytsjerksteradiel,COA,contract_count,26,7,1165026,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-144,publiek,Gemeente Smallingerland,COA,contract_count,26,7,2615026,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-145,publiek,TUE Eindhoven,ZonMW,contract_count,26,7,4716766,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-146,publiek,(COA)litie V.O.F.,COA,contract_count,26,7,9345026,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-147,publiek,Stichting Albeda,ZonMW,contract_count,26,2,1255797,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-148,publiek,Gemeente Utrecht,COA,contract_count,26,7,5350026,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-149,publiek,Twynstra Gudde Holding B.V.,COA,contract_count,26,7,20715026,Q-PUB-01,2026-03-02T19:28:34Z
+PUB-TOP-150,publiek,KleurRijker B.V.,COA,contract_count,26,7,4610026,Q-PUB-01,2026-03-02T19:28:34Z

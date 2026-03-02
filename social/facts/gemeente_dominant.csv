@@ -1,0 +1,101 @@
+fact_id,module,entity,gemeente,metric,entity_total,gemeente_total,pct_of_gemeente,years_with_data,query_ref,verified_at
+GEM-DOM-001,gemeente,Stichting WIJ Groningen,Groningen,dominance_pct,202265560,846472579,23.9,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-002,gemeente,Stichting Centrum voor Jeugd en Gezin (CJG),Barendrecht,dominance_pct,5104350,23606967,21.6,3,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-003,gemeente,Stichting Kijk op Welzijn,Barendrecht,dominance_pct,5021161,23606967,21.3,3,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-004,gemeente,Stichting Sociale Wijkteams Amersfoort,Amersfoort,dominance_pct,114193751,576162231,19.8,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-005,gemeente,Sportbedrijf Arnhem BV,Arnhem,dominance_pct,95492994,555216793,17.2,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-006,gemeente,Stichting Lokalis,Utrecht,dominance_pct,63185356,381227834,16.6,2,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-007,gemeente,Stichting Buurtteamorganisatie Sociaal Utrecht,Utrecht,dominance_pct,47632876,381227834,12.5,2,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-008,gemeente,Schoor Stichting De,Almere,dominance_pct,104907389,845041603,12.4,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-009,gemeente,Stichting Nieuwe Veste,Breda,dominance_pct,83027554,672240712,12.4,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-010,gemeente,Kwintes Stichting,Almere,dominance_pct,99185717,845041603,11.7,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-011,gemeente,Stichting Veilig Thuis West-Brabant,Breda,dominance_pct,66754075,672240712,9.9,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-012,gemeente,Stichting de Bibliotheek Utrecht,Utrecht,dominance_pct,35950207,381227834,9.4,2,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-013,gemeente,GGD Flevoland,Almere,dominance_pct,78601769,845041603,9.3,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-014,gemeente,RWA  (=reg.WSW A'foort),Amersfoort,dominance_pct,51679136,576162231,9.0,3,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-015,gemeente,St. Rozet,Arnhem,dominance_pct,49020306,555216793,8.8,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-016,gemeente,ContourdeTwern Stichting,Tilburg,dominance_pct,72982342,829513634,8.8,3,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-017,gemeente,Kwintes,Amersfoort,dominance_pct,49016802,576162231,8.5,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-018,gemeente,St. Rijnstad,Arnhem,dominance_pct,44403975,555216793,8.0,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-019,gemeente,Coöperatieve Vereniging BreedSaam,Breda,dominance_pct,53755704,672240712,8.0,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-020,gemeente,Groninger Forum,Groningen,dominance_pct,64688927,846472579,7.6,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-021,gemeente,Stichting Stadsschouwburg en Philharmonie Haarlem,Haarlem,dominance_pct,30916463,435302149,7.1,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-022,gemeente,Stichting Samen Veilig Midden-Nederland,Utrecht,dominance_pct,26863354,381227834,7.0,2,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-023,gemeente,CJG Kennemerland BV,Haarlem,dominance_pct,29689084,435302149,6.8,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-024,gemeente,Openbare Bibliotheek Almere  Stichting,Almere,dominance_pct,56601434,845041603,6.7,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-025,gemeente,Beweging 3.0,Amersfoort,dominance_pct,37472571,576162231,6.5,4,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-026,gemeente,St. Musis en Stadstheater,Arnhem,dominance_pct,35629047,555216793,6.4,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-027,gemeente,Blijf Groep Stichting,Almere,dominance_pct,52939487,845041603,6.3,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-028,gemeente,Stichting Ondernemersfonds Utrecht,Utrecht,dominance_pct,23457570,381227834,6.2,2,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-029,gemeente,Bibliotheken Eemland,Amersfoort,dominance_pct,35025472,576162231,6.1,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-030,gemeente,Chasse Theater N.V.,Breda,dominance_pct,38852296,672240712,5.8,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-031,gemeente,Stichting Bibliotheek Zuid Kennemerland,Haarlem,dominance_pct,24763668,435302149,5.7,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-032,gemeente,Scholen in de Kunst,Amersfoort,dominance_pct,31500537,576162231,5.5,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-033,gemeente,Stichting DOCK,Utrecht,dominance_pct,20611671,381227834,5.4,2,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-034,gemeente,Stichting Het Kopland,Groningen,dominance_pct,42767054,846472579,5.1,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-035,gemeente,Stichting Maatschappelijke Opvang Breda e.o.,Breda,dominance_pct,33460822,672240712,5.0,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-036,gemeente,Stichting HVO-Querido,Amsterdam,dominance_pct,247078089,4929978877,5.0,9,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-037,gemeente,Stichting Contour deTwern,Tilburg,dominance_pct,41208279,829513634,5.0,2,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-038,gemeente,Stichting Frans Hals Museum,Haarlem,dominance_pct,21158995,435302149,4.9,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-039,gemeente,Stichting Instituut voor Maatschappelijk Welzijn Breda e.o.,Breda,dominance_pct,31358193,672240712,4.7,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-040,gemeente,Jeugdgezondheidszorg Kennemerland,Haarlem,dominance_pct,20123038,435302149,4.6,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-041,gemeente,St. IrisZorg,Arnhem,dominance_pct,25107609,555216793,4.5,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-042,gemeente,Stichting Jongerenwerk Utrecht,Utrecht,dominance_pct,17085858,381227834,4.5,2,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-043,gemeente,Vitree Stichting,Almere,dominance_pct,37242304,845041603,4.4,4,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-044,gemeente,Stichting Openbare Bibliotheek Amsterdam,Amsterdam,dominance_pct,207112295,4929978877,4.2,9,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-045,gemeente,De Flint Theater- en Congressen,Amersfoort,dominance_pct,24005894,576162231,4.2,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-046,gemeente,MEE West-Brabant,Breda,dominance_pct,27365575,672240712,4.1,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-047,gemeente,Stichting Stedelijk Museum Breda,Breda,dominance_pct,27056982,672240712,4.0,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-048,gemeente,Coöperatieve Vereniging Building Breda,Breda,dominance_pct,26608278,672240712,4.0,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-049,gemeente,Stichting Sterk Huis,Tilburg,dominance_pct,32157149,829513634,3.9,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-050,gemeente,Leger des Heils Welzijns Stichting,Almere,dominance_pct,32321113,845041603,3.8,4,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-051,gemeente,Groninger Museum,Groningen,dominance_pct,32261466,846472579,3.8,8,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-052,gemeente,Stichting U Centraal,Utrecht,dominance_pct,13954287,381227834,3.7,2,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-053,gemeente,Stichting Haarlem Effect,Haarlem,dominance_pct,16214577,435302149,3.7,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-054,gemeente,SMO Traverse,Tilburg,dominance_pct,29717573,829513634,3.6,3,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-055,gemeente,Stichting Amersfoort in C,Amersfoort,dominance_pct,20980501,576162231,3.6,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-056,gemeente,St. Museum Arnhem,Arnhem,dominance_pct,20020235,555216793,3.6,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-057,gemeente,Stichting Arkin,Amersfoort,dominance_pct,20441947,576162231,3.5,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-058,gemeente,Stichting Anton Constandse,Den Haag,dominance_pct,89844748,2535621355,3.5,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-059,gemeente,St. Moviera,Arnhem,dominance_pct,18610023,555216793,3.4,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-060,gemeente,Stichting de Toneelschuur,Haarlem,dominance_pct,15003408,435302149,3.4,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-061,gemeente,Stichting Leger des Heils Welzijns- en Gezondheidszorg,Den Haag,dominance_pct,87054754,2535621355,3.4,8,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-062,gemeente,Stichting Werkpro,Groningen,dominance_pct,28437769,846472579,3.4,8,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-063,gemeente,Samen Veilig Midden-Nederland,Amersfoort,dominance_pct,18802078,576162231,3.3,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-064,gemeente,Stichting Kind & Co Ludens,Utrecht,dominance_pct,12077120,381227834,3.2,2,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-065,gemeente,Pactum,Arnhem,dominance_pct,17554634,555216793,3.2,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-066,gemeente,Stichting Mommerskwartier,Tilburg,dominance_pct,26418923,829513634,3.2,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-067,gemeente,Stichting VRIJDAG,Groningen,dominance_pct,27310705,846472579,3.2,8,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-068,gemeente,Stichting WIJKZ,Den Haag,dominance_pct,81056758,2535621355,3.2,4,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-069,gemeente,Surplus Welzijn Breda,Breda,dominance_pct,21710041,672240712,3.2,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-070,gemeente,Stichting ROC Mondriaan,Den Haag,dominance_pct,79995856,2535621355,3.2,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-071,gemeente,Stichting Het Nationale Theater,Den Haag,dominance_pct,78817053,2535621355,3.1,8,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-072,gemeente,Stichting DOCK Hoofdkantoor,Haarlem,dominance_pct,13468022,435302149,3.1,3,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-073,gemeente,De Bibliotheek Midden-Brabant,Tilburg,dominance_pct,25245446,829513634,3.0,3,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-074,gemeente,Leger des Heils Gelderland,Arnhem,dominance_pct,15969307,555216793,2.9,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-075,gemeente,Verslavingszorg Noord Nederland (VNN),Groningen,dominance_pct,23784273,846472579,2.8,8,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-076,gemeente,Stichting INLIA Groningen,Groningen,dominance_pct,24057073,846472579,2.8,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-077,gemeente,Kinderopvang SKAR BV,Arnhem,dominance_pct,14746221,555216793,2.7,4,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-078,gemeente,ST Stadsring 51,Amersfoort,dominance_pct,15303868,576162231,2.7,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-079,gemeente,Stichting MOOI,Den Haag,dominance_pct,67746736,2535621355,2.7,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-080,gemeente,Blijf Groep,Haarlem,dominance_pct,11528500,435302149,2.6,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-081,gemeente,Stichting Leger des Heils Welzijns- en Gezondheidszorg,Amsterdam,dominance_pct,129326972,4929978877,2.6,9,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-082,gemeente,Stichting Lucas Onderwijs,Den Haag,dominance_pct,66679388,2535621355,2.6,8,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-083,gemeente,St. Veilig Thuis Gelderland Midden,Arnhem,dominance_pct,14600188,555216793,2.6,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-084,gemeente,Stichting Samen Veilig Midden-Nederland,Almere,dominance_pct,21617006,845041603,2.6,3,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-085,gemeente,Kunstlinie Almere Flevoland (KAF),Almere,dominance_pct,21701973,845041603,2.6,3,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-086,gemeente,Stichting Vrouwenopvang Safegroup,Breda,dominance_pct,17721394,672240712,2.6,5,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-087,gemeente,Stichting WIJ,Breda,dominance_pct,17175214,672240712,2.6,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-088,gemeente,Stichting Leergeld Den Haag,Den Haag,dominance_pct,66683787,2535621355,2.6,8,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-089,gemeente,Stichting Patronaat,Haarlem,dominance_pct,11001759,435302149,2.5,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-090,gemeente,Stichting SEZO,Amsterdam,dominance_pct,121303545,4929978877,2.5,9,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-091,gemeente,Stichting Dynamo Welzijn,Amsterdam,dominance_pct,122374037,4929978877,2.5,9,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-092,gemeente,Stichting Hart,Haarlem,dominance_pct,10765167,435302149,2.5,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-093,gemeente,Kober B.V.,Breda,dominance_pct,16481956,672240712,2.5,7,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-094,gemeente,Stichting VR Welzijn,Den Haag,dominance_pct,62835762,2535621355,2.5,4,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-095,gemeente,Stichting Sport Utrecht,Utrecht,dominance_pct,9167794,381227834,2.4,2,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-096,gemeente,Contour deTwern Stg,Tilburg,dominance_pct,19710720,829513634,2.4,1,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-097,gemeente,Stichting DOCK,Amsterdam,dominance_pct,111496825,4929978877,2.3,9,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-098,gemeente,Contour deTwern,Tilburg,dominance_pct,18832291,829513634,2.3,1,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-099,gemeente,Stichting Kunstmuseum Den Haag,Den Haag,dominance_pct,58879191,2535621355,2.3,6,Q-GEM-03,2026-03-02T19:28:34Z
+GEM-DOM-100,gemeente,Stichting Stedelijk Museum Amsterdam,Amsterdam,dominance_pct,108729180,4929978877,2.2,8,Q-GEM-03,2026-03-02T19:28:34Z

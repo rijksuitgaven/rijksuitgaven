@@ -1,0 +1,51 @@
+fact_id,module,entity,metric,leverancier_count,total_contracts,query_ref,verified_at
+INKOOP-CAT-001,inkoop,1130 - Representatie voor eigen personeel,category_total,32515,124521,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-002,inkoop,1150 - Studie en opleiding,category_total,22644,93495,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-003,inkoop,9590 - V&J specifiek,category_total,25260,38519,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-004,inkoop,7110 - Gebruik en onderhoud gebouw en terreinen,category_total,10161,35551,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-005,inkoop,4610 - Benodigdheden en hulpmiddelen,category_total,4978,26060,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-006,inkoop,3120 - Uitbesteden beleidsadvies- en onderzoeksopdrachten,category_total,7178,24697,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-007,inkoop,3000 - Uitbesteden overig,category_total,7813,23431,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-008,inkoop,9560 - I&M specifiek,category_total,8943,23246,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-009,inkoop,1180 - Reis en verblijfkosten,category_total,10082,21398,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-010,inkoop,8510 - Diversen Communicatie,category_total,4011,18825,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-011,inkoop,9530 - DEF specifiek,category_total,4544,16657,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-012,inkoop,4000 - Diensten en middelen overig,category_total,4991,15809,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-013,inkoop,1120 - Arbeidsomstandigheden en personele zorg (incl. BHV middelen),category_total,4173,11895,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-014,inkoop,6510 - Aan een externe partij uitbestede ICT-dienstverlening,category_total,2441,9489,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-015,inkoop,"1160 - Personeelsevenementen, - bijeenkomsten en recepties",category_total,4905,9204,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-016,inkoop,"8110 - Vakliteratuur, abonnementen en overige informatie",category_total,1680,9151,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-017,inkoop,"6220 - Beheer, Onderhoud programmatuur & software",category_total,1034,8592,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-018,inkoop,4510 - Inrichting van gebouwen,category_total,2447,8006,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-019,inkoop,4110 - Consumptieve diensten,category_total,2267,7648,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-020,inkoop,5210 - Wagenpark,category_total,2054,6765,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-021,inkoop,1000 - Personele exploitatie overig,category_total,2960,6435,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-022,inkoop,4120 - Risicobeheersen,category_total,1179,6172,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-023,inkoop,8410 - Evenementen en congresorganisatie,category_total,2427,5793,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-024,inkoop,"1140 - Instroom, doorstroom en uitstroom van personeel",category_total,1942,5729,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-025,inkoop,9302 - Laboratoriummaterialen,category_total,863,5355,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-026,inkoop,6410 - Spraak en dataverbindingen,category_total,1034,5208,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-027,inkoop,9540 - EZ specifiek,category_total,3571,5057,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-028,inkoop,6120 - Beheer en onderhoud hardware,category_total,1178,4548,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-029,inkoop,7410 - Verwerven en afstoten,category_total,1622,4343,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-030,inkoop,7210 - Verbruik van energie en water,category_total,900,4274,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-031,inkoop,"4310 - Documentmanagement, Documentontwikkeling en -verwerking",category_total,1429,4056,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-032,inkoop,6110 - Aanschaf Hardware,category_total,586,3860,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-033,inkoop,5110 - Verblijf extern,category_total,765,3758,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-034,inkoop,9000 - Dienstspecifiek overig,category_total,2811,3247,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-035,inkoop,6210 - Aanschaf programmatuur & software,category_total,654,3186,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-036,inkoop,4130 - Schoonmaak,category_total,725,2784,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-037,inkoop,9520 - BZK Specifiek,category_total,1406,2680,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-038,inkoop,3140 - Uitbesteden juridische adviesopdrachten,category_total,966,2481,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-039,inkoop,"4210 - Post-, koeriers- en transportdiensten",category_total,692,2354,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-040,inkoop,9304 - Aankoop onderzoeksmateriaal,category_total,931,2239,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-041,inkoop,3110 - Uitbesteden organisatie- en formatieadviesopdrachten,category_total,925,2218,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-042,inkoop,8310 - Relatiegeschenken (niet voor eigen personeel),category_total,886,1909,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-043,inkoop,9550 - FIN Specifiek,category_total,748,1704,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-044,inkoop,1110 - Verhuiskosten personeel (binnen- en buitenland),category_total,757,1624,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-045,inkoop,9303 - Laboratoriuminstrumenten,category_total,183,1354,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-046,inkoop,4410 - Afvalzorgmanagement,category_total,153,1113,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-047,inkoop,9305 - Research & development,category_total,367,1058,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-048,inkoop,3150 - Uitbesteden ICT-adviesopdrachten,category_total,260,1035,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-049,inkoop,1170 - Noodzakelijke contributies van personeel,category_total,213,942,Q-INKOOP-03,2026-03-02T19:28:34Z
+INKOOP-CAT-050,inkoop,"6310 - Aanschaf, Beheer en Onderhoud infrastructuur",category_total,278,859,Q-INKOOP-03,2026-03-02T19:28:34Z

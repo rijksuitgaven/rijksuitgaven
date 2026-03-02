@@ -1,8 +1,8 @@
 # Session Context
 
-**Last Updated:** 2026-02-28
+**Last Updated:** 2026-03-02
 **Project Phase:** V2.0 Development
-**Current Sprint:** Week 9+ — Pre-Launch Polish & Beta Feedback
+**Current Sprint:** Week 10 — Pre-Launch Polish & M1.0 Launch Gate
 **Beta Status:** V0.9 live at beta.rijksuitgaven.nl (10 testers, launched 2026-02-21)
 
 > **Full history:** `logs/SESSION-CONTEXT-ARCHIVE.md` (archived 2026-02-22)
@@ -32,7 +32,7 @@
 | Search enhancements | ✅ Implemented (Feb 21) | Multi-word AND, exact phrase `"..."`, wildcard stripping |
 | /versiegeschiedenis page | ✅ Implemented (Feb 21) | Benefit-oriented changelog + V2.x roadmap |
 | Staffel popover fix | ✅ Fixed (Feb 21) | Shows all 14 staffels (0-13) |
-| UX-039 Vergelijk (row pinning) | 🧪 On staging | Pin up to 5 rows, export selection, expand+pink border. 10 bug fixes (Feb 28). Reverted from main 2026-02-22 |
+| UX-039/041 Vergelijk + URL State | 🔨 Feature branch — BLOCKER (5 weeks old) | Branch: `feature/ux-039-041`. Last synced: `a6f57cd` (Feb 28). 12 commits behind main. 34 real commits. Build: untested after last sync. Must resolve per Rule 7. |
 | Email Media Library | ✅ Live (both) | Sharp processing, DB tracking, media picker, media tab. Admin feature |
 | Email deliverability (SPF fix) | ✅ Done (DNS) | Replaced broken self-referencing SPF with correct Resend + ZXCS includes |
 | Campaign features (13) | ✅ Implemented (Feb 22) | 6 phases: webhook, pre-send, analytics, engagement, sequences, preferences |
@@ -54,7 +54,7 @@
 | Lab section (/team/lab) | ✅ Implemented (Feb 24) | Admin-only prototypes: h1-h5 moved from public routes, card grid, dynamic slug, Lab tab+dashboard card |
 | Cron-sequences bearer token | ✅ Fixed (Feb 24) | Hardcoded token not updated after CRON_SECRET rotation. User updated Railway start command |
 | Email spam (Soverin) | ⏳ Diagnosed | Shared SES IP reputation. Recommendation: dedicated Resend IP (~$20/month) |
-| Roadmap page (/team/roadmap) | ✅ Implemented (Feb 24) | Parses VERSIONING.md + backlog.md, 4 track tabs, version cards, feature table, 6 parser fixes. Build-time embed for Railway. |
+| Roadmap page (/team/roadmap) | ✅ Redesigned (Mar 1) | Linear-grade initiative stack: hierarchical data, objectives from VERSIONING.md, collapsible cards, sub-release rows with expand-to-features, backlog section, amber "unclear objective" banner. 2 bug fixes: V3.0+ hierarchy + A/M/D parent features. |
 | UX-040: Sort descending first | ✅ Fixed (Feb 24) | SortableHeader direction logic fixed — first click now actually sorts desc. Both environments. |
 | UX-041: Full URL state restoration | ✅ Implemented (Feb 24, staging) | Sort, page, cols, expand, group, multiselect filters in URL. 4 review bugs fixed. Auto-open filters. V2.1 release. |
 | UX-042: In-app release banner | ✅ Live (Feb 24, both) | Dismissible banner, expert-reviewed design (Primer+Stripe+Vercel). Brand colors, uniform 13px, bordered dismiss, no icon. Flicker fix: sync localStorage init. |
@@ -77,6 +77,9 @@
 | Version renumbering V2.0.x → V2.x | ✅ Done (Feb 28) | Features were mislabeled as patches. V2.0.1→V2.1, V2.0.2→V2.2, V2.0.3→V2.3. 3 files updated. Commit `941dc31` |
 | Browser back button broken | ✅ Fixed (Feb 28) | `router.replace` → debounced `router.push` (500ms). Staging merge conflict resolved. Commit `c4ca6ca` |
 | Login email session duration | ✅ Fixed (Feb 28) | Added "Na inloggen blijft u ingelogd..." to magic link email (HTML+text). Commit `c83152e` |
+| Contact form Pipeline + Expertgroep | ✅ Live (Mar 2) | Pipeline selector on add form, Expertgroep source option, API accepts pipeline_stage |
+| Anomaly cell colors | ✅ Live (Mar 2) | Grey bg (was red), red/green trend tooltips on hover |
+| Social content pipeline | ✅ Built (Mar 2) | Zero-error pipeline: DB → extract_facts.py → facts/*.csv → generate_posts.py → posts/*.csv. 1,921 facts, 2,435 posts, 25 batches. verify.py for re-verification. |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
@@ -88,20 +91,20 @@
 
 ## Recent Work (Last 5)
 
-1. **Bug Fixes + Test Framework + UX-039 Pin Fix** (2026-02-28)
-   20 commits total. Production: word boundary fix, NULLS LAST sort fix, test framework (32/32 pass), version renumber V2.0.x→V2.x, browser back button fix, login email copy. Staging: 10 UX-039 pin/expand fixes (pinnedRowsCache, parseInt→string, sticky offset, isPinned border, max 5 rows).
+1. **Social Content Pipeline + Admin CRM + Anomaly UX** (2026-03-02)
+   Zero-error social pipeline: 18 SQL queries → 1,921 DB-verified facts → 2,435 posts (25 batches). Replaced hand-typed approach (had €243M errors). Also: pipeline pill selector, Expertgroep Bron, anomaly cell bg red→grey, red/green trend tooltips.
+
+2. **Roadmap Redesign — Linear-Grade Initiative Stack** (2026-03-01)
+   Complete rewrite of /team/roadmap. Hierarchical parser (initiatives → sub-releases → features), objectives from VERSIONING.md, collapsible cards, progress bars, amber banner for unclear goals, backlog section. 2 bug fixes: V3.0+ hierarchy, A/M/D parent features visible alongside children.
+
+2. **Bug Fixes + UX-039 Pin Fix + Staging Elimination** (2026-02-28)
+   21 commits across 3 sessions. Production: word boundary fix, NULLS LAST, test framework (32/32), version renumber, back button, login email. UX-039: 10 pin/expand fixes. Infra: eliminated staging environment — localhost as full dev/test (added env vars), deleted staging branch+service, feature branch workflow.
 
 2. **Search-Scoped Results + UI Polish (V2.3)** (2026-02-27)
    Bug fix: secondary search matches show filtered amounts. 2 hotfixes. 6 UI copy improvements. Feedback button dynamic positioning. Google G icon UX: branded SVG, hidden by default, row-hover reveal. Expand column tightened 40→32px.
 
 2. **V5.0 Inzichten — 28-Concept Visualization Suite** (2026-02-25)
    7-domain framework (22 concepts) + 6 novel graph types. All custom SVG, zero external deps. RLS migration 073.
-
-3. **Login UX + Lab + Roadmap + UX-040–042 + V5.0 Lab** (2026-02-24)
-   Magic link 24h, invite email rewrite, Lab section, /team/roadmap, UX-040–042, deployment protocol rewrite, backlog cleanup, V5.0 prototype.
-
-4. **Critical Production Bug Fixes + Email Deliverability** (2026-02-23)
-   7 fixes + deliverability overhaul. Prevention: staging-only registry, Sort Field Contract.
 
 ---
 
@@ -124,8 +127,7 @@
 | **Production URL** | `https://beta.rijksuitgaven.nl` |
 | **Railway URL** | `https://rijksuitgaven-production.up.railway.app` |
 | **CNAME Target** | `j65ghs38.up.railway.app` |
-| **Staging URL** | `https://frontend-staging-production-ce7d.up.railway.app` |
-| **Staging Branch** | `staging` |
+| **Local Dev** | `http://localhost:3000` (feature branches) |
 | **Cron Service** | `curlimages/curl` Docker on Railway, schedule `0 7-16 * * 1-5` |
 | **Cron URL** | `POST https://beta.rijksuitgaven.nl/api/v1/cron/sequences` |
 | **Env Var** | `CRON_SECRET` on frontend + cron service |
@@ -188,7 +190,7 @@ Key recent migrations:
 | Auth | Magic Link only (Supabase Auth + PKCE + Resend) |
 | All transactional email | Bypasses Supabase → Resend with branded templates. From: contact@rijksuitgaven.nl. Multipart (HTML+text). |
 | Export limit | 500 rows always |
-| Staging workflow | Admin→both, fixes→ask, user features→staging only. Batch release. SQL before code. |
+| Deployment workflow | Feature branches + localhost testing. Hotfixes straight to main. SQL before code. |
 | Legal entity | Rijksuitgaven.nl (KVK 96257008) |
 | Formal Dutch | u/uw in all user-facing text |
 | Typography | IBM Plex Sans (public) + Condensed (data pages) |
@@ -232,7 +234,7 @@ Key recent migrations:
 | Frontend docs | `docs/FRONTEND-DOCUMENTATION.md` |
 | Database docs | `scripts/sql/DATABASE-DOCUMENTATION.md` |
 | Backlog | `02-requirements/backlog.md` |
-| Staging setup | `docs/plans/2026-02-21-staging-environment.md` |
+| Deploy workflow | `CLAUDE.md` → Deployment Protocol section |
 | Data update runbook | `scripts/data/DATA-UPDATE-RUNBOOK.md` |
 
 ---

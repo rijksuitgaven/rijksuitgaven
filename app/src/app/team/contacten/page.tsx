@@ -81,6 +81,7 @@ function SortableHeader({ label, field, sortField, sortDir, onSort }: {
 function AddContactForm({ onSuccess }: { onSuccess: () => void }) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [stage, setStage] = useState<PipelineStage>('nieuw')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -96,6 +97,7 @@ function AddContactForm({ onSuccess }: { onSuccess: () => void }) {
       phone: form.get('phone') || null,
       source: form.get('source') || null,
       notes: form.get('notes') || null,
+      pipeline_stage: stage,
     }
 
     try {
@@ -150,7 +152,29 @@ function AddContactForm({ onSuccess }: { onSuccess: () => void }) {
             <option value="homepage">Homepage</option>
             <option value="event">Event</option>
             <option value="referral">Referral</option>
+            <option value="expertgroep">Expertgroep</option>
           </select>
+        </div>
+      </div>
+
+      {/* Pipeline stage */}
+      <div>
+        <label className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Pipeline</label>
+        <div className="flex flex-wrap gap-2">
+          {(['nieuw', 'in_gesprek', 'afgesloten', 'verloren', 'ex_klant'] as PipelineStage[]).map(s => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setStage(s)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
+                stage === s
+                  ? stageConfig[s].className + ' ring-2 ring-offset-1 ring-[var(--navy-dark)]'
+                  : 'bg-white text-[var(--navy-medium)] border-[var(--border)] hover:bg-[var(--gray-light)]'
+              }`}
+            >
+              {stageConfig[s].label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -381,6 +405,7 @@ function EditContactModal({ contact, onClose, onSaved }: {
               <option value="homepage">Homepage</option>
               <option value="event">Event</option>
               <option value="referral">Referral</option>
+              <option value="expertgroep">Expertgroep</option>
             </select>
           </div>
 

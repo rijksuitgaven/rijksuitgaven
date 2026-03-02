@@ -1,0 +1,201 @@
+fact_id,module,entity,source,metric,contract_count,totaal,years_with_data,query_ref,verified_at
+PUB-SRC-001,publiek,Anoniem,COA,per_source_count,1335,14351335,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-002,publiek,De Ridder,COA,per_source_count,91,28675091,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-003,publiek,Lasaulec B.V.,COA,per_source_count,82,3925081,6,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-004,publiek,Jan Snel Livings BV,COA,per_source_count,77,78125075,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-005,publiek,King Nederland B.V.,COA,per_source_count,77,14290077,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-006,publiek,Strijbosch B.V.,COA,per_source_count,71,32200071,6,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-007,publiek,BOL.COM,COA,per_source_count,64,345064,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-008,publiek,Anoniem Anoniem,COA,per_source_count,63,390063,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-009,publiek,Slaapschepen B.V.,COA,per_source_count,61,42840059,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-010,publiek,Poiesz Supermarkten BV,COA,per_source_count,58,435057,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-011,publiek,De Meeuw Oirschot B.V.,COA,per_source_count,57,8465057,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-012,publiek,POL Heteren B.V.,COA,per_source_count,56,1830056,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-013,publiek,Jumbo Supermarkten BV,COA,per_source_count,52,645052,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-014,publiek,Bouwbedrijf Huurman Leiden BV,COA,per_source_count,52,79070052,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-015,publiek,Start People B.V.,COA,per_source_count,51,405455049,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-016,publiek,BAM Bouw en Techniek B.V.,COA,per_source_count,50,88855050,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-017,publiek,Fuego,COA,per_source_count,49,1350049,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-018,publiek,Trans River Line BV,COA,per_source_count,44,20660044,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-019,publiek,Strukton WorkSphere,COA,per_source_count,44,70440043,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-020,publiek,Dienst Justitiele Inrichtingen,COA,per_source_count,44,22710044,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-021,publiek,Gispen Nederland B.V.,COA,per_source_count,43,18305043,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-022,publiek,Kenter B.V.,COA,per_source_count,42,1585040,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-023,publiek,Supermarkt Hesselberth BV,COA,per_source_count,42,205041,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-024,publiek,Facilicom Solutions B.V.,COA,per_source_count,40,44845040,6,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-025,publiek,Rijksvastgoedbedrijf,COA,per_source_count,40,143585038,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-026,publiek,KG & ROLF,COA,per_source_count,39,540039,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-027,publiek,Gemeente Amsterdam,COA,per_source_count,39,9120038,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-028,publiek,XONAR,COA,per_source_count,39,21410039,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-029,publiek,Protinus IT B.V.,COA,per_source_count,38,30170038,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-030,publiek,Gemeente Nijmegen,COA,per_source_count,38,121335038,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-031,publiek,Global Talk Netherlands,COA,per_source_count,37,7680037,1,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-032,publiek,HumanCapitalCare B.V.,COA,per_source_count,37,10200037,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-033,publiek,Xerox Nederland B.V.,COA,per_source_count,36,7275036,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-034,publiek,Van Zijl Supermarkt B.V.,COA,per_source_count,35,200035,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-035,publiek,Liander,COA,per_source_count,35,5880034,6,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-036,publiek,Van Hoeckel Partner in Foodcar,COA,per_source_count,34,2450034,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-037,publiek,Stichting Via Jeugd,COA,per_source_count,34,4730034,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-038,publiek,Gemeente Waadhoeke,COA,per_source_count,33,1150032,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-039,publiek,Jean Heybroek BV,COA,per_source_count,33,625033,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-040,publiek,Leussink Retail Groep B.V.,COA,per_source_count,33,165033,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-041,publiek,Breur Ijzerhandel B.V.,COA,per_source_count,33,10690033,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-042,publiek,Hegeman VNO Bouw B.V.,COA,per_source_count,33,73925032,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-043,publiek,Manutan B.V,COA,per_source_count,33,165033,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-044,publiek,Sligro Food Group Nederland B.,COA,per_source_count,32,7920030,3,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-045,publiek,De Strip BV,COA,per_source_count,32,35680032,3,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-046,publiek,Plus Joffrey ter Horst,COA,per_source_count,32,185032,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-047,publiek,Jos ten Berg B.V.,COA,per_source_count,32,1310032,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-048,publiek,TOA Oegstgeest B.V.,COA,per_source_count,31,12245031,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-049,publiek,Lobbes Speelgoed BV,COA,per_source_count,31,150030,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-050,publiek,Munckhof Taxi BV (voorheen 601,COA,per_source_count,31,97960031,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-051,publiek,Slaapschepen Public B.V.,COA,per_source_count,31,180985031,3,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-052,publiek,Le Cocq Holding Didam II B.V.,COA,per_source_count,31,357195030,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-053,publiek,Zeelandhallen Exploitatie BV,COA,per_source_count,31,17870031,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-054,publiek,Heemskerk Sports & Games BV,COA,per_source_count,30,515030,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-055,publiek,IP Groep,COA,per_source_count,30,13825029,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-056,publiek,RMA Healthcare,COA,per_source_count,30,1079105030,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-057,publiek,Directbouw b.v.,COA,per_source_count,30,13355030,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-058,publiek,Arcadis Nederland B.V.,COA,per_source_count,30,17675029,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-059,publiek,Het Nederlandse Rode Kruis,COA,per_source_count,30,13135030,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-060,publiek,Plus Siemonsma,COA,per_source_count,29,145029,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-061,publiek,Centraal Justitieel Incasso Bu,COA,per_source_count,29,125025,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-062,publiek,Solvinity,COA,per_source_count,29,2770029,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-063,publiek,KG& ROLF,COA,per_source_count,29,365029,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-064,publiek,PLUS Alfring Baalderveld,COA,per_source_count,28,140028,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-065,publiek,Snelwenskaart.nl,COA,per_source_count,28,190028,6,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-066,publiek,H. Offerein Supermarkt B.V.,COA,per_source_count,28,140028,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-067,publiek,Civil Management,COA,per_source_count,28,2925027,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-068,publiek,SPIE Building Solutions B.V.,COA,per_source_count,28,97130028,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-069,publiek,Gemeente Westerwolde,COA,per_source_count,27,6270024,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-070,publiek,BMWSR B.V.,COA,per_source_count,27,5780027,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-071,publiek,Yadeborg,COA,per_source_count,27,10185027,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-072,publiek,De Betteld,COA,per_source_count,27,2625027,3,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-073,publiek,Le Cocq Holding Didam B.V.,COA,per_source_count,27,257990025,1,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-074,publiek,Gemeente Utrecht,COA,per_source_count,26,5350026,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-075,publiek,Twynstra Gudde Holding B.V.,COA,per_source_count,26,20715026,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-076,publiek,Gemeente Tytsjerksteradiel,COA,per_source_count,26,1165026,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-077,publiek,Gemeente Smallingerland,COA,per_source_count,26,2615026,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-078,publiek,(COA)litie V.O.F.,COA,per_source_count,26,9345026,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-079,publiek,Primera Meesters,COA,per_source_count,26,130026,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-080,publiek,KleurRijker B.V.,COA,per_source_count,26,4610026,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-081,publiek,Staatvandienst B.V.,COA,per_source_count,26,355026,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-082,publiek,CBRE GWS IFM B.V.,COA,per_source_count,26,26750026,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-083,publiek,Protestantse Kerk Nederland,COA,per_source_count,26,1170026,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-084,publiek,IVM,COA,per_source_count,26,660026,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-085,publiek,PLUS Wemekamp,COA,per_source_count,25,225025,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-086,publiek,Trigion Beveiliging B.V.,COA,per_source_count,25,729715025,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-087,publiek,Fudura,COA,per_source_count,25,720024,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-088,publiek,Gemeente Arnhem,COA,per_source_count,25,8735024,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-089,publiek,Heijmans Utiliteit B.V.,COA,per_source_count,25,58175025,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-090,publiek,Lyreco Nederland B.V.,COA,per_source_count,25,760025,3,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-091,publiek,Rainbow Events,COA,per_source_count,25,300025,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-092,publiek,Enexis Bv,COA,per_source_count,25,7210025,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-093,publiek,H.O.D.Nederland,COA,per_source_count,25,175025,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-094,publiek,Centralpoint Nijmegen BV,COA,per_source_count,25,37320025,6,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-095,publiek,De Meeuw Verhuur Nederland B.V,COA,per_source_count,25,75730025,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-096,publiek,Engie Services Zuid BV,COA,per_source_count,25,15780025,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-097,publiek,Absoluta,COA,per_source_count,24,580024,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-098,publiek,PLUS Renkum,COA,per_source_count,24,115023,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-099,publiek,Decathlon Netherlands BV,COA,per_source_count,24,220024,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-100,publiek,KPN Mobile,COA,per_source_count,24,6650022,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-101,publiek,Jumbo Noordman,COA,per_source_count,24,120024,6,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-102,publiek,GroenRijk Eemsdelta,COA,per_source_count,24,120024,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-103,publiek,Gemeente Hengelo,COA,per_source_count,24,12015023,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-104,publiek,Gemeente Groningen,COA,per_source_count,24,13600024,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-105,publiek,Brood- en Banketbakkerij BOS,COA,per_source_count,24,120024,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-106,publiek,Hema B.V.,COA,per_source_count,24,120024,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-107,publiek,Keiretsu Europe B.V.,COA,per_source_count,24,415024,1,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-108,publiek,Walibi Holland BV,COA,per_source_count,24,5690024,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-109,publiek,H&S Oisterwijk BV,COA,per_source_count,24,120024,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-110,publiek,Adapteo B.V,COA,per_source_count,23,11550023,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-111,publiek,IT - Staffing Nederland B.V.,COA,per_source_count,23,66185023,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-112,publiek,OHIO B.V.,COA,per_source_count,23,955023,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-113,publiek,Gemeente Maastricht,COA,per_source_count,23,3525022,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-114,publiek,Renewi Nederland B.V.,COA,per_source_count,23,21125022,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-115,publiek,Houwer Bergum BV,COA,per_source_count,23,115023,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-116,publiek,Dirksen,COA,per_source_count,23,750023,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-117,publiek,Insurance Managers B.V.,COA,per_source_count,23,3515023,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-118,publiek,Breur,COA,per_source_count,22,2015022,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-119,publiek,WOT! | B.I.T. Netherlands B.V.,COA,per_source_count,22,400022,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-120,publiek,Gemeente Middelburg,COA,per_source_count,22,1790022,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-121,publiek,Meetingselect BV,COA,per_source_count,22,13255022,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-122,publiek,Inofec BV,COA,per_source_count,22,8045022,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-123,publiek,Jumbo Hapers-Gilze,COA,per_source_count,22,110022,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-124,publiek,Duinrell Wassenaar,COA,per_source_count,22,60845022,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-125,publiek,Huisveste C.V.,COA,per_source_count,22,15880022,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-126,publiek,Babbage Company B.V.,COA,per_source_count,22,11970022,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-127,publiek,TRL Cruise Line BV,COA,per_source_count,21,4675021,3,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-128,publiek,Stichting Salvage,COA,per_source_count,21,100020,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-129,publiek,Lnsurance Managers B.V.,COA,per_source_count,21,3125019,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-130,publiek,Topgeschenken Nederland BV,COA,per_source_count,21,320021,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-131,publiek,NSR-UVB,COA,per_source_count,21,155021,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-132,publiek,De Treemter,COA,per_source_count,21,105021,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-133,publiek,Chip Bizz b.v.,COA,per_source_count,21,2095021,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-134,publiek,Hypeco Exploitatie B.V.,COA,per_source_count,21,22160019,3,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-135,publiek,Asito BV,COA,per_source_count,21,22675021,6,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-136,publiek,BMC implementatie,COA,per_source_count,21,11450021,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-137,publiek,Hotel Cafe Restaurant Boschhui,COA,per_source_count,21,105021,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-138,publiek,De Prijshamer B.V.,COA,per_source_count,21,105021,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-139,publiek,Plus Verbeeten Overloon,COA,per_source_count,20,100020,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-140,publiek,USG Restart B.V.,COA,per_source_count,20,510019,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-141,publiek,Gemeente Tilburg,COA,per_source_count,20,815020,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-142,publiek,Gemeente Noordoostpolder,COA,per_source_count,20,375020,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-143,publiek,Mondial Movers BV,COA,per_source_count,20,22740020,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-144,publiek,Multicom B.V.,COA,per_source_count,20,14760019,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-145,publiek,Gemeente De Fryske Marren,COA,per_source_count,20,1115020,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-146,publiek,Gemeente Emmen,COA,per_source_count,20,1430020,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-147,publiek,Slaapschepen Catering B.V.,COA,per_source_count,20,172255018,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-148,publiek,Schotpoort Connect B.V.,COA,per_source_count,20,95019,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-149,publiek,Gemeente Breda,COA,per_source_count,20,4710018,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-150,publiek,Belastingdienst Apeldoorn,COA,per_source_count,20,462565020,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-151,publiek,Lnofec BV,COA,per_source_count,20,10180019,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-152,publiek,Rentokil,COA,per_source_count,19,8435019,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-153,publiek,Gemeente Harderwijk,COA,per_source_count,19,825018,6,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-154,publiek,Treant Zorggroep,COA,per_source_count,19,220019,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-155,publiek,LenferinkgroepZwolle,COA,per_source_count,19,54100019,3,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-156,publiek,Gemeente Kampen,COA,per_source_count,19,3140019,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-157,publiek,Music Hall B.V.,COA,per_source_count,19,6565019,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-158,publiek,Anoniem B.V.,COA,per_source_count,19,2190019,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-159,publiek,Koninklijke Van der Most B.V.,COA,per_source_count,19,385019,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-160,publiek,BosruiterVastgoed B.V.,COA,per_source_count,18,11655018,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-161,publiek,Valk Exclusief Holding B.V.,COA,per_source_count,18,160900018,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-162,publiek,LnterSettle B.V.,COA,per_source_count,18,12855018,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-163,publiek,Avek BV,COA,per_source_count,18,7490018,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-164,publiek,BOS INCASSO,COA,per_source_count,18,90018,6,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-165,publiek,Viking Netherlands B.V.,COA,per_source_count,18,360018,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-166,publiek,Kroon B.V.,COA,per_source_count,18,375018,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-167,publiek,Service Centrum Auteurs,COA,per_source_count,18,90018,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-168,publiek,Spie Nederland B.V.,COA,per_source_count,18,33135018,6,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-169,publiek,Stedin Netbeheer B.V.,COA,per_source_count,18,2465016,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-170,publiek,Secutor Safety & Facility,COA,per_source_count,18,9565018,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-171,publiek,Dutch Offshore Energy Solution,COA,per_source_count,17,12670017,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-172,publiek,JS Consultancy B.V.,COA,per_source_count,17,4740017,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-173,publiek,Gom Schoonhouden BV,COA,per_source_count,17,15835017,6,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-174,publiek,W&J Molenaar B.V.,COA,per_source_count,17,8265017,3,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-175,publiek,Reisswolf Nederland B.V.,COA,per_source_count,17,775017,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-176,publiek,Dolmans Landscaping Group bv,COA,per_source_count,17,9985017,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-177,publiek,Handelsonderneming Doornbos De,COA,per_source_count,17,85017,6,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-178,publiek,Bax-shop.nl,COA,per_source_count,17,105016,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-179,publiek,Boels Verhuur B.V.,COA,per_source_count,17,795017,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-180,publiek,Bakker Vromans B.V.,COA,per_source_count,17,440017,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-181,publiek,Slaapschepen Accommodations BV,COA,per_source_count,17,41845017,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-182,publiek,Probin - THB groep b.v.,COA,per_source_count,17,110017,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-183,publiek,Sportbedrijf Arnhem,COA,per_source_count,17,135017,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-184,publiek,Mastermate VBT Groep,COA,per_source_count,17,1090016,1,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-185,publiek,Arriva,COA,per_source_count,17,2040015,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-186,publiek,"Triana Group, s.r.o.",COA,per_source_count,17,10445017,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-187,publiek,Bedrijfsfitness Nederland BV,COA,per_source_count,17,85017,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-188,publiek,Gemeente Rotterdam,COA,per_source_count,17,76820015,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-189,publiek,SoftwareONE Netherlands B.V.,COA,per_source_count,17,37080017,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-190,publiek,Karwei Burgum,COA,per_source_count,17,85017,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-191,publiek,Karwei,COA,per_source_count,17,85017,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-192,publiek,Gemeente Assen,COA,per_source_count,17,9195017,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-193,publiek,Integrated Facility Services B,COA,per_source_count,17,85017,5,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-194,publiek,ROi Mixed FleetAG,COA,per_source_count,17,16735017,2,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-195,publiek,Umami Catering NV,COA,per_source_count,17,112785017,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-196,publiek,Coop Supermarkten B.V.,COA,per_source_count,17,85017,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-197,publiek,Woningcorporatie De Woonplaats,COA,per_source_count,17,7670017,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-198,publiek,Tezet Business Gifts B.V.,COA,per_source_count,17,85017,7,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-199,publiek,Kaartje2go,COA,per_source_count,16,80016,4,Q-PUB-02,2026-03-02T19:28:34Z
+PUB-SRC-200,publiek,GroeNoord,COA,per_source_count,16,80016,7,Q-PUB-02,2026-03-02T19:28:34Z
