@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-03-01
+**Last Updated:** 2026-03-02
 **Project Phase:** V2.0 Development
 **Current Sprint:** Week 10 — Pre-Launch Polish & M1.0 Launch Gate
 **Beta Status:** V0.9 live at beta.rijksuitgaven.nl (10 testers, launched 2026-02-21)
@@ -77,6 +77,7 @@
 | Version renumbering V2.0.x → V2.x | ✅ Done (Feb 28) | Features were mislabeled as patches. V2.0.1→V2.1, V2.0.2→V2.2, V2.0.3→V2.3. 3 files updated. Commit `941dc31` |
 | Browser back button broken | ✅ Fixed (Feb 28) | `router.replace` → debounced `router.push` (500ms). Staging merge conflict resolved. Commit `c4ca6ca` |
 | Login email session duration | ✅ Fixed (Feb 28) | Added "Na inloggen blijft u ingelogd..." to magic link email (HTML+text). Commit `c83152e` |
+| Contact form Pipeline + Expertgroep | ✅ Live (Mar 2) | Pipeline selector on add form, Expertgroep source option, API accepts pipeline_stage |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
@@ -88,7 +89,10 @@
 
 ## Recent Work (Last 5)
 
-1. **Roadmap Redesign — Linear-Grade Initiative Stack** (2026-03-01)
+1. **Admin CRM: Pipeline + Expertgroep** (2026-03-02)
+   Pipeline pill selector on add contact form (matching edit modal). "Expertgroep" Bron option. API accepts pipeline_stage on POST.
+
+2. **Roadmap Redesign — Linear-Grade Initiative Stack** (2026-03-01)
    Complete rewrite of /team/roadmap. Hierarchical parser (initiatives → sub-releases → features), objectives from VERSIONING.md, collapsible cards, progress bars, amber banner for unclear goals, backlog section. 2 bug fixes: V3.0+ hierarchy, A/M/D parent features visible alongside children.
 
 2. **Bug Fixes + UX-039 Pin Fix + Staging Elimination** (2026-02-28)
@@ -99,12 +103,6 @@
 
 2. **V5.0 Inzichten — 28-Concept Visualization Suite** (2026-02-25)
    7-domain framework (22 concepts) + 6 novel graph types. All custom SVG, zero external deps. RLS migration 073.
-
-3. **Login UX + Lab + Roadmap + UX-040–042 + V5.0 Lab** (2026-02-24)
-   Magic link 24h, invite email rewrite, Lab section, /team/roadmap, UX-040–042, deployment protocol rewrite, backlog cleanup, V5.0 prototype.
-
-4. **Critical Production Bug Fixes + Email Deliverability** (2026-02-23)
-   7 fixes + deliverability overhaul. Prevention: staging-only registry, Sort Field Contract.
 
 ---
 
