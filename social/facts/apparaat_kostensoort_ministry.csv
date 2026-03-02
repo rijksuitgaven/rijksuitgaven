@@ -1,0 +1,203 @@
+fact_id,module,entity,metric,value,begrotingsnaam,kostensoort,year_count,query_ref,verified_at
+APP-KMIN-001,apparaat,"Salaris, vakantie en eindejaarsuitkering (Defensie)",kostensoort_ministry,17205513000,Defensie,"Salaris, vakantie en eindejaarsuitkering",5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-002,apparaat,"Salaris, vakantie en eindejaarsuitkering (Financiën)",kostensoort_ministry,12886721000,Financiën,"Salaris, vakantie en eindejaarsuitkering",7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-003,apparaat,"Salaris, vakantie en eindejaarsuitkering (Infrastructuur en Waterstaat)",kostensoort_ministry,5501142000,Infrastructuur en Waterstaat,"Salaris, vakantie en eindejaarsuitkering",6,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-004,apparaat,Pensioenen en uitkeringen (Defensie),kostensoort_ministry,5205610000,Defensie,Pensioenen en uitkeringen,4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-005,apparaat,"Salaris, vakantie en eindejaarsuitkering (Ministerie van Defensie)",kostensoort_ministry,5084604000,Ministerie van Defensie,"Salaris, vakantie en eindejaarsuitkering",2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-006,apparaat,"Salaris, vakantie en eindejaarsuitkering (Justitie en Veiligheid)",kostensoort_ministry,3304137000,Justitie en Veiligheid,"Salaris, vakantie en eindejaarsuitkering",7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-007,apparaat,"Salaris, vakantie- en eindejaarsuitkering  (Defensie)",kostensoort_ministry,3155099000,Defensie,"Salaris, vakantie- en eindejaarsuitkering ",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-008,apparaat,"Salaris, vakantie en eindejaarsuitkering (Financiën en Nationale Schuld)",kostensoort_ministry,3101960000,Financiën en Nationale Schuld,"Salaris, vakantie en eindejaarsuitkering",2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-009,apparaat,Sociale lasten enbijdrage zorgverzekeringswet (Financiën),kostensoort_ministry,2857011000,Financiën,Sociale lasten enbijdrage zorgverzekeringswet,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-010,apparaat,"Salaris, Individueel Keuzebudget (Financiën)",kostensoort_ministry,2568645000,Financiën,"Salaris, Individueel Keuzebudget",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-011,apparaat,"Salaris, vakantie en eindejaarsuitkering (Defensie )",kostensoort_ministry,2475233000,Defensie ,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-012,apparaat,"Toelagen, toeslagen en vergoedingen (Defensie)",kostensoort_ministry,2042098000,Defensie,"Toelagen, toeslagen en vergoedingen",6,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-013,apparaat,Bijdrage SSO (Financiën),kostensoort_ministry,2014670000,Financiën,Bijdrage SSO,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-014,apparaat,"Salaris, vakantie en eindejaarsuitkering (Buitenlandse Zaken)",kostensoort_ministry,1880313000,Buitenlandse Zaken,"Salaris, vakantie en eindejaarsuitkering",6,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-015,apparaat,Advisering opdrachtgevers over automatiseringsvraagstukken (Financiën),kostensoort_ministry,1811123000,Financiën,Advisering opdrachtgevers over automatiseringsvraagstukken,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-016,apparaat,"Salaris, vakantie en eindejaarsuitkering (Infrastructuur en Milieu)",kostensoort_ministry,1757827000,Infrastructuur en Milieu,"Salaris, vakantie en eindejaarsuitkering",4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-017,apparaat,schoonmaak en nuts (Defensie),kostensoort_ministry,1694987000,Defensie,schoonmaak en nuts,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-018,apparaat,Sociale lasten en bijdrage zorgverzekeringswet (Financiën),kostensoort_ministry,1629633000,Financiën,Sociale lasten en bijdrage zorgverzekeringswet,3,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-019,apparaat,"Wachtgelden, inactiviteitswedden en SBK-gelden (Ministerie van Defensie)",kostensoort_ministry,1597739000,Ministerie van Defensie,"Wachtgelden, inactiviteitswedden en SBK-gelden",2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-020,apparaat,"Salaris, vakantie en eindejaarsuitkering (Financien)",kostensoort_ministry,1576008000,Financien,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-021,apparaat,"Wachtgelden, inactiviteitswedden en SBK-gelden (Defensie )",kostensoort_ministry,1449943000,Defensie ,"Wachtgelden, inactiviteitswedden en SBK-gelden",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-022,apparaat,"Uitkeringen, pensioenen en wachtgelden (Defensie)",kostensoort_ministry,1437780000,Defensie,"Uitkeringen, pensioenen en wachtgelden",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-023,apparaat,"Salaris, vakantie en eindejaarsuitkering (Onderwijs, Cultuur en Wetenschap)",kostensoort_ministry,1421214000,"Onderwijs, Cultuur en Wetenschap","Salaris, vakantie en eindejaarsuitkering",10,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-024,apparaat,"Salaris, vakantie en eindejaarsuitkering (Binnenlandse Zaken en Koninkrijksrelaties)",kostensoort_ministry,1341057000,Binnenlandse Zaken en Koninkrijksrelaties,"Salaris, vakantie en eindejaarsuitkering",8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-025,apparaat,"Salaris, vakantie- en eindejaarsuitkering  (Infrastructuur en Waterstaat)",kostensoort_ministry,1287860000,Infrastructuur en Waterstaat,"Salaris, vakantie- en eindejaarsuitkering ",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-026,apparaat,Pensioenen (Centraal Apparaat),kostensoort_ministry,1265223000,Centraal Apparaat,Pensioenen,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-027,apparaat,Pensioenpremies (Ministerie van Defensie),kostensoort_ministry,1237183000,Ministerie van Defensie,Pensioenpremies,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-028,apparaat,Bijdrage SSO's (Binnenlandse Zaken en Koninkrijksrelaties),kostensoort_ministry,1181267000,Binnenlandse Zaken en Koninkrijksrelaties,Bijdrage SSO's,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-029,apparaat,Uitzendkrachten (Infrastructuur en Waterstaat),kostensoort_ministry,1143836000,Infrastructuur en Waterstaat,Uitzendkrachten,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-030,apparaat,"Salaris, vakantie en eindejaarsuitkering (Ministerie van Buitenlandse Zaken)",kostensoort_ministry,1141824000,Ministerie van Buitenlandse Zaken,"Salaris, vakantie en eindejaarsuitkering",4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-031,apparaat,BZK specifiek (Binnenlandse Zaken en Koninkrijksrelaties),kostensoort_ministry,1139555000,Binnenlandse Zaken en Koninkrijksrelaties,BZK specifiek,6,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-032,apparaat,Pensioenpremies (Infrastructuur en Waterstaat),kostensoort_ministry,1097231000,Infrastructuur en Waterstaat,Pensioenpremies,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-033,apparaat,"Salaris, vakantie en eindejaarsuitkering (Ministerie van Veiligheid en Justitie)",kostensoort_ministry,1068767000,Ministerie van Veiligheid en Justitie,"Salaris, vakantie en eindejaarsuitkering",2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-034,apparaat,Relatiegeschenken (niet voor eigen personeel) (Defensie),kostensoort_ministry,1040085000,Defensie,Relatiegeschenken (niet voor eigen personeel),6,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-035,apparaat,Bijdrage SSO's (Binnenlandse zaken en Koninkrijksrelaties),kostensoort_ministry,1005707000,Binnenlandse zaken en Koninkrijksrelaties,Bijdrage SSO's,3,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-036,apparaat,"Salaris, vakantie en eindejaarsuitkering (Economische Zaken en Klimaat)",kostensoort_ministry,976471000,Economische Zaken en Klimaat,"Salaris, vakantie en eindejaarsuitkering",5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-037,apparaat,Bijdrage aan SSO (Infrastructuur en Waterstaat),kostensoort_ministry,969808000,Infrastructuur en Waterstaat,Bijdrage aan SSO,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-038,apparaat,Uitzendkrachten (Financiën),kostensoort_ministry,947812000,Financiën,Uitzendkrachten,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-039,apparaat,"Salaris, vakantie- en eindejaarsuitkering  (Justitie en Veiligheid)",kostensoort_ministry,925175000,Justitie en Veiligheid,"Salaris, vakantie- en eindejaarsuitkering ",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-040,apparaat,Gebruik en onderhoud van gebouw en terreinen (Defensie),kostensoort_ministry,840460000,Defensie,Gebruik en onderhoud van gebouw en terreinen,3,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-041,apparaat,"Salaris, vakantie en eindejaarsuitkering (Taakuitvoering Landstrijdkrachten)",kostensoort_ministry,786178000,Taakuitvoering Landstrijdkrachten,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-042,apparaat,Bijdrage SSO (Justitie en Veiligheid),kostensoort_ministry,749432000,Justitie en Veiligheid,Bijdrage SSO,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-043,apparaat,Onkostenvergoedingen waaronder Woon-werkverkeer (Defensie),kostensoort_ministry,732631000,Defensie,Onkostenvergoedingen waaronder Woon-werkverkeer,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-044,apparaat,Uitkeringen (Defensie),kostensoort_ministry,707620000,Defensie,Uitkeringen,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-045,apparaat,Sociale lasten en bijdrage zorgverzekeringswet (Infrastructuur en Waterstaat),kostensoort_ministry,674233000,Infrastructuur en Waterstaat,Sociale lasten en bijdrage zorgverzekeringswet,6,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-046,apparaat,"Toelagen, toeslagen en vergoedingen (Ministerie van Defensie)",kostensoort_ministry,646576000,Ministerie van Defensie,"Toelagen, toeslagen en vergoedingen",2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-047,apparaat,Advisering opdrachtgevers over automatiseringsvraagstukken (Justitie en Veiligheid),kostensoort_ministry,642886000,Justitie en Veiligheid,Advisering opdrachtgevers over automatiseringsvraagstukken,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-048,apparaat,Pensioenpremies (Justitie en Veiligheid),kostensoort_ministry,642524000,Justitie en Veiligheid,Pensioenpremies,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-049,apparaat,Wagenpark (Infrastructuur en Waterstaat),kostensoort_ministry,611480000,Infrastructuur en Waterstaat,Wagenpark,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-050,apparaat,Hardware (Defensie),kostensoort_ministry,587165000,Defensie,Hardware,4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-051,apparaat,"Accountancy, financiën en administratieve organisatie (Financiën)",kostensoort_ministry,572183000,Financiën,"Accountancy, financiën en administratieve organisatie",8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-052,apparaat,"Salaris, vakantie en eindejaarsuitkering (Volksgezondheid, Welzijn en Sport)",kostensoort_ministry,563650000,"Volksgezondheid, Welzijn en Sport","Salaris, vakantie en eindejaarsuitkering",4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-053,apparaat,Verwerven en afstoten (Buitenlandse Zaken),kostensoort_ministry,558877000,Buitenlandse Zaken,Verwerven en afstoten,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-054,apparaat,"Salaris, vakantie en eindejaarsuitkering (Veiligheid en Justitie)",kostensoort_ministry,558373000,Veiligheid en Justitie,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-055,apparaat,"Toelagen, toeslagen en vergoedingen (Financiën)",kostensoort_ministry,538505000,Financiën,"Toelagen, toeslagen en vergoedingen",8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-056,apparaat,Benodigdheden en hulpmiddelen (Defensie),kostensoort_ministry,507336000,Defensie,Benodigdheden en hulpmiddelen,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-057,apparaat,Bijdrage SSO (Financiën en Nationale Schuld),kostensoort_ministry,499945000,Financiën en Nationale Schuld,Bijdrage SSO,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-058,apparaat,Salarissen (Ministerie van Sociale Zaken en Werkgelegenheid),kostensoort_ministry,494286000,Ministerie van Sociale Zaken en Werkgelegenheid,Salarissen,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-059,apparaat,Pensioenen (Defensie),kostensoort_ministry,493965000,Defensie,Pensioenen,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-060,apparaat,Studie en opleiding (Defensie),kostensoort_ministry,487102000,Defensie,Studie en opleiding,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-061,apparaat,Juridisch advies (Financiën),kostensoort_ministry,483754000,Financiën,Juridisch advies,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-062,apparaat,Verwerven en afstoten (Justitie en Veiligheid),kostensoort_ministry,479620000,Justitie en Veiligheid,Verwerven en afstoten,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-063,apparaat,Sociale lasten en bijdrage zorgverzekeringswet (Financien),kostensoort_ministry,452610000,Financien,Sociale lasten en bijdrage zorgverzekeringswet,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-064,apparaat,Reis- en verblijfskosten (Defensie),kostensoort_ministry,449044000,Defensie,Reis- en verblijfskosten,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-065,apparaat,"Salaris, vakantie en eindejaarsuitkering (Taakuitvoering Zeestrijdkrachten)",kostensoort_ministry,448349000,Taakuitvoering Zeestrijdkrachten,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-066,apparaat,"Salaris, vakantie en eindejaarsuitkering (Ondersteuning krijgsmacht door CDC)",kostensoort_ministry,438655000,Ondersteuning krijgsmacht door CDC,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-067,apparaat,Sociale lasten en bijdrage zorgverzekeringswet (Financiën en Nationale Schuld),kostensoort_ministry,438474000,Financiën en Nationale Schuld,Sociale lasten en bijdrage zorgverzekeringswet,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-068,apparaat,"Salarissen (Ministerie van Volksgezondheid, Welzijn en Sport)",kostensoort_ministry,432616000,"Ministerie van Volksgezondheid, Welzijn en Sport",Salarissen,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-069,apparaat,"Toelagen, toeslagen en vergoedingen (Defensie )",kostensoort_ministry,431594000,Defensie ,"Toelagen, toeslagen en vergoedingen",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-070,apparaat,"Salaris, vakantie en eindejaarsuitkering (Economische zaken)",kostensoort_ministry,424797000,Economische zaken,"Salaris, vakantie en eindejaarsuitkering",2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-071,apparaat,"Salarissen (Volksgezondheid, Welzijn en Sport)",kostensoort_ministry,422286000,"Volksgezondheid, Welzijn en Sport",Salarissen,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-072,apparaat,"Toelagen, toeslagen en vergoedingen (Buitenlandse Zaken)",kostensoort_ministry,422111000,Buitenlandse Zaken,"Toelagen, toeslagen en vergoedingen",7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-073,apparaat,Bijdrage SSO (Binnenlandse Zaken en Koninkrijksrelaties),kostensoort_ministry,418066000,Binnenlandse Zaken en Koninkrijksrelaties,Bijdrage SSO,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-074,apparaat,Bijdrage SSO (Ministerie van Veiligheid en Justitie),kostensoort_ministry,401215000,Ministerie van Veiligheid en Justitie,Bijdrage SSO,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-075,apparaat,Apparaat AIVD (Binnenlandse Zaken en Koninkrijksrelaties),kostensoort_ministry,391330000,Binnenlandse Zaken en Koninkrijksrelaties,Apparaat AIVD,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-076,apparaat,"Salaris, vakantie- en eindejaarsuitkering (Buitenlandse Zaken)",kostensoort_ministry,390780000,Buitenlandse Zaken,"Salaris, vakantie- en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-077,apparaat,Uitzendkrachten (Infrastructuurfonds),kostensoort_ministry,387903000,Infrastructuurfonds,Uitzendkrachten,9,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-078,apparaat,Bijdrage SSO SSC-ICT (BZK) (Buitenlandse Zaken),kostensoort_ministry,386747000,Buitenlandse Zaken,Bijdrage SSO SSC-ICT (BZK),4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-079,apparaat,"Salaris, vakantie en eindejaarsuitkering (Ministerie van Sociale Zaken en Werkgelegenheid)",kostensoort_ministry,386635000,Ministerie van Sociale Zaken en Werkgelegenheid,"Salaris, vakantie en eindejaarsuitkering",3,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-080,apparaat,"Salaris, vakantie en eindejaarsuitkering (Binnenlandse zaken en Koninkrijksrelaties)",kostensoort_ministry,383267000,Binnenlandse zaken en Koninkrijksrelaties,"Salaris, vakantie en eindejaarsuitkering",2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-081,apparaat,"Salaris, vakantie- en eindejaarsuitkering  (Economische zaken en Klimaat)",kostensoort_ministry,378972000,Economische zaken en Klimaat,"Salaris, vakantie- en eindejaarsuitkering ",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-082,apparaat,Sociale lasten enbijdrage zorgverzekeringswet (Financiën en Nationale Schuld),kostensoort_ministry,373490000,Financiën en Nationale Schuld,Sociale lasten enbijdrage zorgverzekeringswet,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-083,apparaat,BZK Specifiek (Binnenlandse Zaken en Koninkrijksrelaties),kostensoort_ministry,357325000,Binnenlandse Zaken en Koninkrijksrelaties,BZK Specifiek,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-084,apparaat,"Salaris, vakantie en eindejaarsuitkering (Taakuitvoering Luchtstrijdkrachten)",kostensoort_ministry,345088000,Taakuitvoering Luchtstrijdkrachten,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-085,apparaat,SALARISSEN (Sociale Zaken en Werkgelegenheid),kostensoort_ministry,339322000,Sociale Zaken en Werkgelegenheid,SALARISSEN,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-086,apparaat,Afdracht werkkostenregeling (Defensie),kostensoort_ministry,332701000,Defensie,Afdracht werkkostenregeling,4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-087,apparaat,Bijdrage aan SSO (Infrastructuur en Milieu),kostensoort_ministry,330956000,Infrastructuur en Milieu,Bijdrage aan SSO,3,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-088,apparaat,"Toelagen, toeslagen en vergoedingen (Infrastructuur en Waterstaat)",kostensoort_ministry,310851000,Infrastructuur en Waterstaat,"Toelagen, toeslagen en vergoedingen",7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-089,apparaat,Uitgaven sociaal flankerend beleid (Financiën),kostensoort_ministry,310449000,Financiën,Uitgaven sociaal flankerend beleid,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-090,apparaat,"Salaris, vakantie en eindejaarsuitkering (Economische zaken en Klimaat)",kostensoort_ministry,305685000,Economische zaken en Klimaat,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-091,apparaat,"Salaris, vakantie en eindejaarsuitkering (Ministerie van Volksgezondheid, Welzijn en Sport)",kostensoort_ministry,304485000,"Ministerie van Volksgezondheid, Welzijn en Sport","Salaris, vakantie en eindejaarsuitkering",2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-092,apparaat,Ontvangsten Personeel Materieel (Financiën),kostensoort_ministry,291239000,Financiën,Ontvangsten Personeel Materieel,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-093,apparaat,Reis- en verblijfskosten (Financiën),kostensoort_ministry,288267000,Financiën,Reis- en verblijfskosten,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-094,apparaat,"SALARISSEN (Ministerie van Volksgezondheid, Welzijn en Sport)",kostensoort_ministry,285986000,"Ministerie van Volksgezondheid, Welzijn en Sport",SALARISSEN,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-095,apparaat,Uitzendkrachten (Infrastructuur en Milieu),kostensoort_ministry,283936000,Infrastructuur en Milieu,Uitzendkrachten,4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-096,apparaat,Bijdrage SSO (Economische Zaken en Klimaat),kostensoort_ministry,281377000,Economische Zaken en Klimaat,Bijdrage SSO,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-097,apparaat,Verbruik van energie en water overig (Defensie),kostensoort_ministry,277945000,Defensie,Verbruik van energie en water overig,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-098,apparaat,Verwerven en afstoten (Ministerie van Buitenlandse Zaken),kostensoort_ministry,277184000,Ministerie van Buitenlandse Zaken,Verwerven en afstoten,4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-099,apparaat,"Salaris, vakantie en eindejaarsuitkering ( Landbouw, Natuur en Voedselkwaliteit)",kostensoort_ministry,274199000," Landbouw, Natuur en Voedselkwaliteit","Salaris, vakantie en eindejaarsuitkering",3,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-100,apparaat,"Salaris, vakantie en eindejaarsuitkering (Taakuitvoering Kmar)",kostensoort_ministry,271800000,Taakuitvoering Kmar,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-101,apparaat,Wagenpark (Defensie),kostensoort_ministry,267179000,Defensie,Wagenpark,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-102,apparaat,Advisering opdrachtgevers over automatiseringsvraagstukken (Defensie),kostensoort_ministry,261393000,Defensie,Advisering opdrachtgevers over automatiseringsvraagstukken,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-103,apparaat,Verbruik van energie en water (Defensie),kostensoort_ministry,256990000,Defensie,Verbruik van energie en water,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-104,apparaat,"Pensioenpremies (Onderwijs, Cultuur en Wetenschap)",kostensoort_ministry,256945000,"Onderwijs, Cultuur en Wetenschap",Pensioenpremies,11,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-105,apparaat,Salarissen (Sociale zaken en Werkgelegenheid),kostensoort_ministry,254866000,Sociale zaken en Werkgelegenheid,Salarissen,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-106,apparaat,Pensioenpremies (Infrastructuur en Milieu),kostensoort_ministry,254520000,Infrastructuur en Milieu,Pensioenpremies,4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-107,apparaat,Wachtgelden en SBK gelden (Defensie),kostensoort_ministry,250912000,Defensie,Wachtgelden en SBK gelden,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-108,apparaat,Consumptieve diensten (Defensie),kostensoort_ministry,246184000,Defensie,Consumptieve diensten,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-109,apparaat,Studie en opleiding (Financiën),kostensoort_ministry,245378000,Financiën,Studie en opleiding,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-110,apparaat,Bijdrage SSO`s (Binnenlandse Zaken en Koninkrijksrelaties),kostensoort_ministry,244798000,Binnenlandse Zaken en Koninkrijksrelaties,Bijdrage SSO`s,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-111,apparaat,"Bijdrage SSO (Onderwijs, Cultuur en Wetenschap)",kostensoort_ministry,244221000,"Onderwijs, Cultuur en Wetenschap",Bijdrage SSO,11,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-112,apparaat,"Salaris, vakantie- en eindejaarsuitkering  (Binnenlandse zaken en Koninkrijksrelaties)",kostensoort_ministry,243690000,Binnenlandse zaken en Koninkrijksrelaties,"Salaris, vakantie- en eindejaarsuitkering ",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-113,apparaat,Uitzendkrachten (Financiën en Nationale Schuld),kostensoort_ministry,241758000,Financiën en Nationale Schuld,Uitzendkrachten,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-114,apparaat,Personele exploitatie overig (Defensie),kostensoort_ministry,237284000,Defensie,Personele exploitatie overig,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-115,apparaat,Aan externe partijen uitbestede ICT-dienstverlening (Infrastructuur en Waterstaat),kostensoort_ministry,236898000,Infrastructuur en Waterstaat,Aan externe partijen uitbestede ICT-dienstverlening,6,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-116,apparaat,Aan externe partijen uitbestede ICT-dienstverlening (Justitie en Veiligheid),kostensoort_ministry,233706000,Justitie en Veiligheid,Aan externe partijen uitbestede ICT-dienstverlening,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-117,apparaat,"Salaris, vakantie- en eindejaarsuitkering  (Onderwijs, Cultuur en Wetenschap)",kostensoort_ministry,233418000,"Onderwijs, Cultuur en Wetenschap","Salaris, vakantie- en eindejaarsuitkering ",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-118,apparaat,Gebruik en onderhoud van gebouw en terreinen (Infrastructuur en Waterstaat),kostensoort_ministry,231717000,Infrastructuur en Waterstaat,Gebruik en onderhoud van gebouw en terreinen,6,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-119,apparaat,Pensioenpremies (Buitenlandse Zaken),kostensoort_ministry,229143000,Buitenlandse Zaken,Pensioenpremies,6,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-120,apparaat,Bijdrage door SSO's (DMO/OPS) (Ministerie van Defensie),kostensoort_ministry,228784000,Ministerie van Defensie,Bijdrage door SSO's (DMO/OPS),1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-121,apparaat,"Toelagen, toeslagen en vergoedingen (Ministerie van Buitenlandse Zaken)",kostensoort_ministry,224652000,Ministerie van Buitenlandse Zaken,"Toelagen, toeslagen en vergoedingen",4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-122,apparaat,Salarissen (Sociale Zaken en Werkgelegenheid),kostensoort_ministry,224236000,Sociale Zaken en Werkgelegenheid,Salarissen,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-123,apparaat,Bijdragen aan baten-lastendiensten (Algemene Zaken),kostensoort_ministry,223651000,Algemene Zaken,Bijdragen aan baten-lastendiensten,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-124,apparaat,"Salaris, vakantie en eindejaarsuitkering (Economische Zaken)",kostensoort_ministry,221208000,Economische Zaken,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-125,apparaat,Waarvan SSO DVD / RVB;  Verwerven en afstoten (Ministerie van Defensie),kostensoort_ministry,220607000,Ministerie van Defensie,Waarvan SSO DVD / RVB;  Verwerven en afstoten,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-126,apparaat,BZK-specifiek (Binnenlandse Zaken en Koninkrijksrelaties),kostensoort_ministry,218602000,Binnenlandse Zaken en Koninkrijksrelaties,BZK-specifiek,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-127,apparaat,"Salaris, vakantie en eindejaarsuitkering (Ministerie van EZK)",kostensoort_ministry,217814000,Ministerie van EZK,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-128,apparaat,Bijdrage SSO RVB; Gebruik en onderhoud gebouw en terreinen (Ondersteuning krijgsmacht door CDC),kostensoort_ministry,216632000,Ondersteuning krijgsmacht door CDC,Bijdrage SSO RVB; Gebruik en onderhoud gebouw en terreinen,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-129,apparaat,Benodigdheden en hulpmiddelen (Ministerie van Defensie),kostensoort_ministry,209803000,Ministerie van Defensie,Benodigdheden en hulpmiddelen,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-130,apparaat,Gebruik en onderhoud van gebouw en terreinen (Ministerie van Defensie),kostensoort_ministry,208016000,Ministerie van Defensie,Gebruik en onderhoud van gebouw en terreinen,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-131,apparaat,Sociale lasten en bijdrage zorgverzekeringswet (Justitie en Veiligheid),kostensoort_ministry,205693000,Justitie en Veiligheid,Sociale lasten en bijdrage zorgverzekeringswet,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-132,apparaat,"Vakliteratuur, abonnementen en overige informatie (Financiën)",kostensoort_ministry,204111000,Financiën,"Vakliteratuur, abonnementen en overige informatie",8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-133,apparaat,personele exploitatie overig (Defensie),kostensoort_ministry,203016000,Defensie,personele exploitatie overig,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-134,apparaat,Sociale lasten en bijdrage zorgverzekeringswet (Infrastructuur en Milieu),kostensoort_ministry,201465000,Infrastructuur en Milieu,Sociale lasten en bijdrage zorgverzekeringswet,4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-135,apparaat,Bijdrage SSO (Financien),kostensoort_ministry,201297000,Financien,Bijdrage SSO,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-136,apparaat,UITZENDKRACHTEN (Defensie),kostensoort_ministry,199637000,Defensie,UITZENDKRACHTEN,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-137,apparaat,Studie en opleiding (Ministerie van Defensie),kostensoort_ministry,195865000,Ministerie van Defensie,Studie en opleiding,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-138,apparaat,Opleidingen (Defensie),kostensoort_ministry,195283000,Defensie,Opleidingen,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-139,apparaat,"Instroom, doorstroom en uitstroom van personeel (Defensie)",kostensoort_ministry,194838000,Defensie,"Instroom, doorstroom en uitstroom van personeel",5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-140,apparaat,Bijdrage door SSO's (DVD) (Ministerie van Defensie),kostensoort_ministry,193218000,Ministerie van Defensie,Bijdrage door SSO's (DVD),1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-141,apparaat,BZK specifiek (Koninkrijksrelaties),kostensoort_ministry,190221000,Koninkrijksrelaties,BZK specifiek,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-142,apparaat,Beheer en onderhoud infrastructuur (Infrastructuur en Waterstaat),kostensoort_ministry,189311000,Infrastructuur en Waterstaat,Beheer en onderhoud infrastructuur,6,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-143,apparaat,Bijdrage SSO (Veiligheid en Justitie),kostensoort_ministry,188536000,Veiligheid en Justitie,Bijdrage SSO,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-144,apparaat,Advisering opdrachtgevers over automatiseringsvraagstukken (Financiën en Nationale Schuld),kostensoort_ministry,187549000,Financiën en Nationale Schuld,Advisering opdrachtgevers over automatiseringsvraagstukken,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-145,apparaat,Representatie voor eigen personeel (Defensie),kostensoort_ministry,186318000,Defensie,Representatie voor eigen personeel,6,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-146,apparaat,"Bijdrage SSO DMO OPS; Aanschaf, beheer en onderhoud infrastructuur (Ondersteuning krijgsmacht door DMO)",kostensoort_ministry,184995000,Ondersteuning krijgsmacht door DMO,"Bijdrage SSO DMO OPS; Aanschaf, beheer en onderhoud infrastructuur",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-147,apparaat,"Salaris, vakantie en eindejaarsuitkering (Landbouw, Natuur en Voedselkwaliteit)",kostensoort_ministry,182468000,"Landbouw, Natuur en Voedselkwaliteit","Salaris, vakantie en eindejaarsuitkering",2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-148,apparaat,Inrichting gebouwen (Financiën),kostensoort_ministry,180652000,Financiën,Inrichting gebouwen,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-149,apparaat,"Inbesteding SSO (Volksgezondheid, Welzijn en Sport)",kostensoort_ministry,177561000,"Volksgezondheid, Welzijn en Sport",Inbesteding SSO,3,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-150,apparaat,Geneeskundige verzorging (Defensie),kostensoort_ministry,176090000,Defensie,Geneeskundige verzorging,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-151,apparaat,reis en verblijfkosten (Defensie),kostensoort_ministry,173948000,Defensie,reis en verblijfkosten,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-152,apparaat,Sociale lasten en bijdrage zorgverzekeringswet (Buitenlandse Zaken),kostensoort_ministry,171519000,Buitenlandse Zaken,Sociale lasten en bijdrage zorgverzekeringswet,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-153,apparaat,Advisering opdrachtgevers over automatiseringsvraagstukken (Infrastructuur en Waterstaat),kostensoort_ministry,170856000,Infrastructuur en Waterstaat,Advisering opdrachtgevers over automatiseringsvraagstukken,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-154,apparaat,Huisvesting (Financiën),kostensoort_ministry,169786000,Financiën,Huisvesting,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-155,apparaat,RVB / Gebruik en onderhoud gebouw en terreinen (Defensie ),kostensoort_ministry,167786000,Defensie ,RVB / Gebruik en onderhoud gebouw en terreinen,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-156,apparaat,Beheer en onderhoud infrastructuur (Financiën),kostensoort_ministry,166835000,Financiën,Beheer en onderhoud infrastructuur,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-157,apparaat,Uitzendkrachten (Justitie en Veiligheid),kostensoort_ministry,166530000,Justitie en Veiligheid,Uitzendkrachten,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-158,apparaat,"Salaris, vakantie en eindejaarsuitkering (Ondersteuning krijgsmacht door DMO)",kostensoort_ministry,164706000,Ondersteuning krijgsmacht door DMO,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-159,apparaat,Verwerven en afstoten (Defensie),kostensoort_ministry,164462000,Defensie,Verwerven en afstoten,3,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-160,apparaat,"Sociale lasten en 
+bijdrage zorgverzekeringswet (Infrastructuur en Waterstaat)",kostensoort_ministry,163922000,Infrastructuur en Waterstaat,"Sociale lasten en 
+bijdrage zorgverzekeringswet",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-161,apparaat,Uitzendkrachten (Buitenlandse Zaken),kostensoort_ministry,160629000,Buitenlandse Zaken,Uitzendkrachten,6,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-162,apparaat,Verwerven en afstoten (Ministerie van Defensie),kostensoort_ministry,160557000,Ministerie van Defensie,Verwerven en afstoten,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-163,apparaat,"Salaris, vakantie en eindejaarsuitkering (Sociale Zaken en Werkgelegenheid)",kostensoort_ministry,159842000,Sociale Zaken en Werkgelegenheid,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-164,apparaat,Bijdrage SSO (Economische zaken en Klimaat),kostensoort_ministry,157490000,Economische zaken en Klimaat,Bijdrage SSO,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-165,apparaat,Sociale lasten enbijdrage zorgverzekeringswet (Justitie en Veiligheid),kostensoort_ministry,157324000,Justitie en Veiligheid,Sociale lasten enbijdrage zorgverzekeringswet,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-166,apparaat,"Toelagen, toeslagen en vergoedingen (Taakuitvoering Landstrijdkrachten)",kostensoort_ministry,157216000,Taakuitvoering Landstrijdkrachten,"Toelagen, toeslagen en vergoedingen",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-167,apparaat,Spraak en Data Verbindingen (Financiën),kostensoort_ministry,156631000,Financiën,Spraak en Data Verbindingen,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-168,apparaat,Bijdrage sso's (Ministerie van Sociale Zaken en Werkgelegenheid),kostensoort_ministry,156172000,Ministerie van Sociale Zaken en Werkgelegenheid,Bijdrage sso's,3,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-169,apparaat,"Salaris, vakantie- en eindejaarsuitkering  ( Landbouw, Natuur en Voedselkwaliteit)",kostensoort_ministry,156141000," Landbouw, Natuur en Voedselkwaliteit","Salaris, vakantie- en eindejaarsuitkering ",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-170,apparaat,Salarissen personeel (Ministerie van Sociale Zaken en Werkgelegenheid),kostensoort_ministry,155438000,Ministerie van Sociale Zaken en Werkgelegenheid,Salarissen personeel,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-171,apparaat,Wagenpark (Infrastructuur en Milieu),kostensoort_ministry,154183000,Infrastructuur en Milieu,Wagenpark,4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-172,apparaat,Inrichting gebouwen (Infrastructuur en Waterstaat),kostensoort_ministry,153861000,Infrastructuur en Waterstaat,Inrichting gebouwen,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-173,apparaat,Aanschaf hardware (Financiën),kostensoort_ministry,153251000,Financiën,Aanschaf hardware,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-174,apparaat,Bijdrage SSO (Economische zaken),kostensoort_ministry,151307000,Economische zaken,Bijdrage SSO,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-175,apparaat,Wachtgelden en SBK gelden (Centraal Apparaat),kostensoort_ministry,150355000,Centraal Apparaat,Wachtgelden en SBK gelden,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-176,apparaat,Soc.lstn/bijdr zvw (Ministerie van Sociale Zaken en Werkgelegenheid),kostensoort_ministry,148798000,Ministerie van Sociale Zaken en Werkgelegenheid,Soc.lstn/bijdr zvw,3,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-177,apparaat,Pensioenpremies (Ministerie van Veiligheid en Justitie),kostensoort_ministry,147952000,Ministerie van Veiligheid en Justitie,Pensioenpremies,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-178,apparaat,Aan externe partijen uitbestede ICT-dienstverlening (Buitenlandse Zaken),kostensoort_ministry,146765000,Buitenlandse Zaken,Aan externe partijen uitbestede ICT-dienstverlening,4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-179,apparaat,Gratificaties (Financiën),kostensoort_ministry,144536000,Financiën,Gratificaties,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-180,apparaat,Reis- en verblijfskosten (Ministerie van Defensie),kostensoort_ministry,143372000,Ministerie van Defensie,Reis- en verblijfskosten,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-181,apparaat,Advisering automatiseringsvraagstukken (Defensie),kostensoort_ministry,140561000,Defensie,Advisering automatiseringsvraagstukken,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-182,apparaat,Definities conform P-direkt (Buitenlandse Zaken),kostensoort_ministry,140508000,Buitenlandse Zaken,Definities conform P-direkt,4,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-183,apparaat,Bijdrage SSO (Buitenlandse Zaken),kostensoort_ministry,138583000,Buitenlandse Zaken,Bijdrage SSO,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-184,apparaat,"Inbesteding (Onderwijs, Cultuur en Wetenschap)",kostensoort_ministry,135712000,"Onderwijs, Cultuur en Wetenschap",Inbesteding,11,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-185,apparaat,Sociale lasten en (Justitie en Veiligheid),kostensoort_ministry,135363000,Justitie en Veiligheid,Sociale lasten en,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-186,apparaat,Benodigdheden en hulpmiddelen (Financiën),kostensoort_ministry,135361000,Financiën,Benodigdheden en hulpmiddelen,8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-187,apparaat,"Salaris, vakantie en eindejaarsuitkering (Sociale Zaken en Werkgelegenheid )",kostensoort_ministry,134626000,Sociale Zaken en Werkgelegenheid ,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-188,apparaat,Studie en opleiding (Vliegeropleidingen) (Defensie),kostensoort_ministry,133809000,Defensie,Studie en opleiding (Vliegeropleidingen),2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-189,apparaat,Departement specifiek materieel (Ministerie van Defensie),kostensoort_ministry,130715000,Ministerie van Defensie,Departement specifiek materieel,1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-190,apparaat,"Salaris, vakantie en eindejaarsuitkering (Algemene Zaken)",kostensoort_ministry,130453000,Algemene Zaken,"Salaris, vakantie en eindejaarsuitkering",8,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-191,apparaat,Bijdrage SSO (Ministerie van Buitenlandse Zaken),kostensoort_ministry,128691000,Ministerie van Buitenlandse Zaken,Bijdrage SSO,3,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-192,apparaat,Verbruik van energie en water (Ministerie van Defensie),kostensoort_ministry,127328000,Ministerie van Defensie,Verbruik van energie en water,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-193,apparaat,"Salaris, vakantie en eindejaarsuitkering (Centraal Apparaat)",kostensoort_ministry,126650000,Centraal Apparaat,"Salaris, vakantie en eindejaarsuitkering",1,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-194,apparaat,"Sociale lasten en bijdrage zorgverzekeringswet (Volksgezondheid, Welzijn en Sport)",kostensoort_ministry,123855000,"Volksgezondheid, Welzijn en Sport",Sociale lasten en bijdrage zorgverzekeringswet,3,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-195,apparaat,"Toelagen, toeslagen en vergoedingen (Onderwijs, Cultuur en Wetenschap)",kostensoort_ministry,123387000,"Onderwijs, Cultuur en Wetenschap","Toelagen, toeslagen en vergoedingen",11,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-196,apparaat,"Bijdrage sso's (Ministerie van Volksgezondheid, Welzijn en Sport)",kostensoort_ministry,123078000,"Ministerie van Volksgezondheid, Welzijn en Sport",Bijdrage sso's,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-197,apparaat,Studie en opleiding (Justitie en Veiligheid),kostensoort_ministry,122041000,Justitie en Veiligheid,Studie en opleiding,7,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-198,apparaat,Uitzendkrachten (Defensie),kostensoort_ministry,120363000,Defensie,Uitzendkrachten,5,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-199,apparaat,"Inbesteding SSO (Ministerie van Volksgezondheid, Welzijn en Sport)",kostensoort_ministry,119607000,"Ministerie van Volksgezondheid, Welzijn en Sport",Inbesteding SSO,2,Q-APP-03,2026-03-02T19:28:34Z
+APP-KMIN-200,apparaat,"Aan externe partijen uitbestede ICT-dienstverlening (Onderwijs, Cultuur en Wetenschap)",kostensoort_ministry,119204000,"Onderwijs, Cultuur en Wetenschap",Aan externe partijen uitbestede ICT-dienstverlening,10,Q-APP-03,2026-03-02T19:28:34Z

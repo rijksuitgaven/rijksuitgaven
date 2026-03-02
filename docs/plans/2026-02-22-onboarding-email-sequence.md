@@ -14,8 +14,8 @@
 | **1** | Day 0 | Welkom bij het nieuwe Rijksuitgaven.nl | Toegang + login + feedback ask |
 | **2** | Day 2 | Zo zoekt u op het nieuwe Rijksuitgaven.nl | Autocomplete, Nederlands, integraal |
 | **3** | Day 4 | Zo filtert u op het nieuwe Rijksuitgaven.nl | Cascading, klik-to-filter, kolommen |
-| **4** | Day 7 | Zo ontdekt u trends op het nieuwe Rijksuitgaven.nl | 9 jaar, anomalieën, "Ook in" |
-| **5** | Day 11 | Zo haalt u het meeste uit uw resultaten | Uitklappen, groepering, Excel/CSV |
+| **4** | Day 7 | Zo ontdekt u trends op het nieuwe Rijksuitgaven.nl | 9 jaar, anomalieën, vergelijk/pin |
+| **5** | Day 11 | Zo haalt u het meeste uit uw resultaten | Uitklappen, groepering, bladwijzers, Google, Excel/CSV |
 
 Optional 6th email (day 18): Roadmap + feedback close-loop. Decision deferred.
 
@@ -154,11 +154,11 @@ In de volgende e-mail: trends over 9 jaar en automatische markering van opvallen
 
 ---
 
-## Mail 4: Ontdekking (FINAL)
+## Mail 4: Ontdekking + Vergelijk (FINAL v2)
 
 **Subject:** Zo ontdekt u trends op het nieuwe Rijksuitgaven.nl
 
-**Preheader:** Negen jaar overheidsuitgaven naast elkaar, met automatische markering van grote veranderingen.
+**Preheader:** Negen jaar overheidsuitgaven naast elkaar, vergelijk tot 5 ontvangers tegelijk.
 
 **Heading:** Zie trends en opvallende uitgaven over 9 jaar
 
@@ -166,19 +166,22 @@ In de volgende e-mail: trends over 9 jaar en automatische markering van opvallen
 
 Beste {{voornaam}},
 
-Negen jaar overheidsuitgaven in één oogopslag. Dit is e-mail 4 van 5 over het nieuwe Rijksuitgaven.nl, deze keer over trends en opvallende verschuivingen.
+Negen jaar overheidsuitgaven in één oogopslag. Dit is e-mail 4 van 5 over het nieuwe Rijksuitgaven.nl, deze keer over trends en vergelijken.
 
 Alle overheidsuitgaven van 2016 tot en met 2024 staan in kolommen naast elkaar. Zo ziet u in één blik hoe budgetten zich over de jaren ontwikkelen.
 
 Standaard ziet u de meest recente jaren. Klik op het pijltje naast 2016-20 om alle 9 jaren zichtbaar te maken.
 
 **Opvallende verschuivingen direct zichtbaar**
-Cellen met meer dan 50% jaar-op-jaar verandering worden rood gemarkeerd. Beweeg uw muis over de cel om het exacte percentage te zien. Zo ziet u direct waar budgetten sterk zijn gestegen of gedaald.
+Cellen met meer dan 50% jaar-op-jaar verandering worden gemarkeerd. Beweeg uw muis over de cel: u ziet het exacte percentage in groen (stijging) of rood (daling).
+
+**Vergelijk ontvangers naast elkaar**
+Pin tot 5 ontvangers vast bovenaan de tabel. Uw vastgepinde rijen blijven zichtbaar terwijl u zoekt, filtert of van pagina wisselt. Zo vergelijkt u ontvangers zonder uw overzicht te verliezen.
 
 **Weet precies welke data beschikbaar is**
 Niet elke databron dekt alle jaren. Een streepje (—) betekent "geen data beschikbaar", niet €0. Zo weet u altijd of een bedrag werkelijk nul is of dat er simpelweg geen data voor dat jaar bestaat.
 
-In de volgende e-mail: alle details achter elk bedrag, en exporteer naar Excel.
+In de volgende e-mail: alle details achter elk bedrag, deel uw resultaten en exporteer naar Excel.
 
 **CTA button:** Bekijk de trends
 **CTA URL:** https://beta.rijksuitgaven.nl/gemeente
@@ -187,11 +190,11 @@ In de volgende e-mail: alle details achter elk bedrag, en exporteer naar Excel.
 
 ---
 
-## Mail 5: Details + Export (FINAL)
+## Mail 5: Details + Bladwijzers + Export (FINAL v2)
 
 **Subject:** Zo haalt u het meeste uit uw resultaten
 
-**Preheader:** Klap rijen uit voor de details, exporteer naar Excel met één klik.
+**Preheader:** Klap rijen uit voor de details, sla resultaten op als bladwijzer, exporteer naar Excel.
 
 **Heading:** Zoom in op de details achter de bedragen
 
@@ -199,12 +202,15 @@ In de volgende e-mail: alle details achter elk bedrag, en exporteer naar Excel.
 
 Beste {{voornaam}},
 
-Elk bedrag heeft een verhaal. Dit is de laatste e-mail over het nieuwe Rijksuitgaven.nl, over details en export.
+Elk bedrag heeft een verhaal. Dit is de laatste e-mail over het nieuwe Rijksuitgaven.nl, over details, bladwijzers en export.
 
 Klik op een ontvanger om alle onderliggende betalingen te zien. De details klappen direct onder de rij uit, u verlaat de pagina niet.
 
 **Groepeer op elk veld**
 Bekijk de betalingen gegroepeerd op artikel, regeling, gemeente of een ander veld. Wissel tussen groeperingen om het bedrag vanuit verschillende invalshoeken te bekijken.
+
+**Bewaar uw resultaten als bladwijzer**
+Uw zoekopdracht, filters, sortering en kolommen worden automatisch in de URL opgeslagen. Sla de URL op als bladwijzer en u keert direct terug naar exact hetzelfde resultaat.
 
 **Zoek een ontvanger op Google**
 Eén klik op het linkicoon naast de naam opent Google met die ontvangernaam. Handig voor snel achtergrondonderzoek.

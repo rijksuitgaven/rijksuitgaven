@@ -79,6 +79,7 @@
 | Login email session duration | ✅ Fixed (Feb 28) | Added "Na inloggen blijft u ingelogd..." to magic link email (HTML+text). Commit `c83152e` |
 | Contact form Pipeline + Expertgroep | ✅ Live (Mar 2) | Pipeline selector on add form, Expertgroep source option, API accepts pipeline_stage |
 | Anomaly cell colors | ✅ Live (Mar 2) | Grey bg (was red), red/green trend tooltips on hover |
+| Social content pipeline | ✅ Built (Mar 2) | Zero-error pipeline: DB → extract_facts.py → facts/*.csv → generate_posts.py → posts/*.csv. 1,921 facts, 2,435 posts, 25 batches. verify.py for re-verification. |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
@@ -90,8 +91,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Admin CRM + Anomaly UX Polish** (2026-03-02)
-   Pipeline pill selector on add contact form. "Expertgroep" Bron option. Anomaly cell bg red→grey, red/green trend tooltips.
+1. **Social Content Pipeline + Admin CRM + Anomaly UX** (2026-03-02)
+   Zero-error social pipeline: 18 SQL queries → 1,921 DB-verified facts → 2,435 posts (25 batches). Replaced hand-typed approach (had €243M errors). Also: pipeline pill selector, Expertgroep Bron, anomaly cell bg red→grey, red/green trend tooltips.
 
 2. **Roadmap Redesign — Linear-Grade Initiative Stack** (2026-03-01)
    Complete rewrite of /team/roadmap. Hierarchical parser (initiatives → sub-releases → features), objectives from VERSIONING.md, collapsible cards, progress bars, amber banner for unclear goals, backlog section. 2 bug fixes: V3.0+ hierarchy, A/M/D parent features visible alongside children.

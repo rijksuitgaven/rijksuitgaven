@@ -1,0 +1,43 @@
+fact_id,module,entity,metric,value,y2024,y2023,y2022,y2021,y2020,row_count,query_ref,verified_at
+APP-MIN-001,apparaat,Defensie,ministry_total,42304633000,8865684000,7759837000,0,5669944000,6817680000,1789,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-002,apparaat,Financiën,ministry_total,30673735000,5149471000,4460821000,4081555000,3505907000,3559821000,1351,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-003,apparaat,Infrastructuur en Waterstaat,ministry_total,14615891000,2690102000,2366038000,2113820000,2016014000,1943259000,1403,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-004,apparaat,Ministerie van Defensie,ministry_total,11426358000,0,0,0,0,0,491,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-005,apparaat,Justitie en Veiligheid,ministry_total,9447691000,1887065000,1630923000,524523000,1402448000,457991000,1779,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-006,apparaat,Financiën en Nationale Schuld,ministry_total,6423960000,0,0,0,0,0,248,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-007,apparaat,Buitenlandse Zaken,ministry_total,6207570000,1108110000,1013747000,943642000,822919000,806522000,580,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-008,apparaat,Binnenlandse Zaken en Koninkrijksrelaties,ministry_total,5818243000,0,0,0,1004597000,921311000,606,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-009,apparaat,Defensie ,ministry_total,5701035000,0,0,0,0,0,262,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-010,apparaat,Infrastructuur en Milieu,ministry_total,3968374000,0,0,0,0,0,574,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-011,apparaat,Financien,ministry_total,3246243000,64123000,0,0,0,0,141,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-012,apparaat,"Onderwijs, Cultuur en Wetenschap",ministry_total,3169220000,432050000,367257000,306653000,281554000,280933000,711,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-013,apparaat,Ministerie van Buitenlandse Zaken,ministry_total,2944521000,0,0,0,0,0,242,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-014,apparaat,"Ministerie van Volksgezondheid, Welzijn en Sport",ministry_total,2379520000,622399000,587198000,0,0,448763000,5786,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-015,apparaat,Binnenlandse zaken en Koninkrijksrelaties,ministry_total,2335724000,891459000,770791000,673474000,0,0,217,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-016,apparaat,"Volksgezondheid, Welzijn en Sport",ministry_total,2315126000,0,0,540341000,492633000,0,617,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-017,apparaat,Ministerie van Veiligheid en Justitie,ministry_total,2193548000,0,0,0,0,0,406,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-018,apparaat,Ministerie van Sociale Zaken en Werkgelegenheid,ministry_total,2101371000,0,555160000,0,0,387486000,467,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-019,apparaat,Economische Zaken en Klimaat,ministry_total,1788744000,0,0,466158000,304962000,294989000,247,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-020,apparaat,Centraal Apparaat,ministry_total,1572368000,0,0,0,0,0,57,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-021,apparaat,Sociale Zaken en Werkgelegenheid,ministry_total,1342590000,616915000,0,0,423274000,0,273,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-022,apparaat,Economische zaken en Klimaat,ministry_total,1323966000,713748000,610218000,0,0,0,103,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-023,apparaat,Ondersteuning krijgsmacht door CDC,ministry_total,1223077000,0,0,0,0,0,72,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-024,apparaat,Taakuitvoering Landstrijdkrachten,ministry_total,1080997000,0,0,0,0,0,33,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-025,apparaat,Veiligheid en Justitie,ministry_total,937310000,0,0,0,0,0,204,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-026,apparaat," Landbouw, Natuur en Voedselkwaliteit",ministry_total,771479000,256678000,226243000,0,0,149719000,183,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-027,apparaat,Economische zaken,ministry_total,765041000,0,0,0,0,0,97,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-028,apparaat,Algemene Zaken,ministry_total,637138000,109023000,83567000,74222000,75256000,68516000,1317,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-029,apparaat,Taakuitvoering Zeestrijdkrachten,ministry_total,631024000,0,0,0,0,0,45,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-030,apparaat,Taakuitvoering Luchtstrijdkrachten,ministry_total,527250000,0,0,0,0,0,31,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-031,apparaat,Ondersteuning krijgsmacht door DMO,ministry_total,497540000,0,0,0,0,0,42,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-032,apparaat,Sociale zaken en Werkgelegenheid,ministry_total,485945000,0,0,485945000,0,0,95,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-033,apparaat,Economische Zaken,ministry_total,423580000,0,0,0,0,0,48,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-034,apparaat,Infrastructuurfonds,ministry_total,387903000,45914000,45820000,62452000,42510000,37969000,25,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-035,apparaat,Ministerie van EZK,ministry_total,383150000,0,0,0,0,0,49,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-036,apparaat,Taakuitvoering Kmar,ministry_total,365067000,0,0,0,0,0,26,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-037,apparaat,"Landbouw, Natuur en Voedselkwaliteit",ministry_total,326883000,0,0,173641000,153242000,0,90,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-038,apparaat,Koninkrijksrelaties,ministry_total,271725000,50034000,32506000,34196000,30335000,29879000,208,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-039,apparaat,Sociale Zaken en Werkgelegenheid ,ministry_total,255513000,0,0,0,0,0,56,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-040,apparaat,Deltafonds,ministry_total,89280000,10385000,8008000,8899000,8826000,7756000,176,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-041,apparaat,Ministerie van Algemene Zaken,ministry_total,84940000,0,0,0,0,0,163,Q-APP-02,2026-03-02T19:28:34Z
+APP-MIN-042,apparaat,Koninkrijksrelaties ,ministry_total,21309000,0,0,0,0,0,5,Q-APP-02,2026-03-02T19:28:34Z
