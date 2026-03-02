@@ -32,7 +32,7 @@
 | Search enhancements | ✅ Implemented (Feb 21) | Multi-word AND, exact phrase `"..."`, wildcard stripping |
 | /versiegeschiedenis page | ✅ Implemented (Feb 21) | Benefit-oriented changelog + V2.x roadmap |
 | Staffel popover fix | ✅ Fixed (Feb 21) | Shows all 14 staffels (0-13) |
-| UX-039/041 Vergelijk + URL State | 🔨 Feature branch — BLOCKER (5 weeks old) | Branch: `feature/ux-039-041`. Last synced: `a6f57cd` (Feb 28). 12 commits behind main. 34 real commits. Build: untested after last sync. Must resolve per Rule 7. |
+| UX-039/041 Vergelijk + URL State | ✅ Merged to main (Mar 2) | Pre-Merge Gate 6/6 passed. Branch deleted. Pin rows, URL state, sort desc, release banner. Ready to ship. |
 | Email Media Library | ✅ Live (both) | Sharp processing, DB tracking, media picker, media tab. Admin feature |
 | Email deliverability (SPF fix) | ✅ Done (DNS) | Replaced broken self-referencing SPF with correct Resend + ZXCS includes |
 | Campaign features (13) | ✅ Implemented (Feb 22) | 6 phases: webhook, pre-send, analytics, engagement, sequences, preferences |

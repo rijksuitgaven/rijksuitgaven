@@ -478,7 +478,7 @@ git branch -d feature/ux-XXX  # cleanup — immediately, no lingering
 
 | Branch | Last synced with main | Age | Features | Build status |
 |--------|----------------------|-----|----------|-------------|
-| `feature/ux-039-041` | `a6f57cd` (Feb 28) | 5 weeks | UX-039 pin, UX-041 URL state | Needs sync + build test |
+| (none) | — | — | — | — |
 
 **Rule:** Nothing reaches production unless the user explicitly says "ship it".
 **Rule:** Branches >7 days old are blockers. Escalate at `/startday`.
