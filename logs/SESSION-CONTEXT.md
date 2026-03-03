@@ -87,6 +87,7 @@
 | Railway private networking | ✅ Live (Mar 3) | Backend internal-only at :8080. BFF is only path to backend. |
 | Compound word search "slaap" fix | ✅ Fixed (Mar 3) | 4-commit fix: word boundary, LOWER() WHERE, force-dynamic, no-store cache. V2.4.2 |
 | Browser cache prevention (no-store) | ✅ Fixed (Mar 3) | Cache-Control no-store on BFF + all client-side fetches. Prevents stale API responses. |
+| Resend click tracking on auth emails | ✅ Fixed (Mar 3) | Dashboard disabled + code-level tracking: false on magic-link + invite routes |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
