@@ -24,6 +24,7 @@ interface DraftRequest {
   ctaText?: string
   ctaUrl?: string
   segments: string[]
+  conditions?: { groups: Array<{ conditions: Array<{ type: string; negate?: boolean; campaign_id?: string; engagement_level?: string }> }> }
 }
 
 export async function PUT(
@@ -55,7 +56,7 @@ export async function PUT(
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { subject, heading, preheader, body: bodyHtml, ctaText, ctaUrl, segments } = body
+  const { subject, heading, preheader, body: bodyHtml, ctaText, ctaUrl, segments, conditions } = body
 
   if (!subject?.trim() || !heading?.trim() || !bodyHtml?.trim()) {
     return NextResponse.json({ error: 'Verplichte velden: subject, heading, body' }, { status: 400 })
@@ -96,6 +97,7 @@ export async function PUT(
       cta_text: ctaText?.trim() || null,
       cta_url: ctaUrl?.trim() || null,
       segment: segments.join(','),
+      conditions: conditions?.groups?.length ? conditions : null,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)

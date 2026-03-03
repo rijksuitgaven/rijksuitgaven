@@ -1685,7 +1685,7 @@ export default function MailPage() {
                           className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-[var(--pink)] hover:bg-[var(--pink-hover)] rounded-lg transition-colors disabled:opacity-50"
                         >
                           <Send className="w-4 h-4" />
-                          Verzenden naar {recipientCount} ontvanger{recipientCount !== 1 ? 's' : ''}
+                          Verzenden naar {conditionCount !== null ? conditionCount : recipientCount} ontvanger{(conditionCount !== null ? conditionCount : recipientCount) !== 1 ? 's' : ''}
                         </button>
                       ) : (
                         <div className="flex items-center gap-2">
@@ -1697,7 +1697,7 @@ export default function MailPage() {
                             disabled={sending}
                             className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50"
                           >
-                            {sending ? 'Verzenden...' : `Ja, verzend ${recipientCount} e-mails`}
+                            {sending ? 'Verzenden...' : `Ja, verzend ${conditionCount !== null ? conditionCount : recipientCount} e-mails`}
                           </button>
                           <button
                             onClick={() => setConfirmSend(false)}
