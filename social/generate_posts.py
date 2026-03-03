@@ -240,18 +240,18 @@ APPARAAT_TEMPLATES = [
 
 # Set 3a: Inkoop staffel templates (bracket-based, no exact amounts)
 INKOOP_TEMPLATES = [
-    "{leverancier} heeft inkoopcontracten {bracket} bij de Rijksoverheid voor '{categorie}'.",
-    "De inkoopcontracten van {leverancier} bij het Rijk vallen {bracket}.",
-    "{leverancier} levert aan de Rijksoverheid met contracten {bracket} ({categorie}).",
+    "{leverancier} ontving van de Rijksoverheid bedragen {bracket} voor '{categorie}'.",
+    "De Rijksoverheid betaalde aan {leverancier} bedragen {bracket} ({categorie}).",
+    "Aan {leverancier} betaalde de Rijksoverheid bedragen {bracket} voor '{categorie}'.",
 ]
 
 # Set 3b: COA staffel templates (bracket-based, with regeling)
 COA_TEMPLATES = [
-    "Bij het COA heeft {ontvanger} contracten {bracket} voor de regeling '{regeling}'.",
-    "{ontvanger} levert aan het COA met contracten {bracket}, regeling: {regeling}.",
-    "Het COA koopt bij {ontvanger} in de prijsklasse {bracket} voor '{regeling}'.",
-    "De contracten van {ontvanger} bij het COA vallen {bracket}. Regeling: {regeling}.",
-    "{ontvanger} is leverancier van het COA met contracten {bracket}.",
+    "{ontvanger} ontving van het COA bedragen {bracket} voor de regeling '{regeling}'.",
+    "Het COA betaalde aan {ontvanger} bedragen {bracket}, regeling: {regeling}.",
+    "Aan {ontvanger} betaalde het COA bedragen {bracket} voor '{regeling}'.",
+    "Van het COA ontving {ontvanger} bedragen {bracket}. Regeling: {regeling}.",
+    "{ontvanger} ontving van het COA bedragen {bracket}.",
 ]
 
 
@@ -460,7 +460,7 @@ def gen_inkoop():
             leverancier=entity, bracket=bracket, categorie=cat_short.lower(),
         )
         tags = build_hashtags([
-            "#Overheidsinkoop",
+            "#Overheidsuitgaven",
             make_category_tag(cat_short),
             make_entity_tag(entity),
         ])
