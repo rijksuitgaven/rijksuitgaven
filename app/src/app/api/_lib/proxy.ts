@@ -122,7 +122,7 @@ export async function proxyToBackend(
 
       const data = JSON.parse(text)
       const nextResponse = NextResponse.json(data)
-      nextResponse.headers.set('Cache-Control', 'private, no-cache')
+      nextResponse.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate')
       return nextResponse
 
     } finally {

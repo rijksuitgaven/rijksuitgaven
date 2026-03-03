@@ -61,7 +61,7 @@ function transformRow(apiRow: ApiRecipientRow, years: number[]): RecipientRow {
  * @returns Array of module metadata (id, display name, description)
  */
 export async function fetchModules(signal?: AbortSignal): Promise<ModuleInfo[]> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/modules`, signal ? { signal } : undefined)
+  const response = await fetch(`${API_BASE_URL}/api/v1/modules`, { signal, cache: 'no-store' })
   if (response.status === 401) {
     if (typeof window !== 'undefined') window.location.href = '/login'
     throw new Error('Niet ingelogd')
@@ -111,7 +111,7 @@ export async function fetchModuleData(
   })
 
   const url = `${API_BASE_URL}/api/v1/modules/${module}?${searchParams.toString()}`
-  const response = await fetch(url, signal ? { signal } : undefined)
+  const response = await fetch(url, { signal, cache: 'no-store' })
 
   if (response.status === 401) {
     if (typeof window !== 'undefined') {
@@ -175,6 +175,7 @@ export async function fetchCascadingFilterOptions(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ active_filters: activeFilters }),
     signal,
+    cache: 'no-store',
   })
 
   if (response.status === 401) {
@@ -211,7 +212,7 @@ export async function fetchDetailData(
     url += `?grouping=${encodeURIComponent(groupingField)}`
   }
 
-  const response = await fetch(url, signal ? { signal } : undefined)
+  const response = await fetch(url, { signal, cache: 'no-store' })
 
   if (response.status === 401) {
     if (typeof window !== 'undefined') window.location.href = '/login'

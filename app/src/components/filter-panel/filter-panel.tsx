@@ -702,7 +702,7 @@ export function FilterPanel({
     const controller = new AbortController()
     async function fetchStats() {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/v1/modules/${module}/stats`, { signal: controller.signal })
+        const response = await fetch(`${API_BASE_URL}/api/v1/modules/${module}/stats`, { signal: controller.signal, cache: 'no-store' })
         if (!response.ok) return
         const data = await response.json()
         setModuleStats({
