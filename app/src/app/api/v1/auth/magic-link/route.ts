@@ -201,7 +201,8 @@ export async function POST(request: NextRequest) {
     const { Resend } = await import('resend')
     const resend = new Resend(RESEND_API_KEY)
 
-    await resend.emails.send({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- tracking supported by Resend API but not yet in SDK types
+    await (resend.emails.send as any)({
       from: 'Rijksuitgaven.nl <contact@rijksuitgaven.nl>',
       to: email,
       subject: 'Uw inloglink voor Rijksuitgaven',
@@ -217,7 +218,6 @@ export async function POST(request: NextRequest) {
         'Als u dit niet heeft aangevraagd, kunt u deze e-mail negeren.',
         `Lukt het niet? Neem contact op met ons supportteam: contact@${origin.replace(/^https?:\/\//, '')}`,
       ].join('\n'),
-      // Auth links must NEVER be wrapped by click tracking — breaks token_hash
       tracking: { click: false, open: false },
     })
   } catch (err) {

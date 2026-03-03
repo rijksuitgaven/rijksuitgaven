@@ -236,7 +236,8 @@ export async function POST(
   // Send branded welcome email via Resend
   const resend = new Resend(RESEND_API_KEY)
   const displayHost = origin.replace(/^https?:\/\//, '')
-  const { error: sendError } = await resend.emails.send({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- tracking supported by Resend API but not yet in SDK types
+  const { error: sendError } = await (resend.emails.send as any)({
     from: 'Rijksuitgaven <contact@rijksuitgaven.nl>',
     to: person.email,
     subject: 'Uw inloglink voor Rijksuitgaven 2.0',
@@ -254,7 +255,6 @@ export async function POST(
       '',
       activationLink,
     ].join('\n'),
-    // Auth links must NEVER be wrapped by click tracking — breaks token_hash
     tracking: { click: false, open: false },
   })
 
