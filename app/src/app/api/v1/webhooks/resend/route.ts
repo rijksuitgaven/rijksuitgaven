@@ -23,6 +23,15 @@ const UAParser = require('ua-parser-js') as (ua: string) => { browser: { name?: 
 const WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET
 
 // Email event types we track for campaign analytics
+/**
+ * Extract bare email from Resend "to" field.
+ * Resend may return "Name <email>" or "=?UTF-8?Q?...?= <email>" format.
+ */
+function extractEmail(raw: string): string {
+  const match = raw.match(/<([^>]+)>/)
+  return match ? match[1].toLowerCase() : raw.toLowerCase().trim()
+}
+
 const TRACKED_EMAIL_EVENTS = new Set([
   'email.delivered',
   'email.opened',
@@ -149,7 +158,7 @@ export async function POST(request: NextRequest) {
     const campaignId = data.tags?.campaign_id || null
     const sequenceId = data.tags?.sequence_id || null
     const stepId = data.tags?.step_id || null
-    const recipientEmail = data.to?.[0]
+    const recipientEmail = data.to?.[0] ? extractEmail(data.to[0]) : undefined
     const resendEmailId = data.email_id
 
     // Only track if we have a campaign_id or sequence_id tag (our emails, not transactional)
