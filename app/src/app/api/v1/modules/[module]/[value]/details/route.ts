@@ -8,6 +8,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { proxyToBackend, validateModule } from '../../../../../_lib/proxy'
 import { getAuthenticatedUser, unauthorizedResponse } from '../../../../../_lib/auth'
 
+// Force dynamic — never cache API proxy responses server-side
+export const dynamic = 'force-dynamic'
+
 interface RouteParams {
   params: Promise<{ module: string; value: string }>
 }

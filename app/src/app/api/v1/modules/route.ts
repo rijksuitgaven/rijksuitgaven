@@ -8,6 +8,9 @@ import { NextRequest } from 'next/server'
 import { proxyToBackend } from '../../_lib/proxy'
 import { getAuthenticatedUser, unauthorizedResponse } from '../../_lib/auth'
 
+// Force dynamic — never cache API proxy responses server-side
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   const session = await getAuthenticatedUser()
   if (!session) return unauthorizedResponse()
