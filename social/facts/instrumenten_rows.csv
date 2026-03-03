@@ -1,0 +1,501 @@
+fact_id,ontvanger,jaar,bedrag,descriptor,type
+INSTR-001,Sociale Verzekeringsbank,2024,27828000000,Rijksbijdrage vermogenstekort ouderdomsfonds,Bijdrage aan ZBOs en RWTs
+INSTR-002,Sociale Verzekeringsbank,2022,17612000000,RB VERMOGENSTEK OF,Bijdrage B&S Fondsen
+INSTR-003,Sociale Verzekeringsbank,2023,17543400000,Rijksbijdrage vermogenstekort ouderdomsfonds,Bijdrage aan ZBOs en RWTs
+INSTR-004,Zorginstituut Nederland,2024,15550000000,BEK Bijdr Wlz,Bekostiging
+INSTR-005,Zorginstituut Nederland,2023,14449325000,Afsluiting AFBZ,Bekostiging
+INSTR-006,TenneT Holding B.V.,2024,13100000000,Lening TenneT,Leningen
+INSTR-007,Zorginstituut Nederland,2023,9650000000,Bijdr Wlz,Bekostiging
+INSTR-008,Geanonimiseerde ontvanger(s) van Inkomensoverdrachten voor Zorgtoeslag,2023,8391128000,Zorgtoeslag,Inkomensoverdrachten
+INSTR-009,Politie,2023,7276336000,Bijdrage ZBO's/RWT's: Politie,Bijdrage aan ZBOs en RWTs
+INSTR-010,Politie,2022,7089791000,Politie,Bijdragen aan ZBOs/RWTs
+INSTR-011,Geanonimiseerde ontvanger(s) van Inkomensoverdrachten voor INK Zorgtoeslag,2024,7043866000,INK Zorgtoeslag,Inkomensoverdrachten
+INSTR-012,Zorginstituut Nederland,2024,5302200000,BEK Bijdrage Kosten Korting (BIKK),Bekostiging
+INSTR-013,Belastingdienst/Toeslagen,2024,5096982000,Uitkeringslasten WKB,Inkomensoverdrachten
+INSTR-014,Invoerrechten,2022,4991221000,Invoerrechten,Bijdrage (inter)nationale orgs
+INSTR-015,Belastingdienst/Toeslagen,2024,4937612000,Uitkeringslasten KOT,Inkomensoverdrachten
+INSTR-016,BNI-afdrachten,2022,4897609000,BNI-afdrachten,Bijdrage (inter)nationale orgs
+INSTR-017,Zorginstituut Nederland,2023,4823800000,Bijdrage Kosten Korting (BIKK),Bekostiging
+INSTR-018,Sociale Verzekeringsbank,2024,4625128000,Uitkeringslasten AKW,Inkomensoverdrachten
+INSTR-019,Invoerrechten,2023,4526754000,Invoerrechten,Bijdrage aan (inter-)nationale organisaties
+INSTR-020,Uitvoeringsinstituut werknemersverzekeringen,2024,4378700000,Uitkeringslasten WAJONG,Inkomensoverdrachten
+INSTR-021,Belastingdienst/Toeslagen,2023,4377463000,Uitkeringslasten KOT,Inkomensoverdrachten
+INSTR-022,Sociale Verzekeringsbank,2023,4369419000,Uitkeringslasten AKW,Inkomensoverdrachten
+INSTR-023,Ministerie van Financien,2022,4298568000,Huurtoeslag,Inkomensoverdrachten
+INSTR-024,BNI-afdrachten,2023,4222901000,BNI-afdrachten,Bijdrage aan (inter-)nationale organisaties
+INSTR-025,Belastingdienst/Toeslagen,2022,4104209000,UITKL KOT,Inkomensoverdrachten
+INSTR-026,Uitvoeringsinstituut werknemersverzekeringen,2023,4064100000,Uitkeringslasten Wajong,Inkomensoverdrachten
+INSTR-027,Sociale Verzekeringsbank,2022,3935400000,UITKERINGSLASTEN AKW,Inkomensoverdrachten
+INSTR-028,Centraal Bureau COA,2024,3926875000,COA,Bijdrage aan ZBOs en RWTs
+INSTR-029,Belastingdienst/Toeslagen,2023,3810605000,Uitkeringslasten WKB,Inkomensoverdrachten
+INSTR-030,Uitvoeringsinstituut werknemersverzeke-,2022,3640393000,UITKL WAJONG,Inkomensoverdrachten
+INSTR-031,Zorginstituut Nederland,2024,3303300000,BEK Rijksbijdrage 18-,Bekostiging
+INSTR-032,Zorginstituut Nederland,2023,3078200000,Rijksbijdrage 18-,Bekostiging
+INSTR-033,Sociale Verzekeringsbank,2024,3066400000,Rijksbijdrage BIKK AOW,Bijdrage aan ZBOs en RWTs
+INSTR-034,Belastingdienst/Toeslagen,2022,2897452000,UITKERINGSLASTEN WKB,Inkomensoverdrachten
+INSTR-035,Sociale Verzekeringsbank,2023,2802100000,Rijksbijdrage bikk AOW,Bijdrage aan ZBOs en RWTs
+INSTR-036,Gemeente Amsterdam,2024,2703073000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-037,Begrotingsreserve,2022,2626555000,Storting in begrotingsreserve Duurzame Energie (SE),Storting begrotingsreserve
+INSTR-038,Geanonimiseerde ontvanger(s) van Leningen voor Rentedragende lening (NR),2022,2600352000,Rentedragende lening (NR),Leningen
+INSTR-039,Centraal Orgaan opvang asielzoekers (COA),2023,2546953000,Bijdrage ZBO's/RWT's: COA,Bijdrage aan ZBOs en RWTs
+INSTR-040,Interne overboeking,2022,2486783000,Onderzoeksdeel wo,Bekostiging
+INSTR-041,Sociale Verzekeringsbank,2022,2420700000,RB BIKK AOW,Bijdrage B&S Fondsen
+INSTR-042,Gemeente Amsterdam,2022,2405736000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-043,Gemeente Rotterdam,2024,2053954000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-044,ProRail B.V.,2023,2050706000,Subsidieregeling taakuitoefening beheerders van de HSWI,Bijdrage aan ZBOs en RWTs
+INSTR-045,Gemeente Rotterdam,2023,1937054000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-046,Geanonimiseerde ontvanger(s) van Leningen voor Rentedragende lening (NR),2023,1899590000,Rentedragende lening (NR),Leningen
+INSTR-047,Gemeente Rotterdam,2022,1830192000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-048,Gemeente 's-Gravenhage,2024,1624232000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-049,TenneT Holding B.V.,2023,1602000000,Kapitaaluitbr.TenneT,Vermogensverschaffing/-onttrekking 
+INSTR-050,Centraal Bureau COA,2022,1570085000,COA,Bijdragen aan ZBOs/RWTs
+INSTR-051,Gemeente 's-Gravenhage,2023,1552228000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-052,Gemeente 's-Gravenhage,2022,1468517000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-053,BTW-afdrachten,2024,1467433000,BTW-afdrachten,Bijdrage aan (inter-)nationale organisaties
+INSTR-054,Dienst Justitiële Inrichtingen,2023,1418685000,Bijdrage Agentschappen: DJI-gevangeniswezen,Bijdrage aan agentschappen
+INSTR-055,BTW-afdrachten,2023,1409352000,BTW-afdrachten,Bijdrage aan (inter-)nationale organisaties
+INSTR-056,Dienst Justitiële Inrichtingen,2022,1373659000,DJI-gevangeniswezen,Bijdrage Agentschappen
+INSTR-057,Raad voor de Rechtspraak,2023,1326134000,Bijdrage medeoverheden: Raad voor de rechtspraak,Bijdrage aan medeoverheden
+INSTR-058,Dienst Justitiële Inrichtingen,2023,1253199000,Bijdrage Agentschappen: DJI-Forensische zorg,Bijdrage aan agentschappen
+INSTR-059,BTW-afdrachten,2022,1245232000,BTW-afdrachten,Bijdrage (inter)nationale orgs
+INSTR-060,Geanonimiseerde ontvanger(s) van Leningen voor Rentedragende lening (NR),2024,1239412000,Rentedragende lening (NR),Leningen
+INSTR-061,TenneT Holding B.V.,2022,1230000000,Kap.uitbr. Tennet,Vermogenverschaffing
+INSTR-062,Raad voor de Rechtspraak,2022,1229945000,Raad voor de rechtspraak,Bijdragen aan medeoverheden
+INSTR-063,Geanonimiseerde ontvanger(s) van Leningen voor Basisbeurs prestatiebeurs (NR),2024,1209060000,Basisbeurs prestatiebeurs (NR),Leningen
+INSTR-064,Uitvoeringsinstituut werknemersverzeke-,2022,1208260000,NOW,Subsidies
+INSTR-065,Dienst Justitiële Inrichtingen,2022,1174876000,DJI-Forensische zorg,Bijdrage Agentschappen
+INSTR-066,Uitvoeringsinstituut werknemersverzekeringen,2024,1155793000,Tijdelijke noodmaatregel overbrugg voor werkbehoud,Subsidies (regelingen)
+INSTR-067,EBN B.V.,2022,1000000000,Lening EBN t.b.v. Bergermeer,Leningen
+INSTR-068,Geanonimiseerde ontvanger(s) van Leningen voor Reisvoorziening (NR),2022,974265000,Reisvoorziening (NR),Leningen
+INSTR-069,Commissariaat voor de Media,2024,959044000,Landelijke publieke omroep,Bekostiging
+INSTR-070,Vattenfall Sales Nederland N.V.,2023,958565000,Subsidie prijsplafond energieleveranciers,Subsidies (regelingen)
+INSTR-071,Commissariaat voor de Media,2023,957047000,Landelijke publieke omroep,Bekostiging
+INSTR-072,Commissariaat voor de Media,2022,852640000,Landelijke publieke omroep,Bekostiging
+INSTR-073,Gemeente Utrecht,2024,851132000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-074,Geanonimiseerde ontvanger(s) van Inkomensoverdrachten voor Reisvoorziening gift (R),2022,845408000,Reisvoorziening gift (R),Inkomensoverdrachten
+INSTR-075,Universiteit Utrecht,2024,832481000,Onderwijsdeel wo,Bekostiging
+INSTR-076,Immigratie- en Naturalisatiedienst,2024,805163000,IND,Bijdrage aan agentschappen
+INSTR-077,Gemeente Utrecht,2023,803640000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-078,Universiteit Utrecht,2023,798407000,Onderwijsdeel wo,Bekostiging
+INSTR-079,Universiteit van Amsterdam,2024,789439000,Onderwijsdeel wo,Bekostiging
+INSTR-080,Interne overboeking,2022,787747000,Ondersteuning geneeskundig onderwijs en onderzoek,Bekostiging
+INSTR-081,Geanonimiseerde ontvanger(s) van Inkomensoverdrachten voor Aanvullende beurs gift (R),2024,785246000,Aanvullende beurs gift (R),Inkomensoverdrachten
+INSTR-082,Geanonimiseerde ontvanger(s) van Subsidies voor Regeling subsidie financiering vaste lasten MKB COVID-19,2022,780476000,Regeling subsidie financiering vaste lasten MKB COVID-19,Subsidies
+INSTR-083,Immigratie- en Naturalisatiedienst,2023,774066000,Bijdrage Agentschappen: IND,Bijdrage aan agentschappen
+INSTR-084,Universiteit Utrecht,2022,751331000,Onderwijsdeel wo,Bekostiging
+INSTR-085,Universiteit van Amsterdam,2023,749111000,Onderwijsdeel wo,Bekostiging
+INSTR-086,Gemeente Utrecht,2022,745823000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-087,NS Reizigers B.V.,2023,744617000,Reisvoorziening gift (R),Inkomensoverdrachten
+INSTR-088,Geanonimiseerde ontvanger(s) van Inkomensoverdrachten voor Aanvullende beurs gift (R),2023,715957000,Aanvullende beurs gift (R),Inkomensoverdrachten
+INSTR-089,Geanonimiseerde ontvanger(s) van Inkomensoverdrachten voor Aanvullende beurs gift (R),2022,714951000,Aanvullende beurs gift (R),Inkomensoverdrachten
+INSTR-090,Rijksuniversiteit Groningen,2024,714661000,Onderwijsdeel wo,Bekostiging
+INSTR-091,Universiteit van Amsterdam,2022,709422000,Onderwijsdeel wo,Bekostiging
+INSTR-092,Geanonimiseerde ontvanger(s) van Bijdrage aan ZBOs en RWTs voor Bijdrage aan ACM,2023,707005000,Bijdrage aan ACM,Bijdrage aan ZBOs en RWTs
+INSTR-093,Gemeente Amsterdam,2024,704953000,Gebundeld inkomensdeel aan gemeenten,Inkomensoverdrachten
+INSTR-094,Gemeente Oldambt,2023,699868000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-095,NS Reizigers B.V.,2022,696625000,Wet personenvervoer,Subsidies
+INSTR-096,Geanonimiseerde ontvanger(s) van ZBO ACM voor Bijdrage aan ACM,2022,694600000,Bijdrage aan ACM,ZBO ACM
+INSTR-097,Eneco Consumenten,2023,689394000,Subsidie prijsplafond energieleveranciers,Subsidies (regelingen)
+INSTR-098,Rijksuniversiteit Groningen,2023,688728000,Onderwijsdeel wo,Bekostiging
+INSTR-099,Vattenfall Sales Nederland N.V.,2022,684672000,Tijdelijke overbruggingsregeling compensatie energieprijzen kleinverbruikers 2022,Subsidies
+INSTR-100,Essent Retail Energie B.V.,2023,667228000,Subsidie prijsplafond energieleveranciers,Subsidies (regelingen)
+INSTR-101,Gemeente Amsterdam,2023,654435000,Gebundeld inkomensdeel aan gemeenten,Inkomensoverdrachten
+INSTR-102,Nederlandse organisatie voor,2024,646358000,NWO,Bekostiging
+INSTR-103,Universiteit Leiden,2024,644039000,Onderwijsdeel wo,Bekostiging
+INSTR-104,Technische Universiteit Delft,2024,641950000,Onderwijsdeel wo,Bekostiging
+INSTR-105,ProRail B.V.,2023,640367000,Besluit Infrastructuurfonds,Bijdrage aan ZBOs en RWTs
+INSTR-106,Rijksuniversiteit Groningen,2022,636922000,Onderwijsdeel wo,Bekostiging
+INSTR-107,Ons Middelbaar Onderwijs,2024,624740000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-108,Universiteit Leiden,2023,621166000,Onderwijsdeel wo,Bekostiging
+INSTR-109,Technische Universiteit Delft,2023,615414000,Onderwijsdeel wo,Bekostiging
+INSTR-110,Het College van Bestuur van de Vrije Universiteit,2024,612636000,Onderwijsdeel wo,Bekostiging
+INSTR-111,Gemeente Groningen,2024,612481000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-112,NS-Reizigers (NS),2022,612016000,Reisvoorziening bijdrage aan vervoersbedrijven (R),Inkomensoverdrachten
+INSTR-113,Geanonimiseerde ontvanger(s) van Leningen voor Aanvullende beurs prestatiebeurs (NR),2022,604903000,Aanvullende beurs prestatiebeurs (NR),Leningen
+INSTR-114,Gemeente Amsterdam,2022,599243000,BUIG,Inkomensoverdrachten
+INSTR-115,Metropoolregio Rotterdam Den Haag,2023,594192000,Brede doeluitkering verkeer en vervoer Vervoerregio`s,Subsidies (regelingen)
+INSTR-116,Universiteit Leiden,2022,589382000,Onderwijsdeel wo,Bekostiging
+INSTR-117,Nederlandse organisatie voor,2023,589305000,NWO,Bekostiging
+INSTR-118,Stichting VU,2023,585857000,Onderwijsdeel wo,Bekostiging
+INSTR-119,Ons Middelbaar Onderwijs,2023,581089000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-120,Essent Retail Energie B.V.,2022,578581000,Tijdelijke overbruggingsregeling compensatie energieprijzen kleinverbruikers 2022,Subsidies
+INSTR-121,Technische Universiteit Delft,2022,578360000,Onderwijsdeel wo,Bekostiging
+INSTR-122,Gemeente Rotterdam,2024,574984000,Gebundeld inkomensdeel aan gemeenten,Inkomensoverdrachten
+INSTR-123,Erasmus Universiteit Rotterdam,2024,573410000,Onderwijsdeel wo,Bekostiging
+INSTR-124,Gemeente Groningen,2023,571864000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-125,Gemeente Eindhoven,2024,566101000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-126,Metropoolregio Rotterdam Den Haag (MRDH),2022,562060000,Wet Brede Doeluitkering Verkeer en Vervoer,Bijdrage aan medeoverheden
+INSTR-127,NS-Reizigers,2024,551903000,Reisvoorziening gift(R),Inkomensoverdrachten
+INSTR-128,Gemeente Rotterdam,2023,550866000,Gebundeld inkomensdeel aan gemeenten,Inkomensoverdrachten
+INSTR-129,Erasmus Universiteit Rotterdam,2023,549405000,Onderwijsdeel wo,Bekostiging
+INSTR-130,Het College van Bestuur van de Radboud Universiteit Nijmegen,2024,545949000,Onderwijsdeel wo,Bekostiging
+INSTR-131,Het College van Bestuur van de Vrije Universiteit,2022,545767000,Onderwijsdeel wo,Bekostiging
+INSTR-132,Gemeente Tilburg,2024,535571000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-133,Belastingdienst/Toeslagen,2023,530773000,Lage-inkomensvoordeel,Inkomensoverdrachten
+INSTR-134,Ons Middelbaar Onderwijs,2022,530722000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-135,Immigratie- en Naturalisatiedienst,2022,527678000,IND,Bijdrage Agentschappen
+INSTR-136,Stichting Radboud Universiteit,2023,526135000,Onderwijsdeel wo,Bekostiging
+INSTR-137,Uitvoeringsinstituut werknemersverzekeringen,2023,525403000,Uitvoeringskosten UWV,Bijdrage aan ZBOs en RWTs
+INSTR-138,Gemeente Groningen,2022,524273000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-139,Gemeente Rotterdam,2022,523730000,BUIG,Inkomensoverdrachten
+INSTR-140,Gemeente Eindhoven,2023,523149000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-141,Uitvoeringsinstituut werknemersverzekeringen,2024,520728000,Uitvoeringskosten UWV,Bijdrage aan ZBOs en RWTs
+INSTR-142,Erasmus Universiteit Rotterdam,2022,513422000,Onderwijsdeel wo,Bekostiging
+INSTR-143,Geanonimiseerde ontvanger(s) van Subsidies (regelingen) voor ISDE kleine apparaten,2023,510696000,ISDE kleine apparaten,Subsidies (regelingen)
+INSTR-144,NWO Ned Org Wetensch Onderz,2022,508478000,NWO,Bekostiging
+INSTR-145,Uitvoeringsinstituut werknemersverzeke-,2022,507941000,UITVKSTN UWV,Bijdrage ZBO en RWT
+INSTR-146,Gemeente Tilburg,2023,501000000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-147,Stedin Holding N.V.,2023,500000000,Kap. reg. netbeheer,Vermogensverschaffing/-onttrekking 
+INSTR-148,Eneco Consumenten,2022,499486000,Tijdelijke overbruggingsregeling compensatie energieprijzen kleinverbruikers 2022,Subsidies
+INSTR-149,Het College van Bestuur van de Radboud Universiteit Nijmegen,2022,497593000,Onderwijsdeel wo,Bekostiging
+INSTR-150,Geanonimiseerde ontvanger(s) van Inkomensoverdrachten voor Basisbeurs gift (R),2022,494768000,Basisbeurs gift (R),Inkomensoverdrachten
+INSTR-151,Universiteit Maastricht,2024,481300000,Onderwijsdeel wo,Bekostiging
+INSTR-152,Uitvoeringsinstituut werknemersverzekeringen,2024,479900000,Toeslagenwet,Inkomensoverdrachten
+INSTR-153,Gemeenschappelijke Regeling Samenwerkingsverband Noord-Nederland,2022,479617000,"Subsidieregeling (BA blok A, C, E)",Subsidies
+INSTR-154,Gemeente Eindhoven,2022,476630000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-155,Vervoerregio Amsterdam,2023,471827000,Brede doeluitkering verkeer en vervoer Vervoerregio`s,Subsidies (regelingen)
+INSTR-156,Gemeente Almere,2024,468141000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-157,Gemeente Tilburg,2022,465455000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-158,Belastingdienst/Toeslagen,2024,461658000,Lage-inkomensvoordeel,Inkomensoverdrachten
+INSTR-159,Geanonimiseerde ontvanger(s) van Subsidies (regelingen) voor ISDE kleine apparaten,2024,460485000,ISDE kleine apparaten,Subsidies (regelingen)
+INSTR-160,Universiteit Maastricht,2023,455766000,Onderwijsdeel wo,Bekostiging
+INSTR-161,Sociale Verzekeringsbank,2024,455079000,AIO,Inkomensoverdrachten
+INSTR-162,De Vervoerregio Amsterdam,2022,443632000,Wet Brede Doeluitkering Verkeer en Vervoer,Bijdrage aan medeoverheden
+INSTR-163,Gemeente Almere,2023,443059000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-164,Gemeente Nijmegen,2024,440278000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-165,Provincie Gelderland,2024,438199000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-166,Uitvoeringsinstituut werknemersverzekeringen,2023,436400000,Toeslagenwet,Inkomensoverdrachten
+INSTR-167,Gemeente Arnhem,2024,434043000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-168,Provincie Noord-Brabant,2024,432943000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-169,Dienst Uitvoering Onderwijs,2024,431893000,Dienst Uitvoering Onderwijs (DUO),Bijdrage aan agentschappen
+INSTR-170,Provincie Zuid-Holland,2024,425813000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-171,Uitvoeringsinstituut werknemersverzekeringen,2023,424315000,Bijdrage zbo/rwt,Subsidies (regelingen)
+INSTR-172,Maastricht University,2022,422356000,Onderwijsdeel wo,Bekostiging
+INSTR-173,Gemeente 's-Gravenhage,2024,419765000,Gebundeld inkomensdeel aan gemeenten,Inkomensoverdrachten
+INSTR-174,ZonMW,2024,418293000,BZR ZonMw,Bijdrage aan ZBOs en RWTs
+INSTR-175,Gemeente Almere,2022,417612000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-176,Uitvoeringsinstituut werknemersverzeke-,2022,412999000,Toeslagenwet,Inkomensoverdrachten
+INSTR-177,Sociale Verzekeringsbank,2023,407196000,Uitkeringslasten AIO,Inkomensoverdrachten
+INSTR-178,Gemeente Arnhem,2023,407008000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-179,Gemeente Nijmegen,2023,406788000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-180,Geanonimiseerde ontvanger(s) van (Schade)vergoedingen voor Aardbeving schade Groningen,2024,406256000,Aardbeving schade Groningen,(Schade)vergoedingen
+INSTR-181,Gemeente Enschede,2024,404792000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-182,Geanonimiseerde ontvanger(s) van Inkomensoverdrachten voor Basisbeurs gift (R),2023,396473000,Basisbeurs gift (R),Inkomensoverdrachten
+INSTR-183,Stichting Fontys,2022,395565000,Onderwijsdeel hbo,Bekostiging
+INSTR-184,Gemeente Breda,2024,390857000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-185,Stichting Hogeschool van Amsterdam,2022,387341000,Onderwijsdeel hbo,Bekostiging
+INSTR-186,Stichting Fontys,2023,381798000,Onderwijsdeel hbo,Bekostiging
+INSTR-187,Gemeente Enschede,2023,381098000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-188,Gemeente Nijmegen,2022,380993000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-189,Gemeente Arnhem,2022,379216000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-190,Dienst Uitvoering Onderwijs,2023,378734000,Dienst Uitvoering Onderwijs (DUO),Bijdrage aan agentschappen
+INSTR-191,Gemeente 's-Gravenhage,2023,373861000,Gebundeld inkomensdeel aan gemeenten,Inkomensoverdrachten
+INSTR-192,Gemeente Apeldoorn,2024,373639000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-193,Stichting Fontys,2024,369178000,Onderwijsdeel hbo,Bekostiging
+INSTR-194,Stichting Hogeschool van Amsterdam,2023,366691000,Onderwijsdeel hbo,Bekostiging
+INSTR-195,Stichting Hogeschool van Amsterdam,2024,366015000,Onderwijsdeel hbo,Bekostiging
+INSTR-196,Gemeente Breda,2023,364916000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-197,Stichting Regionaal Opleidingencentrum van Amsterdam - Flevoland,2024,362605000,Bekostiging MBO-instellingen,Bekostiging
+INSTR-198,Belastingdienst/Toeslagen,2022,361735000,Lage-inkomensvoordeel,Inkomensoverdrachten
+INSTR-199,Gemeente Zaanstad,2024,361453000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-200,RVO,2023,361286000,Nationaal isolatie programma (lokale aanpak woningisolatie),Bijdrage aan medeoverheden
+INSTR-201,Gemeente Haarlem,2024,361025000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-202,Geanonimiseerde ontvanger(s) van Inkomensoverdrachten voor Basisbeurs gift (R),2024,360774000,Basisbeurs gift (R),Inkomensoverdrachten
+INSTR-203,ZORGONDERZOEK NEDERLAND EN,2023,358867000,ZonMw,Bijdrage aan ZBOs en RWTs
+INSTR-204,Gemeente 's-Gravenhage,2022,356726000,BUIG,Inkomensoverdrachten
+INSTR-205,Gemeente Enschede,2022,356603000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-206,Stichting Carmelcollege,2024,352628000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-207,LPBL B.V.,2022,351533000,Uitkeringslasten AIO,Inkomensoverdrachten
+INSTR-208,Gemeente Apeldoorn,2023,349325000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-209,Provincie Noord-Brabant,2023,344758000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-210,Provincie Zuid-Holland,2023,340540000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-211,Technische Universiteit Eindhoven,2024,340469000,Onderwijsdeel wo,Bekostiging
+INSTR-212,Stichting Regionaal Opleidingencentrum van Amsterdam - Flevoland,2023,340119000,Bekostiging MBO-instellingen,Bekostiging
+INSTR-213,Gemeente Haarlem,2023,339035000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-214,Gemeente Zaanstad,2023,338913000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-215,Provincie Utrecht,2024,338759000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-216,Gemeente Breda,2022,337961000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-217,Gemeente 's-Hertogenbosch,2024,337213000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-218,Stichting Nidos,2024,335637000,NIDOS - opvang,Bijdrage aan ZBOs en RWTs
+INSTR-219,Gemeente Leeuwarden,2024,335313000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-220,Stichting Carmelcollege,2023,334405000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-221,Gemeente Amersfoort,2024,334022000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-222,Provincie Gelderland,2023,331940000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-223,Stichting Hogeschool Rotterdam,2022,330832000,Onderwijsdeel hbo,Bekostiging
+INSTR-224,Invest-NL N.V.,2024,330000000,Kapitaalinjectie Invest-NL,Vermogensverschaffing/-onttrekking
+INSTR-225,Technische Universiteit Eindhoven,2023,328105000,Onderwijsdeel wo,Bekostiging
+INSTR-226,Wageningen University,2024,327856000,Onderwijsdeel wo,Bekostiging
+INSTR-227,TenneT TSO B.V.,2024,327285000,Net op Zee Tennet (SE),Subsidies (regelingen)
+INSTR-228,Dienst Uitvoering Onderwijs,2022,321442000,Dienst Uitvoering Onderwijs (DUO),Bijdragen aan agentschappen
+INSTR-229,Gemeente Apeldoorn,2022,319249000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-230,Gemeente Amsterdam,2023,319084000,Decentralisatie uitkeringen,Bijdrage aan medeoverheden
+INSTR-231,Provincie Noord-Holland,2024,317067000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-232,Stichting Regionaal Opleidingencentrum van Amsterdam - Flevoland,2022,315716000,Bekostiging MBO-instellingen,Bekostiging
+INSTR-233,Gemeente Haarlem,2022,315547000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-234,Gemeente Amersfoort,2023,314839000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-235,Theologische Universiteit van de Christelijke Gereformeerde Kerken,2023,314656000,Onderwijsdeel hbo,Bekostiging
+INSTR-236,Wageningen University,2023,314529000,Onderwijsdeel wo,Bekostiging
+INSTR-237,Universiteit Twente,2024,314385000,Onderwijsdeel wo,Bekostiging
+INSTR-238,Gemeente Zaanstad,2022,314011000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-239,Gemeente Leeuwarden,2023,313373000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-240,Gemeente 's-Hertogenbosch,2023,312662000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-241,Stichting Hogeschool Rotterdam,2024,312094000,Onderwijsdeel hbo,Bekostiging
+INSTR-242,Technische Universiteit Eindhoven,2022,311079000,Onderwijsdeel wo,Bekostiging
+INSTR-243,Provincie Noord-Brabant,2022,308160000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-244,Universiteit Twente,2023,307578000,Onderwijsdeel wo,Bekostiging
+INSTR-245,Stichting Hogeschool van Arnhem en Nijmegen,2022,306265000,Onderwijsdeel hbo,Bekostiging
+INSTR-246,Geanonimiseerde ontvanger(s) van Subsidies (regelingen) voor Landelijke beëindigingsregeling veehouderijen,2024,305295000,Landelijke beëindigingsregeling veehouderijen,Subsidies (regelingen)
+INSTR-247,Gemeente Zwolle,2024,305157000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-248,Stichting Carmelcollege,2022,304482000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-249,Provincie Zuid-Holland,2022,302300000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-250,TNO KWALITEIT VAN LEVEN,2024,301401000,Bijdrage aan TNO,Bijdrage aan ZBOs en RWTs
+INSTR-251,TenneT TSO B.V.,2023,300872000,Net op Zee Tennet (SE),Subsidies (regelingen)
+INSTR-252,Stichting Hogeschool Utrecht,2022,296166000,Onderwijsdeel hbo,Bekostiging
+INSTR-253,Provincie Gelderland,2022,295827000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-254,Gemeente Dordrecht,2024,294218000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-255,Gemeente Maastricht,2024,294047000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-256,Wageningen University,2022,293726000,Onderwijsdeel wo,Bekostiging
+INSTR-257,Stichting Hogeschool van Arnhem en Nijmegen,2023,292730000,Onderwijsdeel hbo,Bekostiging
+INSTR-258,Gemeente Amersfoort,2022,292380000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-259,TNO KWALITEIT VAN LEVEN,2023,291814000,Bijdrage aan TNO,Bijdrage aan ZBOs en RWTs
+INSTR-260,Stichting Hogeschool van Arnhem en Nijmegen,2024,291750000,Onderwijsdeel hbo,Bekostiging
+INSTR-261,Stichting Hogeschool Utrecht,2024,290670000,Onderwijsdeel hbo,Bekostiging
+INSTR-262,Gemeente Leiden,2024,290451000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-263,Stichting Avans,2022,290023000,Onderwijsdeel hbo,Bekostiging
+INSTR-264,Gemeente 's-Hertogenbosch,2022,289766000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-265,Vereniging Studentenkaart Streekvervoer,2023,288454000,Reisvoorziening gift (R),Inkomensoverdrachten
+INSTR-266,Gemeente Leeuwarden,2022,288331000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-267,Stichting Hogeschool Utrecht,2023,288174000,Onderwijsdeel hbo,Bekostiging
+INSTR-268,Universiteit Twente,2022,287925000,Onderwijsdeel wo,Bekostiging
+INSTR-269,Provincie Noord-Holland,2023,287356000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-270,Gemeente Zwolle,2023,287053000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-271,Gemeente Amsterdam,2022,282760000,Decentralisatie-uitkeringen,Bijdrage aan medeoverheden
+INSTR-272,Baten-lastendienst Logius,2023,282477000,Logius,Bijdrage aan agentschappen
+INSTR-273,Gemeente Dordrecht,2023,281061000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-274,Gemeente Zoetermeer,2024,279916000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-275,Provincie Overijssel,2024,279588000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-276,Geanonimiseerde ontvanger(s) van Leningen voor Basisbeurs prestatiebeurs (NR),2023,278348000,Basisbeurs prestatiebeurs (NR),Leningen
+INSTR-277,Stichting Voorbereiding PALLAS-reactor,2024,277906000,SUB Medische Isotopen,Subsidies (regelingen)
+INSTR-278,Stichting Avans,2023,277280000,Onderwijsdeel hbo,Bekostiging
+INSTR-279,Provincie Utrecht,2023,276877000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-280,Stichting Avans,2024,274664000,Onderwijsdeel hbo,Bekostiging
+INSTR-281,Vereniging Studentenkaart Streekvervoer,2022,274400000,Reisvoorziening bijdrage aan vervoersbedrijven (R),Inkomensoverdrachten
+INSTR-282,Rijksdienst voor Ondernemend Nederland,2024,274084000,Subsidieregeling praktijkleren,Subsidies (regelingen)
+INSTR-283,Provincie Overijssel,2023,273941000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-284,Gemeente Leiden,2023,271438000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-285,Budget Thuis B.V.,2022,271096000,Tijdelijke overbruggingsregeling compensatie energieprijzen kleinverbruikers 2022,Subsidies
+INSTR-286,Gemeente Maastricht,2023,270704000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-287,Gemeente Haarlemmermeer,2024,268959000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-288,Provincie Limburg,2024,266681000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-289,Stichting Hanzehogeschool Groningen,2022,266378000,Onderwijsdeel hbo,Bekostiging
+INSTR-290,"Stichting Limburgs Voortgezet Onderwijs, SWB voor bijzonder en openbaar ond.",2024,265497000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-291,Provincie Fryslân,2024,264067000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-292,Provincie Noord-Holland,2022,262781000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-293,Gemeente Zoetermeer,2023,262485000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-294,Gemeente Emmen,2024,262153000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-295,Gemeente Dordrecht,2022,261888000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-296,Gemeente Zwolle,2022,260888000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-297,Invest International BV,2023,260000000,Kap.Invest Internat.,Vermogensverschaffing/-onttrekking 
+INSTR-298,Gemeente Heerlen,2024,254766000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-299,NVWA,2023,252401000,Bijdrage aan NVWA (DGA),Bijdrage aan agentschappen
+INSTR-300,RIVM,2024,252250000,BAG RIVM: Opdrachtverlening aan kenniscentra,Bijdrage aan agentschappen
+INSTR-301,RVO,2022,252127000,Uitvoeringskosten reguliere schadeafhandeling,Bijdragen Baten-Lastendiensten
+INSTR-302,UNOCHA (Office Coordination Of Humanitarian Aff),2023,251991000,Noodhulpprogramma's,Bijdrage aan (inter-)nationale organisaties
+INSTR-303,Gemeente Maastricht,2022,251667000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-304,Provincie Overijssel,2022,250964000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-305,Provincie Utrecht,2022,250700000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-306,Stichting Lucas Onderwijs,2024,250169000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-307,Invest-NL N.V.,2023,250000000,Kapitaalinj.InvestNL,Vermogensverschaffing/-onttrekking 
+INSTR-308,Gemeente Haarlemmermeer,2023,249879000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-309,Stichting Nidos,2023,249847000,Bijdrage ZBO's/RWT's: NIDOS - opvang,Bijdrage aan ZBOs en RWTs
+INSTR-310,UNOCHA (Office Coordination Of Humanitarian Aff),2024,249792000,Noodhulpprogramma's,Bijdrage aan (inter-)nationale organisaties
+INSTR-311,Geanonimiseerde ontvanger(s) van Leningen voor Reisvoorziening (NR),2023,249168000,Reisvoorziening (NR),Leningen
+INSTR-312,Stichting Hanzehogeschool Groningen,2024,248074000,Onderwijsdeel hbo,Bekostiging
+INSTR-313,Gemeente Alkmaar,2024,246994000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-314,Gemeente Leiden,2022,246860000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-315,Stichting Hanzehogeschool Groningen,2023,246606000,Onderwijsdeel hbo,Bekostiging
+INSTR-316,Gemeente Emmen,2023,245801000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-317,Gemeente Delft,2024,245422000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-318,Geanonimiseerde ontvanger(s) van Leningen voor Aanvullende beurs prestatiebeurs (NR),2024,244247000,Aanvullende beurs prestatiebeurs (NR),Leningen
+INSTR-319,Gemeente Zoetermeer,2022,243721000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-320,Gemeente Venlo,2024,241664000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-321,Stichting Hoger Onderwijs Nederland,2022,240001000,Onderwijsdeel hbo,Bekostiging
+INSTR-322,"Stichting Limburgs Voortgezet Onderwijs, SWB voor bijzonder en openbaar ond.",2023,239172000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-323,Gemeente Heerlen,2023,239077000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-324,Geanonimiseerde ontvanger(s) van Leningen voor Basisbeurs prestatiebeurs (NR),2022,238201000,Basisbeurs prestatiebeurs (NR),Leningen
+INSTR-325,Stichting Saxion,2022,236040000,Onderwijsdeel hbo,Bekostiging
+INSTR-326,Gemeente Ede,2024,235946000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-327,Gemeente Deventer,2024,235880000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-328,Plastic-grondslag,2024,235308000,Plastic-grondslag,Bijdrage aan (inter-)nationale organisaties
+INSTR-329,Dienst Justitiële Inrichtingen,2024,233925000,DJI - jeugd,Bijdrage aan agentschappen
+INSTR-330,Ver. Chr. Voortgezet Onderwijs te Rotterdam en omgeving,2024,233759000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-331,Plastic-grondslag,2023,233215000,Plastic-grondslag,Bijdrage aan (inter-)nationale organisaties
+INSTR-332,Gemeente Alkmaar,2023,232695000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-333,Provincie Groningen,2024,231937000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-334,RVO,2023,230959000,Bijdrage aan RVO (DGA),Bijdrage aan agentschappen
+INSTR-335,Gemeente Emmen,2022,230012000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-336,Gemeente Haarlemmermeer,2022,229715000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-337,Vereniging Studentenkaart Streekvervoer,2024,229687000,Reisvoorziening gift(R),Inkomensoverdrachten
+INSTR-338,Belastingdienst/Blokaansluiting,2024,229665000,Tegemoetkoming blokaansluitingen (EM),Subsidies (regelingen)
+INSTR-339,Stichting Hoger Onderwijs Nederland,2024,228709000,Onderwijsdeel hbo,Bekostiging
+INSTR-340,Stichting Hoger Onderwijs Nederland,2023,228626000,Onderwijsdeel hbo,Bekostiging
+INSTR-341,Gemeente Delft,2023,226224000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-342,Gemeente Heerlen,2022,225683000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-343,Gemeente Venlo,2023,224000000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-344,Stichting Saxion,2024,223921000,Onderwijsdeel hbo,Bekostiging
+INSTR-345,Geanonimiseerde ontvanger(s) van Inkomensoverdrachten voor Overige uitgaven (R),2022,223375000,Overige uitgaven (R),Inkomensoverdrachten
+INSTR-346,NVWA,2022,223006000,Bijdrage aan NVWA (DGA),Bijdragen Baten-Lastendiensten
+INSTR-347,Stichting Saxion,2023,221888000,Onderwijsdeel hbo,Bekostiging
+INSTR-348,Stichting Lucas Onderwijs,2023,221787000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-349,Greenchoice,2022,221472000,Tijdelijke overbruggingsregeling compensatie energieprijzen kleinverbruikers 2022,Subsidies
+INSTR-350,Gemeente Sittard-Geleen,2024,221371000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-351,Gemeente Deventer,2023,220587000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-352,Gemeente Ede,2023,220453000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-353,Stichting Katholieke Universiteit Brabant,2024,220152000,Onderwijsdeel wo,Bekostiging
+INSTR-354,Eneco Consumenten,2022,220138000,Subsidie prijsplafond energieleveranciers,Subsidies
+INSTR-355,Invest International BV,2024,219837000,Kapitaalinjectie Invest International,Vermogensverschaffing/-onttrekking
+INSTR-356,Gemeente Alphen aan den Rijn,2024,218759000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-357,Rijksinstituut voor Volksgezondheid en Milieu (RIVM),2023,218232000,RIVM: Opdrachtverlening aan kenniscentra,Bijdrage aan agentschappen
+INSTR-358,Toeslagen,2024,217969000,Toegerekende uitgaven van Belastingen,Bijdrage aan (andere) begrotingshoofdstukken
+INSTR-359,Gemeente Alkmaar,2022,217356000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-360,TNO KWALITEIT VAN LEVEN,2022,216876000,BIJDRAGE AAN TNO,Bijdragen aan ZBO / RWT
+INSTR-361,Stichting BOOR,2024,216665000,Bekostiging Primair Onderwijs,Bekostiging
+INSTR-362,Gemeente Helmond,2024,216109000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-363,Douane,2024,215786000,Toegerekende uitgaven van Belastingen,Bijdrage aan (andere) begrotingshoofdstukken
+INSTR-364,Stichting Christel. Hogesch. Windesheim,2022,214550000,Onderwijsdeel hbo,Bekostiging
+INSTR-365,Geanonimiseerde ontvanger(s) van Subsidies voor ISDE kleine apparaten,2022,213690000,ISDE kleine apparaten,Subsidies
+INSTR-366,Provincie Flevoland,2023,213314000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-367,Stichting Katholieke Universiteit Brabant,2023,212478000,Onderwijsdeel wo,Bekostiging
+INSTR-368,Provincie Fryslân,2023,212368000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-369,TenneT TSO B.V.,2022,211975000,Net op Zee Tennet (SE),Subsidies
+INSTR-370,Ver. Chr. Voortgezet Onderwijs te Rotterdam en omgeving,2023,211039000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-371,Provincie Limburg,2023,209046000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-372,Stichting Limburgs Voortgezet Onder,2022,208110000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-373,Gemeente Delft,2022,208074000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-374,Politie,2022,207593000,Beheer meldkamers,Bijdragen aan ZBOs/RWTs
+INSTR-375,Gemeente Venlo,2022,207479000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-376,Gemeente Sittard-Geleen,2023,206401000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-377,Gemeente Deventer,2022,205630000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-378,Gemeente Alphen aan den Rijn,2023,205586000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-379,Gemeente Súdwest-Fryslân,2024,205193000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-380,Stichting Christelijke Hogeschool Windesheim,2023,204858000,Onderwijsdeel hbo,Bekostiging
+INSTR-381,Stichting Christel. Hogesch. Windesheim,2024,204622000,Onderwijsdeel hbo,Bekostiging
+INSTR-382,Stichting Hoger Beroepsonderwijs Haden,2022,203844000,Onderwijsdeel hbo,Bekostiging
+INSTR-383,Dienst Justitiële Inrichtingen,2023,203581000,Bijdrage Agentschappen: DJI - jeugd,Bijdrage aan agentschappen
+INSTR-384,Stichting BOOR,2023,203504000,Bekostiging Primair Onderwijs,Bekostiging
+INSTR-385,Provincie Drenthe,2024,203179000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-386,Politie,2023,203166000,Bijdrage ZBO's/RWT's: Beheer meldkamers,Bijdrage aan ZBOs en RWTs
+INSTR-387,Gemeente Oss,2024,202610000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-388,Uitvoeringsinstituut werknemersverzekeringen,2024,202575000,Rijksbijdrage tegemoetkoming arbeidsongeschikten,Bijdrage aan ZBOs en RWTs
+INSTR-389,Gemeente Ede,2022,202434000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-390,Gemeente Lelystad,2024,202391000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-391,Stichting NHL Stenden Hogeschool,2022,201731000,Onderwijsdeel hbo,Bekostiging
+INSTR-392,Stg. Beroepsonderw./ Volw.educ en AVO in Friesland en Flevoland,2024,200951000,Bekostiging MBO-instellingen,Bekostiging
+INSTR-393,Geanonimiseerde ontvanger(s) van Inkomensoverdrachten voor Overige uitgaven (R),2023,200343000,Overige uitgaven (R),Inkomensoverdrachten
+INSTR-394,Gemeente Helmond,2023,199971000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-395,Stichting Lucas Onderwijs,2022,199750000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-396,Gemeente Westland,2024,199649000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-397,Provincie Groningen,2023,198416000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-398,Geanonimiseerde ontvanger(s) van Inkomensoverdrachten voor Overige uitgaven (R),2024,197419000,Overige uitgaven (R),Inkomensoverdrachten
+INSTR-399,Provincie Fryslân,2022,197273000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-400,Sociale Verzekeringsbank,2023,197228000,Uitvoeringskosten SVB,Bijdrage aan ZBOs en RWTs
+INSTR-401,Stichting Katholieke Universiteit Brabant,2022,196901000,Onderwijsdeel wo,Bekostiging
+INSTR-402,Kamer van Koophandel,2024,196694000,Kamer van Koophandel,Bijdrage aan ZBOs en RWTs
+INSTR-403,Centraal Bureau voor de Statistiek,2024,196050000,Bijdrage CBS (vanaf 2020),Bijdrage aan ZBOs en RWTs
+INSTR-404,Stichting NHL Stenden Hogeschool,2023,195812000,Onderwijsdeel hbo,Bekostiging
+INSTR-405,Gemeente Purmerend,2024,195775000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-406,Gemeente Nissewaard,2024,194776000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-407,Gemeente Schiedam,2024,194705000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-408,RVO,2022,193678000,Bijdrage aan RVO (DGA),Bijdragen Baten-Lastendiensten
+INSTR-409,Ver. Chr. Voortgezet Onderwijs te Rotterdam en omgeving,2022,193129000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-410,Gemeente Lelystad,2023,193019000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-411,Gemeente Sittard-Geleen,2022,192864000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-412,Centraal Justitieel Incassobureau,2023,192591000,Bijdrage Agentschappen: CJIB,Bijdrage aan agentschappen
+INSTR-413,Provincie Drenthe,2023,191968000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-414,Gemeente Hilversum,2024,191355000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-415,Gemeente Súdwest-Fryslân,2023,191341000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-416,Provincie Flevoland,2022,191257000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-417,Gemeente Hengelo,2024,191072000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-418,Gemeente Alphen aan den Rijn,2022,190899000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-419,Geanonimiseerde ontvanger(s) van Subsidies (regelingen) voor Stimuleringsregeling Duurzame Energieproductie,2024,190632000,Stimuleringsregeling Duurzame Energieproductie,Subsidies (regelingen)
+INSTR-420,Rijksinstituut voor Volksgezondheid en Milieu (RIVM),2023,190582000,RIVM COVID-19 Opdrv aan kenniscentra,Bijdrage aan agentschappen
+INSTR-421,Stichting Hoger Beroepsonderwijs Haaglanden,2023,190017000,Onderwijsdeel hbo,Bekostiging
+INSTR-422,Provincie Limburg,2022,190002000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-423,Stichting Hoger Beroepsonderwijs Haaglanden,2024,189985000,Onderwijsdeel hbo,Bekostiging
+INSTR-424,Gemeente Almelo,2024,189687000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-425,Gemeente Oss,2023,189174000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-426,Provincie Flevoland,2024,188885000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-427,Commissariaat voor de Media,2024,188349000,Regionale Omroep,Bekostiging
+INSTR-428,Stichting NHL Stenden Hogeschool,2024,187718000,Onderwijsdeel hbo,Bekostiging
+INSTR-429,Stichting Albeda,2024,187711000,Bekostiging MBO-instellingen,Bekostiging
+INSTR-430,Kamer van Koophandel,2023,187691000,Kamer van Koophandel,Bijdrage aan ZBOs en RWTs
+INSTR-431,Dienst Justitiële Inrichtingen,2022,187479000,DJI - jeugd,Bijdrage Agentschappen
+INSTR-432,Centraal Bureau voor de Statistiek,2022,186892000,Bijdrage CBS (vanaf 2020),Bijdragen aan ZBO / RWT
+INSTR-433,Gemeente Groningen,2024,186747000,Gebundeld inkomensdeel aan gemeenten,Inkomensoverdrachten
+INSTR-434,Gemeente Helmond,2022,185361000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-435,Sociale Verzekeringsbank,2023,185100000,Soc. premies Getto uitkeringen,Inkomensoverdrachten
+INSTR-436,Stichting BOOR,2022,184705000,Bekostiging Primair Onderwijs,Bekostiging
+INSTR-437,Gemeente Purmerend,2023,184150000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-438,Sociale Verzekeringsbank,2024,184133000,Uitvoeringskosten SVB,Bijdrage aan ZBOs en RWTs
+INSTR-439,World Bank International Finance,2024,183989000,Wereldbank - IDA,Bijdrage aan (inter-)nationale organisaties
+INSTR-440,Uitvoeringsinstituut werknemersverzeke-,2022,183700000,STAP,Subsidies
+INSTR-441,Gemeente Nissewaard,2023,183463000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-442,Gemeente Schiedam,2023,183190000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-443,Provincie Groningen,2022,182831000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-444,Gemeente Gouda,2024,182625000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-445,Gemeente Westland,2023,182212000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-446,Centraal bureau voor de statistiek,2023,181656000,Bijdrage CBS (vanaf 2020),Bijdrage aan ZBOs en RWTs
+INSTR-447,Gemeente Vlaardingen,2024,181507000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-448,LAND ARUBA - DIRECTIE FINANCIEN,2022,181478000,Leningen aan Aruba,Leningen
+INSTR-449,Reclassering Nederland,2023,180885000,Bijdrage ZBO's/RWT's: Reclassering Nederland,Bijdrage aan ZBOs en RWTs
+INSTR-450,Uitvoeringsinstituut werknemersverzekeringen,2023,180798000,Rijksbijdrage tegemoetkoming arbeidsongeschikten,Bijdrage aan ZBOs en RWTs
+INSTR-451,Geanonimiseerde ontvanger(s) van Leningen voor Collegegeldkrediet (NR),2023,180339000,Collegegeldkrediet (NR),Leningen
+INSTR-452,SOCIALE VERZEKERINGSBANK,2024,179700000,INK Uitkeringen Oorlogswetten,Inkomensoverdrachten
+INSTR-453,Nederlandse organisatie voor,2024,179665000,NWO fonds onderzoek en wetenschap,Bekostiging
+INSTR-454,Stichting Kentalis Onderwijs,2024,179303000,Bekostiging Primair Onderwijs,Bekostiging
+INSTR-455,Gemeente Hilversum,2023,179291000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-456,Gemeente Lelystad,2022,179124000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-457,Commissariaat voor de Media,2023,178968000,Regionale Omroep,Bekostiging
+INSTR-458,Gemeente Almelo,2023,178899000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-459,Gemeente Hengelo,2023,177989000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-460,Provincie Drenthe,2022,177577000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-461,Plastic-grondslag,2022,177346000,Plastic-grondslag,Bijdrage (inter)nationale orgs
+INSTR-462,Gemeente Súdwest-Fryslân,2022,176698000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-463,Stichting Voortgezet Onderwijs Haaglanden,2024,176296000,Bekostiging voortgezet onderwijs lumpsum,Bekostiging
+INSTR-464,Stg. Beroepsonderw./ Volw.educ en AVO in Friesland en Flevoland,2023,175990000,Bekostiging MBO-instellingen,Bekostiging
+INSTR-465,Stichting Albeda,2023,175788000,Bekostiging MBO-instellingen,Bekostiging
+INSTR-466,Invest-NL N.V.,2022,175000000,Kapitaalinj.InvestNL,Vermogenverschaffing
+INSTR-467,Gemeente Land van Cuijk,2024,174901000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-468,Stichting Albeda,2022,174580000,Bekostiging MBO-instellingen,Bekostiging
+INSTR-469,World Bank Group,2023,174530000,Wereldbank - IDA,Bijdrage aan (inter-)nationale organisaties
+INSTR-470,Gemeente Roosendaal,2024,173695000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-471,Gemeente Dijk en Waard,2024,173275000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-472,Gemeente Oss,2022,172503000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-473,Gemeente Schiedam,2022,171888000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-474,Gemeente Purmerend,2022,171818000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-475,Nederlandse organisatie voor,2023,171799000,NWO fonds onderzoek en wetenschap,Bekostiging
+INSTR-476,Gemeente Utrecht,2024,171301000,Gebundeld inkomensdeel aan gemeenten,Inkomensoverdrachten
+INSTR-477,Gemeente Gouda,2023,170402000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-478,Vereniging van Stedelijke Vervoerbedrijven,2023,170144000,Reisvoorziening gift (R),Inkomensoverdrachten
+INSTR-479,Stichting Kentalis Onderwijs,2023,170031000,Bekostiging Primair Onderwijs,Bekostiging
+INSTR-480,Provincie Zeeland,2023,169988000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-481,Gemeente Vlaardingen,2023,169864000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-482,Gemeente Hoorn,2024,169720000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-483,Stichting ROC Mondriaan,2024,168122000,Bekostiging MBO-instellingen,Bekostiging
+INSTR-484,Stichting Rotterdamse Vereniging voor Katholiek Onderwijs,2024,167936000,Bekostiging Primair Onderwijs,Bekostiging
+INSTR-485,Gemeente Nissewaard,2022,167856000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-486,Sociale Verzekeringsbank,2022,167764000,UITVKSTN SVB,Bijdrage ZBO en RWT
+INSTR-487,Provincie Zeeland,2024,167499000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-488,Reclassering Nederland,2022,167493000,Reclassering Nederland,Bijdragen aan ZBOs/RWTs
+INSTR-489,Uitvoeringsinstituut werknemersverzeke-,2022,167394000,RB TEGEMOETK AO,Bijdrage B&S Fondsen
+INSTR-490,Centraal Justitieel Incassobureau,2022,166967000,CJIB,Bijdrage Agentschappen
+INSTR-491,Gemeente Westland,2022,166805000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-492,Gemeente Assen,2024,166651000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-493,Gemeente Hilversum,2022,166526000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-494,Gemeente Almelo,2022,166307000,Algemene uitkering,Bijdrage aan medeoverheden
+INSTR-495,Nederlandse organisatie voor,2024,165885000,NWO Talentenontwikkeling,Bekostiging
+INSTR-496,Nederlandse organisatie voor,2023,165885000,NWO Talentenontwikkeling,Bekostiging
+INSTR-497,NWO Ned Org Wetensch Onderz,2022,165884000,NWO Talentenontwikkeling,Bekostiging
+INSTR-498,Gemeente Groningen,2023,165735000,Gebundeld inkomensdeel aan gemeenten,Inkomensoverdrachten
+INSTR-499,Gemeente Land van Cuijk,2023,165208000,Algemene uitkering en aanvullende uitkeringen,Bijdrage aan medeoverheden
+INSTR-500,Stichting Regionaal Opleidingencentrum van Twente,2024,165083000,Bekostiging MBO-instellingen,Bekostiging

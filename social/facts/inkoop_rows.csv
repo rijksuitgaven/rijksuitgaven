@@ -1,0 +1,301 @@
+fact_id,leverancier,staffel,categorie
+INKOOP-001,Infraspeed B.V.,13,3000 - Uitbesteden overig
+INKOOP-002,Heijmans Infra B.V.,13,9560 - I&M specifiek
+INKOOP-003,Pels Rijcken & Droogleever Fortuijn N.V.,13,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-004,Mediq Nederland B.V.,13,9600 - VWS specifiek
+INKOOP-005,Anoniem_IenW_704,13,9560 - I&M specifiek
+INKOOP-006,Boskalis Nederland B.V.,13,9560 - I&M specifiek
+INKOOP-007,Dura Vermeer Divisie Bouw en Vastgoed B.V.,13,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-008,Fivoor B.V.,13,9590 - V&J specifiek
+INKOOP-009,Heijmans Utiliteit B.V.,13,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-010,Anoniem 1169,13,9560 - I&M specifiek
+INKOOP-011,ANONIEM_I&W_45,13,9560 - I&M specifiek
+INKOOP-012,ANONIEM_I&W_53,13,9560 - I&M specifiek
+INKOOP-013,ANONIEM_I&W_65,13,9560 - I&M specifiek
+INKOOP-014,Anoniem_I & W_384,13,9560 - I&M specifiek
+INKOOP-015,Anoniem_I & W_735,13,9560 - I&M specifiek
+INKOOP-016,Anoniem_I & W_841,13,9560 - I&M specifiek
+INKOOP-017,ANONIEM_I&W_07,13,9560 - I&M specifiek
+INKOOP-018,ANONIEM_I&W_38,13,9560 - I&M specifiek
+INKOOP-019,PoortCentraal B.V.,13,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-020,Sassevaart V.O.F.,13,9560 - I&M specifiek
+INKOOP-021,Stichting Open Nederland,13,3000 - Uitbesteden overig
+INKOOP-022,Anoniem_I & W_323,13,9560 - I&M specifiek
+INKOOP-023,Koninklijke PostNL B.V.,12,"4210 - Post-, koeriers- en transportdiensten"
+INKOOP-024,Boskalis Nederland B.V.,12,9560 - I&M specifiek
+INKOOP-025,Heijmans Infra B.V.,12,9560 - I&M specifiek
+INKOOP-026,Infraspeed B.V.,12,3000 - Uitbesteden overig
+INKOOP-027,Fa. Gebr. Van der Lee,12,9560 - I&M specifiek
+INKOOP-028,ZuidPlus,12,9560 - I&M specifiek
+INKOOP-029,Anoniem 1264,12,9560 - I&M specifiek
+INKOOP-030,Anoniem 252,12,9560 - I&M specifiek
+INKOOP-031,Anoniem 98,12,9560 - I&M specifiek
+INKOOP-032,Anoniem_I & W_354,12,9560 - I&M specifiek
+INKOOP-033,ANONIEM_I&W_07,12,9560 - I&M specifiek
+INKOOP-034,ANONIEM_I&W_38,12,9560 - I&M specifiek
+INKOOP-035,ANONIEM_I&W_49,12,9560 - I&M specifiek
+INKOOP-036,ANONIEM_I&W_75,12,9560 - I&M specifiek
+INKOOP-037,Anoniem_IenW_688,12,9560 - I&M specifiek
+INKOOP-038,BAM Bouw en Techniek B.V.,12,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-039,"De Jong Zuurmond Infrabeheer, Ond.&Serv. B.V.",12,9560 - I&M specifiek
+INKOOP-040,Eurofins NL Moleculair Diagn. Lab. B.V.,12,3000 - Uitbesteden overig
+INKOOP-041,Fivoor B.V.,12,9590 - V&J specifiek
+INKOOP-042,GelreGroen B.V.,12,9560 - I&M specifiek
+INKOOP-043,Heijmans Utiliteit,12,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-044,Heijmans Utiliteit B.V.,12,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-045,Isala Delta,12,9560 - I&M specifiek
+INKOOP-046,N.V. Besix S.A.,12,9560 - I&M specifiek
+INKOOP-047,NS Reizigers B.V.,12,3000 - Uitbesteden overig
+INKOOP-048,O.W.M. DSW Zorgverzekeraar UA,12,6510 - Aan een externe partij uitbestede ICT-dienstverlening
+INKOOP-049,ProRail B.V.,12,3000 - Uitbesteden overig
+INKOOP-050,Synlab Belgium SRL,12,3000 - Uitbesteden overig
+INKOOP-051,Telegrootgebruik B.V.,12,9560 - I&M specifiek
+INKOOP-052,Van den Herik-Sliedrecht,12,9560 - I&M specifiek
+INKOOP-053,Van Hattum en Blankevoort,12,9560 - I&M specifiek
+INKOOP-054,Vattenfall Sales Nederland N.V.,12,7210 - Verbruik van energie en water
+INKOOP-055,Komfort B.V.,11,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-056,Koninklijke PostNL B.V.,11,"4210 - Post-, koeriers- en transportdiensten"
+INKOOP-057,Van der Hoeven Kliniek,11,9590 - V&J specifiek
+INKOOP-058,Heijmans Utiliteit,11,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-059,SPIE Nederland B.V.,11,9560 - I&M specifiek
+INKOOP-060,Gebroeders Van der Lee,11,9560 - I&M specifiek
+INKOOP-061,Transvision B.V.,11,3000 - Uitbesteden overig
+INKOOP-062,Mourik Infra B.V.,11,9560 - I&M specifiek
+INKOOP-063,Fivoor B.V.,11,9590 - V&J specifiek
+INKOOP-064,Stichting Pro Persona Holding,11,9590 - V&J specifiek
+INKOOP-065,Pompestichting,11,9590 - V&J specifiek
+INKOOP-066,Boskalis Nederland B.V.,11,9560 - I&M specifiek
+INKOOP-067,Eneco Zakelijk,11,7210 - Verbruik van energie en water
+INKOOP-068,"Stichting Forensisch Psychiatrisch Instituut ""De Rooyse Wissel""",11,9590 - V&J specifiek
+INKOOP-069,ANONIEM_I&W_01,11,9560 - I&M specifiek
+INKOOP-070,Strukton Worksphere B.V.,11,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-071,ANONIEM_I&W_09,11,9560 - I&M specifiek
+INKOOP-072,Daiwa House Modular Europe Jan Snel B.V.,11,3000 - Uitbesteden overig
+INKOOP-073,MEET Strukton B.V.,11,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-074,IDEMIA The Netherlands B.V.,11,9520 - BZK Specifiek
+INKOOP-075,"De Jong Zuurmond Infrabeheer, Onderhoud & Services B.V.",11,9560 - I&M specifiek
+INKOOP-076,IBM Nederland B.V.,11,"6220 - Beheer, Onderhoud programmatuur & software"
+INKOOP-077,Saltro B.V.,11,3000 - Uitbesteden overig
+INKOOP-078,Core Supply Group B.V.,11,3000 - Uitbesteden overig
+INKOOP-079,BAM Bouw en Techniek B.V.,11,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-080,GGzE,11,9590 - V&J specifiek
+INKOOP-081,Stichting Forensisch Psychiatrisch Centrum Dr. S. van Mesdag,11,9590 - V&J specifiek
+INKOOP-082,Stichting Forensisch Psychiatrisch Centrum Rooyse Wissel,11,9590 - V&J specifiek
+INKOOP-083,ANONIEM_I&W_79,11,9560 - I&M specifiek
+INKOOP-084,Anoniem 1418,11,9560 - I&M specifiek
+INKOOP-085,Anoniem_IenW_588,11,9560 - I&M specifiek
+INKOOP-086,Anoniem_IenW_608,11,9560 - I&M specifiek
+INKOOP-087,Anoniem_IenW_612,11,9560 - I&M specifiek
+INKOOP-088,Anoniem_IenW_618,11,9560 - I&M specifiek
+INKOOP-089,Anoniem_IenW_629,11,9560 - I&M specifiek
+INKOOP-090,Anoniem_IenW_740,11,9560 - I&M specifiek
+INKOOP-091,B.V. Aannemingsbedrijf De Klerk,11,9560 - I&M specifiek
+INKOOP-092,BAAK Blankenburg-Verbinding B.V.,11,9560 - I&M specifiek
+INKOOP-093,BAM Wegen Materieel B.V.,11,9560 - I&M specifiek
+INKOOP-094,Biosynex SWISS SA,11,3000 - Uitbesteden overig
+INKOOP-095,"De Jong Zuurmond Infrabeheer, Ond.&Serv. B.V.",11,9560 - I&M specifiek
+INKOOP-096,Dura Vermeer Divisie Bouw en Vastgoed B.V.,11,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-097,ENGIE Infra & Mobility B.V.,11,9560 - I&M specifiek
+INKOOP-098,Eurofins Nederlands Moleculair Diagnostisch Laboratorium B.V.,11,3000 - Uitbesteden overig
+INKOOP-099,Fa. Gebr. Van der Lee,11,9560 - I&M specifiek
+INKOOP-100,Fugro Netherlands Marine B.V.,11,3120 - Uitbesteden beleidsadvies- en onderzoeksopdrachten
+INKOOP-101,ANONIEM_I&W_90,11,9560 - I&M specifiek
+INKOOP-102,Anoniem 260,11,9560 - I&M specifiek
+INKOOP-103,Anoniem 266,11,9560 - I&M specifiek
+INKOOP-104,Anoniem 390,11,9560 - I&M specifiek
+INKOOP-105,ANONIEM_BZK_151,11,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-106,ANONIEM_BZK_220,11,9520 - BZK Specifiek
+INKOOP-107,ANONIEM_BZK_693,11,6110 - Aanschaf Hardware
+INKOOP-108,Anoniem_I & W_144,11,9560 - I&M specifiek
+INKOOP-109,Anoniem_I & W_197,11,9560 - I&M specifiek
+INKOOP-110,Anoniem_I & W_237,11,9560 - I&M specifiek
+INKOOP-111,GelreGroen B.V.,11,9560 - I&M specifiek
+INKOOP-112,Heijmans Infra,11,9560 - I&M specifiek
+INKOOP-113,Heijmans Infra B.V.,11,9560 - I&M specifiek
+INKOOP-114,Heijmans Infrastructuur B.V.,11,9560 - I&M specifiek
+INKOOP-115,Heijmans Utiliteit B.V.,11,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-116,IXAS Zuid-Oost B.V.,11,9560 - I&M specifiek
+INKOOP-117,LP4 v.o.f.,11,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-118,NACH B.V.,11,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-119,NS Reizigers B.V.,11,3000 - Uitbesteden overig
+INKOOP-120,Pels Rijcken & Droogleever Fortuijn N.V.,11,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-121,Personeelsvereniging F.P.C. Dr. S. van Mesdag,11,9590 - V&J specifiek
+INKOOP-122,Pfizer B.V.,11,9600 - VWS specifiek
+INKOOP-123,PGL Finance B.V.,11,3000 - Uitbesteden overig
+INKOOP-124,ProRail B.V.,11,9560 - I&M specifiek
+INKOOP-125,Roche Diagnostics Nederland B.V.,11,9600 - VWS specifiek
+INKOOP-126,SAAone B.V.,11,9560 - I&M specifiek
+INKOOP-127,Shell Nederland Verkoopmaatschappij B.V.,11,9530 - DEF specifiek
+INKOOP-128,Siemens Healthineers Nederland B.V.,11,9600 - VWS specifiek
+INKOOP-129,Siemens Nederland N.V.,11,9560 - I&M specifiek
+INKOOP-130,Stg. Forensisch Ps. Centrum Dr. S. van Mesdag,11,9590 - V&J specifiek
+INKOOP-131,Synlab Belgium SRL,11,3000 - Uitbesteden overig
+INKOOP-132,The Boeing Company,11,9560 - I&M specifiek
+INKOOP-133,"Trajectum , Polikliniek Zwolle",11,9590 - V&J specifiek
+INKOOP-134,Trajectum / Polikliniek Zwolle,11,9590 - V&J specifiek
+INKOOP-135,Trajectum/Polikliniek Zwolle,11,9590 - V&J specifiek
+INKOOP-136,Unica Installatietechniek B.V.,11,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-137,Van Doorn Geldermalsen B.V.,11,9560 - I&M specifiek
+INKOOP-138,Van Hattum en Blankevoort,11,9560 - I&M specifiek
+INKOOP-139,Vanberkel Professionals B.V.,11,3140 - Uitbesteden juridische adviesopdrachten
+INKOOP-140,Vattenfall Sales Nederland N.V.,11,7210 - Verbruik van energie en water
+INKOOP-141,Anoniem_I & W_249,11,9560 - I&M specifiek
+INKOOP-142,Anoniem_I & W_279,11,9560 - I&M specifiek
+INKOOP-143,Anoniem_I & W_288,11,9560 - I&M specifiek
+INKOOP-144,Anoniem_I & W_313,11,9560 - I&M specifiek
+INKOOP-145,Anoniem_I & W_315,11,9560 - I&M specifiek
+INKOOP-146,Anoniem_I & W_320,11,9560 - I&M specifiek
+INKOOP-147,Anoniem_I & W_337,11,9560 - I&M specifiek
+INKOOP-148,Anoniem_I & W_354,11,9560 - I&M specifiek
+INKOOP-149,Anoniem_I & W_375,11,9560 - I&M specifiek
+INKOOP-150,Anoniem_I & W_391,11,9560 - I&M specifiek
+INKOOP-151,Anoniem_I & W_404,11,9560 - I&M specifiek
+INKOOP-152,Anoniem_I & W_497,11,9560 - I&M specifiek
+INKOOP-153,Anoniem_I & W_609,11,9560 - I&M specifiek
+INKOOP-154,ANONIEM_I&W_05,11,9560 - I&M specifiek
+INKOOP-155,ANONIEM_I&W_1,11,9560 - I&M specifiek
+INKOOP-156,ANONIEM_I&W_10,11,9560 - I&M specifiek
+INKOOP-157,ANONIEM_I&W_12,11,9560 - I&M specifiek
+INKOOP-158,ANONIEM_I&W_13,11,9560 - I&M specifiek
+INKOOP-159,ANONIEM_I&W_17,11,9560 - I&M specifiek
+INKOOP-160,ANONIEM_I&W_21,11,9560 - I&M specifiek
+INKOOP-161,ANONIEM_I&W_24,11,9560 - I&M specifiek
+INKOOP-162,ANONIEM_I&W_33,11,9560 - I&M specifiek
+INKOOP-163,ANONIEM_I&W_49,11,9560 - I&M specifiek
+INKOOP-164,ANONIEM_I&W_62,11,9560 - I&M specifiek
+INKOOP-165,ANONIEM_I&W_63,11,9560 - I&M specifiek
+INKOOP-166,ANONIEM_I&W_68,11,9560 - I&M specifiek
+INKOOP-167,ANONIEM_I&W_74,11,9560 - I&M specifiek
+INKOOP-168,SoftwareONE Netherlands B.V.,10,"6220 - Beheer, Onderhoud programmatuur & software"
+INKOOP-169,Shuttel B.V.,10,1180 - Reis en verblijfkosten
+INKOOP-170,ARCADIS Nederland B.V.,10,9560 - I&M specifiek
+INKOOP-171,Stichting Leger des Heils,10,9590 - V&J specifiek
+INKOOP-172,CRAYON B.V.,10,"6220 - Beheer, Onderhoud programmatuur & software"
+INKOOP-173,PoortCentraal B.V.,10,7410 - Verwerven en afstoten
+INKOOP-174,Virtu Secure Webservices B.V.,10,6510 - Aan een externe partij uitbestede ICT-dienstverlening
+INKOOP-175,GlaxoSmithKline B.V.,10,9600 - VWS specifiek
+INKOOP-176,Fujitsu Technology Solutions B.V.,10,"6220 - Beheer, Onderhoud programmatuur & software"
+INKOOP-177,Dustin Netherlands B.V.,10,6110 - Aanschaf Hardware
+INKOOP-178,BAM Bouw en Techniek B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-179,Van Oord Nederland,10,9560 - I&M specifiek
+INKOOP-180,GGzE,10,9590 - V&J specifiek
+INKOOP-181,Merck Sharp & Dohme B.V.,10,9600 - VWS specifiek
+INKOOP-182,10BE B.V.,10,3120 - Uitbesteden beleidsadvies- en onderzoeksopdrachten
+INKOOP-183,Securitas Beveiliging B.V.,10,4120 - Risicobeheersen
+INKOOP-184,HaskoningDHV Nederland B.V.,10,9560 - I&M specifiek
+INKOOP-185,Insight Enterprises Netherlands B.V.,10,"6310 - Aanschaf, Beheer en Onderhoud infrastructuur"
+INKOOP-186,Stichting Vrienden van Hoeve Boschoord,10,9590 - V&J specifiek
+INKOOP-187,CGI Nederland B.V.,10,9560 - I&M specifiek
+INKOOP-188,Vattenfall Sales Nederland N.V.,10,7210 - Verbruik van energie en water
+INKOOP-189,Stichting Deltares,10,9560 - I&M specifiek
+INKOOP-190,Aannemingsbedrijf Vermeulen Benthuizen B.V.,10,9560 - I&M specifiek
+INKOOP-191,Protinus IT B.V.,10,"6220 - Beheer, Onderhoud programmatuur & software"
+INKOOP-192,PQR B.V.,10,6120 - Beheer en onderhoud hardware
+INKOOP-193,SPIE Nederland B.V.,10,9560 - I&M specifiek
+INKOOP-194,Unica Installatietechniek,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-195,VHD B.V.,10,9560 - I&M specifiek
+INKOOP-196,Vialis B.V.,10,9560 - I&M specifiek
+INKOOP-197,Bouwcombinatie Paleis van Justitie,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-198,DC Sligro,10,4110 - Consumptieve diensten
+INKOOP-199,VTN Besturingstechniek,10,9560 - I&M specifiek
+INKOOP-200,Zonneveld ingenieurs B.V.,10,3000 - Uitbesteden overig
+INKOOP-201,B.V. Aannemingsbedrijf De Klerk,10,9560 - I&M specifiek
+INKOOP-202,PHB Facility,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-203,Philips Nederland B.V.,10,9600 - VWS specifiek
+INKOOP-204,HEGEMAN Bouw & Infra B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-205,BAM Infra Industrie,10,9560 - I&M specifiek
+INKOOP-206,Capgemini Nederland B.V.,10,3120 - Uitbesteden beleidsadvies- en onderzoeksopdrachten
+INKOOP-207,IBM Nederland B.V.,10,"6220 - Beheer, Onderhoud programmatuur & software"
+INKOOP-208,De Staffing Groep Nederland B.V.,10,3000 - Uitbesteden overig
+INKOOP-209,CED Nederland,10,3120 - Uitbesteden beleidsadvies- en onderzoeksopdrachten
+INKOOP-210,Komfort B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-211,ANONIEM_I&W_04,10,9560 - I&M specifiek
+INKOOP-212,Arkin,10,9590 - V&J specifiek
+INKOOP-213,Stg. Forensisch Ps. Centrum Dr. S. van Mesdag,10,9590 - V&J specifiek
+INKOOP-214,Stichting Connekt,10,3000 - Uitbesteden overig
+INKOOP-215,Leaseplan Nederland N.V.,10,5210 - Wagenpark
+INKOOP-216,"Stichting Forensisch Psychiatrisch Instituut ""De Rooyse Wissel""",10,9590 - V&J specifiek
+INKOOP-217,Eneco B.V.,10,7210 - Verbruik van energie en water
+INKOOP-218,CGI,10,9560 - I&M specifiek
+INKOOP-219,ENGIE Infra & Mobility B.V.,10,9560 - I&M specifiek
+INKOOP-220,Techno PMO B.V.,10,9560 - I&M specifiek
+INKOOP-221,Telegrootgebruik B.V.,10,9560 - I&M specifiek
+INKOOP-222,MEET Strukton B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-223,Van den Herik-Sliedrecht,10,9560 - I&M specifiek
+INKOOP-224,COMPAREX Nederland B.V.,10,6110 - Aanschaf Hardware
+INKOOP-225,Fugro Netherlands Marine B.V.,10,3120 - Uitbesteden beleidsadvies- en onderzoeksopdrachten
+INKOOP-226,Mourik Infra B.V.,10,9560 - I&M specifiek
+INKOOP-227,Barli B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-228,Benelux Medical B.V.,10,3000 - Uitbesteden overig
+INKOOP-229,BINX Smartility B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-230,Borrenbergs Bouwbedrijf B.V.,10,9530 - DEF specifiek
+INKOOP-231,Bouwbedrijf Pennings B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-232,Bouwgroep Dijkstra Draisma B.V.,10,3000 - Uitbesteden overig
+INKOOP-233,Brunel Nederland B.V.,10,3140 - Uitbesteden juridische adviesopdrachten
+INKOOP-234,CED Nederland B.V.,10,9000 - Dienstspecifiek overig
+INKOOP-235,Centralpoint B.V.,10,6110 - Aanschaf Hardware
+INKOOP-236,Centralpoint Nijmegen B.V.,10,6110 - Aanschaf Hardware
+INKOOP-237,Combinatie Den Ouden - BAM,10,9530 - DEF specifiek
+INKOOP-238,Compass Infrastructuur Nederland (CIN) B.V.,10,9560 - I&M specifiek
+INKOOP-239,Daiwa House Modular Europe Jan Snel B.V.,10,3160 - Uitbesteden accountancy en financiën
+INKOOP-240,De Jong Zuurmond,10,9560 - I&M specifiek
+INKOOP-241,"De Jong Zuurmond Infrabeheer, Ond.&Serv. B.V.",10,9560 - I&M specifiek
+INKOOP-242,"De Jong Zuurmond Infrabeheer, Onderhoud & Services B.V.",10,9560 - I&M specifiek
+INKOOP-243,Duo2 B.V.,10,7410 - Verwerven en afstoten
+INKOOP-244,DURA VERMEER BETON- EN WATERBOUW,10,9560 - I&M specifiek
+INKOOP-245,Dura Vermeer Bouw Hengelo B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-246,E.ON Benelux Levering B.V.,10,7210 - Verbruik van energie en water
+INKOOP-247,Eneco Zakelijk,10,7210 - Verbruik van energie en water
+INKOOP-248,EQUANS Infra & Mobility B.V.,10,9560 - I&M specifiek
+INKOOP-249,Equinix Virtu Secure Webservices BV,10,6510 - Aan een externe partij uitbestede ICT-dienstverlening
+INKOOP-250,Exploitatiemaatschappij Wijkertunnel C.V.,10,9560 - I&M specifiek
+INKOOP-251,G4S Services,10,4120 - Risicobeheersen
+INKOOP-252,GelreGroen B.V.,10,9560 - I&M specifiek
+INKOOP-253,GGB inBalans B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-254,GGZ Dennenweg,10,9590 - V&J specifiek
+INKOOP-255,Halma Solutions B.V.,10,9600 - VWS specifiek
+INKOOP-256,Heijmans Infrastructuur B.V.,10,9560 - I&M specifiek
+INKOOP-257,Hospitainer B.V.,10,9530 - DEF specifiek
+INKOOP-258,Intravacc B.V.,10,3000 - Uitbesteden overig
+INKOOP-259,Klein Units Projecten B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-260,KPN B.V.,10,9560 - I&M specifiek
+INKOOP-261,KPN Consulting B.V.,10,6410 - Spraak en dataverbindingen
+INKOOP-262,Krinkels B.V.,10,9560 - I&M specifiek
+INKOOP-263,KWS Infra Sas van Gent,10,9560 - I&M specifiek
+INKOOP-264,LP4 V.O.F.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-265,Madmulis V.O.F.,10,3000 - Uitbesteden overig
+INKOOP-266,Marcelis Notaires Associes Srl,10,7410 - Verwerven en afstoten
+INKOOP-267,Mediphos Medical Supplies B.V.,10,3000 - Uitbesteden overig
+INKOOP-268,Mediq Nederland B.V.,10,9600 - VWS specifiek
+INKOOP-269,Mobilis B.V.,10,9560 - I&M specifiek
+INKOOP-270,Mobility Mixx B.V.,10,1180 - Reis en verblijfkosten
+INKOOP-271,MolGen B.V.,10,3000 - Uitbesteden overig
+INKOOP-272,Mourik Grondbank B.V.,10,9560 - I&M specifiek
+INKOOP-273,O2 Health B.V.,10,9600 - VWS specifiek
+INKOOP-274,OpenIJ B.V.,10,9560 - I&M specifiek
+INKOOP-275,Palladium Europe,10,9510 - BZ specifiek
+INKOOP-276,Pels Rijcken & Droogleever Fortuijn N.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-277,Pfizer B.V.,10,9600 - VWS specifiek
+INKOOP-278,PGL Finance B.V.,10,3000 - Uitbesteden overig
+INKOOP-279,Pi2 B.V.,10,7410 - Verwerven en afstoten
+INKOOP-280,Plegt-Vos Bouwgroep B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-281,Pompstation Vechtbrug B.V.,10,9520 - BZK Specifiek
+INKOOP-282,R Creators B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-283,Rasenberg Infra B.V.,10,9560 - I&M specifiek
+INKOOP-284,Shell Nederland Verkoopmaatschappij B.V.,10,9530 - DEF specifiek
+INKOOP-285,Siemens Healthineers Nederland B.V.,10,9600 - VWS specifiek
+INKOOP-286,Siemens Mobility B.V.,10,9560 - I&M specifiek
+INKOOP-287,Sligro Food Group Nederland B.V.,10,9590 - V&J specifiek
+INKOOP-288,SLTN IT Products B.V.,10,6110 - Aanschaf Hardware
+INKOOP-289,SOS International Amsterdam,10,9560 - I&M specifiek
+INKOOP-290,SPIE Building Solutions B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-291,Spoedtest B.V.,10,3000 - Uitbesteden overig
+INKOOP-292,Stichting De Forensische Zorgspecialisten,10,9590 - V&J specifiek
+INKOOP-293,Stichting Derdengelden WWplus,10,9000 - Dienstspecifiek overig
+INKOOP-294,Stichting Open Nederland,10,3000 - Uitbesteden overig
+INKOOP-295,Strukton Civiel West B.V.,10,9560 - I&M specifiek
+INKOOP-296,Strukton Worksphere B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-297,Technisch Bureau Magema B.V.,10,9530 - DEF specifiek
+INKOOP-298,Unica Installatietechniek B.V.,10,7110 - Gebruik en onderhoud gebouw en terreinen
+INKOOP-299,Uniper Benelux N.V.,10,7210 - Verbruik van energie en water
+INKOOP-300,USG Professionals B.V.,10,3140 - Uitbesteden juridische adviesopdrachten

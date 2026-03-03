@@ -1,0 +1,917 @@
+fact_id,ontvanger,jaar,bedrag,descriptor,provincie
+PROV-001,Qbuzz B.V.,2024,155487682,"Bereikbaarheid - Subsidieverordening Mobiliteit Regio Utrecht 2015 - Maatregelen gericht op verbetering van de kwaliteit van het OV  (André van Schie)
+",Utrecht
+PROV-002,Qbuzz B.V.,2024,103554630,SRM 3.2.1 Regionaal openbaar vervoer over weg en spoor - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-003,Qbuzz B.V.,2022,88771958,"Bereikbaarheid II - Openbaar Vervoer - MOB/BRU/Mobiliteit Regio Utrecht - Sociale Veiligheid 2022
+(QB22.SOV01) (Arne Schaddelee)
+",Utrecht
+PROV-004,Qbuzz B.V.,2023,81885630,"Bereikbaarheid  Openbaar Vervoer - Subsidieverordening Mobiliteit Regio Utrecht 2015 - Beheer distributienetwerk 2022 (Arne Schaddelee)
+",Utrecht
+PROV-005,N.V. Nederlandse Gasunie,2022,81000000,N.V. Nederlandse Gasunie t.b.v. warmteleiding Warmtelinq+  - Verduurzaming gebouwde omgeving - Schone energie voor iedereen,Zuid-Holland
+PROV-006,Arriva Personenvervoer Nederland B.V.,2023,78464071,SRM 3.2.1 Regionaal openbaar vervoer over weg en spoor - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-007,Arriva Personenvervoer Nederland BV,2024,77098075,"- Verbeteren mobiliteit en bereikbaarheid - Asv, begrotingssubsidies - Sociaal Veiligheidsplan 2024
+",Noord-Brabant
+PROV-008,Arriva Personenvervoer Nederland BV,2023,71350097,"Algemeen financieel beleid - Verbeteren mobiliteit en bereikbaarheid - Asv, begrotingssubsidies - Sociaal Veiligheidsplan 2023
+",Noord-Brabant
+PROV-009,Stichting Stimuleringsfonds Volkshuisvesting Nederlandse Gemeenten,2023,70000000,"Fonds verduurzaming maatschappelijk vastgoed (lening) - Fonds Verduurzaming Maatschappelijk Vastgoed
+",Gelderland
+PROV-010,Coöperatie Natuurrijk Limburg U.A.,2023,69131989,"Actieve soortenbescherming - Beschermingsplan Patrijs Limburg
+",Limburg
+PROV-011,Staatsbosbeheer Fryslân	,2023,66874749,"Natuur- en landschapsbeheer (SrNL) Fryslân 2023-2028 - Staatsbosbeheer 
+",Friesland
+PROV-012,Arriva Personenvervoer Nederland BV,2022,64561267,"Algemeen financieel beleid - Verbeteren mobiliteit en bereikbaarheid - Asv, begrotingssubsidies - Sociaal Veiligheidsplan 2022
+",Noord-Brabant
+PROV-013,Keolis Nederland B.V.,2024,58213452,"Bereikbaarheid - Openbaar vervoer Concessie Provincie Utrecht 2016-2023 - Wijkbus 501 (Arne Schaddelee)
+",Utrecht
+PROV-014,Eindhoven Airport N.V.,2022,55000000,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - kwaliteitsimpuls terminal EA
+",Noord-Brabant
+PROV-015,AVG restrictie,2022,52004326,Zonnig zuid-Holland - Schone en duurzame elektriciteitsvoorziening - Schone energie voor iedereen,Zuid-Holland
+PROV-016,Coöperatief Boerennatuur Veluwe ,2023,51647033,"Agrarisch natuurbeheer 2023-2028 - Gebiedsaanvraag ANlB 2023-2028 Veluwe
+",Gelderland
+PROV-017,Keolis Nederland B.V.,2023,47469603,"Bereikbaarheid Openbaar Vervoer - Concessie Openbaar Vervoer Provincie Utrecht 2016-2025 - Syntus Marketingplan 2023 (André van Schie)
+",Utrecht
+PROV-018,Natuurmonumenten,2023,43858969,"Actieve soortenbescherming - Heideherstel voor de Zadelsprinkhaan
+",Limburg
+PROV-019,Arriva Personenvervoer Nederland B.V.,2022,43629366,Mob - 3 reg vervoer over weg en spoor - Veilig en duurzaam - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-020,Ver. tot behoud v. Natuurmonumenten in Nederland,2023,42882269,"Algemeen financieel beleid - Verbeteren natuurlijke leefomgeving - Asv, begrotingssubsidies - Capaciteit voor realisatie NNB 2023-2027
+",Noord-Brabant
+PROV-021,Stg. Het Noordbrabants Landschap,2023,42158943,"Algemeen financieel beleid - Verbeteren natuurlijke leefomgeving - Asv, begrotingssubsidies - Activatie natuur en landschap 2023
+",Noord-Brabant
+PROV-022,Qbuzz B.V.,2023,38568691,SRM 3.2.1 Regionaal openbaar vervoer over weg en spoor - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-023,Gemeente Amsterdam,2022,38127704,"Ruimte en Water - Uvr Woonakkoorden  - Nieuwe woonruimteverdeling
+",Noord-Holland
+PROV-024,Coöperatieve Vereniging Agrarisch Landschap Achterhoek ,2023,37182982,"Agrarisch natuurbeheer 2023-2030 - Gebiedsaanvraag ANlB 2023-2028 Achterhoek
+",Gelderland
+PROV-025,AVG restrictie,2023,35624780,Zonnig zuid-Holland - Schone en duurzame elektriciteitsvoorziening - Schone energie voor iedereen,Zuid-Holland
+PROV-026,Pivot Park Vastgoed B.V.,2022,33850000,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - Pivot Park Nieuwbouw Grizzly
+",Noord-Brabant
+PROV-027,Gemeente Leiden,2022,33620000,gemeente Leiden t.b.v. Leidse Ring Noord 2021 ‚Äì 2030  - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-028,Vereniging Noardlike Fryske Wâlden	,2023,33578169,"agrarisch natuur- en landschapsbeheer  - Vereniging Noardlike Fryske Walden - gebiedsaanvraag periode 2023-2028 ihkv agrarisch natuur- en landschapsbeheer (ANLb)
+",Friesland
+PROV-029,Syntus BV,2022,33461149,"Bereikbaarheid II - Openbaar Vervoer - Uitvoeringsverordening Mobiliteit Regio Utrecht - Exploitatiesubsidie streekconcessie OV
+provincie Utrecht Syntus 2022
+ (Arne Schaddelee)
+",Utrecht
+PROV-030,Hermes Openbaar Vervoer B.V.,2023,33325511,"Algemeen financieel beleid - Verbeteren mobiliteit en bereikbaarheid - Asv, begrotingssubsidies - Hermes sociale veiligheid OV
+",Noord-Brabant
+PROV-031,It Fryske Gea	,2023,32729894,"Middelgrote maatschappelijke initiatieven Regio Zuidoost Fryslân 2022 Tender 3 - Sluis Noordpolder De Veenhoop
+",Friesland
+PROV-032,"Coöperatie ""Agrarische Natuur Drenthe""
+U.A.",2023,31375976,"Landelijk Gebied - Actieplan Proeftuin NIL Drentsche Aa
+2022-2023
+",Drenthe
+PROV-033,2307 natuurlijke personen,2023,30072710,"Verordening Stimuleringslening Duurzaam Thuis - Verordening Stimuleringslening Duurzaam Thuis
+",Limburg
+PROV-034,Coöperatieve Vereniging Agrarisch Landschap,2023,29694094,"Agrarisch natuurbeheer 2023-2029 - Gebiedsaanvraag ANlB 2023-2028 Rivierenland
+",Gelderland
+PROV-035,Vereniging Natuurmonumenten,2023,29342826,"Groen - Begrotingspost/BUVR - Programma Vitaler Wormer
+",Noord-Holland
+PROV-036,Connexxion Openbaar Vervoer N.V.,2023,28966160,SRM 3.2.1 Regionaal openbaar vervoer over weg en spoor - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-037,Vereniging tot Behoud van Natuurmonumenten in Nederland,2023,27989471,SKNL Kwaliteitsimpuls natuur en landschap - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-038,Hermes Openbaar Vervoer B.V.,2024,27864403,"- Verbeteren mobiliteit en bereikbaarheid - Asv, begrotingssubsidies - Hermes sociale veiligheid OV
+",Noord-Brabant
+PROV-039,Staatsbosbeheer,2024,26965187,Subs. natuur- en landschapsbeheer SVNL 2024-2029,Zeeland
+PROV-040,Vereniging Tot Behoud Van Natuurmonumenten In Nederland,2023,26694732,"3 Vitaal Platteland - 4.17 Aanpak Van Invasieve Exoten 2.0 - Invasieve Exoten Landgoederen Oldenzaal
+",Overijssel
+PROV-041,Stichting Het Limburgs Landschap,2023,26343004,"Actieve soortenbescherming - Verbindingsgebied Ulingsheide
+",Limburg
+PROV-042,Stichting Landschap Overijssel,2023,25160211,"1 Ruimtelijke Ontwikkeling En Waterbeheer - Asv - Uitvoeringspilot Waardevolle Kleine Wateren
+",Overijssel
+PROV-043,Coöperatie Agrarisch Natuurbeheer,2023,24662706,"Landelijk gebied - Subsidieregeling Agenda Vitaal Platteland provincie Utrecht - Aanleg en herstel Kleine landschapselementen (Mirjam Sterk)
+",Utrecht
+PROV-044,ANC Westergo	,2023,22724628,"agrarisch natuur- en landschapsbeheer  - ANC Westergo - gebiedsaanvraag periode 2023-2028 ihkv agrarisch natuur- en landschapsbeheer (ANLb)
+",Friesland
+PROV-045,Stichting Het Zeeuwse Landschap,2023,21609114,Integrale kostensubs. 2023 Stichting Het Zeeuwse Landschap,Zeeland
+PROV-046,Rijksdienst voor Ondernemend Nederland,2023,21329783,"Groen - Uvr Agrarisch natuur- en landschapsbeheer - ANV Hollands Noorden
+",Noord-Holland
+PROV-047,Coöperatieve Agrarische Natuur Collectief Noordwest Overijssel U.A.,2023,20931671,"3 Vitaal Platteland - Snl Agrarisch Natuur En Landschapsbeheer (Anlb) - Gebiedsaanvraag Agrarisch Natuur- En Landschapsbeheer 2023-2028
+",Overijssel
+PROV-048,Coöperatieve vereniging Coöperatie Agrarisch Collectief Waadrâne U.A	,2023,20909855,"agrarisch natuur- en landschapsbeheer  - Agrarisch Collectief Waadrâne U.A - gebiedsaanvraag periode 2023-2028 ihkv agrarisch natuur- en landschapsbeheer (ANLb)
+",Friesland
+PROV-049,Collectief Alblasserwaard/Vijfheerenlanden Co√∂peratieve U.A.,2023,20799204,Agrarisch Collectief Alblasserwaard-Vijfheerenlanden t.b.v. Biodiverse sloot en rand Alblasserwaard-Vijfheerenlanden - Beter bestuur - Samen werken aan Zuid-Holland,Zuid-Holland
+PROV-050,1720 natuurlijke personen,2022,20701540,"Verordening Stimuleringslening Duurzaam Thuis - Verordening Stimuleringslening Duurzaam Thuis
+",Limburg
+PROV-051,Gebiedscoöperatie It Lege Midden UA	,2023,20203189,"agrarisch natuur- en landschapsbeheer  - Gebiedscoöperatie It Lege Midden UA - gebiedsaanvraag periode 2023-2028 ihkv agrarisch natuur- en landschapsbeheer (ANLb)
+",Friesland
+PROV-052,Safari Resort Vastgoed BV,2022,20000000,"Algemeen financieel beleid - Verbeteren cultureel klimaat - Asv, begrotingssubsidies - safari resort fase 2
+",Noord-Brabant
+PROV-053,Staatsbosbeheer,2023,19394284,"Actieve soortenbescherming - Behoud leefgebied kamsalamander
+",Limburg
+PROV-054,1376 natuurlijke personen,2023,19392328,"Verordening Stimuleringslening Duurzaam Thuis - Verordening Stimuleringslening Duurzaam Thuis
+",Limburg
+PROV-055,"Stichting ""Het Zuid-Hollands Landschap""",2023,19386969,SKNL Kwaliteitsimpuls natuur en landschap - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-056,Coöperatieve Vereniging Súdwestkust UA,2023,19265978,"agrarisch natuur- en landschapsbeheer  - Coöperatieve vereniging Súdwestkust UA - gebiedsaanvraag periode 2023-2028 ihkv agrarisch natuur- en landschapsbeheer (ANLb)
+",Friesland
+PROV-057,Stichting Landschap Noord-Holland,2023,19001598,"Groen - Begrotingspost/BUVR - Betrekken bij Groen
+",Noord-Holland
+PROV-058,Provincie Limburg,2024,18450000,"Electrificatie Maaslijn - Opwaardering Maaslijn
+",Gelderland
+PROV-059,Hermes Openbaar Vervoer B.V.,2022,17871685,"Algemeen financieel beleid - Verbeteren mobiliteit en bereikbaarheid - Asv, begrotingssubsidies - Hermes scoiale veiligheid OV
+",Noord-Brabant
+PROV-060,Elan Zuidoost Friesland	,2023,17291952,"agrarisch natuur- en landschapsbeheer  - Elan Zuidoost Friesland - gebiedsaanvraag periode 2023-2028 ihkv agrarisch natuur- en landschapsbeheer (ANLb)
+",Friesland
+PROV-061,Agrarisch Natuurbeheer West-Brabant,2023,17235659,"Natuur en milieu - Verbeteren natuurlijke leefomgeving - Natuur- en landschapsbeheer 2016 - Beheerjaar 2023-2028
+",Noord-Brabant
+PROV-062,River Operations Rotterdam Drechtsteden B.V.,2023,17177256,SRM 3.2.2 Regionaal openbaar vervoer over water - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-063,Connexxion Openbaar Vervoer N.V.,2024,17155622,SRM 3.2.1 Regionaal openbaar vervoer over weg en spoor - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-064,1542 natuurlijke personen,2022,17046343,"Verordening Stimuleringslening Duurzaam Thuis - Verordening Stimuleringslening Duurzaam Thuis
+",Limburg
+PROV-065,Stichting Het Utrechts Landschap,2023,17002912,"Landelijk gebied - Subsidieregeling Kwaliteitsimpuls Natuur en Landschap - De Lage grond (Mirjam Sterk)
+",Utrecht
+PROV-066,"Waterschap Amstel, Gooi En Vecht",2024,16504815,"Klimaat en gezonde leefomgeving - Saneren waterbodem Amstel bij Uithoorn / Cindu - Begrotingspost / BUVR
+",Noord-Holland
+PROV-067,Particulier,2024,16253824,"2: Milieu En Energie - Asbest Eraf, Zon Erop - Asbest Eraf, Zon Erop
+",Overijssel
+PROV-068,1323 natuurlijke personen,2022,16177270,"Verordening Stimuleringslening Duurzaam Thuis - Verordening Stimuleringslening Duurzaam Thuis
+",Limburg
+PROV-069,Staatsbosbeheer Noord Brabant,2023,15811821,"Algemeen financieel beleid - Verbeteren natuurlijke leefomgeving - Asv, begrotingssubsidies - capaciteit voor realisatie NNB
+",Noord-Brabant
+PROV-070,Staatsbosbeheer,2022,15378653,"Algemene wet bestuursrecht, sub d - Vrijwilligersmiddelen Nationaal Park De Groote Peel
+",Limburg
+PROV-071,Staatsbosbeheer,2023,14905387,SKNL Kwaliteitsimpuls natuur en landschap - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-072,Connexxion Openbaar Vervoer N.V.,2022,14904070,Mob - 3 reg vervoer over weg en spoor - Veilig en duurzaam - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-073,"Gebiedscoop Rijn, Vecht en Venen U.A.",2023,14539016,"Landelijk gebied - Agenda Vitaal Platteland provincie Utrecht 2021 - Projectplan Investeringen agrarisch natuurbeheer (AVP) Gebiedscoöperatie Rijn, Vecht en Venen U.A. (Mirjam Sterk)
+",Utrecht
+PROV-074,Natuurbeheer Oost-Brabant UA,2023,14527134,"Natuur en milieu - Verbeteren natuurlijke leefomgeving - Natuur- en landschapsbeheer 2016 - Beheerjaar 2023-2028
+",Noord-Brabant
+PROV-075,Staatsbosbeheer,2023,14388858,"Behoud van prioritaire soorten 2022-2027 - Monitoring Knoflookpad Millingerwaard 2023-2025
+",Gelderland
+PROV-076,Collectief Eemland,2023,14207223,"Landelijk gebied - Agenda Vitaal Platteland provincie Utrecht 2021 - Verbeteren van het broedsucces van de weidevogels in Eemland (Mirjam Sterk)
+",Utrecht
+PROV-077,Vereniging Natuurmonumenten,2022,13929003,"Groen - Uvr Kwaliteitsimpuls natuur en landschap, functieverandering - Percelen
+",Noord-Holland
+PROV-078,"Stichting ""Het Zuid-Hollands Landschap""",2024,13263515,SKNL Kwaliteitsimpuls natuur en landschap - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-079,Woningstichting Woningbelang,2024,13000000,"- Versterken ruimtelijke kwaliteit - Asv, begrotingssubsidies - Geldlening 1-7-2024 tot 1-7-2054 HooBe1
+",Noord-Brabant
+PROV-080,Natura Artis Magistra,2024,12752439,"Economie, leefbaarheid en cultuur - ARTIS-Salmhuisjes. - Uvr Restauratie rijksmonumenten
+",Noord-Holland
+PROV-081,EUREGIO ,2022,12300000,"Interreg cofinanciering Du-NL - Technische Bijstand Interreg VI Deutschland-Nederland
+",Gelderland
+PROV-082,1195 natuurlijke personen,2022,12230099,"Verordening Stimuleringslening Duurzaam Thuis - Verordening Stimuleringslening Duurzaam Thuis
+",Limburg
+PROV-083,Gemeente Ede,2023,12048829,"Biodiversiteit en Landschap 2026 - Levend Landschap Ede 2023 2026
+",Gelderland
+PROV-084,Waterschap Vallei en Veluwe,2022,11960857,"Beleef het Apeldoorns kanaal - Dierense Sluis
+",Gelderland
+PROV-085,BiSC,2024,11683028,"Cultuur en erfgoed - Algemene subsidieverordening provincie Utrecht 2022 - Exploitatiesubsidie 2025-2028 (Rob van Muilekom)
+",Utrecht
+PROV-086,Vereniging tot Behoud van Natuurmonumenten in Nederland,2022,11492415,"Functieverandering en inrichting tbv GNN 2022-2029 - IJsselvallei 2022.1 (ETH)
+",Gelderland
+PROV-087,Natuurmonumenten,2023,11335309,"Duurzaam weidevogelgrasland - Natuurmonumenten
+",Friesland
+PROV-088,Gemeente Renkum,2022,11305403,"Energieloketten 2021 - 2043 - Energieloket 2022 Gemeente Renkum
+",Gelderland
+PROV-089,"Waterschap Amstel, Gooi en Vecht",2023,11168186,"Groen - Uvr Natuurherstelmaatregelen - SAP
+",Noord-Holland
+PROV-090,Gemeente Emmen,2022,11122272,"Cultuur, Maatschappij en Vrijetijdseconomie - Biovergister
+",Drenthe
+PROV-091,Coöperatieve Agrarisch Natuur Collectief Midden Overijssel U.A,2023,10926908,"3 Vitaal Platteland - Snl Agrarisch Natuur En Landschapsbeheer (Anlb) - Gebiedsaanvraag Agrarisch Natuur- En Landschapsbeheer 2023-2028
+",Overijssel
+PROV-092,Stichting Introdans,2023,10650360,"Cultuur en Erfgoed 2024 BJS - Exploitatie subsidie cultuurperiode 2021-2024
+",Gelderland
+PROV-093,Gemeente Nijmegen,2022,10632703,"Oplossen knelpunten bij procedures woningbouw - tijdelijke inhuur - Koudenhoek Noord woningbouwontwikkeling, Waalsprong
+",Gelderland
+PROV-094,Arriva Openbaar Vervoer NV,2024,10532502,"Verkeer en Vervoer - concessie Vechtdallijn - traject Zwolle-Emmen - 2015
+",Drenthe
+PROV-095,Gemeente Utrecht subsidies,2024,10488826,"Bereikbaarheid - Uitvoeringsverordening subsidies Mobiliteit 2020-2023 provincie Utrecht - Onderhoud en herinrichting Langerakbaan (André van Schie)
+",Utrecht
+PROV-096,Collectief Alblasserwaard Vijfheerenland,2023,10457395,"Landelijk gebied - Agenda Vitaal Platteland provincie Utrecht 2021 - Subsidieaanvraag 17 ANLb-plasdraspompen (Mirjam Sterk)
+",Utrecht
+PROV-097,Business PARK Aviolanda Property BV,2023,10420000,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - Sale en lease-back wb hangaar Aviolanda
+",Noord-Brabant
+PROV-098,Particulier,2023,10345854,"3 Vitaal Platteland - Snl Natura 2000-Gebieden De Wieden En Weerribben - Snl Natura 2000
+",Overijssel
+PROV-099,Provincie Drenthe,2023,10344843,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.5 Deltaprogramma Zoetwater Regio Oost 2022-2027 - Deltaprogramma Zoetwater Regio Oost  2022-2027
+",Overijssel
+PROV-100,Staatsbosbeheer Regio West,2022,10328724,"Economie, cultuur en welzijn - Uvr restauratie Rijksmonumenten - Elswout buitenplaats
+",Noord-Holland
+PROV-101,Staatsbosbeheer,2023,10196894,"3 Vitaal Platteland - 4.5 Verbeteren Condities Voor Aandachtsoorten 5.0 - Actieplan Vogelpoel
+",Overijssel
+PROV-102,Syntus / Keolis Nederland BV,2022,10130000,"Bereikbaarheid II - Openbaar Vervoer - Algemene subsidie verordening provincie Utrecht (AsvpU) - Marketingplan 2022
+ (Arne Schaddelee)
+",Utrecht
+PROV-103,Agrarische Nastuurvereniging Waddenvogels	,2023,10127869,"agrarisch natuur- en landschapsbeheer  - Agrarische Natuurvereniging Waddenvogels	- gebiedsaanvraag periode 2023-2028 ihkv agrarisch natuur- en landschapsbeheer (ANLb)
+",Friesland
+PROV-104,Unie van Bosgroepen u.a.	,2023,10088509,"Natuur- en landschapsbeheer (SrNL) Fryslân 2023-2028 - Unie van Bosgroepen u.a.	
+",Friesland
+PROV-105,Noardlike Fryske Wâlden,2023,10088509,"Natuur- en landschapsbeheer (SrNL) Fryslân 2023-2028 - Noardlike Fryske Walden
+",Friesland
+PROV-106,Nv Pwn Waterleidingbedrijf,2022,9827273,"Groen - Uvr Natuurherstelmaatregelen - Natura 2000 herstelmaatregelen
+",Noord-Holland
+PROV-107,Particulier,2024,9631165,"Verhuisvergoeding huurwoning - Verhuisvergoeding
+",Gelderland
+PROV-108,BiSC,2023,9514300,"Cultuur en erfgoed - Algemene subsidieverordening provincie Utrecht (AsvpU) - Exploitatiesubsidie 2021 -2024 (Rob van Muilekom)
+",Utrecht
+PROV-109,Philharmonie  Zuidnederland,2024,9334185,"Algemene wet bestuursrecht sub c - Werkplan 2024
+",Limburg
+PROV-110,Coöperatie Gebiedscollectief Noordoost-Twente U.A.,2023,9274413,"3 Vitaal Platteland - Snl Agrarisch Natuur En Landschapsbeheer (Anlb) - Gebiedsaanvraag Agrarisch Natuur- En Landschapsbeheer 2023-2028
+",Overijssel
+PROV-111,Gebiedscoöperatie Groot Wilnis,2023,9264288,"Bodem, water, milieu - Subsidieregeling Beperking
+Bodemdaling (SRBB) Utrechtse Veenweiden - Veenweide Infiltratie systeem Fase 2  (Has Bakker)
+",Utrecht
+PROV-112,NS Reizigers B.V.,2023,9204753,SRM 3.2.1 Regionaal openbaar vervoer over weg en spoor - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-113,Coöperatief Collectief Agrarisch Natuurbeheer Midden Brabant U.A.,2023,9104398,"Natuur en milieu - Verbeteren natuurlijke leefomgeving - Natuur- en landschapsbeheer 2016 - Beheerjaar 2023-2028
+",Noord-Brabant
+PROV-114,Gemeente Arnhem,2022,9071568,"Betaalbaar wonen - Nijmeegseweg Arnhem
+",Gelderland
+PROV-115,Co√∂peratief Weidehof Krimpenerwaard U.A.,2023,8822136,SNL 2016 - Hoofdstuk 3 Agrarisch natuur- en landschapsbeheer - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-116,Agrarische natuur & landschapsvereniging,2023,8812667,"Landelijk gebied - Subsidieverordening Natuur- en Landschapsbeheer Provincie Utrecht 2016 - gebiedsaanvraag ANLb 2023 Lopikerwaard (Mirjam Sterk)
+",Utrecht
+PROV-117,Stichting Omgevingsfonds Maastricht Aachen Airport,2024,8750000,"Algemene wet bestuursrecht sub d (Economie en Innovatie) - Omgevingsfonds MAA
+",Limburg
+PROV-118,Waterschap De Dommel,2022,8572811,"Algemeen financieel beleid - Klimaatproof maken leefomgeving - Asv, begrotingssubsidies - Automatiseren stuwen, tranche 2
+",Noord-Brabant
+PROV-119,Gemeente Ede,2022,8490214,"Aanleg Agroforestry - Bomen op melkveebedrijf
+",Gelderland
+PROV-120,Vereniging ANLB Rijn en Gouwe Wiericke,2023,8471820,SNL 2016 - Hoofdstuk 3 Agrarisch natuur- en landschapsbeheer - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-121,Vereniging Natuurmonumenten	,2023,8399003,"Subsidieregeling Kwaliteitsimpuls Natuur en Landschap Fryslân 2022 SPUK (SKNL) - Maatregel vergroten konijnenpopulatie Schiermonnikoog
+",Friesland
+PROV-122,Stichting Het Geldersch Landschap,2022,8332400,"Aanpak invasieve exoten 2022 - Bestrijding invasieve soorten binnen GNN
+",Gelderland
+PROV-123,Co√∂peratie De Groene Klaver U.A.,2023,8149365,SNL 2016 - Hoofdstuk 3 Agrarisch natuur- en landschapsbeheer - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-124,Swets & Co B.V.,2022,8109184,Mob - 3 reg vervoer over weg en spoor - Veilig en duurzaam - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-125,Waterschap Rijn en IJssel,2022,8097513,"Samenwerkingsovereenkomsten waterschappen 2022-2027 - SOK Waterschap Rijn en IJssel 2022-2027 (Prov. middelen)
+",Gelderland
+PROV-126,Natuurmonument ver.,2023,8080182,"Cultuur en erfgoed - Subsidieregeling Hollandse Waterlinies provincie
+Utrecht - Beleef de keelkazemat van Fort bij Nigtevecht (Rob van Muilekom)
+",Utrecht
+PROV-127,The Chocolate Factory Meierijstad B.V.,2023,8000000,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - The Chocolate Factory (TCF)
+",Noord-Brabant
+PROV-128,Gemeente Arnhem,2023,7992347,"Bevorderen inwonerparticipatie in kwetsbare wijken en dorpen - Ontmoetingsplek in portiershuisje bij Enka Arnhem
+",Gelderland
+PROV-129,Coöperatie Collectief Agrarisch Natuurbeheer U.A./Poldernatuur Zeeland,2023,7980000,Subs. agrarisch natuur- en landschapsbeheer (ANLb) 2023-2028; provinciale cofinanciering,Zeeland
+PROV-130,Gemeente Doetinchem,2022,7883252,"Gelders Winterfonds - Winterfonds Doetinchem
+",Gelderland
+PROV-131,Waterschap Drents Overijsselse Delta,2023,7845900,"3 Vitaal Platteland - 4.17 Aanpak Van Invasieve Exoten 2.0 - Beheersen Exoten In De Weerriben, De Wieden En Omgeving Blokzijl
+",Overijssel
+PROV-132,Gemeente Meierijstad,2022,7701250,"Mobiliteit - Verbeteren mobiliteit en bereikbaarheid - Verkeer en vervoer 2016 - Snelfietsroute Uden - Veghel
+",Noord-Brabant
+PROV-133,LIOF,2024,7637705,"Algemene wet bestuursrecht sub c - SPUK bedrijfsmatig vastgoed
+",Limburg
+PROV-134,Vereniging tot Behoud van Natuurmonumenten in Nederland,2023,7628525,Subs. apparaatskosten en maatregelen ter regulering van recreatiedruk in het kader van het Programma Natuur Zeeland - inzet in het kader van fase I en voorbereiden fase II ,Zeeland
+PROV-135,Stichting Natuurcollectief Noord-Holland,2023,7525407,"Groen - Begrotingspost/BUVR - SVNL
+",Noord-Holland
+PROV-136,Stichting ZB Bibliotheek van Zeeland,2024,7464115,"Integrale kosten subs. 2024 Stichting ZB Bibliotheek van Zeeland, inclusief Werkplaats voor duurzaamheid in Zeeland (Switch)",Zeeland
+PROV-137,"Gemeente Alkmaar,Stadsontwikkeling & Beheer",2023,7372067,"Bereikbaarheid - Begrotingspost/BUVR - Havenontwikkeling Boekelermeer
+",Noord-Holland
+PROV-138,AVG restrictie,2024,7307454,Srg 2.19 Landbouwadvies - Toekomstbestendige landbouw - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-139,Ontwikkelingsmaatschappij Oost-Nederland N.V.,2022,7274174,"Economie 2022 BJS - Activiteitenplan 2022 (Apeldoorn)
+",Gelderland
+PROV-140,Coöperatie Bosgroep Midden Nederland U.A.,2022,7213482,"Uitvoering SPUK Natuur 2021-2030 - SPUK-maatregelen 2022-2025
+",Gelderland
+PROV-141,Stichting Landschap Overijssel,2022,7166012,"3 Vitaal Platteland - 9.5 Gebiedsgerichte Aanpak Stikstof - Inzet Gebiedsteams Gebiedsgerichte Aanpak Stikstof
+",Overijssel
+PROV-142,Stichting ZB Bibliotheek van Zeeland,2023,7106107,"Integrale kostensubsidie 2023 Stichting ZB Bibliotheek van Zeeland, inclusief Werkplaats voor duurzaamheid in Zeeland (Switch)",Zeeland
+PROV-143,Landschap Erfgoed Utrecht,2023,7098463,"Cultuur en erfgoed - Algemene subsidieverordening provincie Utrecht (AsvpU) - Exploitatiesubsidie STAMU 2021 -2024 (Rob van Muilekom)
+",Utrecht
+PROV-144,Gemeente Emmen,2023,7029258,"Cultuur, Maatschappij en
+Vrijetijdseconomie - Culturele Impuls gemeenten 2023, Emmen
+",Drenthe
+PROV-145,Coöperatieve Bosgroep Zuid-Nederland UA,2022,7011380,"Natuur en milieu - Verbeteren natuurlijke leefomgeving - Natuur - BBB De Pals, Bladel 2022
+",Noord-Brabant
+PROV-146,Stichting PhotonDelta,2022,7000000,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - PhotonDelta brugfinanciering NGF
+",Noord-Brabant
+PROV-147,Stichting ZB Bibliotheek van Zeeland,2022,6982619,"Integrale kosten subs. 2022 Stichting ZB Bibliotheek van Zeeland, inclusief Werkplaats voor duurzaamheid in Zeeland (Switch)",Zeeland
+PROV-148,Stichting Rijnbrink Holding,2024,6962259,"Cultuur en Erfgoed 2025 BJS - Ondersteuning bibliotheekwerk Gelderland 2025
+",Gelderland
+PROV-149,Maastricht University,2024,6855483,"Algemene wet bestuursrecht sub c (Kennis-As) - Derde tranche UCV, University College Venlo
+",Limburg
+PROV-150,"Gebiedscoop Rijn, Vecht en Venen U.A.",2024,6726272,"Bodem, water, milieu - Subsidieregeling Beperking Bodemdaling Utrechtse Veenweiden - Aanpak Bodemdaling Oud-Kamerik (Has Bakker)
+",Utrecht
+PROV-151,Stichting Rijnbrink Holding,2023,6703252,"Cultuur en Erfgoed 2024 BJS - Ondersteuning bibliotheekwerk Gelderland 2024
+",Gelderland
+PROV-152,Gemeente Druten,2023,6680619,"Aanpak invasieve exoten 2024 - Beheerplan Invasieve Exoten Druten
+",Gelderland
+PROV-153,592 natuurlijke personen,2023,6673790,"Verordening Stimuleringslening Duurzaam Thuis - Verordening Stimuleringslening Duurzaam Thuis
+",Limburg
+PROV-154,Stichting Provinciaal Museum Limburg (Het Bonnefantenmuseum),2023,6541651,"Algemene wet bestuursrecht artikel 4:23, derde lid, sub c - Werkplan 2023
+",Limburg
+PROV-155,Arriva Personenvervoer Nederland B.V.,2024,6521083,SRM 3.2.1 Regionaal openbaar vervoer over weg en spoor - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-156,Gemeente Hoorn,2023,6512618,"Economie, cultuur en welzijn - Uvr HIRB+ toekomstbestendige winkelgebieden - Programma binnenstad Hoorn
+",Noord-Holland
+PROV-157,Waterschap Vechtstromen,2023,6460332,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.11 Klimaatadaptatiemaatregelen 2021-2027 - Droogte Aanpak Midden-Twente
+",Overijssel
+PROV-158,Stichting Gooisch Natuurreservaat,2023,6433614,"Groen - Uvr Natuur - en landschapbeheer - Uitvoering natuur- en landschapsbeheer
+",Noord-Holland
+PROV-159,Gemeente Hoorn,2022,6404586,"Bereikbaarheid - Uvr Doortrappen - Doortrappen West Friesland
+",Noord-Holland
+PROV-160,Waterschapshuis waterschap Vechtstromen,2023,6395000,"Landelijk Gebied - Nieuwe Drostendiep
+",Drenthe
+PROV-161,Gemeente Veenendaal,2022,6352881,"Bereikbaarheid I - Algemeen - Uitvoeringsverordening subsidies Mobiliteit 2020-2023 provincie Utrecht - Doorfietsroute Utrecht Science Park-Veenendaal (Arne Schaddelee)
+",Utrecht
+PROV-162,Co√∂peratie Agrarisch Collectief Midden-Delfland u.a.,2023,6343938,Srg 2.16 Verbeteren leefgebied boerenlandvogels - Gezonde en bewegingsvriendelijke leefomgeving - Gezond en veilig Zuid-Holland,Zuid-Holland
+PROV-163,Stichting Rijnbrink Holding,2022,6331588,"Cultuur en Erfgoed 2023 BJS - Ondersteuning Bibliotheekwerk Gelderland 2023
+",Gelderland
+PROV-164,(leeg),2022,6324132,"Agrarische Bedrijfsverplaatsing 2022 - (leeg)
+",Friesland
+PROV-165,Gemeente Borne,2023,6249349,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.11 Klimaatadaptatiemaatregelen 2021-2027 - Herinrichting Europastraat
+",Overijssel
+PROV-166,Stichting Deltares,2023,6185000,"Projectsubsidies 2023 - FRESHEM-NL
+",Friesland
+PROV-167,Gemeente Enschede,2023,6182416,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.4 Flexpools Versnellen Woningbouw - Cromhoff Versnellen Woningbouw 2023 2024
+",Overijssel
+PROV-168,"Stichting Provinciaal Museum Limburg (Het
+Bonnefantenmuseum)",2024,6091506,"Algemene wet bestuursrecht sub c - Werkplan 2024
+",Limburg
+PROV-169,Limburgs Museum,2024,6064257,"Algemene wet bestuursrecht sub c - Werkplan 2024
+",Limburg
+PROV-170,Stg. Het Noordbrabants Landschap,2022,6025579,"Algemeen financieel beleid - Klimaatproof maken leefomgeving - Asv, begrotingssubsidies - Natte natuurparel Bossche Broek zuid
+",Noord-Brabant
+PROV-171,Stichting Greenwise Campus,2024,6000000,"Economie - Vrijgave gereserveerde middelen investeringsagenda
+",Drenthe
+PROV-172,St. philharmonie zuidnederland,2024,6000000,"Cultuur en samenleving - Verbeteren cultureel klimaat - Hedendaagse cultuur - Activiteitenplan Philzuid 2025-2028
+",Noord-Brabant
+PROV-173,Anonymus,2024,5904482,"Bereikbaarheid - Go safe zonder afleiding - Uvr Verkeerseducatie scholieren
+",Noord-Holland
+PROV-174,Gemeente Utrecht subsidies,2023,5900141,"Bereikbaarheid  - Uitvoeringsverordening subsidies Mobiliteit 2020-2023 provincie Utrecht - Fietsparkeren bij Bushaltes - Tranche 3 (Arne Schaddelee)
+",Utrecht
+PROV-175,BOM Holding B.V.,2024,5834690,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - Activiteiten 2024
+",Noord-Brabant
+PROV-176,Pivot Park Vastgoed B.V.,2024,5826790,"- Versterken economie en innovatie - Asv, begrotingssubsidies - Pivot Park Nieuwbouw Grizzly
+",Noord-Brabant
+PROV-177,Gemeente Gooise Meren,2023,5697928,"Economisch herstel en duurzaamheid - Uvr versterken maatschappelijke sector - Versterken maatschappelijke sector
+",Noord-Holland
+PROV-178,Gemeente Montferland,2022,5674893,"Challenge Groene icoonprojecten - Realisatiefase - Bloemenpark Didam (Didam)
+",Gelderland
+PROV-179,Gemeente Enschede,2024,5662459,"1: Ruimtelijke Ordening En Waterbeheer - Algemene Subsidie Verordening - Vraag En Aanbod Water In Balans
+",Overijssel
+PROV-180,BOM Holding B.V.,2023,5634850,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - Activiteiten 2023
+",Noord-Brabant
+PROV-181,Stichting Rijnbrink Holding,2023,5632000,"6 Cultuur En Sociale Kwaliteit - 7.1 Kader Culturele Instellingen Overijssel 2021 Tot En Met 2024 - Ondersteuning Bibliotheekwerk In Overijssel
+",Overijssel
+PROV-182,Stichting Kunstloc Brabant,2022,5603836,"Algemeen financieel beleid - Verbeteren cultureel klimaat - Asv, begrotingssubsidies - activiteiten 2022
+",Noord-Brabant
+PROV-183,Gemeente Hilversum,2022,5570749,"Bereikbaarheid - Uvr Kleine Infrastructuur - Fietsverbinding Maartensdijkseweg -Huydecopersweg
+",Noord-Holland
+PROV-184,BOM,2022,5445000,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - activiteiten 2022
+",Noord-Brabant
+PROV-185,Stichting ProBiblio,2024,5421411,"Probiblio t.b.v. boekjaarsubsidie - Erfgoed, cultuur en toerisme - Een concurrerend Zuid-Holland",Zuid-Holland
+PROV-186,Gemeente Zwolle,2022,5419425,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.15 Klimaatadaptatie - Klimaatadaptieve Voortuinen Zwollenaren
+",Overijssel
+PROV-187,Stichting Het Limburgs Landschap,2022,5415289,"Algemene wet bestuursrecht, sub c - Werkplan en begroting 2022
+",Limburg
+PROV-188,College van burgemeester en wethouders van de gemeente Opsterland,2023,5400000,"Trochfytsrûtes 2022-2023 - It paad foarút gemeente Opsterland
+",Friesland
+PROV-189,Stichting Discovery Museum,2024,5371396,"Algemene wet bestuursrecht sub c - Werkplan 2024
+",Limburg
+PROV-190,Gemeente Tilburg,2022,5346487,"Algemeen financieel beleid - Verbeteren natuurlijke leefomgeving - Asv, begrotingssubsidies - Recropassage N261 in Tilburg
+",Noord-Brabant
+PROV-191,Stichting Kunstloc Brabant,2024,5343299,"Algemeen financieel beleid - Verbeteren cultureel klimaat - Asv, begrotingssubsidies - Activiteiten 2024
+",Noord-Brabant
+PROV-192,Stichting Drents Museum,2023,5332640,"Cultuur, Maatschappij en Vrijetijdseconomie - Boekjaar 2024, Drents Museum
+",Drenthe
+PROV-193,VNO-NCW MIDDEN,2024,5288258,"Ontzorgingsprogramma verduurzaming MKB - Regionaal Energieteam Bedrijven Foodvalley - ontzorging mkb
+",Gelderland
+PROV-194,Staatsbosbeheer Regio West,2023,5287924,"Groen - Begrotingspost/BUVR - Diemerscheg fase 1 en 2
+",Noord-Holland
+PROV-195,Natuurcollectief Utrecht,2023,5275089,"Landelijk gebied - Subsidieverordening natuur-en landschapsbeheer provincie Utrecht 2016 - SNL2023-2028 NCU (Mirjam Sterk)
+",Utrecht
+PROV-196,Waterschap Vechtstromen,2024,5248302,"1: Ruimtelijke Ordening En Waterbeheer - Algemene Subsidie Verordening - Asv Aanvraag Haarvaten Op Peil
+",Overijssel
+PROV-197,Gemeente Vlaardingen,2023,5213179,Vliegende Brigade Zuid-Holland - Voldoende juiste woningen op de juiste plek - Sterke steden en dorpen in Zuid-Holland,Zuid-Holland
+PROV-198,Stichting ProBiblio,2023,5192923,"Probiblio t.b.v. boekjaarsubsidie - Erfgoed, cultuur en toerisme - Een concurrerend Zuid-Holland",Zuid-Holland
+PROV-199,Maatschap,2023,5154930,"Circulaire mestverwerking - ZLD-UP
+",Gelderland
+PROV-200,Stichting Drents Museum,2022,5152421,"Cultuur, Maatschappij en Vrijetijdseconomie - MESRA
+",Drenthe
+PROV-201,Huis voor de Kunsten Limburg,2022,5134723,"Algemene wet bestuursrecht, sub c - Werkplan en begroting 2022
+",Limburg
+PROV-202,Vereniging Natuurmonumenten,2024,5120615,"Natuur en landelijk gebied - Aanpak Waterteunisbloem Achteraf - Begrotingspost / BUVR
+",Noord-Holland
+PROV-203,Stichting Discovery Museum,2023,5120041,"Algemene wet bestuursrecht artikel 4:23, derde lid, sub c - Werkplan 2023
+",Limburg
+PROV-204,Stichting Kunstloc Brabant,2023,5119016,"Algemeen financieel beleid - Verbeteren cultureel klimaat - Asv, begrotingssubsidies - Activiteiten 2023
+",Noord-Brabant
+PROV-205,Gemeente Den Haag,2023,5092401,Vliegende Brigade Zuid-Holland - Voldoende juiste woningen op de juiste plek - Sterke steden en dorpen in Zuid-Holland,Zuid-Holland
+PROV-206,Gemeente Haarlem,2023,5013503,"Bereikbaarheid - Begrotingspost/BUVR - Lodewijk van Deyssellaan
+",Noord-Holland
+PROV-207,Waterschap Rijn En Ijssel,2023,5012100,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.5 Deltaprogramma Zoetwater Regio Oost 2022-2027 - Waterschap Rijn En Ijssel Zon Fase 2
+",Overijssel
+PROV-208,Stichting Probiblio,2022,5007640,"Probiblio t.b.v. boekjaarsubsidie - Erfgoed, cultuur en toerisme - Een concurrerend Zuid-Holland",Zuid-Holland
+PROV-209,Brabant Startup Fonds B.V.,2022,5000000,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - VFF Brabant
+",Noord-Brabant
+PROV-210,Stg. Ned. Nat. Oologs en Verzets Museum,2023,5000000,"Algemeen financieel beleid - Verbeteren cultureel klimaat - Asv, begrotingssubsidies - Voor nieuw publiek
+",Noord-Brabant
+PROV-211,Woningstichting Woningbelang,2023,5000000,"Algemeen financieel beleid - Versterken leefbaarheid en participatie - Asv, begrotingssubsidies - Hof en Bernardusschool
+",Noord-Brabant
+PROV-212,Brabant Startup Fonds B.V.,2024,5000000,"- Versterken economie en innovatie - Asv, begrotingssubsidies - Vroege Fase Financiering Brabant 2024-27
+",Noord-Brabant
+PROV-213,College van Burgemeester & Wethouders,2023,4947000,"Incidentele Subsidies 2019 - Wurkje mei Fryslân - Subsidieaanvraag gebiedsontwikkeling WTC-Cambuur
+",Friesland
+PROV-214,St. Beheer Derdengelden Bosgroepen,2023,4916495,"Landelijk gebied - Subsidieverordening natuur-en landschapsbeheer provincie Utrecht 2016 - SNL2023-2028 UvB (Mirjam Sterk)
+",Utrecht
+PROV-215,Coöp. Unie Van Bosgroepen U.A.,2023,4888777,"Natuur en milieu - Verbeteren natuurlijke leefomgeving - Natuur- en landschapsbeheer 2016 - 08054125_SNL_202307
+",Noord-Brabant
+PROV-216,Limburgs Museum,2022,4878737,"Algemene wet bestuursrecht, sub c - Werkplan en begroting 2022
+",Limburg
+PROV-217,NS Reizigers B.V.,2024,4873054,SRM 3.2.1 Regionaal openbaar vervoer over weg en spoor - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-218,Gemeente Ede,2024,4857011,"Beëindigen Houtoogst - Beëindigen Houtoogst bos Ede
+",Gelderland
+PROV-219,Gemeente Almelo,2024,4842949,"1: Ruimtelijke Ordening En Waterbeheer - Flexpools Versnellen Woningbouw - Versnelling Sleutelprojecten Gemeente Almelo 2024
+",Overijssel
+PROV-220,Stichting Cubiss Brabant,2023,4799165,"Algemeen financieel beleid - Verbeteren cultureel klimaat - Asv, begrotingssubsidies - activiteiten 2023
+",Noord-Brabant
+PROV-221,Limburgs Museum,2023,4780177,"Algemene wet bestuursrecht artikel 4:23, derde lid, sub c - Werkplan 2023
+",Limburg
+PROV-222,Gemeente Zaanstad,2022,4758988,"Bereikbaarheid - Vernieuwen Zaanbrug - Vernieuwen Zaanbrug
+",Noord-Holland
+PROV-223,Groene Metropoolregio Arnhem - Nijmegen,2024,4726002,"Ontzorgingsprogramma verduurzaming MKB - REE ontzorging van het klein en micro-MKB bij verduurzaming
+",Gelderland
+PROV-224,Gemeente Hoorn,2024,4715747,"Bereikbaarheid - Herinrichting J. Poststraat - Uvr Kleine infrastructuur
+",Noord-Holland
+PROV-225,De Roover B.V.,2024,4714824,"- Versterken energieneutrale samenleving - Asv, begrotingssubsidies - Windturbine de Roover
+",Noord-Brabant
+PROV-226,Staatsbosbeheer,2024,4687334,SKNL Kwaliteitsimpuls natuur en landschap - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-227,Gemeente Apeldoorn,2023,4630686,"Bevorderen inwonerparticipatie in kwetsbare wijken en dorpen - Plek voor meiden
+",Gelderland
+PROV-228,Gemeente Teylingen,2022,4600792,knelpuntenpot sociale huur en middenhuur Zuid-Holland - Voldoende juiste woningen op de juiste plek - Sterke steden en dorpen in Zuid-Holland,Zuid-Holland
+PROV-229,Waterschap Limburg,2023,4594194,"Algemene wet bestuursrecht artikel 4:23, derde lid, sub d - Propositie Heuvelland voor het deeIprojectplan 'Maatregelen tegen
+wateroverlast Waterval-Meerssen'
+",Limburg
+PROV-230,Anonymus,2023,4587460,"Groen - Uvr Kwaliteitsimpuls natuur en landschap, inrichting - Inrichtingsplan
+",Noord-Holland
+PROV-231,Gemeente Dijk en Waard,2023,4585733,"Bereikbaarheid - Uvr Kleine Infrastructuur - Dijk en Waard
+",Noord-Holland
+PROV-232,Staatsbosbeheer	,2023,4582060,"Middelgrote maatschappelijke initiatieven Regio Waddeneilanden 2023 Tender 2 - De  nachtschuur
+",Friesland
+PROV-233,Stichting Noordbrabants Museum,2024,4557300,"Algemeen financieel beleid - Instandhouding cultureel erfgoed - Asv, begrotingssubsidies - Activiteiten 2024
+",Noord-Brabant
+PROV-234,Stichting Noordbrabants Museum,2023,4556518,"Algemeen financieel beleid - Instandhouding cultureel erfgoed - Asv, begrotingssubsidies - activiteiten 2023
+",Noord-Brabant
+PROV-235,NS Reizigers B.V.,2022,4509803,Mob - 3 reg vervoer over weg en spoor - Veilig en duurzaam - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-236,BL Huisvesting B.V.,2023,4500000,"Algemeen financieel beleid - Instandhouding cultureel erfgoed - Asv, begrotingssubsidies - Herontwikkeling Kasteel Gemert
+",Noord-Brabant
+PROV-237,Coöperatieve Unie Van Bosgroepen U.A.,2024,4454427,"3: Vitaal Platteland - Snl Natuur- En Landschapsbeheer - Snl Natuur- En Landschapsbeheer
+",Overijssel
+PROV-238,Stepforward Projecten B.V.,2022,4435001,Stepforward projecten BV t.b.v. Oude Tongen - Gezonde en bewegingsvriendelijke leefomgeving - Gezond en veilig Zuid-Holland,Zuid-Holland
+PROV-239,Gemeente Epe,2024,4400704,"Dorpendeal - Dorpendeal Emst
+",Gelderland
+PROV-240,Ontwikkelingsmaatschappij Oost Nederland Nv,2022,4399796,"5 Regionale Economie - Asv - Activiteitenplan 2022
+",Overijssel
+PROV-241,Gemeente Enschede,2022,4385302,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.16 Flexpools Versnellen Woningbouw - Cromhoff Versnellen Woningbouw
+",Overijssel
+PROV-242,TNO innovation for life,2023,4300000,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - Solar maakindustrie terug naar Brabant
+",Noord-Brabant
+PROV-243,Particulier,2023,4295422,"Verhuisvergoeding huurwoning - Verhuisvergoeding
+",Gelderland
+PROV-244,N.V. Economische Impuls Zeeland,2024,4287307,Integrale kostensubs. 2024 N.V. Economische Impuls Zeeland,Zeeland
+PROV-245,Privé persoon,2024,4279027,"Natuur - Verbeteren natuurlijke leefomgeving - Stimuleringsregeling landschap - Stimuleringsregeling landschap
+",Noord-Brabant
+PROV-246,Vereniging tot Behoud van Natuurmonumenten in Nederland,2023,4242939,"Functieverandering en inrichting tbv GNN 2022-2044 - Natuurakkers Gelderland spoor 2
+",Gelderland
+PROV-247,Gemeente Rotterdam,2023,4242528,Vliegende Brigade Zuid-Holland - Voldoende juiste woningen op de juiste plek - Sterke steden en dorpen in Zuid-Holland,Zuid-Holland
+PROV-248,Gemeente Den Haag ,2022,4229100,"Molens - onderhoud - Erfgoed, cultuur en toerisme - Een concurrerend Zuid-Holland",Zuid-Holland
+PROV-249,Gemeente Borger-Odoorn,2022,4209954,"Cultuur, Maatschappij en Vrijetijdseconomie - Culturele impuls gemeente Coevorden
+",Drenthe
+PROV-250,Gemeente Kampen,2022,4186950,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.16 Flexpools Versnellen Woningbouw - Sleutelproject Reevedelta
+",Overijssel
+PROV-251,Stichting ProBiblio,2024,4165000,"Economie, leefbaarheid en cultuur - Boekjaar 2024 - Begrotingspost / BUVR
+",Noord-Holland
+PROV-252,Co√∂peratie Collectief Hoeksche Waard U.A.,2023,4135804,SNL 2016 - Hoofdstuk 3 Agrarisch natuur- en landschapsbeheer - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-253,Gemeente Utrecht,2022,4128083,"Bereikbaarheid I - Algemeen - Algemene subsidieverordening Provincie Utrecht - Multimodaal Regionaal Verkeersmanagement 2021-2022 (Arne Schaddelee)
+",Utrecht
+PROV-254,Gemeente Alkmaar,2024,4096999,"Ruimte en Wonen - Versnelling woningbouw Alkmaars Kanaal - Uvr Flexibele schil versnelling woningbouw gebiedsontwikkelingsteams
+",Noord-Holland
+PROV-255,Stichting Natuurcollectief Fryslan	,2023,4026594,"Natuur- en landschapsbeheer (SrNL) Fryslân 2023-2028 - Stichting Natuurcollectief Fryslan	
+",Friesland
+PROV-256,College van burgemeester en wethouders van de gemeente Leeuwarden,2022,4024779,"Flexpool versnelling voorfase woningbouw  - CPO Mantgum
+",Friesland
+PROV-257,Stichting Breda University of Applied Science,2024,4000000,"- Versterken economie en innovatie - Asv, begrotingssubsidies - Brabant Game Hub
+",Noord-Brabant
+PROV-258,Gemeente Zaanstad,2024,3992602,"Bereikbaarheid - Verbindingsweg Assendelft - Begrotingspost / BUVR
+",Noord-Holland
+PROV-259,Provincie Overijssel,2024,3953663,"BG Extra bijdrage ZON fase 2 - Cofinanciering landbouwmaatregelen LTO-Noord ZON 2022-2027
+",Gelderland
+PROV-260,Stg. Het Zuid-Hollands Landschap,2023,3935669,"Landelijk gebied - Subsidie kwaliteitsimpuls natuur en landschap (SKNL) - Investering en aanvullende maatregelen Zouweboezem 2022-2023 (Mirjam Sterk)
+",Utrecht
+PROV-261,Unie Van Bosgroepen U.A.,2023,3913120,"3 Vitaal Platteland - Snl Natuur- En Landschapsbeheer - Natuur- En Landschapsbeheer
+",Overijssel
+PROV-262,NOM,2022,3900000,"Economie - Assen installatie techniek
+",Drenthe
+PROV-263,Collectief Agrarische Natuurvereniging De Hollandse Venen,2023,3899988,SNL 2016 - Hoofdstuk 3 Agrarisch natuur- en landschapsbeheer - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-264,Vereniging tot behoud van Natuurmonumenten in Nederland,2022,3889093,"Cultuur en erfgoed - Uitvoeringsprogramma Nieuwe Hollandse Waterlinie en SvA - Verduurzaming en herbestemming Fort bij Abcoude Fase 1 (Rob van Muilekom)
+",Utrecht
+PROV-265,Stichting Beheer Derdengelden Bosgroepen,2023,3800853,"Groen - Uvr Natuur - en landschapbeheer - Uitvoering natuur- en landschapsbeheer
+",Noord-Holland
+PROV-266,Stichting Landschap Noord-Holland,2022,3793731,"Economie, cultuur en welzijn - Restauratie Fort bij Vechte - Restauratie Fort bij Vechte
+",Noord-Holland
+PROV-267,BrabantRing B.V.,2024,3780000,"- Versterken economie en innovatie - Asv, begrotingssubsidies - BrabantRing BV
+",Noord-Brabant
+PROV-268,Gemeente Kerkrade,2022,3701076,"Aanjagen gemeentelijke projecten verduurzaming woningen - Verduurzaming Vasco woningen Hopel/Erensteinerveld
+",Limburg
+PROV-269,Gemeente Arnhem,2024,3650270,"Biodiversiteit en landschap 2031 - Stadsoase & Schuytgraaf
+",Gelderland
+PROV-270,Gemeente Haarlem,2024,3633555,"Bereikbaarheid - Doorfietsroute L. van Deyssellaan en herinricht P.Mullierlaan - Uvr Kleine infrastructuur
+",Noord-Holland
+PROV-271,Co√∂peratief Agrarisch Collectief Zuidhollandse Eilanden U.A.,2023,3628188,SNL 2016 - Hoofdstuk 3 Agrarisch natuur- en landschapsbeheer - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-272,Gemeente Amersfoort,2023,3609334,"Bereikbaarheid - Algemene subsidieverordening provincie Utrecht 2022 - Multimodaal Verkeersmanagement (MUVM) (André van Schie)
+",Utrecht
+PROV-273,Stichting ProBiblio,2023,3607448,"Economie, cultuur en welzijn - Begrotingspost/BUVR - Activiteitenplan 2023
+",Noord-Holland
+PROV-274,Gemeente Amersfoort,2022,3587458,"Bereikbaarheid I - Algemeen - Algemene subsidieverordening Provincie Utrecht - Multimodaal Regionaal Verkeersmanagement 2021-2022 (Arne Schaddelee)
+",Utrecht
+PROV-275,Stichting Het Utrechts Landschap,2024,3569480,"Cultuur en erfgoed - Subsidieregeling Hollandse Waterlinies provincie Utrecht - Realisatie vlonderbrug Everdinger Waarde (Rob van Muilekom)
+",Utrecht
+PROV-276,Gemeente Den Haag,2024,3559524,planvorming detailhandel Zuid-Holland - Toekomstbestendig economisch vestigingsklimaat - Een concurrerend Zuid-Holland,Zuid-Holland
+PROV-277,NV Limburgs Instituut voor Ontwikkeling en Financiën (LIOF),2022,3541600,"Algemene wet bestuursrecht, sub c - Jaarplan NV LIOF 2022
+",Limburg
+PROV-278,Stichting Breda University of Applied Science,2023,3539566,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - Circulaire stromen - Next Level Logistic
+",Noord-Brabant
+PROV-279,Waterschap Rijn en IJssel,2024,3534889,"Samenwerkingsovereenkomsten Waterschappen 2022-2027 (SPUK) - SOK WS Rijn en IJssel 2022-2027 (SPUK versnellingsgelden)
+",Gelderland
+PROV-280,Gemeente Nunspeet,2022,3519110,"Gelders Winterfonds - Gelders Winterfonds
+",Gelderland
+PROV-281,Fers,2023,3518800,"Boekjaarsubsidies 2023 - Fers
+",Friesland
+PROV-282,VOF,2024,3509007,"Natuur - Verbeteren natuurlijke leefomgeving - Stimuleringsregeling landschap - Stimuleringsregeling landschap
+",Noord-Brabant
+PROV-283,Stichting Natuurcollectief Overijssel,2023,3501352,"3 Vitaal Platteland - Snl Natuur- En Landschapsbeheer - Natuur- En Landschapsbeheer
+",Overijssel
+PROV-284,Gemeente Roermond,2022,3500770,"Algemene wet bestuursrecht, sub d - Posifiets Roermond en Weert
+",Limburg
+PROV-285,Staatsbosbeheer,2022,3480049,"Groen - Uvr Kwaliteitsimpuls natuur en landschap, inrichting - Inrichting Koopman 
+",Noord-Holland
+PROV-286,Stichting Delta Climate Center,2024,3474673,Subs. activiteiten Delta Climate Center 2024-2025,Zeeland
+PROV-287,Stichting ProBiblio,2022,3464240,"Economie, cultuur en welzijn - Boekjaar 2022 - Boekjaar 2022
+",Noord-Holland
+PROV-288,Stichting Greenport Gelderland,2024,3454000,"Greenport Gelderland 2025 - 2028 - Programma Greenport Gelderland 2025-2028
+",Gelderland
+PROV-289,Stichting Cubiss Brabant,2024,3443668,"Algemeen financieel beleid - Verbeteren cultureel klimaat - Asv, begrotingssubsidies - Activiteiten 2024
+",Noord-Brabant
+PROV-290,Ministerie van Defensie,2023,3426792,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - Vestiging van de F35 PTMS Testfaciliteit
+",Noord-Brabant
+PROV-291,Gemeente Nijmegen,2023,3412868,"Bevorderen inwonerparticipatie in kwetsbare wijken en dorpen - Participatie en ontmoeten ""kwetsbare"" ouderen Hazenkamp
+",Gelderland
+PROV-292,Unie van Bosgroepen,2023,3407131,"Natuur- en Landschapsbeheer Limburg - Natuur- en Landschapsbeheer Limburg 2022-2027
+",Limburg
+PROV-293,Fers,2022,3406387,"Boekjaarsubsidies 2022 - Aanvraag boekjaarsubsidie 2022 FERS
+",Friesland
+PROV-294,Stichting Marketingoost,2024,3403000,"5: Regionale Economie - Algemene Subsidie Verordening - Gastvrij Overijssel 2024-2027, Deel 1
+",Overijssel
+PROV-295,VFFRNH B.V.,2024,3400000,"Economie, leefbaarheid en cultuur - Vroege Fase Financiering - Begrotingspost / BUVR
+",Noord-Holland
+PROV-296,Waterschap Aa en Maas,2022,3378075,"Algemeen financieel beleid - Klimaatproof maken leefomgeving - Asv, begrotingssubsidies - Begrotingssubsidie WAM
+",Noord-Brabant
+PROV-297,Local Action Group LEADER Noordwest-Fryslan	,2023,3362715,"Open Call LEADER GLB-NSP Fryslân - Local Action Group LEADER Noordwest-Fryslan	
+",Friesland
+PROV-298,Lokale Actiegroep Zuidoost-Friesland	,2023,3362715,"Open Call LEADER GLB-NSP Fryslân - Lokale Actiegroep Zuidoost-Friesland	
+",Friesland
+PROV-299,Lokale Actiegroep Zuidwest-Fryslân i.o..	,2023,3362715,"Open Call LEADER GLB-NSP Fryslân - Lokale Actiegroep Zuidwest-Fryslân i.o..	
+",Friesland
+PROV-300,Land- En Tuinbouw Organisatie Noord,2024,3362071,"1: Ruimtelijke Ordening En Waterbeheer - Deltaprogramma Zoetwater Regio Oost 2022-2027 - Zon Fase 2
+",Overijssel
+PROV-301,Natuurcollectief Brabant,2023,3350446,"Natuur en milieu - Verbeteren natuurlijke leefomgeving - Natuur- en landschapsbeheer 2016 - SNL voor individueel gecertificeerden
+",Noord-Brabant
+PROV-302,Gebiedsco√∂peratie Buijtenland van Rhoon U.A.,2023,3292534,gebiedsco√∂peratie Buijtenland van Rhoon t.b.v. realisatie en beheer - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-303,Fries Sociaal Planbureau,2022,3274219,"Boekjaarsubsidies 2022 - Fries sociaal planbureau 2022
+",Friesland
+PROV-304,Gemeente Delft,2024,3252041,SRW -  Hoofdstuk 4 Vliegende Brigade - Voldoende juiste woningen op de juiste plek - Sterke steden en dorpen in Zuid-Holland,Zuid-Holland
+PROV-305,Gemeente Tilburg,2024,3245377,"- Versterken economie en innovatie - Asv, begrotingssubsidies - Talent voor de kenniseconomie van morgen
+",Noord-Brabant
+PROV-306,Stichting Brabant Sport,2023,3240790,"Algemeen financieel beleid - Versterken leefbaarheid en participatie - Asv, begrotingssubsidies - Activiteiten 2024
+",Noord-Brabant
+PROV-307,Gemeente Venlo,2022,3233722,"Aanjagen gemeentelijke projecten verduurzaming woningen - Regionaal Isolatieprogramma Regionale Energie Strategie Noord- en Midden Limburg (RES NML)
+",Limburg
+PROV-308,Vereniging tot Behoud van Natuurmonumenten in Nederland,2024,3226135,"Functieverandering en inrichting tbv GNN 2022-2065 - Velhorst 2023.02
+",Gelderland
+PROV-309,Gemeente Rotterdam,2024,3205464,SRW -  Hoofdstuk 4 Vliegende Brigade - Voldoende juiste woningen op de juiste plek - Sterke steden en dorpen in Zuid-Holland,Zuid-Holland
+PROV-310,Stichting Monumentenwacht Utrecht,2024,3202384,"Cultuur en erfgoed - Algemene subsidieverordening provincie Utrecht 2022 - Exploitatie Monumentenwacht Utrecht 2025 (Rob van Muilekom)
+",Utrecht
+PROV-311,Ontwikkelingsmaatschappij Oost-Nederland N.V.,2023,3180220,"Cofinanciering Europese thematische fondsen 2023 - Interreg NSR - ACE Home care innovation ecosystem
+",Gelderland
+PROV-312,Gemeente Dordrecht,2022,3156141,Vliegende Brigade Zuid-Holland - Voldoende juiste woningen op de juiste plek - Sterke steden en dorpen in Zuid-Holland,Zuid-Holland
+PROV-313,Gemeente Nunspeet,2023,3151085,"Historische Molens en stoomgemalen 2125 - Molen De Maagd
+",Gelderland
+PROV-314,Gemeente Zwolle,2024,3147488,"1: Ruimtelijke Ordening En Waterbeheer - Flexpools Versnellen Woningbouw - Parkeerbalans Ten Behoeve Van Versnelling Woningbouw Programma Stadshart
+",Overijssel
+PROV-315,Gemeente Deventer,2022,3144321,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.16 Flexpools Versnellen Woningbouw - Flexpool Deventer Versnellen Woningbouw
+",Overijssel
+PROV-316,Rom Regio Utrecht B.V.,2022,3142826,"Economie - Algemene subsidie verordening provincie Utrecht (AsvpU) - Vroege Fase Financiering powered by ROM Utrecht Region (Robert Strijk)
+",Utrecht
+PROV-317,Stichting Brabant Sport,2022,3130059,"Algemeen financieel beleid - Versterken leefbaarheid en participatie - Asv, begrotingssubsidies - activiteiten 2023
+",Noord-Brabant
+PROV-318,"Waterschap Amstel,Gooi en Vecht",2023,3106400,"Landelijk gebied - Subsidie kwaliteitsimpuls natuur en landschap (SKNL) - Natuurherstel Molenpolder (2) (Mirjam Sterk)
+",Utrecht
+PROV-319,"Waterschap Amstel, Gooi en Vecht",2022,3094393,"Landelijk gebied - Subsidieregeling Kwaliteitsimpuls Natuur Landschap - Natuurherstel Molenpolder (kreeftenbeheersing) SKNL-SPUK  (Mirjam Sterk)
+",Utrecht
+PROV-320,Gemeente Nieuwegein,2022,3079725,"Ruimtelijke ontwikkeling - Uitvoeringsverordening subsidie Versnelling woningbouw provincie Utrecht 2021-2024 - Versnelling woningbouwopgave Nieuwegein (Rob van Muilekom)
+",Utrecht
+PROV-321,Gemeente Amersfoort,2024,3059199,"Bereikbaarheid - Uitvoeringsverordening subsidies Mobiliteit 2020-2023 provincie Utrecht - Aanpak fietsparkeerdruk bushaltes Amersfoort (Arne Schaddelee)
+",Utrecht
+PROV-322,Gemeente Wageningen,2022,3058412,"Betaalbaar wonen - Buurtseweg Ireneschool
+",Gelderland
+PROV-323,Gemeente Haarlem,2022,3033008,"Bereikbaarheid - Uvr Doortrappen - Doortrappen Noord-Holland
+",Noord-Holland
+PROV-324,Fryske Akademy	,2022,3016885,"Boekjaarsubsidies 2022 - Fryske Akademy	
+",Friesland
+PROV-325,Stichting Cultuur Oost,2024,3009960,"Cultuur en Erfgoed 2024 BS - Transformatie ondersteuning culturele infrastructuu
+",Gelderland
+PROV-326,Gemeente Land van Cuijk,2023,3005269,"Algemeen financieel beleid - Verbeteren mobiliteit en bereikbaarheid - Asv, begrotingssubsidies - SPUK Kademuren Haven Cuijk
+",Noord-Brabant
+PROV-327,Stichting Centrum voor Veiligheid en Digitalisering,2022,3000000,"Centrum voor digitalisering en veiligheid - Centrum voor Veiligheid en Digitalisering (Apeldoorn)
+",Gelderland
+PROV-328,Arnhems Buiten B.V.,2023,3000000,"Perspectieffonds gelderland - Ontwikkeling Arnhems Buiten
+",Gelderland
+PROV-329,Stichting Oranje Fonds,2022,3000000,"Leefbaarheid samenwerking Oranje Fonds 2023 - Samenwerkingsfonds ""Verbind je buurt!"" fonds 2023-2024
+",Gelderland
+PROV-330,Omgevingsdienst NZKG,2023,3000000,"Klimaat en Milieu - Begrotingspost/BUVR - Groen Staal
+",Noord-Holland
+PROV-331,Stichting Scholingsfonds Brabant Leert,2023,3000000,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - Scholingsfonds Brabant Leert
+",Noord-Brabant
+PROV-332,Gemeente Deventer,2023,2990678,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.10 Klimaatadaptatiemaatregelen Werkregio Rivus - Klimaatadaptieve Maatregelen Deventer
+",Overijssel
+PROV-333,Stichting Erfgoed Gelderland,2022,2987821,"Cultuur en Erfgoed 2022 BJS - Boekjaarsubsidie Erfgoed Gelderland 2022
+",Gelderland
+PROV-334,Connexxion,2024,2987166,Subs. 2024 compenseren prijsstijging om verschraling van het regionaal OV tegen te gaan (middelen Motie Bikker),Zeeland
+PROV-335,Coöperatieve Bosgroep Zuid-Nederland UA,2023,2986662,"Natuur en milieu - Verbeteren natuurlijke leefomgeving - Natuur - LPN Cyclische maatregelen N2000-gebieden
+",Noord-Brabant
+PROV-336,N.V. Economische Impuls Zeeland,2022,2975868,Integrale kostensubs. 2022 N.V. Economische Impuls Zeeland,Zeeland
+PROV-337,Land- En Tuinbouw Organisatie Noord (Bij Verkorting Lto Noord),2024,2970339,"1: Ruimtelijke Ordening En Waterbeheer - Algemene Subsidie Verordening - Zon Uitvoering Landbouw 2023-2027
+",Overijssel
+PROV-338,203494047 Hoogheemraadschap De Stichtse Rijnlanden,2022,2960000,"Bodem, water, milieu - Agenda Vitaal Platteland  (AVP) + Plattelandsontwikklingsprogramma (POP) (ILG) - Waterberging en -doorvoer Willeskop (Mirjam Sterk)
+",Utrecht
+PROV-339,Stichting Food Valley,2023,2950000,"Innovatie facility vouchers - : Proposal Regiodeal Innovation Voucher Program for SME’s
+",Gelderland
+PROV-340,Connexxion Openbaar Vervoer N.V.,2022,2945900,Aanvullende subs. i.v.m. beschikbaarheidsvergoeding openbaar vervoer (BVOV) 2022 Zeeland,Zeeland
+PROV-341,Gemeente Putten,2022,2921035,"Bodemgegevens op orde - invoeren bodemgegevens uit rapporten (Putten)
+",Gelderland
+PROV-342,Stichting Veenweiden Innovatiecentrum,2022,2915616,Veenweide Innovatie Centrum t.b.v. project Klei in veen  - Toekomstbestendige landbouw - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-343,Maastricht University,2023,2913020,"Algemene wet bestuursrecht sub c - Tweede Tranche HEFI,  Healthy Eating and Food Innovation
+",Limburg
+PROV-344,Stifling Fryske Akademy,2023,2910000,"Boekjaarsubsidies 2023 - Stichting Fryske Akademy
+",Friesland
+PROV-345,Particulier,2022,2902121,"Verhuisvergoeding huurwoning - Verhuisvergoeding
+",Gelderland
+PROV-346,Universiteit Utrecht,2023,2899975,"Stikstofmeetnet - Depositie meten en modelleren
+",Gelderland
+PROV-347,Connexxion Openbaar Vervoer N.V.,2023,2893430,Aanvullende subs. i.v.m. transitievergoeding openbaar vervoer 2023 Zeeland,Zeeland
+PROV-348,VisitBrabant,2022,2883577,"Algemeen financieel beleid - Verbeteren gezonde leefomgeving - Asv, begrotingssubsidies - Ons Brabant fietst Sjees Gangmakers 2022
+",Noord-Brabant
+PROV-349,V.O.F.,2024,2865534,"Aanleg Agroforestry - Agroforestry-plan
+",Gelderland
+PROV-350,Stichting Marketingoost,2022,2857234,"5 Regionale Economie - Asv - Gebiedsarrangement Propositie & Positionering Kernen Np Sh Entr
+",Overijssel
+PROV-351,Gemeente Amsterdam,2024,2843601,"Economie, leefbaarheid en cultuur - Museum FOAM - Uvr Restauratie rijksmonumenten
+",Noord-Holland
+PROV-352,Stichting Omroep Gelderland,2024,2818918,"Cultuur en Erfgoed 2024 BS - Gelders Mediabeleid 2024
+",Gelderland
+PROV-353,River Operations Rotterdam Drechtsteden B.V.,2024,2816530,SRM 3.2.2 Regionaal openbaar vervoer over water - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-354,InnovationQuarter,2022,2810399,Deelakkoorden Human Capital Zuid-Holland - Toekomstbestendig economisch vestigingsklimaat - Een concurrerend Zuid-Holland,Zuid-Holland
+PROV-355,Gemeente Hof Van Twente,2022,2801977,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.16 Flexpools Versnellen Woningbouw - Tsb / Op Stoom
+",Overijssel
+PROV-356,Gemeente Hengelo,2022,2800478,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.16 Flexpools Versnellen Woningbouw - Flexpools Hengelo
+",Overijssel
+PROV-357,Stichting Natuurbeheercollectief Krimpenerwaard,2022,2795000,Stichting Natuurbeheer Collectief Krimpenerwaard t.b.v. het natuurbeheer op de provinciale gronden - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-358,Stichting Natuurcollectief Limburg,2023,2788352,"Natuur- en Landschapsbeheer Limburg - Natuurbeheer 2023-2028
+",Limburg
+PROV-359,Staatsbosbeheer Noord Brabant,2022,2780894,"Natuur en milieu - Verbeteren natuurlijke leefomgeving - Natuur - Begrazing N2000 Brabantse Wal
+",Noord-Brabant
+PROV-360,Burgerkracht Limburg,2024,2778930,"Algemene wet bestuursrecht sub c - Werkplan 2024
+",Limburg
+PROV-361,Gemeente Hollands Kroon,2023,2777433,"Bereikbaarheid - Uvr doortrappen  - Doortrappen Noord-Holland
+",Noord-Holland
+PROV-362,Stichting Het Zeeuwse Landschap,2024,2775137,Integrale kostensubs. 2024 Stichting Het Zeeuwse Landschap,Zeeland
+PROV-363,Zeeuws Museum,2024,2753634,Integrale kosten subs. 2024 Zeeuws Museum,Zeeland
+PROV-364,TNO,2022,2730000,"Algemeen financieel beleid - Verbeteren mobiliteit en bereikbaarheid - Asv, begrotingssubsidies - Appl.AI New Mobililty
+",Noord-Brabant
+PROV-365,Stichting Natuurcollectief Noord West Overijssel,2023,2727533,"3 Vitaal Platteland - Snl Natuur- En Landschapsbeheer - Natuur- En Landschapsbeheer
+",Overijssel
+PROV-366,Buijtenland van Rhoon,2022,2725928,gebiedscooperatie Buijtenland van Rhoon t.b.v. boekjaarsubsidie - Gezonde en bewegingsvriendelijke leefomgeving - Gezond en veilig Zuid-Holland,Zuid-Holland
+PROV-367,Waterschap Brabantse Delta,2023,2724278,"Algemeen financieel beleid - Verbeteren waterkwaliteit - Asv, begrotingssubsidies - Extra capaciteit MOK Ws Brabantse Delta
+",Noord-Brabant
+PROV-368,Burgerkracht Limburg,2023,2714574,"Algemene wet bestuursrecht sub c - Jaarplan 2023
+",Limburg
+PROV-369,Gemeente Tiel,2023,2713001,"Gelders Winterfonds - Winterfonds gemeente Tiel
+",Gelderland
+PROV-370,Gemeente Baarn,2024,2709750,"Bereikbaarheid - Uitvoeringsverordening subsidies Mobiliteit 2020-2023 provincie Utrecht - Doorfietsroute Amersfoort Hilversum (André van Schie)
+",Utrecht
+PROV-371,Stichting Natuurcollectief Zuid-Holland,2024,2692322,SNL 2016 - Hoofdstuk 2 Natuur- en Landschapsbeheer - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-372,Gemeente Leiden,2023,2686513,SRM 2.2.1 Gebiedsagenda infrastructurele projecten - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-373,Unie Van Bosgroepen,2022,2668175,"3 Vitaal Platteland - Snl - Lumpsum - Natuur- En Landschapsbeheer
+",Overijssel
+PROV-374,Landgoed Den Treek-Henschoten N.V.,2023,2639394,"Landelijk gebied - Subsidieverordening natuur-en landschapsbeheer provincie Utrecht 2016 - SNL2023-2028 Den Treek-Henschoten (Mirjam Sterk)
+",Utrecht
+PROV-375,Stichting Erfgoed Brabant,2024,2634551,"- Verbeteren cultureel klimaat - Asv, begrotingssubsidies - Museumschatjes
+",Noord-Brabant
+PROV-376,Zeeuws Museum,2023,2630450,Integrale kostensubs. 2023 Zeeuws Museum,Zeeland
+PROV-377,Anonymus,2022,2628570,"Groen - Uvr SVNL-N Natuurbeheer - Herbeschikking standaardkostprijs
+",Noord-Holland
+PROV-378,Stichting Het Utrechts Landschap,2022,2625235,"Cultuur en erfgoed - Uitvoeringsverordening subsidie Erfgoedparels provincie Utrecht 2020-2023 - Tuinmuur buitenplaats Hoog Beek en Royen (Rob van Muilekom)
+",Utrecht
+PROV-379,N.V. Economische Impuls Zeeland,2023,2623901,Integrale kostensubs. 2023 N.V. Economische Impuls Zeeland,Zeeland
+PROV-380,Stichting Regionaal Bureau voor Toerisme Arnhem Nijmegen Veluwe,2022,2610102,"Campagne Gelderland levert je mooie streken/Gelderse streken - Gelderland/ Gelderse Streken 2022
+",Gelderland
+PROV-381,Stichting Erfgoed Brabant,2023,2609066,"Algemeen financieel beleid - Instandhouding cultureel erfgoed - Asv, begrotingssubsidies - activiteiten 2023
+",Noord-Brabant
+PROV-382,Samenwerkingsorgaan Holland Rijnland,2022,2606105,Mob 2017 - 11 gedragsbe√Ønvloeding - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-383,Universiteit Twente,2024,2595750,"5: Regionale Economie - Algemene Subsidie Verordening - Circular Manufacturing Program
+",Overijssel
+PROV-384,REDstack B.V.,2023,2558750,"Cofinanciering Waddenfonds - Blue Energy
+",Friesland
+PROV-385,Waterschap Limburg,2022,2549305,"Algemene wet bestuursrecht, sub d - Soortenbeschermingsplannen en bevermaatregelen
+",Limburg
+PROV-386,VisitBrabant,2023,2548917,"Algemeen financieel beleid - Verbeteren cultureel klimaat - Asv, begrotingssubsidies - activiteiten 2023
+",Noord-Brabant
+PROV-387,Zeeuws Museum,2022,2548734,Integrale kosten subs. 2022 Zeeuws Museum,Zeeland
+PROV-388,Stg. Kunst Centraal,2024,2546315,"Cultuur en erfgoed - Algemene subsidieverordening provincie Utrecht 2022 - Beleidsplan Kunst Centraal 2025-2028  (Rob van Muilekom)
+",Utrecht
+PROV-389,Erfgoed Zeeland,2024,2540235,Integrale kosten subs. 1e kwartaal 2024 Erfgoed Zeeland,Zeeland
+PROV-390,Stichting Cultuur Oost,2022,2540026,"Covid steun Culturele instellingen - Corona steun 2020
+",Gelderland
+PROV-391,Gemeente Zoeterwoude,2022,2531000,Mob 2017 - 14 fietsprojecten - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-392,Gemeente Steenwijkerland,2024,2530016,"1: Ruimtelijke Ordening En Waterbeheer - Flexpools Versnellen Woningbouw - Lokale Woonzorgvisie Steenwijkerland
+",Overijssel
+PROV-393,Biblionet Drenthe,2023,2526072,"Cultuur, Maatschappij en Vrijetijdseconomie - Boekjaar 2024, Biblionet
+",Drenthe
+PROV-394,Gemeente Utrechtse Heuvelrug,2022,2515982,"Bodem, water, milieu - Uitvoeringsverordening subsidie bodemsanering provincie Utrecht - Bodemsanering voormalig drugslab Spoorlaan 35 te Overberg fase 1 (SPUK) (Mirjam Sterk)
+",Utrecht
+PROV-395,Gemeente Leiden,2024,2508190,SRM 2.2.1 Gebiedsagenda infrastructurele projecten - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-396,Gemeente Gooise Meren,2022,2507812,"Bereikbaarheid - Uvr Kleine Infrastructuur - Fietsstraat Amsterdamsestraatweg
+",Noord-Holland
+PROV-397,Gemeente Stein,2023,2500500,"Aanjagen gemeentelijke projecten verduurzaming woningen - In slimme stappen naar een toekomstbestendig huis
+",Limburg
+PROV-398,Twence Duurzaam B.V.,2023,2500000,"2 Milieu En Energie - 3.18 Investeringssubsidie Warmtenetprojecten - Regionaal Warmtenet Twente: De Beste Warmte Komt Uit De Buurt
+",Overijssel
+PROV-399,B.V. Beheermij ETG Hart van Brabant Golf,2022,2488300,"Algemeen financieel beleid - Verbeteren natuurlijke leefomgeving - Asv, begrotingssubsidies - Hydrologische herinrichting golfbaan
+",Noord-Brabant
+PROV-400,Van Gogh Sites N.V.,2022,2484402,"Algemeen financieel beleid - Instandhouding cultureel erfgoed - Asv, begrotingssubsidies - Uitbreiding Van Gogh Museum Vincentre
+",Noord-Brabant
+PROV-401,Gemeente Alphen aan den Rijn,2024,2467530,SRM 2.2.1 Gebiedsagenda infrastructurele projecten - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-402,Gemeente Hengelo,2023,2461553,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.4 Flexpools Versnellen Woningbouw - Realisatie Flexwoningen
+",Overijssel
+PROV-403,Stichting Cultuur Oost,2023,2459378,"Cultuur en Erfgoed 2024 BJS - Cultuur Oost
+",Gelderland
+PROV-404,River Operations South Holland B.V.,2024,2457060,River Operations South Holland B.V. t.b.v. Exploitatie veerdienst Maassluis-Rozenburg - Duurzame en veilige bereikbaarheid voor iedereen - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-405,Gemeente Aa en Hunze,2022,2452818,"Cultuur, Maatschappij en Vrijetijdseconomie - Bedrijfsovername Van Dalen
+",Drenthe
+PROV-406,C.V. Bosgroep Noord-Oost Nederland u.a.	,2023,2447187,"Subsidieregeling Kwaliteitsimpuls Natuur en Landschap Fryslân 2022 SPUK (SKNL) - Versneld Natuurherstel Friesland Maatregelen bossen
+",Friesland
+PROV-407,Biblionet Drenthe,2022,2440649,"Cultuur, Maatschappij en Vrijetijdseconomie - Greenwise Campus, gemeente Emmen
+",Drenthe
+PROV-408,Erfgoed Zeeland,2023,2426230,Integrale kostensubs. 2023 Erfgoed Zeeland,Zeeland
+PROV-409,Gemeente Rheden,2022,2424614,"Challenge Groene icoonprojecten - Realisatiefase - Groen icoon Dorpspark de Laak, Rheden (Rheden)
+",Gelderland
+PROV-410,Erfgoed Zeeland,2022,2411679,Integrale kosten subs. 2022 Erfgoed Zeeland  (inclusief huur en exploitatie gebouw Schuitvlot),Zeeland
+PROV-411,Waterschap Vallei En Veluwe,2023,2404167,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.5 Deltaprogramma Zoetwater Regio Oost 2022-2027 - Werkprogramma Zon 2022-2027 Waterschap Vallei En Veluwe
+",Overijssel
+PROV-412,Gemeente Velsen,2023,2379774,"Bereikbaarheid - Begrotingspost/BUVR - Tweede pont bij Velsen
+",Noord-Holland
+PROV-413,Gemeente Oss,2024,2372500,"- Verbeteren gezonde leefomgeving - Asv, begrotingssubsidies - Onderzoek voormalige stortplaatsen Oss
+",Noord-Brabant
+PROV-414,Staatsbosbeheer,2024,2363725,"Cultuur en erfgoed - Algemene subsidieverordening provincie Utrecht 2022 - RodS Staatsbosbeheer UTrecht 2024-2027 (Rob van Muilekom)
+",Utrecht
+PROV-415,Gemeente Horst aan de Maas,2022,2361554,"Algemene wet bestuursrecht, sub d - Programma Veiligheid 2e tranche Regiodeal Noord Limburg
+",Limburg
+PROV-416,Gemeente Nijmegen,2024,2354628,"Deelmobiliteitshub - Deelmobiliteitshubs gemeente Nijmegen
+",Gelderland
+PROV-417,Gemeente Oude IJsselstreek,2024,2350040,"Biodiversiteit en landschap 2026 - Biodiversiteit & Landschap Oude IJsselstreek
+",Gelderland
+PROV-418,N.V. Limburgs Instituut voor Ontwikkeling en Financiën (LIOF),2024,2350000,"Algemene wet bestuursrecht sub d - Subsidie BrightStart 2024 - 2026
+",Limburg
+PROV-419,Gemeente Hoeksche Waard,2024,2349867,SRM 2.2.1 Gebiedsagenda infrastructurele projecten - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-420,Stichting Natuurcollectief Zeeland,2023,2345430,Subs. natuur- en landschapsbeheer SVNL 2023-2028,Zeeland
+PROV-421,Gemeente Delft,2023,2345224,Vliegende Brigade Zuid-Holland - Voldoende juiste woningen op de juiste plek - Sterke steden en dorpen in Zuid-Holland,Zuid-Holland
+PROV-422,Stichting Landschapsbeheer Gelderland,2024,2340099,"Impuls biodiversiteit en landschap 2025-2028 - Impuls biodiversiteit en landschap 2025-2028
+",Gelderland
+PROV-423,Gemeente Amsterdam Subsidies,2023,2327953,"Economie, cultuur en welzijn - Uvr herstructurering en intelligent ruimtegebruik bedrijventerreinen - Herprofilering bedrijventerrein
+",Noord-Holland
+PROV-424,Groene Metropoolregio Arnhem - Nijmegen,2023,2318940,"Circulaire Economie (BS) - Aanjagen conceptueel circulair bouwen 2023
+",Gelderland
+PROV-425,Gemeente Hilversum,2023,2310206,"Bereikbaarheid - Begrotingspost/BUVR - Stationshal Hilversum
+",Noord-Holland
+PROV-426,Gemeente Apeldoorn,2024,2307677,"Biodiversiteit en landschap 2038 - Biodiversiteit en Landschap 2025-2028 Apeldoorn
+",Gelderland
+PROV-427,ANV Water Land en Dijken,2024,2304663,"Natuur en landelijk gebied - Aanvraag SVNL periode 2023-2028 (resterende beheerperiode) - Uvr Natuur- en landschapsbeheer
+",Noord-Holland
+PROV-428,Gebiedsco√∂peratie Buijtenland van Rhoon U.A.,2024,2300000,gebiedsco√∂peratie Buijtenland van Rhoon t.b.v. realisatie en beheer - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-429,Stichting Phion,2024,2295745,"Cultuur en Erfgoed 2024 BJS - Phion in Gelderland 2024
+",Gelderland
+PROV-430,Stichting Erfgoedhuis Zuid-Holland,2024,2286748,"erfgoedlijnen Zuid-Holland 2020 - Erfgoed, cultuur en toerisme - Een concurrerend Zuid-Holland",Zuid-Holland
+PROV-431,Gemeente Beekdaelen,2024,2276876,"Algemene wet bestuursrecht sub d - Ondersteuning OLS 2024
+",Limburg
+PROV-432,Stichting Monumenten Bezit,2022,2267445,"Economie, cultuur en welzijn - Uvr Onderzoek duurzaam benutten monumenten - Trompenburg
+",Noord-Holland
+PROV-433,Gemeente Den Helder,2022,2266750,"Bereikbaarheid - Uvr Doortrappen - Doortrappen Den Helder
+",Noord-Holland
+PROV-434,Privé persoon,2023,2258297,"Natuur en milieu - Verbeteren natuurlijke leefomgeving - Stimuleringsregeling landschap - Stimuleringsregeling landschap
+",Noord-Brabant
+PROV-435,Gemeente Hardenberg,2022,2257435,"Economie - Geopark De Hondsrug gemeente Borger-Odoorn
+",Drenthe
+PROV-436,Gemeente Bunnik,2023,2247560,"Bereikbaarheid  - Algemene subsidieverordening provincie Utrecht (AsvpU) - Rotonde N411 van Zijldreef (Arne Schaddelee)
+",Utrecht
+PROV-437,Gemeente Gouda,2022,2244324,Mob - 2 infrastructurele projecten - Snel van A naar B - Bereikbaar Zuid-Holland,Zuid-Holland
+PROV-438,Vereniging Samenwerkende Gelderse Bibliotheken,2024,2238243,"Gelderse aanpak basisvaardigheden - Programma Gelderland Aanpak Basisvaardigheden
+",Gelderland
+PROV-439,Huis voor de Kunsten Limburg,2024,2237187,"Algemene wet bestuursrecht sub c - Werkplan 2024
+",Limburg
+PROV-440,Brightlands Campus Greenport Venlo,2022,2228591,"Algemene wet bestuursrecht, sub d - Gezonde Basisschool van de Toekomst (GBT), Limburg Fit (LiFi)
+",Limburg
+PROV-441,ROM Regio Utrecht B.V.,2023,2226406,"Economie - Algemene subsidieverordening provincie Utrecht (AsvpU) - EDIH Noord West (Robert Strijk)
+",Utrecht
+PROV-442,Gemeente Deventer,2024,2218096,"1: Ruimtelijke Ordening En Waterbeheer - Flexpools Versnellen Woningbouw - Flexpool Projectbeheersing En -Voorbereiding Deventer
+",Overijssel
+PROV-443,Noordwijkse Golfclub,2023,2217557,SKNL Kwaliteitsimpuls natuur en landschap - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-444,Stichting Waternet,2022,2215803,"Groen - Defosfatering inlaatwater en afkoppelen agrarische gebieden - Fosfaatrijk inlaatwater
+",Noord-Holland
+PROV-445,Gemeente Beverwijk,2024,2211598,"Bereikbaarheid - Reconstructie Plesmanweg - Uvr Kleine infrastructuur
+",Noord-Holland
+PROV-446,VisitBrabant,2024,2209932,"- Verbeteren mobiliteit en bereikbaarheid - Asv, begrotingssubsidies - Ons Brabant Fietst 2024
+",Noord-Brabant
+PROV-447,Particulier,2024,2209766,Subs. kavelaanvaardingswerken,Zeeland
+PROV-448,Coöperatieve Vereniging Agrarisch Landschap Achterhoek,2022,2180685,"Behoud van prioritaire soorten 2022-2025 - herstel leefgebied boomkikker
+",Gelderland
+PROV-449,Gemeente Nieuwegein,2024,2178212,"Bereikbaarheid - Uitvoeringsverordening subsidies Mobiliteit 2020-2023 provincie Utrecht - Bushalte 2e Regimentsdok Het Klooster (Arne Schaddelee)
+",Utrecht
+PROV-450,Stichting Rijnbrink Deventer,2022,2170850,"6 Culturele Infrastructuur En Monumentenzorg - 7.1 Kader Culturele Instellingen Overijssel 2021 Tot En Met 2024 - Cultuureducatie Met Kwaliteit 2021 - 2024 Samenspel Cultuuronderwijs In Overijssel
+",Overijssel
+PROV-451,Stichting Erfgoedhuis Zuid-Holland,2023,2168168,"Erfgoedhuis Zuid-Holland - Erfgoed, cultuur en toerisme - Een concurrerend Zuid-Holland",Zuid-Holland
+PROV-452,Stg. Het Noordbrabants Landschap,2024,2163439,"- Verbeteren natuurlijke leefomgeving - Asv, begrotingssubsidies - Bijenlandschap West-Brabant
+",Noord-Brabant
+PROV-453,Vereniging Nationale Monumentenorganisaties,2022,2148000,"Economie, cultuur en welzijn - Instandhouding Kasteel Huis te Nuwendoorn - Instandhouding Kasteel Huis te Nuwendoorn
+",Noord-Holland
+PROV-454,Vereniging tot Behoud van Natuurmonumenten in Nederland,2022,2147611,Stichting Natuurmonumenten t.b.v. het gebied Meijegraslanden aanleg blauw grasland - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-455,Staatsbosbeheer,2022,2141475,"Grondverwerving Gelders Natuurnetwerk 2022-2026 - 2020-005042 Pachtafkoop en grondverwerving
+",Gelderland
+PROV-456,Stichting Opera Zuid,2024,2140000,"Algemene wet bestuursrecht sub c - Werkplan 2024
+",Limburg
+PROV-457,Ontwikkelingsmaatschappij Oost-Nederland N.V.,2024,2127000,"5: Regionale Economie - Algemene Subsidie Verordening - Activiteitenplan 2024
+",Overijssel
+PROV-458,Gemeente Assen,2024,2122119,"Cultuur, Maatschappij en Vrijetijdseconomie - Culturele impuls gemeente Assen
+",Drenthe
+PROV-459,Stichting Merk Fryslan,2023,2119900,"Boekjaarsubsidies 2023 - Merk Fryslân
+",Friesland
+PROV-460,Groenalliantie Midden-Holland en omstreken,2022,2117775,natuur- en recreatieschap Groenalliantie Midden-Holland t.b.v. boekjaarsubsidie - Gezonde en bewegingsvriendelijke leefomgeving - Gezond en veilig Zuid-Holland,Zuid-Holland
+PROV-461,Gemeente Bunnik,2024,2112800,"Bereikbaarheid - Uitvoeringsverordening subsidies Mobiliteit 2020-2023 provincie Utrecht - Doorfietsroute Veenendaal - Utrecht Science (Arne Schaddelee)
+",Utrecht
+PROV-462,Coöp.Ver.Coll.Deltaplan Landsch.UA,2023,2111134,"Natuur en milieu - Verbeteren natuurlijke leefomgeving - Natuur- en landschapsbeheer 2016 - Beheerjaar 2023-2028
+",Noord-Brabant
+PROV-463,Hoogheemraadschap van Rijnland,2023,2096080,Srn  2 natuurmaatregelen - Gezonde natuur - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-464,Stichting Monumentenwacht Gelderland,2022,2093523,"Covid steun Culturele instellingen - Coronaschade 2020
+",Gelderland
+PROV-465,Coöperatie Bosgroep Midden Nederland U.A.,2023,2093166,"Revitalisering en omvorming bos buiten Natura 2002 - Revitalisering en omvorming bos buiten N2000 BGMN
+",Gelderland
+PROV-466,Stichting Merk Fryslan,2022,2089870,"Projectsubsidies 2021 - Projectplan 2022
+",Friesland
+PROV-467,TNO,2024,2074138,"- Versterken economie en innovatie - Asv, begrotingssubsidies - H2Future - Groene Waterstof Elektrolyse
+",Noord-Brabant
+PROV-468,Gemeente Lingewaard,2023,2056550,"Biodiversiteit en landschap 2036 - Vlinderrijke Akkerranden 2023 2026
+",Gelderland
+PROV-469,Gemeente Rotterdam,2022,2050295,art 4 Asv - Deltaprogramma Zoet Water 2e fase - Leven met water - Versterken natuur in Zuid-Holland,Zuid-Holland
+PROV-470,Stichting Erfgoedhuis Zuid-Holland,2022,2049296,"erfgoedlijnen Zuid-Holland 2020 - Erfgoed, cultuur en toerisme - Een concurrerend Zuid-Holland",Zuid-Holland
+PROV-471,Gemeente Apeldoorn,2022,2043357,"Gelders Winterfonds - Winterfonds Apeldoorn
+",Gelderland
+PROV-472,Particulier,2022,2041702,"2 Milieu En Energie - 3.4 Asbest Eraf Zon Erop - Asbest Eraf Zon Erop
+",Overijssel
+PROV-473,Zuyd Hogeschool,2022,2040000,"Algemene wet bestuursrecht, sub c - Lime 2.0
+",Limburg
+PROV-474,Gemeente Epe,2023,2038894,"Biodiversiteit en landschap 2030 - Heel Epe Helpt!!
+",Gelderland
+PROV-475,Land- En Tuinbouw Organisatie Noord (Bij Verkorting Lto Noord),2023,2032843,"3 Vitaal Platteland - 4.20 Uitvoering Ontwikkelopgave Natura 2000 - Evenwichtsbemesting Lemselermaten
+",Overijssel
+PROV-476,Philharmonie zuidnederland,2023,2032558,"Algemene wet bestuursrecht artikel 4:23, derde lid, sub c - Werkplan 2023
+",Limburg
+PROV-477,Gemeente Zwolle,2023,2023889,"1 Ruimtelijke Ontwikkeling En Waterbeheer - 2.5 Deltaprogramma Zoetwater Regio Oost 2022-2027 - Afkoppelen Verhard Oppervlak In Zwolle
+",Overijssel
+PROV-478,Stichting Landschap Noord-Holland,2024,2017228,"Natuur en landelijk gebied - Bedijkte boezem - Uvr Kwaliteitsimpuls natuur- en landschap, functiewijziging
+",Noord-Holland
+PROV-479,"KUNSTGEBOUW, Stichting Kunst en Cultuur Zuid-Holland",2024,2016204,Het Kunstgebouw t.b.v. bijdrage in de loonontwikkeling - Erfgoed en Cultuur - Een welvarend Zuid-Holland,Zuid-Holland
+PROV-480,Coöperatief Boerennatuur Veluwe ,2024,2014534,"Biodiversiteit en landschap 2023 (RSG2.2f) - aanleg landschap met waardedaling Veluwe
+",Gelderland
+PROV-481,Particulier,2023,2005253,"Landelijk Gebied - Wolfwerende afrastering
+",Drenthe
+PROV-482,Gemeente 's-Hertogenbosch,2024,2003025,"- Versterken economie en innovatie - Asv, begrotingssubsidies - Datatalent voor Noordoost Brabant
+",Noord-Brabant
+PROV-483,Waterschapsbedrijf Limburg,2023,2000000,"Algemene wet bestuursrecht sub d - Pilot Nereda Verdygo Package Plant
+",Limburg
+PROV-484,NetVerder BV,2022,2000000,NetVerder B.V. t.b.v. de realisatie van een open netwerk voor stoom - Duurzaam energie-en grondstoffensysteem in de industrie - Schone energie voor iedereen,Zuid-Holland
+PROV-485,Stichting Nationaal Groenfonds,2024,2000000,Nationaal Groenfonds t.b.v. Ontwikkelfonds energieco√∂peraties - Energietransitie - Schone energie voor iedereen,Zuid-Holland
+PROV-486,Waterschap Rivierenland,2022,2000000,"Natuur en milieu - Verbeteren natuurlijke leefomgeving - Natuur - N2000 Pompveld Andelsch Broek fase 3
+",Noord-Brabant
+PROV-487,N.V. PWN Waterleidingbedrijf Noord-Holland,2024,2000000,"Natuur en landelijk gebied - Ondergrondse drinkwateropslag - Begrotingspost / BUVR
+",Noord-Holland
+PROV-488,Stichting Breda Robotics,2023,2000000,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - Robotica ecosysteem West-Brabant
+",Noord-Brabant
+PROV-489,TNO,2023,1999841,"Algemeen financieel beleid - Versterken economie en innovatie - Asv, begrotingssubsidies - Holst Centre-ZSW collaboration ACROBATTS
+",Noord-Brabant
+PROV-490,Gemeente Zeist,2023,1996234,"Bereikbaarheid  Openbaar Vervoer - Uitvoeringsverordening subsidies Mobiliteit 2020-2023 provincie Utrecht - Verlenging busperron Jordanlaan Zeist In (Arne Schaddelee)
+",Utrecht
+PROV-491,"Nederlandse Fruittelers Organisatie, NFO",2024,1992500,"Kennis en Innovatieprogramma Fruitteelt 2025-2028 - Programma “Fruitteelt levert je mooie streken in Gelderland""
+",Gelderland
+PROV-492,Gemeente Haarlemmermeer,2022,1981260,"Bereikbaarheid - Doorfietsroute - Doorfietsroute
+",Noord-Holland
+PROV-493,Stichting Rozet,2022,1977650,"Cultuur en Erfgoed 2022 BJS - De Gelderlandbibliotheek 2022
+",Gelderland
+PROV-494,WGR regio Stedendriehoek,2024,1973911,"Klimaatadaptatie 2025 - Klimaatadaptatie Oost-Veluwe
+",Gelderland
+PROV-495,ROM Regio Utrecht B.V.,2024,1965021,"Economie - Algemene subsidieverordening provincie Utrecht 2022 - Investeren, innoveren, internationaliser (André van Schie)
+",Utrecht
+PROV-496,Philharmonie Zuidnederland,2022,1954383,"Algemene wet bestuursrecht, sub c - Werkplan en begroting 2022
+",Limburg
+PROV-497,Groenalliantie Midden-Holland en omstreken,2023,1950855,Srsg - subsidie kwaliteitsimpuls recreatie Zuid-Holland - Gezonde en bewegingsvriendelijke leefomgeving - Gezond en veilig Zuid-Holland,Zuid-Holland
+PROV-498,NOM,2024,1950000,"Economie - Boekjaar 2024, NOM
+",Drenthe
+PROV-499,Staatsbosbeheer,2024,1948615,"Algemene wet bestuursrecht sub d - Uitvoeren van de maatregelen in het kader van de reservegelden
+gebiedsgerichte maatregelen programma Natuur 2021-2023
+",Limburg
+PROV-500,Stichting Vivare,2022,1947652,"Investeringsimpuls verduurzaming sociale huurwoningen - Complex 1005 - 99 VHE - Elst
+",Gelderland

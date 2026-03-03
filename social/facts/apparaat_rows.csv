@@ -1,0 +1,304 @@
+fact_id,begrotingsnaam,kostensoort,jaar,bedrag
+APP-001,Defensie,"Salaris, vakantie en eindejaarsuitkering",2023,4026365000
+APP-002,Defensie,"Salaris, vakantie- en eindejaarsuitkering ",2024,3155099000
+APP-003,Financiën,"Salaris, Individueel Keuzebudget",2024,2568645000
+APP-004,Financiën,"Salaris, vakantie en eindejaarsuitkering",2023,2252982000
+APP-005,Financiën,"Salaris, vakantie en eindejaarsuitkering",2022,2039577000
+APP-006,Defensie,schoonmaak en nuts,2024,1694987000
+APP-007,Defensie,"Uitkeringen, pensioenen en wachtgelden",2024,1437780000
+APP-008,Infrastructuur en Waterstaat,"Salaris, vakantie- en eindejaarsuitkering ",2024,1287860000
+APP-009,Infrastructuur en Waterstaat,"Salaris, vakantie en eindejaarsuitkering",2023,1103383000
+APP-010,Infrastructuur en Waterstaat,"Salaris, vakantie en eindejaarsuitkering",2022,980419000
+APP-011,Justitie en Veiligheid,"Salaris, vakantie- en eindejaarsuitkering ",2024,925175000
+APP-012,Justitie en Veiligheid,"Salaris, vakantie en eindejaarsuitkering",2023,807181000
+APP-013,Financiën,Sociale lasten en bijdrage zorgverzekeringswet,2024,709699000
+APP-014,Defensie,Uitkeringen,2023,707620000
+APP-015,Financiën,Sociale lasten enbijdrage zorgverzekeringswet,2023,632444000
+APP-016,Financiën,Sociale lasten enbijdrage zorgverzekeringswet,2022,617288000
+APP-017,Defensie,Relatiegeschenken (niet voor eigen personeel),2024,543037000
+APP-018,Defensie,Pensioenen,2023,493965000
+APP-019,Defensie,Relatiegeschenken (niet voor eigen personeel),2023,485098000
+APP-020,Defensie,"Toelagen, toeslagen en vergoedingen",2023,401879000
+APP-021,Buitenlandse Zaken,"Salaris, vakantie- en eindejaarsuitkering",2024,390780000
+APP-022,Binnenlandse zaken en Koninkrijksrelaties,Bijdrage SSO's,2024,381218000
+APP-023,Economische zaken en Klimaat,"Salaris, vakantie- en eindejaarsuitkering ",2024,378972000
+APP-024,Financiën,Bijdrage SSO,2024,364812000
+APP-025,Buitenlandse Zaken,"Salaris, vakantie en eindejaarsuitkering",2023,349538000
+APP-026,Financiën,Bijdrage SSO,2023,340773000
+APP-027,Sociale Zaken en Werkgelegenheid,SALARISSEN,2024,339322000
+APP-028,Binnenlandse zaken en Koninkrijksrelaties,Bijdrage SSO's,2023,332505000
+APP-029,Financiën,Advisering opdrachtgevers over automatiseringsvraagstukken,2024,330629000
+APP-030,Financiën,Advisering opdrachtgevers over automatiseringsvraagstukken,2023,328008000
+APP-031,Buitenlandse Zaken,"Salaris, vakantie en eindejaarsuitkering",2022,316121000
+APP-032,Defensie,"Toelagen, toeslagen en vergoedingen",2024,313551000
+APP-033,Economische zaken en Klimaat,"Salaris, vakantie en eindejaarsuitkering",2023,305685000
+APP-034,Ministerie van Sociale Zaken en Werkgelegenheid,Salarissen,2023,292612000
+APP-035,Binnenlandse zaken en Koninkrijksrelaties,Bijdrage SSO's,2022,291984000
+APP-036,"Ministerie van Volksgezondheid, Welzijn en Sport",SALARISSEN,2024,289149000
+APP-037,Financiën,Advisering opdrachtgevers over automatiseringsvraagstukken,2022,283008000
+APP-038,Sociale zaken en Werkgelegenheid,Salarissen,2022,254866000
+APP-039,"Ministerie van Volksgezondheid, Welzijn en Sport",Salarissen,2023,248213000
+APP-040,Binnenlandse zaken en Koninkrijksrelaties,"Salaris, vakantie- en eindejaarsuitkering ",2024,243690000
+APP-041,Economische Zaken en Klimaat,"Salaris, vakantie en eindejaarsuitkering",2022,236297000
+APP-042,"Onderwijs, Cultuur en Wetenschap","Salaris, vakantie- en eindejaarsuitkering ",2024,233418000
+APP-043,"Volksgezondheid, Welzijn en Sport",Salarissen,2022,222396000
+APP-044,Infrastructuur en Waterstaat,Uitzendkrachten,2024,208742000
+APP-045,Binnenlandse zaken en Koninkrijksrelaties,"Salaris, vakantie en eindejaarsuitkering",2023,205493000
+APP-046,Defensie,personele exploitatie overig,2024,203016000
+APP-047,Defensie,UITZENDKRACHTEN,2024,199637000
+APP-048,Defensie,Opleidingen,2024,195283000
+APP-049,"Onderwijs, Cultuur en Wetenschap","Salaris, vakantie en eindejaarsuitkering",2023,195140000
+APP-050,Infrastructuur en Waterstaat,Uitzendkrachten,2023,187152000
+APP-051,Financiën,Uitzendkrachten,2024,185533000
+APP-052,Financiën,Juridisch advies,2024,178858000
+APP-053,Infrastructuur en Waterstaat,Pensioenpremies,2024,177899000
+APP-054,Binnenlandse zaken en Koninkrijksrelaties,"Salaris, vakantie en eindejaarsuitkering",2022,177774000
+APP-055,Defensie,Verbruik van energie en water overig,2023,176351000
+APP-056,Defensie,reis en verblijfkosten,2024,173948000
+APP-057,Infrastructuur en Waterstaat,Pensioenpremies,2022,173945000
+APP-058,Financiën,Huisvesting,2022,167835000
+APP-059,Infrastructuur en Waterstaat,Pensioenpremies,2023,167151000
+APP-060,Infrastructuur en Waterstaat,"Sociale lasten en 
+bijdrage zorgverzekeringswet",2024,163922000
+APP-061,"Onderwijs, Cultuur en Wetenschap","Salaris, vakantie en eindejaarsuitkering",2022,162469000
+APP-062,Infrastructuur en Waterstaat,Bijdrage aan SSO,2023,157783000
+APP-063," Landbouw, Natuur en Voedselkwaliteit","Salaris, vakantie- en eindejaarsuitkering ",2024,156141000
+APP-064,Financiën,"Accountancy, financiën en administratieve organisatie",2024,156001000
+APP-065,Financiën,Uitzendkrachten,2023,154758000
+APP-066,Infrastructuur en Waterstaat,Bijdrage aan SSO,2024,154688000
+APP-067,Infrastructuur en Waterstaat,Uitzendkrachten,2022,151704000
+APP-068,Financiën,"Accountancy, financiën en administratieve organisatie",2023,148328000
+APP-069,Financiën,Juridisch advies,2023,144145000
+APP-070,Financiën,"Toelagen, toeslagen en vergoedingen",2024,140092000
+APP-071,Infrastructuur en Waterstaat,Bijdrage aan SSO,2022,139776000
+APP-072,Defensie,Advisering automatiseringsvraagstukken,2024,139673000
+APP-073,Infrastructuur en Waterstaat,Sociale lasten en bijdrage zorgverzekeringswet,2023,138656000
+APP-074,Buitenlandse Zaken,Verwerven en afstoten,2022,130420000
+APP-075," Landbouw, Natuur en Voedselkwaliteit","Salaris, vakantie en eindejaarsuitkering",2023,129105000
+APP-076,Financiën,"Accountancy, financiën en administratieve organisatie",2022,127803000
+APP-077,Justitie en Veiligheid,Pensioenpremies,2024,127049000
+APP-078,Defensie,Onkostenvergoedingen waaronder Woon-werkverkeer,2023,123249000
+APP-079,Buitenlandse Zaken,Bijdrage SSO SSC-ICT (BZK),2023,122882000
+APP-080,Infrastructuur en Waterstaat,Sociale lasten en bijdrage zorgverzekeringswet,2022,121718000
+APP-081,Buitenlandse Zaken,Bijdrage SSO SSC-ICT (BZK),2024,120707000
+APP-082,Justitie en Veiligheid,Pensioenpremies,2023,119373000
+APP-083,Justitie en Veiligheid,Sociale lasten en bijdrage zorgverzekeringswet,2024,118058000
+APP-084,Buitenlandse Zaken,Verwerven en afstoten ,2024,117851000
+APP-085,Justitie en Veiligheid,Advisering opdrachtgevers over automatiseringsvraagstukken,2024,117607000
+APP-086,Justitie en Veiligheid,Verwerven en afstoten ,2024,112713000
+APP-087,Financiën,Uitzendkrachten,2022,111017000
+APP-088,Infrastructuur en Waterstaat,Wagenpark,2024,110836000
+APP-089,Buitenlandse Zaken,Verwerven en afstoten,2023,107058000
+APP-090,Financiën,Juridisch advies,2022,106039000
+APP-091,Defensie,Reis- en verblijfskosten,2023,103880000
+APP-092,"Landbouw, Natuur en Voedselkwaliteit","Salaris, vakantie en eindejaarsuitkering",2022,102856000
+APP-093,Defensie,consumptieve diensten,2024,102626000
+APP-094,Buitenlandse Zaken,Bijdrage SSO SSC-ICT (BZK),2022,102098000
+APP-095,Defensie,Representatie voor eigen personeel,2023,101106000
+APP-096,Defensie,Afdracht werkkostenregeling,2023,100701000
+APP-097,Justitie en Veiligheid,Verwerven en afstoten,2023,98045000
+APP-098,Justitie en Veiligheid,Advisering opdrachtgevers over automatiseringsvraagstukken,2023,96676000
+APP-099,Defensie,Studie en opleiding,2023,96139000
+APP-100,Infrastructuur en Waterstaat,Wagenpark,2023,95873000
+APP-101,Defensie,Consumptieve diensten,2023,92085000
+APP-102,Infrastructuur en Waterstaat,Wagenpark,2022,90160000
+APP-103,Defensie,Advisering opdrachtgevers over automatiseringsvraagstukken,2023,88946000
+APP-104,Justitie en Veiligheid,Sociale lasten en bijdrage zorgverzekeringswet,2023,87635000
+APP-105,Justitie en Veiligheid,Advisering opdrachtgevers over automatiseringsvraagstukken,2022,85598000
+APP-106,Justitie en Veiligheid,Bijdrage SSO,2024,85274000
+APP-107,"Ministerie van Volksgezondheid, Welzijn en Sport",BIJDRAGE SSO'S,2024,84204000
+APP-108,Defensie,Diensten en middelen overig,2023,82734000
+APP-109,Justitie en Veiligheid,Bijdrage SSO,2023,81275000
+APP-110,Economische zaken en Klimaat,Bijdrage SSO,2023,79373000
+APP-111,Defensie,Onkostenvergoedingen waaronder Woon-werkverkeer,2024,78539000
+APP-112,Economische zaken en Klimaat,Bijdrage SSO,2024,78117000
+APP-113,Justitie en Veiligheid,Bijdrage SSO,2022,77220000
+APP-114,Financiën,"Toelagen, toeslagen en vergoedingen",2023,77175000
+APP-115,Defensie,Goederenvervoer weg,2024,76715000
+APP-116,"Ministerie van Volksgezondheid, Welzijn en Sport",SOC.LSTN/BIJDR ZVW,2024,76078000
+APP-117,Justitie en Veiligheid,Verwerven en afstoten,2022,75945000
+APP-118,Defensie,Taxi- en groepsvervoer,2023,75146000
+APP-119,"Ministerie van Volksgezondheid, Welzijn en Sport",Bijdrage sso's,2023,70646000
+APP-120,Buitenlandse Zaken,"Toelagen, toeslagen en vergoedingen",2024,69652000
+APP-121,Infrastructuur en Waterstaat,Aan externe partijen uitbestede ICT - dienstverlening,2024,69547000
+APP-122,Financiën,Ontvangsten Personeel Materieel,2024,69166000
+APP-123,"Ministerie van Volksgezondheid, Welzijn en Sport",Soc.lstn/bijdr zvw,2023,68581000
+APP-124,Financiën,"Toelagen, toeslagen en vergoedingen",2022,68065000
+APP-125,Ministerie van Sociale Zaken en Werkgelegenheid,Bijdrage sso's,2023,67897000
+APP-126,Sociale Zaken en Werkgelegenheid,BIJDRAGE SSO'S,2024,67125000
+APP-127,Buitenlandse Zaken,"Toelagen, toeslagen en vergoedingen",2023,66787000
+APP-128,"Volksgezondheid, Welzijn en Sport",Sociale lasten/bijdrage zvw,2022,64178000
+APP-129,"Volksgezondheid, Welzijn en Sport",Advies,2022,63347000
+APP-130,Infrastructuurfonds,Uitzendkrachten,2022,62452000
+APP-131,"Ministerie van Volksgezondheid, Welzijn en Sport",Advies,2023,61038000
+APP-132,Defensie,representatie voor eigen personeel,2024,60904000
+APP-133,Economische Zaken en Klimaat,Bijdrage SSO,2022,60702000
+APP-134,Buitenlandse Zaken,"Toelagen, toeslagen en vergoedingen",2022,60455000
+APP-135,Infrastructuur en Waterstaat,"Toelagen, toeslagen en vergoedingen",2024,59811000
+APP-136,Justitie en Veiligheid,Aan externe partijen uitbestede ICT-dienstverlening,2022,59810000
+APP-137,Sociale zaken en Werkgelegenheid,Bijdrage sso's,2022,59508000
+APP-138,"Volksgezondheid, Welzijn en Sport",Bijdrage SSO,2022,59503000
+APP-139,Infrastructuur en Waterstaat,Aan externe partijen uitbestede ICT-dienstverlening,2023,59322000
+APP-140,Financiën,Ontvangsten Personeel Materieel,2022,58698000
+APP-141,"Ministerie van Volksgezondheid, Welzijn en Sport",INHUUR AUTOM. ADVIES,2024,57004000
+APP-142,Economische zaken en Klimaat,"Advisering en eventueel explorerend onderzoek dat wordt verricht ten behoeve van nieuw beleid, dan wel bijstelling van bestaand beleid (toekomstgericht). ",2024,56890000
+APP-143,Justitie en Veiligheid,Aan externe partij uitbestede ICT-dienstverlening,2024,55965000
+APP-144,Financiën,Bijdrage SSO,2022,55289000
+APP-145,Defensie,Representatie voor eigen personeel,2024,54159000
+APP-146,Justitie en Veiligheid,Aan externe partijen uitbestede ICT-dienstverlening,2023,52991000
+APP-147,Defensie,"INSTROOM, DOORSTROOM EN UITSTROOM VAN PERSONEEL OVERIG",2024,52441000
+APP-148,Defensie,Sociaal beleidskader,2023,52319000
+APP-149,Defensie,Maatwerkopleidingen,2023,52017000
+APP-150,Financiën,Reis- en verblijfskosten,2023,51624000
+APP-151,Infrastructuur en Waterstaat,"Toelagen, toeslagen en vergoedingen",2023,50949000
+APP-152,Binnenlandse zaken en Koninkrijksrelaties,BZK Specifiek,2022,49841000
+APP-153,Defensie,Dienst/lease vervoersmiddelen overig,2023,49823000
+APP-154,Defensie,Geneeskundige verzorging,2024,49061000
+APP-155,Infrastructuur en Waterstaat,Aan externe partijen uitbestede ICT-dienstverlening,2022,48709000
+APP-156,Infrastructuur en Waterstaat,"Toelagen, toeslagen en vergoedingen",2022,46790000
+APP-157,Financien,Reis- en Verblijfkosten,2024,46052000
+APP-158,Infrastructuurfonds,Uitzendkrachten,2024,45914000
+APP-159,Infrastructuurfonds,Uitzendkrachten,2023,45820000
+APP-160,Financiën,Gratificaties,2022,45432000
+APP-161,Sociale Zaken en Werkgelegenheid,PENSIOENPREMIES,2024,44933000
+APP-162,Infrastructuur en Waterstaat,Gebruik en onderhoud van gebouw en terreinen,2022,43957000
+APP-163,Infrastructuur en Waterstaat,Gebruik en onderhoud van gebouw en terreinen,2023,43528000
+APP-164,Justitie en Veiligheid,Vergoedingen voor inbesteding personeel,2023,43422000
+APP-165,Buitenlandse Zaken,Pensioenpremies,2024,43208000
+APP-166,Financiën,"Vakliteratuur, abonnementen en overige informatie",2024,42836000
+APP-167,Infrastructuur en Waterstaat,Gebruik en onderhoud gebouw en terreinen,2024,42735000
+APP-168,Buitenlandse Zaken,Uitzendkrachten,2024,42452000
+APP-169,Ministerie van Sociale Zaken en Werkgelegenheid,Pensioenpremies,2023,42089000
+APP-170,Economische zaken en Klimaat,Bijdragen aan baten-lastendiensten ,2024,41907000
+APP-171,Sociale zaken en Werkgelegenheid,Pensioenpremies,2022,41526000
+APP-172,Sociale Zaken en Werkgelegenheid,SOC.LSTN/BIJDR ZVW,2024,41273000
+APP-173,Buitenlandse Zaken,Pensioenpremies,2022,41041000
+APP-174,Economische zaken en Klimaat,Bijdragen aan baten-lastendiensten,2023,40920000
+APP-175,Defensie,Benodigdheden en hulpmiddelen overig,2024,40865000
+APP-176,Infrastructuur en Waterstaat,Advisering opdrachtgevers over automatiseringsvraagstukken,2024,40796000
+APP-177,Buitenlandse Zaken,Definities conform P-direkt,2024,40288000
+APP-178,Financiën,Studie en opleiding,2023,40236000
+APP-179,Buitenlandse Zaken,Pensioenpremies,2023,40080000
+APP-180,Defensie,"Instroom, doorstroom en uitstroom van personeel",2023,39797000
+APP-181,Defensie,Schoonmaakkosten,2023,39109000
+APP-182,Ministerie van Sociale Zaken en Werkgelegenheid,Soc.lstn/bijdr zvw,2023,38464000
+APP-183,Financiën,Vervoer- en verblijfskosten,2023,38449000
+APP-184,Economische Zaken en Klimaat,Advisering en eventueel explorerend onderzoek,2022,37838000
+APP-185,Defensie,BHV middelen,2023,37710000
+APP-186,Financiën,Studie en opleiding,2024,37413000
+APP-187,Justitie en Veiligheid,"Beheer, Onderhoud programmatuur & Software",2024,37362000
+APP-188," Landbouw, Natuur en Voedselkwaliteit",Bijdrage SSO,2024,37342000
+APP-189,Buitenlandse Zaken,Sociale lasten en bijdrage zorgverzekeringswet,2024,36998000
+APP-190,Justitie en Veiligheid,Vergoedingen voor inbesteding personeel ,2024,36971000
+APP-191,Buitenlandse Zaken,Definities conform P-direkt,2023,36469000
+APP-192,Economische zaken en Klimaat,Interim management,2023,35186000
+APP-193,Infrastructuur en Waterstaat,Advisering opdrachtgevers over automatiseringsvraagstukken,2023,35133000
+APP-194,Algemene Zaken,Inbesteding,2024,34971000
+APP-195,Financiën,Inrichting van Gebouwen,2024,34753000
+APP-196,Financiën,Studie en opleiding,2022,34409000
+APP-197,Financiën,Vakliteratuur,2023,33891000
+APP-198,Financiën,Reis- en verblijfskosten,2022,33722000
+APP-199," Landbouw, Natuur en Voedselkwaliteit",Bijdrage SSO,2023,33625000
+APP-200,Binnenlandse zaken en Koninkrijksrelaties,Pensioenpremies,2024,33375000
+APP-201,Infrastructuur en Waterstaat,Beheer en onderhoud infrastructuur,2022,33159000
+APP-202,"Onderwijs, Cultuur en Wetenschap",Pensioenpremies,2024,32948000
+APP-203,Buitenlandse Zaken,Definities conform P-direkt,2022,32787000
+APP-204,Financiën,Inrichting gebouwen,2023,32759000
+APP-205,Koninkrijksrelaties,BZK specifiek,2024,32429000
+APP-206,Sociale zaken en Werkgelegenheid,Soc.lstn/bijdr zvw,2022,32333000
+APP-207,Binnenlandse zaken en Koninkrijksrelaties,BZK Specifiek,2024,31500000
+APP-208,Financiën,Inrichting gebouwen,2022,31479000
+APP-209,Algemene Zaken,Bijdragen aan baten-lastendiensten,2023,31424000
+APP-210,Defensie,Vervoer en verblijfkosten overig,2024,31301000
+APP-211,Koninkrijksrelaties,BZK specifiek,2023,31007000
+APP-212,Buitenlandse Zaken,Sociale lasten en bijdrage zorgverzekeringswet,2023,30995000
+APP-213,Defensie,wetenschappenlijk onderzoek en innovatie,2024,30794000
+APP-214,Algemene Zaken,Bijdragen aan baten-lastendiensten,2022,30660000
+APP-215,"Onderwijs, Cultuur en Wetenschap","Sociale lasten en 
+bijdrage zorgverzekeringswet",2024,30649000
+APP-216,Binnenlandse zaken en Koninkrijksrelaties,Sociale lasten en bijdrage zorgverzekeringswet,2024,30573000
+APP-217,Algemene Zaken,Loonkosten eigen personeel,2024,30487000
+APP-218,Defensie,Onderhoud IT,2024,30452000
+APP-219,Binnenlandse zaken en Koninkrijksrelaties,Pensioenpremies,2023,30448000
+APP-220,Financiën,"Bovenwettelijke uitkering, wachtgelden",2024,30163000
+APP-221,Defensie,Uitzendkrachten,2023,29999000
+APP-222,Financiën,Vervoer- en verblijfskosten,2022,29994000
+APP-223,"Onderwijs, Cultuur en Wetenschap",Pensioenpremies,2023,29928000
+APP-224,Financiën,Vakliteratuur,2022,29867000
+APP-225,Koninkrijksrelaties,BZK specifiek,2022,29694000
+APP-226,Defensie,Externe inhuur overig,2023,29579000
+APP-227,Binnenlandse zaken en Koninkrijksrelaties,Pensioenpremies,2022,29057000
+APP-228,Infrastructuur en Waterstaat,Beheer & Onderhoud hardware ,2024,29000000
+APP-229,"Landbouw, Natuur en Voedselkwaliteit",Bijdrage SSO,2022,28915000
+APP-230,Buitenlandse Zaken,Reis- en Verblijfkosten,2024,28808000
+APP-231,Infrastructuur en Waterstaat,Inrichting gebouwen,2023,28778000
+APP-232,Infrastructuur en Waterstaat,Beheer en onderhoud infrastructuur,2023,28763000
+APP-233,Buitenlandse Zaken,Reis- en verblijfskosten,2023,28338000
+APP-234,"Onderwijs, Cultuur en Wetenschap",Pensioenpremies,2022,28199000
+APP-235,Economische zaken en Klimaat,Advisering opdrachtgevers over automatiseringsvraagstukken,2023,27508000
+APP-236,Binnenlandse zaken en Koninkrijksrelaties,Uitzendkrachten,2024,27490000
+APP-237,Financiën,Aanschaf hardware,2022,27355000
+APP-238,Binnenlandse zaken en Koninkrijksrelaties,BZK Specifiek,2023,27175000
+APP-239,Economische zaken en Klimaat,Advisering en eventueel explorerend onderzoek,2023,26742000
+APP-240,Buitenlandse Zaken,Sociale lasten en bijdrage zorgverzekeringswet,2022,26709000
+APP-241,Justitie en Veiligheid,"Studie en opleiding
+",2024,26605000
+APP-242,"Onderwijs, Cultuur en Wetenschap",Bijdrage SSO,2022,26246000
+APP-243,Infrastructuur en Waterstaat,Inrichting gebouwen,2022,26164000
+APP-244,Justitie en Veiligheid,Reis- en Verblijfkosten,2024,25460000
+APP-245,Infrastructuur en Waterstaat,Advisering opdrachtgevers over automatiseringsvraagstukken,2022,25392000
+APP-246,Binnenlandse zaken en Koninkrijksrelaties,Sociale lasten en bijdrage zorgverzekeringswet,2023,25386000
+APP-247,Buitenlandse Zaken,Uitzendkrachten,2023,24814000
+APP-248,Defensie,Wachtgelden,2023,24799000
+APP-249,Justitie en Veiligheid,Organisatie- en formatieadvies,2024,24617000
+APP-250,Justitie en Veiligheid,Uitzendkrachten,2024,24570000
+APP-251,Infrastructuur en Waterstaat,Reis- en Verblijfkosten,2024,24507000
+APP-252,Economische Zaken en Klimaat,Bijdragen aan baten-lastendiensten,2022,24500000
+APP-253,Economische zaken en Klimaat,Advisering opdrachtgevers over automatiseringsvraagstukken,2024,24451000
+APP-254,Financiën,Verblijf extern,2024,24179000
+APP-255,Justitie en Veiligheid,Studie en opleiding,2023,24175000
+APP-256,"Onderwijs, Cultuur en Wetenschap",Sociale lasten en bijdrage zorgverzekeringswet,2023,24165000
+APP-257,Justitie en Veiligheid,"Advisering en eventueel explorerend onderzoek dat wordt verricht ten behoeve van nieuw beleid, dan wel bijstelling van bestaand beleid (toekomstgericht). ",2024,24146000
+APP-258,Justitie en Veiligheid,Reis- en verblijfskosten,2023,23944000
+APP-259,Infrastructuur en Waterstaat,Studie en opleiding,2023,23798000
+APP-260,Financiën,Uitbesteden beleidsadvies,2023,23740000
+APP-261,"Onderwijs, Cultuur en Wetenschap",Bijdrage SSO,2024,23627000
+APP-262,Financiën,Uitbesteden beleidsadvies- en onderzoeksopdrachten,2024,23586000
+APP-263,Defensie,Facilitair en huisvesting,2023,23277000
+APP-264,Buitenlandse Zaken,Gebruik en onderhoud gebouw en terreinen,2024,23164000
+APP-265,Buitenlandse Zaken,Uitzendkrachten,2022,23067000
+APP-266,Infrastructuur en Waterstaat,Reis- en verblijfskosten,2023,22508000
+APP-267,Infrastructuur en Waterstaat,"Beheer, onderhoud programmatuur & software",2024,22464000
+APP-268,Justitie en Veiligheid,Organisatie- en formatieadvies,2022,22423000
+APP-269,Justitie en Veiligheid,Beheer en onderhoud infrastructuur,2023,22013000
+APP-270,Buitenlandse Zaken,Reis- en verblijfskosten,2022,21925000
+APP-271,"Ministerie van Volksgezondheid, Welzijn en Sport",Inhuur acc/fin/ao,2023,21695000
+APP-272,Justitie en Veiligheid,Organisatie- en formatieadvies,2023,21660000
+APP-273,"Onderwijs, Cultuur en Wetenschap",Bijdrage SSO,2023,21641000
+APP-274,Infrastructuur en Waterstaat,Uitbesteding capaciteit organisatie- en formatieadvies,2022,21604000
+APP-275,Binnenlandse zaken en Koninkrijksrelaties,Sociale lasten en bijdrage zorgverzekeringswet,2022,20876000
+APP-276,Buitenlandse Zaken,Advisering opdrachtgevers over automatiseringsvraagstukken,2023,20693000
+APP-277,Binnenlandse zaken en Koninkrijksrelaties,Uitzendkrachten,2023,20629000
+APP-278,Algemene Zaken,"Salaris, vakantie en eindejaarsuitkering",2023,20584000
+APP-279,Infrastructuur en Waterstaat,"Advisering en eventueel explorerend onderzoek dat wordt verricht ten behoeve van nieuw beleid, dan wel bijstelling van bestaand beleid (toekomstgericht). ",2024,20496000
+APP-280,Buitenlandse Zaken,Eindheffing loonbelasting,2024,20274000
+APP-281,"Onderwijs, Cultuur en Wetenschap","Toelagen, toeslagen en vergoedingen",2024,20270000
+APP-282,Infrastructuur en Waterstaat,Advisering en eventueel explorerend onderzoek,2023,20259000
+APP-283,Justitie en Veiligheid,Uitbesteden beleidsadvies- en onderzoeksopdrachten,2024,20218000
+APP-284,Financiën,Risicobeheersen,2022,20173000
+APP-285,"Ministerie van Volksgezondheid, Welzijn en Sport",INHUUR ACC/FIN/AO,2024,20135000
+APP-286,Financiën,Schoonmaakkosten,2022,20113000
+APP-287,Financiën,Wagenpark,2024,19933000
+APP-288,"Onderwijs, Cultuur en Wetenschap",Sociale lasten en bijdrage zorgverzekeringswet,2022,19211000
+APP-289,Defensie,externe inhuur bewaking en beveiliging,2024,19175000
+APP-290,Economische zaken en Klimaat,Interim–management,2024,19133000
+APP-291,Financiën,Spraak en Data Verbindingen,2023,19063000
+APP-292,Buitenlandse Zaken,Advisering opdrachtgevers over automatiseringsvraagstukken,2022,18931000
+APP-293,Defensie,Externe inhuur overig,2024,18884000
+APP-294,"Onderwijs, Cultuur en Wetenschap","Toelagen, toeslagen en vergoedingen",2023,18560000
+APP-295,Buitenlandse Zaken,Gebruik en onderhoud van gebouw en terreinen,2023,18538000
+APP-296,Justitie en Veiligheid,Studie en opleiding,2022,18482000
+APP-297,Infrastructuur en Waterstaat,Studie en opleiding,2022,18449000
+APP-298,Financiën,Gratificaties,2024,18405000
+APP-299,Justitie en Veiligheid,Departement specifiek materieel,2022,18338000
+APP-300,Algemene Zaken,"Salaris, vakantie en eindejaarsuitkering",2022,18308000

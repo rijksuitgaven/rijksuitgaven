@@ -1,8 +1,0 @@
-fact_id,module,entity,metric,mode_staffel,contract_count,categorie,years_with_data,query_ref,verified_at
-INKOOP-HSTF-001,inkoop,Infraspeed B.V.,high_staffel,13,6,3000 - Uitbesteden overig,6,Q-INKOOP-02,2026-03-02T19:28:34Z
-INKOOP-HSTF-002,inkoop,Anoniem_I & W_735,high_staffel,13,1,9560 - I&M specifiek,1,Q-INKOOP-02,2026-03-02T19:28:34Z
-INKOOP-HSTF-003,inkoop,Anoniem_I & W_841,high_staffel,13,1,9560 - I&M specifiek,1,Q-INKOOP-02,2026-03-02T19:28:34Z
-INKOOP-HSTF-004,inkoop,Anoniem_IenW_704,high_staffel,13,1,9560 - I&M specifiek,1,Q-INKOOP-02,2026-03-02T19:28:34Z
-INKOOP-HSTF-005,inkoop,Sassevaart V.O.F.,high_staffel,13,1,9560 - I&M specifiek,1,Q-INKOOP-02,2026-03-02T19:28:34Z
-INKOOP-HSTF-006,inkoop,Anoniem_IenW_688,high_staffel,12,1,9560 - I&M specifiek,1,Q-INKOOP-02,2026-03-02T19:28:34Z
-INKOOP-HSTF-007,inkoop,Eurofins NL Moleculair Diagn. Lab. B.V.,high_staffel,12,1,3000 - Uitbesteden overig,1,Q-INKOOP-02,2026-03-02T19:28:34Z

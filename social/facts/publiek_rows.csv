@@ -1,0 +1,502 @@
+fact_id,ontvanger,jaar,bedrag,descriptor,source
+PUB-001,Air Liquide Industrie B.V.,2022,292201695,IPCEI Waterstof,RVO
+PUB-002,Rotterdam Hydrogen Company B.V.,2022,150000000,IPCEI Waterstof,RVO
+PUB-003,Engie Energie Nederland N.V.,2022,113090000,IPCEI Waterstof,RVO
+PUB-004,Orsted Hydrogen Netherlands Holding B.V.,2022,110804896,IPCEI Waterstof,RVO
+PUB-005,H2-Fifty B.V.,2022,103006383,IPCEI Waterstof,RVO
+PUB-006,Koninklijke Visio,2023,68669642,A haptic framework for teaching mathematical equations to Braille readers,ZonMW
+PUB-007,SURF - Coöperatie SURF U.A.,2024,42074965,Nederlandse bijdrage ,NWO
+PUB-008,Koninklijke Kentalis,2023,38496216,Deelkracht 2023-2026,ZonMW
+PUB-009,AZL/LUMC p/a Projectenbureau Leiden,2024,37503195,"‘NOTCH3-brains@risk: the severe, the mild, and the unknown’",ZonMW
+PUB-010,Radboudumc,2024,34424891,‘Evaluatie en optimalisatie van Mindfulness-Based Cognitive Therapy implementatie in tweedelijns GGZ’,ZonMW
+PUB-011,Erasmus MC (UMCR),2024,33785345,‘Finding novel routes to penetrate the mycetoma grain (PENEGRAIN)’,ZonMW
+PUB-012,Radboudumc,2023,29388192,"‘Validation and Market Transfer of the Novel Cardiovascular Stress Management Program: ôWavyô through a multicenter randomized controlled trial, aimed to reduce symptoms of both males and females with coronary vascular dysfunction, followed by market",ZonMW
+PUB-013,UMC Utrecht (UMCU),2024,27386389,‘Building growth charts of Superficial White Matter microstructure’,ZonMW
+PUB-014,SURF - Coöperatie SURF U.A.,2022,27037400,SURF 2022 extra middelen,NWO
+PUB-015,AMC Medical Research BV,2024,26863287,‘Diepe hersenstimulatie effectiever maken door toepassen van 7 Tesla MRI en magnetoencefalografie’,ZonMW
+PUB-016,"Amsterdam UMC, locatie VUmc",2023,24629634,A Dutch Implementation of the Physical Activity Environment Policy Index (PA-EPI),ZonMW
+PUB-017,HVC Warmte B.V.,2023,22848000,Warmtenetten Investeringssubsidie (WIS),RVO
+PUB-018,AMC Medical Research BV,2023,22558331,"Adaptatie aan orthesen met behulp van looptraining, wat kan er beter?",ZonMW
+PUB-019,Nedstack Fuel Cell Technology B.V.,2022,21736099,IPCEI Waterstof,RVO
+PUB-020,UMC Utrecht (UMCU),2023,20398663,‘Bonding molecular genotyping and phenotyping to outcome measures in AL amyloidosis: A EUropean REgistry and sample sharing networK to promote the diagnosis and management of light chain Amyloidosis’,ZonMW
+PUB-021,Erasmus MC (UMCR),2023,20084003,Anti-Inflammatory Pharmacotherapy for Prevention of Non-Atherosclerotic Vascular Aging: A Systematic Review and Meta-Analysis of Animal Studies,ZonMW
+PUB-022,AMC Medical Research BV,2022,20059088,A cholestatic itch mouse model with state-of-the-art scratch monitoring for the identification of pruritogens in cholestatic liver diseases,ZonMW
+PUB-023,Technische Universiteit Delft,2023,18855602,Advanced Sensor Validation for Autonomous Driving,NWO
+PUB-024,"Amsterdam UMC, locatie VUmc",2024,17551756,’PROPr: Bepaling van een landspecifieke waardeset voor het preferentiesysteem van PROMIS,ZonMW
+PUB-025,UMCG,2024,17507326,A (WO)MEN’S WORLD: GENDERED STIGMATIZATION OF PERSISTENT SOMATIC SYMPTOMS,ZonMW
+PUB-026,AZL/LUMC p/a Projectenbureau Leiden,2023,17316785,‘Commensal Immune Modulators (CIM) boost PROtective immunity against respiratory Viral infections (CIMPROV)’,ZonMW
+PUB-027,Universiteit Maastricht,2024,17215074,‘BrainAct’,ZonMW
+PUB-028,UMCG,2023,17110089,A role of microbiome in the pathogenesis of ME/CFS: a population-based study,ZonMW
+PUB-029,Twence Duurzaam B.V.,2023,17046120,Warmtenetten Investeringssubsidie (WIS),RVO
+PUB-030,SKMS 2,2024,16859578,Kwaliteitsgelden Medisch Specialisten 2024.1 oncologie,ZonMW
+PUB-031,ENECO Warmtenetten B.V.,2023,16788370,Warmtenetten Investeringssubsidie (WIS),RVO
+PUB-032,Erasmus MC (UMCR),2022,16416184,"Als Your World stress verlaagd bij zorgmedewerkers, dan kan het buiten het ziekenhuis helpen! (Your World: een app-based vitaliteits-programma gemaakt voor werknemers, door werknemers)",ZonMW
+PUB-033,SKMS 2,2022,15614074,Kwaliteitsgelden medisch Specialistische Zorg (SRI): Onderhouden Richtlijnen Infectie Preventie 2022,ZonMW
+PUB-034,Onbekend,2022,15330032,Onderzoeken en ontwikkelen innovaties voor stallen,RVO
+PUB-035,Radboudumc,2022,15172317,A novel malaria vaccine strategy using programmed suicide of Plasmodium falciparum parasites,ZonMW
+PUB-036,Fluidwell Hydrogen Systems B.V.,2024,14937899,Investeringssubsidie maakindustrie klimaatneutrale economie (IMKE),RVO
+PUB-037,H2Ermes B.V.,2022,14397026,IPCEI Waterstof,RVO
+PUB-038,Firan B.V.,2023,14295681,Warmtenetten Investeringssubsidie (WIS),RVO
+PUB-039,SKMS 2,2023,14194657,Kwaliteitsgelden Medisch Specialisten onco 2023 - oktober 2023,ZonMW
+PUB-040,Universiteit Twente,2022,13750964,Accumulation-Mode BIdiswitch FArm for energy efficient battery chargers (AMBIFAlent),NWO
+PUB-041,Universiteit Maastricht,2023,11553175,“Investigating the effects of beta event-related synchronization modulation on motor function recovery and GABA inhibition: towards an individualized neuromodulation-based treatment for stroke patients”,ZonMW
+PUB-042,Stichting Oncode Institute,2023,11500000,Oncode Phase 2,ZonMW
+PUB-043,UMCG,2022,11214263,An unfinished symphony: incomplete DNA replication as a therapeutic target in cancer.,ZonMW
+PUB-044,AZL/LUMC p/a Projectenbureau Leiden,2022,10496791,Active vitamin D for secondary hyperparathyroidism after bariatric surgery: a randomized controlled trial,ZonMW
+PUB-045,Universiteit Maastricht,2022,10091045,Academische Werkplaats ouderenzorg Limburg,ZonMW
+PUB-046,"Amsterdam UMC, locatie VUmc",2022,9754668,4D FUTURE - Detecting and diagnosing dementia using digital tools; the future patient journey,ZonMW
+PUB-047,Technische Universiteit Delft,2022,9156829,3D printed leachable Salt Templates: From Aerospace Materials to Cell Scaffolds,NWO
+PUB-048,Universiteit Leiden,2023,8662131,Aspasia 2021 ,NWO
+PUB-049,Universiteit Utrecht,2023,8541999,Breast milk extracellular vesicles for baby brains (EV4BB): Deciphering and exploiting the anti-inflammatory and regenerative effects on brain cells,ZonMW
+PUB-050,Vrije Universiteit Amsterdam (VUA) Faculteit ALW,2023,8151091,Explaining skeletal muscle-related symptoms in patients with ME/CFS: from skeletal muscle to exercise immunology (MuscleME),ZonMW
+PUB-051,Technische Universiteit Delft,2024,7737513,Accurate Control of Aerial Robotic Manipulators under Uncertainties,NWO
+PUB-052,Morssinkhof Plastics Lichtenvoorde B.V.,2024,7469609,Subsidie Circular Plastics NL,RVO
+PUB-053,Stichting Projectenbureau PGVNL,2022,7388855,Corona Gezondheidsmonitor Jeugd 2021 en opzetten COVID-19 programma,ZonMW
+PUB-054,V&VN Eerstelijnsverpleegkundigen,2024,7039032,Kwaliteitsgelden Verpleging & Verzorging Subsidieaanvraag Juli 2024 - IZA,ZonMW
+PUB-055,Academisch Ziekenhuis Maastricht (AZM),2024,7034953,Citrien-3: verkleinen gezondheidsachterstanden: kansen en bedreigingen van digitale zorg,ZonMW
+PUB-056,Warmtebedrijf Amersfoort B.V.,2023,7020000,Warmtenetten Investeringssubsidie (WIS),RVO
+PUB-057,Universiteit Utrecht,2023,6923580,Aspasia 2021 ,NWO
+PUB-058,Universiteit Leiden,2022,6777575,Aspasia 2019,NWO
+PUB-059,Vrije Universiteit Amsterdam,2024,6448022,"Co-creation and evaluation of a Combined Lifestyle Intervention for Patients recovering from Cancer with the aim to increase Positive health Quality of life and Vitality, while taking Health literacy into account (short title: CLI after cancer)",ZonMW
+PUB-060,Technische Universiteit Eindhoven - Eindhoven University of Technology,2022,5846842,Docent van het jaar 2022,NWO
+PUB-061,AKWA GGZ,2024,5790000,Akwa GGZ Jaarplan 2024 | Activiteiten ter ondersteuning van continue kwaliteitsverbetering in de ggz,ZonMW
+PUB-062,Universitair Medisch Centrum Utrecht,2022,5722034,A.I.-driven ultrasound theranostics in cancer of head and neck (SOUND-CHECK),NWO
+PUB-063,Biomarker Bay B.V.,2024,5696575,G² Solutions,ZonMW
+PUB-064,TNO Accounts Receivable,2024,5575744,‘INoVA: an information hub for innovative non-in vivo alternatives’,ZonMW
+PUB-065,St Alzheimer Nederland,2023,5200000,"DEMPACT / Valorisatie: integratie onderzoek, onderwijs en praktijk",ZonMW
+PUB-066,Universiteit Twente,2023,5168744,AluviaPhotonics: enabling UV photonic integrated circuits,NWO
+PUB-067,Ministerie van VWS (RIVM),2022,4923850,Integraal Gezondheidsonderzoek bij Rampen - COVID-19 Fase 2 RIVM/ Integrated Public Health Monitor - COVID-19 Phase2 RIVM,ZonMW
+PUB-068,NIVEL,2024,4840278,Gezondheid en werk na COVID-19 in mensen met bestaande gezondheidsproblemen: geleerde lessen,ZonMW
+PUB-069,AKWA GGZ,2023,4780608,"Akwa GGZ jaarplan 2023. Activiteiten ter ondersteuning van continue kwaliteitsverbetering in de ggz. Ontwikkelen, onderhoud en implementatieondersteuning van kwaliteitsstandaarden, ondersteunen van datagedreven leren en lerende netwerken in de ggz",ZonMW
+PUB-070,DPI,2024,4755135,Subsidie Circular Plastics NL,RVO
+PUB-071,Wageningen University & Research,2023,4542867,10th European Plant Science PhD Retreat (EPSR) 2023,NWO
+PUB-072,Nanoworx B.V.,2024,4445654,Nanoworx,ZonMW
+PUB-073,UMC Utrecht (UMCU),2022,4422252,Aangeboren aandoeningen bij de foetus: samen beslissen en ondersteunen met behulp van PROMs’.,ZonMW
+PUB-074,Wageningen University & Research,2022,4380705,Natural flocculants,NWO
+PUB-075,St Universiteit van Tilburg,2024,4336622,begroting 2024 en toelichting Academische Werkplaats Ouderenzorg Tranzo,ZonMW
+PUB-076,Universitair Medisch Centrum Utrecht,2023,4323460,A brain wave inspired by global mean sea-level rise: A unique way to measure the tides and flows of brain clearance in humans non-invasively.,NWO
+PUB-077,Nederlands Huisartsen Genootschap,2024,4206381,Kwaliteitsgelden Thuisarts 2024,ZonMW
+PUB-078,AKWA GGZ,2022,4192066,Kwaliteitsgelden GGZ: Akwa GGZ 2022,ZonMW
+PUB-079,Erasmus Universiteit Rotterdam,2024,4142758,"Als je het ons vraagt, dan: leren en verbeteren met naasten, vrijwilligers, cliënten en medewerkers",ZonMW
+PUB-080,Nederlands Huisartsen Genootschap (NHG),2023,4105178,Kwaliteitsgelden NHG 2023,ZonMW
+PUB-081,Technische Universiteit Eindhoven - Eindhoven University of Technology,2023,4075211,21st International Conference on Software Engineering and Formal Methods,NWO
+PUB-082,Nederlands Huisartsen Genootschap (NHG),2024,3956787,Kwaliteitsgelden NHG 2024,ZonMW
+PUB-083,Gemeente Groningen/DMO,2024,3871716,Groningen Dementievriendelijk,ZonMW
+PUB-084,Aanvrager geen rechtspersoon,2022,3870408,Mkb-innovatiestimulering Topsectoren,RVO
+PUB-085,Prodrive Technologies B.V.,2024,3791167,Investeringssubsidie maakindustrie klimaatneutrale economie (IMKE),RVO
+PUB-086,Universiteit Utrecht,2022,3740463,Aspasia 2020 ,NWO
+PUB-087,AMC,2024,3701309,Continueren ovulatie-inductie met letrozol versus switchen naar gonadotrofines bij vrouwen met PCOS,ZonMW
+PUB-088,Energiebedrijf Ketelhuis WG B.V.,2023,3696000,Warmtenetten Investeringssubsidie (WIS),RVO
+PUB-089,Aanvrager geen rechtspersoon,2023,3665323,Mkb-innovatiestimulering Topsectoren,RVO
+PUB-090,Stg KU - Radboud Universiteit,2024,3617145,Alpha-Synuclein OMICS to identify Drug-targets (SynOD),ZonMW
+PUB-091,Radboud Universiteit Nijmegen,2023,3559072,Aspasia 2021 ,NWO
+PUB-092,GGD Amsterdam,2023,3534037,De Kracht van de Natuurô van Welzijn Op Recept in 3 stadsdelen in Amsterdam als onderdeel van de kwalitatieve ontwikkel agenda WoR,ZonMW
+PUB-093,Universiteit Utrecht,2024,3532876,Het geheim van hotspots. Succesvolle manieren om sportaccommodaties te exploiteren en benutten,ZonMW
+PUB-094,IKNL,2022,3527859,Meerjarenplan richtlijnen palliatieve zorg,ZonMW
+PUB-095,Universiteit van Amsterdam,2024,3517365,Aligned Minds: embedding SDG interactions research in local knowledge ecosystems,NWO
+PUB-096,Netherlands eScience Center (NLeSC),2022,3500000,NLeSC 2022 extra middelen,NWO
+PUB-097,Universiteit Twente,2024,3453772,Application Form Venture Challenge spring 02_02_2024_HAPI,NWO
+PUB-098,Koninklijke Nederlandse Akademie van Wetenschappen,2023,3437062,Aspasia 2019,NWO
+PUB-099,Radboud Universiteit Nijmegen,2022,3433659,2nd Neuromorphic Computing in the Netherlands – Edition 2022 – Control and Learning,NWO
+PUB-100,Nederlands Huisartsen Genootschap (NHG),2022,3425159,Digitale zorg op afstand in Diabetes richtlijnen (DiDia),ZonMW
+PUB-101,Hogeschool van Arnhem en Nijmegen,2024,3423724,‘Doorontwikkeling Mentality - naar een inclusievere samenwerking’,ZonMW
+PUB-102,St Universiteit van Tilburg,2023,3402381,"Academische Werkplaats Leven met een verstandelijke beperking: structuur, werkwijze en plan van aanpak ten behoeve van het versterken van de kennisinfrastructuur langdurige zorg voor mensen met een verstandelijke beperking.",ZonMW
+PUB-103,Leids Universitair Medisch Centrum,2022,3361377,19th Dutch chromatin meeting 2022,NWO
+PUB-104,Stichting Patiënt en Kwaliteit,2024,3218268,1e subsidieaanvraag Stichting Patiënt en Kwaliteit 2024,ZonMW
+PUB-105,Het Nederlands Kanker Instituut (NKI),2022,3183669,Data-gedreven narratieve ervaringen ter ondersteuning van het terugkoppelen van patiënt-gerapporteerde uitkomsten in de dagelijkse klinische oncologische praktijk,ZonMW
+PUB-106,St Antonius Ziekenhuis,2023,3143457,"Personalized, CT-guided antithrombotic therapy versus lifelong single antiplatelet therapy to reduce thromboembolic and bleeding events in non-atrial fibrillation patients after transcatheter aortic valve implantation: a pragmatic, international, multicen",ZonMW
+PUB-107,Kon.Ned.Org.van Verloskundigen,2024,3103835,Kwaliteitsgelden Verloskunde 2024-1,ZonMW
+PUB-108,Kon.Ned.Org.van Verloskundigen,2023,3040899,Kwaliteitsgelden Verloskunde 2023-1,ZonMW
+PUB-109,Starters4Communities Amsterdam,2022,2931450,Fiks MDT project 4C,ZonMW
+PUB-110,Rijksuniversiteit Groningen (RUG) PPSW,2024,2909810,2024 Academische Werkplaats EMB,ZonMW
+PUB-111,Trioworld,2024,2905459,Subsidie Circular Plastics NL,RVO
+PUB-112,Ministerie van VWS (RIVM),2024,2905297,"CAUTION: Candida auris screening, surveillance en infectiepreventie",ZonMW
+PUB-113,Vrije Universiteit Amsterdam,2023,2832885,Academische Werkplaats Viveon (voorheen ‘s Heeren Loo – VU),ZonMW
+PUB-114,Stichting Patiënt en Kwaliteit,2022,2828623,Derde aanvraag 2022 kwaliteitsgelden SPK,ZonMW
+PUB-115,TNO Accounts Receivable,2023,2812579,Development and harmonization of pyrolysis GC-MS methods for the identification and quantification of micro- and nanoplastics,ZonMW
+PUB-116,NWO-institutenorganisatie,2023,2790871,Achieving Semiconductor Stability from the Ground Up,NWO
+PUB-117,Ver. van Ned. Gemeenten Den Haag,2022,2787872,Beschermd Thuis – landelijke coördinatie en regionale ondersteuning,ZonMW
+PUB-118,Erasmus Universiteit Rotterdam,2023,2784844,Als je het ons vraagtô: co-creatie van passende zorg en ondersteuning voor mensen met niet aangeboren hersenletsel of een lichamelijke beperking,ZonMW
+PUB-119,Ver. van Ned. Gemeenten Den Haag,2024,2738117,Doorontwikkeling Platform Sociaal Domein/Voorbij corona,ZonMW
+PUB-120,Gemeente Haarlem,2024,2692479,Kennemerland en Haarlem: Samenwerken aan grip op onbegrip,ZonMW
+PUB-121,Radboud universitair medisch centrum,2023,2663301,Aspasia 2019,NWO
+PUB-122,Amsterdam UMC - Locatie VUmc,2023,2649056,Aspasia 2019,NWO
+PUB-123,Kon.Ned.Org.van Verloskundigen,2022,2642130,Kwaliteitsgelden Verloskunde 2022-2,ZonMW
+PUB-124,Erasmus Universiteit Rotterdam,2023,2620000,Aspasia 2019,NWO
+PUB-125,Wageningen Universiteit Bureau Maatschappijwetenschappen,2024,2602922,FOODPATH: Voedselsystemen en beleidsroutes naargezonde voeding voor iedereen in Europa,ZonMW
+PUB-126,Rijksuniversiteit Groningen,2022,2602174,Aspasia 2019,NWO
+PUB-127,Universiteit Twente (UT),2024,2531622,“Treatment of ELectroencephalographic STatus epilepticus After cardiopulmonary Resuscitation-2 (TELSTAR-2): a multicenter randomised clinical trial and health economic evaluation of treatment with anti-seizure medication in comatose cardiac arrest pat,ZonMW
+PUB-128,Gemeente DEN HAAG Fin. Adm.,2023,2489588,Aanpak overlast verward gedrag Den Haag,ZonMW
+PUB-129,Ore Energie B.V.,2024,2407227,Investeringssubsidie maakindustrie klimaatneutrale economie (IMKE),RVO
+PUB-130,SVP Distributie & Levering B.V.,2023,2396283,Warmtenetten Investeringssubsidie (WIS),RVO
+PUB-131,Amsterdam UMC - Locatie AMC,2023,2294441,Aspasia 2021 ,NWO
+PUB-132,Stichting Young Society,2022,2241055,Fix the Future,ZonMW
+PUB-133,Stichting Patiënt en Kwaliteit,2023,2157679,1e subsidieaanvraag Stichting Patiënt en Kwaliteit 2023,ZonMW
+PUB-134,Trimbos-Instituut,2023,2093923,Het brede gesprek: Praktische hulpmiddelen om huisarts en sociaal domein te verbinden bij psychosociale problematiek,ZonMW
+PUB-135,Gemeente Utrecht Subsidies,2024,2087720,In Utrecht aan de slag met zinvolle dagactiviteiten voor thuiswonende mensen met dementie,ZonMW
+PUB-136,Zuyd hogeschool,2022,2071490,Academische Werkplaats Hulpmiddelen Zelfredzaamheid,ZonMW
+PUB-137,Universiteit van Amsterdam,2024,2028706,‘IMpaired cOordiNation between cortical areas as a key to diagnose Autism spectrum Disorders (MONAD)ô,ZonMW
+PUB-138,Gemeente Utrecht Subsidies,2022,2024466,Integraal Gezondheidsonderzoek bij Rampen – COVID-19 Fase 2 Gemeente Utrecht Volksgezondheid / Integrated Public Health Monitor – COVID-19 Phase 2 Gemeente Utrecht Volksgezondheid,ZonMW
+PUB-139,Vrije Universiteit Amsterdam,2022,1938310,Aspasia 2020 ,NWO
+PUB-140,Stg. Nationaal Testcentrum Circulaire Plastics,2024,1930081,Subsidie Circular Plastics NL,RVO
+PUB-141,Leids Universitair Medisch Centrum,2023,1910785,A Dynamic Arteriovenous Fistula,NWO
+PUB-142,Technische Universiteit Eindhoven - Eindhoven University of Technology,2024,1904784,A Drop-in Sensing Method for Smart Handling of Fresh Fruits with Soft Pneumatic Grippers,NWO
+PUB-143,Stichting HBO Haaglanden,2024,1857789,ACT2ACT; ACTive systems to ACTivate young children,ZonMW
+PUB-144,NIVEL,2023,1856393,Care2report; the development and testing of automated medical visit summarization as integrated solution to enhance time with patients and reduce administrative burden in clinical geriatrics,ZonMW
+PUB-145,St. Universiteit voor Humanistiek,2022,1811413,Kenniswerkplaats Zorg voor Zingeving Thuis – uitbreiding van de Kenniswerkplaats Zingeving en Geestelijke Verzorging Thuis,ZonMW
+PUB-146,St Universiteit van Tilburg,2022,1763282,"Academische Werkplaats Leven met een verstandelijke beperking: structuur, werkwijze en plan van aanpak ten behoeve van het versterken van de kennisinfrastructuur langdurige zorg voor mensen met een verstandelijke beperking.",ZonMW
+PUB-147,NIVEL,2022,1759603,Designing One Health Governance for Antimicrobial Stewardship Interventions,ZonMW
+PUB-148,NWO-institutenorganisatie,2022,1747316,Routemanagement Tussen conflict en cooperatie,NWO
+PUB-149,Vrije Universiteit Amsterdam,2024,1736848,Aspasia 2020 ,NWO
+PUB-150,Gemeente DEN HAAG Fin. Adm.,2022,1734645,Follow Your Dreams 2.0,ZonMW
+PUB-151,V&VN Eerstelijnsverpleegkundigen,2023,1730062,"Kwaliteitsstandaarden Wijkverpleging (Door)ontwikkelen, onderhouden, implementeren & Evalueren Subsidieaanvraag oktober 2022",ZonMW
+PUB-152,ICIN Netherlands Heart Institute,2022,1707087,Creating infrastructure for cardiovascular registry-based research in the Netherlands,ZonMW
+PUB-153,Academisch Centrum Tandheelkunde Amsterdam,2022,1697674,Body Barriers - A novel mucosa-blood-brain organ-on-chip platform for the safety testing of medical devices,NWO
+PUB-154,Trimbos-Instituut,2024,1692402,Applying the gambling harms framework to the Netherlands: Developing multiple indicators to support assessment of gambling harms,ZonMW
+PUB-155,Rijksuniversiteit Groningen,2024,1684235,Alcoholregulering: navigeren tussen toestaan en verbieden,ZonMW
+PUB-156,Universiteit Leiden,2024,1671728,An Unprecedented View into Galaxy Evolution and the Nature of Dark Matter,NWO
+PUB-157,Stg KU - Radboud Universiteit,2022,1662380,Diversiteit en volwaardig partnerschap in hulpverlening aan kinderen en jeugdigen met CMB en hun communicatiepartners,ZonMW
+PUB-158,Universiteit Utrecht (UU)  Faculteit Sociale Wetenschappen,2024,1645592,"De effecten van prenatale infecties op de vroege ontwikkeling: hersenen, cognitie en gedrag",ZonMW
+PUB-159,Gemeente DEN HAAG Fin. Adm.,2024,1640729,De Gaarden: een nieuwe richting in Gezonde Stedelijke Ontwikkeling,ZonMW
+PUB-160,Tilburg University,2024,1630000,AI for Robotics Workshop,NWO
+PUB-161,VU Fac Exacte Wetenschappen,2023,1629580,Extracellular vesicles as secretome sponges in cancer,ZonMW
+PUB-162,GGD Flevoland,2024,1626134,Bewonersinitiatieven in de leefomgeving voor langer gezond thuis wonen door ouderen in Flevoland,ZonMW
+PUB-163,IKNL,2023,1622830,Meerjarenplan richtlijnen palliatieve zorg,ZonMW
+PUB-164,Zilveren Kruis Zorgverzekeringen,2023,1591237,Opstellen regiobeeld Amsterdam nav IZA afspraken,ZonMW
+PUB-165,Verwey Jonker Instituut,2023,1586098,Besmetting en verspreiding van COVID-19 voorkomen: een serious game voor mensen met lage gezondheidsvaardigheden,ZonMW
+PUB-166,Rijksuniversiteit Groningen,2024,1569976,"Experiences of Ukrainian migrant workers in Europe – experiencing decent work? (Hop-on project to ""Working Democracy"" VICI grant)",NWO
+PUB-167,Prinses Maxima Centrum voor Kinderoncologie BV,2024,1515000,‘Tracing the etiology of longterm toxicity in childhood cancer survivors’,ZonMW
+PUB-168,Peeters Energy Solutions B.V.,2024,1500027,Investeringssubsidie maakindustrie klimaatneutrale economie (IMKE),RVO
+PUB-169,Stichting ETB-BISLIFE,2023,1500000,Implementatie VitalTissue: humaan restweefsel beschikbaar voor alle biomedisch onderzoekers in NL,ZonMW
+PUB-170,Maastricht University,2024,1499597,ACT - Accelerating Just Climate Transitions in Urban Regions,NWO
+PUB-171,Fablefactory B.V.,2022,1499172,MDT CULTUUR & KUNST,ZonMW
+PUB-172,Hogeschool van Arnhem en Nijmegen,2023,1495818,Beter bewegen in Elderveld doen we samen!,ZonMW
+PUB-173,Patiëntenfederatie Nederland,2022,1491781,Generieke module omgaan met taalbarrières in de zorg en het sociaal domein,ZonMW
+PUB-174,St. Chr. Hogeschool Windesheim,2024,1488966,CONTACT: samen werken aan afstemming in dementie zorgdriehoek,ZonMW
+PUB-175,Faculteit Sociale Wetenschappen UL,2023,1484249,Brave Steps: A Stepped-Care Approach to Building Confidence in Anxiety-prone Young Children,ZonMW
+PUB-176,Kearn Welzijn,2022,1463428,´t Stationnetje in actie!,ZonMW
+PUB-177,RecyBEM B.V.,2024,1462432,Subsidie Circular Plastics NL,RVO
+PUB-178,Vrije Universiteit Amsterdam,2022,1455740,Academische Werkplaats Viveon (voorheen ‘s Heeren Loo – VU),ZonMW
+PUB-179,Sint Maartenskliniek,2024,1439169,Dosis verlaging van JAK-remmers bij mensen met inflammatoire reumatische aandoeningen,ZonMW
+PUB-180,St. Maxima Medisch Centrum,2023,1421337,Building A BRIDGE: Academic nurses who,ZonMW
+PUB-181,Huntington KennisNet Nederland,2023,1410000,Extra transitiesubsidie en financiering van het kenniscentrum’,ZonMW
+PUB-182,TNO Accounts Receivable,2022,1409810,GIZ method for parents-to-be: a shared decision-making method for the assessment of care needs in the first 1000 days,ZonMW
+PUB-183,Wageningen Universiteit,2024,1407901,Rehabilitation after a hip fracture: effects of dietary protein and exercise on bone and muscle health and quality of life,ZonMW
+PUB-184,Gemeente Dordrecht,2024,1403108,Eerlijke hitte in de stad,ZonMW
+PUB-185,Erasmus MC,2022,1400960,3rd ECTORS meeting,NWO
+PUB-186,Het College van B&W van de Gemeente Hoogeveen,2024,1399425,Domein Overstijgend Samenwerken Drenthe,ZonMW
+PUB-187,Stichting NHL Stenden Hogeschool,2024,1396602,De prevalentie en perceptie van alcoholvrije dranken,ZonMW
+PUB-188,Parnassia Bavo Groep,2022,1389427,"Efficacy and safety of 24 weeks sustained-release dexamphetamine in patients with moderate to severe cocaine use disorder with comorbid opioid use disorder – A multicenter randomized, double-blind, placebo-controlled study",ZonMW
+PUB-189,Rijksuniversiteit Groningen (RUG) PPSW,2023,1377146,"A web based cognitive behavioral therapy that addresses gender dysphoria, gender minority stress and suicidality among gender minority youth. A Randomized Control Trial",ZonMW
+PUB-190,GGD Zuid-Limburg,2024,1358014,GGroen: Ontsluiten van de Gezondheidswaarde van een Groen Zuid Limburg;wat werkt in kwetsbare wijken,ZonMW
+PUB-191,Contourde Twern,2022,1348708,Gelukkig en gezond oud in de Reeshof,ZonMW
+PUB-192,Stichting OLVG,2024,1348414,Centrale OLVG research pool ter ondersteuning van 6 zorgevaluatiestudies,ZonMW
+PUB-193,Patiëntenfederatie Nederland,2024,1347777,Referentenpanel Patiëntenfederatie Nederland 2024,ZonMW
+PUB-194,Stg KU - Radboud Universiteit,2023,1306277,Best practices combineren tot een veilige digitale ontmoetingsplek voor mensen met mentale problemen,ZonMW
+PUB-195,Wageningen Universiteit,2023,1285260,(micro)2 corona. Advanced characterization of biomolecular corona on micro and nanoplastics in the anaerobic intestinal microbiome and its consequences on the intestinal epithelium,ZonMW
+PUB-196,Rijksuniversiteit Groningen (RUG) PPSW,2022,1284781,Training en toolbox voor account managers in de arbeidsmarktregio Groningen en Noord-Drenthe ter bevordering van duurzame en succesvol bemiddeling van statushouders naar werk.,ZonMW
+PUB-197,Stichting SeniorenStudent,2022,1283890,Jong+Oud=Goud,ZonMW
+PUB-198,Gemeente Zaanstad,2023,1282058,De basis op orde: Regionale kenniswerkplaats onbegrepen gedrag Zaanstreek-Waterland,ZonMW
+PUB-199,Stichting Hogeschool van Arnhem en Nijmegen,2023,1274390,Maatschappelijke waarde van topsportevenementen,ZonMW
+PUB-200,Universiteit Utrecht,2024,1252972,A novel method for efficient expansion of functional human hepatocytes,NWO
+PUB-201,Stichting rijnstate ziekenhuis,2022,1251455,IS A PREOPERATIVE MULTIDISCIPLINARY TEAM MEETING (COST)EFFECTIVE IN OPTIMIZING NON-CARDIOSURGICAL PATIENT MANAGEMENT: THE PREPARATION STUDY,ZonMW
+PUB-202,NWO-institutenorganisatie,2024,1199476,"Green Sparks 
+Understanding the electric breakdown dynamics of eco-friendly insulating gases for high voltage technology",NWO
+PUB-203,Hogeschool Utrecht,2024,1196812,De doorontwikkeling van de ConnectEM binnen de acute zorg (ambulance- en spoedeisende hulp context),ZonMW
+PUB-204,Vereniging Expertisenetwerk NAH,2023,1190000,"‘Extra transitiesubsidie om te komen tot een kennisnetwerk voor een specfieke doelgroep in de langdurige zorg’, kortweg ‘extra transitiesubsidie’",ZonMW
+PUB-205,Gemeente Zaanstad,2024,1155449,Hulpkaart en crisiskaart in de regio Zaanstreek-Waterland,ZonMW
+PUB-206,Open Universiteit Nederland,2023,1151463,What´s BOThering you?,ZonMW
+PUB-207,Prinses Maxima Centrum voor Kinderoncologie BV,2022,1148883,Development and Evaluation of a National Network of Allied Health Professionals working with Children with Cancer to improve Participation and Quality of Life (KinderOncoNet),ZonMW
+PUB-208,Maastricht University,2024,1147565,Secondary prevention of dementia in memory clinics: implementation and cost-effectiveness of an integrated lifestyle intervention,ZonMW
+PUB-209,Kon. Ned. Genootschap Fysiotherapie (KNGF),2022,1128044,Digi-On: praktische aanbevelingen voor fysiotherapie en oefentherapie op afstand,ZonMW
+PUB-210,Gemeente Almere OW&SZ,2024,1117924,Domeinoverstijgende aanpak regio Flevoland,ZonMW
+PUB-211,Gemeente Deventer,2024,1105198,Gezond leven en bewegen in Colmschate Zuid,ZonMW
+PUB-212,VGZ Zorgverzekeraar N.V.,2023,1101355,Aanvraag subsidie regiobeeld Noord- en Midden-Limburg,ZonMW
+PUB-213,St. Sportief Besteed Groep,2022,1099190,Jongeren voor Oekraïne,ZonMW
+PUB-214,KNAW Nederlands Herseninstituut,2022,1095000,AAn interneuron-microglia crosstalk for diagnosing and treating early dementia,ZonMW
+PUB-215,CZ Actief in Gezondheid,2023,1093800,Regiobeeld Haaglanden,ZonMW
+PUB-216,Patiëntenfederatie Nederland,2023,1088973,Aanvraag ZorgkaartNederland 2023,ZonMW
+PUB-217,Kanker.nl,2024,1086854,Multidisciplinair Consortium Kanker en Werk,ZonMW
+PUB-218,St Ready,2022,1085740,MDT Basketbal Impuls: Gamechangers,ZonMW
+PUB-219,St. Chr. Hogeschool Windesheim,2023,1084603,Bewegen en ontmoeten in de Pierik,ZonMW
+PUB-220,Open Universiteit Nederland,2024,1083745,"CARE-FIT- Comprehensive AppRoach for Embedding lifestyle support in oncology care – Focusing on Increasing physical activity, better sleep and reducing stress Through eHealth",ZonMW
+PUB-221,Vrije Universiteit Amsterdam (VUA) Faculteit ALW,2022,1083316,Identifying targetable mechanisms of insomnia in brain aging and dementia,ZonMW
+PUB-222,GGD Gelderland-Zuid,2023,1051015,Samenwerkplaats Sluitende Aanpak Gelderland-Zuid,ZonMW
+PUB-223,Ministerie van VWS (RIVM),2023,1042191,De reis naar kennisuitwisseling en netwerken rondom arbeidsgerelateerde zorg,ZonMW
+PUB-224,Universiteit van Amsterdam,2023,1012597,nified histological and MRI reconstructions of the Alzheimer brain (3D-AD),ZonMW
+PUB-225,Kwaliteitsbureau NVAB,2023,1003248,Professionalisering Poortwachtersproces - Multidisciplinaire ontwikkeling van richtlijnen,ZonMW
+PUB-226,Veiligheidsregio Twente,2024,1000602,Domein overstijgend samenwerken onbegrepen gedrag twente,ZonMW
+PUB-227,Stichting H3O inzake bestuursbureau,2022,999825,Insula-Connect!,ZonMW
+PUB-228,Nederlands Federatie Universitair Medische Centra,2024,999291,Citrienfonds 3.0 - Landelijke coördinatie en communicatie NFU,ZonMW
+PUB-229,ROC Mondriaan,2022,999120,MDT-Connected,ZonMW
+PUB-230,ROC Friese Poort,2022,998595,Bloeizone Fryslan,ZonMW
+PUB-231,ICIN Netherlands Heart Institute,2023,996205,SELEnium and coQ10 Treatment for Heart Failure (SELEQT-HF) a registry based randomised clinical trial,ZonMW
+PUB-232,Universitair Medisch Centrum Groningen,2022,986106,Dutch Translational Metabolism Conference,NWO
+PUB-233,Zorgverzekeraars Nederland,2023,983617,Actieplan wachttijden en toegankelijkheid GGZ 2023 inclusief casuïstiektafels,ZonMW
+PUB-234,Amsterdam UMC - Locatie VUmc,2022,979014,Aspasia 2019,NWO
+PUB-235,Radboud universitair medisch centrum,2022,964327,Beter Verwijs: het leefstijlverwijsplatform voor elke zorgverlener,NWO
+PUB-236,RDOG Hollands Midden,2024,959636,Actief in het groene hart van Boskoop Noord,ZonMW
+PUB-237,Vrije Universiteit Amsterdam,2023,955123,Aspasia 2021 ,NWO
+PUB-238,Elitac Systems BV,2023,934773,Eurostars,RVO
+PUB-239,Warmtebedrijf Ede B.V,2023,931937,Warmtenetten Investeringssubsidie (WIS),RVO
+PUB-240,Crown Bioscience Netherlands B.V.,2023,911292,Eurostars,RVO
+PUB-241,Gemeente Rotterdam DMC Afdeling Concernfinanciering,2024,905268,Afwegingskader en borging van gezondheidsregels in beleid,ZonMW
+PUB-242,PG&Z,2024,903024,Impuls borging Gezonde school aanpak op het gebied van mentaal welbevinden in regio Groningen,ZonMW
+PUB-243,Hogeschool Rotterdam,2024,897146,Betere transitiezorg voor jongeren met verstandelijke beperkingen met een gezondheidsprobleem,ZonMW
+PUB-244,ZINZIZ b.v.,2023,896434,"Jong geleerd, oud geleerd",ZonMW
+PUB-245,CNV,2022,889540,Druk of Geluk: de interventie,ZonMW
+PUB-246,Gemeente Rotterdam DMC Afdeling Concernfinanciering,2022,887361,GLOW UP! - MDT Rotterdam 2022-2023,ZonMW
+PUB-247,Stichting Hanzehogeschool Groningen,2024,885001,Leren in t twijduuster. Samen transformeren naar een gezond Eemsdelta,ZonMW
+PUB-248,Zorgverzekeraars Nederland,2022,881380,Actieplan wachttijden en toegankelijkheid GGZ 2022 inclusief casuïstiektafels,ZonMW
+PUB-249,Stichting Palliatieve Zorg Nederland,2024,870175,Ontwikkeling richtlijn Perinatale Palliatieve zorg,ZonMW
+PUB-250,Het Nederlands Kanker Instituut (NKI),2024,870000,Het ontrafelen van de rol van niet-uniforme tRNA-genregulatie in kanker en het aanpassen van cellen aan hun omgeving,ZonMW
+PUB-251,Respiro B.V.,2022,868067,Mkb-innovatiestimulering Topsectoren,RVO
+PUB-252,VitroScan B.V.,2022,847410,Eurostars,RVO
+PUB-253,Erasmus MC,2023,845500,Aspasia 2021 ,NWO
+PUB-254,Spaarne Gasthuis,2024,843257,Effect van coronamaatregelen op dragerschap van pneumokokken en groep A streptokokken,ZonMW
+PUB-255,V&VN Eerstelijnsverpleegkundigen,2022,842535,Kwaliteitsstandaarden Wijkverpleging,ZonMW
+PUB-256,St. Universiteit voor Humanistiek,2024,830343,Buitengewoon kennis-maken: collaboratief onderzoek naar zeven beleidsinitiatieven in complexe zorg,ZonMW
+PUB-257,JenM Group B.V.,2022,830080,Cultural Encounters,ZonMW
+PUB-258,GR Publieke Gezondheid & Jeugd Zuid-Holland Zuid,2023,830067,Foodways: een cultuur-sensitieve inventarisatie van voedingspatronen en gewoonten voor een betere aansluiting bij gezinnen en meer passende ondersteuning vanuit professionals ter bevordering van de resultaten in de ketenaanpak,ZonMW
+PUB-259,Universiteit Twente (UT),2022,824536,CRISPR screen to identify targets of human cardiac differentiation and disease - from molecular pathways to tissue formation and desease,ZonMW
+PUB-260,Mind Platform Psychische Gezondheid,2023,815406,‘Kiezen in de ggz 2023‘,ZonMW
+PUB-261,Avans Hogeschool / DFS,2024,814751,Kwaliteit van palliatieve zorg in een netwerk van Cello en Reinier van Arkel.,ZonMW
+PUB-262,"Gemeente Amsterdam, Onderwijs Jeugd en Zorg",2022,792460,Impact Creators Amsterdam ICA,ZonMW
+PUB-263,Universiteit Maastricht Finance/Debiteuren,2024,792130,Op zoek naar een gezamenlijke oorsprong: hoe neuroinflammatie in post-COVID hersenfunctie ontregelt,ZonMW
+PUB-264,Trabotyx B.V.,2023,782505,Mkb-innovatiestimulering Topsectoren,RVO
+PUB-265,GGD Drenthe,2023,780440,Drentse kenniswerkplaats onbegrepen gedrag,ZonMW
+PUB-266,Stichting Isala Klinieken,2024,777933,Centrale onderzoeksondersteuning voor zorgevaluatieonderzoek,ZonMW
+PUB-267,Koninklijke Nederlandse Akademie van Wetenschappen,2023,769974,Crowning chromosomes: The fibrous corona in maintenance of genome stability in oocytes and early embryos,ZonMW
+PUB-268,Stichting Traversegroep,2024,766988,Regionale Kenniswerkplaats Onbegrepen Gedrag,ZonMW
+PUB-269,"Stichting Spectrum, partner met elan",2022,760577,Jong & Meer 2.0,ZonMW
+PUB-270,IMC Weekendschool,2022,751732,De Waarde(n) van MDT!,ZonMW
+PUB-271,KNAW Nederlands Herseninstituut,2024,750000,Electronische neuroprothese voor het herstel van zien,ZonMW
+PUB-272,Gemeente Tilburg,2024,750000,Integrale triage en opvolging van (acute) meldingen van onbegrepen gedrag,ZonMW
+PUB-273,Mind Platform Psychische Gezondheid,2022,750000,Kiezen in de ggz 2022,ZonMW
+PUB-274,Universiteit Maastricht Faculteit Psychologie en Neurowetenschappen,2024,750000,Sla de avatar niet!: Ontwikkeling en farmacologische validatie van een nieuw transdiagnotisch RDoC-model van reactieve agressie,ZonMW
+PUB-275,Koninklijke Nederlandse Akademie van Wetenschappen (Hubrecht),2024,750000,"b3D-AGM, een 3D-gebioprinte omgeving voor de productie van hematopoëtische stamcellen in vitro",ZonMW
+PUB-276,Libreon,2022,749725,MDT-Baronie,ZonMW
+PUB-277,De Willibrord St. voor Utrecht e.o.,2022,749585,FLOW!,ZonMW
+PUB-278,Menzis Zorgverzekeraar N.V.,2023,747751,Opmaken van het Regiobeeld Arnhem,ZonMW
+PUB-279,Stichting Albeda,2024,747645,Albeda Next x MDT Apothekersassistent,ZonMW
+PUB-280,Healthy Ageing Business Coöperatie,2024,747494,‘Groningen Human Capital for LIFE Sciences’,ZonMW
+PUB-281,Huis voor beweging Arnhem,2022,746320,Wereldmeiden/Wereldgozers,ZonMW
+PUB-282,Stichting ARQ Centrum ´45,2023,746164,Cost-Effectiveness of Intensive Trauma-Focused Treatment versus Spaced Trauma-Focused Treatment as First-,ZonMW
+PUB-283,Rijksuniversiteit Groningen,2023,744039,3rd Neuromorphic Computing in the Netherlands - Edition 2023 - Bio-inspired computing paradigms and emerging technologies,NWO
+PUB-284,Universiteit van Amsterdam,2022,731626,Aspasia 2020 ,NWO
+PUB-285,Stichting Shift Heemstede,2022,730800,Grensverleggers in de regio,ZonMW
+PUB-286,Stichting Life Goals,2022,728268,Opschaling Set your Life Goal,ZonMW
+PUB-287,Maastricht University,2022,728202,Aspasia 2020 ,NWO
+PUB-288,Gemeente Alkmaar Financiele Adm,2022,724590,Gouden Kans Project,ZonMW
+PUB-289,Koninklijke Nederlandse Akademie van Wetenschappen,2022,723070,Aspasia 2019,NWO
+PUB-290,St Antonius Ziekenhuis,2024,722479,Dutch-TIMELINESS: Nationale implementatie van een cholecystectomie binnen 72u na ERCP voor galstenen,ZonMW
+PUB-291,Valley Optics B.V.,2023,719100,Mkb-innovatiestimulering Topsectoren,RVO
+PUB-292,St. Maxima Medisch Centrum,2024,708352,Ondersteuning Verloskundige Samenwerkingsverbanden door Regionaal Consortium Brabant,ZonMW
+PUB-293,Pro Persona Holding,2023,693810,Defeating Fear with Exposure therapy delivered by mental health nurses in primary care for Anxiety Disorders,ZonMW
+PUB-294,Gemeente Oldambt,2024,687922,Vroegsignalering en opvolging in Oost-Groningen,ZonMW
+PUB-295,Spaarne Gasthuis,2022,687541,Opschalen van medicatiebehandeling thuis in plaats van in het ziekenhuis bij patiënten met kanker,ZonMW
+PUB-296,Stichting Academy Het Dorp,2024,687122,"Fellowship passend onderzoek naar doelmatige inzet van technologische hulpmiddelen in de gehandicaptenzorg, gekoppeld aan academische werkplaats ZoTeG",ZonMW
+PUB-297,Zuyd hogeschool,2023,685412,EET-ZE! Economische evaluatie van technologie voor zelfstandig eten,ZonMW
+PUB-298,Stichting Travers Welzijn,2022,682710,Impacter x Windesheim,ZonMW
+PUB-299,Gemeente Dantumadiel,2022,681275,MDT ôZoek het uit!ô,ZonMW
+PUB-300,Gemeente Nijmegen,2024,680379,"Gezonde leefomgeving Nijmegen: Verbinden en organiseren van proces, advies, kennis en samenwerking",ZonMW
+PUB-301,Gemeente Dordrecht,2022,674246,Evaluatie pilots kleinschalige crisisopvang,ZonMW
+PUB-302,Stichting 10000 Hours,2022,665098,Music Moves,ZonMW
+PUB-303,Faculteit Sociale Wetenschappen UL,2024,647270,Bouwstenen van succes: Analyse van kerncomponenten in een effectieve interventie voor jonge kinderen,ZonMW
+PUB-304,Zuyd hogeschool,2024,643443,Leren beter begrepen! Onderzoek naar het creëren van een lerende organisatie in het jeugdveld,ZonMW
+PUB-305,ParkinsonNet,2023,636816,Implementatie van Perspective-innovaties in logopedische behandeling van volwassenen met dysartrie.,ZonMW
+PUB-306,Stichting ZONH,2023,635000,Pro-actieve zorgplanning bij mensen met een verstandelijke beperking bij Odion,ZonMW
+PUB-307,Hogeschool van Amsterdam,2024,633044,Ervaring en organisatie van sportprofessionals in Nederland: De implementatie van sociaal management,ZonMW
+PUB-308,Hogeschool Rotterdam,2022,629677,Motivatiebrief Netwerk Regionale Consortia Geboortezorg (NRCG),ZonMW
+PUB-309,Stichting Change to Influence,2022,625910,Chance 4 Talentz,ZonMW
+PUB-310,Stichting Sport Data Valley,2024,625000,OPEN SDV,ZonMW
+PUB-311,GGD Amsterdam,2024,621931,CONTROL-2: Evaluatie van CONTact Reducerende OverheidsmaatregeLen,ZonMW
+PUB-312,Stichting GROW!,2022,619764,Grow2Work,ZonMW
+PUB-313,GGD Amsterdam,2022,618379,Gezamenlijk gedragen en ontwikkelde oplossingen voor de knelpunten in de samenwerking tussen politie en zorg op straat in de regio Amsterdam-Amstelland,ZonMW
+PUB-314,Gemeente Leiden team BMO,2022,613966,MDT UniverCity voor changemakers,ZonMW
+PUB-315,GGD regio Utrecht,2024,607957,Bouwen aan een Gezonde Gemeenschap,ZonMW
+PUB-316,GGZ-Drenthe,2024,604853,Helpt medicatie bij de behandeling van moeilijk verstaanbaar gedrag en hoe weten en meten we dat?,ZonMW
+PUB-317,Stichting Academy Het Dorp,2022,602420,"Academische Werkplaats ZoTeG, ZorgTechnologie in de Gehandicaptenzorg",ZonMW
+PUB-318,Gemeente Renkum,2023,600856,Niet Wijken! Samenwerkplaats Onbegrepen Gedrag Gelderland-Midden.,ZonMW
+PUB-319,De Haagse Hogeschool,2022,594265,Academische Werkplaats Technologie voor Thuis te honoreren,ZonMW
+PUB-320,Viazym B.V.,2022,591228,Mkb-innovatiestimulering Topsectoren,RVO
+PUB-321,UvA FNWI locatie Vstr,2023,588328,Brain changes in ME/CFS: Focus on the stress and immune system,ZonMW
+PUB-322,Stichting Koninklijke Kentalis,2022,588191,Move to Succeed: Evaluation of the effectiveness of the program Hexe-Pre,ZonMW
+PUB-323,United World College Maastricht,2022,583300,#CHANGEMAKERS,ZonMW
+PUB-324,GGD regio Utrecht,2023,578707,Regionale Kenniswerkplaats Samen Omgaan met Onbegrip (SOMO) regio Utrecht,ZonMW
+PUB-325,St. Universiteit voor Humanistiek,2023,576866,Resilience around severe experiences of loss in daily life. Phenomenological practive-oriented research,ZonMW
+PUB-326,Stichting Fioretti Teylingen,2022,576340,Talent4Life,ZonMW
+PUB-327,Hogeschool Utrecht,2022,570824,Creating optimized and future-proof emergency care for patients with complex multimorbidity,ZonMW
+PUB-328,Alliade Zorggroep,2024,570811,Analyseren en onderzoeken van afvalscheiding en het maken van verbeterplannen binnen Alliade,ZonMW
+PUB-329,Korsakov Kenniscentrum Rotterdam,2023,570000,Kenniscentrum Korsakov,ZonMW
+PUB-330,Korsakov Kenniscentrum Rotterdam,2022,570000,Kenniscentrum Korsakov,ZonMW
+PUB-331,Korsakov Kenniscentrum Rotterdam,2024,570000,Kennisnetwerk Korsakov,ZonMW
+PUB-332,Gemeente Eindhoven,2024,569629,Implementatietraject Streettriage Eindhoven,ZonMW
+PUB-333,Het Nederlands Kanker Instituut (NKI),2023,567000,Bestraling van de hersenen zorgt in muizen niet voor versnelde veroudering in gezonde hersencellen,ZonMW
+PUB-334,WSG Stg Expertise Centrum,2022,563732,"Time of Your Life - Opschalen, uitbreiden en versterken",ZonMW
+PUB-335,Wageningen Universiteit Bureau Maatschappijwetenschappen,2023,562136,Living Lab Lindenholt: de natuurlijke broedplaats voor de wijk,ZonMW
+PUB-336,Stichting Vitis Welzijn,2022,561207,Vrijwillig Traineeship 3.0,ZonMW
+PUB-337,Stichting Arkin,2024,561046,“VIPwordtFIT!”,ZonMW
+PUB-338,Canisius-Wilhelmina Ziekenhuis,2022,555330,Lysergzuurdiethylamide (LSD) als preventieve behandeling bij chronische clusterhoofdpijn: gerandomiseerd placebo-gecontroleerd onderzoek,ZonMW
+PUB-339,Stichting Partners in Welzijn,2022,549975,MatchMate MDT,ZonMW
+PUB-340,TUE Eindhoven,2024,549090,Mobiliteits- en gedragsgebaseerde ex-postevaluatie van effectiviteit van COVID-19-maatregelen,ZonMW
+PUB-341,Stichting Koninklijke Kentalis,2023,547016,Always look at the bright side of life: a digital intervention to treat psychosocial problems in deaf/hard-hearing/DLD adolescents,ZonMW
+PUB-342,Open Universiteit,2023,544301,AUTOLINK: Automated Unobtrusive Techniques for LINKing requirements and testing in agile software development,NWO
+PUB-343,Stichting New Bees,2022,536465,NewBees MDT Traineeships,ZonMW
+PUB-344,St. Zuyderland Medisch Centrum,2023,532494,De zorg die ik wens en bij mij past als… ik niet meer beter word’ Structurele implementatie van transmurale proactieve zorgplanning op maat in specialistische zorgpaden,ZonMW
+PUB-345,Stichting Humanitas DMH,2024,530000,De Kookapp - Eet je een hapje mee?,ZonMW
+PUB-346,Hogeschool Rotterdam,2023,529112,"Boss: Betere zorg voor Oudere migranten met dementie door Samenwerking, (vroeg)Signalering en diagnostiek. Kennisvergroting bij de doelgroep oudere migranten, mantelzorgers en (toekomstige) zorg- en welzijnsprofessionals over (vroeg)signaleren, diagnostie",ZonMW
+PUB-347,In Holland Hogeschool,2023,527003,"De mens zien, die (ook) dementie heeft. Via actieonderzoek samen ontdekken en anders leren doen voor meer menselijkheid in de zorg",ZonMW
+PUB-348,BioscienZ,2022,520000,Eurostars,RVO
+PUB-349,Maastricht UMC+,2022,519984,Aspasia 2019,NWO
+PUB-350,Stichting Expertisecentrum Preventie,2022,519980,"Kenniswerkplaats Onbegrepen Gedrag in het Caribische deel van het Koninkrijk: samenwerken, samen leren, samen groeien!",ZonMW
+PUB-351,BIMINI Biotech B.V.,2023,519943,Eurostars,RVO
+PUB-352,Locsense B.V.,2023,519871,Eurostars,RVO
+PUB-353,Gemeente Delft,2024,519700,Buurt GGZ-er Delft,ZonMW
+PUB-354,Stichting Lentis Maatschappelijke Onderneming,2023,516812,"Huis-CAT, Cognitieve Adaptatie Training aangepast voor woonbegeleiders & naasten",ZonMW
+PUB-355,Stichting Academy Het Dorp,2023,516087,More is less?! Meer zelfstandig functioneren en minder begeleidingsmomenten door robot Tessa: een,ZonMW
+PUB-356,Stichting Albeda,2023,508152,Albeda Next x MDT,ZonMW
+PUB-357,Sint Maartenskliniek,2022,505891,REDUCE PMR: Rituximab Effect on Decreasing glUcoCorticoid Exposition in PolyMyalgia Rheumatica: 2 parallel trials in 1) recently diagnosed and 2) relapsing polymyalgia rheumatica patients,ZonMW
+PUB-358,Vereniging Gezondheidsregio Zoetermeer,2024,504595,"""Versterk de burger, verlicht de zorg, Hoe gemeenschapsintelligentie ons gaat helpen”",ZonMW
+PUB-359,Lunet Zorg,2024,504560,"Effectiviteit van Dialectische Gedragstherapie voor mensen met LVB, zelfbeschadiging en agressie",ZonMW
+PUB-360,University Medical Center Utrecht,2023,500000,Eurostars,RVO
+PUB-361,Odd.Bot,2022,500000,Eurostars,RVO
+PUB-362,ONWARD Medical N.V.,2023,500000,Eurostars,RVO
+PUB-363,Sensing360 B.V.,2023,500000,Eurostars,RVO
+PUB-364,Salvia BioElectronics BV,2022,500000,Eurostars,RVO
+PUB-365,Sensius,2023,500000,Eurostars,RVO
+PUB-366,Qorium B.V.,2023,500000,Eurostars,RVO
+PUB-367,Vereniging Samenwerkende Topklinische Opleidings Ziekenhuizen STZ,2024,500000,STZ innovatiehub,ZonMW
+PUB-368,Hybridize Pharma BV,2023,500000,Eurostars,RVO
+PUB-369,ONWARD Medical N.V.,2022,500000,Eurostars,RVO
+PUB-370,Inno-Assembly B.V.,2023,500000,Eurostars,RVO
+PUB-371,AM-Flow B.V.,2022,500000,Eurostars,RVO
+PUB-372,Stichting Kenniscentrum Kraamzorg (KCKZ),2024,499995,Kwaliteitsgelden Kraamzorg 2024,ZonMW
+PUB-373,Stg. Amsterdam Inst. for Adv. Metropol. Sol.,2023,499972,Kennis en Innovatie Agenda-Circulaire Economie (KIA CE),RVO
+PUB-374,Vivolta B.V.,2023,499955,Eurostars,RVO
+PUB-375,MindAffect B.V.,2023,499892,Eurostars,RVO
+PUB-376,LeydenJar Technologies BV,2022,499875,Eurostars,RVO
+PUB-377,Forensisch medisch genootschap,2023,499654,Richtlijnontwikkeling lijkschouw en FMO (forensisch medisch onderzoek),ZonMW
+PUB-378,FUL Foods,2023,499529,Eurostars,RVO
+PUB-379,DC4U,2022,499499,Eurostars,RVO
+PUB-380,Stichting Flever,2024,499229,Coalitievorming t.b.v. participatiehub Flevoland,ZonMW
+PUB-381,Ocean Grazer B.V.,2022,499094,Ocean Battery: a sustainable and cost-effective energy storage technology,NWO
+PUB-382,Genewity B.V.,2023,499012,Eurostars,RVO
+PUB-383,Orthros Medical B.V.,2023,498750,Eurostars,RVO
+PUB-384,Protinhi Therapeutics,2022,498563,Eurostars,RVO
+PUB-385,Sustainer Homes B.V.,2022,498299,Kennis en Innovatie Agenda-Circulaire Economie (KIA CE),RVO
+PUB-386,AgriData Innovations b.v.,2022,498206,Eurostars,RVO
+PUB-387,PERSUASIVE B.V.,2023,498098,Eurostars,RVO
+PUB-388,3DUniversum BV,2022,497618,Eurostars,RVO
+PUB-389,Delta Diagnostics B.V.,2023,496993,Eurostars,RVO
+PUB-390,AntenneX BV,2023,496768,High-volume test equipment for 6G software antennas,NWO
+PUB-391,Stichting Maastricht Radiation Oncology  -Maastro Clinic,2022,496589,Eurostars,RVO
+PUB-392,Aiosyn,2023,496586,Eurostars,RVO
+PUB-393,Asthmaware,2023,496359,Eurostars,RVO
+PUB-394,Da Vinci laboratory solutions B.V.,2022,496138,Eurostars,RVO
+PUB-395,MUD Jeans International B.V.,2022,495393,Kennis en Innovatie Agenda-Circulaire Economie (KIA CE),RVO
+PUB-396,Stichting 113Online,2022,495000,The STRENGTH project: Adaptation and implementation of suicide prevention efforts for middle-aged men in the Netherlands,ZonMW
+PUB-397,GGZ Centraal,2023,494984,"Een impuls aan de door- en uitstroom in de regio Utrecht: van instellingsaanpak naar netwerkaanpak door middel van visievorming, dataanalyse en samenwerkafspraken",ZonMW
+PUB-398,Stichting Wetenschappelijk Onderzoek Verkeersveiligheid Swov,2024,494932,Alcohol in het verkeer: maatschappelijke impact en passende preventieve en repressieve interventies,ZonMW
+PUB-399,Single Quantum B.V.,2022,494450,Eurostars,RVO
+PUB-400,Wageningen University,2024,494257,Interventie Modellering & Bayesiaanse Inferentie van transmissieroutes aan de start van een Pandemie,ZonMW
+PUB-401,Onicor BV,2022,494194,Eurostars,RVO
+PUB-402,Leids Universitair Medisch Centrum (LUMC)  - DIAZ,2024,493448,"FUSION: een familie multi-statemodellen om dynamiek, sterfte en lasten van pandemie te voorspellen",ZonMW
+PUB-403,Radboudumc,2022,492252,Eurostars,RVO
+PUB-404,Photosynthetic,2022,491850,Eurostars,RVO
+PUB-405,Delft Circuits B.V.,2023,490770,Eurostars,RVO
+PUB-406,Predica Diagnostics BV,2022,490320,Eurostars,RVO
+PUB-407,HeartEye B.V,2023,490025,Eurostars,RVO
+PUB-408,Digi.bio B.V.,2022,490000,Eurostars,RVO
+PUB-409,Sorama B.V.,2022,487575,Eurostars,RVO
+PUB-410,Universiteit van Amsterdam,2023,486903,Aspasia 2021 ,NWO
+PUB-411,St Kenniscentrum Phrenos,2024,485605,Beter omgaan met hoogcomplex onbegrepen gedrag,ZonMW
+PUB-412,Stichting Bartimeus Sonneheerdt,2022,484993,A personal sensory navigation profile: A novel tool to predict successful use of sensory information during navigation in visually impaired individuals,ZonMW
+PUB-413,Stichting MESO,2023,484876,Vervolg en afronding MESO-project,ZonMW
+PUB-414,Gemeente Ede,2024,483972,Beweegroutes in Ede,ZonMW
+PUB-415,Zorgbelang Inclusief,2024,482648,Caolitievorming ter voorbereiding op participatie hubs Regio Noord Veluwe,ZonMW
+PUB-416,WSK Medical,2023,480695,Eurostars,RVO
+PUB-417,GECCO Biotech B.V.,2023,478530,Eurostars,RVO
+PUB-418,CardiacBooster,2022,477963,Eurostars,RVO
+PUB-419,CimCure BV,2022,477938,Eurostars,RVO
+PUB-420,Roessingh Research and Development,2022,477877,Eurostars,RVO
+PUB-421,Stanford University,2023,476962,“Automated anatomical naming of blood vessels and blood flow analyses in digital subtraction angiography during endovascular treatment of patients with acute ischemic stroke”,ZonMW
+PUB-422,Verwey Jonker Instituut,2022,475404,Burn-out bij werknemers binnen de jeugdzorg: Nieuwe kansen voor re-integratie 2e spoor door inzet van Virtual Reality?,ZonMW
+PUB-423,Academisch Medisch Centrum,2022,473754,Eurostars,RVO
+PUB-424,Blue Radix B.V.,2023,471820,Eurostars,RVO
+PUB-425,Stichting Radboud Universiteit,2023,469519,Eurostars,RVO
+PUB-426,Train.Red,2023,464300,Eurostars,RVO
+PUB-427,Nederlands Bijwerkingen Centrum Lareb,2023,464093,De implementatie van reeds bestaande kennis over genees- en zelfzorgmiddelen rondom de zwangerschap om deze laagdrempelig beschikbaar en toegankelijk te maken voor zwangere of lacterende vrouwen en hun zorgverleners,ZonMW
+PUB-428,Gemeente Almelo,2024,464065,Almelo sport buiten,ZonMW
+PUB-429,GGDRU (GGD regio Utrecht),2022,463910,Integraal Gezondheidsonderzoek bij Rampen – COVID-19 Fase 2,ZonMW
+PUB-430,Kennisinstituut van Medische Specialisten,2022,463667,Addendum Overkoepelend deel Kennisinstituut,ZonMW
+PUB-431,Nostics,2023,458100,Eurostars,RVO
+PUB-432,Stichting Ziekenhuis Gelderse Vallei,2023,457744,Coördineren van het (regionale) Sportinnovator netwerk - versterking positionering centrum,ZonMW
+PUB-433,St Studeren & Werken Op Maat,2022,455395,De SWOM Academie breidt uit naar Gelderland en Friesland,ZonMW
+PUB-434,Stichting GGNET,2023,455360,Regio-Impuls 8RHK Gezond,ZonMW
+PUB-435,St. Toekomst voor de Buurtjeugd,2022,453625,Young Leaders in actie,ZonMW
+PUB-436,PamGene International B.V.,2022,451000,Eurostars,RVO
+PUB-437,Gemeente Dordrecht,2023,450896,MDT Missie Nationale Sportweek,ZonMW
+PUB-438,Cellcius B.V.,2023,450542,Eurostars,RVO
+PUB-439,Liquidseal Flowers BV,2023,450039,Eurostars,RVO
+PUB-440,Gemeente Zaanstad,2022,449930,Een goede inrichting van gegevensverwerking als randvoorwaarde voor de verbetering van de sturing en samenwerking binnen het netwerk van Zorg en Veiligheid in Zaanstreek-Waterland,ZonMW
+PUB-441,Optometristen Vereniging Nederland,2024,449900,Kwaliteitskader Passende Oogzorg,ZonMW
+PUB-442,Photon IP B.V.,2023,448188,Eurostars,RVO
+PUB-443,Onderlinge Waarborgmaatschappij Zorgverzekeraar Zorg en Zekerheid U.A.,2023,448093,Opstellen Regioplan Amstelland,ZonMW
+PUB-444,Mellon Medical B.V.,2023,446255,Eurostars,RVO
+PUB-445,Lapsi Health B.V.,2022,446125,Eurostars,RVO
+PUB-446,Amsterdam Scientific Instruments,2022,444554,Eurostars,RVO
+PUB-447,Praxa Sense,2022,444538,Eurostars,RVO
+PUB-448,Stichting Amsta,2024,440275,"wie heeft het voor het zeggen""?: betekenisvolle relaties en samenwerking met het informele netwerk",ZonMW
+PUB-449,GGD Zuid-Limburg,2023,436561,Versterking kennis- en adviesfunctie van GGD Zuid Limburg voor betere implementatie van Keigezond Limburg,ZonMW
+PUB-450,Stichting Saga Interproject,2022,435610,Rebalancing Society,ZonMW
+PUB-451,Zavhy B.V.,2023,434614,Kennis en Innovatie Agenda-Circulaire Economie (KIA CE),RVO
+PUB-452,ExRobotics B.V.,2022,433532,Eurostars,RVO
+PUB-453,GG&GD Zeeland jeugdgezondheidszorg,2024,431462,Organiseren en monitoren van groepsleerprocessen,ZonMW
+PUB-454,Stichting Lumens,2022,430540,Pak de VIBE,ZonMW
+PUB-455,Erasmus Universiteit Rotterdam,2022,429731,Sociale Impact in tijden van Corona. Doorontwikkeling van het thema Sociale Cohesie t.b.v. het Dashboard Sociale Impact Corona,ZonMW
+PUB-456,Libreon,2024,429436,Christoffel MDT Libreon Groen & Duurzaam,ZonMW
+PUB-457,Serendipity BV,2023,425800,Eurostars,RVO
+PUB-458,Gemeente Enschede,2024,422118,Speaking Minds MDT-kort Enschede,ZonMW
+PUB-459,Stichting Vitaal Vechtdal,2024,418968,Versterken gezondheidsinfrastructuur Vitaal Vechtdal,ZonMW
+PUB-460,GGD IJsselland,2023,417882,Regionale Kenniswerkplaats Psychische Gezondheid en Onbegrepen Gedrag IJsselland,ZonMW
+PUB-461,De Omring,2024,412764,Noord-Holland Noord Gezond als dé Regiotafel voor gezondheid van de inwoners Noord-Holland Noord,ZonMW
+PUB-462,Stichting Solidair Friesland,2022,412500,Friend4Friend Noord Nederland,ZonMW
+PUB-463,Smart-ship,2023,412100,Eurostars,RVO
+PUB-464,Stichting Laurens,2024,411959,BAMM: Beter Af Met Minder,ZonMW
+PUB-465,In Holland Hogeschool,2024,411075,Regionaal Kennisnetwerk Jeugd Noord-Holland: gezamenlijke verbinding met KBL,ZonMW
+PUB-466,Choice bv,2022,409750,Eurostars,RVO
+PUB-467,Aminoverse B.V.,2022,408300,Eurostars,RVO
+PUB-468,ZOOROBOTICS BV,2022,408300,Eurostars,RVO
+PUB-469,Gemeente Weert,2024,407528,Regionale Kenniswerkplaats Onbegrepen Gedrag Midden-Limburg,ZonMW
+PUB-470,Avans Hogeschool / DFS,2022,407050,Gendersensitief werken voor kinderen van gedetineerde vaders,ZonMW
+PUB-471,Gemeente Goes,2023,406000,Domeinoverstijgend samenwerken Zorg en Veiligheid Zeeland,ZonMW
+PUB-472,Universiteit Leiden,2024,403061,PPP-COMPUTE: Pandemisch Farmacologie Platform voor model-gestuurde therapie optimalisatie,ZonMW
+PUB-473,Catharina Ziekenhuis Radiotherapie,2024,401821,Implementatie van de kosteneffectieve PreHEART score voor prehospitale triage bij pijn op de borst,ZonMW
+PUB-474,Mijzo,2024,400000,Transmurale Zorgnetwerk West Brabant oost,ZonMW
+PUB-475,NEO Huisartsen Dagzorg B.V.,2023,400000,Versterken van leefstijladvisering binnen de zorggroep Nijmegen en omstreken (NEO),ZonMW
+PUB-476,NCJ,2023,400000,Digitale infrastructuur JGZ Richtlijnen,ZonMW
+PUB-477,Veiligheidsregio N-Holland Noord,2023,400000,Vervolgfase ôAanpak mensen met onbegrepen gedragô,ZonMW
+PUB-478,Stichting De Wending,2024,400000,Op weg naar een nieuw gezondheidslandschap in Mooi Maasvallei,ZonMW
+PUB-479,Huisartsenpraktijk Amarant,2023,399746,Van weten naar doen: op weg naar een werkzame preventie in de eerste lijn,ZonMW
+PUB-480,Veiligheidsregio Twente,2023,399398,Versterkingsagenda Zorg en Veiligheid Twente,ZonMW
+PUB-481,St Kenniscentrum Phrenos,2023,399274,Ogen open voor LVB in de GGZ. Het LVB proof maken van gespecialiseerde ggz instellingen,ZonMW
+PUB-482,Stichting Fontys,2022,398225,Empty Farm to Fill,ZonMW
+PUB-483,Gemeente Albrandswaard,2024,397707,Inloopvoorzieningen met dagactiviteiten voor beginnende dementerenden en diens mantelzorgers,ZonMW
+PUB-484,Stichting BVE Oost-Gelderland,2022,397100,HIER DRAAG JE BIJ AAN DE SAMENLEVING VAN DE TOEKOMST,ZonMW
+PUB-485,Stichting Adelante Zorg,2024,396986,Gezond leven met hersenletsel in Limburg,ZonMW
+PUB-486,Siip Group B.V.,2022,395200,"Smart Safe Stadiums’,  Deze aanvraag heeft u op 8 november bij het programma Sportinnovator ingediend voor de subsidie oproep ‘De inzet van (slimme) technologie in voetbalstadions voor de aanpak van racisme en discriminatie",ZonMW
+PUB-487,Huisarts en Zorg Facilitair B.V.,2023,394631,Leefstijlondersteuning op recept. Actieonderzoek naar verduurzamen en versterken van de samenwerking tussen het medische en het sociale domein om de leefstijlinterventie ‘Slimmer’ effectiever te maken voor patiënten met lage gezondheidsvaardigheden,ZonMW
+PUB-488,Leidsche Rijn Julius Gez.centra,2023,391881,Implementatie Wijkleefstijlnetwerk Leidsche Rijn Gezond: samen kom je verder,ZonMW
+PUB-489,Semiconductor Ideas To The Market (Itom) B.V.,2022,390617,Eurostars,RVO
+PUB-490,Universiteit Maastricht Finance/Debiteuren,2022,390500,NODOK en NODOV,ZonMW
+PUB-491,NPSP,2022,390400,Eurostars,RVO
+PUB-492,Gemeente Bergen op Zoom,2024,390388,Regionale inzet West Brabant West wijk GGD-er/Wijk GGZ-er,ZonMW
+PUB-493,Min. van Justitie en Veiligheid 604/NFI,2022,390000,Additional multidisciplinary medical forensic diagnostics to aid the forensic physician during death investigation – Introduction of the NOFA-procedure (Nader Overlijdensonderzoek Forensisch Arts – Additional death investigation forensic physician),ZonMW
+PUB-494,Zorggroep Eerste Lijn Chronische Zorg B.V.,2023,389606,Werken aan de GLI: doorontwikkeling en evaluatie van de Gecombineerde Leefstijl Interventie (GLI) voor werkenden,ZonMW
+PUB-495,GGD Flevoland,2022,388275,Integraal Gezondheidsonderzoek bij Rampen – COVID-19 Fase 2 GGD Flevoland/ Integrated Public Health Monitor – COVID-19 Phase 2 GGD Flevoland,ZonMW
+PUB-496,Noble Environmental Technologies Europe B.V.,2022,386901,Kennis en Innovatie Agenda-Circulaire Economie (KIA CE),RVO
+PUB-497,Sorama B.V.,2022,381600,Fangage for Football,ZonMW
+PUB-498,Gemeente Zoetermeer,2024,381521,Lerend netwerk preventie Zoetermeer,ZonMW
+PUB-499,Omnigen B.V.,2023,379665,Eurostars,RVO
+PUB-500,ZINZIZ b.v.,2022,378590,`Het zijn net mensenô : vakmanschap versterken aan de hand van het integratief gedragsmodel,ZonMW
