@@ -79,7 +79,7 @@
 | Login email session duration | ✅ Fixed (Feb 28) | Added "Na inloggen blijft u ingelogd..." to magic link email (HTML+text). Commit `c83152e` |
 | Contact form Pipeline + Expertgroep | ✅ Live (Mar 2) | Pipeline selector on add form, Expertgroep source option, API accepts pipeline_stage |
 | Anomaly cell colors | ✅ Live (Mar 2) | Grey bg (was red), red/green trend tooltips on hover |
-| Social content pipeline | ✅ Built (Mar 2) | Zero-error pipeline: DB → extract_facts.py → facts/*.csv → generate_posts.py → posts/*.csv. 1,921 facts, 2,435 posts, 25 batches. verify.py for re-verification. |
+| Social content pipeline | ✅ Rewritten (Mar 3) | C7-style pipeline: source tables → extract_facts.py (7 queries) → facts/*.csv (2,800 rows) → generate_posts.py (3 template sets) → posts/buffer-ready.csv (500 posts). Per-year facts, single #Rijksuitgaven hashtag, tautology filter, entity blocklist, round-robin module balance. Replaces Mar 2 version (19 queries, 5 editorial formats, 25 batch files). |
 | Rule 7: Branch Discipline | ✅ Codified (Mar 3) | 7-day max branches, daily sync, 6-point Pre-Merge Gate, branch state table. In CLAUDE.md. |
 | V2.4 bug fixes (3) | ✅ Fixed (Mar 3) | URL cols pollution, setState-during-render on expand, stale expand tracking. |
 | UX-043: Specific recipient picker | ✅ Live (Mar 3) | Person picker toggle on /team/mail, searchable list, flows through save/send/draft restore. Migration 074. Also fixes draft conditionGroups restore bug. |
@@ -94,11 +94,11 @@
 
 ## Recent Work (Last 5)
 
-1. **V2.4 Live + UX-043 Person Picker** (2026-03-03)
-   Session 1-2: Merged UX-039/041 via Pre-Merge Gate 6/6. Rule 7 codified. 3 bug fixes. 147 commits pushed. Session 3: UX-043 specific recipient picker for email campaigns. Migration 074. Draft conditionGroups restore bug fixed.
+1. **V2.4 Live + UX-043/044 + Social Pipeline Rewrite** (2026-03-03)
+   Session 1-2: Merged UX-039/041 via Pre-Merge Gate 6/6. Rule 7 codified. 3 bug fixes. 147 commits pushed. Session 3: UX-043 person picker. Session 4: UX-044 uitgeschreven filter. Session 5: Complete social pipeline rewrite — C7-style templates, 7 source table queries, 500 posts in single buffer-ready.csv. 31 Q&A rounds with virtual senior team. 8 data quality filters added.
 
-2. **Social Content Pipeline + Admin CRM + Anomaly UX** (2026-03-02)
-   Zero-error social pipeline: 18 SQL queries → 1,921 DB-verified facts → 2,435 posts (25 batches). Replaced hand-typed approach (had €243M errors). Also: pipeline pill selector, Expertgroep Bron, anomaly cell bg red→grey, red/green trend tooltips.
+2. **Social Content Pipeline v1 + Admin CRM + Anomaly UX** (2026-03-02)
+   Initial social pipeline (superseded by Mar 3 rewrite): 18 SQL queries → 1,921 facts → 2,435 posts (25 batches). Also: pipeline pill selector, Expertgroep Bron, anomaly cell bg red→grey, red/green trend tooltips.
 
 2. **Roadmap Redesign — Linear-Grade Initiative Stack** (2026-03-01)
    Complete rewrite of /team/roadmap. Hierarchical parser (initiatives → sub-releases → features), objectives from VERSIONING.md, collapsible cards, progress bars, amber banner for unclear goals, backlog section. 2 bug fixes: V3.0+ hierarchy, A/M/D parent features visible alongside children.
@@ -249,7 +249,7 @@ Key recent migrations:
 
 ## Notes
 
-- **UX counter:** Next available UX-044
+- **UX counter:** Next available UX-045
 - **Communication:** English with Claude, Dutch (formal u/uw) for user-facing text
 - **Budget:** ~€190/month infrastructure
 - **psql path:** `/usr/local/Cellar/libpq/18.1/bin/psql`

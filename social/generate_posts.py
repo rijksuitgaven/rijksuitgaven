@@ -27,18 +27,6 @@ os.makedirs(POSTS_DIR, exist_ok=True)
 
 TARGET_POSTS = 500
 MAX_PER_RECIPIENT = 3
-HASHTAG = "#Rijksuitgaven"
-
-# Module distribution targets (approximate, flexible)
-MODULE_TARGETS = {
-    "instrumenten": 100,
-    "apparaat": 50,
-    "inkoop": 80,
-    "provincie": 60,
-    "gemeente": 80,
-    "publiek": 60,
-    "coa": 70,
-}
 
 
 # ============================================================
@@ -69,6 +57,12 @@ def is_blocked(entity):
         return True
     # "1542 natuurlijke personen" — aggregated anonymous group
     if re.match(r'^\d+\s+natuurlijke\s+personen', e, re.IGNORECASE):
+        return True
+    # Truncated entity names (cut mid-word by source data)
+    if e.endswith('-') or e.endswith('…'):
+        return True
+    # Too long for a clean post
+    if len(e) > 50:
         return True
     return False
 
@@ -147,8 +141,8 @@ def is_tautological(entity, context):
 # ============================================================
 # DESCRIPTOR CLEANUP
 # ============================================================
-def clean_descriptor(d, max_len=80):
-    """Clean up and truncate long descriptors."""
+def clean_descriptor(d, max_len=50):
+    """Clean up descriptors. Return "" if too long or low quality — skip the candidate."""
     if not d:
         return ""
     d = re.sub(r'\s+', ' ', d.strip())
@@ -156,7 +150,6 @@ def clean_descriptor(d, max_len=80):
     # Keep only the last meaningful segment
     parts = d.split(" - ")
     if len(parts) >= 2 and re.match(r'^\d', parts[0].strip()):
-        # Take the last segment that isn't just a number or "Boekjaar YYYY"
         for part in reversed(parts):
             p = part.strip()
             if p and not re.match(r'^(\d+\.?\d*|Boekjaar \d{4})$', p):
@@ -169,13 +162,15 @@ def clean_descriptor(d, max_len=80):
     if re.match(r'^Boekjaar \d{4}$', d):
         return ""
     # Skip English-language descriptors (common in ZonMW/NWO research titles)
-    # Uses unambiguously English function words as markers
-    eng_markers = {'the', 'for', 'with', 'of', 'based', 'towards', 'from'}
+    eng_markers = {'the', 'for', 'with', 'of', 'based', 'towards', 'from',
+                   'and', 'in', 'on', 'by', 'using', 'between', 'through',
+                   'during', 'after', 'before', 'into', 'within'}
     words_lower = set(d.lower().split())
     if len(words_lower & eng_markers) >= 2:
         return ""
+    # Too long? Skip entirely — no truncation
     if len(d) > max_len:
-        d = d[:max_len - 3].rsplit(' ', 1)[0] + "..."
+        return ""
     return d
 
 
@@ -196,32 +191,19 @@ def load_csv(filename):
 # ============================================================
 
 # Set 1: Standard templates — exact bedrag + descriptor (C7-style)
-# Universal templates that work for all modules with bedrag
 STANDARD_TEMPLATES = [
     "Dankzij '{descriptor}' kreeg {ontvanger} in {jaar} {bedrag}.",
     "In {jaar} ontving {ontvanger} {bedrag} via '{descriptor}'.",
     "{bedrag} werd in {jaar} toegekend aan {ontvanger} onder '{descriptor}'.",
     "Met '{descriptor}' werd in {jaar} {bedrag} verstrekt aan {ontvanger}.",
-    "Via '{descriptor}' ging in {jaar} {bedrag} naar {ontvanger}.",
     "In {jaar} kwam {bedrag} terecht bij {ontvanger} dankzij '{descriptor}'.",
-    "Voor {ontvanger} betekende {jaar}: {bedrag} via '{descriptor}'.",
-    "Resultaat van '{descriptor}': {ontvanger} ontving in {jaar} {bedrag}.",
-    "Wist u dat {ontvanger} in {jaar} {bedrag} ontving via '{descriptor}'?",
-    "Kort: {ontvanger} kreeg in {jaar} {bedrag} onder '{descriptor}'.",
-    "{bedrag} in {jaar}: dat is wat {ontvanger} ontving via '{descriptor}'.",
     "Met behulp van '{descriptor}' ontving {ontvanger} in {jaar} {bedrag}.",
-    "Voor '{descriptor}' werd in {jaar} {bedrag} toegekend aan {ontvanger}.",
-    "Samengevat: {ontvanger} kreeg in {jaar} {bedrag} via '{descriptor}'.",
 ]
 
-# Instrumenten-specific (adds TYPE and instrument-framing)
+# Instrumenten-specific (adds TYPE)
 INSTRUMENTEN_EXTRA = [
     "Onder '{descriptor}' kreeg {ontvanger} in {jaar} een {type} van {bedrag}.",
-    "Een {type} van {bedrag} werd in {jaar} uitgekeerd aan {ontvanger} via '{descriptor}'.",
-    "In {jaar} keerde '{descriptor}' {bedrag} uit aan {ontvanger}.",
-    "Het instrument '{descriptor}' leverde in {jaar} {bedrag} op voor {ontvanger}.",
     "In {jaar} werd {ontvanger} ondersteund met {bedrag} vanuit '{descriptor}'.",
-    "In {jaar} ontving {ontvanger} {bedrag}; bron: '{descriptor}'.",
 ]
 
 # Provincie-specific (adds province context)
@@ -229,14 +211,12 @@ PROVINCIE_EXTRA = [
     "De provincie {provincie} keerde in {jaar} {bedrag} uit aan {ontvanger} voor '{descriptor}'.",
     "In {jaar} ontving {ontvanger} {bedrag} van de provincie {provincie} via '{descriptor}'.",
     "De provincie {provincie} betaalde in {jaar} {bedrag} aan {ontvanger} onder '{descriptor}'.",
-    "Vanuit de provincie {provincie} ging in {jaar} {bedrag} naar {ontvanger} voor '{descriptor}'.",
 ]
 
 # Gemeente-specific (adds municipality context)
 GEMEENTE_EXTRA = [
     "De gemeente {gemeente} keerde in {jaar} {bedrag} uit aan {ontvanger} voor '{descriptor}'.",
     "In {jaar} ontving {ontvanger} {bedrag} van de gemeente {gemeente} via '{descriptor}'.",
-    "De gemeente {gemeente} betaalde in {jaar} {bedrag} aan {ontvanger} onder '{descriptor}'.",
     "Vanuit de gemeente {gemeente} ging in {jaar} {bedrag} naar {ontvanger} voor '{descriptor}'.",
 ]
 
@@ -248,13 +228,11 @@ PUBLIEK_EXTRA = [
     "Vanuit {source} ging in {jaar} {bedrag} naar {ontvanger} voor '{descriptor}'.",
 ]
 
-# Set 2: Apparaat templates (internal government costs — no "ontvanger ontving")
+# Set 2: Apparaat templates (internal government costs)
 APPARAAT_TEMPLATES = [
     "In {jaar} gaf {begrotingsnaam} {bedrag} uit aan {kostensoort}.",
-    "{bedrag} in {jaar}: zoveel besteedde {begrotingsnaam} aan {kostensoort}.",
     "De post '{kostensoort}' bij {begrotingsnaam} bedroeg in {jaar} {bedrag}.",
     "{begrotingsnaam} gaf in {jaar} {bedrag} uit aan {kostensoort}.",
-    "Wist u dat {begrotingsnaam} in {jaar} {bedrag} besteedde aan {kostensoort}?",
     "In {jaar} was de kostenpost '{kostensoort}' bij {begrotingsnaam}: {bedrag}.",
     "Aan {kostensoort} besteedde {begrotingsnaam} in {jaar} {bedrag}.",
     "{begrotingsnaam} besteedde in {jaar} {bedrag} aan de post '{kostensoort}'.",
@@ -263,9 +241,6 @@ APPARAAT_TEMPLATES = [
 # Set 3a: Inkoop staffel templates (bracket-based, no exact amounts)
 INKOOP_TEMPLATES = [
     "{leverancier} heeft inkoopcontracten {bracket} bij de Rijksoverheid voor '{categorie}'.",
-    "Het Rijk koopt bij {leverancier} in de prijsklasse {bracket} voor '{categorie}'.",
-    "In welke prijsklasse koopt het Rijk in bij {leverancier}? Contracten {bracket}.",
-    "Wist u dat {leverancier} contracten {bracket} heeft bij de Rijksoverheid? Categorie: {categorie}.",
     "De inkoopcontracten van {leverancier} bij het Rijk vallen {bracket}.",
     "{leverancier} levert aan de Rijksoverheid met contracten {bracket} ({categorie}).",
 ]
@@ -275,10 +250,132 @@ COA_TEMPLATES = [
     "Bij het COA heeft {ontvanger} contracten {bracket} voor de regeling '{regeling}'.",
     "{ontvanger} levert aan het COA met contracten {bracket}, regeling: {regeling}.",
     "Het COA koopt bij {ontvanger} in de prijsklasse {bracket} voor '{regeling}'.",
-    "Wist u dat {ontvanger} bij het COA contracten {bracket} heeft? Regeling: {regeling}.",
     "De contracten van {ontvanger} bij het COA vallen {bracket}. Regeling: {regeling}.",
     "{ontvanger} is leverancier van het COA met contracten {bracket}.",
 ]
+
+
+# ============================================================
+# CONTEXTUAL HASHTAGS
+# ============================================================
+
+# Suffixes to strip before making entity hashtag
+ENTITY_STRIP = [
+    " B.V.", " b.v.", " BV", " N.V.", " n.v.", " NV",
+    " B.V", " N.V", " VOF", " V.O.F.",
+]
+
+
+def make_entity_tag(entity):
+    """Create #EntityName hashtag if entity is short and recognizable.
+
+    Rules: strip B.V./N.V., only if 1-2 words remain, no Stichting/Gemeente/Provincie prefix.
+    """
+    e = entity.strip()
+    for suffix in ENTITY_STRIP:
+        if e.endswith(suffix):
+            e = e[:-len(suffix)].strip()
+    # Skip long/institutional prefixes
+    skip_prefixes = ("Stichting ", "Gemeente ", "Provincie ", "Ministerie ", "Koninklijke ")
+    for prefix in skip_prefixes:
+        if e.startswith(prefix):
+            e = e[len(prefix):]
+    words = e.split()
+    if len(words) > 2 or len(words) == 0:
+        return ""
+    tag = "#" + "".join(w.capitalize() for w in words)
+    # Strip characters invalid in hashtags
+    tag = re.sub(r'[^#\w]', '', tag)
+    if len(tag) > 25 or len(tag) <= 1:
+        return ""
+    return tag
+
+
+def make_category_tag(categorie):
+    """Create hashtag from inkoop categorie."""
+    if not categorie:
+        return ""
+    # Map common categories to clean hashtags
+    cat_map = {
+        "automatisering": "#ICT",
+        "ict": "#ICT",
+        "advies": "#Advies",
+        "personeel": "#Personeel",
+        "huisvesting": "#Huisvesting",
+        "reis en verblijf": "#Reiskosten",
+        "vervoer": "#Vervoer",
+        "inhuur": "#Inhuur",
+        "beveiliging": "#Beveiliging",
+        "communicatie": "#Communicatie",
+        "facilitair": "#Facilitair",
+        "juridisch": "#Juridisch",
+    }
+    cl = categorie.lower().strip()
+    if cl in cat_map:
+        return cat_map[cl]
+    # Only use mapped categories — skip unknown ones
+    return ""
+
+
+def make_ministry_tag(begrotingsnaam):
+    """Create hashtag from ministry name."""
+    if not begrotingsnaam:
+        return ""
+    # Map known ministries to short hashtags
+    ministry_map = {
+        "Defensie": "#Defensie",
+        "Justitie en Veiligheid": "#JenV",
+        "Binnenlandse Zaken en Koninkrijksrelaties": "#BZK",
+        "Buitenlandse Zaken": "#BuZa",
+        "Financiën": "#Financien",
+        "Infrastructuur en Waterstaat": "#IenW",
+        "Onderwijs, Cultuur en Wetenschap": "#OCW",
+        "Sociale Zaken en Werkgelegenheid": "#SZW",
+        "Volksgezondheid, Welzijn en Sport": "#VWS",
+        "Economische Zaken en Klimaat": "#EZK",
+        "Landbouw, Natuur en Voedselkwaliteit": "#LNV",
+        "Algemene Zaken": "#AZ",
+        "Koninkrijksrelaties en Digitalisering": "#KenD",
+    }
+    for key, tag in ministry_map.items():
+        if key.lower() in begrotingsnaam.lower():
+            return tag
+    # Fallback: first word if short
+    first = begrotingsnaam.split()[0] if begrotingsnaam else ""
+    if first and len(first) <= 15:
+        return f"#{first}"
+    return ""
+
+
+def make_kostensoort_tag(kostensoort):
+    """Create hashtag from kostensoort."""
+    if not kostensoort:
+        return ""
+    ks_map = {
+        "personeel": "#Personeel",
+        "materieel": "#Materieel",
+        "inhuur externen": "#Inhuur",
+        "ict": "#ICT",
+        "huisvesting": "#Huisvesting",
+    }
+    cl = kostensoort.lower().strip()
+    for key, tag in ks_map.items():
+        if key in cl:
+            return tag
+    return ""
+
+
+def build_hashtags(tags):
+    """Combine 2-3 hashtags into a suffix string. Dedup and limit."""
+    seen = set()
+    result = []
+    for t in tags:
+        if t and t.lower() not in seen:
+            seen.add(t.lower())
+            result.append(t)
+        if len(result) >= 3:
+            break
+    return " ".join(result)
 
 
 # ============================================================
@@ -296,7 +393,6 @@ def gen_instrumenten():
         descriptor = clean_descriptor(f.get("descriptor", ""))
         if not descriptor:
             continue
-        # Skip if descriptor is essentially the entity name (tautological)
         if is_tautological(entity, descriptor):
             continue
         bedrag = int(float(f["bedrag"]))
@@ -307,7 +403,8 @@ def gen_instrumenten():
             ontvanger=entity, jaar=jaar, bedrag=fmt_eur(bedrag),
             descriptor=descriptor, type=inst_type,
         )
-        text = f"{text} {HASHTAG}"
+        tags = build_hashtags(["#Subsidies", make_entity_tag(entity)])
+        text = f"{text} {tags}"
         if 50 <= len(text) <= 280:
             candidates.append((text, "instrumenten", entity, jaar))
     return candidates
@@ -321,6 +418,8 @@ def gen_apparaat():
         kostensoort = f["kostensoort"].strip()
         if is_blocked(kostensoort) or not begrotingsnaam:
             continue
+        if len(kostensoort) > 50 or len(begrotingsnaam) > 50:
+            continue
         bedrag = int(float(f["bedrag"]))
         jaar = f["jaar"]
 
@@ -328,7 +427,12 @@ def gen_apparaat():
             begrotingsnaam=begrotingsnaam, kostensoort=kostensoort.lower(),
             jaar=jaar, bedrag=fmt_eur(bedrag),
         )
-        text = f"{text} {HASHTAG}"
+        tags = build_hashtags([
+            "#Overheidsuitgaven",
+            make_ministry_tag(begrotingsnaam),
+            make_kostensoort_tag(kostensoort),
+        ])
+        text = f"{text} {tags}"
         if 50 <= len(text) <= 280:
             candidates.append((text, "apparaat", kostensoort, jaar))
     return candidates
@@ -349,11 +453,18 @@ def gen_inkoop():
         cat_short = categorie.split(" - ", 1)[1] if " - " in categorie else categorie
         if not cat_short:
             cat_short = "overheidsinkoop"
+        if len(cat_short) > 50:
+            continue
 
         text = random.choice(INKOOP_TEMPLATES).format(
             leverancier=entity, bracket=bracket, categorie=cat_short.lower(),
         )
-        text = f"{text} {HASHTAG}"
+        tags = build_hashtags([
+            "#Overheidsinkoop",
+            make_category_tag(cat_short),
+            make_entity_tag(entity),
+        ])
+        text = f"{text} {tags}"
         if 50 <= len(text) <= 280:
             candidates.append((text, "inkoop", entity, ""))
     return candidates
@@ -380,7 +491,9 @@ def gen_provincie():
             ontvanger=entity, jaar=jaar, bedrag=fmt_eur(bedrag),
             descriptor=descriptor, provincie=provincie,
         )
-        text = f"{text} {HASHTAG}"
+        prov_tag = "#" + re.sub(r'[^\w]', '', provincie)
+        tags = build_hashtags(["#Provincies", prov_tag, make_entity_tag(entity)])
+        text = f"{text} {tags}"
         if 50 <= len(text) <= 280:
             candidates.append((text, "provincie", entity, jaar))
     return candidates
@@ -407,7 +520,9 @@ def gen_gemeente():
             ontvanger=entity, jaar=jaar, bedrag=fmt_eur(bedrag),
             descriptor=descriptor, gemeente=gemeente,
         )
-        text = f"{text} {HASHTAG}"
+        gem_tag = "#" + re.sub(r'[^\w]', '', gemeente)
+        tags = build_hashtags(["#Gemeenten", gem_tag, make_entity_tag(entity)])
+        text = f"{text} {tags}"
         if 50 <= len(text) <= 280:
             candidates.append((text, "gemeente", entity, jaar))
     return candidates
@@ -432,7 +547,9 @@ def gen_publiek():
             ontvanger=entity, jaar=jaar, bedrag=fmt_eur(bedrag),
             descriptor=descriptor, source=source,
         )
-        text = f"{text} {HASHTAG}"
+        source_tag = f"#{source}" if source else ""
+        tags = build_hashtags(["#Subsidies", source_tag, make_entity_tag(entity)])
+        text = f"{text} {tags}"
         if 50 <= len(text) <= 280:
             candidates.append((text, "publiek", entity, jaar))
     return candidates
@@ -450,6 +567,8 @@ def gen_coa():
         if not bracket:
             continue
         regeling = f.get("regeling", "").strip()
+        if len(regeling) > 50:
+            continue
 
         # With regeling: use all templates. Without: only the last (no regeling field).
         if regeling:
@@ -460,7 +579,8 @@ def gen_coa():
             text = COA_TEMPLATES[-1].format(
                 ontvanger=entity, bracket=bracket,
             )
-        text = f"{text} {HASHTAG}"
+        tags = build_hashtags(["#COA", "#Asielopvang", make_entity_tag(entity)])
+        text = f"{text} {tags}"
         if 50 <= len(text) <= 280:
             candidates.append((text, "coa", entity, ""))
     return candidates

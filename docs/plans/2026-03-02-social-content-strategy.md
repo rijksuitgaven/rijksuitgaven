@@ -1,9 +1,10 @@
 # Social Content Strategy — Rijksuitgaven.nl
 
 **Created:** 2026-03-02
-**Status:** Draft — concept approved, delivery method TBD
-**Goal:** 810 factual, retweetable posts (3/day × 9 months) across X, Bluesky, LinkedIn
-**Tool:** Buffer (current workflow)
+**Updated:** 2026-03-03
+**Status:** ✅ Implemented — pipeline generates 500 posts from source tables
+**Goal:** 500 factual, retweetable posts (3/day × ~6 months) across X, Bluesky, LinkedIn
+**Tool:** Buffer (manual CSV import)
 
 ---
 
@@ -117,37 +118,26 @@ Open with a question, answer immediately.
 
 ## Hashtag Convention
 
-- 3–5 topic hashtags per post
-- No forced brand hashtag (#rijksuitgaven) — topic tags are more discoverable
-- Inline after final period: "...de grootste ontvanger. #OV #NoordBrabant"
-- Mix of broad (#Overheidsuitgaven) and specific (#TenneT, #Amsterdam)
-- Politically neutral tags only — no opinion hashtags
-- All posts optimized for X (under 280 chars including hashtags)
-
-### Common Hashtag Pool
-
-| Category | Tags |
-|----------|------|
-| General | #Overheidsuitgaven #Rijksbegroting #Transparantie |
-| Modules | #Inkoop #Subsidies #Gemeentefonds |
-| Regions | #Amsterdam #DenHaag #NoordBrabant #Groningen |
-| Sectors | #ICT #Zorg #Energie #Defensie #Veiligheid #OV |
-| Topics | #Energietransitie #DigitaleOverheid #Cultuur |
-| Entities | #TenneT #ProRail #Politie #COA |
+- **Single hashtag only: #Rijksuitgaven** (brand recognition, no noise)
+- Appended after final period: "...voor '{descriptor}'. #Rijksuitgaven"
+- No topic, region, or entity hashtags (decision from Mar 3 Q&A round 2, Q25)
+- All posts optimized for X (50-280 chars including hashtag)
 
 ---
 
-## Content Mix (per week, 21 posts)
+## Content Mix (500 posts, balanced across modules)
 
-| Type | Posts/week | Modules |
-|------|-----------|---------|
-| Scale Shock | 4–5 | instrumenten, apparaat, gemeente, provincie |
-| Comparison | 4–5 | gemeente, provincie, cross-module |
-| Concentration | 4–5 | all modules |
-| Category Reveal | 3–4 | inkoop, apparaat |
-| Curiosity Question | 3–4 | all modules |
+| Module | Template Set | ~Posts | Key Fields |
+|--------|-------------|-------|------------|
+| instrumenten | Standard (14) + Extra (6) | ~100 | ontvanger, jaar, bedrag, descriptor, type |
+| apparaat | Apparaat (8) | ~50 | begrotingsnaam, kostensoort, jaar, bedrag |
+| inkoop | Staffel (6) | ~80 | leverancier, staffel bracket, categorie |
+| provincie | Standard (14) + Extra (4) | ~60 | ontvanger, jaar, bedrag, descriptor, provincie |
+| gemeente | Standard (14) + Extra (4) | ~80 | ontvanger, jaar, bedrag, descriptor, gemeente |
+| publiek | Standard (14) + Extra (4) | ~60 | ontvanger, jaar, bedrag, descriptor, source |
+| coa | COA Staffel (6) | ~70 | ontvanger, staffel bracket, regeling |
 
-**Rotation rule:** Never post the same module twice in a row. Alternate between exact and staffel modules.
+**Selection:** Round-robin across modules, max 3 posts per recipient entity, shuffled output.
 
 ---
 
@@ -175,80 +165,127 @@ All posts are written to fit X (280 chars). Same post goes to all three platform
 
 ---
 
-## Delivery Format
+## Implemented Pipeline
 
-**Method:** Hybrid — script finds interesting data points, Claude curates/writes posts in the 5 formats.
+**Method:** Fully automated — rule-based extraction + template generation, no Claude API scoring.
+
+### Pipeline Steps
+
+```
+1. python3 social/extract_facts.py     # 7 SQL queries → 7 fact CSVs (~2,800 rows)
+2. python3 social/generate_posts.py    # 3 template sets → 500 posts → buffer-ready.csv
+3. Manual: import buffer-ready.csv into Buffer
+```
 
 ### Folder Structure
 
 ```
 social/
-├── posts/
-│   ├── batch-001.csv          # Posts 1–100
-│   ├── batch-002.csv          # Posts 101–200
-│   └── ...                    # ~8 batches total
-├── registry.csv               # All generated data points (dedup index)
-└── README.md                  # Strategy summary + Buffer import instructions
+├── extract_facts.py            # 7 extraction queries from source tables
+├── generate_posts.py           # Template-based post generation + filtering
+├── facts/                      # Intermediate fact CSVs (gitignored)
+│   ├── instrumenten_rows.csv   # (ontvanger, jaar, bedrag, descriptor, type)
+│   ├── apparaat_rows.csv       # (begrotingsnaam, kostensoort, jaar, bedrag)
+│   ├── inkoop_rows.csv         # (leverancier, staffel, categorie)
+│   ├── provincie_rows.csv      # (ontvanger, jaar, bedrag, descriptor, provincie)
+│   ├── gemeente_rows.csv       # (ontvanger, jaar, bedrag, descriptor, gemeente)
+│   ├── publiek_rows.csv        # (ontvanger, jaar, bedrag, descriptor, source)
+│   └── coa_rows.csv            # (ontvanger, staffel, regeling)
+└── posts/
+    └── buffer-ready.csv        # 500 posts (text, module, entity, jaar, chars)
 ```
 
-### CSV Columns
+### CSV Output Columns
 
 | Column | Description | Example |
 |--------|-------------|---------|
-| `text` | Full post text including hashtags | De Politie ontving €7.276.336.000 in 2023. #Politie |
-| `format` | Post format type | scale_shock / comparison / concentration / category_reveal / curiosity |
-| `module` | Source module | instrumenten / inkoop / gemeente / provincie / publiek / apparaat |
-| `entity` | Primary entity in the post | Politie |
-| `year` | Year referenced (or range) | 2023 / 2018-2024 |
-| `staffel` | Whether amounts are staffel-based | yes / no |
+| `text` | Full post text including #Rijksuitgaven | In 2023 ontving ProRail €1.234.567 via 'Spoorinfrastructuur'. #Rijksuitgaven |
+| `module` | Source module | instrumenten / apparaat / inkoop / provincie / gemeente / publiek / coa |
+| `entity` | Primary entity in the post | ProRail |
+| `jaar` | Year referenced (empty for staffel) | 2023 |
 | `chars` | Character count | 134 |
-
-### Registry (Dedup Index)
-
-`registry.csv` tracks every generated data point as `module,entity,year,format` to prevent duplicate posts across batches. Before generating a new batch, check registry for existing combinations.
 
 ### Buffer Import
 
-Buffer accepts CSV with a `text` column. The extra columns (`format`, `module`, etc.) are for internal tracking only — strip before import or Buffer ignores them.
+Buffer accepts CSV with a `text` column. Extra columns are for internal tracking — Buffer ignores them.
 
-### Batch Size
+### Extraction Thresholds
 
-100 posts per batch. ~8 batches for 810 total.
+| Module | Minimum Amount | Multiplier | Year Range | Max Rows |
+|--------|---------------|------------|------------|----------|
+| instrumenten | €100,000 | ×1000 | 2022-2024 | 500 |
+| apparaat | €1,000,000 | ×1000 | 2022-2024 | 300 |
+| inkoop | staffel ≥ 7 | — | all years | 300 |
+| provincie | €25,000 | ×1 | 2022-2024 | 500 |
+| gemeente | €25,000 | ×1 | 2022-2024 | 500 |
+| publiek | €25,000 | ×1 | 2022-2024 | 500 |
+| coa | staffel ≥ 7 | — | all years | 200 |
+
+### Filters Applied
+
+| Filter | Purpose | Example |
+|--------|---------|---------|
+| Entity blocklist | Remove generic/anonymous entities | "Niet toegewezen", "Anoniem", "Particulier" |
+| Tautology check | Remove entity↔context overlap | Gelderland → Stichting Erfgoed Gelderland |
+| English title filter | Remove research titles (ZonMW/NWO) | "A cholestatic itch mouse model..." |
+| Address filter | Remove street addresses as descriptors | "A.J. Ernststraat 195" |
+| Budget code stripping | Clean hierarchical prefixes | "1 Ruimtelijke Ontwikkeling - 2.11 ..." → meaningful part |
+| Numeric group filter | Remove aggregated anonymous groups | "1542 natuurlijke personen" |
+| Max per recipient | Prevent entity dominance | Max 3 posts per entity |
 
 ---
 
-## Approved Sample Posts (10)
+## Template Sets (Implemented)
 
-### Exact modules
+### Set 1: Standard Templates (14 universal + module-specific extras)
 
-1. TenneT Holding ontving €13.100.000.000 in 2024 als lening voor het stroomnet. Een jaar eerder: €1.602.000.000.
-   #Energietransitie #Stroomnet #TenneT #Overheidsuitgaven
+Universal (work for all modules with bedrag):
+```
+Dankzij '{descriptor}' kreeg {ontvanger} in {jaar} {bedrag}.
+In {jaar} ontving {ontvanger} {bedrag} via '{descriptor}'.
+{bedrag} werd in {jaar} toegekend aan {ontvanger} onder '{descriptor}'.
+Met '{descriptor}' werd in {jaar} {bedrag} verstrekt aan {ontvanger}.
+Via '{descriptor}' ging in {jaar} {bedrag} naar {ontvanger}.
+In {jaar} kwam {bedrag} terecht bij {ontvanger} dankzij '{descriptor}'.
+Voor {ontvanger} betekende {jaar}: {bedrag} via '{descriptor}'.
+Resultaat van '{descriptor}': {ontvanger} ontving in {jaar} {bedrag}.
+Wist u dat {ontvanger} in {jaar} {bedrag} ontving via '{descriptor}'?
+Kort: {ontvanger} kreeg in {jaar} {bedrag} onder '{descriptor}'.
+{bedrag} in {jaar}: dat is wat {ontvanger} ontving via '{descriptor}'.
+Met behulp van '{descriptor}' ontving {ontvanger} in {jaar} {bedrag}.
+Voor '{descriptor}' werd in {jaar} {bedrag} toegekend aan {ontvanger}.
+Samengevat: {ontvanger} kreeg in {jaar} {bedrag} via '{descriptor}'.
+```
 
-2. Amsterdam ontving €4.022.206.697 aan gemeente-uitkeringen. Den Haag: €2.167.675.501. Bijna de helft minder.
-   #Gemeenten #Amsterdam #DenHaag #Gemeentefonds
+Instrumenten extras (6): adds {type} field (bijdrage, lening, etc.)
+Provincie extras (4): adds {provincie} context
+Gemeente extras (4): adds {gemeente} context
+Publiek extras (4): adds {source} context (NWO, RVO, ZonMW)
 
-3. Noord-Brabant ontving €3.377.525.353 aan provinciale subsidies. Zeeland, Drenthe en Friesland samen: €1.547.151.228.
-   #Provincies #NoordBrabant #Subsidies #Overheidsuitgaven
+### Set 2: Apparaat Templates (8)
 
-4. De Openbare Bibliotheek Amsterdam ontving €182.126.005 van de gemeente. Bijna evenveel als het Stedelijk Museum en de Nationale Opera samen.
-   #Amsterdam #Cultuur #Bibliotheken #Gemeentefonds
+Internal government cost framing — no "ontvanger ontving":
+```
+In {jaar} gaf {begrotingsnaam} {bedrag} uit aan {kostensoort}.
+{bedrag} in {jaar}: zoveel besteedde {begrotingsnaam} aan {kostensoort}.
+De post '{kostensoort}' bij {begrotingsnaam} bedroeg in {jaar} {bedrag}.
+... (8 total)
+```
 
-5. De Politie ontving €7.276.336.000 in 2023 via 'Bijdrage ZBO's/RWT's: Politie'.
-   #Politie #Veiligheid #Rijksbegroting #Overheidsuitgaven
+### Set 3: Staffel Templates (6 inkoop + 6 COA)
 
-### Staffel modules
+Bracket-based — no exact amounts:
+```
+{leverancier} heeft inkoopcontracten {bracket} bij de Rijksoverheid voor '{categorie}'.
+Het Rijk koopt bij {leverancier} in de prijsklasse {bracket} voor '{categorie}'.
+Bij het COA heeft {ontvanger} contracten {bracket} voor de regeling '{regeling}'.
+... (12 total)
+```
 
-6. Pels Rijcken, de landsadvocaat, had twee inkoopcontracten boven €150 miljoen bij het Rijk. Plus 26 contracten tussen €1 en €5 miljoen.
-   #Landsadvocaat #Overheidsuitgaven #Advocatuur #Justitie
+## Sample Output Posts
 
-7. Shuttel B.V. had zeven jaar op rij inkoopcontracten tussen €25 en €50 miljoen bij het Rijk. Categorie: reis en verblijf.
-   #Overheidsuitgaven #Inkoop #Reiskosten #Dienstreizen
-
-8. RMA Healthcare ontving negen contracten boven €50 miljoen van het COA. Waarvan één boven €150 miljoen. In zeven jaar tijd.
-   #COA #Asielopvang #Zorg #Overheidsuitgaven
-
-9. IBM Nederland had zeven jaar op rij inkoopcontracten bij het Rijk. Capgemini ook. Samen tientallen contracten per jaar, categorie: ICT.
-   #ICT #DigitaleOverheid #Overheidsuitgaven #Inkoop
-
-10. Arriva Personenvervoer ontving €499.435.571 aan provinciale subsidies van Noord-Brabant. Zeven jaar op rij de grootste ontvanger.
-    #OV #NoordBrabant #Provincies #OpenbaarVervoer
+1. Dankzij 'Bijdrage ZBO's/RWT's: Politie' kreeg de Nationale Politie in 2023 €7.276.336.000. #Rijksuitgaven
+2. In 2024 gaf Defensie €2.891.234.000 uit aan personeel. #Rijksuitgaven
+3. Accenture heeft inkoopcontracten boven €25 miljoen bij de Rijksoverheid voor 'automatisering'. #Rijksuitgaven
+4. Via RVO ontving Vattenfall in 2023 €12.456.789 voor 'SDE++ subsidie'. #Rijksuitgaven
+5. Bij het COA heeft RMA Healthcare contracten boven €150 miljoen voor de regeling 'opvang'. #Rijksuitgaven
