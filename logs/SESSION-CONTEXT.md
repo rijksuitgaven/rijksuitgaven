@@ -15,7 +15,7 @@
 
 | Track | Current | Status |
 |-------|---------|--------|
-| **V** (End-user) | V2.3 Search Platform | ✅ Live (beta) |
+| **V** (End-user) | V2.4 Search Platform | ✅ Live (beta) |
 | **A** (Admin) | A1.0 Beheer MVP | ✅ Live |
 | **M** (Marketing) | M1.0 Lancering | 📋 Planned |
 | **D** (Data) | D1.0 Gemeente Uitbreiding | 📋 Planned |
@@ -32,7 +32,7 @@
 | Search enhancements | ✅ Implemented (Feb 21) | Multi-word AND, exact phrase `"..."`, wildcard stripping |
 | /versiegeschiedenis page | ✅ Implemented (Feb 21) | Benefit-oriented changelog + V2.x roadmap |
 | Staffel popover fix | ✅ Fixed (Feb 21) | Shows all 14 staffels (0-13) |
-| UX-039/041 Vergelijk + URL State | ✅ Merged to main (Mar 3) | Pre-Merge Gate 6/6 passed. Branch deleted. Pin rows, URL state, sort desc, release banner. 3 bug fixes (cols URL, expand render, stale expand tracking). Ready to ship. |
+| UX-039/041 Vergelijk + URL State (V2.4) | ✅ Live (Mar 3) | Pre-Merge Gate 6/6. 147 commits pushed. Pin rows, URL state, sort desc, release banner. 3 bug fixes. Versiegeschiedenis + help tips + support page updated. |
 | Email Media Library | ✅ Live (both) | Sharp processing, DB tracking, media picker, media tab. Admin feature |
 | Email deliverability (SPF fix) | ✅ Done (DNS) | Replaced broken self-referencing SPF with correct Resend + ZXCS includes |
 | Campaign features (13) | ✅ Implemented (Feb 22) | 6 phases: webhook, pre-send, analytics, engagement, sequences, preferences |
@@ -93,8 +93,8 @@
 
 ## Recent Work (Last 5)
 
-1. **V2.4 Merge + Branch Discipline + 3 Bug Fixes** (2026-03-03)
-   Merged UX-039/041 feature branch (5 weeks, 34 commits) via Pre-Merge Gate 6/6. Rule 7 codified. 3 fixes: URL cols pollution, setState-during-render, stale expand tracking. Vergelijkpagina added to V2.5.
+1. **V2.4 Live — Vergelijk & URL State** (2026-03-03)
+   Merged UX-039/041 feature branch via Pre-Merge Gate 6/6. Rule 7 codified. 3 bug fixes. Release notes, help tips, support page updated. 147 commits pushed to production. Publieke deellinks added to V2.5 roadmap.
 
 2. **Social Content Pipeline + Admin CRM + Anomaly UX** (2026-03-02)
    Zero-error social pipeline: 18 SQL queries → 1,921 DB-verified facts → 2,435 posts (25 batches). Replaced hand-typed approach (had €243M errors). Also: pipeline pill selector, Expertgroep Bron, anomaly cell bg red→grey, red/green trend tooltips.
