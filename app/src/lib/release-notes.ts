@@ -23,6 +23,12 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    date: '2026-03-03',
+    version: 'V2.4',
+    title: 'Vergelijk ontvangers en bookmark uw weergave',
+    summary: 'Pin rijen vast om te vergelijken en bookmark een link naar precies uw huidige weergave.',
+  },
+  {
     date: '2026-02-27',
     version: 'V2.3',
     title: 'Nauwkeurigere zoekresultaten',

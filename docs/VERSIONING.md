@@ -128,6 +128,7 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 **Status:** 📋 Planned
 
 - Vergelijkpagina: dedicated `/vergelijk` page for cross-module comparison (add recipients from any module, side-by-side view)
+- Publieke deellinks: tokenized read-only URL sharing for non-subscribers (view specific bookmarked state without account)
 - UX-024: Type-ahead with recent searches (localStorage, reduced debounce, response caching)
 - Fuzzy/typo tolerance (Typesense `num_typos`)
 - Accurate multi-field match reporting ("Ook in" for multi-word searches)

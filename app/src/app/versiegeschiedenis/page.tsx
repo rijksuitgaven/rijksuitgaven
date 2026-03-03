@@ -25,6 +25,30 @@ export default function VersiegeschiedenisPage() {
 
         <article className="prose prose-slate max-w-none">
 
+          {/* V2.4 */}
+          <section className="mb-12">
+            <div className="flex items-baseline gap-3 mb-4">
+              <h2 className="text-xl font-semibold text-[var(--navy-dark)] m-0" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
+                V2.4
+              </h2>
+              <span className="text-sm text-[var(--muted-foreground)]">3 maart 2026</span>
+            </div>
+
+            <h3 className="text-lg font-semibold text-[var(--navy-dark)] mb-3" style={{ fontFamily: 'var(--font-heading), sans-serif' }}>
+              Vergelijk ontvangers en bookmark uw weergave
+            </h3>
+            <ul className="list-disc pl-6 text-[var(--foreground)] space-y-3">
+              <li>
+                <strong>Pin rijen vast om te vergelijken:</strong> Pin tot vijf ontvangers bovenaan de tabel. Ze blijven zichtbaar binnen de module terwijl u zoekt, filtert of sorteert. Klap een vastgepinde rij uit voor een gedetailleerde vergelijking — of exporteer alleen uw selectie.
+              </li>
+              <li>
+                <strong>Bookmark uw weergave:</strong> Uw volledige weergave — sortering, filters, kolommen, uitgeklapte rijen — wordt nu vastgelegd in de URL. Sla de link op en u keert terug naar exact dezelfde weergave.
+              </li>
+            </ul>
+          </section>
+
+          <hr className="border-[var(--border)] my-8" />
+
           {/* V2.3 */}
           <section className="mb-12">
             <div className="flex items-baseline gap-3 mb-4">
