@@ -138,7 +138,7 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 ### V2.6 - Performance
 
 - Filter performance: Typesense facets (~10ms vs 300-900ms PostgreSQL)
-- Railway private networking (Typesense egress savings)
+- ~~Railway private networking (backend internal-only)~~ ✅ Done (Mar 3, security audit)
 
 ### V2.7 - Data & Integraal
 
@@ -149,7 +149,7 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 ### V2.8 - Polish & Toegankelijkheid
 
 - Accessibility: colorblind anomaly indicator (pattern/dot overlay)
-- xlsx package replacement (ExcelJS — CVE cleanup)
+- ~~xlsx package replacement (ExcelJS — CVE cleanup)~~ ✅ Done (Mar 3, security audit)
 - AI Integration: MCP Server + OpenAI GPT (teaser API, lead generation)
 
 ---
@@ -178,6 +178,9 @@ Internal admin tooling at `/team/*`. Separate release cadence from the end-user 
 | Subscriber engagement scoring — per-person timeline, engagement badges | ✅ Live |
 | Email sequences — multi-step drip campaigns, cron-based hourly processor, auto-enroll on invite | ✅ Live |
 | Preference center — topic-based opt-out, public page at /voorkeuren | ✅ Live |
+| UX-043: Specific recipient picker for targeted email sends | ✅ Live |
+| UX-044: Uitgeschreven filter on /team/leden and /team/contacten | ✅ Live |
+| Security hardening — CSRF, CSP, rate limiting, private networking, dependency CVEs | ✅ Live |
 | UTM builder — compose UI for UTM parameters, auto-append to CTA + body links | 📋 Planned |
 
 ### A1.1 - Bulk & CRM
@@ -219,7 +222,7 @@ Marketing, launch infrastructure, and conversion optimization. Not end-user feat
 |---------|--------|--------------------|
 | SEO: OG image, twitter cards, per-page metadata, structured data | 📋 Planned | Yes |
 | DNS switch plan: rijksuitgaven.nl → Railway, metadataBase update, rollback plan | 📋 Planned | Yes (is the switch) |
-| Rate limiting: Cloudflare free tier in front of Railway | 📋 Planned | Yes |
+| Rate limiting: Backend token bucket + contact form rate limit + Railway private networking | ✅ Live | Yes |
 | User migration: ~50 WordPress users to Supabase | 📋 Planned | Yes |
 | Homepage copy optimization (remaining value props) | ⏳ In progress | Yes |
 | Logo asset optimization (compact variant, SVG) | 📋 Planned | No |

@@ -273,15 +273,9 @@ Missing: Twitter/X cards, OG image, per-page metadata, structured data (JSON-LD)
 
 ---
 
-#### Rate Limiting via Cloudflare
+#### ~~Rate Limiting~~ ✅ COMPLETED 2026-03-03
 
-**Priority:** High | **Added:** 2026-02-08
-
-No rate limiting exists. Autocomplete (every keystroke) and cascading filters (7 parallel queries) are amplifiable vectors.
-
-**Solution:** Cloudflare free tier in front of Railway. Rate limiting + DDoS + WAF for free.
-
-**Effort:** 30 minutes
+Backend token bucket middleware (10/min public, 120/min auth), contact form rate limit + honeypot, Railway private networking. See security audit in daily log.
 
 ---
 
