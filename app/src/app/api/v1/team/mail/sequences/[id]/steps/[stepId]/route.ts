@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { isAdmin } from '@/app/api/_lib/admin'
+import { csrfCheck } from '@/app/api/_lib/auth'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -19,11 +20,8 @@ export async function PATCH(
     return NextResponse.json({ error: 'Geen toegang' }, { status: 403 })
   }
 
-  const origin = request.headers.get('origin')
-  const host = request.headers.get('host')
-  if (origin && host && new URL(origin).host !== host) {
-    return NextResponse.json({ error: 'Ongeldige origin' }, { status: 403 })
-  }
+  const csrfError = csrfCheck(request)
+  if (csrfError) return csrfError
 
   const { id, stepId } = await params
   if (!UUID_REGEX.test(id) || !UUID_REGEX.test(stepId)) {

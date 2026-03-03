@@ -14,7 +14,7 @@ import {
   type Column,
 } from '@tanstack/react-table'
 import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet, Info, Search, MousePointerClick, AlertTriangle, SlidersHorizontal, Columns3, Pin, PinOff } from 'lucide-react'
-import * as XLSX from 'xlsx'
+import ExcelJS from 'exceljs'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { cn } from '@/lib/utils'
 import { useAnalytics } from '@/hooks/use-analytics'
@@ -156,7 +156,7 @@ function sanitizeXlsCell(value: string): string {
  * Generate and download XLS file
  * Uses same data structure as CSV export
  */
-function downloadXLS(
+async function downloadXLS(
   data: RecipientRow[],
   availableYears: number[],
   primaryColumnName: string,
@@ -180,22 +180,34 @@ function downloadXLS(
     return [sanitizeXlsCell(row.primary_value), ...extraValues, ...yearAmounts, row.total]
   })
 
-  // Create worksheet
-  const wsData = [headers, ...rows]
-  const ws = XLSX.utils.aoa_to_sheet(wsData)
+  // Create workbook and worksheet
+  const wb = new ExcelJS.Workbook()
+  const ws = wb.addWorksheet('Rijksuitgaven')
+
+  // Add header row and data rows
+  ws.addRow(headers)
+  for (const row of rows) {
+    ws.addRow(row)
+  }
 
   // Set column widths
-  ws['!cols'] = [
-    { wch: 40 }, // Primary column
-    ...extraColumnLabels.map(() => ({ wch: 20 })), // Extra columns
-    ...availableYears.map(() => ({ wch: 12 })), // Year columns
-    { wch: 14 }, // Totaal
+  const colWidths = [
+    40, // Primary column
+    ...extraColumnLabels.map(() => 20), // Extra columns
+    ...availableYears.map(() => 12), // Year columns
+    14, // Totaal
   ]
+  ws.columns = colWidths.map(width => ({ width }))
 
-  // Create workbook and export
-  const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, 'Rijksuitgaven')
-  XLSX.writeFile(wb, filename)
+  // Generate and download
+  const buffer = await wb.xlsx.writeBuffer()
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
 /**
@@ -520,7 +532,7 @@ export function DataTable({
   }
 
   // XLS Export handler (UX-039: selectionOnly for pinned rows)
-  const handleExportXLS = (selectionOnly = false) => {
+  const handleExportXLS = async (selectionOnly = false) => {
     const exportData = selectionOnly ? getPinnedData() : data
     if (exportData.length === 0) return
     setIsExportingXLS(true)
@@ -529,7 +541,7 @@ export function DataTable({
       const timestamp = new Date().toISOString().split('T')[0]
       const suffix = selectionOnly ? '-selectie' : ''
       const filename = `rijksuitgaven-${moduleId}${suffix}-${timestamp}.xlsx`
-      downloadXLS(exportData, availableYears, primaryColumnName, filename, selectedColumns, moduleId)
+      await downloadXLS(exportData, availableYears, primaryColumnName, filename, selectedColumns, moduleId)
       const exportCount = Math.min(exportData.length, MAX_EXPORT_ROWS)
       onExport?.('xls', exportCount)
     } finally {

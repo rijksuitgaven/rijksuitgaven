@@ -16,6 +16,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { isAdmin } from '@/app/api/_lib/admin'
+import { csrfCheck } from '@/app/api/_lib/auth'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 import { createClient } from '@/lib/supabase/server'
 import { renderCampaignEmail, renderCampaignEmailText } from '@/app/api/_lib/campaign-template'
@@ -67,12 +68,8 @@ interface SendRequest {
 export async function POST(request: NextRequest) {
   if (!(await isAdmin())) return forbiddenResponse()
 
-  // CSRF check
-  const origin = request.headers.get('origin')
-  const host = request.headers.get('host')
-  if (origin && host && new URL(origin).host !== host) {
-    return NextResponse.json({ error: 'Ongeldige origin' }, { status: 403 })
-  }
+  const csrfError = csrfCheck(request)
+  if (csrfError) return csrfError
 
   if (!RESEND_API_KEY) {
     return NextResponse.json({ error: 'Resend niet geconfigureerd' }, { status: 500 })

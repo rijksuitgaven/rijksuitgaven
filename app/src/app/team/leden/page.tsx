@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import { createClient } from '@/lib/supabase/client'
+import { MUTATION_HEADERS } from '@/lib/api-config'
 import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
 import { ChevronUp, ChevronDown, ChevronsUpDown, Zap, Clock, Snowflake, User } from 'lucide-react'
@@ -131,7 +132,7 @@ function MemberActions({ member, isSelf, onChanged }: { member: Member; isSelf: 
     e.stopPropagation()
     setBusy(true)
     try {
-      const res = await fetch(`/api/v1/team/leden/${member.id}/invite`, { method: 'POST' })
+      const res = await fetch(`/api/v1/team/leden/${member.id}/invite`, { method: 'POST', headers: MUTATION_HEADERS })
       const data = await res.json()
       if (!res.ok) {
         alert(data.error || 'Fout bij versturen uitnodiging')
@@ -151,7 +152,7 @@ function MemberActions({ member, isSelf, onChanged }: { member: Member; isSelf: 
     try {
       const res = await fetch(`/api/v1/team/leden/${member.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({ cancelled_at: null }),
       })
       if (res.ok) onChanged()
@@ -168,7 +169,7 @@ function MemberActions({ member, isSelf, onChanged }: { member: Member; isSelf: 
     if (!confirm(`Weet u zeker dat u het lidmaatschap van ${member.first_name} ${member.last_name} wilt opzeggen? Deze persoon wordt verplaatst naar Contacten. U kunt het lidmaatschap later opnieuw activeren.`)) return
     setBusy(true)
     try {
-      const res = await fetch(`/api/v1/team/leden/${member.id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/v1/team/leden/${member.id}`, { method: 'DELETE', headers: MUTATION_HEADERS })
       if (res.ok) onChanged()
       else {
         const data = await res.json()
@@ -259,7 +260,7 @@ function AddMemberForm({ onSuccess }: { onSuccess: () => void }) {
     try {
       const res = await fetch('/api/v1/team/leden', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify(body),
       })
       const data = await res.json()
@@ -389,7 +390,7 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
     try {
       const res = await fetch(`/api/v1/team/leden/${member.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify(body),
       })
       const data = await res.json()

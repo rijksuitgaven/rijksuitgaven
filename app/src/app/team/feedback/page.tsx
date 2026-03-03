@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
+import { MUTATION_HEADERS } from '@/lib/api-config'
 
 // --- Types ---
 
@@ -239,7 +240,7 @@ function FeedbackDetailModal({
     try {
       const res = await fetch(`/api/v1/team/feedback/${item.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           status,
           priority,
@@ -422,7 +423,7 @@ export default function TeamFeedbackPage() {
 
     const res = await fetch(`/api/v1/team/feedback/${id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: MUTATION_HEADERS,
       body: JSON.stringify({ status: newStatus }),
     })
 
@@ -437,7 +438,7 @@ export default function TeamFeedbackPage() {
 
     const res = await fetch(`/api/v1/team/feedback/${id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: MUTATION_HEADERS,
       body: JSON.stringify({ priority: newPriority }),
     })
 

@@ -136,7 +136,7 @@ export async function proxyToBackend(
       )
     }
 
-    console.error('[BFF Proxy] Error:', error)
+    console.error('[BFF Proxy] Error:', error instanceof Error ? error.message : 'Unknown error')
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -30,6 +30,11 @@ class Settings(BaseSettings):
     typesense_port: int = 443
 
     # BFF shared secret (empty = disabled, for backwards compatibility during rollout)
+    # SECURITY: When Railway private networking is enabled, change BACKEND_API_URL
+    # in the frontend service to use the internal URL:
+    #   https://<backend-service>.railway.internal:<PORT>
+    # Then disable public networking on the backend service in Railway dashboard.
+    # This makes the backend unreachable from the internet — only the frontend can call it.
     bff_secret: str = ""
 
     # CORS origins - default to production domains only

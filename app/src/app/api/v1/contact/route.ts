@@ -3,6 +3,11 @@
  *
  * POST /api/v1/contact — Store demo request in people table + send email notification
  * No auth required (public form on homepage)
+ *
+ * Security:
+ * - Rate limit: 1 request per email per 60 seconds (in-memory)
+ * - Body size limit: 2KB
+ * - Honeypot field: rejects bots that fill hidden fields
  */
 
 import { NextResponse } from 'next/server'
@@ -11,6 +16,19 @@ import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const CONTACT_TO = 'contact@rijksuitgaven.nl'
 
+// Rate limit: email → last request timestamp
+const rateLimitMap = new Map<string, number>()
+const RATE_LIMIT_MS = 60_000
+const MAX_RATE_LIMIT_ENTRIES = 5_000
+
+// Periodic cleanup every 5 minutes
+setInterval(() => {
+  const cutoff = Date.now() - RATE_LIMIT_MS
+  for (const [key, ts] of rateLimitMap) {
+    if (ts < cutoff) rateLimitMap.delete(key)
+  }
+}, 5 * 60_000).unref()
+
 export async function POST(request: Request) {
   // Reject oversized bodies (max 2KB)
   const body = await request.text()
@@ -18,11 +36,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Body too large' }, { status: 413 })
   }
 
-  let parsed: { firstName?: string; lastName?: string; email?: string; phone?: string }
+  let parsed: { firstName?: string; lastName?: string; email?: string; phone?: string; website?: string }
   try {
     parsed = JSON.parse(body)
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+  }
+
+  // Honeypot: if "website" field is filled, it's a bot (field is hidden in UI)
+  if (parsed.website) {
+    return NextResponse.json({ ok: true }) // Silent success to not tip off bots
   }
 
   const { firstName, lastName, email, phone } = parsed
@@ -35,6 +58,17 @@ export async function POST(request: Request) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: 'Ongeldig e-mailadres' }, { status: 400 })
   }
+
+  // Rate limit: 1 request per email per 60s
+  const normalizedEmail = email.trim().toLowerCase()
+  const lastRequest = rateLimitMap.get(normalizedEmail)
+  if (lastRequest && Date.now() - lastRequest < RATE_LIMIT_MS) {
+    return NextResponse.json({ error: 'Te veel aanvragen. Probeer het later opnieuw.' }, { status: 429 })
+  }
+  if (rateLimitMap.size >= MAX_RATE_LIMIT_ENTRIES) {
+    return NextResponse.json({ error: 'Te veel aanvragen. Probeer het later opnieuw.' }, { status: 429 })
+  }
+  rateLimitMap.set(normalizedEmail, Date.now())
 
   // Sanitize: trim and limit field lengths
   const safeFirstName = firstName.trim().slice(0, 200)

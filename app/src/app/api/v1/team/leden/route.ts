@@ -10,6 +10,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { isAdmin } from '@/app/api/_lib/admin'
+import { csrfCheck } from '@/app/api/_lib/auth'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 import { syncPersonToResend, type ListType } from '@/app/api/_lib/resend-audience'
 
@@ -49,12 +50,8 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   if (!(await isAdmin())) return forbiddenResponse()
 
-  // Verify origin matches expected domain (basic CSRF protection)
-  const origin = request.headers.get('origin')
-  const host = request.headers.get('host')
-  if (origin && host && new URL(origin).host !== host) {
-    return NextResponse.json({ error: 'Ongeldige origin' }, { status: 403 })
-  }
+  const csrfError = csrfCheck(request)
+  if (csrfError) return csrfError
 
   let body: Record<string, unknown>
   try {
@@ -176,15 +173,15 @@ export async function POST(request: NextRequest) {
 
   if (authError) {
     if (authError.message?.includes('already been registered')) {
-      // User already exists in auth — find them by iterating pages (no getUserByEmail in Supabase)
-      let existingUser = null
-      let page = 1
-      while (!existingUser) {
-        const { data: { users } } = await supabase.auth.admin.listUsers({ page, perPage: 50 })
-        if (!users || users.length === 0) break
-        existingUser = users.find(u => u.email === normalizedEmail) ?? null
-        page++
-      }
+      // User already exists in auth — look up via GoTrue admin API (no getUserByEmail in SDK)
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+      const lookupRes = await fetch(
+        `${supabaseUrl}/auth/v1/admin/users?page=1&per_page=1&filter=${encodeURIComponent(normalizedEmail)}`,
+        { headers: { 'Authorization': `Bearer ${serviceRoleKey}`, 'apikey': serviceRoleKey } }
+      )
+      const lookupData = await lookupRes.json()
+      const existingUser = lookupData?.users?.find((u: { email?: string }) => u.email === normalizedEmail)
       if (!existingUser) {
         return NextResponse.json({ error: 'Gebruiker bestaat al maar kon niet gevonden worden' }, { status: 409 })
       }

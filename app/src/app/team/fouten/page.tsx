@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useSubscription } from '@/hooks/use-subscription'
 import { TeamNav } from '@/components/team-nav'
+import { MUTATION_HEADERS } from '@/lib/api-config'
 import Link from 'next/link'
 import {
   AlertTriangle, CheckCircle, Trash2, Copy, Check,
@@ -84,7 +85,7 @@ export default function FoutenPage() {
   }, [subLoading, role, days])
 
   const clearOneError = useCallback((createdAt: string) => {
-    fetch(`/api/v1/team/statistieken?created_at=${encodeURIComponent(createdAt)}`, { method: 'DELETE' })
+    fetch(`/api/v1/team/statistieken?created_at=${encodeURIComponent(createdAt)}`, { method: 'DELETE', headers: MUTATION_HEADERS })
       .then(res => {
         if (res.ok) {
           setErrors(prev => prev.filter(e => e.created_at !== createdAt))
@@ -94,7 +95,7 @@ export default function FoutenPage() {
   }, [])
 
   const clearAllErrors = useCallback(() => {
-    fetch(`/api/v1/team/statistieken`, { method: 'DELETE' })
+    fetch(`/api/v1/team/statistieken`, { method: 'DELETE', headers: MUTATION_HEADERS })
       .then(res => {
         if (res.ok) {
           setErrors([])

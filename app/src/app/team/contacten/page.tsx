@@ -5,6 +5,7 @@ import { useSubscription } from '@/hooks/use-subscription'
 import Link from 'next/link'
 import { TeamNav } from '@/components/team-nav'
 import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react'
+import { MUTATION_HEADERS } from '@/lib/api-config'
 
 type PipelineStage = 'nieuw' | 'in_gesprek' | 'gewonnen' | 'afgesloten' | 'verloren' | 'ex_klant'
 
@@ -104,7 +105,7 @@ function AddContactForm({ onSuccess }: { onSuccess: () => void }) {
     try {
       const res = await fetch('/api/v1/team/contacten', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify(body),
       })
       const data = await res.json()
@@ -231,7 +232,7 @@ function ConvertToMemberModal({ contact, onClose, onConverted }: {
     try {
       const res = await fetch(`/api/v1/team/contacten/${contact.id}/convert`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify(body),
       })
       const data = await res.json()
@@ -339,7 +340,7 @@ function EditContactModal({ contact, onClose, onSaved }: {
     try {
       const res = await fetch(`/api/v1/team/contacten/${contact.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify(body),
       })
       const data = await res.json()

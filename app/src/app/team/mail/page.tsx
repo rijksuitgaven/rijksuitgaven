@@ -13,6 +13,7 @@ import {
   Filter, Search, UserCheck,
 } from 'lucide-react'
 import { EmailEditor, type UploadedImage, type MediaItem } from '@/components/email-editor/email-editor'
+import { MUTATION_HEADERS } from '@/lib/api-config'
 
 interface MailData {
   counts: Record<string, number>
@@ -477,7 +478,7 @@ export default function MailPage() {
     try {
       const res = await fetch('/api/v1/team/mail/preview', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           subject: subject.trim(),
           heading: heading.trim(),
@@ -505,7 +506,7 @@ export default function MailPage() {
     try {
       const res = await fetch('/api/v1/team/mail/test', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           subject: subject.trim(),
           heading: heading.trim(),
@@ -542,7 +543,7 @@ export default function MailPage() {
     try {
       const res = await fetch('/api/v1/team/mail/precheck', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           subject: subject.trim(),
           heading: heading.trim(),
@@ -571,7 +572,7 @@ export default function MailPage() {
     try {
       const res = await fetch('/api/v1/team/mail/preview', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           subject: newStepSubject.trim(),
           heading: newStepHeading.trim(),
@@ -594,7 +595,7 @@ export default function MailPage() {
     try {
       const res = await fetch('/api/v1/team/mail/test', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           subject: newStepSubject.trim(),
           heading: newStepHeading.trim(),
@@ -623,7 +624,7 @@ export default function MailPage() {
     try {
       const res = await fetch('/api/v1/team/mail/precheck', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           subject: newStepSubject.trim(),
           heading: newStepHeading.trim(),
@@ -676,7 +677,7 @@ export default function MailPage() {
     try {
       const res = await fetch('/api/v1/team/mail/campaigns/compare', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({ campaign_ids: Array.from(compareSelected) }),
       })
       const data = await res.json()
@@ -711,13 +712,13 @@ export default function MailPage() {
       if (editingDraftId) {
         res = await fetch(`/api/v1/team/mail/drafts/${editingDraftId}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: MUTATION_HEADERS,
           body: JSON.stringify(payload),
         })
       } else {
         res = await fetch('/api/v1/team/mail/drafts', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: MUTATION_HEADERS,
           body: JSON.stringify(payload),
         })
       }
@@ -747,7 +748,7 @@ export default function MailPage() {
     try {
       const res = await fetch('/api/v1/team/mail/send', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           subject: subject.trim(),
           heading: heading.trim(),
@@ -900,7 +901,7 @@ export default function MailPage() {
     try {
       const res = await fetch('/api/v1/team/mail/conditions/evaluate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({ groups }),
       })
       const data = await res.json()
@@ -984,6 +985,7 @@ export default function MailPage() {
     try {
       const res = await fetch(`/api/v1/team/mail/upload?filename=${encodeURIComponent(filename)}`, {
         method: 'DELETE',
+        headers: MUTATION_HEADERS,
       })
       if (res.ok) {
         setMediaLibrary(prev => prev.filter(m => m.filename !== filename))
@@ -1040,7 +1042,7 @@ export default function MailPage() {
     try {
       const res = await fetch('/api/v1/team/mail/sequences', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           name: newSequenceName.trim(),
           description: newSequenceDesc.trim() || undefined,
@@ -1066,7 +1068,7 @@ export default function MailPage() {
     try {
       const res = await fetch(`/api/v1/team/mail/sequences/${seq.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({ status: newStatus }),
       })
       if (res.ok) {
@@ -1082,7 +1084,7 @@ export default function MailPage() {
 
   const handleDeleteSequence = useCallback(async (sequenceId: string) => {
     try {
-      const res = await fetch(`/api/v1/team/mail/sequences/${sequenceId}`, { method: 'DELETE' })
+      const res = await fetch(`/api/v1/team/mail/sequences/${sequenceId}`, { method: 'DELETE', headers: MUTATION_HEADERS })
       if (res.ok) {
         setSequences(prev => prev.filter(s => s.id !== sequenceId))
         if (expandedSequenceId === sequenceId) setExpandedSequenceId(null)
@@ -1100,7 +1102,7 @@ export default function MailPage() {
     try {
       const res = await fetch(`/api/v1/team/mail/sequences/${expandedSequenceId}/steps`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           subject: newStepSubject.trim(),
           heading: newStepHeading.trim(),
@@ -1129,6 +1131,7 @@ export default function MailPage() {
     try {
       const res = await fetch(`/api/v1/team/mail/sequences/${expandedSequenceId}/steps/${stepId}`, {
         method: 'DELETE',
+        headers: MUTATION_HEADERS,
       })
       if (res.ok) {
         handleExpandSequence(expandedSequenceId)
@@ -1145,7 +1148,7 @@ export default function MailPage() {
     try {
       const res = await fetch(`/api/v1/team/mail/sequences/${expandedSequenceId}/steps/${editingStepId}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           subject: newStepSubject.trim(),
           heading: newStepHeading.trim(),
@@ -1170,7 +1173,7 @@ export default function MailPage() {
       const url = isDraft
         ? `/api/v1/team/mail/drafts/${campaignId}`
         : `/api/v1/team/mail/campaigns/${campaignId}`
-      const res = await fetch(url, { method: 'DELETE' })
+      const res = await fetch(url, { method: 'DELETE', headers: MUTATION_HEADERS })
       if (res.ok) {
         setCampaigns(prev => prev.filter(c => c.id !== campaignId))
         if (expandedCampaignId === campaignId) setExpandedCampaignId(null)

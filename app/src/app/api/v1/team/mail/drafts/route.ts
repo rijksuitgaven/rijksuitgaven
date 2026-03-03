@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { isAdmin } from '@/app/api/_lib/admin'
+import { csrfCheck } from '@/app/api/_lib/auth'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 
 const VALID_SEGMENTS = new Set(['nieuw', 'in_gesprek', 'leden_maandelijks', 'leden_jaarlijks', 'verloren', 'ex_klant'])
@@ -29,12 +30,8 @@ interface DraftRequest {
 export async function POST(request: NextRequest) {
   if (!(await isAdmin())) return forbiddenResponse()
 
-  // CSRF check
-  const origin = request.headers.get('origin')
-  const host = request.headers.get('host')
-  if (origin && host && new URL(origin).host !== host) {
-    return NextResponse.json({ error: 'Ongeldige origin' }, { status: 403 })
-  }
+  const csrfError = csrfCheck(request)
+  if (csrfError) return csrfError
 
   let params: DraftRequest
   try {

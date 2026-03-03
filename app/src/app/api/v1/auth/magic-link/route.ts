@@ -219,7 +219,7 @@ export async function POST(request: NextRequest) {
       ].join('\n'),
     })
   } catch (err) {
-    console.error('[MagicLink] Resend error:', err)
+    console.error('[MagicLink] Resend error:', err instanceof Error ? err.message : 'Unknown error')
   }
 
   return NextResponse.json({ ok: true })

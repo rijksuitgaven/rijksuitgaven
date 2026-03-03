@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { isAdmin } from '@/app/api/_lib/admin'
+import { csrfCheck } from '@/app/api/_lib/auth'
 import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 
 export async function GET() {
@@ -33,11 +34,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Geen toegang' }, { status: 403 })
   }
 
-  const origin = request.headers.get('origin')
-  const host = request.headers.get('host')
-  if (origin && host && new URL(origin).host !== host) {
-    return NextResponse.json({ error: 'Ongeldige origin' }, { status: 403 })
-  }
+  const csrfError = csrfCheck(request)
+  if (csrfError) return csrfError
 
   let body: { name?: string; slug?: string; description?: string; is_default?: boolean; sort_order?: number }
   try {

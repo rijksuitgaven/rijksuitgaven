@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import { MessageSquare, X, Crosshair, Send, Loader2, Check, RefreshCw } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { useAnalytics } from '@/hooks/use-analytics'
+import { MUTATION_HEADERS } from '@/lib/api-config'
 
 type FeedbackState = 'idle' | 'form' | 'marking' | 'capturing' | 'sending' | 'success'
 
@@ -256,7 +257,7 @@ export function FeedbackButton() {
     try {
       const res = await fetch('/api/v1/feedback', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           category,
           message: message.trim(),

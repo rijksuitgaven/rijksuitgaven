@@ -7,6 +7,7 @@ import {
   ScrollReveal,
 } from '@/components/homepage/public-homepage'
 import { useAnalytics } from '@/hooks/use-analytics'
+import { MUTATION_HEADERS } from '@/lib/api-config'
 
 // ============================================================================
 // Types
@@ -267,7 +268,7 @@ function ContactForm() {
     try {
       const res = await fetch('/api/v1/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({ firstName: fd.get('firstName'), lastName: fd.get('lastName'), email: fd.get('email'), phone: fd.get('phone') }),
       })
       if (res.ok) { setFormState('sent'); form.reset(); track('public_interaction', undefined, { action: 'contact_form_submit', element: 'success', section: 'contact', session_id: publicSessionId }) }

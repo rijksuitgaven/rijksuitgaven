@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { MUTATION_HEADERS } from '@/lib/api-config'
 
 interface TopicPreference {
   id: string
@@ -71,7 +72,7 @@ function VoorkeurenContent() {
     try {
       const res = await fetch('/api/v1/preferences', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           token,
           preferences: topics.map(t => ({
@@ -100,7 +101,7 @@ function VoorkeurenContent() {
     try {
       const res = await fetch('/api/v1/preferences', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({ token, unsubscribe_all: true }),
       })
 
@@ -123,7 +124,7 @@ function VoorkeurenContent() {
       // Re-subscribe by sending preferences (clears unsubscribed_at)
       const res = await fetch('/api/v1/preferences', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({
           token,
           preferences: topics.map(t => ({

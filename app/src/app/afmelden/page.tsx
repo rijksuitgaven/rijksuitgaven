@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { TrackPageView } from '@/components/analytics/track-page-view'
+import { MUTATION_HEADERS } from '@/lib/api-config'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
@@ -38,7 +39,7 @@ function AfmeldenContent() {
     try {
       const res = await fetch('/api/v1/unsubscribe', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: MUTATION_HEADERS,
         body: JSON.stringify({ token }),
       })
 

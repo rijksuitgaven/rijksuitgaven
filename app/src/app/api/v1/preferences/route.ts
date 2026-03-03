@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
       .upsert(upserts, { onConflict: 'person_id,topic_id' })
 
     if (error) {
-      console.error('[Preferences] Upsert error:', error)
+      console.error('[Preferences] Upsert error:', error.message)
       return NextResponse.json({ error: 'Fout bij opslaan voorkeuren' }, { status: 500 })
     }
   }

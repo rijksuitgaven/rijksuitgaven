@@ -13,6 +13,27 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+// Allowed hosts for redirects — prevents x-forwarded-host injection (C1 fix)
+const ALLOWED_HOSTS = new Set([
+  'rijksuitgaven.nl',
+  'www.rijksuitgaven.nl',
+  'beta.rijksuitgaven.nl',
+  'localhost:3000',
+  'localhost:3001',
+])
+
+/** Build redirect URL safely — only trusts x-forwarded-host if in whitelist */
+function safeRedirect(request: NextRequest, pathname: string): NextResponse {
+  const forwardedHost = request.headers.get('x-forwarded-host')
+  const forwardedProto = request.headers.get('x-forwarded-proto') ?? 'https'
+  if (forwardedHost && ALLOWED_HOSTS.has(forwardedHost)) {
+    return NextResponse.redirect(new URL(pathname, `${forwardedProto}://${forwardedHost}`))
+  }
+  const url = request.nextUrl.clone()
+  url.pathname = pathname
+  return NextResponse.redirect(url)
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -58,14 +79,7 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname === '/afmelden'
 
   if (!session && !isPublicPath) {
-    const forwardedHost = request.headers.get('x-forwarded-host')
-    const forwardedProto = request.headers.get('x-forwarded-proto') ?? 'https'
-    if (forwardedHost) {
-      return NextResponse.redirect(new URL('/login', `${forwardedProto}://${forwardedHost}`))
-    }
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+    return safeRedirect(request, '/login')
   }
 
   // Subscription check — skip for public pages and /verlopen itself
@@ -89,14 +103,7 @@ export async function updateSession(request: NextRequest) {
       const isExpired = sub.role !== 'admin' && (!!sub.cancelled_at || today > sub.grace_ends_at)
 
       if (isExpired) {
-        const forwardedHost = request.headers.get('x-forwarded-host')
-        const forwardedProto = request.headers.get('x-forwarded-proto') ?? 'https'
-        if (forwardedHost) {
-          return NextResponse.redirect(new URL('/verlopen', `${forwardedProto}://${forwardedHost}`))
-        }
-        const url = request.nextUrl.clone()
-        url.pathname = '/verlopen'
-        return NextResponse.redirect(url)
+        return safeRedirect(request, '/verlopen')
       }
 
       // Track last_active_at (throttled: max once per 5 minutes via cookie)
@@ -111,6 +118,7 @@ export async function updateSession(request: NextRequest) {
         if (pingError) console.error('[middleware] last_active_at update failed:', pingError.message)
         supabaseResponse.cookies.set('_la', String(now), {
           httpOnly: true,
+          secure: true,
           sameSite: 'lax',
           maxAge: 300,
         })
@@ -118,14 +126,7 @@ export async function updateSession(request: NextRequest) {
     } else {
       // No subscription row for this user — deny access.
       // All legitimate users have a subscription created by admin via /team/leden.
-      const forwardedHost = request.headers.get('x-forwarded-host')
-      const forwardedProto = request.headers.get('x-forwarded-proto') ?? 'https'
-      if (forwardedHost) {
-        return NextResponse.redirect(new URL('/verlopen', `${forwardedProto}://${forwardedHost}`))
-      }
-      const url = request.nextUrl.clone()
-      url.pathname = '/verlopen'
-      return NextResponse.redirect(url)
+      return safeRedirect(request, '/verlopen')
     }
   }
 

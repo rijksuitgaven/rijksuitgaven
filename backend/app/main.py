@@ -4,6 +4,8 @@ Rijksuitgaven API - FastAPI Backend
 Main application entry point.
 """
 import logging
+import time
+from collections import defaultdict
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -87,6 +89,76 @@ class BFFSecretMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 app.add_middleware(BFFSecretMiddleware)
+
+
+# Rate limiting middleware — token bucket per IP
+# Public endpoints (no BFF secret): 10 req/min
+# Authenticated endpoints (BFF secret): 120 req/min
+# Health/root: exempt
+class RateLimitMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app):
+        super().__init__(app)
+        # {ip: [tokens, last_refill_time]}
+        self.buckets: dict[str, list] = defaultdict(lambda: [0.0, 0.0])
+        self.last_cleanup = time.monotonic()
+
+    def _get_client_ip(self, request: Request) -> str:
+        """Extract client IP, respecting X-Forwarded-For from Railway proxy."""
+        forwarded = request.headers.get("x-forwarded-for", "")
+        if forwarded:
+            return forwarded.split(",")[0].strip()
+        return request.client.host if request.client else "unknown"
+
+    async def dispatch(self, request: Request, call_next):
+        path = request.url.path
+
+        # Exempt: health checks, root, OPTIONS (CORS preflight)
+        if path in ("/", "/health", "/api/v1/health") or request.method == "OPTIONS":
+            return await call_next(request)
+
+        # Determine rate limit tier
+        is_public = path.startswith("/api/v1/public/")
+        max_tokens = 10.0 if is_public else 120.0  # bucket capacity
+        refill_rate = 10.0 / 60.0 if is_public else 120.0 / 60.0  # tokens per second
+
+        client_ip = self._get_client_ip(request)
+        bucket_key = f"{'pub' if is_public else 'auth'}:{client_ip}"
+
+        now = time.monotonic()
+        bucket = self.buckets[bucket_key]
+
+        # Initialize new bucket
+        if bucket[1] == 0.0:
+            bucket[0] = max_tokens
+            bucket[1] = now
+
+        # Refill tokens based on elapsed time
+        elapsed = now - bucket[1]
+        bucket[0] = min(max_tokens, bucket[0] + elapsed * refill_rate)
+        bucket[1] = now
+
+        # Check if request is allowed
+        if bucket[0] < 1.0:
+            logger.warning(f"Rate limit exceeded for {bucket_key}")
+            return JSONResponse(
+                status_code=429,
+                content={"error": "Too many requests"},
+                headers={"Retry-After": str(int(1.0 / refill_rate))},
+            )
+
+        # Consume a token
+        bucket[0] -= 1.0
+
+        # Periodic cleanup of stale buckets (every 5 minutes)
+        if now - self.last_cleanup > 300:
+            self.last_cleanup = now
+            stale_keys = [k for k, v in self.buckets.items() if now - v[1] > 300]
+            for k in stale_keys:
+                del self.buckets[k]
+
+        return await call_next(request)
+
+app.add_middleware(RateLimitMiddleware)
 
 # Include API routes
 app.include_router(api_v1_router, prefix="/api/v1")
