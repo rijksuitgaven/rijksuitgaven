@@ -644,7 +644,7 @@ V10.0 European Platform
 | V2.1 | ✅ Slimmer Zoeken | Feb 21 |
 | V2.2 | ✅ Sorteren & Meldingen | Feb 24 |
 | V2.3 | ✅ Zoekresultaten & Tekst | Feb 27 |
-| V2.4 | 🔨 Vergelijk & URL State (feature branch) | ~1 week post-launch |
+| V2.4 | ✅ Vergelijk & URL State | Mar 3 |
 | V2.5 | 📋 Zoeken | Post-launch |
 | V2.6 | 📋 Performance | Post-launch |
 | V2.7 | 📋 Data & Integraal | Post-launch |
@@ -706,4 +706,4 @@ V10.0 European Platform
 ---
 
 **Document maintained by:** Product Owner
-**Last updated:** 2026-02-28
+**Last updated:** 2026-03-03

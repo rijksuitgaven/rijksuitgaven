@@ -82,6 +82,7 @@
 | Social content pipeline | ✅ Built (Mar 2) | Zero-error pipeline: DB → extract_facts.py → facts/*.csv → generate_posts.py → posts/*.csv. 1,921 facts, 2,435 posts, 25 batches. verify.py for re-verification. |
 | Rule 7: Branch Discipline | ✅ Codified (Mar 3) | 7-day max branches, daily sync, 6-point Pre-Merge Gate, branch state table. In CLAUDE.md. |
 | V2.4 bug fixes (3) | ✅ Fixed (Mar 3) | URL cols pollution, setState-during-render on expand, stale expand tracking. |
+| UX-043: Specific recipient picker | ✅ Live (Mar 3) | Person picker toggle on /team/mail, searchable list, flows through save/send/draft restore. Migration 074. Also fixes draft conditionGroups restore bug. |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
@@ -93,8 +94,8 @@
 
 ## Recent Work (Last 5)
 
-1. **V2.4 Live — Vergelijk & URL State** (2026-03-03)
-   Merged UX-039/041 feature branch via Pre-Merge Gate 6/6. Rule 7 codified. 3 bug fixes. Release notes, help tips, support page updated. 147 commits pushed to production. Publieke deellinks added to V2.5 roadmap.
+1. **V2.4 Live + UX-043 Person Picker** (2026-03-03)
+   Session 1-2: Merged UX-039/041 via Pre-Merge Gate 6/6. Rule 7 codified. 3 bug fixes. 147 commits pushed. Session 3: UX-043 specific recipient picker for email campaigns. Migration 074. Draft conditionGroups restore bug fixed.
 
 2. **Social Content Pipeline + Admin CRM + Anomaly UX** (2026-03-02)
    Zero-error social pipeline: 18 SQL queries → 1,921 DB-verified facts → 2,435 posts (25 batches). Replaced hand-typed approach (had €243M errors). Also: pipeline pill selector, Expertgroep Bron, anomaly cell bg red→grey, red/green trend tooltips.
@@ -164,9 +165,9 @@
 
 ## Executed SQL Migrations
 
-Last migration: **073-rls-campaigns-media.sql** (2026-02-25)
+Last migration: **074-campaign-person-ids.sql** (2026-03-03)
 
-Full list: 001 → 073. See `SESSION-CONTEXT-ARCHIVE.md` for complete execution log.
+Full list: 001 → 074. See `SESSION-CONTEXT-ARCHIVE.md` for complete execution log.
 
 Key recent migrations:
 | # | Description | Date |
@@ -184,6 +185,8 @@ Key recent migrations:
 | 070 | Campaign events sequence columns | 2026-02-22 |
 | 071 | Email preferences + topics | 2026-02-22 |
 | 072 | Campaign conditions (JSONB + index) | 2026-02-22 |
+| 073 | RLS policies for campaigns + media | 2026-02-25 |
+| 074 | Campaign person_ids (JSONB) for specific recipients | 2026-03-03 |
 
 ---
 
@@ -246,7 +249,7 @@ Key recent migrations:
 
 ## Notes
 
-- **UX counter:** Next available UX-043
+- **UX counter:** Next available UX-044
 - **Communication:** English with Claude, Dutch (formal u/uw) for user-facing text
 - **Budget:** ~€190/month infrastructure
 - **psql path:** `/usr/local/Cellar/libpq/18.1/bin/psql`
