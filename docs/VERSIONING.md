@@ -122,6 +122,7 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 | Patch | Date | Changes |
 |-------|------|---------|
 | V2.4.1 | 2026-03-03 | Fix: URL cols pollution from localStorage, setState-during-render on expand, expand URL tracking stale row, getTopRows safety check |
+| V2.4.2 | 2026-03-03 | Fix: compound word search "slaap" in publiek (case-insensitive WHERE for entity-level views), browser cache prevention (no-store on all API responses and client-side fetches) |
 
 ### V2.5 - Zoeken & Vergelijken
 

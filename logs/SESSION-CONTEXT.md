@@ -85,6 +85,8 @@
 | UX-043: Specific recipient picker | ✅ Live (Mar 3) | Person picker toggle on /team/mail, searchable list, flows through save/send/draft restore. Migration 074. Also fixes draft conditionGroups restore bug. |
 | Security audit (15 findings) | ✅ Fixed (Mar 3) | CSRF protection (31 files), getUser, ExcelJS, CSP hardening, backend rate limiting, Railway private networking, Python deps, RLS audit. 0 npm/pip vulns. |
 | Railway private networking | ✅ Live (Mar 3) | Backend internal-only at :8080. BFF is only path to backend. |
+| Compound word search "slaap" fix | ✅ Fixed (Mar 3) | 4-commit fix: word boundary, LOWER() WHERE, force-dynamic, no-store cache. V2.4.2 |
+| Browser cache prevention (no-store) | ✅ Fixed (Mar 3) | Cache-Control no-store on BFF + all client-side fetches. Prevents stale API responses. |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
@@ -95,8 +97,8 @@
 
 ## Recent Work (Last 5)
 
-1. **V2.4 Live + UX-043/044 + Social Pipeline + Security Audit** (2026-03-03)
-   Session 1-2: V2.4 merge + Rule 7 + 3 bug fixes + 147 commits pushed. Session 3: UX-043 person picker. Session 4: UX-044 uitgeschreven filter. Session 5-6: Social pipeline rewrite + template curation (48→32) + contextual hashtags (replace #Rijksuitgaven with #Subsidies/#Defensie/etc.) + 50-char max fields. 500 posts in buffer-ready.csv. Session 7: Comprehensive security audit — 15 findings fixed (CSRF, CSP, rate limiting, dependency CVEs, Railway private networking, RLS audit).
+1. **V2.4 Live + UX-043/044 + Social Pipeline + Security Audit + Slaap Bug** (2026-03-03)
+   Session 1-2: V2.4 merge + Rule 7 + 3 bug fixes + 147 commits pushed. Session 3: UX-043 person picker. Session 4: UX-044 uitgeschreven filter. Session 5-6: Social pipeline rewrite + template curation (48→32) + contextual hashtags (replace #Rijksuitgaven with #Subsidies/#Defensie/etc.) + 50-char max fields. 500 posts in buffer-ready.csv. Session 7: Comprehensive security audit — 15 findings fixed (CSRF, CSP, rate limiting, dependency CVEs, Railway private networking, RLS audit). Session 8: 4-commit fix for "slaap" compound word search in publiek (word boundary, LOWER() WHERE, force-dynamic routes, no-store cache headers). Browser cache prevention on all API endpoints.
 
 2. **Social Content Pipeline v1 + Admin CRM + Anomaly UX** (2026-03-02)
    Initial social pipeline (superseded by Mar 3 rewrite): 18 SQL queries → 1,921 facts → 2,435 posts (25 batches). Also: pipeline pill selector, Expertgroep Bron, anomaly cell bg red→grey, red/green trend tooltips.
