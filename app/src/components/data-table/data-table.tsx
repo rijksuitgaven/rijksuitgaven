@@ -1049,6 +1049,14 @@ export function DataTable({
                     <Download className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
                     <p className="text-sm text-white/80">Exporteer als CSV of Excel. Maximaal 500 rijen met zichtbare kolommen.</p>
                   </div>
+                  <div className="flex gap-3">
+                    <Pin className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" />
+                    <p className="text-sm text-white/80">Pin tot 5 rijen vast om te vergelijken.</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <svg className="h-4 w-4 text-[var(--pink)] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                    <p className="text-sm text-white/80">Bookmark de URL om uw weergave op te slaan.</p>
+                  </div>
                 </div>
               </div>
             )}

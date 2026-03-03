@@ -80,6 +80,21 @@ export default function SupportPage() {
                   afhankelijk van de module.
                 </p>
 
+                <h3 className="font-semibold text-[var(--navy-dark)] pt-2">Vergelijken</h3>
+                <p>
+                  Pin tot vijf ontvangers bovenaan de tabel om ze naast elkaar te vergelijken.
+                  Vastgepinde rijen blijven zichtbaar terwijl u zoekt, filtert of sorteert.
+                  Klap een vastgepinde rij uit voor een gedetailleerde vergelijking,
+                  of exporteer alleen uw selectie.
+                </p>
+
+                <h3 className="font-semibold text-[var(--navy-dark)] pt-2">Bookmark uw weergave</h3>
+                <p>
+                  Uw volledige weergave — sortering, filters, kolommen, uitgeklapte rijen —
+                  wordt vastgelegd in de URL. Sla de link op en u keert terug naar exact
+                  dezelfde weergave.
+                </p>
+
                 <h3 className="font-semibold text-[var(--navy-dark)] pt-2">Integraal zoeken</h3>
                 <p>
                   De module <strong>Zoeken in alle modules</strong> doorzoekt alle databronnen tegelijk.
