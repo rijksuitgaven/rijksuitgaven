@@ -25,7 +25,7 @@ export async function GET() {
   // Get all people who are NOT active members (pipeline_stage != 'gewonnen' or no active sub)
   const { data: people, error } = await supabase
     .from('people')
-    .select('id, email, first_name, last_name, organization, phone, source, notes, resend_contact_id, pipeline_stage, lost_reason, created_at, updated_at, subscriptions(id, end_date, grace_ends_at, cancelled_at)')
+    .select('id, email, first_name, last_name, organization, phone, source, notes, resend_contact_id, pipeline_stage, lost_reason, unsubscribed_at, created_at, updated_at, subscriptions(id, end_date, grace_ends_at, cancelled_at)')
     .order('created_at', { ascending: false })
 
   if (error) {

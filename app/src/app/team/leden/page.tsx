@@ -24,6 +24,7 @@ interface Member {
   activated_at: string | null
   last_active_at: string | null
   notes: string | null
+  unsubscribed_at: string | null
   created_at: string
 }
 
@@ -490,6 +491,8 @@ export default function TeamLedenPage() {
   type SortField = 'name' | 'organization' | 'email' | 'plan' | 'status' | 'last_active_at' | 'end_date' | 'engagement'
   const [sortBy, setSortBy] = useState<SortField | null>(null)
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  type FilterKey = MemberStatus | 'uitgeschreven'
+  const [activeFilter, setActiveFilter] = useState<FilterKey | null>(null)
 
   useEffect(() => {
     createClient().auth.getSession().then(({ data: { session } }) => {
@@ -620,7 +623,21 @@ export default function TeamLedenPage() {
     aangemaakt: members.filter(m => computeStatus(m) === 'aangemaakt').length,
     grace: members.filter(m => computeStatus(m) === 'grace').length,
     expired: members.filter(m => computeStatus(m) === 'expired').length,
+    uitgeschreven: members.filter(m => !!m.unsubscribed_at).length,
   }
+
+  const filteredMembers = activeFilter
+    ? activeFilter === 'uitgeschreven'
+      ? sortedMembers.filter(m => !!m.unsubscribed_at)
+      : sortedMembers.filter(m => computeStatus(m) === activeFilter)
+    : sortedMembers
+
+  function toggleFilter(key: FilterKey) {
+    setActiveFilter(prev => prev === key ? null : key)
+  }
+
+  const filterBtnClass = (key: FilterKey) =>
+    `cursor-pointer hover:underline ${activeFilter === key ? 'underline decoration-2 underline-offset-2' : ''}`
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8" style={{ fontFamily: 'var(--font-condensed), sans-serif' }}>
@@ -629,19 +646,22 @@ export default function TeamLedenPage() {
       {/* Inline stats + Nieuw lid button */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
-          <span className="text-[var(--navy-dark)]"><span className="font-semibold">{members.length}</span> totaal</span>
-          <span className="text-green-700"><span className="font-semibold">{counts.active}</span> actief</span>
+          <button onClick={() => setActiveFilter(null)} className={`text-[var(--navy-dark)] ${!activeFilter ? 'underline decoration-2 underline-offset-2' : 'cursor-pointer hover:underline'}`}><span className="font-semibold">{members.length}</span> totaal</button>
+          <button onClick={() => toggleFilter('active')} className={`text-green-700 ${filterBtnClass('active')}`}><span className="font-semibold">{counts.active}</span> actief</button>
           {counts.uitgenodigd > 0 && (
-            <span className="text-blue-700"><span className="font-semibold">{counts.uitgenodigd}</span> uitgenodigd</span>
+            <button onClick={() => toggleFilter('uitgenodigd')} className={`text-blue-700 ${filterBtnClass('uitgenodigd')}`}><span className="font-semibold">{counts.uitgenodigd}</span> uitgenodigd</button>
           )}
           {counts.aangemaakt > 0 && (
-            <span className="text-gray-600"><span className="font-semibold">{counts.aangemaakt}</span> aangemaakt</span>
+            <button onClick={() => toggleFilter('aangemaakt')} className={`text-gray-600 ${filterBtnClass('aangemaakt')}`}><span className="font-semibold">{counts.aangemaakt}</span> aangemaakt</button>
           )}
           {counts.grace > 0 && (
-            <span className="text-amber-700"><span className="font-semibold">{counts.grace}</span> verlengingsperiode</span>
+            <button onClick={() => toggleFilter('grace')} className={`text-amber-700 ${filterBtnClass('grace')}`}><span className="font-semibold">{counts.grace}</span> verlengingsperiode</button>
           )}
           {counts.expired > 0 && (
-            <span className="text-red-700"><span className="font-semibold">{counts.expired}</span> verlopen</span>
+            <button onClick={() => toggleFilter('expired')} className={`text-red-700 ${filterBtnClass('expired')}`}><span className="font-semibold">{counts.expired}</span> verlopen</button>
+          )}
+          {counts.uitgeschreven > 0 && (
+            <button onClick={() => toggleFilter('uitgeschreven')} className={`text-orange-700 ${filterBtnClass('uitgeschreven')}`}><span className="font-semibold">{counts.uitgeschreven}</span> uitgeschreven</button>
           )}
         </div>
         <button
@@ -675,14 +695,14 @@ export default function TeamLedenPage() {
               </tr>
             </thead>
             <tbody>
-              {sortedMembers.length === 0 ? (
+              {filteredMembers.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="px-4 py-8 text-center text-[var(--navy-medium)]">
-                    Nog geen leden. Voeg het eerste lid toe.
+                    {activeFilter ? 'Geen leden met dit filter.' : 'Nog geen leden. Voeg het eerste lid toe.'}
                   </td>
                 </tr>
               ) : (
-                sortedMembers.map(member => {
+                filteredMembers.map(member => {
                   const status = computeStatus(member)
                   return (
                     <tr
@@ -700,6 +720,7 @@ export default function TeamLedenPage() {
                         </Link>
                         {member.role === 'admin' && <span className="ml-1.5 text-xs text-[var(--pink)]">admin</span>}
                         {member.role === 'trial' && <span className="ml-1.5 text-xs text-blue-600">trial</span>}
+                        {member.unsubscribed_at && <span className="ml-1.5 text-xs text-orange-600">geen e-mail</span>}
                       </td>
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{member.organization || '—'}</td>
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{member.email}</td>

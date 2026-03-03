@@ -20,6 +20,7 @@ interface Contact {
   source: string | null
   notes: string | null
   resend_contact_id: string | null
+  unsubscribed_at: string | null
   created_at: string
   updated_at: string
 }
@@ -482,6 +483,8 @@ export default function TeamContactenPage() {
   const [convertingContact, setConvertingContact] = useState<Contact | null>(null)
   const [sortField, setSortField] = useState<SortField>('created_at')
   const [sortDir, setSortDir] = useState<SortDirection>('desc')
+  type ContactFilterKey = PipelineStage | 'uitgeschreven'
+  const [activeFilter, setActiveFilter] = useState<ContactFilterKey | null>(null)
 
   const fetchContacts = useCallback(async () => {
     try {
@@ -579,7 +582,21 @@ export default function TeamContactenPage() {
     ex_klant: contacts.filter(c => c.pipeline_stage === 'ex_klant').length,
     verloren: contacts.filter(c => c.pipeline_stage === 'verloren').length,
     afgesloten: contacts.filter(c => c.pipeline_stage === 'afgesloten').length,
+    uitgeschreven: contacts.filter(c => !!c.unsubscribed_at).length,
   }
+
+  const filteredContacts = activeFilter
+    ? activeFilter === 'uitgeschreven'
+      ? sortedContacts.filter(c => !!c.unsubscribed_at)
+      : sortedContacts.filter(c => c.pipeline_stage === activeFilter)
+    : sortedContacts
+
+  function toggleFilter(key: ContactFilterKey) {
+    setActiveFilter(prev => prev === key ? null : key)
+  }
+
+  const filterBtnClass = (key: ContactFilterKey) =>
+    `cursor-pointer hover:underline ${activeFilter === key ? 'underline decoration-2 underline-offset-2' : ''}`
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8" style={{ fontFamily: 'var(--font-condensed), sans-serif' }}>
@@ -588,21 +605,24 @@ export default function TeamContactenPage() {
       {/* Inline stats + Nieuw contact button */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm">
-          <span className="text-[var(--navy-dark)]"><span className="font-semibold">{contacts.length}</span> totaal</span>
+          <button onClick={() => setActiveFilter(null)} className={`text-[var(--navy-dark)] ${!activeFilter ? 'underline decoration-2 underline-offset-2' : 'cursor-pointer hover:underline'}`}><span className="font-semibold">{contacts.length}</span> totaal</button>
           {stageCounts.nieuw > 0 && (
-            <span className="text-blue-700"><span className="font-semibold">{stageCounts.nieuw}</span> nieuw</span>
+            <button onClick={() => toggleFilter('nieuw')} className={`text-blue-700 ${filterBtnClass('nieuw')}`}><span className="font-semibold">{stageCounts.nieuw}</span> nieuw</button>
           )}
           {stageCounts.in_gesprek > 0 && (
-            <span className="text-purple-700"><span className="font-semibold">{stageCounts.in_gesprek}</span> in gesprek</span>
+            <button onClick={() => toggleFilter('in_gesprek')} className={`text-purple-700 ${filterBtnClass('in_gesprek')}`}><span className="font-semibold">{stageCounts.in_gesprek}</span> in gesprek</button>
           )}
           {stageCounts.ex_klant > 0 && (
-            <span className="text-gray-600"><span className="font-semibold">{stageCounts.ex_klant}</span> ex-klant</span>
+            <button onClick={() => toggleFilter('ex_klant')} className={`text-gray-600 ${filterBtnClass('ex_klant')}`}><span className="font-semibold">{stageCounts.ex_klant}</span> ex-klant</button>
           )}
           {stageCounts.verloren > 0 && (
-            <span className="text-amber-700"><span className="font-semibold">{stageCounts.verloren}</span> verloren</span>
+            <button onClick={() => toggleFilter('verloren')} className={`text-amber-700 ${filterBtnClass('verloren')}`}><span className="font-semibold">{stageCounts.verloren}</span> verloren</button>
           )}
           {stageCounts.afgesloten > 0 && (
-            <span className="text-stone-500"><span className="font-semibold">{stageCounts.afgesloten}</span> afgesloten</span>
+            <button onClick={() => toggleFilter('afgesloten')} className={`text-stone-500 ${filterBtnClass('afgesloten')}`}><span className="font-semibold">{stageCounts.afgesloten}</span> afgesloten</button>
+          )}
+          {stageCounts.uitgeschreven > 0 && (
+            <button onClick={() => toggleFilter('uitgeschreven')} className={`text-orange-700 ${filterBtnClass('uitgeschreven')}`}><span className="font-semibold">{stageCounts.uitgeschreven}</span> uitgeschreven</button>
           )}
         </div>
         <button
@@ -637,14 +657,14 @@ export default function TeamContactenPage() {
               </tr>
             </thead>
             <tbody>
-              {sortedContacts.length === 0 ? (
+              {filteredContacts.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-4 py-8 text-center text-[var(--navy-medium)]">
-                    Nog geen contacten. Voeg het eerste contact toe.
+                    {activeFilter ? 'Geen contacten met dit filter.' : 'Nog geen contacten. Voeg het eerste contact toe.'}
                   </td>
                 </tr>
               ) : (
-                sortedContacts.map(contact => (
+                filteredContacts.map(contact => (
                   <tr
                     key={contact.id}
                     onClick={() => setEditingContact(contact)}
@@ -655,6 +675,7 @@ export default function TeamContactenPage() {
                       {contact.resend_contact_id && (
                         <span className="ml-1.5 text-xs text-green-600" title="Resend gesynchroniseerd">&#10003;</span>
                       )}
+                      {contact.unsubscribed_at && <span className="ml-1.5 text-xs text-orange-600">geen e-mail</span>}
                     </td>
                     <td className="px-4 py-3 text-[var(--navy-medium)]">{contact.organization || '—'}</td>
                     <td className="px-4 py-3 text-[var(--navy-medium)]">{contact.email}</td>

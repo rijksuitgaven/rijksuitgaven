@@ -23,7 +23,7 @@ export async function GET() {
   const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('subscriptions')
-    .select('id, user_id, person_id, plan, role, start_date, end_date, grace_ends_at, cancelled_at, invited_at, activated_at, last_active_at, notes, created_at, people!inner(email, first_name, last_name, organization)')
+    .select('id, user_id, person_id, plan, role, start_date, end_date, grace_ends_at, cancelled_at, invited_at, activated_at, last_active_at, notes, created_at, people!inner(email, first_name, last_name, organization, unsubscribed_at)')
     .is('deleted_at', null)
     .order('end_date', { ascending: true })
 
@@ -40,6 +40,7 @@ export async function GET() {
     first_name: people.first_name,
     last_name: people.last_name,
     organization: people.organization,
+    unsubscribed_at: people.unsubscribed_at,
   }))
 
   return NextResponse.json({ members })
