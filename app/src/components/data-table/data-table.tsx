@@ -1234,7 +1234,7 @@ export function DataTable({
                   </tr>
                 )}
                 {/* Regular (unpinned) rows — filter out phantom rows from keepPinnedRows when searching */}
-                {table.getCenterRows().filter(row => dataIdSet.has(row.id)).map((row) => (
+                {(table.getCenterRows() ?? []).filter(row => dataIdSet.has(row.id)).map((row) => (
                   <Fragment key={row.id}>
                     <tr
                       className={cn(
