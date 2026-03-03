@@ -1031,8 +1031,12 @@ async def _get_from_aggregated_view(
 
                 if primary_only_keys:
                     # Use IN clause with array for primary matches (aggregated view)
-                    where_clauses.append(f"{primary} = ANY(${param_idx})")
-                    params.append(primary_only_keys)
+                    # LOWER() for case-insensitive matching: Typesense stores raw ontvanger
+                    # values from source table, but entity-level aggregated views title-case
+                    # the first character (UPPER(LEFT(MIN(ontvanger),1)) || SUBSTRING(...)).
+                    # Without LOWER(), "stichting slaapschepen" ≠ "Stichting slaapschepen".
+                    where_clauses.append(f"LOWER({primary}) = ANY(${param_idx})")
+                    params.append([k.lower() for k in primary_only_keys])
                     param_idx += 1
                 elif not secondary_only_keys:
                     # No matches at all — shouldn't happen but be safe
