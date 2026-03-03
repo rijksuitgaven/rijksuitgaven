@@ -10,7 +10,7 @@ import {
   BarChart3, Trash2, Save, Pencil, Images, Upload,
   Monitor, Tablet, Smartphone, ShieldCheck, SendHorizontal, Link2,
   ListOrdered, Plus, Clock, Users, Play, Pause, GripVertical, HelpCircle,
-  Filter,
+  Filter, Search, UserCheck,
 } from 'lucide-react'
 import { EmailEditor, type UploadedImage, type MediaItem } from '@/components/email-editor/email-editor'
 
@@ -44,6 +44,16 @@ interface Campaign {
   opened_count: number
   clicked_count: number
   bounced_count: number
+  conditions?: { groups: CampaignConditionGroup[] } | null
+  person_ids?: string[] | null
+}
+
+interface Person {
+  id: string
+  email: string
+  first_name: string | null
+  last_name: string | null
+  segment: string
 }
 
 interface CampaignRecipient {
@@ -246,6 +256,12 @@ export default function MailPage() {
   const [conditionCount, setConditionCount] = useState<number | null>(null)
   const [conditionEvaluating, setConditionEvaluating] = useState(false)
   const [showConditions, setShowConditions] = useState(false)
+  // Person picker state
+  const [showPersonPicker, setShowPersonPicker] = useState(false)
+  const [specificPersonIds, setSpecificPersonIds] = useState<Set<string>>(new Set())
+  const [availablePeople, setAvailablePeople] = useState<Person[]>([])
+  const [personSearch, setPersonSearch] = useState('')
+  const [peopleLoading, setPeopleLoading] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
   const [previewHtml, setPreviewHtml] = useState<string | null>(null)
   const [previewLoading, setPreviewLoading] = useState(false)
@@ -387,6 +403,31 @@ export default function MailPage() {
       })
       .catch(() => setSequencesLoading(false))
   }, [])
+
+  const fetchPeople = useCallback((segments: Set<string>) => {
+    if (segments.size === 0) {
+      setAvailablePeople([])
+      return
+    }
+    setPeopleLoading(true)
+    fetch(`/api/v1/team/mail/people?segments=${Array.from(segments).join(',')}`)
+      .then(res => res.json())
+      .then(d => {
+        setAvailablePeople(d.people || [])
+        setPeopleLoading(false)
+      })
+      .catch(() => setPeopleLoading(false))
+  }, [])
+
+  // Re-fetch people when segments change while picker is open
+  useEffect(() => {
+    if (showPersonPicker) {
+      fetchPeople(selectedSegments)
+      // Remove person selections that are no longer in the segment pool
+      // (will be cleaned on next render when availablePeople updates)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showPersonPicker, selectedSegments])
 
   const handleExpandCampaign = useCallback(async (campaignId: string) => {
     if (expandedCampaignId === campaignId) {
@@ -662,6 +703,7 @@ export default function MailPage() {
       ctaUrl: ctaUrl.trim() || undefined,
       segments: Array.from(selectedSegments),
       conditions: conditionGroups.length > 0 ? { groups: conditionGroups } : undefined,
+      personIds: specificPersonIds.size > 0 ? Array.from(specificPersonIds) : undefined,
     }
 
     try {
@@ -694,7 +736,7 @@ export default function MailPage() {
     } finally {
       setSaving(false)
     }
-  }, [subject, heading, preheader, body, ctaText, ctaUrl, selectedSegments, editingDraftId, fetchCampaigns])
+  }, [subject, heading, preheader, body, ctaText, ctaUrl, selectedSegments, editingDraftId, conditionGroups, specificPersonIds, fetchCampaigns])
 
   const handleSend = useCallback(async () => {
     setConfirmSend(false)
@@ -716,6 +758,7 @@ export default function MailPage() {
           segments: Array.from(selectedSegments),
           draftId: editingDraftId || undefined,
           conditions: conditionGroups.length > 0 ? { groups: conditionGroups } : undefined,
+          personIds: specificPersonIds.size > 0 ? Array.from(specificPersonIds) : undefined,
         }),
       })
       const result = await res.json()
@@ -732,7 +775,7 @@ export default function MailPage() {
     } finally {
       setSending(false)
     }
-  }, [subject, heading, preheader, body, ctaText, ctaUrl, selectedSegments, editingDraftId, fetchCampaigns])
+  }, [subject, heading, preheader, body, ctaText, ctaUrl, selectedSegments, editingDraftId, conditionGroups, specificPersonIds, fetchCampaigns])
 
   const handleUseAsTemplate = useCallback((campaign: Campaign) => {
     setSubject(campaign.subject)
@@ -744,6 +787,9 @@ export default function MailPage() {
     const segs = campaign.segment.split(',').filter(s => VALID_SEGMENTS_SET.has(s))
     setSelectedSegments(new Set(segs.length > 0 ? segs : ['nieuw']))
     setEditingDraftId(null) // Template = new compose, not editing a draft
+    setShowPersonPicker(false)
+    setSpecificPersonIds(new Set())
+    setPersonSearch('')
     setSendResult(null)
     setSendError(null)
     setSaveSuccess(false)
@@ -767,6 +813,26 @@ export default function MailPage() {
     setSaveSuccess(false)
     setShowPreview(false)
     setActiveTab('compose')
+
+    // Restore conditions from draft
+    if (campaign.conditions?.groups?.length) {
+      setConditionGroups(campaign.conditions.groups)
+      setShowConditions(true)
+    } else {
+      setConditionGroups([])
+      setShowConditions(false)
+    }
+    setConditionCount(null)
+
+    // Restore person IDs from draft
+    if (campaign.person_ids?.length) {
+      setSpecificPersonIds(new Set(campaign.person_ids))
+      setShowPersonPicker(true)
+    } else {
+      setSpecificPersonIds(new Set())
+      setShowPersonPicker(false)
+    }
+    setPersonSearch('')
 
     // Restore images from draft body HTML
     const imgRegex = /email-images\/([^"'?\s]+)/g
@@ -810,6 +876,10 @@ export default function MailPage() {
     setConditionGroups([])
     setConditionCount(null)
     setShowConditions(false)
+    setShowPersonPicker(false)
+    setSpecificPersonIds(new Set())
+    setAvailablePeople([])
+    setPersonSearch('')
     setEditingDraftId(null)
     setSendResult(null)
     setSendError(null)
@@ -1119,6 +1189,13 @@ export default function MailPage() {
     ? Array.from(selectedSegments).reduce((sum, seg) => sum + (data.counts[seg] ?? 0), 0)
     : 0
 
+  // When person picker is active, use specific count; otherwise fall back to conditions or segment count
+  const displayCount = showPersonPicker && specificPersonIds.size > 0
+    ? specificPersonIds.size
+    : conditionCount !== null
+      ? conditionCount
+      : recipientCount
+
   // Body from Tiptap is HTML — check it's not just empty tags
   const bodyHasContent = body.replace(/<[^>]*>/g, '').trim().length > 0
   const canSend = subject.trim() && heading.trim() && bodyHasContent && !sending && selectedSegments.size > 0
@@ -1342,6 +1419,122 @@ export default function MailPage() {
                           : 'Selecteer minimaal één groep'
                         }
                       </p>
+                    </div>
+
+                    {/* Person picker */}
+                    <div>
+                      <label className="flex items-center gap-2.5 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={showPersonPicker}
+                          onChange={() => {
+                            const next = !showPersonPicker
+                            setShowPersonPicker(next)
+                            if (!next) {
+                              setSpecificPersonIds(new Set())
+                              setPersonSearch('')
+                              setAvailablePeople([])
+                            }
+                          }}
+                          className="w-4 h-4 rounded border-[var(--border)] text-[var(--pink)] focus:ring-[var(--pink)]"
+                        />
+                        <span className="text-sm font-medium text-[var(--navy-medium)]">
+                          <UserCheck className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
+                          Specifieke ontvangers
+                        </span>
+                        {specificPersonIds.size > 0 && (
+                          <span className="inline-flex items-center justify-center min-w-[18px] px-1 py-0.5 text-xs font-bold rounded-full bg-[var(--pink)] text-white">
+                            {specificPersonIds.size}
+                          </span>
+                        )}
+                      </label>
+
+                      {showPersonPicker && (
+                        <div className="mt-3 border border-[var(--border)] rounded-lg p-3 bg-[var(--gray-light)]/30">
+                          {peopleLoading ? (
+                            <div className="flex items-center gap-2 text-xs text-[var(--navy-medium)] py-2">
+                              <RefreshCw className="w-3 h-3 animate-spin" />
+                              Laden...
+                            </div>
+                          ) : availablePeople.length === 0 ? (
+                            <p className="text-xs text-[var(--navy-medium)] py-2">
+                              Geen ontvangers gevonden in de geselecteerde segmenten.
+                            </p>
+                          ) : (
+                            <>
+                              <div className="relative mb-2">
+                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--navy-medium)]" />
+                                <input
+                                  type="text"
+                                  value={personSearch}
+                                  onChange={e => setPersonSearch(e.target.value)}
+                                  placeholder="Zoek op naam of e-mail..."
+                                  className="w-full pl-8 pr-3 py-1.5 rounded border border-[var(--border)] text-xs text-[var(--navy-dark)] placeholder:text-[var(--navy-medium)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--pink)] bg-white"
+                                />
+                              </div>
+
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs text-[var(--navy-medium)]">
+                                  {specificPersonIds.size > 0
+                                    ? `${specificPersonIds.size} van ${availablePeople.length} geselecteerd`
+                                    : `${availablePeople.length} ontvangers beschikbaar`
+                                  }
+                                </span>
+                                {specificPersonIds.size > 0 && (
+                                  <button
+                                    onClick={() => setSpecificPersonIds(new Set())}
+                                    className="text-xs text-[var(--navy-medium)] hover:text-[var(--navy-dark)] underline transition-colors"
+                                  >
+                                    Wis selectie
+                                  </button>
+                                )}
+                              </div>
+
+                              <div className="max-h-48 overflow-y-auto space-y-0.5">
+                                {availablePeople
+                                  .filter(p => {
+                                    if (!personSearch.trim()) return true
+                                    const q = personSearch.toLowerCase()
+                                    const name = `${p.first_name || ''} ${p.last_name || ''}`.toLowerCase()
+                                    return name.includes(q) || (p.email?.toLowerCase().includes(q))
+                                  })
+                                  .map(person => {
+                                    const checked = specificPersonIds.has(person.id)
+                                    const name = [person.first_name, person.last_name].filter(Boolean).join(' ') || '—'
+                                    return (
+                                      <label
+                                        key={person.id}
+                                        className={`flex items-center justify-between px-2 py-1.5 rounded cursor-pointer transition-colors ${
+                                          checked
+                                            ? 'bg-[var(--navy-dark)]/5'
+                                            : 'hover:bg-white'
+                                        }`}
+                                      >
+                                        <div className="flex items-center gap-2 min-w-0">
+                                          <input
+                                            type="checkbox"
+                                            checked={checked}
+                                            onChange={() => {
+                                              setSpecificPersonIds(prev => {
+                                                const next = new Set(prev)
+                                                if (next.has(person.id)) next.delete(person.id)
+                                                else next.add(person.id)
+                                                return next
+                                              })
+                                            }}
+                                            className="w-3.5 h-3.5 shrink-0 rounded border-[var(--border)] text-[var(--pink)] focus:ring-[var(--pink)]"
+                                          />
+                                          <span className="text-xs text-[var(--navy-dark)] truncate">{name}</span>
+                                        </div>
+                                        <span className="text-xs text-[var(--navy-medium)] truncate ml-2 shrink-0">{person.email}</span>
+                                      </label>
+                                    )
+                                  })}
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* Condition builder */}
@@ -1685,7 +1878,7 @@ export default function MailPage() {
                           className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-[var(--pink)] hover:bg-[var(--pink-hover)] rounded-lg transition-colors disabled:opacity-50"
                         >
                           <Send className="w-4 h-4" />
-                          Verzenden naar {conditionCount !== null ? conditionCount : recipientCount} ontvanger{(conditionCount !== null ? conditionCount : recipientCount) !== 1 ? 's' : ''}
+                          Verzenden naar {displayCount} ontvanger{displayCount !== 1 ? 's' : ''}
                         </button>
                       ) : (
                         <div className="flex items-center gap-2">
@@ -1697,7 +1890,7 @@ export default function MailPage() {
                             disabled={sending}
                             className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50"
                           >
-                            {sending ? 'Verzenden...' : `Ja, verzend ${conditionCount !== null ? conditionCount : recipientCount} e-mails`}
+                            {sending ? 'Verzenden...' : `Ja, verzend ${displayCount} e-mails`}
                           </button>
                           <button
                             onClick={() => setConfirmSend(false)}

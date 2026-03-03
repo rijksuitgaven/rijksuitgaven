@@ -61,6 +61,7 @@ interface SendRequest {
   draftId?: string
   topicId?: string
   conditions?: { groups: ConditionGroup[] }
+  personIds?: string[]
 }
 
 export async function POST(request: NextRequest) {
@@ -89,7 +90,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ongeldige JSON' }, { status: 400 })
   }
 
-  const { subject, heading, preheader, body, ctaText, ctaUrl, segments, draftId, topicId, conditions } = params
+  const { subject, heading, preheader, body, ctaText, ctaUrl, segments, draftId, topicId, conditions, personIds } = params
 
   if (!subject?.trim() || !heading?.trim() || !body?.trim() || !segments?.length) {
     return NextResponse.json({ error: 'Verplichte velden: subject, heading, body, segments' }, { status: 400 })
@@ -217,6 +218,12 @@ export async function POST(request: NextRequest) {
     conditionedRecipients = recipients.filter(r => result.has(r.id))
   }
 
+  // Filter to specific people if personIds provided
+  if (personIds?.length) {
+    const idSet = new Set(personIds)
+    conditionedRecipients = conditionedRecipients.filter(r => idSet.has(r.id))
+  }
+
   // Filter by topic preference if campaign has a topic_id
   let filteredRecipients = conditionedRecipients
   if (topicId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(topicId)) {
@@ -280,6 +287,7 @@ export async function POST(request: NextRequest) {
         cta_url: ctaUrl || null,
         segment: segments.join(','),
         conditions: conditions?.groups?.length ? conditions : null,
+        person_ids: personIds?.length ? personIds : null,
         sent_count: 0,
         failed_count: 0,
         sent_by: sentBy,
@@ -310,6 +318,7 @@ export async function POST(request: NextRequest) {
         cta_url: ctaUrl || null,
         segment: segments.join(','),
         conditions: conditions?.groups?.length ? conditions : null,
+        person_ids: personIds?.length ? personIds : null,
         sent_count: 0,
         failed_count: 0,
         sent_by: sentBy,
