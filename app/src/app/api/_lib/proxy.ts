@@ -99,6 +99,7 @@ export async function proxyToBackend(
           ...(BFF_SECRET && { 'X-BFF-Secret': BFF_SECRET }),
         },
         signal: controller.signal,
+        cache: 'no-store',  // Never cache API proxy responses — always hit backend
       })
 
       clearTimeout(timeoutId)
