@@ -217,6 +217,8 @@ export async function POST(request: NextRequest) {
         'Als u dit niet heeft aangevraagd, kunt u deze e-mail negeren.',
         `Lukt het niet? Neem contact op met ons supportteam: contact@${origin.replace(/^https?:\/\//, '')}`,
       ].join('\n'),
+      // Auth links must NEVER be wrapped by click tracking — breaks token_hash
+      tracking: { click: false, open: false },
     })
   } catch (err) {
     console.error('[MagicLink] Resend error:', err instanceof Error ? err.message : 'Unknown error')

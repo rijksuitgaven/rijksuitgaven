@@ -254,6 +254,8 @@ export async function POST(
       '',
       activationLink,
     ].join('\n'),
+    // Auth links must NEVER be wrapped by click tracking — breaks token_hash
+    tracking: { click: false, open: false },
   })
 
   if (sendError) {
