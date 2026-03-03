@@ -752,18 +752,24 @@ async def _typesense_get_primary_keys_with_highlights(
 
         data = await _typesense_search(collection, params)
 
-        # Extract primary values from hits, filtering by word boundary match
+        # Extract primary values from hits
         for hit in data.get("hits", []):
             doc = hit.get("document", {})
             value = doc.get(primary_field)
             if value and value not in seen:
                 # Get the field value that was searched
                 field_value = doc.get(field)
-
-                # Only include if this field has a word boundary match
-                # (Typesense uses prefix matching, so "COA" matches "Coaching")
-                if not field_value or not is_word_boundary_match(search, str(field_value)):
+                if not field_value:
                     continue
+
+                # Primary field: trust Typesense prefix matching (Dutch compound
+                # words like "Slaapschepen" must match "slaap"). Word boundary
+                # \b rejects these because "slaap" isn't a whole word in "Slaapschepen".
+                # Secondary fields: keep word boundary filter to avoid false positives
+                # (e.g., "COA" matching "Coaching" in omschrijving text).
+                if field != primary_field:
+                    if not is_word_boundary_match(search, str(field_value)):
+                        continue
 
                 seen.add(value)
                 primary_keys.append(value)
@@ -777,8 +783,8 @@ async def _typesense_get_primary_keys_with_highlights(
                     break
 
     logger.info(
-        f"Typesense search '{search}' in {collection}: found {len(primary_keys)} unique {primary_field}s "
-        f"(word boundary filtered), {len(matched_info)} with non-primary field matches"
+        f"Typesense search '{search}' in {collection}: found {len(primary_keys)} unique {primary_field}s, "
+        f"{len(matched_info)} with non-primary field matches"
     )
 
     return primary_keys, matched_info
@@ -898,14 +904,13 @@ async def _typesense_search_recipient_keys(
         doc_id = doc.get("id")
         if not name or not doc_id:
             continue
-        # Word boundary filter to avoid prefix false positives
-        if not is_word_boundary_match(search, name):
-            continue
+        # Trust Typesense prefix matching for entity names (Dutch compound words
+        # like "Slaapschepen" must match "slaap"). No word boundary post-filter.
         keys.append(doc_id)
         if len(keys) >= limit:
             break
 
-    logger.info(f"Typesense recipients search '{search}': {len(keys)} matches (word boundary filtered)")
+    logger.info(f"Typesense recipients search '{search}': {len(keys)} matches")
     return keys
 
 
@@ -1104,20 +1109,21 @@ async def _get_from_aggregated_view(
     if search:
         # When searching: 3-tier relevance ranking
         # 1. Exact match on name → score 1
-        # 2. Name contains search term (word boundary) → score 2
+        # 2. Name contains search term (substring, case-insensitive) → score 2
+        #    Uses ILIKE for substring match instead of \y word boundary regex,
+        #    so Dutch compound words rank correctly ("slaap" in "Slaapschepen" = tier 2).
         # 3. Match only in other fields (Regeling, etc.) → score 3
-        # Parse search to strip quotes/wildcards for clean SQL patterns
         parsed_rel = parse_search_query(search)
         clean_search = parsed_rel.raw
-        search_pattern = rf"\y{re.escape(clean_search.lower())}\y"
+        ilike_search = clean_search.replace('%', r'\%').replace('_', r'\_')
         relevance_select = f""",
             CASE
                 WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
-                WHEN {primary} ~* ${param_idx + 1} THEN 2
+                WHEN {primary} ILIKE ${param_idx + 1} THEN 2
                 ELSE 3
             END AS relevance_score"""
         params.append(clean_search)
-        params.append(search_pattern)
+        params.append(f"%{ilike_search}%")
         param_idx += 2
         sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
     elif sort_by == "random":
@@ -1570,20 +1576,21 @@ async def _get_from_source_table(
     if search:
         # When searching: 3-tier relevance ranking
         # 1. Exact match on name → score 1
-        # 2. Name contains search term (word boundary) → score 2
+        # 2. Name contains search term (substring, case-insensitive) → score 2
+        #    Uses ILIKE for substring match instead of \y word boundary regex,
+        #    so Dutch compound words rank correctly ("slaap" in "Slaapschepen" = tier 2).
         # 3. Match only in other fields (Regeling, etc.) → score 3
-        # Parse search to strip quotes/wildcards for clean SQL patterns
         parsed_rel = parse_search_query(search)
         clean_search = parsed_rel.raw
-        search_pattern = rf"\y{re.escape(clean_search.lower())}\y"
+        ilike_search = clean_search.replace('%', r'\%').replace('_', r'\_')
         relevance_select = f""",
             CASE
                 WHEN UPPER({primary}) = UPPER(${param_idx}) THEN 1
-                WHEN {primary} ~* ${param_idx + 1} THEN 2
+                WHEN {primary} ILIKE ${param_idx + 1} THEN 2
                 ELSE 3
             END AS relevance_score"""
         params.append(clean_search)
-        params.append(search_pattern)
+        params.append(f"%{ilike_search}%")
         param_idx += 2
         sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
     elif sort_by == "random":
@@ -2007,20 +2014,21 @@ async def get_integraal_data(
     if search:
         # When searching: 3-tier relevance ranking
         # 1. Exact match on name → score 1
-        # 2. Name contains search term (word boundary) → score 2
+        # 2. Name contains search term (substring, case-insensitive) → score 2
+        #    Uses ILIKE for substring match instead of \y word boundary regex,
+        #    so Dutch compound words rank correctly ("slaap" in "Slaapschepen" = tier 2).
         # 3. Match only in other fields → score 3
-        # Parse search to strip quotes/wildcards for clean SQL patterns
         parsed_rel = parse_search_query(search)
         clean_search = parsed_rel.raw
-        search_pattern = rf"\y{re.escape(clean_search.lower())}\y"
+        ilike_search = clean_search.replace('%', r'\%').replace('_', r'\_')
         relevance_select = f""",
             CASE
                 WHEN UPPER(ontvanger) = UPPER(${param_idx}) THEN 1
-                WHEN ontvanger ~* ${param_idx + 1} THEN 2
+                WHEN ontvanger ILIKE ${param_idx + 1} THEN 2
                 ELSE 3
             END AS relevance_score"""
         params.append(clean_search)
-        params.append(search_pattern)
+        params.append(f"%{ilike_search}%")
         param_idx += 2
         sort_clause = "ORDER BY relevance_score ASC, totaal DESC"
     elif sort_by == "random":
