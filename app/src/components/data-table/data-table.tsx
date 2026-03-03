@@ -363,13 +363,11 @@ export function DataTable({
   // Update cache: add newly pinned rows, remove unpinned ones
   useEffect(() => {
     const pinnedIds = new Set(rowPinning.top ?? [])
-    // Add any pinned rows from current data to cache
     for (const row of data) {
       if (pinnedIds.has(row.primary_value)) {
         pinnedRowsCache.current.set(row.primary_value, row)
       }
     }
-    // Remove rows that are no longer pinned
     for (const key of pinnedRowsCache.current.keys()) {
       if (!pinnedIds.has(key)) {
         pinnedRowsCache.current.delete(key)
@@ -401,8 +399,10 @@ export function DataTable({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
-  // Clear pins when module changes
+  // Clear pins on module change — pins are a view-level tool, not persisted
+  // Cross-module comparison is a separate feature (V2.5 Vergelijkpagina)
   useEffect(() => {
+    pinnedRowsCache.current = new Map()
     setRowPinning({ top: [], bottom: [] })
   }, [moduleId])
 
@@ -936,11 +936,16 @@ export function DataTable({
       setExpanded(prev => {
         const next = typeof updater === 'function' ? updater(prev) : updater
         // UX-041: Notify parent of expanded row + grouping for URL state
+        // Find the NEWLY expanded row (in next but not prev), not just first key
         if (onExpandedChange) {
-          const expandedKeys = Object.entries(next as Record<string, boolean>).filter(([, v]) => v).map(([k]) => k)
-          if (expandedKeys.length > 0) {
-            const pv = expandedKeys[0]
-            onExpandedChange(pv, expandGroupingRef.current[pv] || null)
+          const prevKeys = new Set(Object.entries(prev as Record<string, boolean>).filter(([, v]) => v).map(([k]) => k))
+          const nextKeys = Object.entries(next as Record<string, boolean>).filter(([, v]) => v).map(([k]) => k)
+          const newlyExpanded = nextKeys.find(k => !prevKeys.has(k))
+          if (newlyExpanded) {
+            onExpandedChange(newlyExpanded, expandGroupingRef.current[newlyExpanded] || null)
+          } else if (nextKeys.length > 0) {
+            // No new key — might be a grouping change on existing expanded row
+            onExpandedChange(nextKeys[nextKeys.length - 1], expandGroupingRef.current[nextKeys[nextKeys.length - 1]] || null)
           } else {
             onExpandedChange(null)
           }
@@ -1179,7 +1184,7 @@ export function DataTable({
             ) : (
               <>
                 {/* Pinned rows (UX-039) — always visible at top */}
-                {table.getTopRows().filter(row => (rowPinning.top ?? []).includes(row.id)).map((row) => (
+                {(table.getTopRows() ?? []).filter(row => (rowPinning.top ?? []).includes(row.id)).map((row) => (
                   <Fragment key={row.id}>
                     <tr className={cn(
                       'group bg-blue-50/60 border-l-2 border-l-[var(--pink)] hover:bg-blue-50/80 transition-colors',

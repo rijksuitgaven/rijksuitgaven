@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-03-02
+**Last Updated:** 2026-03-03
 **Project Phase:** V2.0 Development
 **Current Sprint:** Week 10 — Pre-Launch Polish & M1.0 Launch Gate
 **Beta Status:** V0.9 live at beta.rijksuitgaven.nl (10 testers, launched 2026-02-21)
@@ -32,7 +32,7 @@
 | Search enhancements | ✅ Implemented (Feb 21) | Multi-word AND, exact phrase `"..."`, wildcard stripping |
 | /versiegeschiedenis page | ✅ Implemented (Feb 21) | Benefit-oriented changelog + V2.x roadmap |
 | Staffel popover fix | ✅ Fixed (Feb 21) | Shows all 14 staffels (0-13) |
-| UX-039/041 Vergelijk + URL State | ✅ Merged to main (Mar 2) | Pre-Merge Gate 6/6 passed. Branch deleted. Pin rows, URL state, sort desc, release banner. Ready to ship. |
+| UX-039/041 Vergelijk + URL State | ✅ Merged to main (Mar 3) | Pre-Merge Gate 6/6 passed. Branch deleted. Pin rows, URL state, sort desc, release banner. 3 bug fixes (cols URL, expand render, stale expand tracking). Ready to ship. |
 | Email Media Library | ✅ Live (both) | Sharp processing, DB tracking, media picker, media tab. Admin feature |
 | Email deliverability (SPF fix) | ✅ Done (DNS) | Replaced broken self-referencing SPF with correct Resend + ZXCS includes |
 | Campaign features (13) | ✅ Implemented (Feb 22) | 6 phases: webhook, pre-send, analytics, engagement, sequences, preferences |
@@ -80,6 +80,8 @@
 | Contact form Pipeline + Expertgroep | ✅ Live (Mar 2) | Pipeline selector on add form, Expertgroep source option, API accepts pipeline_stage |
 | Anomaly cell colors | ✅ Live (Mar 2) | Grey bg (was red), red/green trend tooltips on hover |
 | Social content pipeline | ✅ Built (Mar 2) | Zero-error pipeline: DB → extract_facts.py → facts/*.csv → generate_posts.py → posts/*.csv. 1,921 facts, 2,435 posts, 25 batches. verify.py for re-verification. |
+| Rule 7: Branch Discipline | ✅ Codified (Mar 3) | 7-day max branches, daily sync, 6-point Pre-Merge Gate, branch state table. In CLAUDE.md. |
+| V2.4 bug fixes (3) | ✅ Fixed (Mar 3) | URL cols pollution, setState-during-render on expand, stale expand tracking. |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
@@ -91,7 +93,10 @@
 
 ## Recent Work (Last 5)
 
-1. **Social Content Pipeline + Admin CRM + Anomaly UX** (2026-03-02)
+1. **V2.4 Merge + Branch Discipline + 3 Bug Fixes** (2026-03-03)
+   Merged UX-039/041 feature branch (5 weeks, 34 commits) via Pre-Merge Gate 6/6. Rule 7 codified. 3 fixes: URL cols pollution, setState-during-render, stale expand tracking. Vergelijkpagina added to V2.5.
+
+2. **Social Content Pipeline + Admin CRM + Anomaly UX** (2026-03-02)
    Zero-error social pipeline: 18 SQL queries → 1,921 DB-verified facts → 2,435 posts (25 batches). Replaced hand-typed approach (had €243M errors). Also: pipeline pill selector, Expertgroep Bron, anomaly cell bg red→grey, red/green trend tooltips.
 
 2. **Roadmap Redesign — Linear-Grade Initiative Stack** (2026-03-01)

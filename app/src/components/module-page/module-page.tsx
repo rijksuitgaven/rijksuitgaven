@@ -252,6 +252,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   // UX-041: Skip if URL already provided cols
   // Only runs on mount + module switch (not on every searchParams change — R-3 fix)
   const urlHadCols = useRef(!!searchParams.get('cols'))
+  const userChangedCols = useRef(!!searchParams.get('cols'))
   useEffect(() => {
     if (!urlHadCols.current) {
       const stored = getStoredColumns(moduleId)
@@ -328,6 +329,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     setUserHasSorted(false)
     setPage(1)
     expandedPrimaryRef.current = null
+    userChangedCols.current = !!searchParams.get('cols')
     // End current search session on module switch
     endCurrentSearch('module_switch')
   }, [moduleId, endCurrentSearch])
@@ -367,12 +369,15 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
       // Page — omit page=1
       if (page > 1) params.set('page', String(page))
 
-      // Columns — omit when equal to module defaults
-      const defaults = getDefaultColumns(moduleId)
-      const colsSorted = [...selectedColumns].sort()
-      const defaultsSorted = [...defaults].sort()
-      if (JSON.stringify(colsSorted) !== JSON.stringify(defaultsSorted)) {
-        params.set('cols', selectedColumns.join(','))
+      // Columns — only encode when user explicitly changed them or URL originally had them
+      // localStorage preferences alone should NOT pollute the URL
+      if (userChangedCols.current) {
+        const defaults = getDefaultColumns(moduleId)
+        const colsSorted = [...selectedColumns].sort()
+        const defaultsSorted = [...defaults].sort()
+        if (JSON.stringify(colsSorted) !== JSON.stringify(defaultsSorted)) {
+          params.set('cols', selectedColumns.join(','))
+        }
       }
 
       // Expanded row + grouping (read from ref to avoid re-render cycle)
@@ -598,23 +603,27 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     })
   }, [track, moduleId, filters.search])
 
-  // UX-041: Track expanded row + grouping for URL state (ref + immediate URL sync — no re-render)
+  // UX-041: Track expanded row + grouping for URL state (ref + deferred URL sync)
+  // setTimeout(0) defers router.replace out of TanStack's render cycle to avoid
+  // "Cannot update Router while rendering DataTable" React error
   const handleExpandedChange = useCallback((primaryValue: string | null, grouping?: string | null) => {
     expandedPrimaryRef.current = primaryValue
     expandGroupingRef.current = grouping ?? null
-    const url = new URL(window.location.href)
-    if (primaryValue) {
-      url.searchParams.set('expand', primaryValue)
-      if (grouping) {
-        url.searchParams.set('group', grouping)
+    setTimeout(() => {
+      const url = new URL(window.location.href)
+      if (primaryValue) {
+        url.searchParams.set('expand', primaryValue)
+        if (grouping) {
+          url.searchParams.set('group', grouping)
+        } else {
+          url.searchParams.delete('group')
+        }
       } else {
+        url.searchParams.delete('expand')
         url.searchParams.delete('group')
       }
-    } else {
-      url.searchParams.delete('expand')
-      url.searchParams.delete('group')
-    }
-    router.replace(url.pathname + url.search, { scroll: false })
+      router.replace(url.pathname + url.search, { scroll: false })
+    }, 0)
   }, [router])
 
   const handleNavigateToModule = useCallback((targetModule: string, recipient: string) => {
@@ -744,6 +753,7 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             moduleId={moduleId}
             selectedColumns={effectiveColumns}
             onColumnsChange={(cols) => {
+              userChangedCols.current = true
               setSelectedColumns(cols)
               track('column_change', moduleId, { columns: cols, search_id: activeSearchId.current || undefined })
             }}

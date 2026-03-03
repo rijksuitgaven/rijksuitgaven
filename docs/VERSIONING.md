@@ -2,7 +2,7 @@
 
 **Project:** Rijksuitgaven.nl
 **Created:** 2026-01-30
-**Updated:** 2026-02-28
+**Updated:** 2026-03-03
 **Status:** Active
 
 ---
@@ -112,15 +112,22 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 
 ### V2.4 - Vergelijk & URL State
 
-**Status:** 🔨 Testing (feature branch `feature/ux-039-041`)
+**Status:** ✅ Merged to main (3 maart 2026)
 
 - UX-039: Row pinning (pin up to 5 rows for side-by-side comparison, expand pinned rows, export selection)
 - UX-041: Full URL state restoration (sort, page, columns, expand, group, multiselect filters in URL)
 
-### V2.5 - Zoeken
+#### Patches
+
+| Patch | Date | Changes |
+|-------|------|---------|
+| V2.4.1 | 2026-03-03 | Fix: URL cols pollution from localStorage, setState-during-render on expand, expand URL tracking stale row, getTopRows safety check |
+
+### V2.5 - Zoeken & Vergelijken
 
 **Status:** 📋 Planned
 
+- Vergelijkpagina: dedicated `/vergelijk` page for cross-module comparison (add recipients from any module, side-by-side view)
 - UX-024: Type-ahead with recent searches (localStorage, reduced debounce, response caching)
 - Fuzzy/typo tolerance (Typesense `num_typos`)
 - Accurate multi-field match reporting ("Ook in" for multi-word searches)
