@@ -93,7 +93,7 @@
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
 | SEO optimization | ⏳ Pending | OG image, twitter cards, per-page metadata, structured data |
-| DNS switch | ⏳ Pending | rijksuitgaven.nl → Railway, update metadataBase, rollback plan |
+| DNS/CloudFlare switch | 📋 Planned (Mar 8-9) | 3-phase plan: CloudFlare NS setup, production domain swap (rijksuitgaven.nl → Railway), code changes (metadataBase, Supabase). Full DNS record inventory (40+ records). Retire nieuws subdomain, keep v100 archive. See `docs/plans/2026-03-04-dns-cloudflare-switch.md` |
 
 ---
 
