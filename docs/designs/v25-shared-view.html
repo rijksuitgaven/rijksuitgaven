@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gedeelde weergave — Rijksuitgaven.nl</title>
+  <meta property="og:title" content="Rijksuitgaven.nl — infrastructuur in Instrumenten">
+  <meta property="og:description" content="167 resultaten — Bekijk overheidsuitgaven van de Rijksoverheid">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       V2.5 SHARED VIEW — DESIGN PROTOTYPE
+       Aesthetic: Editorial data utility. Bloomberg meets NRC.
+       ============================================================ */
+
+    :root {
+      /* Brand */
+      --navy:        #1a2332;
+      --navy-mid:    #243044;
+      --navy-light:  #2d3a50;
+      --navy-subtle: #374562;
+      --pink:        #e8456b;
+      --pink-hover:  #d63a5e;
+      --pink-soft:   #fdf0f3;
+      --pink-border: #f5c6d0;
+
+      /* Surfaces */
+      --bg:          #f5f6f8;
+      --bg-card:     #ffffff;
+      --bg-table:    #ffffff;
+      --bg-hover:    #f8f9fb;
+      --bg-expanded: #fafbfc;
+      --bg-stripe:   #f9fafb;
+
+      /* Borders */
+      --border:      #e3e6eb;
+      --border-light:#eef0f3;
+
+      /* Text */
+      --text-primary:   #1a2332;
+      --text-secondary: #5a6474;
+      --text-tertiary:  #8a94a4;
+      --text-inverse:   #ffffff;
+
+      /* Data */
+      --amount:      #1a2332;
+      --trend-up:    #1a7f37;
+      --trend-down:  #cf222e;
+
+      /* Fonts */
+      --font-body:      'IBM Plex Sans', -apple-system, sans-serif;
+      --font-condensed: 'IBM Plex Sans Condensed', -apple-system, sans-serif;
+
+      /* Layout */
+      --max-width:   1280px;
+      --header-h:    56px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--text-primary);
+      background: var(--bg);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ============================================================
+       HEADER — Minimal, branded, conversion-focused
+       ============================================================ */
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--navy);
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .header-logo-mark {
+      width: 28px;
+      height: 28px;
+      background: var(--pink);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: white;
+      font-size: 14px;
+      font-family: var(--font-condensed);
+    }
+
+    .header-logo-text {
+      color: var(--text-inverse);
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-login {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-login:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .btn-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--pink);
+      color: #fff;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 7px 18px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-cta:hover {
+      background: var(--pink-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(232,69,107,0.3);
+    }
+
+    /* ============================================================
+       SHARE CONTEXT BAR — The "sealed document" indicator
+       ============================================================ */
+
+    .share-bar {
+      background: var(--navy);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0 24px;
+    }
+
+    .share-bar-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      gap: 16px;
+    }
+
+    .share-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .share-icon {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: rgba(232,69,107,0.12);
+      border: 1px solid rgba(232,69,107,0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .share-icon svg {
+      width: 16px;
+      height: 16px;
+      color: var(--pink);
+    }
+
+    .share-label {
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.9);
+      font-weight: 500;
+    }
+
+    .share-label strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .share-label .sep {
+      color: rgba(255,255,255,0.25);
+      margin: 0 6px;
+    }
+
+    .share-meta {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       CONVERSION STRIP — Persistent but not aggressive
+       ============================================================ */
+
+    .conversion-strip {
+      background: var(--pink-soft);
+      border-bottom: 1px solid var(--pink-border);
+      padding: 0 24px;
+    }
+
+    .conversion-strip-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      gap: 16px;
+    }
+
+    .conversion-text {
+      font-size: 13.5px;
+      color: var(--text-primary);
+    }
+
+    .conversion-text strong {
+      font-weight: 600;
+    }
+
+    .btn-conversion {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--pink);
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 5px;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .btn-conversion:hover {
+      background: var(--pink-hover);
+    }
+
+    .btn-conversion svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ============================================================
+       MAIN CONTENT AREA
+       ============================================================ */
+
+    .main {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 20px 24px 0;
+    }
+
+    /* ============================================================
+       FROZEN STATE — Search & filter chips
+       ============================================================ */
+
+    .state-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .state-label {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
+    .state-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-size: 13px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .state-chip .chip-key {
+      color: var(--text-tertiary);
+      font-weight: 400;
+      font-size: 12px;
+    }
+
+    .state-chip svg {
+      width: 12px;
+      height: 12px;
+      color: var(--text-tertiary);
+      flex-shrink: 0;
+    }
+
+    .state-chip--search {
+      background: var(--navy);
+      color: var(--text-inverse);
+      border-color: var(--navy);
+    }
+
+    .state-chip--search .chip-key {
+      color: rgba(255,255,255,0.5);
+    }
+
+    .state-chip--search svg {
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ============================================================
+       RESULTS HEADER
+       ============================================================ */
+
+    .results-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .results-count {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .results-count strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .results-sort {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    /* ============================================================
+       DATA TABLE — The core. Dense, scannable, authoritative.
+       ============================================================ */
+
+    .table-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 8px;
+      position: relative;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-condensed);
+      font-size: 13.5px;
+    }
+
+    .data-table thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .data-table thead th {
+      background: var(--bg);
+      border-bottom: 2px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .data-table thead th.col-amount {
+      text-align: right;
+    }
+
+    .data-table thead th.col-expand {
+      width: 40px;
+      padding: 10px 8px;
+    }
+
+    .data-table tbody tr {
+      transition: background 0.1s;
+    }
+
+    .data-table tbody tr:hover {
+      background: var(--bg-hover);
+    }
+
+    .data-table tbody tr:not(:last-child) td {
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .data-table tbody td {
+      padding: 11px 14px;
+      vertical-align: middle;
+    }
+
+    .data-table tbody td.col-expand {
+      padding: 11px 8px;
+      width: 40px;
+    }
+
+    .data-table tbody td.col-primary {
+      font-weight: 500;
+      color: var(--text-primary);
+      max-width: 300px;
+    }
+
+    .data-table tbody td.col-amount {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+      color: var(--amount);
+      white-space: nowrap;
+    }
+
+    .data-table tbody td.col-descriptor {
+      color: var(--text-secondary);
+      font-weight: 400;
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .data-table tbody td.col-total {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Expand button */
+    .expand-btn {
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      transition: all 0.15s;
+    }
+
+    .expand-btn:hover {
+      background: var(--bg);
+      color: var(--text-secondary);
+      border-color: var(--text-tertiary);
+    }
+
+    .expand-btn svg {
+      width: 14px;
+      height: 14px;
+      transition: transform 0.2s;
+    }
+
+    .expand-btn.expanded svg {
+      transform: rotate(90deg);
+    }
+
+    /* Trend indicators */
+    .trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 500;
+      margin-left: 6px;
+    }
+
+    .trend--up { color: var(--trend-up); }
+    .trend--down { color: var(--trend-down); }
+
+    .trend svg {
+      width: 10px;
+      height: 10px;
+    }
+
+    /* Expanded row detail */
+    .expanded-detail {
+      background: var(--bg-expanded);
+    }
+
+    .expanded-detail td {
+      padding: 0 !important;
+      border-bottom: 2px solid var(--border) !important;
+    }
+
+    .expanded-inner {
+      padding: 12px 14px 14px 54px;
+    }
+
+    .expanded-title {
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+    }
+
+    .expanded-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-condensed);
+      font-size: 12.5px;
+    }
+
+    .expanded-table thead th {
+      text-align: left;
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border);
+      background: transparent;
+    }
+
+    .expanded-table thead th.col-amount {
+      text-align: right;
+    }
+
+    .expanded-table tbody td {
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-primary);
+    }
+
+    .expanded-table tbody td.col-amount {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+    }
+
+    .expanded-table tbody td.col-descriptor {
+      color: var(--text-secondary);
+    }
+
+    .expanded-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      min-width: 60px;
+    }
+
+    .expanded-bar-fill {
+      height: 100%;
+      background: var(--navy);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    /* ============================================================
+       FADE OVERLAY — The signature conversion moment
+       ============================================================ */
+
+    .table-fade {
+      position: relative;
+    }
+
+    .table-fade::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 180px;
+      background: linear-gradient(
+        to bottom,
+        rgba(245,246,248, 0) 0%,
+        rgba(245,246,248, 0.6) 40%,
+        rgba(245,246,248, 0.95) 70%,
+        rgba(245,246,248, 1) 100%
+      );
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* ============================================================
+       UPSELL SECTION — Compelling but not desperate
+       ============================================================ */
+
+    .upsell {
+      position: relative;
+      z-index: 10;
+      margin-top: -40px;
+      padding: 0 24px;
+    }
+
+    .upsell-card {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      box-shadow:
+        0 1px 3px rgba(26,35,50,0.04),
+        0 8px 24px rgba(26,35,50,0.06);
+    }
+
+    .upsell-remaining {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--navy);
+      color: var(--text-inverse);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+
+    .upsell-remaining svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0.6;
+    }
+
+    .upsell-heading {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .upsell-sub {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 480px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+    }
+
+    .upsell-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-upsell-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--pink);
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 12px 28px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-upsell-primary:hover {
+      background: var(--pink-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(232,69,107,0.25);
+    }
+
+    .btn-upsell-primary svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-upsell-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      transition: all 0.15s;
+    }
+
+    .btn-upsell-secondary:hover {
+      background: var(--bg);
+      color: var(--text-primary);
+      border-color: var(--text-tertiary);
+    }
+
+    .upsell-features {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .upsell-feature {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .upsell-feature svg {
+      width: 14px;
+      height: 14px;
+      color: var(--trend-up);
+    }
+
+    /* ============================================================
+       FOOTER — Minimal, branded
+       ============================================================ */
+
+    .footer {
+      margin-top: 48px;
+      padding: 24px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-text {
+      font-size: 12.5px;
+      color: var(--text-tertiary);
+    }
+
+    .footer-text a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    .footer-text a:hover {
+      color: var(--pink);
+    }
+
+    /* ============================================================
+       ROW NUMBER — Subtle left gutter
+       ============================================================ */
+
+    .row-num {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      font-variant-numeric: tabular-nums;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+
+    @media (max-width: 768px) {
+      .header { padding: 0 16px; }
+      .share-bar { padding: 0 16px; }
+      .conversion-strip { padding: 0 16px; }
+      .main { padding: 16px 16px 0; }
+      .upsell { padding: 0 16px; }
+
+      .share-bar-inner { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .share-meta { display: none; }
+
+      .conversion-strip-inner { flex-direction: column; gap: 8px; text-align: center; }
+
+      .data-table { font-size: 12.5px; }
+      .data-table thead th { padding: 8px 10px; }
+      .data-table tbody td { padding: 9px 10px; }
+
+      .col-y2022, .col-descriptor { display: none; }
+
+      .upsell-card { padding: 28px 20px; }
+      .upsell-heading { font-size: 19px; }
+      .upsell-features { gap: 16px; }
+
+      .expanded-inner { padding-left: 20px; }
+    }
+
+    /* ============================================================
+       ANIMATION — Subtle entrance
+       ============================================================ */
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-in {
+      animation: fadeUp 0.4s ease-out both;
+    }
+
+    .delay-1 { animation-delay: 0.05s; }
+    .delay-2 { animation-delay: 0.1s; }
+    .delay-3 { animation-delay: 0.15s; }
+    .delay-4 { animation-delay: 0.2s; }
+
+    /* ============================================================
+       INTERACTIVE — Row expand toggle
+       ============================================================ */
+
+    .expandable-row { cursor: pointer; }
+
+    .expanded-detail { display: none; }
+    .expanded-detail.show { display: table-row; }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       HEADER
+       ============================================================ -->
+  <header class="header">
+    <a href="/" class="header-logo">
+      <div class="header-logo-mark">R</div>
+      <span class="header-logo-text">Rijksuitgaven.nl</span>
+    </a>
+    <div class="header-actions">
+      <a href="/login" class="btn-login">Inloggen</a>
+      <a href="/#aanmelden" class="btn-cta">
+        Probeer gratis
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       SHARE CONTEXT BAR
+       ============================================================ -->
+  <div class="share-bar animate-in">
+    <div class="share-bar-inner">
+      <div class="share-bar-left">
+        <div class="share-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <span class="share-label">
+          <strong>Gedeelde weergave</strong>
+          <span class="sep">&middot;</span>
+          Instrumenten
+        </span>
+      </div>
+      <span class="share-meta">Gedeeld op 4 maart 2026</span>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       CONVERSION STRIP
+       ============================================================ -->
+  <div class="conversion-strip animate-in delay-1">
+    <div class="conversion-strip-inner">
+      <span class="conversion-text">
+        <strong>U bekijkt een gedeeld overzicht.</strong>
+        Wilt u zelf zoeken, filteren en exporteren?
+      </span>
+      <a href="/#aanmelden" class="btn-conversion">
+        Zoek zelf verder
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MAIN CONTENT
+       ============================================================ -->
+  <main class="main animate-in delay-2">
+
+    <!-- Frozen state chips -->
+    <div class="state-bar">
+      <span class="state-label">Weergave</span>
+      <span class="state-chip state-chip--search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span class="chip-key">Zoek:</span>
+        infrastructuur
+      </span>
+      <span class="state-chip">
+        <span class="chip-key">Jaar:</span>
+        2024
+      </span>
+      <span class="state-chip">
+        <span class="chip-key">Sorteer:</span>
+        Totaal &darr;
+      </span>
+    </div>
+
+    <!-- Results header -->
+    <div class="results-header">
+      <span class="results-count">
+        <strong>167</strong> resultaten &mdash; u ziet de eerste <strong>25</strong>
+      </span>
+    </div>
+
+    <!-- Data table with fade -->
+    <div class="table-fade">
+      <div class="table-wrap animate-in delay-3">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="col-expand"></th>
+              <th class="col-primary">Ontvanger</th>
+              <th class="col-descriptor">Regeling</th>
+              <th class="col-amount">2024</th>
+              <th class="col-amount col-y2022">2023</th>
+              <th class="col-amount col-total">Totaal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1 — expandable, pre-expanded -->
+            <tr class="expandable-row" onclick="toggleExpand(this)">
+              <td class="col-expand"><button class="expand-btn expanded" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">ProRail B.V.</td>
+              <td class="col-descriptor">Beheer, onderhoud en vervanging</td>
+              <td class="col-amount">&euro;1.247.000.000 <span class="trend trend--up"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m18 15-6-6-6 6"/></svg>4,9%</span></td>
+              <td class="col-amount col-y2022">&euro;1.189.000.000</td>
+              <td class="col-amount col-total">&euro;5.423.000.000</td>
+            </tr>
+            <!-- Expanded detail for row 1 -->
+            <tr class="expanded-detail show" id="detail-1">
+              <td colspan="6">
+                <div class="expanded-inner">
+                  <div class="expanded-title">Uitsplitsing per regeling</div>
+                  <table class="expanded-table">
+                    <thead>
+                      <tr>
+                        <th>Regeling</th>
+                        <th>Instrument</th>
+                        <th class="col-amount">2024</th>
+                        <th class="col-amount">Totaal</th>
+                        <th style="width:80px"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Beheer, onderhoud en vervanging</td>
+                        <td class="col-descriptor">Bijdrage</td>
+                        <td class="col-amount">&euro;874.200.000</td>
+                        <td class="col-amount">&euro;3.891.000.000</td>
+                        <td><div class="expanded-bar"><div class="expanded-bar-fill" style="width:72%"></div></div></td>
+                      </tr>
+                      <tr>
+                        <td>Aanleg spoorwegen</td>
+                        <td class="col-descriptor">Bijdrage</td>
+                        <td class="col-amount">&euro;298.400.000</td>
+                        <td class="col-amount">&euro;1.124.000.000</td>
+                        <td><div class="expanded-bar"><div class="expanded-bar-fill" style="width:21%"></div></div></td>
+                      </tr>
+                      <tr>
+                        <td>Geluidsmaatregelen spoor</td>
+                        <td class="col-descriptor">Subsidie</td>
+                        <td class="col-amount">&euro;74.400.000</td>
+                        <td class="col-amount">&euro;408.000.000</td>
+                        <td><div class="expanded-bar"><div class="expanded-bar-fill" style="width:7%"></div></div></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr class="expandable-row" onclick="toggleExpand(this)">
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Rijkswaterstaat</td>
+              <td class="col-descriptor">Hoofdwegennet</td>
+              <td class="col-amount">&euro;982.400.000</td>
+              <td class="col-amount col-y2022">&euro;1.021.000.000</td>
+              <td class="col-amount col-total">&euro;4.891.000.000</td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr class="expandable-row" onclick="toggleExpand(this)">
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">NS Groep N.V.</td>
+              <td class="col-descriptor">Exploitatiebijdrage HSL</td>
+              <td class="col-amount">&euro;654.100.000 <span class="trend trend--down"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>8,2%</span></td>
+              <td class="col-amount col-y2022">&euro;712.300.000</td>
+              <td class="col-amount col-total">&euro;3.247.000.000</td>
+            </tr>
+
+            <!-- Row 4 -->
+            <tr class="expandable-row" onclick="toggleExpand(this)">
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Hoogheemraadschap van Delfland</td>
+              <td class="col-descriptor">Deltafonds waterveiligheid</td>
+              <td class="col-amount">&euro;412.800.000</td>
+              <td class="col-amount col-y2022">&euro;389.200.000</td>
+              <td class="col-amount col-total">&euro;1.892.000.000</td>
+            </tr>
+
+            <!-- Row 5 -->
+            <tr class="expandable-row" onclick="toggleExpand(this)">
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Waterschap Rivierenland</td>
+              <td class="col-descriptor">Hoogwaterbeschermingsprogramma</td>
+              <td class="col-amount">&euro;298.700.000</td>
+              <td class="col-amount col-y2022">&euro;276.100.000</td>
+              <td class="col-amount col-total">&euro;1.341.000.000</td>
+            </tr>
+
+            <!-- Row 6 -->
+            <tr>
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Stichting Deltares</td>
+              <td class="col-descriptor">Kennis- en innovatieprogramma</td>
+              <td class="col-amount">&euro;187.600.000</td>
+              <td class="col-amount col-y2022">&euro;179.400.000</td>
+              <td class="col-amount col-total">&euro;892.000.000</td>
+            </tr>
+
+            <!-- Row 7 -->
+            <tr>
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Havenbedrijf Rotterdam N.V.</td>
+              <td class="col-descriptor">Bereikbaarheid Mainport</td>
+              <td class="col-amount">&euro;156.200.000 <span class="trend trend--up"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m18 15-6-6-6 6"/></svg>12%</span></td>
+              <td class="col-amount col-y2022">&euro;139.500.000</td>
+              <td class="col-amount col-total">&euro;724.000.000</td>
+            </tr>
+
+            <!-- Row 8 -->
+            <tr>
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Schiphol Nederland B.V.</td>
+              <td class="col-descriptor">Luchtvaartveiligheid</td>
+              <td class="col-amount">&euro;134.900.000</td>
+              <td class="col-amount col-y2022">&euro;142.100.000</td>
+              <td class="col-amount col-total">&euro;651.000.000</td>
+            </tr>
+
+            <!-- Row 9 -->
+            <tr>
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Gemeente Rotterdam</td>
+              <td class="col-descriptor">Stedelijke bereikbaarheid</td>
+              <td class="col-amount">&euro;112.400.000</td>
+              <td class="col-amount col-y2022">&euro;98.700.000</td>
+              <td class="col-amount col-total">&euro;487.000.000</td>
+            </tr>
+
+            <!-- Row 10 -->
+            <tr>
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Gemeente Amsterdam</td>
+              <td class="col-descriptor">Vervoersnetwerk OV</td>
+              <td class="col-amount">&euro;98.200.000</td>
+              <td class="col-amount col-y2022">&euro;94.600.000</td>
+              <td class="col-amount col-total">&euro;423.000.000</td>
+            </tr>
+
+            <!-- Row 11 -->
+            <tr>
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Gemeente Den Haag</td>
+              <td class="col-descriptor">Netwerk Randstad</td>
+              <td class="col-amount">&euro;87.600.000</td>
+              <td class="col-amount col-y2022">&euro;82.400.000</td>
+              <td class="col-amount col-total">&euro;389.000.000</td>
+            </tr>
+
+            <!-- Row 12 -->
+            <tr>
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Waterschap Zuiderzeeland</td>
+              <td class="col-descriptor">Dijkversterkingsprogramma</td>
+              <td class="col-amount">&euro;76.300.000</td>
+              <td class="col-amount col-y2022">&euro;71.200.000</td>
+              <td class="col-amount col-total">&euro;342.000.000</td>
+            </tr>
+
+            <!-- Row 13 -->
+            <tr>
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">TNO</td>
+              <td class="col-descriptor">Innovatieprogramma duurzaamheid</td>
+              <td class="col-amount">&euro;68.400.000</td>
+              <td class="col-amount col-y2022">&euro;64.800.000</td>
+              <td class="col-amount col-total">&euro;298.000.000</td>
+            </tr>
+
+            <!-- Row 14 -->
+            <tr>
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Vitens N.V.</td>
+              <td class="col-descriptor">Drinkwaterinfrastructuur</td>
+              <td class="col-amount">&euro;54.200.000</td>
+              <td class="col-amount col-y2022">&euro;48.900.000</td>
+              <td class="col-amount col-total">&euro;231.000.000</td>
+            </tr>
+
+            <!-- Row 15 — starts fading -->
+            <tr>
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Connexxion Openbaar Vervoer</td>
+              <td class="col-descriptor">Exploitatie regionaal OV</td>
+              <td class="col-amount">&euro;47.800.000</td>
+              <td class="col-amount col-y2022">&euro;45.100.000</td>
+              <td class="col-amount col-total">&euro;198.000.000</td>
+            </tr>
+
+            <!-- Row 16 -->
+            <tr>
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Port of Amsterdam N.V.</td>
+              <td class="col-descriptor">Haveninfrastructuur</td>
+              <td class="col-amount">&euro;42.100.000</td>
+              <td class="col-amount col-y2022">&euro;39.800.000</td>
+              <td class="col-amount col-total">&euro;176.000.000</td>
+            </tr>
+
+            <!-- Row 17 -->
+            <tr>
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Witteveen+Bos Raadgevende Ingenieurs</td>
+              <td class="col-descriptor">Waterkwaliteitsbeheer</td>
+              <td class="col-amount">&euro;38.900.000</td>
+              <td class="col-amount col-y2022">&euro;36.200.000</td>
+              <td class="col-amount col-total">&euro;164.000.000</td>
+            </tr>
+
+            <!-- Row 18 -->
+            <tr>
+              <td class="col-expand"><button class="expand-btn" aria-label="Details"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></td>
+              <td class="col-primary">Gemeente Utrecht</td>
+              <td class="col-descriptor">Fietsinfrastructuur</td>
+              <td class="col-amount">&euro;34.600.000</td>
+              <td class="col-amount col-y2022">&euro;31.200.000</td>
+              <td class="col-amount col-total">&euro;142.000.000</td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div><!-- /table-wrap -->
+    </div><!-- /table-fade -->
+
+  </main>
+
+  <!-- ============================================================
+       UPSELL SECTION
+       ============================================================ -->
+  <section class="upsell animate-in delay-4">
+    <div class="upsell-card">
+      <div class="upsell-remaining">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        Nog 142 resultaten niet zichtbaar
+      </div>
+      <h2 class="upsell-heading">Zoek zelf verder in alle overheidsuitgaven</h2>
+      <p class="upsell-sub">
+        Doorzoek &euro;1,75 biljoen aan rijksuitgaven. Filter, sorteer, exporteer en vergelijk ontvangers uit 6 databronnen.
+      </p>
+      <div class="upsell-actions">
+        <a href="/#aanmelden" class="btn-upsell-primary">
+          Vraag een proefaccount aan
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <a href="/login" class="btn-upsell-secondary">
+          Al een account? Inloggen
+        </a>
+      </div>
+      <div class="upsell-features">
+        <span class="upsell-feature">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Zoeken in &lt;100ms
+        </span>
+        <span class="upsell-feature">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          CSV &amp; Excel export
+        </span>
+        <span class="upsell-feature">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          6 databronnen
+        </span>
+        <span class="upsell-feature">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Geavanceerde filters
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="footer">
+    <p class="footer-text">
+      &copy; 2026 <a href="/">Rijksuitgaven.nl</a> &middot;
+      <a href="/privacybeleid">Privacybeleid</a> &middot;
+      <a href="/voorwaarden">Voorwaarden</a>
+    </p>
+  </footer>
+
+  <!-- ============================================================
+       INTERACTIVE — Row expand toggle (prototype only)
+       ============================================================ -->
+  <script>
+    function toggleExpand(row) {
+      const btn = row.querySelector('.expand-btn');
+      const detail = row.nextElementSibling;
+      if (detail && detail.classList.contains('expanded-detail')) {
+        detail.classList.toggle('show');
+        btn.classList.toggle('expanded');
+      }
+    }
+  </script>
+
+</body>
+</html>

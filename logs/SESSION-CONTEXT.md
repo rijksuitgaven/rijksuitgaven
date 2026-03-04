@@ -88,6 +88,7 @@
 | Compound word search "slaap" fix | ✅ Fixed (Mar 3) | 4-commit fix: word boundary, LOWER() WHERE, force-dynamic, no-store cache. V2.4.2 |
 | Browser cache prevention (no-store) | ✅ Fixed (Mar 3) | Cache-Control no-store on BFF + all client-side fetches. Prevents stale API responses. |
 | Resend click tracking on auth emails | ✅ Fixed (Mar 3) | Dashboard disabled + code-level tracking: false on magic-link + invite routes |
+| V2.5 Publieke Deellinks | 📋 Planned (Mar 4) | Architecture complete: DB-backed tokens (`/s/{token}`), 25-row read-only shared view, BFF-mediated, conversion CTAs, 5-min cache. Design prototype at `docs/designs/v25-shared-view.html`. Migration 075 planned. 10 files to create/modify. Implementation next session. |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
@@ -98,8 +99,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Social Pipeline Upgrade: Templates + Verification** (2026-03-04)
-   Template updates: "betaalde" replaces "keerde uit" (gemeente), "voor" replaces "via" (provincie), 4 new templates (10a, 13a, 26a, COA 27-31 with jaar). Added `jaar` to COA and inkoop fact extraction. Built field-level verification system: every template variable verified against source, "[Checked & Verified]" stamp per field. 18-column CSV output. 500 posts, 2502/2502 fields verified.
+1. **V2.5 Planning + Social Pipeline Upgrade** (2026-03-04)
+   Session 1: Social pipeline — template updates (4 new/changed), jaar added to COA/inkoop extraction, field-level verification system (2502/2502 verified). Session 2: V2.5 Publieke Deellinks — version reshuffle (V2.5=Deellinks only, V2.6-V2.9 shifted), comprehensive architecture planning with 6-person virtual team, design prototype. Key decisions: DB-backed `/s/{token}` (12-char, permanent), 25-row read-only shared view, BFF-mediated (no backend changes), conversion touchpoints, 5-min cache for viral scenarios.
 
 2. **V2.4 Live + UX-043/044 + Social Pipeline + Security Audit + Slaap Bug** (2026-03-03)
    Session 1-2: V2.4 merge + Rule 7 + 3 bug fixes + 147 commits pushed. Session 3: UX-043 person picker. Session 4: UX-044 uitgeschreven filter. Session 5-6: Social pipeline rewrite + template curation (48→32) + contextual hashtags (replace #Rijksuitgaven with #Subsidies/#Defensie/etc.) + 50-char max fields. 500 posts in buffer-ready.csv. Session 7: Comprehensive security audit — 15 findings fixed (CSRF, CSP, rate limiting, dependency CVEs, Railway private networking, RLS audit). Session 8: 4-commit fix for "slaap" compound word search in publiek (word boundary, LOWER() WHERE, force-dynamic routes, no-store cache headers). Browser cache prevention on all API endpoints.
