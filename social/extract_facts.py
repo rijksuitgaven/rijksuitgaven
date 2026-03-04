@@ -6,11 +6,11 @@ Pipeline: source tables -> facts/*.csv -> generate_posts.py -> posts/
 Extracts 7 CSVs, one per module/type:
   1. instrumenten_rows.csv  — (ontvanger, jaar, bedrag, descriptor, type)
   2. apparaat_rows.csv      — (begrotingsnaam, kostensoort, jaar, bedrag)
-  3. inkoop_rows.csv        — (leverancier, staffel, categorie)
+  3. inkoop_rows.csv        — (leverancier, staffel, categorie, jaar)
   4. provincie_rows.csv     — (ontvanger, jaar, bedrag, descriptor, provincie)
   5. gemeente_rows.csv      — (ontvanger, jaar, bedrag, descriptor, gemeente)
   6. publiek_rows.csv       — (ontvanger, jaar, bedrag, descriptor, source)
-  7. coa_rows.csv           — (ontvanger, staffel, regeling)
+  7. coa_rows.csv           — (ontvanger, staffel, regeling, jaar)
 
 Usage:
     python3 social/extract_facts.py
@@ -140,23 +140,25 @@ def extract_apparaat(cur):
 
 
 def extract_inkoop(cur):
-    """Per (leverancier, staffel) from inkoop source table. Staffel >= 7."""
+    """Per (leverancier, staffel, jaar) from inkoop source table. Staffel >= 7."""
     cur.execute("""
         SELECT
             UPPER(LEFT(MIN(leverancier), 1)) || SUBSTRING(MIN(leverancier) FROM 2) AS leverancier,
             staffel,
-            MODE() WITHIN GROUP (ORDER BY categorie) AS categorie
+            MODE() WITHIN GROUP (ORDER BY categorie) AS categorie,
+            jaar
         FROM inkoop
         WHERE staffel >= 7
+            AND jaar BETWEEN 2022 AND 2024
             AND leverancier IS NOT NULL AND TRIM(leverancier) != ''
-        GROUP BY normalize_recipient(leverancier), staffel
+        GROUP BY normalize_recipient(leverancier), staffel, jaar
         ORDER BY staffel DESC, COUNT(*) DESC
         LIMIT 300
     """)
     rows = []
     for i, r in enumerate(cur.fetchall(), 1):
-        rows.append([f"INKOOP-{i:03d}", r[0], r[1], r[2] or ""])
-    headers = ["fact_id", "leverancier", "staffel", "categorie"]
+        rows.append([f"INKOOP-{i:03d}", r[0], r[1], r[2] or "", r[3]])
+    headers = ["fact_id", "leverancier", "staffel", "categorie", "jaar"]
     return "inkoop_rows.csv", headers, rows
 
 
@@ -237,24 +239,26 @@ def extract_publiek(cur):
 
 
 def extract_coa(cur):
-    """COA recipients with high staffel (>= 7). Staffel-based, no exact amounts."""
+    """COA recipients with high staffel (>= 7), per year."""
     cur.execute("""
         SELECT
             UPPER(LEFT(MIN(ontvanger), 1)) || SUBSTRING(MIN(ontvanger) FROM 2) AS ontvanger,
             MODE() WITHIN GROUP (ORDER BY staffel::integer) AS staffel,
-            MODE() WITHIN GROUP (ORDER BY regeling) AS regeling
+            MODE() WITHIN GROUP (ORDER BY regeling) AS regeling,
+            jaar
         FROM publiek
         WHERE source = 'COA'
+            AND jaar BETWEEN 2022 AND 2024
             AND staffel ~ '^\\d+$'
             AND staffel::integer >= 7
-        GROUP BY normalize_recipient(ontvanger)
+        GROUP BY normalize_recipient(ontvanger), jaar
         ORDER BY MODE() WITHIN GROUP (ORDER BY staffel::integer) DESC, COUNT(*) DESC
         LIMIT 200
     """)
     rows = []
     for i, r in enumerate(cur.fetchall(), 1):
-        rows.append([f"COA-{i:03d}", r[0], r[1], r[2] or ""])
-    headers = ["fact_id", "ontvanger", "staffel", "regeling"]
+        rows.append([f"COA-{i:03d}", r[0], r[1], r[2] or "", r[3]])
+    headers = ["fact_id", "ontvanger", "staffel", "regeling", "jaar"]
     return "coa_rows.csv", headers, rows
 
 

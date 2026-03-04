@@ -1,7 +1,7 @@
 # Social Content Strategy — Rijksuitgaven.nl
 
 **Created:** 2026-03-02
-**Updated:** 2026-03-03
+**Updated:** 2026-03-03 (templates curated, hashtags contextual, factual accuracy verified)
 **Status:** ✅ Implemented — pipeline generates 500 posts from source tables
 **Goal:** 500 factual, retweetable posts (3/day × ~6 months) across X, Bluesky, LinkedIn
 **Tool:** Buffer (manual CSV import)
@@ -12,9 +12,10 @@
 
 1. **Factual only** — every number must be directly verifiable from the source data
 2. **No editorializing** — state what IS, not what should be. The facts speak for themselves.
-3. **Staffel honesty** — inkoop and publiek use staffelbedragen (brackets). Never present midpoints as exact amounts. Use bracket boundaries or rankings instead.
-4. **Politically neutral** — sensitive topics (COA, defensie) are reported with the same factual tone as any other data point
-5. **"Doel door doen"** — the post's goal is to make people stop scrolling. The means is a surprising fact.
+3. **Staffel honesty** — inkoop and COA use staffelbedragen (brackets). Never present midpoints as exact amounts. Use bracket boundaries only.
+4. **No unverifiable claims** — never use words like "koopt", "inkoopcontracten", "leverancier", "levert aan". We only know money went from A to B. Use "ontving van" and "betaalde aan" only.
+5. **Politically neutral** — sensitive topics (COA, defensie) are reported with the same factual tone as any other data point
+6. **"Doel door doen"** — the post's goal is to make people stop scrolling. The means is a surprising fact.
 
 ---
 
@@ -26,8 +27,8 @@
 | apparaat | Exact (×1000) | "€7.276.336.000" | — |
 | gemeente | Exact | "€182.126.005" | — |
 | provincie | Exact | "€499.435.571" | — |
-| inkoop | Staffel brackets | "contracten boven €150 miljoen" | "ontving €637 miljoen" |
-| publiek | Staffel brackets | "negen contracten boven €50 miljoen" | "ontving €1 miljard" |
+| inkoop | Staffel brackets | "bedragen boven €150 miljoen" | "ontving €637 miljoen", "inkoopcontracten", "koopt" |
+| publiek (COA) | Staffel brackets | "bedragen boven €50 miljoen" | "ontving €1 miljard", "contracten", "leverancier" |
 
 ### Staffel Brackets (Source: Rijksoverheid)
 
@@ -50,67 +51,12 @@
 
 ---
 
-## Post Formats (5 Types)
-
-### 1. Scale Shock
-One number that makes you stop scrolling.
-
-**Structure:** "[Bedrag/feit]. [Context dat het schokkend maakt]."
-
-**Example:**
-> TenneT Holding ontving €13.100.000.000 in 2024 als lening voor het stroomnet. Een jaar eerder: €1.602.000.000.
-
-**Works best with:** Exact modules (instrumenten, apparaat, gemeente, provincie). Large single-year amounts. Dramatic YoY changes.
-
-### 2. Comparison
-A vs B makes abstract numbers tangible.
-
-**Structure:** "[A]: [bedrag]. [B]: [bedrag]. [framing]."
-
-**Example:**
-> Amsterdam ontving €4.022.206.697 aan gemeente-uitkeringen. Den Haag: €2.167.675.501. Bijna de helft minder.
-
-**Works best with:** Gemeente vs gemeente. Provincie vs provincie. Ontvanger vs ontvanger. Year vs year.
-
-### 3. Concentration
-"Eén [entity]" creates curiosity about who and why.
-
-**Structure:** "Eén [type] [feit]. [context]."
-
-**Example (staffel):**
-> RMA Healthcare ontving negen contracten boven €50 miljoen van het COA. Waarvan één boven €150 miljoen. In zeven jaar tijd.
-
-**Works best with:** Top ontvangers. Dominant leveranciers. Unexpected recipients.
-
-### 4. Category Reveal
-Spending on unexpected categories.
-
-**Structure:** "[Categorie]: [feit]. De grootste [type]: [naam]."
-
-**Example (staffel):**
-> Shuttel B.V. had zeven jaar op rij inkoopcontracten tussen €25 en €50 miljoen bij het Rijk. Categorie: reis en verblijf.
-
-**Works best with:** Inkoop categories. Apparaat kostensoorten. Cross-module totals.
-
-### 5. Curiosity Question
-Open with a question, answer immediately.
-
-**Structure:** "[Vraag]? [Antwoord]."
-
-**Example:**
-> Hoeveel ontving de Openbare Bibliotheek Amsterdam van de gemeente? €182.126.005. Bijna evenveel als het Stedelijk Museum en de Nationale Opera samen.
-
-**Works best with:** Well-known organizations. Surprising comparisons. Counter-intuitive facts.
-
----
-
 ## Number Formatting
 
 | Context | Format | Example |
 |---------|--------|---------|
 | Exact amounts (exact modules) | Full with dots | €13.100.000.000 |
 | Staffel bracket boundaries | Rounded with "miljoen" | "boven €150 miljoen" |
-| Contract counts | Written out | "negen contracten" |
 | Year ranges | Digits | "2018–2024" |
 | Percentages | Not used | — (implies false precision on staffel data) |
 
@@ -118,10 +64,64 @@ Open with a question, answer immediately.
 
 ## Hashtag Convention
 
-- **Single hashtag only: #Rijksuitgaven** (brand recognition, no noise)
-- Appended after final period: "...voor '{descriptor}'. #Rijksuitgaven"
-- No topic, region, or entity hashtags (decision from Mar 3 Q&A round 2, Q25)
-- All posts optimized for X (50-280 chars including hashtag)
+- **Contextual hashtags** — 2-3 per post, derived from data fields (no brand hashtag)
+- Appended after final period: "...voor '{descriptor}'. #Tag1 #Tag2"
+- All posts optimized for X (50-280 chars including hashtags)
+
+### Hashtag Sources Per Module
+
+| Module | Tag 1 (topic) | Tag 2 (context) | Tag 3 (entity) |
+|--------|--------------|-----------------|-----------------|
+| instrumenten | #Subsidies | — | `make_entity_tag()` |
+| apparaat | #Overheidsuitgaven | ministry map | kostensoort map |
+| inkoop | #Overheidsuitgaven | category map | `make_entity_tag()` |
+| provincie | #Provincies | #ProvincieNaam | `make_entity_tag()` |
+| gemeente | #Gemeenten | #GemeenteNaam | `make_entity_tag()` |
+| publiek | #Subsidies | #Source (NWO/RVO/ZonMW) | `make_entity_tag()` |
+| coa | #COA | #Asielopvang | `make_entity_tag()` |
+
+### Ministry Map (apparaat)
+
+| Ministry | Tag |
+|----------|-----|
+| Defensie | #Defensie |
+| Justitie en Veiligheid | #JenV |
+| Binnenlandse Zaken | #BZK |
+| Buitenlandse Zaken | #BuZa |
+| Financiën | #Financien |
+| Infrastructuur en Waterstaat | #IenW |
+| Onderwijs, Cultuur en Wetenschap | #OCW |
+| Sociale Zaken en Werkgelegenheid | #SZW |
+| Volksgezondheid, Welzijn en Sport | #VWS |
+| Economische Zaken en Klimaat | #EZK |
+| Landbouw, Natuur en Voedselkwaliteit | #LNV |
+| Algemene Zaken | #AZ |
+| Koninkrijksrelaties en Digitalisering | #KenD |
+
+### Category Map (inkoop)
+
+Only mapped categories get a hashtag — unknown categories are skipped:
+
+| Category | Tag |
+|----------|-----|
+| automatisering / ict | #ICT |
+| advies | #Advies |
+| personeel | #Personeel |
+| huisvesting | #Huisvesting |
+| reis en verblijf | #Reiskosten |
+| vervoer | #Vervoer |
+| inhuur | #Inhuur |
+| beveiliging | #Beveiliging |
+| communicatie | #Communicatie |
+| facilitair | #Facilitair |
+| juridisch | #Juridisch |
+
+### Entity Tag Rules
+
+- Strip B.V./N.V. suffixes
+- Strip Stichting/Gemeente/Provincie/Ministerie/Koninklijke prefixes
+- Only if 1-2 words remain, max 25 chars
+- Invalid characters stripped: `re.sub(r'[^#\w]', '', tag)`
 
 ---
 
@@ -129,13 +129,13 @@ Open with a question, answer immediately.
 
 | Module | Template Set | ~Posts | Key Fields |
 |--------|-------------|-------|------------|
-| instrumenten | Standard (14) + Extra (6) | ~100 | ontvanger, jaar, bedrag, descriptor, type |
-| apparaat | Apparaat (8) | ~50 | begrotingsnaam, kostensoort, jaar, bedrag |
-| inkoop | Staffel (6) | ~80 | leverancier, staffel bracket, categorie |
-| provincie | Standard (14) + Extra (4) | ~60 | ontvanger, jaar, bedrag, descriptor, provincie |
-| gemeente | Standard (14) + Extra (4) | ~80 | ontvanger, jaar, bedrag, descriptor, gemeente |
-| publiek | Standard (14) + Extra (4) | ~60 | ontvanger, jaar, bedrag, descriptor, source |
-| coa | COA Staffel (6) | ~70 | ontvanger, staffel bracket, regeling |
+| instrumenten | Standard (5) + Extra (2) | ~74 | ontvanger, jaar, bedrag, descriptor, type |
+| apparaat | Apparaat (6) | ~74 | begrotingsnaam, kostensoort, jaar, bedrag |
+| inkoop | Inkoop (3) | ~74 | leverancier, staffel bracket, categorie |
+| provincie | Standard (5) + Extra (3) | ~57 | ontvanger, jaar, bedrag, descriptor, provincie |
+| gemeente | Standard (5) + Extra (3) | ~74 | ontvanger, jaar, bedrag, descriptor, gemeente |
+| publiek | Standard (5) + Extra (4) | ~74 | ontvanger, jaar, bedrag, descriptor, source |
+| coa | COA (5) | ~74 | ontvanger, staffel bracket, regeling |
 
 **Selection:** Round-robin across modules, max 3 posts per recipient entity, shuffled output.
 
@@ -149,7 +149,7 @@ Open with a question, answer immediately.
 | Bluesky | 300 chars | Same content as X |
 | LinkedIn | 3000 chars | Same content — no need for longer version |
 
-All posts are written to fit X (280 chars). Same post goes to all three platforms via Buffer.
+All posts are written to fit X (280 chars incl. hashtags). Same post goes to all three platforms via Buffer.
 
 ---
 
@@ -157,11 +157,13 @@ All posts are written to fit X (280 chars). Same post goes to all three platform
 
 - [ ] Every number directly verifiable from source data
 - [ ] Staffel modules: bracket language only, no midpoint amounts
+- [ ] No unverifiable claims (no "koopt", "contracten", "leverancier", "levert")
 - [ ] No editorializing or opinion
-- [ ] Under 280 characters (excl. hashtags)
-- [ ] 3–5 relevant hashtags
+- [ ] Under 280 characters (including hashtags)
+- [ ] 2-3 contextual hashtags
 - [ ] Not politically suggestive in framing
 - [ ] Module source identifiable
+- [ ] All text fields ≤ 50 characters (skip if longer)
 
 ---
 
@@ -199,7 +201,7 @@ social/
 
 | Column | Description | Example |
 |--------|-------------|---------|
-| `text` | Full post text including #Rijksuitgaven | In 2023 ontving ProRail €1.234.567 via 'Spoorinfrastructuur'. #Rijksuitgaven |
+| `text` | Full post text including hashtags | In 2024 ontving Provincie Drenthe €203.179.000 via 'Algemene uitkering'. #Subsidies #Drenthe |
 | `module` | Source module | instrumenten / apparaat / inkoop / provincie / gemeente / publiek / coa |
 | `entity` | Primary entity in the post | ProRail |
 | `jaar` | Year referenced (empty for staffel) | 2023 |
@@ -227,65 +229,97 @@ Buffer accepts CSV with a `text` column. Extra columns are for internal tracking
 |--------|---------|---------|
 | Entity blocklist | Remove generic/anonymous entities | "Niet toegewezen", "Anoniem", "Particulier" |
 | Tautology check | Remove entity↔context overlap | Gelderland → Stichting Erfgoed Gelderland |
-| English title filter | Remove research titles (ZonMW/NWO) | "A cholestatic itch mouse model..." |
+| English title filter | Remove research titles (20 marker words) | "A cholestatic itch mouse model..." |
 | Address filter | Remove street addresses as descriptors | "A.J. Ernststraat 195" |
 | Budget code stripping | Clean hierarchical prefixes | "1 Ruimtelijke Ontwikkeling - 2.11 ..." → meaningful part |
 | Numeric group filter | Remove aggregated anonymous groups | "1542 natuurlijke personen" |
+| Truncated entity filter | Remove entities cut mid-word in source | ending with `-` or `…` |
+| Field length limit | Skip all text fields > 50 chars | descriptor, entity, kostensoort, begrotingsnaam, categorie, regeling |
 | Max per recipient | Prevent entity dominance | Max 3 posts per entity |
 
 ---
 
-## Template Sets (Implemented)
+## Template Sets (31 templates — curated Mar 3)
 
-### Set 1: Standard Templates (14 universal + module-specific extras)
+### Set 1: Standard Templates (5 universal)
 
-Universal (work for all modules with bedrag):
+Used by instrumenten, provincie, gemeente, publiek:
 ```
-Dankzij '{descriptor}' kreeg {ontvanger} in {jaar} {bedrag}.
 In {jaar} ontving {ontvanger} {bedrag} via '{descriptor}'.
 {bedrag} werd in {jaar} toegekend aan {ontvanger} onder '{descriptor}'.
 Met '{descriptor}' werd in {jaar} {bedrag} verstrekt aan {ontvanger}.
-Via '{descriptor}' ging in {jaar} {bedrag} naar {ontvanger}.
 In {jaar} kwam {bedrag} terecht bij {ontvanger} dankzij '{descriptor}'.
-Voor {ontvanger} betekende {jaar}: {bedrag} via '{descriptor}'.
-Resultaat van '{descriptor}': {ontvanger} ontving in {jaar} {bedrag}.
-Wist u dat {ontvanger} in {jaar} {bedrag} ontving via '{descriptor}'?
-Kort: {ontvanger} kreeg in {jaar} {bedrag} onder '{descriptor}'.
-{bedrag} in {jaar}: dat is wat {ontvanger} ontving via '{descriptor}'.
 Met behulp van '{descriptor}' ontving {ontvanger} in {jaar} {bedrag}.
-Voor '{descriptor}' werd in {jaar} {bedrag} toegekend aan {ontvanger}.
-Samengevat: {ontvanger} kreeg in {jaar} {bedrag} via '{descriptor}'.
 ```
 
-Instrumenten extras (6): adds {type} field (bijdrage, lening, etc.)
-Provincie extras (4): adds {provincie} context
-Gemeente extras (4): adds {gemeente} context
-Publiek extras (4): adds {source} context (NWO, RVO, ZonMW)
+### Instrumenten extras (2) — adds {type} field
+```
+Onder '{descriptor}' kreeg {ontvanger} in {jaar} een {type} van {bedrag}.
+In {jaar} werd {ontvanger} ondersteund met {bedrag} vanuit '{descriptor}'.
+```
 
-### Set 2: Apparaat Templates (8)
+### Provincie extras (3) — adds {provincie} context
+```
+De provincie {provincie} keerde in {jaar} {bedrag} uit aan {ontvanger} voor '{descriptor}'.
+In {jaar} ontving {ontvanger} {bedrag} van de provincie {provincie} via '{descriptor}'.
+De provincie {provincie} betaalde in {jaar} {bedrag} aan {ontvanger} onder '{descriptor}'.
+```
+
+### Gemeente extras (3) — adds {gemeente} context
+```
+De gemeente {gemeente} keerde in {jaar} {bedrag} uit aan {ontvanger} voor '{descriptor}'.
+In {jaar} ontving {ontvanger} {bedrag} van de gemeente {gemeente} via '{descriptor}'.
+Vanuit de gemeente {gemeente} ging in {jaar} {bedrag} naar {ontvanger} voor '{descriptor}'.
+```
+
+### Publiek extras (4) — adds {source} context (NWO, RVO, ZonMW)
+```
+Via {source} ontving {ontvanger} in {jaar} {bedrag} voor '{descriptor}'.
+{source} keerde in {jaar} {bedrag} uit aan {ontvanger} voor '{descriptor}'.
+In {jaar} ontving {ontvanger} {bedrag} van {source} via '{descriptor}'.
+Vanuit {source} ging in {jaar} {bedrag} naar {ontvanger} voor '{descriptor}'.
+```
+
+### Set 2: Apparaat Templates (6)
 
 Internal government cost framing — no "ontvanger ontving":
 ```
 In {jaar} gaf {begrotingsnaam} {bedrag} uit aan {kostensoort}.
-{bedrag} in {jaar}: zoveel besteedde {begrotingsnaam} aan {kostensoort}.
 De post '{kostensoort}' bij {begrotingsnaam} bedroeg in {jaar} {bedrag}.
-... (8 total)
+{begrotingsnaam} gaf in {jaar} {bedrag} uit aan {kostensoort}.
+In {jaar} was de kostenpost '{kostensoort}' bij {begrotingsnaam}: {bedrag}.
+Aan {kostensoort} besteedde {begrotingsnaam} in {jaar} {bedrag}.
+{begrotingsnaam} besteedde in {jaar} {bedrag} aan de post '{kostensoort}'.
 ```
 
-### Set 3: Staffel Templates (6 inkoop + 6 COA)
+### Set 3a: Inkoop Templates (3) — bracket-based, verifiable only
 
-Bracket-based — no exact amounts:
+Only "ontving van" and "betaalde aan" — no "koopt", "contracten", "leverancier":
 ```
-{leverancier} heeft inkoopcontracten {bracket} bij de Rijksoverheid voor '{categorie}'.
-Het Rijk koopt bij {leverancier} in de prijsklasse {bracket} voor '{categorie}'.
-Bij het COA heeft {ontvanger} contracten {bracket} voor de regeling '{regeling}'.
-... (12 total)
+{leverancier} ontving van de Rijksoverheid bedragen {bracket} voor '{categorie}'.
+De Rijksoverheid betaalde aan {leverancier} bedragen {bracket} ({categorie}).
+Aan {leverancier} betaalde de Rijksoverheid bedragen {bracket} voor '{categorie}'.
 ```
 
-## Sample Output Posts
+### Set 3b: COA Templates (5) — bracket-based, verifiable only
 
-1. Dankzij 'Bijdrage ZBO's/RWT's: Politie' kreeg de Nationale Politie in 2023 €7.276.336.000. #Rijksuitgaven
-2. In 2024 gaf Defensie €2.891.234.000 uit aan personeel. #Rijksuitgaven
-3. Accenture heeft inkoopcontracten boven €25 miljoen bij de Rijksoverheid voor 'automatisering'. #Rijksuitgaven
-4. Via RVO ontving Vattenfall in 2023 €12.456.789 voor 'SDE++ subsidie'. #Rijksuitgaven
-5. Bij het COA heeft RMA Healthcare contracten boven €150 miljoen voor de regeling 'opvang'. #Rijksuitgaven
+Only "ontving van" and "betaalde aan" — no "koopt", "contracten", "leverancier":
+```
+{ontvanger} ontving van het COA bedragen {bracket} voor de regeling '{regeling}'.
+Het COA betaalde aan {ontvanger} bedragen {bracket}, regeling: {regeling}.
+Aan {ontvanger} betaalde het COA bedragen {bracket} voor '{regeling}'.
+Van het COA ontving {ontvanger} bedragen {bracket}. Regeling: {regeling}.
+{ontvanger} ontving van het COA bedragen {bracket}.
+```
+
+---
+
+## Sample Output Posts (from current buffer-ready.csv)
+
+1. Onderwijs, Cultuur en Wetenschap gaf in 2022 €28.199.000 uit aan pensioenpremies. #Overheidsuitgaven #OCW
+2. Aan FABK Defensie betaalde het COA bedragen boven €1 miljoen voor 'Overige huurkosten huisvesting'. #COA #Asielopvang #FabkDefensie
+3. In 2024 ontving Stichting Voortgezet Onderwijs Haaglanden €3.029.513 van de gemeente Den Haag via '430.I Onderwijsbeleid'. #Gemeenten #DenHaag
+4. Plegt-Vos Bouwgroep B.V. ontving van de Rijksoverheid bedragen boven €25 miljoen voor 'gebruik en onderhoud gebouw en terreinen'. #Overheidsuitgaven #PlegtvosBouwgroep
+5. In 2024 ontving Provincie Drenthe €203.179.000 via 'Algemene uitkering'. #Subsidies #Drenthe
+6. De provincie Zeeland betaalde in 2023 €2.630.450 aan Zeeuws Museum onder 'Integrale kostensubs. 2023 Zeeuws Museum'. #Provincies #Zeeland #ZeeuwsMuseum
+7. Via ZonMW ontving Gemeente Dordrecht in 2023 €450.896 voor 'MDT Missie Nationale Sportweek'. #Subsidies #ZonMW #Dordrecht

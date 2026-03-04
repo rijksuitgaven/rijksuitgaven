@@ -1,201 +1,201 @@
-fact_id,ontvanger,staffel,regeling
-COA-001,RMA Healthcare,11,Medische dienstverl.
-COA-002,Slaapschepen Catering B.V.,11,Voeding
-COA-003,Start People B.V.,10,Uitzendbureaus
-COA-004,Trigion Beveiliging B.V.,10,Beveiligingsdiensten
-COA-005,Belastingdienst Apeldoorn,10,Belastingen
-COA-006,Trigion Beveiliging,10,Beveiligingsdiensten
-COA-007,PGGM,9,Geen inkoop
-COA-008,Hegeman Bouw Vriezenveen B.V.,9,Bouwkundig onderhd
-COA-009,Directoraat-Generaal Vreemdeli,9,Subsidierel ketenpar
-COA-010,Gemeente Rotterdam,9,Overige exploitatiekosten
-COA-011,Veiligheidsregio Noord-Holland,9,Vergoeding gemeenten LOCC
-COA-012,Veiligheidsregio Fryslän,9,Vergoeding gemeenten LOCC
-COA-013,Veiligheidsregio Utrecht,9,Vergoeding gemeenten LOCC
-COA-014,Gemeente Haarlem,9,Vergoeding gemeenten LOCC
-COA-015,Veiligheidsregio Zuid-Limburg,9,Vergoeding gemeenten LOCC
-COA-016,GGDGHOR,9,Kosten PGA
-COA-017,Broekhoven B.V.,9,Vergoeding gemeenten LOCC
-COA-018,Gemeente Loon op Zand,9,Vergoeding gemeenten LOCC
-COA-019,Gemeente Den Haag,9,Vergoeding gemeenten LOCC
-COA-020,Veiligheidsregio Zaanstreek-Wa,9,Vergoeding gemeenten LOCC
-COA-021,Krans Notarissen,9,Aankoop permanente gebouwen
-COA-022,IT - Staffing Nederland B.V.,8,ICTdienstverlening
-COA-023,Hegeman VNO Bouw B.V.,8,Bouwkundig onderhd
-COA-024,SoftwareONE Netherlands B.V.,8,Overige adviezen derden
-COA-025,Duinrell Wassenaar,8,Huisvesting Huur
-COA-026,ENECO Zakelijk B.V.,8,E/G/W
-COA-027,Strijbosch B.V.,8,Witgoed & Bruingoed
-COA-028,HeadFirst BV,8,Externen (geen uitzendkrachten)
-COA-029,Livewords,8,Tolk- en vertaaldnst
-COA-030,GGD GHOR,8,Medische dienstverl.
-COA-031,Gr8 Hotels B.V.,8,Contracthuren AZC
-COA-032,Fletcher Hotel Restaurant Beek,8,Faciliteiten externe opvang
-COA-033,AT Anqor Ltd,8,Voeding
-COA-034,SPIE Worksphere B.V.,8,Bouwkundig onderhd
-COA-035,Gom Schoonhouden BV,8,Schoonmaakkosten
-COA-036,INLIA- Projecten,8,Contracthuren AZC
-COA-037,Gemeente Meierijstad,8,Vergoeding gemeenten LOCC
-COA-038,Gazprom Marketing & Trading Re,8,E/G/W
-COA-039,Veiligheidsregio Hollands Midd,8,Vergoeding gemeenten LOCC
-COA-040,Geveke Bouw,8,Bouwkundig onderhd
-COA-041,Gemeente Boxtel,8,Vergoeding gemeenten LOCC
-COA-042,CSU B.V.,8,Schoonmaakkosten
-COA-043,ROI Mixed Fleet AG,8,Huisvesting Huur
-COA-044,Notariskantoor Soons,8,Aankoop permanente gebouwen
-COA-045,Veiligheidsregio Brabant-Zuido,8,Vergoeding gemeenten LOCC
-COA-046,Veiligheidsregio Gelderland-Zu,8,Vergoeding gemeenten LOCC
-COA-047,Gemeente Culemborg,8,Vergoeding gemeenten LOCC
-COA-048,Bosruiter Vastgoed B.V.,8,Huisvesting Huur
-COA-049,Bouwcombinatie Ooijevaar K_De,8,Nieuwbouw
-COA-050,Gemeente Rucphen,8,Vergoeding gemeenten LOCC
-COA-051,Losberger De Boer Benelux B.V.,8,Huisvesting Huur
-COA-052,Loyens Loeft,8,Aankoop permanente gebouwen
-COA-053,Brummelhuis Notarissen,8,Afkoopsommen huurpanden
-COA-054,Van Wijnen Haarlemmermeer B.V.,8,Verbouwingen
-COA-055,Drost Juten Notarissen,8,Huisvesting
-COA-056,Hotel Ara B.V.,8,Contracthuren AZC
-COA-057,Global Talk Netherlands,8,Tolken en vertaaldiensten
-COA-058,Gemeente Dongen,8,Vergoeding gemeenten LOCC
-COA-059,Hak & Rein Vos Notarissen,8,Aankoop permanente gebouwen
-COA-060,Gemeente Eindhoven,8,Vergoeding gemeenten LOCC
-COA-061,Rijksvastgoedbedrijf,7,Huisvesting Huur
-COA-062,Jan Snel Livings BV,7,Huisvesting Huur
-COA-063,Heijmans Utiliteit B.V.,7,Eigenaardeel planmatig onderhoud
-COA-064,BAM Bouw en Techniek B.V.,7,Bouwkundig onderhd
-COA-065,Munckhof Taxi BV (voorheen 601,7,Personenverv aslzkr
-COA-066,Bouwbedrijf Huurman Leiden BV,7,Bouwkundig onderhd
-COA-067,De Meeuw Verhuur Nederland B.V,7,Huisvesting Huur
-COA-068,Slaapschepen Public B.V.,7,Contracthuren AZC
-COA-069,Umami Catering NV,7,Catering
-COA-070,Facilicom Solutions B.V.,7,Huisvesting
-COA-071,CBRE GWS IFM B.V.,7,Eigenaardeel planmatig onderhoud
-COA-072,De Ridder,7,Sanitaire artikelen
-COA-073,LenferinkgroepZwolle,7,Contract exploitant
-COA-074,Valk Exclusief Holding B.V.,7,Contracthuren AZC
-COA-075,Renewi Nederland B.V.,7,Vuilafvoer
-COA-076,SPIE Building Solutions B.V.,7,Eigenaardeel planmatig onderhoud
-COA-077,RadarVertige,7,Opleiding&training
-COA-078,Veiligheidsregio Rotterdam-Rij,7,Vergoeding gemeenten LOCC
-COA-079,Centralpoint Nijmegen BV,7,Hardware
-COA-080,FMHaaglanden,7,Adm.ondersteuning
-COA-081,LeasePlan Nederland N.V.,7,Voertuigen
-COA-082,Mondial Movers BV,7,Logistieke dienstvrl
-COA-083,Nederlandse Spoorwegen,7,Personenverv aslzkr
-COA-084,Slaapschepen Accommodations BV,7,Contract-OH. Overig
-COA-085,XONAR,7,Huisvesting
-COA-086,Spie Nederland B.V.,7,Hardware
-COA-087,De Strip BV,7,Contract beveiliging
-COA-088,Twynstra Gudde Holding B.V.,7,Man.advies&interim
-COA-089,Dienst Justitiele Inrichtingen,7,Extra beveiligingsuren
-COA-090,Hypeco Exploitatie B.V.,7,Kosten gas
-COA-091,Slaapschepen B.V.,7,Contracthuren AZC
-COA-092,Asito BV,7,Schoonmaakdienst
-COA-093,PQR BV,7,Hardware
-COA-094,Le Cocq Holding Didam II B.V.,7,Contract beveiliging 
-COA-095,Trans River Line BV,7,Contract beveiliging
-COA-096,Harbour Hotels B.V.,7,Contracthuren AZC
-COA-097,Seven Stars BV,7,ICTdienstverlening
-COA-098,Star Lodge Hotels,7,Contracthuren AZC
-COA-099,Protinus IT B.V.,7,Hardware
-COA-100,Strukton WorkSphere,7,Bouwkundig onderhd
-COA-101,Tele 2 Nederland B.V.,7,ICT Infrastructuur
-COA-102,Caesar Accounts B.V.,7,ICTdienstverlening
-COA-103,Equans Zuid-Nederland bv,7,Eigenaardeel planmatig onderhoud
-COA-104,Ministerie van Justitie en Vei,7,ICT Infrastructuur
-COA-105,VOB Velsen B.V.,7,Contracthuren AZC
-COA-106,Hectas Facility Services C.V.,7,Schoonmaakdienst
-COA-107,Bergman Assets B.V.,7,Contracthuren AZC
-COA-108,Vattenfall Sales Nederland N.V,7,E/G/W
-COA-109,A&O hostel and hotel Amsterdam,7,Voeding
-COA-110,Huisveste C.V.,7,Huisvesting Huur
-COA-111,Gispen Nederland B.V.,7,Prijsverschillen automatisch (geboekt)
-COA-112,Engie Services Zuid BV,7,Bouwkundig onderhd
-COA-113,Park Plaza Amsterdam Airport,7,Overige huurkosten huisvesting
-COA-114,Zeelandhallen Exploitatie BV,7,Voeding
-COA-115,LEA Immobilienvermittlungs Gmb,7,Huisvesting Huur
-COA-116,Pels Rijcken & Droogleever For,7,Huisvesting
-COA-117,Le Cocq Holding Didam B.V.,7,Contract beveiliging
-COA-118,Pensioenfonds Zorg & Welzijn,7,Geen inkoop
-COA-119,Koopmans Bouwservice B.V.,7,Eigenaardeel planmatig onderhoud
-COA-120,RIVM,7,Kosten jeugdgezondheidszorg
-COA-121,Circle8 (MSP),7,Externen (geen uitzendkrachten)
-COA-122,Gooiland B.V.,7,Voeding
-COA-123,IP Groep,7,Contract-OH. Mediadistributie
-COA-124,InterSettle B.V.,7,Huisvesting Huur
-COA-125,Deltex,7,Matrassen en Kussens
-COA-126,Arcadis Nederland B.V.,7,Externen (geen uitzendkrachten)
-COA-127,Gemeente Haarlemmermeer,7,Contracthuren AZC
-COA-128,ABN AMRO Lease N.V.,7,Huisvesting Huur
-COA-129,Gemeente Groningen,7,Bestuursovereenkomst overige kosten
-COA-130,Gemeente Oss,7,Overige exploitatiekosten
-COA-131,Brink Management & Advies B.V.,7,Man.advies&interim
-COA-132,Hotel Café Restaurant Brinkzic,7,Contract exploitant
-COA-133,LnterSettle B.V.,7,Contracthuren AZC
-COA-134,Meetingselect BV,7,Pensionkosten
-COA-135,Eurohal Exploitatie BV,7,Contract exploitant
-COA-136,LINKIT B.V.,7,Externen (geen uitzendkrachten)
-COA-137,Brink Management &Advies B.V.,7,Overige adviezen derden
-COA-138,TOA Oegstgeest B.V.,7,Contracthuren AZC
-COA-139,Acolad Netherlands,7,Tolken en vertaaldiensten
-COA-140,Adapteo B.V,7,Contracthuren AZC
-COA-141,Apeldoorn Christiaan Geurtsweg,7,Huisvesting Huur
-COA-142,AVB Vertalingen,7,Tolken en vertaaldiensten
-COA-143,Babbage Company B.V.,7,Externen (geen uitzendkrachten)
-COA-144,BMC implementatie,7,Externen (geen uitzendkrachten)
-COA-145,Breur Ijzerhandel B.V.,7,Materiaalkosten
-COA-146,Circle8,7,Externen (geen uitzendkrachten)
-COA-147,COMPAREX Nederland B.V.,7,Software
-COA-148,Computacenter B.V.,7,Aanschaf hardware uitbreiding
-COA-149,Crayon B.V.,7,Software en licenties
-COA-150,Directbouw b.v.,7,Huisvesting Huur
-COA-151,Doggerland Offshore,7,Aankoop semi-permanente gebouwen
-COA-152,Dolmans Landscaping Group bv,7,Contract-OH. Groenvoorziening
-COA-153,Dustin Netherlands B.V.,7,Aanschaf hardware uitbreiding
-COA-154,Dutch Offshore Energy Solution,7,Contracthuren AZC
-COA-155,Einstein Amsterdam B.V.,7,Verbouwingen
-COA-156,Erve Onroerend Goed Schelluine,7,Contracthuren kantoren
-COA-157,Gemeente Assen,7,Vergoeding gemeenten LOCC
-COA-158,Gemeente Nijmegen,7,Vergoeding gemeenten LOCC
-COA-159,Gemeente Rheden,7,Vergoeding gemeenten LOCC
-COA-160,Havenbedrijf Amsterdam N.V.,7,Contract-OH. Overig
-COA-161,Het Nederlandse Rode Kruis,7,Externen (geen uitzendkrachten)
-COA-162,Just4 Care & Hospitality BV,7,Medische kosten ongeregistreerden
-COA-163,King Nederland B.V.,7,Prijsverschillen automatisch (geboekt)
-COA-164,Lnofec BV,7,Prijsverschillen inkoop
-COA-165,Ministerie van Justitie,7,ICT Infrastructuur
-COA-166,Moods & Roots Events B.V.,7,Voeding
-COA-167,Pillar notarissen B.V.,7,Aankoop permanente gebouwen
-COA-168,ROi Mixed FleetAG,7,Contract-OH. Overig
-COA-169,Secutor Safety & Facility,7,Extra beveiligingsuren
-COA-170,"Triana Group, s.r.o.",7,Contracthuren AZC
-COA-171,Veiligheidsregio ZHZ,7,Vergoeding gemeenten LOCC
-COA-172,Veka Shipyards B.V.,7,Kosten olie
-COA-173,Yadeborg,7,Huisvesting
-COA-174,Gemeente GD Doetinchem,7,Vergoeding gemeenten LOCC
-COA-175,Gemeente Wierden,7,Vergoeding gemeenten LOCC
-COA-176,Gemeente Woensdrecht,7,Vergoeding gemeenten LOCC
-COA-177,Galjema B.V.,7,HV Bouwfysica
-COA-178,Gemeente Ede,7,Vergoeding gemeenten LOCC
-COA-179,Saskia Hardus Evenementen cate,7,Voeding
-COA-180,Zorgkompas B.V.,7,Contracthuren AZC
-COA-181,FlexValue,7,Externen (geen uitzendkrachten)
-COA-182,Gemeente Zaanstad,7,Overige exploitatiekosten
-COA-183,Lmproven B.V.,7,Externen (geen uitzendkrachten)
-COA-184,De Beveiligers B.V.,7,Contract beveiliging
-COA-185,Gemeente Dordrecht,7,Overige huurkosten huisvesting
-COA-186,Familie van Eck,7,Contracthuren AZC
-COA-187,Sligro Food Group Nederland B.,7,Voeding
-COA-188,Gemeente Zwolle,7,Vergoeding gemeenten LOCC
-COA-189,Loveland Productions B.V.,7,Huisvesting Huur
-COA-190,FABK Defensie,7,Overige huurkosten huisvesting
-COA-191,CWS Workwear Nederland B.V.,7,Wasserijdiensten
-COA-192,Gemeente Hulst,7,Vergoeding gemeenten LOCC
-COA-193,Maandag Managed Services,7,Externen (geen uitzendkrachten)
-COA-194,St.Videma,7,Auteursrechtenvergoeding
-COA-195,Expo Center Assen Exploitatie,7,Huisvesting Huur
-COA-196,Menzis COA administratie b.v.,7,Medische dienstverl.
-COA-197,Horne Quartier,7,Huisvesting Huur
-COA-198,Gemeente Deventer,7,Vergoeding gemeenten LOCC
-COA-199,Gemeente Horst aan de Maas,7,Vergoeding gemeenten LOCC
-COA-200,Hotel Pettelaar,7,Contracthuren AZC
+fact_id,ontvanger,staffel,regeling,jaar
+COA-001,Belastingdienst Apeldoorn,12,Exploitatie centrumbus,2024
+COA-002,Trigion Beveiliging B.V.,12,Beveiligingsdiensten,2022
+COA-003,RMA Healthcare,12,Medische dienstverl.,2022
+COA-004,Slaapschepen Catering B.V.,11,Voeding,2024
+COA-005,Belastingdienst Apeldoorn,11,Belastingen,2022
+COA-006,Belastingdienst Apeldoorn,11,Exploitatie centrumbus,2023
+COA-007,Gemeente Nijmegen,11,Vergoeding gemeenten LOCC,2023
+COA-008,PGGM,11,Pensioenen,2024
+COA-009,Le Cocq Holding Didam II B.V.,11,Huisvesting Huur,2022
+COA-010,Slaapschepen Catering BV,11,Voeding,2023
+COA-011,Trigion Beveiliging B.V.,10,Contract beveiliging,2023
+COA-012,Slaapschepen Public B.V.,10,Huisvesting Huur,2022
+COA-013,Pillar notarissen B.V.,10,Aankoop permanente gebouwen,2024
+COA-014,PGGM,10,Geen inkoop,2022
+COA-015,A&O hostel and hotel Amsterdam,10,Voeding,2024
+COA-016,SPIE Worksphere B.V.,10,Bouwkundig onderhd,2022
+COA-017,Gemeente Nijmegen,10,Vergoeding gemeenten LOCC,2024
+COA-018,Umami Catering NV,10,Voeding,2024
+COA-019,PGGM,10,Pensioenen,2023
+COA-020,Veiligheidsregio Zuid-Limburg,10,Vergoeding gemeenten LOCC,2024
+COA-021,Munckhof Taxi BV (voorheen 601,9,Collectief schoolvervoer,2024
+COA-022,Duinrell Wassenaar,9,Contracthuren AZC,2023
+COA-023,ENECO Zakelijk B.V.,9,Kosten gas,2023
+COA-024,Veiligheidsregio Zaanstreek-Wa,9,Vergoeding gemeenten LOCC,2023
+COA-025,Veiligheidsregio Zuid-Limburg,9,Vergoeding gemeenten LOCC,2023
+COA-026,Veiligheidsregio Fryslän,9,Vergoeding gemeenten LOCC,2023
+COA-027,Veiligheidsregio Hollands Midd,9,Vergoeding gemeenten LOCC,2023
+COA-028,Umami Catering NV,9,Voeding,2023
+COA-029,Hegeman Bouw Vriezenveen B.V.,9,Verbouwingen,2024
+COA-030,Gemeente Rotterdam,9,Verbouwingen,2023
+COA-031,ENECO Zakelijk B.V.,9,Kosten gas,2024
+COA-032,GGDGHOR,9,Kosten PGA,2024
+COA-033,Just4 Care & Hospitality BV,9,Medische kosten ongeregistreerden,2024
+COA-034,Vattenfall Sales Nederland N.V,9,Kosten electra,2024
+COA-035,Gemeente Den Haag,9,Vergoeding gemeenten LOCC,2024
+COA-036,Gemeente Loon op Zand,9,Vergoeding gemeenten LOCC,2024
+COA-037,Bouwbedrijf Huurman Leiden BV,9,Bouwkundig onderhd,2022
+COA-038,BAM Bouw en Techniek B.V.,9,Bouwkundig onderhd,2022
+COA-039,Duinrell Wassenaar,9,Contracthuren AZC,2024
+COA-040,CSU B.V.,9,Schoonmaakkosten,2024
+COA-041,GGD GHOR,9,Medische dienstverl.,2022
+COA-042,Munckhof Taxi BV (voorheen 601,9,Personenverv aslzkr,2022
+COA-043,Global Talk Netherlands B.V.,9,Tolken en vertaaldiensten,2024
+COA-044,Krans Notarissen,9,Aankoop permanente gebouwen,2024
+COA-045,A&O hostel and hotel Amsterdam,9,Huisvesting Huur,2022
+COA-046,Veiligheidsregio ZHZ,9,Vergoeding gemeenten LOCC,2023
+COA-047,Veiligheidsregio Utrecht,9,Vergoeding gemeenten LOCC,2023
+COA-048,Vattenfall Sales Nederland N.V,9,Kosten electra,2023
+COA-049,Veiligheidsregio Noord-Holland,9,Vergoeding gemeenten LOCC,2024
+COA-050,Pillar notarissen B.V.,9,Aankoop permanente gebouwen,2023
+COA-051,Gemeente GD Doetinchem,9,Vergoeding gemeenten LOCC,2023
+COA-052,Veiligheidsregio Fryslän,9,Vergoeding gemeenten LOCC,2024
+COA-053,Gemeente Haarlem,9,Vergoeding gemeenten LOCC,2024
+COA-054,Hegeman Bouw Vriezenveen B.V.,9,Verbouwingen,2023
+COA-055,Gemeente Haarlem,9,Vergoeding gemeenten LOCC,2023
+COA-056,GGDGHOR,9,Kosten PGA,2023
+COA-057,Acolad Netherlands,9,Tolken en vertaaldiensten,2024
+COA-058,Broekhoven B.V.,9,Vergoeding gemeenten LOCC,2024
+COA-059,Veiligheidsregio Utrecht,9,Vergoeding gemeenten LOCC,2024
+COA-060,Bouwbedrijf Huurman Leiden BV,8,Eigenaardeel planmatig onderhoud,2023
+COA-061,LenferinkgroepZwolle,8,Contract exploitant,2023
+COA-062,Bouwbedrijf Huurman Leiden BV,8,Eigenaardeel planmatig onderhoud,2024
+COA-063,Bergman Assets B.V.,8,Contracthuren AZC,2024
+COA-064,Circle8 (MSP),8,Externen (geen uitzendkrachten),2024
+COA-065,Hegeman VNO Bouw B.V.,8,Eigenaardeel planmatig onderhoud,2023
+COA-066,HeadFirst BV,8,Externen (geen uitzendkrachten),2024
+COA-067,Start People B.V.,8,ICTdienstverlening,2022
+COA-068,Slaapschepen BV,8,Contracthuren AZC,2023
+COA-069,Hotel Ara B.V.,8,Contracthuren AZC,2024
+COA-070,Doggerland Offshore,8,Aankoop semi-permanente gebouwen,2023
+COA-071,ROI Mixed Fleet AG,8,Huisvesting Huur,2022
+COA-072,ROi Mixed FleetAG,8,Overige exploitatiekosten,2024
+COA-073,Heijmans Utiliteit B.V.,8,Bouwkundig onderhd,2022
+COA-074,RadarVertige,8,Opleidingskosten,2023
+COA-075,RadarVertige,8,Opleidingskosten,2024
+COA-076,Acolad Netherlands,8,Tolken en vertaaldiensten,2023
+COA-077,Protinus IT B.V.,8,Software en licenties,2023
+COA-078,Gemeente Culemborg,8,Vergoeding gemeenten LOCC,2023
+COA-079,Nederlandse Spoorwegen,8,Dienstreizen via facturen,2024
+COA-080,INLIA- Projecten,8,Contracthuren AZC,2024
+COA-081,BosruiterVastgoed B.V.,8,Contracthuren AZC,2023
+COA-082,Gemeente Boxtel,8,Vergoeding gemeenten LOCC,2024
+COA-083,Fletcher Hotel Restaurant Beek,8,Faciliteiten externe opvang,2024
+COA-084,Multicom B.V.,8,Verbouwingen,2024
+COA-085,Gemeente Deventer,8,Vergoeding gemeenten LOCC,2024
+COA-086,Loyens Loeft,8,Aankoop permanente gebouwen,2024
+COA-087,Gemeente Dongen,8,Vergoeding gemeenten LOCC,2024
+COA-088,Crayon B.V.,8,Software en licenties,2024
+COA-089,Jan Snel Livings BV,8,Contracthuren AZC,2023
+COA-090,Gom Schoonhouden BV,8,Schoonmaakkosten,2024
+COA-091,Gemeente Boxtel,8,Vergoeding gemeenten LOCC,2023
+COA-092,Hotel Pettelaar,8,Contracthuren AZC,2024
+COA-093,INLIA- Projecten,8,Contracthuren AZC,2023
+COA-094,CSU B.V.,8,Schoonmaakkosten,2023
+COA-095,AT Anqor Ltd,8,Voeding,2024
+COA-096,Losberger De Boer Benelux B.V.,8,Huisvesting Huur,2022
+COA-097,Veiligheidsregio Hollands Midd,8,Vergoeding gemeenten LOCC,2024
+COA-098,FABK Defensie,8,Overige huurkosten huisvesting,2023
+COA-099,Hectas Facility Services C.V.,8,Schoonmaakdienst,2022
+COA-100,HeadFirst BV,8,Man.advies&interim,2022
+COA-101,Veiligheidsregio Brabant-Zuido,8,Vergoeding gemeenten LOCC,2023
+COA-102,Hak & Rein Vos Notarissen,8,Aankoop permanente gebouwen,2024
+COA-103,Hegeman VNO Bouw B.V.,8,Bouwkundig onderhd,2022
+COA-104,Veiligheidsregio Gelderland-Zu,8,Vergoeding gemeenten LOCC,2023
+COA-105,Van Wijnen Haarlemmermeer B.V.,8,Verbouwingen,2024
+COA-106,Nederlandse Spoorwegen,8,Prijsverschillen inkoop,2023
+COA-107,Gom Schoonhouden BV,8,Schoonmaakkosten,2023
+COA-108,Gr8 Hotels B.V.,8,Contracthuren AZC,2023
+COA-109,Fletcher Hotel Restaurant Beek,8,Faciliteiten externe opvang,2023
+COA-110,Notariskantoor Soons,8,Aankoop permanente gebouwen,2023
+COA-111,Gr8 Hotels B.V.,8,Contracthuren AZC,2024
+COA-112,Global Talk Netherlands,8,Tolken en vertaaldiensten,2023
+COA-113,Strijbosch B.V.,8,Lease van inventaris,2024
+COA-114,Gemeente Woensdrecht,8,Vergoeding gemeenten LOCC,2024
+COA-115,Strijbosch B.V.,8,Lease van inventaris,2023
+COA-116,AT Anqor Ltd,8,Voeding,2023
+COA-117,Gemeente Terneuzen,8,Vergoeding gemeenten LOCC,2024
+COA-118,Rijksvastgoedbedrijf,8,Huisvesting Huur,2022
+COA-119,Strijbosch B.V.,8,Witgoed & Bruingoed,2022
+COA-120,Star Lodge Hotels,8,Contracthuren AZC,2023
+COA-121,SPIE Worksphere B.V.,8,Verbouwingen,2023
+COA-122,Asito BV,8,Schoonmaakdienst,2022
+COA-123,Gemeente Rucphen,8,Vergoeding gemeenten LOCC,2024
+COA-124,Star Lodge Hotels,8,Huisvesting Huur,2022
+COA-125,Gemeente Meierijstad,8,Vergoeding gemeenten LOCC,2023
+COA-126,ENECO Zakelijk B.V.,8,E/G/W,2022
+COA-127,Gemeente Meierijstad,8,Vergoeding gemeenten LOCC,2024
+COA-128,Gemeente Leeuwarden,8,Verg. gemeenten Flexwoningen,2023
+COA-129,Spie Nederland B.V.,8,ICT Infrastructuur,2022
+COA-130,SoftwareONE Netherlands B.V.,8,Software,2022
+COA-131,Spie Nederland B.V.,8,Telecom,2023
+COA-132,Gemeente Eindhoven,8,Vergoeding gemeenten LOCC,2024
+COA-133,Drost Juten Notarissen,8,Huisvesting,2022
+COA-134,Gemeente Ede,8,Vergoeding gemeenten LOCC,2024
+COA-135,Spie Nederland B.V.,8,Telecom,2024
+COA-136,Gemeente Hengelo,8,Vergoeding gemeenten LOCC,2024
+COA-137,Brummelhuis Notarissen,8,Afkoopsommen huurpanden,2023
+COA-138,Valk Exclusief Holding B.V.,7,Contract beveiliging,2024
+COA-139,Slaapschepen Accommodations BV,7,Contract-OH. Overig,2024
+COA-140,RMA Healthcare,7,Administratiekst. Ziektekosten,2023
+COA-141,Le Cocq Holding Didam II B.V.,7,Contract beveiliging ,2023
+COA-142,Heijmans Utiliteit B.V.,7,Eigenaardeel planmatig onderhoud,2023
+COA-143,Heijmans Utiliteit B.V.,7,Eigenaardeel planmatig onderhoud,2024
+COA-144,Start People B.V.,7,Externen (geen uitzendkrachten),2023
+COA-145,Slaapschepen Public B.V.,7,Contracthuren AZC,2024
+COA-146,Slaapschepen B.V.,7,Contracthuren AZC,2024
+COA-147,RMA Healthcare,7,Administratiekst. Ziektekosten,2024
+COA-148,Rijksvastgoedbedrijf,7,Aankoop semi-permanente gebouwen,2024
+COA-149,LenferinkgroepZwolle,7,Contract exploitant,2024
+COA-150,Le Cocq Holding Didam B.V.,7,Contract beveiliging,2024
+COA-151,LnterSettle B.V.,7,Contracthuren AZC,2023
+COA-152,Jan Snel Livings BV,7,Contracthuren AZC,2024
+COA-153,Hypeco Exploitatie B.V.,7,Contracthuren AZC,2023
+COA-154,Veiligheidsregio Rotterdam-Rij,7,Elektro&Installatie,2022
+COA-155,Start People B.V.,7,Externen (geen uitzendkrachten),2024
+COA-156,CBRE GWS IFM B.V.,7,Eigenaardeel planmatig onderhoud,2024
+COA-157,SPIE Building Solutions B.V.,7,Eigenaardeel planmatig onderhoud,2024
+COA-158,Dienst Justitiele Inrichtingen,7,Extra beveiligingsuren,2023
+COA-159,Rijksvastgoedbedrijf,7,Aankoop semi-permanente gebouwen,2023
+COA-160,Park Plaza Amsterdam Airport,7,Contracthuren AZC,2024
+COA-161,Munckhof Taxi BV (voorheen 601,7,Collectief schoolvervoer,2023
+COA-162,De Meeuw Verhuur Nederland B.V,7,Contracthuren AZC,2024
+COA-163,De Meeuw Verhuur Nederland B.V,7,Contracthuren AZC,2023
+COA-164,InterSettle B.V.,7,Huisvesting,2022
+COA-165,Bergman Assets B.V.,7,Contracthuren AZC,2023
+COA-166,Adapteo B.V,7,Contracthuren AZC,2024
+COA-167,Trigion Beveiliging B.V.,7,Contract beveiliging,2024
+COA-168,BAM Bouw en Techniek B.V.,7,Contracthuren AZC,2024
+COA-169,CBRE GWS IFM B.V.,7,Eigenaardeel planmatig onderhoud,2023
+COA-170,Gemeente Rotterdam,7,Overige exploitatiekosten,2024
+COA-171,Star Lodge Hotels,7,Faciliteiten externe opvang,2024
+COA-172,A&O hostel and hotel Amsterdam,7,Contracthuren AZC,2023
+COA-173,Dutch Offshore Energy Solution,7,Contracthuren AZC,2023
+COA-174,SPIE Building Solutions B.V.,7,Eigenaardeel planmatig onderhoud,2023
+COA-175,Slaapschepen Public B.V.,7,Contracthuren AZC,2023
+COA-176,Gemeente Groningen,7,Bestuursovereenkomst overige kosten,2024
+COA-177,Doggerland Offshore,7,Aankoop semi-permanente gebouwen,2024
+COA-178,Slaapschepen Accommodations BV,7,Contract-OH. Overig,2023
+COA-179,Slaapschepen Catering BV,7,Catering,2022
+COA-180,Directbouw b.v.,7,Huisvesting Huur,2022
+COA-181,ROi Mixed FleetAG,7,Contract-OH. Overig,2023
+COA-182,Dienst Justitiele Inrichtingen,7,Extra beveiligingsuren,2024
+COA-183,Protinus IT B.V.,7,Aanschaf hardware uitbreiding,2024
+COA-184,De Strip BV,7,Contract beveiliging,2024
+COA-185,De Strip BV,7,Contract beveiliging,2023
+COA-186,De Strip BV,7,Beveiligingsdiensten,2022
+COA-187,De Ridder,7,Eenmalige materiële verstrekkingen asielzoekers,2024
+COA-188,De Ridder,7,Eenmalige materiële verstrekkingen asielzoekers,2023
+COA-189,Meetingselect BV,7,Huur vergaderfaciliteiten,2024
+COA-190,De Meeuw Verhuur Nederland B.V,7,Bouwkundig onderhd,2022
+COA-191,Maandag Managed Services,7,Externen (geen uitzendkrachten),2024
+COA-192,Ministerie van Justitie en Vei,7,ICT Infrastructuur,2022
+COA-193,LINKIT B.V.,7,Externen (geen uitzendkrachten),2024
+COA-194,Lnofec BV,7,Prijsverschillen automatisch (geboekt),2024
+COA-195,Koopmans Bouwservice B.V.,7,Eigenaardeel planmatig onderhoud,2024
+COA-196,Koopmans Bouwservice B.V.,7,Eigenaardeel planmatig onderhoud,2023
+COA-197,IT - Staffing Nederland B.V.,7,ICTdienstverlening,2022
+COA-198,Jan Snel Livings BV,7,Elektro&Installatie,2022
+COA-199,Inofec BV,7,Garderobekasten,2022
+COA-200,Het Nederlandse Rode Kruis,7,Externen (geen uitzendkrachten),2024

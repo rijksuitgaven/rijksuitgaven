@@ -1,6 +1,6 @@
 # Session Context
 
-**Last Updated:** 2026-03-03
+**Last Updated:** 2026-03-04
 **Project Phase:** V2.0 Development
 **Current Sprint:** Week 10 — Pre-Launch Polish & M1.0 Launch Gate
 **Beta Status:** V0.9 live at beta.rijksuitgaven.nl (10 testers, launched 2026-02-21)
@@ -79,7 +79,7 @@
 | Login email session duration | ✅ Fixed (Feb 28) | Added "Na inloggen blijft u ingelogd..." to magic link email (HTML+text). Commit `c83152e` |
 | Contact form Pipeline + Expertgroep | ✅ Live (Mar 2) | Pipeline selector on add form, Expertgroep source option, API accepts pipeline_stage |
 | Anomaly cell colors | ✅ Live (Mar 2) | Grey bg (was red), red/green trend tooltips on hover |
-| Social content pipeline | ✅ Rewritten (Mar 3) | C7-style pipeline: source tables → extract_facts.py (7 queries) → facts/*.csv → generate_posts.py (32 curated templates, 3 sets) → posts/buffer-ready.csv (500 posts). Per-year facts, 2-3 contextual hashtags per post, 50-char max on all fields, tautology filter, entity blocklist, round-robin module balance. User reviewed all 48 templates (cut 16). |
+| Social content pipeline | ✅ Updated (Mar 4) | C7-style pipeline: source tables → extract_facts.py (7 queries, all with jaar) → facts/*.csv → generate_posts.py (31 templates, 3 sets) → posts/buffer-ready.csv (500 posts, 18-col CSV with field-level verification). Template updates: "betaalde" replaces "keerde uit", 4 new templates (10a, 13a, 26a, COA 27-31 with jaar). Verification: every variable checked against source, "[Checked & Verified]" stamp per field. 2502/2502 fields verified. |
 | Rule 7: Branch Discipline | ✅ Codified (Mar 3) | 7-day max branches, daily sync, 6-point Pre-Merge Gate, branch state table. In CLAUDE.md. |
 | V2.4 bug fixes (3) | ✅ Fixed (Mar 3) | URL cols pollution, setState-during-render on expand, stale expand tracking. |
 | UX-043: Specific recipient picker | ✅ Live (Mar 3) | Person picker toggle on /team/mail, searchable list, flows through save/send/draft restore. Migration 074. Also fixes draft conditionGroups restore bug. |
@@ -98,7 +98,10 @@
 
 ## Recent Work (Last 5)
 
-1. **V2.4 Live + UX-043/044 + Social Pipeline + Security Audit + Slaap Bug** (2026-03-03)
+1. **Social Pipeline Upgrade: Templates + Verification** (2026-03-04)
+   Template updates: "betaalde" replaces "keerde uit" (gemeente), "voor" replaces "via" (provincie), 4 new templates (10a, 13a, 26a, COA 27-31 with jaar). Added `jaar` to COA and inkoop fact extraction. Built field-level verification system: every template variable verified against source, "[Checked & Verified]" stamp per field. 18-column CSV output. 500 posts, 2502/2502 fields verified.
+
+2. **V2.4 Live + UX-043/044 + Social Pipeline + Security Audit + Slaap Bug** (2026-03-03)
    Session 1-2: V2.4 merge + Rule 7 + 3 bug fixes + 147 commits pushed. Session 3: UX-043 person picker. Session 4: UX-044 uitgeschreven filter. Session 5-6: Social pipeline rewrite + template curation (48→32) + contextual hashtags (replace #Rijksuitgaven with #Subsidies/#Defensie/etc.) + 50-char max fields. 500 posts in buffer-ready.csv. Session 7: Comprehensive security audit — 15 findings fixed (CSRF, CSP, rate limiting, dependency CVEs, Railway private networking, RLS audit). Session 8: 4-commit fix for "slaap" compound word search in publiek (word boundary, LOWER() WHERE, force-dynamic routes, no-store cache headers). Browser cache prevention on all API endpoints.
 
 2. **Social Content Pipeline v1 + Admin CRM + Anomaly UX** (2026-03-02)
@@ -109,12 +112,6 @@
 
 2. **Bug Fixes + UX-039 Pin Fix + Staging Elimination** (2026-02-28)
    21 commits across 3 sessions. Production: word boundary fix, NULLS LAST, test framework (32/32), version renumber, back button, login email. UX-039: 10 pin/expand fixes. Infra: eliminated staging environment — localhost as full dev/test (added env vars), deleted staging branch+service, feature branch workflow.
-
-2. **Search-Scoped Results + UI Polish (V2.3)** (2026-02-27)
-   Bug fix: secondary search matches show filtered amounts. 2 hotfixes. 6 UI copy improvements. Feedback button dynamic positioning. Google G icon UX: branded SVG, hidden by default, row-hover reveal. Expand column tightened 40→32px.
-
-2. **V5.0 Inzichten — 28-Concept Visualization Suite** (2026-02-25)
-   7-domain framework (22 concepts) + 6 novel graph types. All custom SVG, zero external deps. RLS migration 073.
 
 ---
 

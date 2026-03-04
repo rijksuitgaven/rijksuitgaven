@@ -28,6 +28,21 @@ os.makedirs(POSTS_DIR, exist_ok=True)
 TARGET_POSTS = 500
 MAX_PER_RECIPIENT = 3
 
+# All template variable columns in the CSV output
+FIELD_COLUMNS = [
+    "ontvanger", "bedrag", "jaar", "descriptor", "type",
+    "provincie", "gemeente", "source", "begrotingsnaam",
+    "kostensoort", "leverancier", "bracket", "categorie",
+    "regeling", "hashtags",
+]
+
+VERIFIED = "Checked & Verified"
+
+
+def verified_cell(value):
+    """Format a CSV cell as 'value [Checked & Verified]'."""
+    return f"{value} [{VERIFIED}]"
+
 
 # ============================================================
 # BLOCKLIST
@@ -192,7 +207,6 @@ def load_csv(filename):
 
 # Set 1: Standard templates — exact bedrag + descriptor (C7-style)
 STANDARD_TEMPLATES = [
-    "Dankzij '{descriptor}' kreeg {ontvanger} in {jaar} {bedrag}.",
     "In {jaar} ontving {ontvanger} {bedrag} via '{descriptor}'.",
     "{bedrag} werd in {jaar} toegekend aan {ontvanger} onder '{descriptor}'.",
     "Met '{descriptor}' werd in {jaar} {bedrag} verstrekt aan {ontvanger}.",
@@ -209,15 +223,17 @@ INSTRUMENTEN_EXTRA = [
 # Provincie-specific (adds province context)
 PROVINCIE_EXTRA = [
     "De provincie {provincie} keerde in {jaar} {bedrag} uit aan {ontvanger} voor '{descriptor}'.",
-    "In {jaar} ontving {ontvanger} {bedrag} van de provincie {provincie} via '{descriptor}'.",
+    "In {jaar} ontving {ontvanger} {bedrag} van de provincie {provincie} voor '{descriptor}'.",
     "De provincie {provincie} betaalde in {jaar} {bedrag} aan {ontvanger} onder '{descriptor}'.",
+    "In {jaar} maakte de provincie {provincie} {bedrag} over aan {ontvanger} voor '{descriptor}'.",
 ]
 
 # Gemeente-specific (adds municipality context)
 GEMEENTE_EXTRA = [
-    "De gemeente {gemeente} keerde in {jaar} {bedrag} uit aan {ontvanger} voor '{descriptor}'.",
+    "De gemeente {gemeente} betaalde in {jaar} {bedrag} aan {ontvanger} voor '{descriptor}'.",
     "In {jaar} ontving {ontvanger} {bedrag} van de gemeente {gemeente} via '{descriptor}'.",
     "Vanuit de gemeente {gemeente} ging in {jaar} {bedrag} naar {ontvanger} voor '{descriptor}'.",
+    "In {jaar} maakte de gemeente {gemeente} {bedrag} over aan {ontvanger} voor '{descriptor}'.",
 ]
 
 # Publiek-specific (adds source context: NWO, RVO, ZonMW)
@@ -238,20 +254,21 @@ APPARAAT_TEMPLATES = [
     "{begrotingsnaam} besteedde in {jaar} {bedrag} aan de post '{kostensoort}'.",
 ]
 
-# Set 3a: Inkoop staffel templates (bracket-based, no exact amounts)
+# Set 3a: Inkoop staffel templates (bracket-based)
 INKOOP_TEMPLATES = [
     "{leverancier} ontving van de Rijksoverheid bedragen {bracket} voor '{categorie}'.",
     "De Rijksoverheid betaalde aan {leverancier} bedragen {bracket} ({categorie}).",
     "Aan {leverancier} betaalde de Rijksoverheid bedragen {bracket} voor '{categorie}'.",
+    "De Rijksoverheid gunde in {jaar} opdrachten aan {leverancier} met een waarde van {bracket}.",
 ]
 
-# Set 3b: COA staffel templates (bracket-based, with regeling)
+# Set 3b: COA staffel templates (bracket-based, with regeling, per year)
 COA_TEMPLATES = [
-    "{ontvanger} ontving van het COA bedragen {bracket} voor de regeling '{regeling}'.",
-    "Het COA betaalde aan {ontvanger} bedragen {bracket}, regeling: {regeling}.",
-    "Aan {ontvanger} betaalde het COA bedragen {bracket} voor '{regeling}'.",
-    "Van het COA ontving {ontvanger} bedragen {bracket}. Regeling: {regeling}.",
-    "{ontvanger} ontving van het COA bedragen {bracket}.",
+    "{ontvanger} ontving in {jaar} bedragen {bracket} voor de regeling '{regeling}' van het COA.",
+    "Het COA betaalde in {jaar} aan {ontvanger} bedragen {bracket}, regeling: {regeling}.",
+    "Aan {ontvanger} betaalde het COA in {jaar} bedragen {bracket} voor '{regeling}'.",
+    "Van het COA ontving {ontvanger} in {jaar} bedragen {bracket} met omschrijving {regeling}.",
+    "{ontvanger} ontving in {jaar} van het COA bedragen {bracket}.",
 ]
 
 
@@ -379,12 +396,70 @@ def build_hashtags(tags):
 
 
 # ============================================================
+# VERIFICATION — check every variable appears in the post text
+# ============================================================
+
+def get_template_fields(template):
+    """Extract {field_name} placeholders from a template string."""
+    return set(re.findall(r'\{(\w+)\}', template))
+
+
+def verify_fields(text, fields):
+    """Verify all non-empty field values appear in the post text.
+
+    Returns True if ALL fields are verified. False if ANY mismatch found.
+    Hashtags are checked separately (appended at end of text).
+    """
+    for key, value in fields.items():
+        if not value:
+            continue
+        if str(value) not in text:
+            return False
+    return True
+
+
+def make_candidate(text, module, entity_key, jaar, fields, hashtags_str):
+    """Create a candidate tuple with verification data.
+
+    Returns the candidate dict or None if verification fails.
+    fields should only contain variables actually used in the chosen template.
+    """
+    # Verify every field value appears in the text
+    if not verify_fields(text, fields):
+        return None
+
+    # Verify hashtags appear in text
+    if hashtags_str and hashtags_str not in text:
+        return None
+
+    # Build verified fields dict — value [Checked & Verified] for used fields, empty for unused
+    verified = {}
+    for col in FIELD_COLUMNS:
+        if col == "hashtags":
+            verified[col] = verified_cell(hashtags_str) if hashtags_str else ""
+        elif col in fields and fields[col]:
+            verified[col] = verified_cell(fields[col])
+        else:
+            verified[col] = ""
+
+    return {
+        "text": text,
+        "module": module,
+        "entity_key": entity_key,
+        "jaar": jaar,
+        "chars": len(text),
+        "fields": verified,
+    }
+
+
+# ============================================================
 # POST GENERATION PER MODULE
 # ============================================================
 
 def gen_instrumenten():
     """Generate posts from instrumenten per-year facts."""
     candidates = []
+    skipped = 0
     templates = STANDARD_TEMPLATES + INSTRUMENTEN_EXTRA
     for f in load_csv("instrumenten_rows.csv"):
         entity = fix_entity(f["ontvanger"])
@@ -395,24 +470,41 @@ def gen_instrumenten():
             continue
         if is_tautological(entity, descriptor):
             continue
-        bedrag = int(float(f["bedrag"]))
+        bedrag = fmt_eur(int(float(f["bedrag"])))
         jaar = f["jaar"]
         inst_type = f.get("type", "bijdrage").strip() or "bijdrage"
 
-        text = random.choice(templates).format(
-            ontvanger=entity, jaar=jaar, bedrag=fmt_eur(bedrag),
+        template = random.choice(templates)
+        used = get_template_fields(template)
+        text = template.format(
+            ontvanger=entity, jaar=jaar, bedrag=bedrag,
             descriptor=descriptor, type=inst_type,
         )
         tags = build_hashtags(["#Subsidies", make_entity_tag(entity)])
         text = f"{text} {tags}"
-        if 50 <= len(text) <= 280:
-            candidates.append((text, "instrumenten", entity, jaar))
+
+        if not (50 <= len(text) <= 280):
+            continue
+
+        all_vars = {
+            "ontvanger": entity, "bedrag": bedrag, "jaar": jaar,
+            "descriptor": descriptor, "type": inst_type,
+        }
+        fields = {k: v for k, v in all_vars.items() if k in used}
+        c = make_candidate(text, "instrumenten", entity, jaar, fields, tags)
+        if c:
+            candidates.append(c)
+        else:
+            skipped += 1
+    if skipped:
+        print(f"    instrumenten: {skipped} posts skipped (verification failed)")
     return candidates
 
 
 def gen_apparaat():
     """Generate posts from apparaat per-year facts."""
     candidates = []
+    skipped = 0
     for f in load_csv("apparaat_rows.csv"):
         begrotingsnaam = f["begrotingsnaam"].strip()
         kostensoort = f["kostensoort"].strip()
@@ -420,12 +512,15 @@ def gen_apparaat():
             continue
         if len(kostensoort) > 50 or len(begrotingsnaam) > 50:
             continue
-        bedrag = int(float(f["bedrag"]))
+        bedrag = fmt_eur(int(float(f["bedrag"])))
         jaar = f["jaar"]
+        kostensoort_lower = kostensoort.lower()
 
-        text = random.choice(APPARAAT_TEMPLATES).format(
-            begrotingsnaam=begrotingsnaam, kostensoort=kostensoort.lower(),
-            jaar=jaar, bedrag=fmt_eur(bedrag),
+        template = random.choice(APPARAAT_TEMPLATES)
+        used = get_template_fields(template)
+        text = template.format(
+            begrotingsnaam=begrotingsnaam, kostensoort=kostensoort_lower,
+            jaar=jaar, bedrag=bedrag,
         )
         tags = build_hashtags([
             "#Overheidsuitgaven",
@@ -433,14 +528,29 @@ def gen_apparaat():
             make_kostensoort_tag(kostensoort),
         ])
         text = f"{text} {tags}"
-        if 50 <= len(text) <= 280:
-            candidates.append((text, "apparaat", kostensoort, jaar))
+
+        if not (50 <= len(text) <= 280):
+            continue
+
+        all_vars = {
+            "begrotingsnaam": begrotingsnaam, "kostensoort": kostensoort_lower,
+            "jaar": jaar, "bedrag": bedrag,
+        }
+        fields = {k: v for k, v in all_vars.items() if k in used}
+        c = make_candidate(text, "apparaat", kostensoort, jaar, fields, tags)
+        if c:
+            candidates.append(c)
+        else:
+            skipped += 1
+    if skipped:
+        print(f"    apparaat: {skipped} posts skipped (verification failed)")
     return candidates
 
 
 def gen_inkoop():
     """Generate posts from inkoop staffel facts."""
     candidates = []
+    skipped = 0
     for f in load_csv("inkoop_rows.csv"):
         entity = fix_entity(f["leverancier"])
         if is_blocked(entity):
@@ -455,9 +565,22 @@ def gen_inkoop():
             cat_short = "overheidsinkoop"
         if len(cat_short) > 50:
             continue
+        jaar = f.get("jaar", "").strip()
 
-        text = random.choice(INKOOP_TEMPLATES).format(
-            leverancier=entity, bracket=bracket, categorie=cat_short.lower(),
+        cat_lower = cat_short.lower()
+
+        # Template 26a uses {jaar} — only use it when jaar is available
+        available_templates = list(INKOOP_TEMPLATES)
+        if not jaar:
+            # Remove template with {jaar} if no year data
+            available_templates = [t for t in available_templates if "{jaar}" not in t]
+        if not available_templates:
+            continue
+
+        template = random.choice(available_templates)
+        used = get_template_fields(template)
+        text = template.format(
+            leverancier=entity, bracket=bracket, categorie=cat_lower, jaar=jaar,
         )
         tags = build_hashtags([
             "#Overheidsuitgaven",
@@ -465,14 +588,26 @@ def gen_inkoop():
             make_entity_tag(entity),
         ])
         text = f"{text} {tags}"
-        if 50 <= len(text) <= 280:
-            candidates.append((text, "inkoop", entity, ""))
+
+        if not (50 <= len(text) <= 280):
+            continue
+
+        all_vars = {"leverancier": entity, "bracket": bracket, "categorie": cat_lower, "jaar": jaar}
+        fields = {k: v for k, v in all_vars.items() if k in used}
+        c = make_candidate(text, "inkoop", entity, jaar, fields, tags)
+        if c:
+            candidates.append(c)
+        else:
+            skipped += 1
+    if skipped:
+        print(f"    inkoop: {skipped} posts skipped (verification failed)")
     return candidates
 
 
 def gen_provincie():
     """Generate posts from provincie per-year facts."""
     candidates = []
+    skipped = 0
     templates = STANDARD_TEMPLATES + PROVINCIE_EXTRA
     for f in load_csv("provincie_rows.csv"):
         entity = fix_entity(f["ontvanger"])
@@ -484,24 +619,41 @@ def gen_provincie():
         descriptor = clean_descriptor(f.get("descriptor", ""))
         if not descriptor:
             continue
-        bedrag = int(float(f["bedrag"]))
+        bedrag = fmt_eur(int(float(f["bedrag"])))
         jaar = f["jaar"]
 
-        text = random.choice(templates).format(
-            ontvanger=entity, jaar=jaar, bedrag=fmt_eur(bedrag),
+        template = random.choice(templates)
+        used = get_template_fields(template)
+        text = template.format(
+            ontvanger=entity, jaar=jaar, bedrag=bedrag,
             descriptor=descriptor, provincie=provincie,
         )
         prov_tag = "#" + re.sub(r'[^\w]', '', provincie)
         tags = build_hashtags(["#Provincies", prov_tag, make_entity_tag(entity)])
         text = f"{text} {tags}"
-        if 50 <= len(text) <= 280:
-            candidates.append((text, "provincie", entity, jaar))
+
+        if not (50 <= len(text) <= 280):
+            continue
+
+        all_vars = {
+            "ontvanger": entity, "bedrag": bedrag, "jaar": jaar,
+            "descriptor": descriptor, "provincie": provincie,
+        }
+        fields = {k: v for k, v in all_vars.items() if k in used}
+        c = make_candidate(text, "provincie", entity, jaar, fields, tags)
+        if c:
+            candidates.append(c)
+        else:
+            skipped += 1
+    if skipped:
+        print(f"    provincie: {skipped} posts skipped (verification failed)")
     return candidates
 
 
 def gen_gemeente():
     """Generate posts from gemeente per-year facts."""
     candidates = []
+    skipped = 0
     templates = STANDARD_TEMPLATES + GEMEENTE_EXTRA
     for f in load_csv("gemeente_rows.csv"):
         entity = fix_entity(f["ontvanger"])
@@ -513,24 +665,41 @@ def gen_gemeente():
         descriptor = clean_descriptor(f.get("descriptor", ""))
         if not descriptor:
             continue
-        bedrag = int(float(f["bedrag"]))
+        bedrag = fmt_eur(int(float(f["bedrag"])))
         jaar = f["jaar"]
 
-        text = random.choice(templates).format(
-            ontvanger=entity, jaar=jaar, bedrag=fmt_eur(bedrag),
+        template = random.choice(templates)
+        used = get_template_fields(template)
+        text = template.format(
+            ontvanger=entity, jaar=jaar, bedrag=bedrag,
             descriptor=descriptor, gemeente=gemeente,
         )
         gem_tag = "#" + re.sub(r'[^\w]', '', gemeente)
         tags = build_hashtags(["#Gemeenten", gem_tag, make_entity_tag(entity)])
         text = f"{text} {tags}"
-        if 50 <= len(text) <= 280:
-            candidates.append((text, "gemeente", entity, jaar))
+
+        if not (50 <= len(text) <= 280):
+            continue
+
+        all_vars = {
+            "ontvanger": entity, "bedrag": bedrag, "jaar": jaar,
+            "descriptor": descriptor, "gemeente": gemeente,
+        }
+        fields = {k: v for k, v in all_vars.items() if k in used}
+        c = make_candidate(text, "gemeente", entity, jaar, fields, tags)
+        if c:
+            candidates.append(c)
+        else:
+            skipped += 1
+    if skipped:
+        print(f"    gemeente: {skipped} posts skipped (verification failed)")
     return candidates
 
 
 def gen_publiek():
     """Generate posts from publiek (non-COA) per-year facts."""
     candidates = []
+    skipped = 0
     templates = STANDARD_TEMPLATES + PUBLIEK_EXTRA
     for f in load_csv("publiek_rows.csv"):
         entity = fix_entity(f["ontvanger"])
@@ -540,24 +709,41 @@ def gen_publiek():
         descriptor = clean_descriptor(f.get("descriptor", ""))
         if not descriptor:
             continue
-        bedrag = int(float(f["bedrag"]))
+        bedrag = fmt_eur(int(float(f["bedrag"])))
         jaar = f["jaar"]
 
-        text = random.choice(templates).format(
-            ontvanger=entity, jaar=jaar, bedrag=fmt_eur(bedrag),
+        template = random.choice(templates)
+        used = get_template_fields(template)
+        text = template.format(
+            ontvanger=entity, jaar=jaar, bedrag=bedrag,
             descriptor=descriptor, source=source,
         )
         source_tag = f"#{source}" if source else ""
         tags = build_hashtags(["#Subsidies", source_tag, make_entity_tag(entity)])
         text = f"{text} {tags}"
-        if 50 <= len(text) <= 280:
-            candidates.append((text, "publiek", entity, jaar))
+
+        if not (50 <= len(text) <= 280):
+            continue
+
+        all_vars = {
+            "ontvanger": entity, "bedrag": bedrag, "jaar": jaar,
+            "descriptor": descriptor, "source": source,
+        }
+        fields = {k: v for k, v in all_vars.items() if k in used}
+        c = make_candidate(text, "publiek", entity, jaar, fields, tags)
+        if c:
+            candidates.append(c)
+        else:
+            skipped += 1
+    if skipped:
+        print(f"    publiek: {skipped} posts skipped (verification failed)")
     return candidates
 
 
 def gen_coa():
     """Generate posts from COA staffel facts."""
     candidates = []
+    skipped = 0
     for f in load_csv("coa_rows.csv"):
         entity = fix_entity(f["ontvanger"])
         if is_blocked(entity):
@@ -569,20 +755,32 @@ def gen_coa():
         regeling = f.get("regeling", "").strip()
         if len(regeling) > 50:
             continue
+        jaar = f.get("jaar", "").strip()
 
         # With regeling: use all templates. Without: only the last (no regeling field).
         if regeling:
-            text = random.choice(COA_TEMPLATES).format(
-                ontvanger=entity, bracket=bracket, regeling=regeling,
-            )
+            template = random.choice(COA_TEMPLATES)
         else:
-            text = COA_TEMPLATES[-1].format(
-                ontvanger=entity, bracket=bracket,
-            )
+            template = COA_TEMPLATES[-1]
+        used = get_template_fields(template)
+        text = template.format(
+            ontvanger=entity, bracket=bracket, regeling=regeling, jaar=jaar,
+        )
         tags = build_hashtags(["#COA", "#Asielopvang", make_entity_tag(entity)])
         text = f"{text} {tags}"
-        if 50 <= len(text) <= 280:
-            candidates.append((text, "coa", entity, ""))
+
+        if not (50 <= len(text) <= 280):
+            continue
+
+        all_vars = {"ontvanger": entity, "bracket": bracket, "jaar": jaar, "regeling": regeling}
+        fields = {k: v for k, v in all_vars.items() if k in used}
+        c = make_candidate(text, "coa", entity, jaar, fields, tags)
+        if c:
+            candidates.append(c)
+        else:
+            skipped += 1
+    if skipped:
+        print(f"    coa: {skipped} posts skipped (verification failed)")
     return candidates
 
 
@@ -598,7 +796,7 @@ def select_posts(all_candidates, target=TARGET_POSTS, max_per=MAX_PER_RECIPIENT)
     # Group by module
     by_module = defaultdict(list)
     for post in all_candidates:
-        by_module[post[1]].append(post)
+        by_module[post["module"]].append(post)
 
     # Shuffle within each module
     for mod in by_module:
@@ -616,7 +814,7 @@ def select_posts(all_candidates, target=TARGET_POSTS, max_per=MAX_PER_RECIPIENT)
             while idx[mod] < len(by_module[mod]):
                 post = by_module[mod][idx[mod]]
                 idx[mod] += 1
-                entity_key = post[2].lower()
+                entity_key = post["entity_key"].lower()
                 if entity_count[entity_key] < max_per:
                     entity_count[entity_key] += 1
                     selected.append(post)
@@ -641,15 +839,19 @@ def cleanup_old_posts():
 
 
 def write_output(posts):
-    """Write buffer-ready CSV and stats."""
+    """Write buffer-ready CSV with verification columns."""
     cleanup_old_posts()
 
     csv_path = os.path.join(POSTS_DIR, "buffer-ready.csv")
+    header = ["text", "module", "chars"] + FIELD_COLUMNS
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["text", "module", "entity", "jaar", "chars"])
-        for text, module, entity, jaar in posts:
-            w.writerow([text, module, entity, jaar, len(text)])
+        w.writerow(header)
+        for post in posts:
+            row = [post["text"], post["module"], post["chars"]]
+            for col in FIELD_COLUMNS:
+                row.append(post["fields"].get(col, ""))
+            w.writerow(row)
 
     print(f"\nWrote {csv_path} ({len(posts)} posts)")
     return csv_path
@@ -684,12 +886,24 @@ def main():
     print(f"Selected: {len(selected)} posts (target: {TARGET_POSTS})")
 
     # Distribution stats
-    mod_dist = Counter(p[1] for p in selected)
+    mod_dist = Counter(p["module"] for p in selected)
     print(f"\nBy module: {dict(sorted(mod_dist.items()))}")
 
     # Character stats
-    lengths = [len(p[0]) for p in selected]
+    lengths = [p["chars"] for p in selected]
     print(f"Chars: min={min(lengths)}, max={max(lengths)}, avg={sum(lengths)//len(lengths)}")
+
+    # Verification summary
+    total_fields = 0
+    verified_fields = 0
+    for p in selected:
+        for col in FIELD_COLUMNS:
+            val = p["fields"].get(col, "")
+            if val:
+                total_fields += 1
+                if VERIFIED in val:
+                    verified_fields += 1
+    print(f"\nVerification: {verified_fields}/{total_fields} fields checked & verified")
 
     # Write output
     write_output(selected)
@@ -697,8 +911,8 @@ def main():
     # Show samples
     print("\n--- SAMPLE POSTS ---")
     samples = random.sample(selected, min(10, len(selected)))
-    for text, module, entity, jaar in samples:
-        print(f"  [{module}] {text}")
+    for post in samples:
+        print(f"  [{post['module']}] {post['text']}")
 
     if len(selected) < TARGET_POSTS:
         print(f"\n  Warning: only {len(selected)} posts (target: {TARGET_POSTS}). "
