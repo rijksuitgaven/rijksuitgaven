@@ -124,30 +124,35 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 | V2.4.1 | 2026-03-03 | Fix: URL cols pollution from localStorage, setState-during-render on expand, expand URL tracking stale row, getTopRows safety check |
 | V2.4.2 | 2026-03-03 | Fix: compound word search "slaap" in publiek (case-insensitive WHERE for entity-level views), browser cache prevention (no-store on all API responses and client-side fetches) |
 
-### V2.5 - Zoeken & Vergelijken
+### V2.5 - Publieke Deellinks
+
+**Status:** 📋 Planned
+
+- Publieke deellinks: tokenized read-only URL sharing for non-subscribers (view specific bookmarked state without account)
+
+### V2.6 - Zoeken & Vergelijken
 
 **Status:** 📋 Planned
 
 - Vergelijkpagina: dedicated `/vergelijk` page for cross-module comparison (add recipients from any module, side-by-side view)
-- Publieke deellinks: tokenized read-only URL sharing for non-subscribers (view specific bookmarked state without account)
 - UX-024: Type-ahead with recent searches (localStorage, reduced debounce, response caching)
 - Fuzzy/typo tolerance (Typesense `num_typos`)
 - Accurate multi-field match reporting ("Ook in" for multi-word searches)
 - Semantic search (Cohere embeddings, ~€1/month)
 - Field-specific search syntax (`leverancier:prorail`) — power users
 
-### V2.6 - Performance
+### V2.7 - Performance
 
 - Filter performance: Typesense facets (~10ms vs 300-900ms PostgreSQL)
 - ~~Railway private networking (backend internal-only)~~ ✅ Done (Mar 3, security audit)
 
-### V2.7 - Data & Integraal
+### V2.8 - Data & Integraal
 
 - Integraal cross-module data completeness (regelingen in integraal view)
 - Integraal view redesign (brainstorm — module-specific columns)
 - Data provenance / freshness indicator ("Data bijgewerkt: [date]")
 
-### V2.8 - Polish & Toegankelijkheid
+### V2.9 - Polish & Toegankelijkheid
 
 - Accessibility: colorblind anomaly indicator (pattern/dot overlay)
 - ~~xlsx package replacement (ExcelJS — CVE cleanup)~~ ✅ Done (Mar 3, security audit)
@@ -600,7 +605,7 @@ V1 WordPress (legacy) ───────────────────�
 
 V2.0 Search ─────────────────────────────────► ✅ LIVE
   │
-  ├─► V2.1-V2.3 (shipped) → V2.4 Vergelijk → V2.5 Zoeken → V2.6-V2.8 (improvements)
+  ├─► V2.1-V2.3 (shipped) → V2.4 Vergelijk → V2.5 Deellinks → V2.6 Zoeken → V2.7-V2.9 (improvements)
   │
   ├─► A1.0 Beheer MVP ─► A1.1 Bulk & CRM ─► A1.2 Inzichten ─► A2.0 Subscriptions
   │
@@ -649,10 +654,11 @@ V10.0 European Platform
 | V2.2 | ✅ Sorteren & Meldingen | Feb 24 |
 | V2.3 | ✅ Zoekresultaten & Tekst | Feb 27 |
 | V2.4 | ✅ Vergelijk & URL State | Mar 3 |
-| V2.5 | 📋 Zoeken | Post-launch |
-| V2.6 | 📋 Performance | Post-launch |
-| V2.7 | 📋 Data & Integraal | Post-launch |
-| V2.8 | 📋 Polish & Toegankelijkheid + AI | Post-launch |
+| V2.5 | 📋 Publieke Deellinks | Post-launch |
+| V2.6 | 📋 Zoeken & Vergelijken | Post-launch |
+| V2.7 | 📋 Performance | Post-launch |
+| V2.8 | 📋 Data & Integraal | Post-launch |
+| V2.9 | 📋 Polish & Toegankelijkheid + AI | Post-launch |
 | V3.0 | 📋 Planned | Post V2.0 launch |
 | V4.0 | 📋 Planned | Q1-Q2 2026 |
 | V5.0 | 📋 Planned | Q2 2026 |
@@ -710,4 +716,4 @@ V10.0 European Platform
 ---
 
 **Document maintained by:** Product Owner
-**Last updated:** 2026-03-03
+**Last updated:** 2026-03-04
