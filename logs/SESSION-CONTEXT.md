@@ -98,14 +98,14 @@
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
 | SEO optimization | ⏳ Pending | OG image, twitter cards, per-page metadata, structured data |
-| DNS/CloudFlare switch | 📋 Planned (Mar 8-9) | 3-phase plan: CloudFlare NS setup, production domain swap (rijksuitgaven.nl → Railway), code changes (metadataBase, Supabase). Full DNS record inventory (40+ records). Retire nieuws subdomain, keep v100 archive. See `docs/plans/2026-03-04-dns-cloudflare-switch.md` |
+| DNS/CloudFlare switch | 📋 Planned (Mar 8-9) | 3-phase plan reviewed by senior team (Mar 5). CloudFlare Free confirmed sufficient. 27 verification checks across phases. Biggest risk: missing DNS record during import. Execute Saturday. See `docs/plans/2026-03-04-dns-cloudflare-switch.md` |
 
 ---
 
 ## Recent Work (Last 5)
 
-1. **Autocomplete Fix + Features + V2.5 Design** (2026-03-05)
-   Session 1: Autocomplete field_matches prefix fix (V2.4.3), Railway backend public networking removed. Session 2: Roadmap patches on /team/roadmap, feedback screenshot+annotation. Session 3: V2.5 share trigger brainstorm — "Deel" button, stored state spec, subscriber redirect, H8 lab prototype for banner design.
+1. **Autocomplete Fix + Features + V2.5 Design + DNS Review** (2026-03-05)
+   Session 1: Autocomplete field_matches prefix fix (V2.4.3), Railway backend public networking removed. Session 2: Roadmap patches on /team/roadmap, feedback screenshot+annotation. Session 3: V2.5 share trigger brainstorm — "Deel" button, stored state spec, subscriber redirect, H8 lab prototype. Session 4: DNS/CloudFlare senior team review — CloudFlare Free confirmed sufficient, verification questions per phase, risk analysis.
 
 2. **V2.5 Planning + Social Pipeline Upgrade** (2026-03-04)
    Session 1: Social pipeline — template updates (4 new/changed), jaar added to COA/inkoop extraction, field-level verification system (2502/2502 verified). Session 2: V2.5 Publieke Deellinks — version reshuffle (V2.5=Deellinks only, V2.6-V2.9 shifted), comprehensive architecture planning with 6-person virtual team, design prototype. Key decisions: DB-backed `/s/{token}` (12-char, permanent), 25-row read-only shared view, BFF-mediated (no backend changes), conversion touchpoints, 5-min cache for viral scenarios.
@@ -151,7 +151,8 @@
 
 | Property | Value |
 |----------|-------|
-| URL | `https://rijksuitgaven-api-production-3448.up.railway.app` |
+| URL | `http://rijksuitgaven-api.railway.internal:8080` (internal only since Mar 5) |
+| Local Dev | `http://localhost:8000` |
 | Health | `/health` |
 | API Docs | `/docs` (Swagger) |
 | Root Directory | `backend` |
