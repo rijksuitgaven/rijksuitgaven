@@ -92,6 +92,7 @@
 | Railway backend public networking removed | ✅ Done (Mar 5) | Removed public domain from backend. Only accessible via Railway private network. Local dev updated to localhost:8000 |
 | Roadmap patches display | ✅ Live (Mar 5) | /team/roadmap parses #### Patches tables from VERSIONING.md. Collapsible UI per version. |
 | Feedback screenshot + annotation | ✅ Live (Mar 5) | Replaced element picker ("Markeer op de pagina") with viewport screenshot + annotation canvas (pen, rectangle, arrow, text). html2canvas→html2canvas-pro (Tailwind v4 oklab fix). Box-shadow stripping during capture. |
+| Pin limit removed | ✅ Live (Mar 5) | MAX_PINNED_ROWS (5) removed. Unlimited row pinning. |
 | V2.5 Publieke Deellinks | 📋 Planned (Mar 4) | Architecture complete: DB-backed tokens (`/s/{token}`), 25-row read-only shared view, BFF-mediated, conversion CTAs, 5-min cache. Design prototype at `docs/designs/v25-shared-view.html`. Migration 075 planned. 10 files to create/modify. Implementation next session. |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
