@@ -88,6 +88,8 @@
 | Compound word search "slaap" fix | ✅ Fixed (Mar 3) | 4-commit fix: word boundary, LOWER() WHERE, force-dynamic, no-store cache. V2.4.2 |
 | Browser cache prevention (no-store) | ✅ Fixed (Mar 3) | Cache-Control no-store on BFF + all client-side fetches. Prevents stale API responses. |
 | Resend click tracking on auth emails | ✅ Fixed (Mar 3) | Dashboard disabled + code-level tracking: false on magic-link + invite routes |
+| Autocomplete field_matches prefix fix | ✅ Fixed (Mar 5) | Field matches (regelingen, artikelen) now appear while typing partial words. Exact+prefix fallback matching primary field pattern. V2.4.3 |
+| Railway backend public networking removed | ✅ Done (Mar 5) | Removed public domain from backend. Only accessible via Railway private network. Local dev updated to localhost:8000 |
 | V2.5 Publieke Deellinks | 📋 Planned (Mar 4) | Architecture complete: DB-backed tokens (`/s/{token}`), 25-row read-only shared view, BFF-mediated, conversion CTAs, 5-min cache. Design prototype at `docs/designs/v25-shared-view.html`. Migration 075 planned. 10 files to create/modify. Implementation next session. |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
@@ -99,7 +101,10 @@
 
 ## Recent Work (Last 5)
 
-1. **V2.5 Planning + Social Pipeline Upgrade** (2026-03-04)
+1. **Autocomplete Fix + Backend Security Hardening** (2026-03-05)
+   Autocomplete field_matches (regelingen, artikelen) now appear while typing partial words — exact+prefix fallback matching primary field pattern (V2.4.3). Removed public networking on Railway backend (security). Updated local dev to use localhost:8000.
+
+2. **V2.5 Planning + Social Pipeline Upgrade** (2026-03-04)
    Session 1: Social pipeline — template updates (4 new/changed), jaar added to COA/inkoop extraction, field-level verification system (2502/2502 verified). Session 2: V2.5 Publieke Deellinks — version reshuffle (V2.5=Deellinks only, V2.6-V2.9 shifted), comprehensive architecture planning with 6-person virtual team, design prototype. Key decisions: DB-backed `/s/{token}` (12-char, permanent), 25-row read-only shared view, BFF-mediated (no backend changes), conversion touchpoints, 5-min cache for viral scenarios.
 
 2. **V2.4 Live + UX-043/044 + Social Pipeline + Security Audit + Slaap Bug** (2026-03-03)
@@ -110,9 +115,6 @@
 
 2. **Roadmap Redesign — Linear-Grade Initiative Stack** (2026-03-01)
    Complete rewrite of /team/roadmap. Hierarchical parser (initiatives → sub-releases → features), objectives from VERSIONING.md, collapsible cards, progress bars, amber banner for unclear goals, backlog section. 2 bug fixes: V3.0+ hierarchy, A/M/D parent features visible alongside children.
-
-2. **Bug Fixes + UX-039 Pin Fix + Staging Elimination** (2026-02-28)
-   21 commits across 3 sessions. Production: word boundary fix, NULLS LAST, test framework (32/32), version renumber, back button, login email. UX-039: 10 pin/expand fixes. Infra: eliminated staging environment — localhost as full dev/test (added env vars), deleted staging branch+service, feature branch workflow.
 
 ---
 
