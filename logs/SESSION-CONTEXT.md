@@ -93,7 +93,7 @@
 | Roadmap patches display | ✅ Live (Mar 5) | /team/roadmap parses #### Patches tables from VERSIONING.md. Collapsible UI per version. |
 | Feedback screenshot + annotation | ✅ Live (Mar 5) | Replaced element picker ("Markeer op de pagina") with viewport screenshot + annotation canvas (pen, rectangle, arrow, text). html2canvas→html2canvas-pro (Tailwind v4 oklab fix). Box-shadow stripping during capture. |
 | Pin limit removed | ✅ Live (Mar 5) | MAX_PINNED_ROWS (5) removed. Unlimited row pinning. |
-| V2.5 Publieke Deellinks | 📋 Planned (Mar 4) | Architecture complete: DB-backed tokens (`/s/{token}`), 25-row read-only shared view, BFF-mediated, conversion CTAs, 5-min cache. Design prototype at `docs/designs/v25-shared-view.html`. Migration 075 planned. 10 files to create/modify. Implementation next session. |
+| V2.5 Publieke Deellinks | 🔨 In Progress (Mar 5) | Architecture (Mar 4) + share trigger UI design (Mar 5). Share exactly what you see: module, search, filters, sort, columns, expanded row+grouping+columns. "Deel" button in toolbar (disabled without search). One-click copy to clipboard. Subscribers redirect to full page, non-subscribers see same page + banners + 25-row limit. H8 lab prototype validates banner design. Design docs: `docs/designs/v25-shared-view.html` + `docs/plans/2026-03-05-v25-share-trigger-design.md`. Next: migration 075, BFF routes, share button, `/s/[token]` route. |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
@@ -104,8 +104,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Autocomplete Fix + Roadmap Patches + Feedback Screenshot** (2026-03-05)
-   Session 1: Autocomplete field_matches prefix fix (V2.4.3), Railway backend public networking removed. Session 2: Roadmap patches display on /team/roadmap (parses #### Patches tables from VERSIONING.md, collapsible UI). Feedback widget redesigned — replaced element picker with viewport screenshot + annotation canvas (4 tools: pen, rectangle, arrow, text). html2canvas→html2canvas-pro for Tailwind v4 oklab support. Box-shadow stripping for clean captures.
+1. **Autocomplete Fix + Features + V2.5 Design** (2026-03-05)
+   Session 1: Autocomplete field_matches prefix fix (V2.4.3), Railway backend public networking removed. Session 2: Roadmap patches on /team/roadmap, feedback screenshot+annotation. Session 3: V2.5 share trigger brainstorm — "Deel" button, stored state spec, subscriber redirect, H8 lab prototype for banner design.
 
 2. **V2.5 Planning + Social Pipeline Upgrade** (2026-03-04)
    Session 1: Social pipeline — template updates (4 new/changed), jaar added to COA/inkoop extraction, field-level verification system (2502/2502 verified). Session 2: V2.5 Publieke Deellinks — version reshuffle (V2.5=Deellinks only, V2.6-V2.9 shifted), comprehensive architecture planning with 6-person virtual team, design prototype. Key decisions: DB-backed `/s/{token}` (12-char, permanent), 25-row read-only shared view, BFF-mediated (no backend changes), conversion touchpoints, 5-min cache for viral scenarios.

@@ -12,6 +12,7 @@ const LAB_COMPONENTS: Record<string, React.ComponentType> = {
   h4: dynamic(() => import('@/components/lab/h4')),
   h5: dynamic(() => import('@/components/lab/h5')),
   h6: dynamic(() => import('@/components/lab/h6')),
+  h8: dynamic(() => import('@/components/lab/h8')),
 }
 
 export default function LabSlugPage() {
@@ -50,6 +51,11 @@ export default function LabSlugPage() {
         </div>
       </main>
     )
+  }
+
+  // Full-bleed prototypes (e.g. h8 shared view) — skip lab wrapper, own their entire viewport
+  if (pageInfo.fullBleed) {
+    return <Component />
   }
 
   return (
