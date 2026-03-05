@@ -35,7 +35,6 @@ const COLLAPSED_YEARS_START = 2016
 const COLLAPSED_YEARS_END = 2020
 
 const MAX_EXPORT_ROWS = 500
-const MAX_PINNED_ROWS = 5
 
 // Sticky column offset for primary column (in pixels)
 const STICKY_PRIMARY_OFFSET_PX = 32
@@ -616,25 +615,17 @@ export function DataTable({
                   <Tooltip.Trigger asChild>
                     <button
                       onClick={() => {
-                        if (pinnedCount < MAX_PINNED_ROWS) {
-                          row.pin('top')
-                          if (row.getIsExpanded()) row.toggleExpanded()
-                        }
+                        row.pin('top')
+                        if (row.getIsExpanded()) row.toggleExpanded()
                       }}
-                      className={cn(
-                        'p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity -mr-1',
-                        pinnedCount >= MAX_PINNED_ROWS
-                          ? 'cursor-not-allowed text-[var(--muted-foreground)]'
-                          : 'hover:bg-[var(--pink)]/10 text-[var(--navy-medium)] hover:text-[var(--pink)]'
-                      )}
-                      disabled={pinnedCount >= MAX_PINNED_ROWS}
+                      className="p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity -mr-1 hover:bg-[var(--pink)]/10 text-[var(--navy-medium)] hover:text-[var(--pink)]"
                     >
                       <Pin className="h-3.5 w-3.5" aria-hidden="true" />
                     </button>
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
                     <Tooltip.Content className="px-[10px] py-[6px] bg-[var(--navy-dark,#1e3a5f)] text-white text-[13px] font-normal leading-[1.4] rounded whitespace-nowrap z-[9999]" sideOffset={6}>
-                      {pinnedCount >= MAX_PINNED_ROWS ? `Maximaal ${MAX_PINNED_ROWS}` : 'Vergelijk'}
+                      Vergelijk
                     </Tooltip.Content>
                   </Tooltip.Portal>
                 </Tooltip.Root>
