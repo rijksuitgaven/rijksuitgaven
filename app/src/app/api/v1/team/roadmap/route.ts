@@ -23,6 +23,12 @@ interface Feature {
   source: 'versioning' | 'backlog'
 }
 
+interface Patch {
+  id: string
+  date: string
+  changes: string
+}
+
 interface Version {
   id: string
   name: string
@@ -30,6 +36,7 @@ interface Version {
   features_total: number
   features_done: number
   features: Feature[]
+  patches: Patch[]
   timeline?: string
   objective?: string
   objectiveClear: boolean
@@ -108,6 +115,8 @@ function parseVersioning(content: string): Map<TrackKey, TrackData> {
   let currentVersionId: string | null = null
   let inFeatureTable = false
   let featureTableHeaderPassed = false
+  let inPatchTable = false
+  let patchTableHeaderPassed = false
 
   // Flat list of all versions per track, to be organized into hierarchy later
   const flatVersions = new Map<TrackKey, Version[]>()
@@ -157,6 +166,8 @@ function parseVersioning(content: string): Map<TrackKey, TrackData> {
       const versionName = versionMatch[2].trim()
       inFeatureTable = false
       featureTableHeaderPassed = false
+      inPatchTable = false
+      patchTableHeaderPassed = false
 
       // Look ahead for status line
       let status: VersionStatus = 'planned'
@@ -179,6 +190,7 @@ function parseVersioning(content: string): Map<TrackKey, TrackData> {
         features_total: 0,
         features_done: 0,
         features: [],
+        patches: [],
         timeline,
         objectiveClear: true,
         children: [],
@@ -187,6 +199,48 @@ function parseVersioning(content: string): Map<TrackKey, TrackData> {
     }
 
     if (!currentVersionId) continue
+
+    // Detect patch table header: #### Patches
+    if (/^####\s+Patches/i.test(line)) {
+      inPatchTable = true
+      patchTableHeaderPassed = false
+      inFeatureTable = false
+      featureTableHeaderPassed = false
+      continue
+    }
+
+    // Parse patch table header row (| Patch | Date | Changes |)
+    if (inPatchTable && /^\| Patch\s*\|/i.test(line)) {
+      continue
+    }
+
+    // Skip patch table separator
+    if (inPatchTable && /^\|[\s-|]+\|$/.test(line)) {
+      patchTableHeaderPassed = true
+      continue
+    }
+
+    // Parse patch table rows
+    if (inPatchTable && patchTableHeaderPassed && line.startsWith('|')) {
+      const cells = line.split('|').map(c => c.trim()).filter(Boolean)
+      if (cells.length >= 3) {
+        const patchId = cells[0].trim()
+        const date = cells[1].trim()
+        const changes = cells[2].trim()
+
+        const version = trackVersions.find(v => v.id === currentVersionId)
+        if (version) {
+          version.patches.push({ id: patchId, date, changes })
+        }
+      }
+      continue
+    }
+
+    // End patch table on non-pipe line
+    if (inPatchTable && !line.startsWith('|') && line.trim() !== '') {
+      inPatchTable = false
+      patchTableHeaderPassed = false
+    }
 
     // Detect feature table start
     if (/^\| Feature\s*\|/i.test(line) || /^\| Dataset\s*\|/i.test(line)) {
@@ -305,6 +359,7 @@ function parseVersioning(content: string): Map<TrackKey, TrackData> {
             features_total: 0,
             features_done: 0,
             features: [],
+            patches: [],
             objective,
             objectiveClear: !!init?.objective,
             children: [],
@@ -351,6 +406,7 @@ function parseVersioning(content: string): Map<TrackKey, TrackData> {
               features_total: 0,
               features_done: 0,
               features: [],
+              patches: [],
               objectiveClear: false,
               children: [v],
             }

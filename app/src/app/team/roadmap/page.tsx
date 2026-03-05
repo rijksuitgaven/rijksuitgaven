@@ -20,6 +20,12 @@ interface Feature {
   source: 'versioning' | 'backlog'
 }
 
+interface Patch {
+  id: string
+  date: string
+  changes: string
+}
+
 interface Version {
   id: string
   name: string
@@ -27,6 +33,7 @@ interface Version {
   features_total: number
   features_done: number
   features: Feature[]
+  patches?: Patch[]
   timeline?: string
   objective?: string
   objectiveClear: boolean
@@ -135,6 +142,35 @@ function FeatureRow({ feature }: { feature: Feature }) {
   )
 }
 
+function PatchesSection({ patches }: { patches: Patch[] }) {
+  const [expanded, setExpanded] = useState(false)
+
+  if (patches.length === 0) return null
+
+  return (
+    <div className="mt-1">
+      <button
+        onClick={() => setExpanded(e => !e)}
+        className="flex items-center gap-2 py-1 px-3 text-[11px] text-[var(--navy-medium)] hover:text-[var(--navy-dark)] transition-colors cursor-pointer"
+      >
+        <span className={`text-[9px] transition-transform ${expanded ? 'rotate-90' : ''}`}>▶</span>
+        <span>{patches.length} patch{patches.length !== 1 ? 'es' : ''}</span>
+      </button>
+      {expanded && (
+        <div className="ml-6 mb-1">
+          {patches.map(p => (
+            <div key={p.id} className="flex items-baseline gap-3 py-1 px-3 text-[12px]">
+              <span className="font-mono font-semibold text-[var(--navy-dark)] w-[52px] shrink-0">{p.id}</span>
+              <span className="text-[var(--navy-medium)] w-[72px] shrink-0 tabular-nums">{p.date}</span>
+              <span className="text-[var(--navy-medium)] flex-1">{p.changes}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function SubReleaseRow({ version }: { version: Version }) {
   const [expanded, setExpanded] = useState(false)
   const pct = version.features_total > 0
@@ -209,6 +245,13 @@ function SubReleaseRow({ version }: { version: Version }) {
           {version.features.map((f, i) => (
             <FeatureRow key={`${f.version}-${i}`} feature={f} />
           ))}
+        </div>
+      )}
+
+      {/* Patches */}
+      {expanded && version.patches && version.patches.length > 0 && (
+        <div className="ml-[22px] pl-3 border-l-2 border-gray-100">
+          <PatchesSection patches={version.patches} />
         </div>
       )}
     </div>
@@ -322,6 +365,9 @@ function InitiativeCard({ release }: { release: Version }) {
               {release.features.map((f, i) => (
                 <FeatureRow key={`${f.version}-${i}`} feature={f} />
               ))}
+              {release.patches && release.patches.length > 0 && (
+                <PatchesSection patches={release.patches} />
+              )}
             </div>
           )}
 
