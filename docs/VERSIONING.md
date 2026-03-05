@@ -2,7 +2,7 @@
 
 **Project:** Rijksuitgaven.nl
 **Created:** 2026-01-30
-**Updated:** 2026-03-03
+**Updated:** 2026-03-05
 **Status:** Active
 
 ---
@@ -75,7 +75,7 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 | URL sharing | ✅ Live |
 | BFF proxy (security) | ✅ Live |
 | Typesense data enrichment (recipients + year amounts for hybrid search) | ✅ Live |
-| UX-025: Feedback button with screenshot area selection | ✅ Live |
+| UX-025: Feedback button with screenshot + annotation (pen, rectangle, arrow, text tools) | ✅ Live |
 | Exact phrase search (`"rode kruis"`) | ✅ Live |
 | Wildcard syntax (`prorail*`) | ✅ Live |
 | Email campaigns via Resend Broadcasts (replaces WordPress/Mailster) | ✅ Live |
@@ -188,6 +188,7 @@ Internal admin tooling at `/team/*`. Separate release cadence from the end-user 
 | UX-043: Specific recipient picker for targeted email sends | ✅ Live |
 | UX-044: Uitgeschreven filter on /team/leden and /team/contacten | ✅ Live |
 | Security hardening — CSRF, CSP, rate limiting, private networking, dependency CVEs | ✅ Live |
+| Roadmap patches display — /team/roadmap shows patch releases parsed from VERSIONING.md | ✅ Live |
 | UTM builder — compose UI for UTM parameters, auto-append to CTA + body links | 📋 Planned |
 
 ### A1.1 - Bulk & CRM
