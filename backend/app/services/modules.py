@@ -2574,8 +2574,14 @@ async def get_module_autocomplete(
             logger.warning(f"Autocomplete PostgreSQL fallback failed: {e}")
 
     # 2. Field match results (OOK GEVONDEN IN section)
+    # Uses exact + prefix fallback (matching primary field logic):
+    # - Exact word boundary matches are prioritized
+    # - Substring matches are included as fallback so results appear while typing
     if collection and search_fields:
         seen_values: set[str] = set()
+        exact_field_matches: list[dict] = []
+        prefix_field_matches: list[dict] = []
+        search_lower = search.lower()
         for field in search_fields[:3]:
             label = f"field:{field}"
             data = result_map.get(label, {})
@@ -2586,13 +2592,18 @@ async def get_module_autocomplete(
                 doc = hits[0].get("document", {})
                 value = doc.get(field)
                 if value and len(str(value)) >= 3 and value.upper() not in seen_values:
+                    entry = {"value": value, "field": field}
                     if is_word_boundary_match(search, str(value)):
                         seen_values.add(value.upper())
-                        field_matches.append({"value": value, "field": field})
-                        if len(field_matches) >= limit:
-                            break
-            if len(field_matches) >= limit:
-                break
+                        exact_field_matches.append(entry)
+                    elif search_lower in str(value).lower():
+                        seen_values.add(value.upper())
+                        prefix_field_matches.append(entry)
+        # Exact matches first, then prefix/substring matches
+        field_matches = exact_field_matches[:limit]
+        remaining = limit - len(field_matches)
+        if remaining > 0:
+            field_matches.extend(prefix_field_matches[:remaining])
 
     # 3. Recipients collection results
     current_names = {r["name"].upper() for r in current_module_results}
