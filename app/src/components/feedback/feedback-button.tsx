@@ -1,55 +1,13 @@
 'use client'
 
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { MessageSquare, X, Crosshair, Send, Loader2, Check, RefreshCw } from 'lucide-react'
+import { MessageSquare, X, Camera, Send, Loader2, Check, RefreshCw } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { useAnalytics } from '@/hooks/use-analytics'
 import { MUTATION_HEADERS } from '@/lib/api-config'
+import { AnnotationCanvas } from './annotation-canvas'
 
-type FeedbackState = 'idle' | 'form' | 'marking' | 'capturing' | 'sending' | 'success'
-
-interface MarkedElement {
-  screenshot: string | null
-  selector: string
-  text: string
-  tag: string
-  rect: { x: number; y: number; width: number; height: number }
-}
-
-/** Build a human-readable CSS selector for an element */
-function getSelector(el: Element): string {
-  if (el.id) return `#${el.id}`
-  const parts: string[] = []
-  let current: Element | null = el
-  while (current && current !== document.body) {
-    let selector = current.tagName.toLowerCase()
-    if (current.className && typeof current.className === 'string') {
-      const meaningful = current.className
-        .split(/\s+/)
-        .filter(c => c && !c.startsWith('hover:') && !c.startsWith('focus:') && c.length < 30)
-        .slice(0, 2)
-      if (meaningful.length) selector += `.${meaningful.join('.')}`
-    }
-    parts.unshift(selector)
-    current = current.parentElement
-    if (parts.length >= 3) break
-  }
-  return parts.join(' > ')
-}
-
-/** Get a friendly label for an element */
-function getElementLabel(el: Element): string {
-  const tag = el.tagName.toLowerCase()
-  const labels: Record<string, string> = {
-    table: 'Tabel', tr: 'Tabelrij', td: 'Tabelcel', th: 'Tabelkop',
-    button: 'Knop', a: 'Link', input: 'Invoerveld', textarea: 'Tekstveld',
-    select: 'Selectieveld', img: 'Afbeelding', h1: 'Kop', h2: 'Kop',
-    h3: 'Kop', h4: 'Kop', p: 'Tekst', span: 'Tekst', div: 'Sectie',
-    header: 'Header', footer: 'Footer', nav: 'Navigatie', main: 'Hoofdinhoud',
-    form: 'Formulier', label: 'Label', svg: 'Icoon',
-  }
-  return labels[tag] || tag
-}
+type FeedbackState = 'idle' | 'form' | 'capturing' | 'annotating' | 'sending' | 'success'
 
 const COOKIE_BANNER_KEY = 'cookie-banner-dismissed'
 
@@ -59,12 +17,15 @@ export function FeedbackButton() {
   const [state, setState] = useState<FeedbackState>('idle')
   const [category, setCategory] = useState<'suggestie' | 'bug' | 'vraag'>('suggestie')
   const [message, setMessage] = useState('')
-  const [marked, setMarked] = useState<MarkedElement | null>(null)
+  const [screenshot, setScreenshot] = useState<string | null>(null)
   const [screenshotError, setScreenshotError] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [rawScreenshot, setRawScreenshot] = useState<string | null>(null)
 
   // Cookie banner awareness — push feedback button up when banner is visible
   const [cookieBannerVisible, setCookieBannerVisible] = useState(false)
+
+  const savedMessageRef = useRef('')
 
   useEffect(() => {
     try {
@@ -83,21 +44,15 @@ export function FeedbackButton() {
     return () => window.removeEventListener('cookie-banner-change', handleChange)
   }, [])
 
-  // Element highlighting state
-  const [highlightRect, setHighlightRect] = useState<DOMRect | null>(null)
-  const hoveredElRef = useRef<Element | null>(null)
-  const savedMessageRef = useRef('')
-
   // Reset
   const reset = useCallback(() => {
     setState('idle')
     setCategory('suggestie')
     setMessage('')
-    setMarked(null)
+    setScreenshot(null)
+    setRawScreenshot(null)
     setScreenshotError(null)
     setSubmitError(null)
-    setHighlightRect(null)
-    hoveredElRef.current = null
     savedMessageRef.current = ''
   }, [])
 
@@ -109,13 +64,11 @@ export function FeedbackButton() {
     }
   }, [state, reset])
 
-  // Escape key handler
+  // Escape key handler (form and screenshotting states — annotation canvas handles its own)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (state === 'marking' || state === 'capturing') {
-          setHighlightRect(null)
-          hoveredElRef.current = null
+        if (state === 'capturing') {
           setMessage(savedMessageRef.current)
           setState('form')
         } else if (state === 'form') {
@@ -127,124 +80,72 @@ export function FeedbackButton() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [state, reset])
 
-  // Set crosshair cursor on body during marking mode
-  useEffect(() => {
-    if (state === 'marking') {
-      document.body.style.cursor = 'crosshair'
-      return () => { document.body.style.cursor = '' }
-    }
-  }, [state])
-
-  // Element highlighting: mousemove + click handlers during marking mode
-  useEffect(() => {
-    if (state !== 'marking') return
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const el = document.elementFromPoint(e.clientX, e.clientY)
-      if (!el) return
-
-      // Skip our own overlay/toolbar elements
-      if ((el as HTMLElement).closest('[data-feedback-overlay]')) return
-
-      // Find a meaningful element (not too small, not the body)
-      let target: Element = el
-      const rect = target.getBoundingClientRect()
-      // If element is very small (icon, span), go up to parent
-      if (rect.width < 20 || rect.height < 20) {
-        target = target.parentElement || target
-      }
-      // Don't highlight body or html
-      if (target === document.body || target === document.documentElement) return
-
-      hoveredElRef.current = target
-      setHighlightRect(target.getBoundingClientRect())
-    }
-
-    const handleClick = async (e: MouseEvent) => {
-      // Let toolbar clicks through (Annuleren button etc.)
-      if ((e.target as HTMLElement).closest('[data-feedback-overlay]')) return
-
-      e.preventDefault()
-      e.stopPropagation()
-
-      const el = hoveredElRef.current
-      if (!el) return
-
-      // Capture the clicked element
-      setHighlightRect(null)
-      setState('capturing')
-
-      const rect = el.getBoundingClientRect()
-      const elementInfo = {
-        selector: getSelector(el),
-        text: (el.textContent || '').trim().slice(0, 200),
-        tag: getElementLabel(el),
-        rect: {
-          x: Math.round(rect.x),
-          y: Math.round(rect.y),
-          width: Math.round(rect.width),
-          height: Math.round(rect.height),
-        },
-      }
-
-      // Try to capture element screenshot
-      let screenshot: string | null = null
-      try {
-        const html2canvas = (await import('html2canvas')).default
-        const canvas = await html2canvas(el as HTMLElement, {
-          useCORS: true,
-          allowTaint: true,
-          logging: false,
-          scale: 1,
-          width: Math.min(rect.width, 800),
-          height: Math.min(rect.height, 600),
-        })
-        screenshot = canvas.toDataURL('image/png')
-      } catch (err) {
-        console.error('[Feedback] Element capture failed:', err)
-        // Not fatal — we still have element info
-      }
-
-      setMarked({ ...elementInfo, screenshot })
-      setMessage(savedMessageRef.current)
-      if (!screenshot) {
-        setScreenshotError('Schermafbeelding mislukt, maar element is gemarkeerd')
-      }
-      setState('form')
-    }
-
-    document.addEventListener('mousemove', handleMouseMove, true)
-    document.addEventListener('click', handleClick, true)
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove, true)
-      document.removeEventListener('click', handleClick, true)
-    }
-  }, [state])
-
   // Open form
   const handleOpen = useCallback(() => {
     setState('form')
   }, [])
 
-  // Start element marking mode
-  const startMarking = useCallback(() => {
+  // Start screenshot capture — 'capturing' state renders NO UI so the page is clean
+  const startScreenshot = useCallback(async () => {
     savedMessageRef.current = message
     setScreenshotError(null)
-    setState('marking')
+    setState('capturing')
+
+    // Wait for all feedback UI to unmount and DOM to repaint
+    await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())))
+
+    // Temporarily strip box-shadows to prevent html2canvas thick border artifacts
+    const style = document.createElement('style')
+    style.setAttribute('data-feedback-capture', '')
+    style.textContent = '*, *::before, *::after { box-shadow: none !important; }'
+    document.head.appendChild(style)
+
+    try {
+      const html2canvas = (await import('html2canvas-pro')).default
+      const canvas = await html2canvas(document.body, {
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        scale: 1,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        windowWidth: window.innerWidth,
+        windowHeight: window.innerHeight,
+        x: window.scrollX,
+        y: window.scrollY,
+      })
+      const dataUrl = canvas.toDataURL('image/png')
+      style.remove()
+      setRawScreenshot(dataUrl)
+      setState('annotating')
+    } catch (err) {
+      style.remove()
+      console.error('[Feedback] Screenshot capture failed:', err)
+      setScreenshotError('Screenshot kon niet worden gemaakt')
+      setMessage(savedMessageRef.current)
+      setState('form')
+    }
   }, [message])
 
-  // Cancel marking, return to form
-  const cancelMarking = useCallback(() => {
-    setHighlightRect(null)
-    hoveredElRef.current = null
+  // Annotation done — receive the annotated PNG
+  const handleAnnotationDone = useCallback((annotatedDataUrl: string) => {
+    setScreenshot(annotatedDataUrl)
+    setRawScreenshot(null)
     setMessage(savedMessageRef.current)
     setState('form')
   }, [])
 
-  // Remove marked element
-  const removeMarked = useCallback(() => {
-    setMarked(null)
+  // Annotation cancelled
+  const handleAnnotationCancel = useCallback(() => {
+    setRawScreenshot(null)
+    setMessage(savedMessageRef.current)
+    setState('form')
+  }, [])
+
+  // Remove screenshot
+  const removeScreenshot = useCallback(() => {
+    setScreenshot(null)
+    setRawScreenshot(null)
     setScreenshotError(null)
   }, [])
 
@@ -261,13 +162,7 @@ export function FeedbackButton() {
         body: JSON.stringify({
           category,
           message: message.trim(),
-          screenshot: marked?.screenshot || undefined,
-          element: marked ? {
-            selector: marked.selector,
-            text: marked.text,
-            tag: marked.tag,
-            rect: marked.rect,
-          } : undefined,
+          screenshot: screenshot || undefined,
           pageUrl: window.location.href,
           userAgent: navigator.userAgent,
         }),
@@ -284,59 +179,22 @@ export function FeedbackButton() {
       setState('form')
       track('error', undefined, { message: err instanceof Error ? err.message : 'Feedback submit failed', trigger: 'feedback_submit' })
     }
-  }, [message, category, marked])
+  }, [message, category, screenshot])
 
   if (!isLoggedIn) return null
 
   return (
     <>
-      {/* Element highlighting overlay during marking mode */}
-      {state === 'marking' && (
-        <>
-          {/* Highlight box following hovered element */}
-          {highlightRect && (
-            <div
-              className="fixed pointer-events-none z-[9998] border-2 border-[#E62D75] rounded-sm"
-              style={{
-                left: highlightRect.left - 2,
-                top: highlightRect.top - 2,
-                width: highlightRect.width + 4,
-                height: highlightRect.height + 4,
-                backgroundColor: 'rgba(230, 45, 117, 0.08)',
-                transition: 'all 50ms ease-out',
-              }}
-            />
-          )}
-
-          {/* Toolbar */}
-          <div
-            data-feedback-overlay
-            className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 bg-white rounded-lg shadow-xl px-4 py-2.5 border border-gray-200"
-          >
-            <Crosshair className="w-4 h-4 text-[#E62D75]" />
-            <span className="text-sm text-gray-700">
-              Klik op het element dat u wilt melden
-            </span>
-            <button
-              onClick={cancelMarking}
-              className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded hover:bg-gray-200 transition-colors"
-            >
-              Annuleren
-            </button>
-          </div>
-
-        </>
+      {/* Annotation canvas overlay */}
+      {state === 'annotating' && rawScreenshot && (
+        <AnnotationCanvas
+          screenshotDataUrl={rawScreenshot}
+          onDone={handleAnnotationDone}
+          onCancel={handleAnnotationCancel}
+        />
       )}
 
-      {/* Loading state while capturing element */}
-      {state === 'capturing' && (
-        <div className="fixed inset-0 z-[9999] bg-black/30 flex items-center justify-center">
-          <div className="bg-white rounded-lg px-6 py-4 flex items-center gap-3 shadow-xl">
-            <Loader2 className="w-5 h-5 animate-spin text-[#0E3261]" />
-            <span className="text-sm text-gray-700">Element vastleggen...</span>
-          </div>
-        </div>
-      )}
+      {/* 'capturing' state renders nothing — clean page for html2canvas */}
 
       {/* Feedback form panel */}
       {(state === 'form' || state === 'sending') && (
@@ -385,32 +243,30 @@ export function FeedbackButton() {
               autoFocus
             />
 
-            {/* Element marking section */}
+            {/* Screenshot section */}
             <div className="mt-3">
-              {marked ? (
-                /* Compact attachment chip */
+              {screenshot ? (
+                /* Screenshot attachment chip */
                 <div className="flex items-center gap-3 rounded-md border border-gray-200 bg-gray-50 px-3 py-2">
-                  {marked.screenshot && (
-                    <img
-                      src={marked.screenshot}
-                      alt="Gemarkeerd element"
-                      className="h-10 w-14 object-cover rounded border border-gray-200 flex-shrink-0"
-                    />
-                  )}
+                  <img
+                    src={screenshot}
+                    alt="Screenshot"
+                    className="h-10 w-14 object-cover rounded border border-gray-200 flex-shrink-0"
+                  />
                   <span className="text-xs text-gray-500 truncate flex-1 min-w-0">
-                    Gemarkeerd
+                    Screenshot
                   </span>
                   <div className="flex gap-1 flex-shrink-0">
                     <button
-                      onClick={startMarking}
+                      onClick={startScreenshot}
                       className="p-1 hover:bg-gray-200 rounded transition-colors"
-                      aria-label="Opnieuw markeren"
-                      title="Opnieuw markeren"
+                      aria-label="Opnieuw screenshot maken"
+                      title="Opnieuw screenshot maken"
                     >
                       <RefreshCw className="w-3.5 h-3.5 text-gray-400" />
                     </button>
                     <button
-                      onClick={removeMarked}
+                      onClick={removeScreenshot}
                       className="p-1 hover:bg-gray-200 rounded transition-colors"
                       aria-label="Verwijderen"
                       title="Verwijderen"
@@ -420,14 +276,14 @@ export function FeedbackButton() {
                   </div>
                 </div>
               ) : (
-                /* Mark element button */
+                /* Screenshot button */
                 <button
-                  onClick={startMarking}
+                  onClick={startScreenshot}
                   disabled={state === 'sending'}
                   className="w-full flex items-center justify-center gap-2 px-3 py-2.5 border border-dashed border-gray-300 rounded-md text-sm text-gray-500 hover:border-[#E62D75] hover:text-[#E62D75] hover:bg-[#E62D75]/5 disabled:opacity-50 transition-colors"
                 >
-                  <Crosshair className="w-4 h-4" />
-                  Markeer op de pagina
+                  <Camera className="w-4 h-4" />
+                  Screenshot maken
                 </button>
               )}
             </div>
