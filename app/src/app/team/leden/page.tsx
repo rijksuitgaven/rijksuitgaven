@@ -25,6 +25,7 @@ interface Member {
   activated_at: string | null
   last_active_at: string | null
   notes: string | null
+  contract_end_date: string | null
   unsubscribed_at: string | null
   created_at: string
 }
@@ -376,7 +377,9 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
     const graceDate = new Date(endDate + 'T00:00:00Z')
     graceDate.setUTCDate(graceDate.getUTCDate() + graceDays)
 
-    const body = {
+    const contractEndDate = form.get('contract_end_date') as string
+
+    const body: Record<string, unknown> = {
       first_name: form.get('first_name'),
       last_name: form.get('last_name'),
       organization: form.get('organization') || null,
@@ -385,6 +388,7 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
       end_date: endDate,
       grace_ends_at: graceDate.toISOString().split('T')[0],
       notes: form.get('notes') || null,
+      contract_end_date: contractEndDate || null,
     }
 
     try {
@@ -457,6 +461,12 @@ function EditMemberModal({ member, onClose, onSaved }: { member: Member; onClose
               </div>
             )}
           </div>
+          {member.role !== 'admin' && (
+            <div>
+              <label htmlFor="edit_contract_end_date" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Contractdatum (oud)</label>
+              <input id="edit_contract_end_date" name="contract_end_date" type="date" defaultValue={member.contract_end_date ?? ''} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]" />
+            </div>
+          )}
           <div>
             <label htmlFor="edit_notes" className="block text-sm font-medium text-[var(--navy-medium)] mb-1">Notities</label>
             <textarea id="edit_notes" name="notes" rows={2} defaultValue={member.notes ?? ''} className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--pink)]" />
@@ -489,7 +499,7 @@ export default function TeamLedenPage() {
   const [showForm, setShowForm] = useState(false)
   const [editingMember, setEditingMember] = useState<Member | null>(null)
   const [engagement, setEngagement] = useState<Record<string, EngagementInfo>>({})
-  type SortField = 'name' | 'organization' | 'email' | 'plan' | 'status' | 'last_active_at' | 'end_date' | 'engagement'
+  type SortField = 'name' | 'organization' | 'email' | 'plan' | 'status' | 'last_active_at' | 'end_date' | 'contract_end_date' | 'engagement'
   const [sortBy, setSortBy] = useState<SortField | null>(null)
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
   type FilterKey = MemberStatus | 'uitgeschreven'
@@ -603,6 +613,10 @@ export default function TeamLedenPage() {
         aVal = a.end_date
         bVal = b.end_date
         break
+      case 'contract_end_date':
+        aVal = a.contract_end_date ?? ''
+        bVal = b.contract_end_date ?? ''
+        break
       case 'engagement': {
         // Sort order: active > at_risk > new > cold
         const order: Record<string, number> = { active: 0, at_risk: 1, new: 2, cold: 3 }
@@ -687,7 +701,7 @@ export default function TeamLedenPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-[var(--border)]">
-                {([['name', 'Naam'], ['organization', 'Organisatie'], ['email', 'E-mail'], ['plan', 'Plan'], ['status', 'Status'], ['engagement', 'Engagement'], ['last_active_at', 'Laatst actief'], ['end_date', 'Einddatum']] as [SortField, string][]).map(([field, label]) => (
+                {([['name', 'Naam'], ['organization', 'Organisatie'], ['email', 'E-mail'], ['plan', 'Plan'], ['status', 'Status'], ['engagement', 'Engagement'], ['last_active_at', 'Laatst actief'], ['end_date', 'Einddatum'], ['contract_end_date', 'Contract']] as [SortField, string][]).map(([field, label]) => (
                   <th key={field} onClick={() => toggleSort(field)} className="text-left px-4 py-3 font-medium text-[var(--navy-medium)] cursor-pointer select-none hover:text-[var(--navy-dark)]">
                     <span className="inline-flex items-center gap-1">{label} <SortIcon field={field} /></span>
                   </th>
@@ -698,7 +712,7 @@ export default function TeamLedenPage() {
             <tbody>
               {filteredMembers.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-8 text-center text-[var(--navy-medium)]">
+                  <td colSpan={10} className="px-4 py-8 text-center text-[var(--navy-medium)]">
                     {activeFilter ? 'Geen leden met dit filter.' : 'Nog geen leden. Voeg het eerste lid toe.'}
                   </td>
                 </tr>
@@ -738,6 +752,7 @@ export default function TeamLedenPage() {
                         {formatRelativeTime(member.last_active_at)}
                       </td>
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{member.role === 'admin' ? '—' : formatDate(member.end_date)}</td>
+                      <td className="px-4 py-3 text-[var(--navy-medium)]">{member.contract_end_date ? formatDate(member.contract_end_date) : '—'}</td>
                       <td className="px-4 py-3">
                         <MemberActions member={member} isSelf={currentUserId === member.user_id} onChanged={fetchMembers} />
                       </td>

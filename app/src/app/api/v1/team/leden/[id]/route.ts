@@ -19,7 +19,7 @@ function forbiddenResponse() {
 }
 
 const PERSON_FIELDS = new Set(['first_name', 'last_name', 'organization'])
-const SUBSCRIPTION_FIELDS = new Set(['plan', 'start_date', 'end_date', 'grace_ends_at', 'notes', 'role', 'cancelled_at'])
+const SUBSCRIPTION_FIELDS = new Set(['plan', 'start_date', 'end_date', 'grace_ends_at', 'notes', 'role', 'cancelled_at', 'contract_end_date'])
 
 export async function PATCH(
   request: NextRequest,
@@ -132,7 +132,7 @@ export async function PATCH(
   // Fetch updated member with person data for response
   const { data: updated, error: fetchError } = await adminSupabase
     .from('subscriptions')
-    .select('id, user_id, person_id, plan, role, start_date, end_date, grace_ends_at, cancelled_at, invited_at, activated_at, last_active_at, notes, created_at, people!inner(email, first_name, last_name, organization, resend_contact_id)')
+    .select('id, user_id, person_id, plan, role, start_date, end_date, grace_ends_at, cancelled_at, invited_at, activated_at, last_active_at, notes, contract_end_date, created_at, people!inner(email, first_name, last_name, organization, resend_contact_id)')
     .eq('id', id)
     .single()
 
