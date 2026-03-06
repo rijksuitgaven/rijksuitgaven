@@ -532,9 +532,14 @@ export default function TeamLedenPage() {
     try {
       const res = await fetch('/api/v1/team/leden/engagement')
       const data = await res.json()
-      if (res.ok) setEngagement(data.engagement || {})
-    } catch {
-      // Non-fatal
+      if (res.ok) {
+        console.log('[Engagement] Loaded:', Object.keys(data.engagement || {}).length, 'records')
+        setEngagement(data.engagement || {})
+      } else {
+        console.warn('[Engagement] Failed:', res.status, data)
+      }
+    } catch (err) {
+      console.error('[Engagement] Fetch error:', err)
     }
   }, [])
 
