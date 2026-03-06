@@ -554,6 +554,9 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     lastTrigger.current = newFilters.search !== prev.search ? 'search' : 'filter_apply'
     setFilters(newFilters)
     setPage(1)
+    // Clear expanded row — new search/filter results won't contain the same row
+    expandedPrimaryRef.current = null
+    expandGroupingRef.current = null
   }, [track, moduleId])
 
   const handleSortChange = useCallback((column: string, direction: 'asc' | 'desc') => {
@@ -653,6 +656,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
       [field]: [value],
     })
     setPage(1)
+    expandedPrimaryRef.current = null
+    expandGroupingRef.current = null
     setFilterExpandTrigger(prev => prev + 1)
   }, [])
 

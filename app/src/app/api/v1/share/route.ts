@@ -9,7 +9,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/app/api/_lib/auth'
 import { csrfCheck } from '@/app/api/_lib/auth'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/app/api/_lib/supabase-admin'
 
 const VALID_MODULES = new Set([
   'instrumenten', 'apparaat', 'inkoop', 'provincie', 'gemeente', 'publiek', 'integraal',
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     ? (body.expanded_columns as string[]).filter(c => typeof c === 'string').slice(0, MAX_COLUMNS)
     : null
 
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const userId = auth.user.id
 
   // Dedup: find existing active link with same module+search+sort+filters
