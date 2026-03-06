@@ -20,7 +20,7 @@ const ibmPlexSansCondensed = IBM_Plex_Sans_Condensed({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://beta.rijksuitgaven.nl'),
+  metadataBase: new URL('https://rijksuitgaven.nl'),
   title: {
     default: 'Rijksuitgaven.nl',
     template: '%s | Rijksuitgaven.nl',
