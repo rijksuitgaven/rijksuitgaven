@@ -234,10 +234,10 @@ Marketing, launch infrastructure, and conversion optimization. Not end-user feat
 
 | Feature | Status | Blocks DNS switch? |
 |---------|--------|--------------------|
-| SEO: OG image, twitter cards, per-page metadata, structured data | 📋 Planned | Yes |
+| SEO: OG image, twitter cards, per-page metadata, structured data | ✅ Live (7 maart 2026) | Yes |
 | DNS switch: rijksuitgaven.nl → Railway via CloudFlare, metadataBase, Supabase URLs | ✅ Live (6 maart 2026) | Yes (is the switch) |
 | Rate limiting: Backend token bucket + contact form rate limit + Railway private networking | ✅ Live | Yes |
-| User migration: ~50 WordPress users to Supabase | 📋 Planned | Yes |
+| User migration: ~50 WordPress users to Supabase | ✅ Live (6 maart 2026) | Yes |
 | Homepage copy optimization (remaining value props) | ⏳ In progress | Yes |
 | Logo asset optimization (compact variant, SVG) | 📋 Planned | No |
 
@@ -689,7 +689,7 @@ V10.0 European Platform
 
 | Version | Status | Timeline |
 |---------|--------|----------|
-| M1.0 | 📋 Lancering (launch gate) | Before DNS switch |
+| M1.0 | 🔨 Lancering (launch gate) | DNS+SEO done, homepage copy remaining |
 | M1.1 | 📋 Conversie & Groei | Post-launch |
 
 **Data (D-track):**
@@ -724,4 +724,4 @@ V10.0 European Platform
 ---
 
 **Document maintained by:** Product Owner
-**Last updated:** 2026-03-04
+**Last updated:** 2026-03-07

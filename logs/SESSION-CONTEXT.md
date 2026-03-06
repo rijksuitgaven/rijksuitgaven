@@ -1,9 +1,9 @@
 # Session Context
 
-**Last Updated:** 2026-03-06
+**Last Updated:** 2026-03-07
 **Project Phase:** V2.0 Development
 **Current Sprint:** Week 10 — Pre-Launch Polish & M1.0 Launch Gate
-**Beta Status:** V0.9 live at beta.rijksuitgaven.nl (10 testers, launched 2026-02-21)
+**Beta Status:** V2.5 live at rijksuitgaven.nl (DNS migrated 2026-03-06, launched 2026-02-21)
 
 > **Full history:** `logs/SESSION-CONTEXT-ARCHIVE.md` (archived 2026-02-22)
 
@@ -17,7 +17,7 @@
 |-------|---------|--------|
 | **V** (End-user) | V2.5 Search Platform | ✅ Live (beta) |
 | **A** (Admin) | A1.0 Beheer MVP | ✅ Live |
-| **M** (Marketing) | M1.0 Lancering | 📋 Planned |
+| **M** (Marketing) | M1.0 Lancering | 🔨 In Progress |
 | **D** (Data) | D1.0 Gemeente Uitbreiding | 📋 Planned |
 
 **Scheme:** VX.Y = end-user | AX.Y = admin | MX.Y = marketing | DX.Y = data
@@ -99,16 +99,19 @@
 | V2.5 Publieke Deellinks | ✅ Live (Mar 6) | Full implementation: migration 076 (shared_links table), BFF routes (POST create + GET public + DELETE), Deel button (admin-only, 4 visual states), subscriber redirect (/s/[token] → full module page with state reconstruction), public read-only view (server-rendered, 25 rows, conversion banners). Bug fixes: base64url encoding, stale expand param, RLS bypass. 8 commits. |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
-| User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
-| SEO optimization | ⏳ Pending | OG image, twitter cards, per-page metadata, structured data |
+| User migration | ✅ Done (Mar 6) | ~50 WordPress users imported to Supabase |
+| SEO optimization | ✅ Live (Mar 7) | OG image, sitemap, robots, JSON-LD, twitter card, metadata. Commit `6418092`. |
 | DNS/CloudFlare switch | ✅ Live (Mar 6) | All 3 phases complete. CloudFlare proxy active, rijksuitgaven.nl → Railway, www 301 redirect, SSL Full (strict), API cache bypass. metadataBase + Supabase updated. |
-| SPF tightening | ⏳ Pending | Remove ZXCS includes from SPF record since no longer sending from there. Do after confirming email works for a few days. |
+| SPF tightening | ⏳ Pending | Remove `a` and `rrpproxyspf.zxcs.nl`. Keep `mx` + `spfmailpod.zxcs.nl` (Vimexx mail still active). New SPF: `v=spf1 mx include:spfmailpod.zxcs.nl include:send.resend.dev -all` |
 
 ---
 
 ## Recent Work (Last 5)
 
-1. **V2.5 + DNS Migration + Admin Leden** (2026-03-06)
+1. **SEO Implementation** (2026-03-07)
+   OG image (opengraph-image.tsx with IBM Plex Sans Bold, hi-res logo, left-aligned layout), sitemap.ts (6 pages), robots.ts (disallows), layout.tsx (metadata + JSON-LD), middleware fix (opengraph-image public path). SPF tightening planned. Commit `6418092`.
+
+2. **V2.5 + DNS Migration + Admin Leden** (2026-03-06)
    Session 1: Admin leden — contract_end_date (migration 075), engagement badge bug fix, compact table. Session 2: V2.5 full implementation — migration 076 (shared_links), BFF routes, Deel button (admin-only), subscriber redirect (/s/[token]), public read-only view (25 rows, conversion banners). Session 3: Expanded-row abort fix. Session 4: Expand chevron fix (32→36px). Session 5: Full DNS/CloudFlare migration — CloudFlare zone, NS switch, Railway custom domain (475sqwom), proxy enabled, SSL Full (strict), Page Rules, metadataBase + Supabase updated. beta.→rijksuitgaven.nl 301 redirect.
 
 2. **Autocomplete Fix + Features + V2.5 Design + DNS Review** (2026-03-05)
@@ -120,8 +123,6 @@
 2. **V2.4 Live + UX-043/044 + Social Pipeline + Security Audit + Slaap Bug** (2026-03-03)
    Session 1-2: V2.4 merge + Rule 7 + 3 bug fixes + 147 commits pushed. Session 3: UX-043 person picker. Session 4: UX-044 uitgeschreven filter. Session 5-6: Social pipeline rewrite + template curation (48→32) + contextual hashtags (replace #Rijksuitgaven with #Subsidies/#Defensie/etc.) + 50-char max fields. 500 posts in buffer-ready.csv. Session 7: Comprehensive security audit — 15 findings fixed (CSRF, CSP, rate limiting, dependency CVEs, Railway private networking, RLS audit). Session 8: 4-commit fix for "slaap" compound word search in publiek (word boundary, LOWER() WHERE, force-dynamic routes, no-store cache headers). Browser cache prevention on all API endpoints.
 
-2. **Social Content Pipeline v1 + Admin CRM + Anomaly UX** (2026-03-02)
-   Initial social pipeline (superseded by Mar 3 rewrite): 18 SQL queries → 1,921 facts → 2,435 posts (25 batches). Also: pipeline pill selector, Expertgroep Bron, anomaly cell bg red→grey, red/green trend tooltips.
 
 ---
 
@@ -141,12 +142,12 @@
 
 | Property | Value |
 |----------|-------|
-| **Production URL** | `https://beta.rijksuitgaven.nl` |
+| **Production URL** | `https://rijksuitgaven.nl` |
 | **Railway URL** | `https://rijksuitgaven-production.up.railway.app` |
 | **CNAME Target** | `j65ghs38.up.railway.app` |
 | **Local Dev** | `http://localhost:3000` (feature branches) |
 | **Cron Service** | `curlimages/curl` Docker on Railway, schedule `0 7-16 * * 1-5` |
-| **Cron URL** | `POST https://beta.rijksuitgaven.nl/api/v1/cron/sequences` |
+| **Cron URL** | `POST https://rijksuitgaven.nl/api/v1/cron/sequences` |
 | **Env Var** | `CRON_SECRET` on frontend + cron service |
 | Root Directory | `app` |
 | Region | EU West (Amsterdam) |
