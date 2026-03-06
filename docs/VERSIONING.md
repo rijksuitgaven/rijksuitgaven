@@ -189,6 +189,7 @@ Internal admin tooling at `/team/*`. Separate release cadence from the end-user 
 | UX-044: Uitgeschreven filter on /team/leden and /team/contacten | ✅ Live |
 | Security hardening — CSRF, CSP, rate limiting, private networking, dependency CVEs | ✅ Live |
 | Roadmap patches display — /team/roadmap shows patch releases parsed from VERSIONING.md | ✅ Live |
+| Legacy contract date tracking — sortable V1 Contract column on /team/leden (migration 075) | ✅ Live |
 | UTM builder — compose UI for UTM parameters, auto-append to CTA + body links | 📋 Planned |
 
 ### A1.1 - Bulk & CRM
