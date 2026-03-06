@@ -500,7 +500,7 @@ export default function TeamLedenPage() {
   const [showForm, setShowForm] = useState(false)
   const [editingMember, setEditingMember] = useState<Member | null>(null)
   const [engagement, setEngagement] = useState<Record<string, EngagementInfo>>({})
-  type SortField = 'name' | 'organization' | 'email' | 'plan' | 'status' | 'last_active_at' | 'end_date' | 'contract_end_date' | 'engagement'
+  type SortField = 'name' | 'organization' | 'email' | 'plan' | 'status' | 'last_active_at' | 'end_date' | 'contract_end_date'
   const [sortBy, setSortBy] = useState<SortField | null>(null)
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
   type FilterKey = MemberStatus | 'uitgeschreven'
@@ -623,14 +623,6 @@ export default function TeamLedenPage() {
         aVal = a.contract_end_date ?? ''
         bVal = b.contract_end_date ?? ''
         break
-      case 'engagement': {
-        // Sort order: active > at_risk > new > cold
-        const order: Record<string, number> = { active: 0, at_risk: 1, new: 2, cold: 3 }
-        const aEng = engagement[a.person_id]?.level || 'new'
-        const bEng = engagement[b.person_id]?.level || 'new'
-        const cmpVal = (order[aEng] ?? 4) - (order[bEng] ?? 4)
-        return sortDir === 'asc' ? cmpVal : -cmpVal
-      }
       default:
         return 0
     }
@@ -707,7 +699,7 @@ export default function TeamLedenPage() {
           <table className="w-full text-xs">
             <thead>
               <tr className="bg-gray-50 border-b border-[var(--border)]">
-                {([['name', 'Naam'], ['organization', 'Organisatie'], ['email', 'E-mail'], ['plan', 'Plan'], ['status', 'Status'], ['engagement', 'Engagement'], ['last_active_at', 'Laatst actief'], ['end_date', 'Einddatum'], ['contract_end_date', 'V1 Contract']] as [SortField, string][]).map(([field, label]) => (
+                {([['name', 'Naam'], ['organization', 'Organisatie'], ['email', 'E-mail'], ['plan', 'Plan'], ['status', 'Status'], ['last_active_at', 'Laatst actief'], ['end_date', 'Einddatum'], ['contract_end_date', 'V1 Contract']] as [SortField, string][]).map(([field, label]) => (
                   <th key={field} onClick={() => toggleSort(field)} className="text-left px-2 py-2 font-medium text-[var(--navy-medium)] cursor-pointer select-none hover:text-[var(--navy-dark)]">
                     <span className="inline-flex items-center gap-1">{label} <SortIcon field={field} /></span>
                   </th>
@@ -718,7 +710,7 @@ export default function TeamLedenPage() {
             <tbody>
               {filteredMembers.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="px-2 py-8 text-center text-[var(--navy-medium)]">
+                  <td colSpan={9} className="px-2 py-8 text-center text-[var(--navy-medium)]">
                     {activeFilter ? 'Geen leden met dit filter.' : 'Nog geen leden. Voeg het eerste lid toe.'}
                   </td>
                 </tr>
@@ -747,13 +739,6 @@ export default function TeamLedenPage() {
                       <td className="px-2 py-2 text-[var(--navy-medium)]">{member.email}</td>
                       <td className="px-2 py-2 text-[var(--navy-medium)]">{member.plan === 'yearly' ? 'Jaar' : member.plan === 'trial' ? 'Proef' : 'Maand'}</td>
                       <td className="px-2 py-2"><StatusBadge status={status} /></td>
-                      <td className="px-2 py-2">
-                        {engagement[member.person_id] ? (
-                          <EngagementBadge level={engagement[member.person_id].level} />
-                        ) : (
-                          <span className="text-xs text-[var(--navy-medium)]">—</span>
-                        )}
-                      </td>
                       <td className="px-2 py-2 text-[var(--navy-medium)]" title={member.last_active_at ? formatDateTime(member.last_active_at) : undefined}>
                         {formatRelativeTime(member.last_active_at)}
                       </td>
