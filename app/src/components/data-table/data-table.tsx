@@ -37,7 +37,7 @@ const COLLAPSED_YEARS_END = 2020
 const MAX_EXPORT_ROWS = 500
 
 // Sticky column offset for primary column (in pixels)
-const STICKY_PRIMARY_OFFSET_PX = 32
+const STICKY_PRIMARY_OFFSET_PX = 36
 const STICKY_PRIMARY_OFFSET_PINNED_PX = 56 // Extra width when pinned rows exist (unpin + chevron)
 
 // Column meta type for sticky columns
@@ -657,7 +657,7 @@ export function DataTable({
             </div>
           )
         },
-        size: 32,
+        size: 36,
       },
       // Primary column (Ontvanger) - sticky on mobile
       {
