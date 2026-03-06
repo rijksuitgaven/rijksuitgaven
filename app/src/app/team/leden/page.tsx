@@ -704,21 +704,21 @@ export default function TeamLedenPage() {
       {/* Members table */}
       <div className="bg-white border border-[var(--border)] rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-xs">
             <thead>
               <tr className="bg-gray-50 border-b border-[var(--border)]">
                 {([['name', 'Naam'], ['organization', 'Organisatie'], ['email', 'E-mail'], ['plan', 'Plan'], ['status', 'Status'], ['engagement', 'Engagement'], ['last_active_at', 'Laatst actief'], ['end_date', 'Einddatum'], ['contract_end_date', 'V1 Contract']] as [SortField, string][]).map(([field, label]) => (
-                  <th key={field} onClick={() => toggleSort(field)} className="text-left px-4 py-3 font-medium text-[var(--navy-medium)] cursor-pointer select-none hover:text-[var(--navy-dark)]">
+                  <th key={field} onClick={() => toggleSort(field)} className="text-left px-2 py-2 font-medium text-[var(--navy-medium)] cursor-pointer select-none hover:text-[var(--navy-dark)]">
                     <span className="inline-flex items-center gap-1">{label} <SortIcon field={field} /></span>
                   </th>
                 ))}
-                <th className="px-4 py-3"><span className="sr-only">Acties</span></th>
+                <th className="px-2 py-2"><span className="sr-only">Acties</span></th>
               </tr>
             </thead>
             <tbody>
               {filteredMembers.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="px-4 py-8 text-center text-[var(--navy-medium)]">
+                  <td colSpan={10} className="px-2 py-8 text-center text-[var(--navy-medium)]">
                     {activeFilter ? 'Geen leden met dit filter.' : 'Nog geen leden. Voeg het eerste lid toe.'}
                   </td>
                 </tr>
@@ -731,7 +731,7 @@ export default function TeamLedenPage() {
                       onClick={() => setEditingMember(member)}
                       className="border-b border-[var(--border)] hover:bg-gray-50 cursor-pointer transition-colors"
                     >
-                      <td className="px-4 py-3 text-[var(--navy-dark)] font-medium">
+                      <td className="px-2 py-2 text-[var(--navy-dark)] font-medium">
                         <Link
                           href={`/team/leden/${member.id}`}
                           onClick={e => e.stopPropagation()}
@@ -739,27 +739,27 @@ export default function TeamLedenPage() {
                         >
                           {member.first_name} {member.last_name}
                         </Link>
-                        {member.role === 'admin' && <span className="ml-1.5 text-xs text-[var(--pink)]">admin</span>}
-                        {member.role === 'trial' && <span className="ml-1.5 text-xs text-blue-600">trial</span>}
-                        {member.unsubscribed_at && <span className="ml-1.5 text-xs text-orange-600">geen e-mail</span>}
+                        {member.role === 'admin' && <span className="ml-1 text-xs text-[var(--pink)]">admin</span>}
+                        {member.role === 'trial' && <span className="ml-1 text-xs text-blue-600">trial</span>}
+                        {member.unsubscribed_at && <span className="ml-1 text-xs text-orange-600">geen e-mail</span>}
                       </td>
-                      <td className="px-4 py-3 text-[var(--navy-medium)]">{member.organization || '—'}</td>
-                      <td className="px-4 py-3 text-[var(--navy-medium)]">{member.email}</td>
-                      <td className="px-4 py-3 text-[var(--navy-medium)]">{member.plan === 'yearly' ? 'Jaar' : member.plan === 'trial' ? 'Proef' : 'Maand'}</td>
-                      <td className="px-4 py-3"><StatusBadge status={status} /></td>
-                      <td className="px-4 py-3">
+                      <td className="px-2 py-2 text-[var(--navy-medium)]">{member.organization || '—'}</td>
+                      <td className="px-2 py-2 text-[var(--navy-medium)]">{member.email}</td>
+                      <td className="px-2 py-2 text-[var(--navy-medium)]">{member.plan === 'yearly' ? 'Jaar' : member.plan === 'trial' ? 'Proef' : 'Maand'}</td>
+                      <td className="px-2 py-2"><StatusBadge status={status} /></td>
+                      <td className="px-2 py-2">
                         {engagement[member.person_id] ? (
                           <EngagementBadge level={engagement[member.person_id].level} />
                         ) : (
                           <span className="text-xs text-[var(--navy-medium)]">—</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-[var(--navy-medium)]" title={member.last_active_at ? formatDateTime(member.last_active_at) : undefined}>
+                      <td className="px-2 py-2 text-[var(--navy-medium)]" title={member.last_active_at ? formatDateTime(member.last_active_at) : undefined}>
                         {formatRelativeTime(member.last_active_at)}
                       </td>
-                      <td className="px-4 py-3 text-[var(--navy-medium)]">{member.role === 'admin' ? '—' : formatDate(member.end_date)}</td>
-                      <td className="px-4 py-3 text-[var(--navy-medium)]">{member.contract_end_date ? formatDate(member.contract_end_date) : '—'}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-2 py-2 text-[var(--navy-medium)]">{member.role === 'admin' ? '—' : formatDate(member.end_date)}</td>
+                      <td className="px-2 py-2 text-[var(--navy-medium)]">{member.contract_end_date ? formatDate(member.contract_end_date) : '—'}</td>
+                      <td className="px-2 py-2">
                         <MemberActions member={member} isSelf={currentUserId === member.user_id} onChanged={fetchMembers} />
                       </td>
                     </tr>
