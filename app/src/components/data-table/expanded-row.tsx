@@ -236,7 +236,7 @@ export function ExpandedRow({
           setGroupingCounts(data)
         }
       } catch (err) {
-        if (err instanceof Error && (err.name === 'AbortError' || err.message === 'signal is aborted without reason')) return
+        if (abortController.signal.aborted) return
         // Track error but don't break UX — counts are a nice-to-have enhancement
         track('error', module, { message: err instanceof Error ? err.message : 'Grouping counts fetch failed', trigger: 'row_expand' })
       }
@@ -290,9 +290,7 @@ export function ExpandedRow({
         const data = await response.json()
         setDetails(data.details || [])
       } catch (err) {
-        if (err instanceof Error && err.name === 'AbortError') {
-          return
-        }
+        if (abortController.signal.aborted) return
         console.error('[ExpandedRow]', err instanceof Error ? err.message : err)
         setError('Details konden niet worden geladen')
         track('error', module, { message: err instanceof Error ? err.message : String(err), trigger: 'row_expand' })
