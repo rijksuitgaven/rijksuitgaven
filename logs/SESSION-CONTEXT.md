@@ -101,14 +101,15 @@
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
 | SEO optimization | ⏳ Pending | OG image, twitter cards, per-page metadata, structured data |
-| DNS/CloudFlare switch | 📋 Planned (Mar 8-9) | 3-phase plan reviewed by senior team (Mar 5). CloudFlare Free confirmed sufficient. 27 verification checks across phases. Biggest risk: missing DNS record during import. Execute Saturday. See `docs/plans/2026-03-04-dns-cloudflare-switch.md` |
+| DNS/CloudFlare switch | ✅ Live (Mar 6) | All 3 phases complete. CloudFlare proxy active, rijksuitgaven.nl → Railway, www 301 redirect, SSL Full (strict), API cache bypass. metadataBase + Supabase updated. |
+| SPF tightening | ⏳ Pending | Remove ZXCS includes from SPF record since no longer sending from there. Do after confirming email works for a few days. |
 
 ---
 
 ## Recent Work (Last 5)
 
-1. **V2.5 Publieke Deellinks + Admin Leden** (2026-03-06)
-   Session 1: Admin leden — contract_end_date (migration 075), engagement badge bug fix, compact table. Session 2: V2.5 full implementation — migration 076 (shared_links), BFF routes, Deel button (admin-only), subscriber redirect (/s/[token]), public read-only view (25 rows, conversion banners). Bug fixes: base64url encoding, stale expand param, RLS bypass.
+1. **V2.5 + DNS Migration + Admin Leden** (2026-03-06)
+   Session 1: Admin leden — contract_end_date (migration 075), engagement badge bug fix, compact table. Session 2: V2.5 full implementation — migration 076 (shared_links), BFF routes, Deel button (admin-only), subscriber redirect (/s/[token]), public read-only view (25 rows, conversion banners). Session 3: Expanded-row abort fix. Session 4: Expand chevron fix (32→36px). Session 5: Full DNS/CloudFlare migration — CloudFlare zone, NS switch, Railway custom domain (475sqwom), proxy enabled, SSL Full (strict), Page Rules, metadataBase + Supabase updated. beta.→rijksuitgaven.nl 301 redirect.
 
 2. **Autocomplete Fix + Features + V2.5 Design + DNS Review** (2026-03-05)
    Session 1: Autocomplete field_matches prefix fix (V2.4.3), Railway backend public networking removed. Session 2: Roadmap patches on /team/roadmap, feedback screenshot+annotation. Session 3: V2.5 share trigger brainstorm — "Deel" button, stored state spec, subscriber redirect, H8 lab prototype. Session 4: DNS/CloudFlare senior team review — CloudFlare Free confirmed sufficient, verification questions per phase, risk analysis.

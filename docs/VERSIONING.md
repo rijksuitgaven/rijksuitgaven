@@ -230,12 +230,12 @@ Marketing, launch infrastructure, and conversion optimization. Not end-user feat
 
 ### M1.0 - Lancering (Launch Gate)
 
-**Status:** 📋 Planned — all items are prerequisites for DNS switch
+**Status:** 🔨 In Progress — DNS switch done, remaining items before public launch
 
 | Feature | Status | Blocks DNS switch? |
 |---------|--------|--------------------|
 | SEO: OG image, twitter cards, per-page metadata, structured data | 📋 Planned | Yes |
-| DNS switch plan: rijksuitgaven.nl → Railway, metadataBase update, rollback plan | 📋 Planned | Yes (is the switch) |
+| DNS switch: rijksuitgaven.nl → Railway via CloudFlare, metadataBase, Supabase URLs | ✅ Live (6 maart 2026) | Yes (is the switch) |
 | Rate limiting: Backend token bucket + contact form rate limit + Railway private networking | ✅ Live | Yes |
 | User migration: ~50 WordPress users to Supabase | 📋 Planned | Yes |
 | Homepage copy optimization (remaining value props) | ⏳ In progress | Yes |
