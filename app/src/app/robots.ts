@@ -6,8 +6,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/login'],
+        disallow: ['/api/', '/login', '/team/', '/profiel', '/s/'],
       },
     ],
+    sitemap: 'https://rijksuitgaven.nl/sitemap.xml',
   }
 }
