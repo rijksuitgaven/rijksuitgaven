@@ -714,7 +714,11 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
         headers: MUTATION_HEADERS,
         body: JSON.stringify(body),
       })
-      if (!res.ok) return 'error'
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        console.error('[Share] API error:', res.status, err)
+        return 'error'
+      }
       const { token } = await res.json()
       const url = `${window.location.origin}/s/${token}`
       await navigator.clipboard.writeText(url)
