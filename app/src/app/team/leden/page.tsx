@@ -701,7 +701,7 @@ export default function TeamLedenPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-[var(--border)]">
-                {([['name', 'Naam'], ['organization', 'Organisatie'], ['email', 'E-mail'], ['plan', 'Plan'], ['status', 'Status'], ['engagement', 'Engagement'], ['last_active_at', 'Laatst actief'], ['end_date', 'Einddatum'], ['contract_end_date', 'Contract']] as [SortField, string][]).map(([field, label]) => (
+                {([['name', 'Naam'], ['organization', 'Organisatie'], ['email', 'E-mail'], ['plan', 'Plan'], ['status', 'Status'], ['engagement', 'Engagement'], ['last_active_at', 'Laatst actief'], ['end_date', 'Einddatum'], ['contract_end_date', 'V1 Contract']] as [SortField, string][]).map(([field, label]) => (
                   <th key={field} onClick={() => toggleSort(field)} className="text-left px-4 py-3 font-medium text-[var(--navy-medium)] cursor-pointer select-none hover:text-[var(--navy-dark)]">
                     <span className="inline-flex items-center gap-1">{label} <SortIcon field={field} /></span>
                   </th>
