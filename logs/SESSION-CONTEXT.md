@@ -15,7 +15,7 @@
 
 | Track | Current | Status |
 |-------|---------|--------|
-| **V** (End-user) | V2.4 Search Platform | ✅ Live (beta) |
+| **V** (End-user) | V2.5 Search Platform | ✅ Live (beta) |
 | **A** (Admin) | A1.0 Beheer MVP | ✅ Live |
 | **M** (Marketing) | M1.0 Lancering | 📋 Planned |
 | **D** (Data) | D1.0 Gemeente Uitbreiding | 📋 Planned |
@@ -96,7 +96,7 @@
 | Leden: contract_end_date column | ✅ Live (Mar 6) | Migration 075. Sortable "V1 Contract" column for legacy WordPress contract dates. Date picker in edit modal. |
 | Leden: engagement badge bug | ✅ Fixed (Mar 6) | Wrong key lookup (subscription.id vs person_id). Fixed + removed column (email engagement misleading for platform usage). |
 | Leden: compact table layout | ✅ Live (Mar 6) | px-2 padding, text-xs. Fits without horizontal scroll. |
-| V2.5 Publieke Deellinks | 🔨 In Progress (Mar 5) | Architecture (Mar 4) + share trigger UI design (Mar 5). Share exactly what you see: module, search, filters, sort, columns, expanded row+grouping+columns. "Deel" button in toolbar (disabled without search). One-click copy to clipboard. Subscribers redirect to full page, non-subscribers see same page + banners + 25-row limit. H8 lab prototype validates banner design. Design docs: `docs/designs/v25-shared-view.html` + `docs/plans/2026-03-05-v25-share-trigger-design.md`. Next: migration 075, BFF routes, share button, `/s/[token]` route. |
+| V2.5 Publieke Deellinks | ✅ Live (Mar 6) | Full implementation: migration 076 (shared_links table), BFF routes (POST create + GET public + DELETE), Deel button (admin-only, 4 visual states), subscriber redirect (/s/[token] → full module page with state reconstruction), public read-only view (server-rendered, 25 rows, conversion banners). Bug fixes: base64url encoding, stale expand param, RLS bypass. 8 commits. |
 | Homepage copy optimization | ⏳ In progress | V1 headline restored, "doel door doen" applied to value prop #1. Remaining props TBD |
 | CRM Phase 3 | ⏳ Pending | Drop redundant subscription columns (email, first_name, last_name, org) |
 | User migration | ⏳ Pending | ~50 WordPress users to import to Supabase |
@@ -107,8 +107,8 @@
 
 ## Recent Work (Last 5)
 
-1. **Admin Leden Improvements** (2026-03-06)
-   contract_end_date column (migration 075), engagement badge bug fix (person_id key mismatch), removed misleading Engagement column, compact table layout. Email bounce investigation (marit@nieuwrechts.nl — Google Workspace transient, not Resend suppression).
+1. **V2.5 Publieke Deellinks + Admin Leden** (2026-03-06)
+   Session 1: Admin leden — contract_end_date (migration 075), engagement badge bug fix, compact table. Session 2: V2.5 full implementation — migration 076 (shared_links), BFF routes, Deel button (admin-only), subscriber redirect (/s/[token]), public read-only view (25 rows, conversion banners). Bug fixes: base64url encoding, stale expand param, RLS bypass.
 
 2. **Autocomplete Fix + Features + V2.5 Design + DNS Review** (2026-03-05)
    Session 1: Autocomplete field_matches prefix fix (V2.4.3), Railway backend public networking removed. Session 2: Roadmap patches on /team/roadmap, feedback screenshot+annotation. Session 3: V2.5 share trigger brainstorm — "Deel" button, stored state spec, subscriber redirect, H8 lab prototype. Session 4: DNS/CloudFlare senior team review — CloudFlare Free confirmed sufficient, verification questions per phase, risk analysis.
@@ -176,9 +176,9 @@
 
 ## Executed SQL Migrations
 
-Last migration: **075-contract-end-date.sql** (2026-03-06)
+Last migration: **076-shared-links.sql** (2026-03-06)
 
-Full list: 001 → 074. See `SESSION-CONTEXT-ARCHIVE.md` for complete execution log.
+Full list: 001 → 075. See `SESSION-CONTEXT-ARCHIVE.md` for complete execution log.
 
 Key recent migrations:
 | # | Description | Date |
@@ -199,6 +199,7 @@ Key recent migrations:
 | 073 | RLS policies for campaigns + media | 2026-02-25 |
 | 074 | Campaign person_ids (JSONB) for specific recipients | 2026-03-03 |
 | 075 | contract_end_date on subscriptions (legacy contract tracking) | 2026-03-06 |
+| 076 | shared_links table for V2.5 Publieke Deellinks (token, state, RLS, view_count RPC) | 2026-03-06 |
 
 ---
 

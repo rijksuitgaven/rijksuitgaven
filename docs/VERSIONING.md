@@ -2,7 +2,7 @@
 
 **Project:** Rijksuitgaven.nl
 **Created:** 2026-01-30
-**Updated:** 2026-03-05
+**Updated:** 2026-03-06
 **Status:** Active
 
 ---
@@ -127,9 +127,14 @@ The original rijksuitgaven.nl built on WordPress. Superseded by V2.
 
 ### V2.5 - Publieke Deellinks
 
-**Status:** 📋 Planned
+**Status:** ✅ Live (6 maart 2026)
 
 - Publieke deellinks: tokenized read-only URL sharing for non-subscribers (view specific bookmarked state without account)
+- "Deel" button in toolbar — captures full view state (module, search, filters, sort, columns, expanded row), one-click copy to clipboard
+- Subscriber redirect: `/s/{token}` reconstructs full module page with all state
+- Public read-only view: server-rendered 25-row table with conversion banners (no account required)
+- Deduplication: same user+module+search+sort+filters returns existing token
+- Admin-only gating for testing phase
 
 ### V2.6 - Zoeken & Vergelijken
 
@@ -657,7 +662,7 @@ V10.0 European Platform
 | V2.2 | ✅ Sorteren & Meldingen | Feb 24 |
 | V2.3 | ✅ Zoekresultaten & Tekst | Feb 27 |
 | V2.4 | ✅ Vergelijk & URL State | Mar 3 |
-| V2.5 | 📋 Publieke Deellinks | Post-launch |
+| V2.5 | ✅ Publieke Deellinks | Mar 6 |
 | V2.6 | 📋 Zoeken & Vergelijken | Post-launch |
 | V2.7 | 📋 Performance | Post-launch |
 | V2.8 | 📋 Data & Integraal | Post-launch |
