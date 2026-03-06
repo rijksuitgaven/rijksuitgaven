@@ -11,6 +11,7 @@ import { ChevronUp, ChevronDown, ChevronsUpDown, Zap, Clock, Snowflake, User } f
 interface Member {
   id: string
   user_id: string
+  person_id: string
   email: string
   first_name: string
   last_name: string
@@ -620,8 +621,8 @@ export default function TeamLedenPage() {
       case 'engagement': {
         // Sort order: active > at_risk > new > cold
         const order: Record<string, number> = { active: 0, at_risk: 1, new: 2, cold: 3 }
-        const aEng = engagement[a.id]?.level || 'new'
-        const bEng = engagement[b.id]?.level || 'new'
+        const aEng = engagement[a.person_id]?.level || 'new'
+        const bEng = engagement[b.person_id]?.level || 'new'
         const cmpVal = (order[aEng] ?? 4) - (order[bEng] ?? 4)
         return sortDir === 'asc' ? cmpVal : -cmpVal
       }
@@ -742,8 +743,8 @@ export default function TeamLedenPage() {
                       <td className="px-4 py-3 text-[var(--navy-medium)]">{member.plan === 'yearly' ? 'Jaar' : member.plan === 'trial' ? 'Proef' : 'Maand'}</td>
                       <td className="px-4 py-3"><StatusBadge status={status} /></td>
                       <td className="px-4 py-3">
-                        {engagement[member.id] ? (
-                          <EngagementBadge level={engagement[member.id].level} />
+                        {engagement[member.person_id] ? (
+                          <EngagementBadge level={engagement[member.person_id].level} />
                         ) : (
                           <span className="text-xs text-[var(--navy-medium)]">—</span>
                         )}
