@@ -13,7 +13,7 @@ import {
   type RowPinningState,
   type Column,
 } from '@tanstack/react-table'
-import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet, Info, Search, MousePointerClick, AlertTriangle, SlidersHorizontal, Columns3, Pin, PinOff } from 'lucide-react'
+import { ChevronRight, ChevronLeft, ChevronDown, ChevronUp, ChevronsUpDown, Download, FileSpreadsheet, Info, Search, MousePointerClick, AlertTriangle, SlidersHorizontal, Columns3, Pin, PinOff, Share2, Check, Loader2 } from 'lucide-react'
 import ExcelJS from 'exceljs'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { cn } from '@/lib/utils'
@@ -75,6 +75,8 @@ interface DataTableProps {
   initialExpandedPrimary?: string | null  // UX-041: Auto-expand this row on load (from URL)
   initialExpandGrouping?: string | null  // UX-041: Auto-select grouping in expanded row (from URL)
   onExpandedChange?: (primaryValue: string | null, grouping?: string | null) => void  // UX-041: Notify parent of expand/collapse + grouping
+  onShare?: () => Promise<'copied' | 'error'>  // V2.5: Share button callback (admin-only for now)
+  shareDisabled?: boolean  // V2.5: Disable when no search/filters active
 }
 
 /**
@@ -357,8 +359,11 @@ export function DataTable({
   initialExpandedPrimary,
   initialExpandGrouping,
   onExpandedChange,
+  onShare,
+  shareDisabled = true,
 }: DataTableProps) {
   const { track } = useAnalytics()
+  const [shareState, setShareState] = useState<'idle' | 'loading' | 'copied' | 'error'>('idle')
   const [sorting, setSorting] = useState<SortingState>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const expandGroupingRef = useRef<Record<string, string>>({})
@@ -1072,6 +1077,43 @@ export function DataTable({
               selectedColumns={selectedColumns}
               onColumnsChange={onColumnsChange}
             />
+          )}
+
+          {/* V2.5: Share button (admin-only for now) */}
+          {onShare && (
+            <button
+              onClick={async () => {
+                if (shareDisabled || shareState === 'loading') return
+                setShareState('loading')
+                try {
+                  const result = await onShare()
+                  setShareState(result)
+                  setTimeout(() => setShareState('idle'), 3000)
+                } catch {
+                  setShareState('error')
+                  setTimeout(() => setShareState('idle'), 3000)
+                }
+              }}
+              disabled={shareDisabled || shareState === 'loading'}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium border rounded transition-colors',
+                shareState === 'copied'
+                  ? 'border-green-500 text-green-700 bg-green-50'
+                  : shareState === 'error'
+                    ? 'border-red-400 text-red-600 bg-red-50'
+                    : 'border-[var(--border)] hover:bg-[var(--gray-light)] disabled:opacity-40 disabled:cursor-not-allowed'
+              )}
+              title={shareDisabled ? 'Zoek eerst om te delen' : 'Deellink kopiëren'}
+            >
+              {shareState === 'loading' ? (
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              ) : shareState === 'copied' ? (
+                <Check className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <Share2 className="h-4 w-4" aria-hidden="true" />
+              )}
+              {shareState === 'copied' ? 'Gekopieerd!' : shareState === 'error' ? 'Fout' : 'Deel'}
+            </button>
           )}
 
           {/* CSV Export button (UX-039: selection export when rows pinned) */}

@@ -9,6 +9,8 @@ import { ErrorBoundary, ErrorReport } from '@/components/error-boundary'
 import { fetchModuleData } from '@/lib/api'
 import { getStoredColumns, getDefaultColumns } from '@/components/column-selector'
 import { useAnalytics } from '@/hooks/use-analytics'
+import { useSubscription } from '@/hooks/use-subscription'
+import { MUTATION_HEADERS } from '@/lib/api-config'
 import type { ModuleDataResponse, RecipientRow } from '@/types/api'
 
 // Module configuration
@@ -115,6 +117,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
   const router = useRouter()
   const searchParams = useSearchParams()
   const { track } = useAnalytics()
+  const { role } = useSubscription()
+  const isAdmin = role === 'admin'
   const hasTrackedView = useRef(false)
   const lastTrigger = useRef<string>('page_load')
 
@@ -675,6 +679,46 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
     return Object.keys(result).length > 0 ? result : undefined
   }, [filters])
 
+  // V2.5: Share handler — captures current view state, creates shared link, copies to clipboard
+  const handleShare = useCallback(async (): Promise<'copied' | 'error'> => {
+    // Build filters object (only non-empty values)
+    const shareFilters: Record<string, unknown> = {}
+    if (filters.jaar) shareFilters.jaar = filters.jaar
+    if (filters.minBedrag) shareFilters.min_bedrag = filters.minBedrag
+    if (filters.maxBedrag) shareFilters.max_bedrag = filters.maxBedrag
+    for (const [key, value] of Object.entries(filters)) {
+      if (['search', 'jaar', 'minBedrag', 'maxBedrag'].includes(key)) continue
+      if (Array.isArray(value) && value.length > 0) shareFilters[key] = value
+    }
+
+    const body = {
+      module: moduleId,
+      search: filters.search || null,
+      filters: shareFilters,
+      sort_by: sortBy,
+      sort_order: sortOrder,
+      columns: effectiveColumns,
+      expanded: expandedPrimaryRef.current ?? null,
+      expanded_grouping: expandGroupingRef.current ?? null,
+      expanded_columns: null, // TODO: Phase 4
+    }
+
+    try {
+      const res = await fetch('/api/v1/share', {
+        method: 'POST',
+        headers: MUTATION_HEADERS,
+        body: JSON.stringify(body),
+      })
+      if (!res.ok) return 'error'
+      const { token } = await res.json()
+      const url = `${window.location.origin}/s/${token}`
+      await navigator.clipboard.writeText(url)
+      return 'copied'
+    } catch {
+      return 'error'
+    }
+  }, [moduleId, filters, sortBy, sortOrder, effectiveColumns])
+
   const renderExpandedRow = useCallback((row: RecipientRow, initialGrouping?: string, isPinned?: boolean) => (
     <ExpandedRow
       row={row}
@@ -771,6 +815,8 @@ function ModulePageContent({ moduleId, config }: { moduleId: string; config: Mod
             initialExpandedPrimary={initialExpandedPrimary}
             initialExpandGrouping={initialExpandGrouping}
             onExpandedChange={handleExpandedChange}
+            onShare={isAdmin ? handleShare : undefined}
+            shareDisabled={isDefaultView}
           />
         </div>
       </main>
